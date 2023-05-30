@@ -25,6 +25,7 @@ defmodule Beacon.LiveAdmin.MixProject do
 
   defp deps do
     [
+      {:beacon, github: "BeaconCMS/beacon", runtime: false},
       {:phoenix, "~> 1.7"},
       {:phoenix_html, "~> 3.3"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},

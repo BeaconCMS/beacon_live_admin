@@ -41,7 +41,7 @@ defmodule DemoWeb.Router do
 
   scope "/" do
     pipe_through :browser
-    live_admin "/"
+    beacon_live_admin "/", sites: [:dev]
   end
 end
 

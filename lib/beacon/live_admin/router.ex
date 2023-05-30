@@ -7,7 +7,7 @@ defmodule Beacon.LiveAdmin.Router do
   TODO
   """
   # TODO opts :sites
-  defmacro live_admin(path, opts \\ []) do
+  defmacro beacon_live_admin(path, opts \\ []) do
     opts =
       if Macro.quoted_literal?(opts) do
         Macro.prewalk(opts, &expand_alias(&1, __CALLER__))
@@ -25,8 +25,8 @@ defmodule Beacon.LiveAdmin.Router do
           import Phoenix.LiveView.Router, only: [live: 4, live_session: 3]
 
           live_session session_name, session_opts do
-            live "/", Beacon.LiveAdmin.PageLive, :index, route_opts
-            live "/pages", Beacon.LiveAdmin.PageLive, :index, route_opts
+            live "/:site", Beacon.LiveAdmin.PageLive, :index, route_opts
+            live "/:site/pages", Beacon.LiveAdmin.PageLive, :index, route_opts
           end
         end
       end
@@ -34,10 +34,14 @@ defmodule Beacon.LiveAdmin.Router do
     quote do
       unquote(scope)
 
-      unless Module.get_attribute(__MODULE__, :live_admin_prefix) do
-        @live_admin_prefix Phoenix.Router.scoped_path(__MODULE__, path)
-        # TODO __live_admin_preifx__(site)
-        def __live_admin_prefix__, do: @live_admin_prefix
+      @live_admin_prefix Phoenix.Router.scoped_path(__MODULE__, path)
+
+      for site <- opts[:sites] do
+        def __live_admin_prefix__(site) do
+          [@live_admin_prefix, site]
+          |> Enum.join("/")
+          |> String.replace("//", "/")
+        end
       end
     end
   end
@@ -51,7 +55,12 @@ defmodule Beacon.LiveAdmin.Router do
   def __options__(options) do
     live_socket_path = Keyword.get(options, :live_socket_path, "/live")
 
-    session_args = []
+    # TODO validate empty/invalid :sites
+    sites = options[:sites]
+
+    session_args = [
+      sites
+    ]
 
     {
       options[:live_session_name] || :live_admin,
@@ -67,7 +76,7 @@ defmodule Beacon.LiveAdmin.Router do
   end
 
   @doc false
-  def __session__(_args) do
+  def __session__(_conn, sites) do
     # TODO additional_pages
     pages =
       [
@@ -78,9 +87,9 @@ defmodule Beacon.LiveAdmin.Router do
         session = initialize_page(module, path, live_action, opts)
         {path, module, live_action, session}
       end)
-      |> dbg
 
     %{
+      "sites" => sites,
       "pages" => pages
     }
   end

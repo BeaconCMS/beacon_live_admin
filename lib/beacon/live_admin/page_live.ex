@@ -12,8 +12,8 @@ defmodule Beacon.LiveAdmin.PageLive do
   alias Phoenix.LiveView.Socket
 
   @impl true
-  def mount(params, %{"pages" => pages} = session, socket) do
-    request_path = socket.private.connect_info.request_path
+  def mount(params, %{"sites" => sites, "pages" => pages} = session, socket) do
+    {current_site, request_path} = path_info(socket.private.connect_info.path_info, sites)
 
     find_page = fn pages ->
       Enum.find(pages, :error, fn {path, _module, _live_action, _opts} -> path == request_path end)
@@ -21,15 +21,34 @@ defmodule Beacon.LiveAdmin.PageLive do
 
     case find_page.(pages) do
       {path, module, _live_action, page_session} ->
-        assign_mount(socket, pages, path, module, page_session, params, session)
+        assign_mount(socket, pages, current_site, path, module, page_session, params, session)
 
       :error ->
         raise Beacon.LiveAdmin.PageNotFound, "unknown page #{inspect(request_path)}"
     end
   end
 
-  defp assign_mount(socket, pages, path, module, page_session, params, _session) do
-    socket = assign(socket, page: %Page{module: module}, menu: %Menu{})
+  defp path_info(path_info, sites) do
+    {current_site, path_info} =
+      case path_info do
+        [site] -> {site, [""]}
+        [site | path_info] -> {site, path_info}
+        other -> raise Beacon.LiveAdmin.PageNotFound, "failed to serve request #{inspect(other)}"
+      end
+
+    current_site =
+      case Enum.find(sites, :error, fn site -> Atom.to_string(site) == current_site end) do
+        :error -> raise Beacon.LiveAdmin.PageNotFound, "unknown site #{inspect(current_site)}"
+        site -> site
+      end
+
+    {current_site, Enum.join(["", path_info], "/")}
+  end
+
+  defp assign_mount(socket, pages, current_site, path, module, page_session, params, _session) do
+
+    socket =
+      assign(socket, page: %Page{module: module, current_site: current_site}, menu: %Menu{})
 
     with %Socket{redirected: nil} = socket <- update_page(socket, params: params, path: path),
          %Socket{redirected: nil} = socket <- assign_menu_links(socket, pages) do
@@ -40,8 +59,7 @@ defmodule Beacon.LiveAdmin.PageLive do
   end
 
   defp assign_menu_links(socket, pages) do
-    dbg(pages)
-    current_path = socket.assigns.page.path |> dbg
+    current_path = socket.assigns.page.path
 
     {links, socket} =
       Enum.map_reduce(pages, socket, fn {path, module, _live_action, session}, socket ->
@@ -115,11 +133,18 @@ defmodule Beacon.LiveAdmin.PageLive do
   end
 
   # TODO: prefix path
-  defp maybe_link(_socket, _page, {:enabled, text, path}) do
-    live_redirect(text,
-      to: path,
-      class: ""
-    )
+  defp maybe_link(socket, page, {:enabled, text, path}) do
+    router = socket.private.connect_info.private[:phoenix_router]
+    prefix = router.__live_admin_prefix__(page.current_site)
+
+    # TODO: helper live_admin_path
+    path =
+      case path do
+        "/" -> prefix
+        path -> "#{prefix}/#{path}" |> String.replace("//", "/")
+      end
+
+    live_redirect(text, to: path, class: "")
   end
 
   defp maybe_link(_socket, _page, {:disabled, text}) do

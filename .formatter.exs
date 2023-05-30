@@ -1,6 +1,6 @@
 locals_without_parens = [
-  beacon_admin: 1,
-  beacon_admin: 2
+  beacon_live_admin: 1,
+  beacon_live_admin: 2
 ]
 
 [
