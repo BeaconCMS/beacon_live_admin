@@ -1,0 +1,12 @@
+<div>page live</div>
+<header>
+  <nav>
+    <%= for link <- @menu.links, link != :skip do %>
+      <%= maybe_link(@socket, @page, link) %>
+    <% end %>
+  </nav>
+</header>
+
+<section>
+  <%= render_page(@page.module, assigns) %>
+</section>

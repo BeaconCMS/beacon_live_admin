@@ -1,4 +1,3 @@
-
 # Development Server for Beacon LiveAdmin
 #
 # Usage:

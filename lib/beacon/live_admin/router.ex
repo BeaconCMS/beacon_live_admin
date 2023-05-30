@@ -6,6 +6,7 @@ defmodule Beacon.LiveAdmin.Router do
   @doc """
   TODO
   """
+  # TODO opts :sites
   defmacro live_admin(path, opts \\ []) do
     opts =
       if Macro.quoted_literal?(opts) do
@@ -16,6 +17,7 @@ defmodule Beacon.LiveAdmin.Router do
 
     scope =
       quote bind_quoted: binding() do
+        # TODO scope by site
         scope path, alias: false, as: false do
           {session_name, session_opts, route_opts} = Beacon.LiveAdmin.Router.__options__(opts)
 
@@ -23,7 +25,8 @@ defmodule Beacon.LiveAdmin.Router do
           import Phoenix.LiveView.Router, only: [live: 4, live_session: 3]
 
           live_session session_name, session_opts do
-            live "/", Beacon.LiveAdmin.PageLive, :home, route_opts
+            live "/", Beacon.LiveAdmin.PageLive, :index, route_opts
+            live "/pages", Beacon.LiveAdmin.PageLive, :index, route_opts
           end
         end
       end
@@ -33,6 +36,7 @@ defmodule Beacon.LiveAdmin.Router do
 
       unless Module.get_attribute(__MODULE__, :live_admin_prefix) do
         @live_admin_prefix Phoenix.Router.scoped_path(__MODULE__, path)
+        # TODO __live_admin_preifx__(site)
         def __live_admin_prefix__, do: @live_admin_prefix
       end
     end
@@ -64,6 +68,42 @@ defmodule Beacon.LiveAdmin.Router do
 
   @doc false
   def __session__(_args) do
-    %{}
+    # TODO additional_pages
+    pages =
+      [
+        {"/", Beacon.LiveAdmin.HomePage, :index, %{}},
+        {"/pages", Beacon.LiveAdmin.PageEditorPage, :index, %{}}
+      ]
+      |> Enum.map(fn {path, module, live_action, opts} ->
+        session = initialize_page(module, path, live_action, opts)
+        {path, module, live_action, session}
+      end)
+      |> dbg
+
+    %{
+      "pages" => pages
+    }
+  end
+
+  defp initialize_page(module, path, live_action, opts) do
+    case module.init(path, live_action, opts) do
+      {:ok, session} ->
+        session
+
+      output ->
+        msg = """
+        failed to initialize page #{inspect(module)}
+
+        expected `c:init/3` to return {:ok, map}
+
+        Got:
+
+          #{inspect(output)}
+
+        """
+
+        # TODO: custom exception?
+        raise msg
+    end
   end
 end
