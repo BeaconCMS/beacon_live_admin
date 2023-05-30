@@ -30,6 +30,32 @@ Application.put_env(:beacon_live_admin, DemoWeb.Endpoint,
   ]
 )
 
+defmodule DemoWeb.CustomPage do
+  use Beacon.LiveAdmin.PageBuilder
+
+  def init(_live_action, opts) do
+    {:ok, opts}
+  end
+
+  @impl true
+  def menu_link(_session) do
+    {:ok, "Custom"}
+  end
+
+  @impl true
+  def mount(_params, %{val: val}, socket) do
+    {:ok, assign(socket, val: val)}
+  end
+
+  @impl true
+  def render(assigns) do
+    ~H"""
+    <div>Custom</div>
+    <p>Val: <%= @val %></p>
+    """
+  end
+end
+
 defmodule DemoWeb.Router do
   use Phoenix.Router
   import Beacon.LiveAdmin.Router
@@ -41,7 +67,7 @@ defmodule DemoWeb.Router do
 
   scope "/" do
     pipe_through :browser
-    beacon_live_admin "/", sites: [:dev]
+    beacon_live_admin "/", sites: [:dev], additional_pages: [{"/custom", DemoWeb.CustomPage, :index, %{val: 1}}]
   end
 end
 

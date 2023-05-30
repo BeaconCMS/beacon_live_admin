@@ -27,6 +27,11 @@ defmodule Beacon.LiveAdmin.Router do
           live_session session_name, session_opts do
             live "/:site", Beacon.LiveAdmin.PageLive, :index, route_opts
             live "/:site/pages", Beacon.LiveAdmin.PageLive, :index, route_opts
+
+            # TODO validate :additional_pages
+            for {path, _module, live_action, _} <- opts[:additional_pages] do
+              live "/:site#{path}", Beacon.LiveAdmin.PageLive, live_action, route_opts
+            end
           end
         end
       end
@@ -55,11 +60,13 @@ defmodule Beacon.LiveAdmin.Router do
   def __options__(options) do
     live_socket_path = Keyword.get(options, :live_socket_path, "/live")
 
-    # TODO validate empty/invalid :sites
+    # TODO validate options
     sites = options[:sites]
+    additional_pages = options[:additional_pages]
 
     session_args = [
-      sites
+      sites,
+      additional_pages
     ]
 
     {
@@ -76,15 +83,16 @@ defmodule Beacon.LiveAdmin.Router do
   end
 
   @doc false
-  def __session__(_conn, sites) do
+  def __session__(_conn, sites, additional_pages) do
     # TODO additional_pages
     pages =
       [
         {"/", Beacon.LiveAdmin.HomePage, :index, %{}},
         {"/pages", Beacon.LiveAdmin.PageEditorPage, :index, %{}}
       ]
+      |> Enum.concat(additional_pages)
       |> Enum.map(fn {path, module, live_action, opts} ->
-        session = initialize_page(module, path, live_action, opts)
+        session = initialize_page(module, live_action, opts)
         {path, module, live_action, session}
       end)
 
@@ -94,8 +102,8 @@ defmodule Beacon.LiveAdmin.Router do
     }
   end
 
-  defp initialize_page(module, path, live_action, opts) do
-    case module.init(path, live_action, opts) do
+  defp initialize_page(module, live_action, opts) do
+    case module.init(live_action, opts) do
       {:ok, session} ->
         session
 

@@ -46,7 +46,6 @@ defmodule Beacon.LiveAdmin.PageLive do
   end
 
   defp assign_mount(socket, pages, current_site, path, module, page_session, params, _session) do
-
     socket =
       assign(socket, page: %Page{module: module, current_site: current_site}, menu: %Menu{})
 

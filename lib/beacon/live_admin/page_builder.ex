@@ -18,7 +18,7 @@ defmodule Beacon.LiveAdmin.PageBuilder do
   @type session :: map
   @type unsigned_params :: map
 
-  @callback init(path :: String.t(), live_action :: atom(), opts :: term()) :: {:ok, session()}
+  @callback init(live_action :: atom(), opts :: term()) :: {:ok, session()}
 
   @callback menu_link(session()) ::
               {:ok, String.t()}
@@ -52,8 +52,8 @@ defmodule Beacon.LiveAdmin.PageBuilder do
 
       @behaviour Beacon.LiveAdmin.PageBuilder
 
-      def init(_path, _live_action, opts), do: {:ok, opts}
-      defoverridable init: 3
+      def init(_live_action, opts), do: {:ok, opts}
+      defoverridable init: 2
     end
   end
 end
