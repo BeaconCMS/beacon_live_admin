@@ -7,12 +7,13 @@ defmodule Beacon.LiveAdmin.PageLive do
   @moduledoc false
 
   use Beacon.LiveAdmin.Web, :live_view
-  alias Beacon.LiveAdmin.PageBuilder.Page
+  alias Beacon.LiveAdmin.PageBuilder.Env
   alias Beacon.LiveAdmin.PageBuilder.Menu
+  alias Beacon.LiveAdmin.PageBuilder.Page
   alias Phoenix.LiveView.Socket
 
   @impl true
-  def mount(params, %{"sites" => sites, "pages" => pages} = session, socket) do
+  def mount(params, %{"sites" => sites, "pages" => pages}, socket) do
     {current_site, request_path} = path_info(socket.private.connect_info.path_info, sites)
 
     find_page = fn pages ->
@@ -21,7 +22,7 @@ defmodule Beacon.LiveAdmin.PageLive do
 
     case find_page.(pages) do
       {path, module, _live_action, page_session} ->
-        assign_mount(socket, pages, current_site, path, module, page_session, params, session)
+        assign_mount(socket, sites, current_site, pages, path, module, page_session, params)
 
       :error ->
         raise Beacon.LiveAdmin.PageNotFound, "unknown page #{inspect(request_path)}"
@@ -45,9 +46,13 @@ defmodule Beacon.LiveAdmin.PageLive do
     {current_site, Enum.join(["", path_info], "/")}
   end
 
-  defp assign_mount(socket, pages, current_site, path, module, page_session, params, _session) do
+  defp assign_mount(socket, sites, current_site, pages, path, module, page_session, params) do
     socket =
-      assign(socket, page: %Page{module: module, current_site: current_site}, menu: %Menu{})
+      assign(socket,
+        env: %Env{sites: sites, current_site: current_site},
+        menu: %Menu{},
+        page: %Page{module: module}
+      )
 
     with %Socket{redirected: nil} = socket <- update_page(socket, params: params, path: path),
          %Socket{redirected: nil} = socket <- assign_menu_links(socket, pages) do

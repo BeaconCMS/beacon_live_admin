@@ -1,11 +1,16 @@
-defmodule Beacon.LiveAdmin.PageBuilder.Page do
+defmodule Beacon.LiveAdmin.PageBuilder.Env do
   @moduledoc false
-  defstruct path: nil, module: nil, params: %{}, current_site: nil
+  defstruct sites: [], current_site: nil
 end
 
 defmodule Beacon.LiveAdmin.PageBuilder.Menu do
   @moduledoc false
   defstruct links: []
+end
+
+defmodule Beacon.LiveAdmin.PageBuilder.Page do
+  @moduledoc false
+  defstruct path: nil, module: nil, params: %{}
 end
 
 defmodule Beacon.LiveAdmin.PageBuilder do
