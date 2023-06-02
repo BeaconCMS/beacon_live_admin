@@ -34,9 +34,10 @@ if Mix.env() == :dev do
     version: "3.2.7",
     default: [
       args: ~w(
+      --minify
       --config=tailwind.config.js
       --input=css/app.css
-      --output=../priv/static/beacon_live_admin.css
+      --output=../priv/static/beacon_live_admin.min.css
     ),
       cd: Path.expand("../assets", __DIR__)
     ]

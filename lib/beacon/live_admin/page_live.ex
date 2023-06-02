@@ -63,7 +63,7 @@ defmodule Beacon.LiveAdmin.PageLive do
 
         case {current?, menu_link} do
           {true, {:ok, anchor}} ->
-            {{:current, anchor}, socket}
+            {{:current, anchor, path}, socket}
 
           {true, _} ->
             {:skip, redirect_to_home_page(socket)}
@@ -125,11 +125,12 @@ defmodule Beacon.LiveAdmin.PageLive do
 
   ## Navbar handling
 
-  defp maybe_link(_socket, _env, {:current, text}) do
-    assigns = %{text: text}
+  defp maybe_link(socket, env, {:current, text, path}) do
+    path = Beacon.LiveAdmin.PageBuilder.live_admin_path(socket, env, path)
+    assigns = %{text: text, path: path}
 
     ~H"""
-    <%= @text %>
+    <.link navigate={@path} class="bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium"><%= @text %></.link>
     """
   end
 
@@ -138,7 +139,7 @@ defmodule Beacon.LiveAdmin.PageLive do
     assigns = %{text: text, path: path}
 
     ~H"""
-    <.link navigate={@path}><%= @text %></.link>
+    <.link navigate={@path} class="text-gray-900 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"><%= @text %></.link>
     """
   end
 
@@ -146,7 +147,7 @@ defmodule Beacon.LiveAdmin.PageLive do
     assigns = %{text: text}
 
     ~H"""
-    <%= @text %>
+    <span class=""><%= @text %></span>
     """
   end
 end
