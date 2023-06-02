@@ -4,7 +4,7 @@ defmodule Beacon.LiveAdmin.PageEditorPage do
   use Beacon.LiveAdmin.PageBuilder
 
   @impl true
-  def menu_link(_session) do
+  def menu_link do
     {:ok, "Pages"}
   end
 

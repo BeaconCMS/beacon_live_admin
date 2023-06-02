@@ -1,6 +1,6 @@
 defmodule Beacon.LiveAdmin.PageBuilder.Env do
   @moduledoc false
-  defstruct sites: [], current_site: nil
+  defstruct sites: [], current_site: nil, pages: []
 end
 
 defmodule Beacon.LiveAdmin.PageBuilder.Menu do
@@ -23,9 +23,7 @@ defmodule Beacon.LiveAdmin.PageBuilder do
   @type session :: map
   @type unsigned_params :: map
 
-  @callback init(live_action :: atom(), opts :: term()) :: {:ok, session()}
-
-  @callback menu_link(session()) ::
+  @callback menu_link() ::
               {:ok, String.t()}
               | {:disabled, String.t()}
               | :skip
@@ -56,9 +54,25 @@ defmodule Beacon.LiveAdmin.PageBuilder do
       import Phoenix.LiveView
 
       @behaviour Beacon.LiveAdmin.PageBuilder
-
-      def init(_live_action, opts), do: {:ok, opts}
-      defoverridable init: 2
     end
+  end
+
+  def live_admin_path(socket, env, path, params \\ %{}) do
+    prefix = socket.router.__beacon_live_admin_prefix__(env.current_site)
+    path = build_path_with_prefix(prefix, path)
+    params = for {key, val} <- params, do: {key, val}
+    Phoenix.VerifiedRoutes.unverified_path(socket, socket.router, path, params)
+  end
+
+  defp build_path_with_prefix(prefix, "/") do
+    prefix
+  end
+
+  defp build_path_with_prefix(prefix, path) do
+    sanitize_path("#{prefix}/#{path}")
+  end
+
+  defp sanitize_path(path) do
+    String.replace(path, "//", "/")
   end
 end

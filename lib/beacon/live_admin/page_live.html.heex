@@ -3,7 +3,6 @@
     <%= for link <- @menu.links, link != :skip do %>
       <%= maybe_link(@socket, @env, link) %>
     <% end %>
-    <%= inspect @env.sites %>
   </nav>
 </header>
 <section>

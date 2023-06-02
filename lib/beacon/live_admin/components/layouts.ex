@@ -4,4 +4,14 @@ defmodule Beacon.LiveAdmin.Layouts do
   embed_templates "layouts/*"
 
   def render("admin.html", assigns), do: admin(assigns)
+
+  def asset_path(conn_or_socket, asset) when asset in [:css, :js] do
+    prefix = router(conn_or_socket).__beacon_live_admin_assets_prefix__()
+    hash = BeaconWeb.Admin.AssetsController.current_hash(asset)
+    path = Beacon.Router.sanitize_path("#{prefix}/#{asset}-#{hash}")
+    Phoenix.VerifiedRoutes.unverified_path(conn_or_socket, router(conn_or_socket), path)
+  end
+
+  defp router(%Plug.Conn{private: %{phoenix_router: router}}), do: router
+  defp router(%Phoenix.LiveView.Socket{router: router}), do: router
 end

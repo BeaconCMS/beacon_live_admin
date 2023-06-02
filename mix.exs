@@ -44,7 +44,7 @@ defmodule Beacon.LiveAdmin.MixProject do
       setup: ["deps.get", "assets.setup", "assets.build"],
       dev: "run --no-halt dev.exs",
       "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
-      "assets.build": ["tailwind default", "esbuild default"],
+      "assets.build": ["tailwind default", "esbuild module", "esbuild main", "esbuild cdn", "esbuild cdn_min"],
       "assets.deploy": ["tailwind default --minify", "esbuild default --minify", "phx.digest"]
     ]
   end
