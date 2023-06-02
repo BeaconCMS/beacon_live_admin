@@ -10,7 +10,7 @@ end
 
 defmodule Beacon.LiveAdmin.PageBuilder.Page do
   @moduledoc false
-  defstruct path: nil, module: nil, params: %{}
+  defstruct path: nil, module: nil, params: %{}, session: %{}
 end
 
 defmodule Beacon.LiveAdmin.PageBuilder do
@@ -23,7 +23,9 @@ defmodule Beacon.LiveAdmin.PageBuilder do
   @type session :: map
   @type unsigned_params :: map
 
-  @callback menu_link() ::
+  @callback init(term()) :: {:ok, session()}
+
+  @callback menu_link(live_actionn :: atom) ::
               {:ok, String.t()}
               | {:disabled, String.t()}
               | :skip
@@ -52,8 +54,12 @@ defmodule Beacon.LiveAdmin.PageBuilder do
       import Beacon.LiveAdmin.CoreComponents
       import Beacon.LiveAdmin.PageBuilder
       import Phoenix.LiveView
+      alias Phoenix.LiveView.JS
 
       @behaviour Beacon.LiveAdmin.PageBuilder
+
+      def init(opts), do: {:ok, opts}
+      defoverridable init: 1
     end
   end
 

@@ -35,15 +35,25 @@ defmodule DemoWeb.CustomPage do
   use Beacon.LiveAdmin.PageBuilder
 
   @impl true
-  def menu_link do
+  def init(opts) do
+    {:ok, opts}
+  end
+
+  @impl true
+  def menu_link(_live_action) do
     {:ok, "Custom"}
+  end
+
+  @impl true
+  def mount(_params, session, socket) do
+    {:ok, assign(socket, :val, session.val)}
   end
 
   @impl true
   def render(assigns) do
     ~H"""
     <div>Custom</div>
-    <%= DemoWeb.Router.__beacon_live_admin_assets_prefix__() %>
+    <span>Val: <%= @val %></span>
     """
   end
 end
@@ -55,6 +65,7 @@ defmodule DemoWeb.Router do
   pipeline :browser do
     plug :fetch_session
     plug :protect_from_forgery
+    plug Beacon.LiveAdmin.Plug
   end
 
   scope "/" do
@@ -62,7 +73,7 @@ defmodule DemoWeb.Router do
 
     beacon_live_admin("/admin",
       sites: [:dev],
-      additional_pages: [{"/custom", DemoWeb.CustomPage, :index}]
+      additional_pages: [{"/custom", DemoWeb.CustomPage, :show, %{val: 1}}]
     )
   end
 end
@@ -88,17 +99,6 @@ defmodule DemoWeb.Endpoint do
 end
 
 Application.put_env(:phoenix, :serve_endpoints, true)
-
-# Task.async(fn ->
-#   children = [
-#     {Phoenix.PubSub, [name: Demo.PubSub, adapter: Phoenix.PubSub.PG2]},
-#     DemoWeb.Endpoint
-#   ]
-#
-#   {:ok, _} = Supervisor.start_link(children, strategy: :one_for_one)
-#   Process.sleep(:infinity)
-# end)
-# |> Task.await(:infinity)
 
 Task.start(fn ->
   children = [

@@ -78,7 +78,7 @@ defmodule Beacon.LiveAdmin.Router do
         import Phoenix.LiveView.Router, only: [live: 4, live_session: 3]
 
         live_session session_name, session_opts do
-          for {path, page_module, live_action} = page <- pages do
+          for {path, page_module, live_action, _session} = page <- pages do
             route_opts = Beacon.LiveAdmin.Router.__route_options__(opts, page)
             live path, Beacon.LiveAdmin.PageLive, live_action, route_opts
           end
@@ -99,13 +99,38 @@ defmodule Beacon.LiveAdmin.Router do
     # TODO validate additional_pages
     additional_pages = additional_pages || []
 
-    Enum.concat(
-      [
-        {"/", Beacon.LiveAdmin.HomePage, :index},
-        {"/pages", Beacon.LiveAdmin.PageEditorPage, :index}
-      ],
-      additional_pages
-    )
+    [
+      {"/", Beacon.LiveAdmin.HomeLive, :index, %{}},
+      {"/pages", Beacon.LiveAdmin.PageEditorLive.Index, :index, %{}},
+      {"/pages/:id", Beacon.LiveAdmin.PageEditorLive.Show, :show, %{}}
+    ]
+    |> Enum.concat(additional_pages)
+    |> Enum.map(fn {path, module, live_action, opts} ->
+      session = initialize_page!(module, opts)
+      {path, module, live_action, session}
+    end)
+  end
+
+  defp initialize_page!(module, opts) do
+    case module.init(opts) do
+      {:ok, session} ->
+        session
+
+      error ->
+        msg = """
+        failed to initialize page #{inspect(module)}
+
+        Expected c:init/1 to return {:ok, opts}
+
+        Got:
+
+          #{inspect(error)}
+
+        """
+
+        # TODO: custom exception?
+        raise msg
+    end
   end
 
   @doc false
@@ -138,11 +163,10 @@ defmodule Beacon.LiveAdmin.Router do
   @doc false
   def __route_options__(opts, page) do
     live_socket_path = Keyword.get(opts, :live_socket_path, "/live")
-    {path, module, _live_action} = page
-    page = %{path: path, module: module}
+    {path, module, _live_action, session} = page
+    page = %{path: path, module: module, session: session}
 
     [
-      # private: %{beacon: %{"live_socket_path" => live_socket_path, "page" => page}},
       metadata: %{beacon: %{"live_socket_path" => live_socket_path, "page" => page}},
       as: :beacon_live_admin_path
     ]

@@ -1,5 +1,4 @@
 locals_without_parens = [
-  beacon_live_admin: 1,
   beacon_live_admin: 2
 ]
 
