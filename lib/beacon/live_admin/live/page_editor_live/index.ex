@@ -31,7 +31,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
       </:actions>
     </.header>
 
-    <.table id="pages" rows={@streams.pages} row_click={fn {_id, page} -> JS.navigate(live_admin_path(@socket, @env, "/pages/1")) end}>
+    <.table id="pages" rows={@streams.pages} row_click={fn {_id, page} -> JS.navigate(live_admin_path(@socket, @beacon_page.site, "/pages/1")) end}>
       <:col :let={{_id, page}} label="Title"><%= page.title %></:col>
       <:col :let={{_id, page}} label="Description"><%= page.description %></:col>
       <:action :let={{_id, page}}>

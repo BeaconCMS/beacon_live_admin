@@ -1,6 +1,42 @@
 defmodule Beacon.LiveAdmin.Web do
   @moduledoc false
 
+  @doc """
+  Generates prefix `path` for live admin.
+
+    ## Examples
+
+        iex> Beacon.LiveAdmin.Web.live_admin_path(@socket, :my_site, "/pages")
+        "/my_admin/my_site/pages"
+
+        iex> Beacon.LiveAdmin.Web.live_admin_path(@socket, :my_site, "/pages", status: :draft)
+        "/my_admin/my_site/pages?status=draft"
+
+  """
+  def live_admin_path(conn_or_socket, site, path, params \\ %{})
+      when is_atom(site) and is_binary(path) do
+    router = router(conn_or_socket)
+    prefix = router.__beacon_live_admin_prefix__()
+    path = build_path_with_prefix(prefix, site, path)
+    params = for {key, val} <- params, do: {key, val}
+    Phoenix.VerifiedRoutes.unverified_path(conn_or_socket, router, path, params)
+  end
+
+  defp router(%Plug.Conn{private: %{phoenix_router: router}}), do: router
+  defp router(%Phoenix.LiveView.Socket{router: router}), do: router
+
+  defp build_path_with_prefix(prefix, site, "/") do
+    "#{prefix}/#{site}"
+  end
+
+  defp build_path_with_prefix(prefix, site, path) do
+    sanitize_path("#{prefix}/#{site}/#{path}")
+  end
+
+  defp sanitize_path(path) do
+    String.replace(path, "//", "/")
+  end
+
   def router do
     quote do
       use Phoenix.Router, helpers: false

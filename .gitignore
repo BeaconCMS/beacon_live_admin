@@ -35,3 +35,5 @@ beacon_live_admin-*.tar
 npm-debug.log
 /assets/node_modules/
 
+# Local iex config
+.iex.exs

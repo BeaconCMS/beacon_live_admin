@@ -26,7 +26,7 @@ Application.put_env(:beacon_live_admin, DemoWeb.Endpoint,
     patterns: [
       ~r"dist/.*(js|css|png|jpeg|jpg|gif|svg)$",
       ~r"lib/beacon/live_admin/.*(ex)$",
-      ~r"lib/beacon/live_admin/(components|pages)/.*(ex)$"
+      ~r"lib/beacon/live_admin/(components|controllers|pages)/.*(ex)$"
     ]
   ]
 )
@@ -63,6 +63,7 @@ defmodule DemoWeb.Router do
   use Beacon.LiveAdmin.Router
 
   pipeline :browser do
+    plug :accepts, ["html"]
     plug :fetch_session
     plug :protect_from_forgery
     plug Beacon.LiveAdmin.Plug

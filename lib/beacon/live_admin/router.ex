@@ -12,11 +12,6 @@ defmodule Beacon.LiveAdmin.Router do
   defp prelude do
     assets =
       quote do
-        @doc false
-        def __beacon_live_admin_assets_prefix__ do
-          "/__beacon_live_admin/assets"
-        end
-
         scope "/__beacon_live_admin/assets", alias: false, as: false do
           get "/css-:md5", Beacon.LiveAdmin.AssetsController, :css, as: :beacon_live_admin_asset
           get "/js-:md5", Beacon.LiveAdmin.AssetsController, :js, as: :beacon_live_admin_asset
@@ -24,7 +19,7 @@ defmodule Beacon.LiveAdmin.Router do
       end
 
     quote do
-      Module.register_attribute(__MODULE__, :beacon_live_admins, accumulate: true)
+      Module.register_attribute(__MODULE__, :beacon_live_admin_prefix, accumulate: false)
       import Beacon.LiveAdmin.Router, only: [beacon_live_admin: 2]
       @before_compile unquote(__MODULE__)
       unquote(assets)
@@ -32,29 +27,24 @@ defmodule Beacon.LiveAdmin.Router do
   end
 
   defmacro __before_compile__(env) do
-    admins = Module.get_attribute(env.module, :beacon_live_admins)
-
-    prefixes =
-      for {prefix, sites} <- admins, site <- sites do
-        quote do
-          @doc false
-          def __beacon_live_admin_prefix__(unquote(site)) do
-            [unquote(prefix), unquote(site)]
-            |> Enum.join("/")
-            |> String.replace("//", "/")
-          end
-        end
-      end
+    live_admin_prefix = Module.get_attribute(env.module, :beacon_live_admin_prefix)
 
     quote do
-      unquote(prefixes)
+      @doc false
+      def __beacon_live_admin_prefix__ do
+        unquote(Macro.escape(live_admin_prefix))
+      end
+
+      @doc false
+      def __beacon_live_admin_assets_prefix__ do
+        "/__beacon_live_admin/assets"
+      end
     end
   end
 
   @doc """
   TODO
   """
-  # TODO opts :sites
   defmacro beacon_live_admin(prefix, opts) do
     opts =
       if Macro.quoted_literal?(opts) do
@@ -63,11 +53,18 @@ defmodule Beacon.LiveAdmin.Router do
         opts
       end
 
-    quote bind_quoted: binding() do
-      # TODO scope by site
-      p = "#{prefix}/:site"
+    quote bind_quoted: binding(), location: :keep do
+      if existing = Module.get_attribute(__MODULE__, :beacon_live_admin_prefix) do
+        raise ArgumentError, """
+        only one declaration of beacon_live_admin/2 is allowed per router.
 
-      scope p, alias: false, as: false do
+        Can not add #{inspect(prefix)} when #{inspect(existing)} is already defined.
+        """
+      else
+        @beacon_live_admin_prefix Phoenix.Router.scoped_path(__MODULE__, prefix)
+      end
+
+      scope prefix, alias: false, as: false do
         {additional_pages, opts} = Keyword.pop(opts, :additional_pages, [])
         pages = Beacon.LiveAdmin.Router.__pages__(additional_pages)
 
@@ -78,14 +75,15 @@ defmodule Beacon.LiveAdmin.Router do
         import Phoenix.LiveView.Router, only: [live: 4, live_session: 3]
 
         live_session session_name, session_opts do
+          get "/", Beacon.LiveAdmin.HomeController, :index, as: :beacon_live_admin_home
+
           for {path, page_module, live_action, _session} = page <- pages do
             route_opts = Beacon.LiveAdmin.Router.__route_options__(opts, page)
+            path = "/:site#{path}"
             live path, Beacon.LiveAdmin.PageLive, live_action, route_opts
           end
         end
       end
-
-      @beacon_live_admins {Phoenix.Router.scoped_path(__MODULE__, prefix), opts[:sites]}
     end
   end
 
@@ -100,7 +98,6 @@ defmodule Beacon.LiveAdmin.Router do
     additional_pages = additional_pages || []
 
     [
-      {"/", Beacon.LiveAdmin.HomeLive, :index, %{}},
       {"/pages", Beacon.LiveAdmin.PageEditorLive.Index, :index, %{}},
       {"/pages/:id", Beacon.LiveAdmin.PageEditorLive.Show, :show, %{}}
     ]
@@ -136,10 +133,8 @@ defmodule Beacon.LiveAdmin.Router do
   @doc false
   def __session_options__(prefix, pages, opts) do
     # TODO validate options
-    sites = opts[:sites]
 
     session_args = [
-      sites,
       pages
     ]
 
@@ -153,11 +148,8 @@ defmodule Beacon.LiveAdmin.Router do
   end
 
   @doc false
-  def __session__(_conn, sites, pages) do
-    # beacon
-    %{}
-    |> Map.put("sites", sites)
-    |> Map.put("pages", pages)
+  def __session__(_conn, pages) do
+    %{"pages" => pages}
   end
 
   @doc false
@@ -168,7 +160,7 @@ defmodule Beacon.LiveAdmin.Router do
 
     [
       metadata: %{beacon: %{"live_socket_path" => live_socket_path, "page" => page}},
-      as: :beacon_live_admin_path
+      as: :beacon_live_admin_page
     ]
   end
 end

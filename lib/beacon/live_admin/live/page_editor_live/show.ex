@@ -32,7 +32,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Show do
       Page <%= @record.id %>
       <:subtitle>This is a page record from your database.</:subtitle>
       <:actions>
-        <.link patch={"/pages/{@page}/show/edit"} phx-click={JS.push_focus()}>
+        <.link patch="/pages/{@page}/show/edit" phx-click={JS.push_focus()}>
           <.button>Edit page</.button>
         </.link>
       </:actions>

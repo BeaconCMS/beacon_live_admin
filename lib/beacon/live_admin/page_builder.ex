@@ -1,8 +1,3 @@
-defmodule Beacon.LiveAdmin.PageBuilder.Env do
-  @moduledoc false
-  defstruct sites: [], current_site: nil, pages: []
-end
-
 defmodule Beacon.LiveAdmin.PageBuilder.Menu do
   @moduledoc false
   defstruct links: []
@@ -10,7 +5,7 @@ end
 
 defmodule Beacon.LiveAdmin.PageBuilder.Page do
   @moduledoc false
-  defstruct path: nil, module: nil, params: %{}, session: %{}
+  defstruct site: nil, path: nil, module: nil, params: %{}, session: %{}
 end
 
 defmodule Beacon.LiveAdmin.PageBuilder do
@@ -52,7 +47,7 @@ defmodule Beacon.LiveAdmin.PageBuilder do
     quote location: :keep, bind_quoted: [opts: opts] do
       use Phoenix.Component
       import Beacon.LiveAdmin.CoreComponents
-      import Beacon.LiveAdmin.PageBuilder
+      import Beacon.LiveAdmin.Web, only: [live_admin_path: 3, live_admin_path: 4]
       import Phoenix.LiveView
       alias Phoenix.LiveView.JS
 
@@ -61,24 +56,5 @@ defmodule Beacon.LiveAdmin.PageBuilder do
       def init(opts), do: {:ok, opts}
       defoverridable init: 1
     end
-  end
-
-  def live_admin_path(socket, env, path, params \\ %{}) do
-    prefix = socket.router.__beacon_live_admin_prefix__(env.current_site)
-    path = build_path_with_prefix(prefix, path)
-    params = for {key, val} <- params, do: {key, val}
-    Phoenix.VerifiedRoutes.unverified_path(socket, socket.router, path, params)
-  end
-
-  defp build_path_with_prefix(prefix, "/") do
-    prefix
-  end
-
-  defp build_path_with_prefix(prefix, path) do
-    sanitize_path("#{prefix}/#{path}")
-  end
-
-  defp sanitize_path(path) do
-    String.replace(path, "//", "/")
   end
 end

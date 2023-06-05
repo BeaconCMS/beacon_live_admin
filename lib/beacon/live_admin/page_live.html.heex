@@ -1,8 +1,8 @@
 <header class="bg-white">
   <nav class="flex items-center justify-between border-b border-zinc-100 p-4">
     <div class="flex items-center gap-4">
-      <%= for link <- @menu.links, link != :skip do %>
-        <%= maybe_link(@socket, @env, link) %>
+      <%= for link <- @__beacon_menu__.links, link != :skip do %>
+        <%= maybe_link(@socket, @beacon_page, link) %>
       <% end %>
     </div>
   </nav>
@@ -10,5 +10,5 @@
 
 <main class="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8 mt-10">
   live_action: <%= @live_action %>
-  <%= render_page(@page.module, assigns) %>
+  <%= render_page(@beacon_page.module, assigns) %>
 </main>

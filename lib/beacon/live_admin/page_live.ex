@@ -7,7 +7,6 @@ defmodule Beacon.LiveAdmin.PageLive do
   @moduledoc false
 
   use Beacon.LiveAdmin.Web, :live_view
-  alias Beacon.LiveAdmin.PageBuilder.Env
   alias Beacon.LiveAdmin.PageBuilder.Menu
   alias Beacon.LiveAdmin.PageBuilder.Page
   alias Phoenix.LiveView.Socket
@@ -16,21 +15,21 @@ defmodule Beacon.LiveAdmin.PageLive do
   def mount(params, session, socket) do
     {site, params} = Map.pop(params, "site")
     site = String.to_existing_atom(site)
-    %{"sites" => sites, "pages" => pages, "beacon_live_admin_page_url" => current_url} = session
+
+    sites = Beacon.LiveAdmin.Cluster.running_sites()
+    %{"pages" => pages, "beacon_live_admin_page_url" => current_url} = session
     page = lookup_page!(socket, current_url)
 
     socket =
       assign(socket,
-        env: %Env{},
-        menu: %Menu{},
-        page: %Page{}
+        __beacon_sites__: sites,
+        __beacon_pages__: pages,
+        __beacon_menu__: %Menu{},
+        beacon_page: %Page{}
       )
 
-
     with %Socket{redirected: nil} = socket <-
-           update_env(socket, sites: sites, current_site: site, pages: pages),
-         %Socket{redirected: nil} = socket <-
-           update_page(socket, path: page.path, module: page.module, params: params),
+           update_page(socket, site: site, path: page.path, module: page.module, params: params),
          %Socket{redirected: nil} = socket <- assign_menu_links(socket, pages) do
       maybe_apply_module(socket, :mount, [params, page.session], &{:ok, &1})
     else
@@ -41,7 +40,7 @@ defmodule Beacon.LiveAdmin.PageLive do
 
   @impl true
   def handle_params(params, url, socket) do
-    %{env: %{pages: pages}} = socket.assigns
+    %{__beacon_sites__: sites, __beacon_pages__: pages} = socket.assigns
     page = lookup_page!(socket, url)
 
     with %Socket{redirected: nil} = socket <-
@@ -73,7 +72,7 @@ defmodule Beacon.LiveAdmin.PageLive do
 
   # TODO subpath /pages/:id -> Pages menu
   defp assign_menu_links(socket, pages) do
-    current_path = socket.assigns.page.path
+    current_path = socket.assigns.beacon_page.path
 
     {links, socket} =
       Enum.map_reduce(pages, socket, fn {path, module, live_action, _session}, socket ->
@@ -99,23 +98,15 @@ defmodule Beacon.LiveAdmin.PageLive do
   end
 
   defp maybe_apply_module(socket, fun, params, default) do
-    if function_exported?(socket.assigns.page.module, fun, length(params) + 1) do
-      apply(socket.assigns.page.module, fun, params ++ [socket])
+    if function_exported?(socket.assigns.beacon_page.module, fun, length(params) + 1) do
+      apply(socket.assigns.beacon_page.module, fun, params ++ [socket])
     else
       default.(socket)
     end
   end
 
-  defp update_env(socket, assigns) do
-    update(socket, :env, fn env ->
-      Enum.reduce(assigns, env, fn {key, value}, env ->
-        Map.replace!(env, key, value)
-      end)
-    end)
-  end
-
   defp update_page(socket, assigns) do
-    update(socket, :page, fn page ->
+    update(socket, :beacon_page, fn page ->
       Enum.reduce(assigns, page, fn {key, value}, page ->
         Map.replace!(page, key, value)
       end)
@@ -123,7 +114,7 @@ defmodule Beacon.LiveAdmin.PageLive do
   end
 
   defp update_menu(socket, assigns) do
-    update(socket, :menu, fn menu ->
+    update(socket, :__beacon_menu__, fn menu ->
       Enum.reduce(assigns, menu, fn {key, value}, menu ->
         Map.replace!(menu, key, value)
       end)
@@ -136,8 +127,8 @@ defmodule Beacon.LiveAdmin.PageLive do
 
   ## Navbar handling
 
-  defp maybe_link(socket, env, {:current, text, path}) do
-    path = Beacon.LiveAdmin.PageBuilder.live_admin_path(socket, env, path)
+  defp maybe_link(socket, page, {:current, text, path}) do
+    path = Beacon.LiveAdmin.Web.live_admin_path(socket, page.site, path)
     assigns = %{text: text, path: path}
 
     # force redirect to re-execute plug to fecth current url
@@ -146,8 +137,8 @@ defmodule Beacon.LiveAdmin.PageLive do
     """
   end
 
-  defp maybe_link(socket, env, {:enabled, text, path}) do
-    path = Beacon.LiveAdmin.PageBuilder.live_admin_path(socket, env, path)
+  defp maybe_link(socket, page, {:enabled, text, path}) do
+    path = Beacon.LiveAdmin.Web.live_admin_path(socket, page.site, path)
     assigns = %{text: text, path: path}
 
     # force redirect to re-execute plug to fecth current url
@@ -156,7 +147,7 @@ defmodule Beacon.LiveAdmin.PageLive do
     """
   end
 
-  defp maybe_link(_socket, _env, {:disabled, text}) do
+  defp maybe_link(_socket, _page, {:disabled, text}) do
     assigns = %{text: text}
 
     ~H"""
