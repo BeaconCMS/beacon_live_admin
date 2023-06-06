@@ -25,7 +25,7 @@ defmodule Beacon.LiveAdmin.MixProject do
 
   defp deps do
     [
-      {:beacon, github: "BeaconCMS/beacon", runtime: false},
+      beacon_dep(),
       {:phoenix, "~> 1.7"},
       {:phoenix_html, "~> 3.3"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
@@ -37,6 +37,14 @@ defmodule Beacon.LiveAdmin.MixProject do
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"}
     ]
+  end
+
+  defp beacon_dep do
+    if path = System.get_env("BEACON_PATH") do
+      {:beacon, path: path, runtime: false}
+    else
+      {:beacon, github: "beaconCMS/beacon", runtime: false}
+    end
   end
 
   defp aliases do

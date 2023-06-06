@@ -2,6 +2,8 @@
 # https://github.com/cabol/nebulex/blob/974f54e53ac91bf4906c35fcbd8b67166a86895b/test/support/cluster.ex
 
 defmodule Beacon.LiveAdminTest.Cluster do
+  @moduledoc false
+
   def spawn(nodes) do
     # Turn node into a distributed node with the given long name
     :net_kernel.start([:"primary@127.0.0.1"])
@@ -40,7 +42,7 @@ defmodule Beacon.LiveAdminTest.Cluster do
     end
   end
 
-  defp rpc(node, module, function, args) do
+  def rpc(node, module, function, args) do
     :rpc.block_call(node, module, function, args)
   end
 
@@ -68,6 +70,10 @@ defmodule Beacon.LiveAdminTest.Cluster do
   defp ensure_applications_started(node) do
     rpc(node, Application, :ensure_all_started, [:mix])
     rpc(node, Mix, :env, [Mix.env()])
+
+    for {app_name, _, _} <- Application.loaded_applications(), app_name not in [:beacon, :ecto] do
+      rpc(node, Application, :ensure_all_started, [app_name])
+    end
   end
 
   defp node_name(node_host) do
