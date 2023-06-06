@@ -11,6 +11,10 @@ defmodule Beacon.LiveAdmin.Cluster do
 
   """
   def discover_sites do
+    # add or remove nodes from ets state when nodes changes
+    # instead of recreating everything
+    :ets.delete_all_objects(@ets_table)
+
     nodes()
     |> Map.new(fn node ->
       try do
@@ -28,7 +32,8 @@ defmodule Beacon.LiveAdmin.Cluster do
     end)
   end
 
-  defp nodes do
+  @doc false
+  def nodes do
     [Node.self()] ++ Node.list()
   end
 

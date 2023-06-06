@@ -2,6 +2,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
   @moduledoc false
 
   use Beacon.LiveAdmin.PageBuilder
+  alias Beacon.LiveAdmin
 
   @impl true
   def menu_link(:index), do: {:ok, "Pages"}
@@ -9,14 +10,8 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    pages = [
-      %{
-        id: 1,
-        title: "Title",
-        description: "Description"
-      }
-    ]
-
+    site = socket.assigns.beacon_page.site
+    pages = LiveAdmin.call(site, Beacon.Content, :list_pages_for_site, [site])
     {:ok, stream(socket, :pages, pages)}
   end
 
@@ -31,7 +26,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
       </:actions>
     </.header>
 
-    <.table id="pages" rows={@streams.pages} row_click={fn {_id, page} -> JS.navigate(live_admin_path(@socket, @beacon_page.site, "/pages/1")) end}>
+    <.table id="pages" rows={@streams.pages} row_click={fn {_id, page} -> JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/pages/1")) end}>
       <:col :let={{_id, page}} label="Title"><%= page.title %></:col>
       <:col :let={{_id, page}} label="Description"><%= page.description %></:col>
       <:action :let={{_id, page}}>

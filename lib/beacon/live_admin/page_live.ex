@@ -13,6 +13,10 @@ defmodule Beacon.LiveAdmin.PageLive do
 
   @impl true
   def mount(params, session, socket) do
+    if connected?(socket) do
+      :net_kernel.monitor_nodes(true, node_type: :all) |> IO.inspect()
+    end
+
     {site, params} = Map.pop(params, "site")
     site = String.to_existing_atom(site)
 
@@ -128,7 +132,7 @@ defmodule Beacon.LiveAdmin.PageLive do
   ## Navbar handling
 
   defp maybe_link(socket, page, {:current, text, path}) do
-    path = Beacon.LiveAdmin.Web.live_admin_path(socket, page.site, path)
+    path = Beacon.LiveAdmin.Router.beacon_live_admin_path(socket, page.site, path)
     assigns = %{text: text, path: path}
 
     # force redirect to re-execute plug to fecth current url
@@ -138,7 +142,7 @@ defmodule Beacon.LiveAdmin.PageLive do
   end
 
   defp maybe_link(socket, page, {:enabled, text, path}) do
-    path = Beacon.LiveAdmin.Web.live_admin_path(socket, page.site, path)
+    path = Beacon.LiveAdmin.Router.beacon_live_admin_path(socket, page.site, path)
     assigns = %{text: text, path: path}
 
     # force redirect to re-execute plug to fecth current url

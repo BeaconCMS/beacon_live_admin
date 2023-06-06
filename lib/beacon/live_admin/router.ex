@@ -20,7 +20,7 @@ defmodule Beacon.LiveAdmin.Router do
 
     quote do
       Module.register_attribute(__MODULE__, :beacon_live_admin_prefix, accumulate: false)
-      import Beacon.LiveAdmin.Router, only: [beacon_live_admin: 2]
+      import Beacon.LiveAdmin.Router, only: [beacon_live_admin: 1, beacon_live_admin: 2]
       @before_compile unquote(__MODULE__)
       unquote(assets)
     end
@@ -45,7 +45,7 @@ defmodule Beacon.LiveAdmin.Router do
   @doc """
   TODO
   """
-  defmacro beacon_live_admin(prefix, opts) do
+  defmacro beacon_live_admin(prefix, opts \\ []) do
     opts =
       if Macro.quoted_literal?(opts) do
         Macro.prewalk(opts, &expand_alias(&1, __CALLER__))
@@ -75,7 +75,7 @@ defmodule Beacon.LiveAdmin.Router do
         import Phoenix.LiveView.Router, only: [live: 4, live_session: 3]
 
         live_session session_name, session_opts do
-          get "/", Beacon.LiveAdmin.HomeController, :index, as: :beacon_live_admin_home
+          live "/", Beacon.LiveAdmin.HomeLive, :index, as: :beacon_live_admin_home
 
           for {path, page_module, live_action, _session} = page <- pages do
             route_opts = Beacon.LiveAdmin.Router.__route_options__(opts, page)
@@ -162,5 +162,41 @@ defmodule Beacon.LiveAdmin.Router do
       metadata: %{beacon: %{"live_socket_path" => live_socket_path, "page" => page}},
       as: :beacon_live_admin_page
     ]
+  end
+
+  @doc """
+  Generates prefix `path` for live admin.
+
+    ## Examples
+
+        iex> Beacon.LiveAdmin.Router.beacon_live_admin_path(@socket, :my_site, "/pages")
+        "/my_admin/my_site/pages"
+
+        iex> Beacon.LiveAdmin.Router.beacon_live_admin_path(@socket, :my_site, "/pages", status: :draft)
+        "/my_admin/my_site/pages?status=draft"
+
+  """
+  def beacon_live_admin_path(conn_or_socket, site, path, params \\ %{})
+      when is_atom(site) and is_binary(path) do
+    router = router(conn_or_socket)
+    prefix = router.__beacon_live_admin_prefix__()
+    path = build_path_with_prefix(prefix, site, path)
+    params = for {key, val} <- params, do: {key, val}
+    Phoenix.VerifiedRoutes.unverified_path(conn_or_socket, router, path, params)
+  end
+
+  defp router(%Plug.Conn{private: %{phoenix_router: router}}), do: router
+  defp router(%Phoenix.LiveView.Socket{router: router}), do: router
+
+  defp build_path_with_prefix(prefix, site, "/") do
+    "#{prefix}/#{site}"
+  end
+
+  defp build_path_with_prefix(prefix, site, path) do
+    sanitize_path("#{prefix}/#{site}/#{path}")
+  end
+
+  defp sanitize_path(path) do
+    String.replace(path, "//", "/")
   end
 end
