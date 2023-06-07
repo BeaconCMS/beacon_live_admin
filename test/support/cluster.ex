@@ -83,4 +83,51 @@ defmodule Beacon.LiveAdminTest.Cluster do
     |> Enum.at(0)
     |> String.to_atom()
   end
+
+  def start_beacon(node, beacon_config) do
+    node_name = node |> to_string() |> String.split("@") |> List.first()
+
+    rpc(node, Application, :put_env, [
+      :my_app,
+      MyApp.Endpoint,
+      url: [host: "localhost", port: Enum.random(4010..4020)],
+      secret_key_base: "TrXbWpjZWxk0GXclXOHFCoufQh1oRK0N5rev5GcpbPCsuf2C/kbYlMgeEEAXPayF",
+      live_view: [signing_salt: "nXvN+c8y"],
+      render_errors: [view: MyApp.ErrorView],
+      check_origin: false
+    ])
+
+    rpc(node, Application, :put_env, [
+      :beacon,
+      Beacon.Repo,
+      [
+        database: "beacon_#{node_name}_test",
+        password: "postgres",
+        pool: Ecto.Adapters.SQL.Sandbox,
+        username: "postgres",
+        ownership_timeout: 1_000_000_000,
+        stacktrace: true,
+        show_sensitive_data_on_connection_error: true
+      ]
+    ])
+
+    ecto_adapter = rpc(node, Beacon.Repo, :__adapter__, [])
+    repo_config = rpc(node, Beacon.Repo, :config, [])
+
+    # rpc(node, ecto_adapter, :storage_down, [repo_config])
+    rpc(node, ecto_adapter, :storage_up, [repo_config])
+
+    rpc(node, Application, :ensure_all_started, [:beacon])
+
+    rpc(node, Supervisor, :start_link, [
+      Beacon,
+      beacon_config,
+      [name: Beacon]
+    ])
+
+    # rpc(node, Ecto.Migrator, :run, [Beacon.Repo, :down, [all: true]])
+    rpc(node, Ecto.Migrator, :run, [Beacon.Repo, :up, [all: true]])
+
+    Beacon.LiveAdmin.Cluster.discover_sites()
+  end
 end
