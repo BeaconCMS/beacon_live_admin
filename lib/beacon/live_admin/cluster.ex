@@ -74,10 +74,19 @@ defmodule Beacon.LiveAdmin.Cluster do
     exception -> exception
   end
 
-  defp find_node(site) when is_atom(site) do
-    case :ets.match(@ets_table, {site, :"$1"}) do
-      [[nodes]] -> Enum.random(nodes)
-      _ -> nil
+  if Code.ensure_loaded?(Mix.Project) and Mix.env() == :test do
+    defp find_node(site) when is_atom(site) do
+      case :ets.match(@ets_table, {site, :"$1"}) do
+        [[nodes]] -> List.first(nodes)
+        _ -> nil
+      end
+    end
+  else
+    defp find_node(site) when is_atom(site) do
+      case :ets.match(@ets_table, {site, :"$1"}) do
+        [[nodes]] -> Enum.random(nodes)
+        _ -> nil
+      end
     end
   end
 end

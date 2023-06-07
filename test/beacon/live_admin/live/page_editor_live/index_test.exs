@@ -1,15 +1,9 @@
 defmodule Beacon.LiveAdmin.Live.PageEditorLive.IndexTest do
-  use Beacon.LiveAdmin.ConnCase, async: true
+  use Beacon.LiveAdmin.ConnCase, async: false
   import Beacon.LiveAdminTest.Cluster, only: [rpc: 4]
 
   setup tags do
     node = :"node1@127.0.0.1"
-
-    pid =
-      rpc(node, Ecto.Adapters.SQL.Sandbox, :start_owner!, [
-        Beacon.Repo,
-        [shared: not tags[:async]]
-      ])
 
     %{id: layout_id} =
       rpc(node, Beacon.Layouts, :create_layout!, [
@@ -42,7 +36,8 @@ defmodule Beacon.LiveAdmin.Live.PageEditorLive.IndexTest do
     ])
 
     on_exit(fn ->
-      rpc(node, Ecto.Adapters.SQL.Sandbox, :stop_owner, [pid])
+      rpc(node, Beacon.Repo, :delete_all, [Beacon.Pages.Page, [log: false]])
+      rpc(node, Beacon.Repo, :delete_all, [Beacon.Layouts.Layout, [log: false]])
     end)
   end
 

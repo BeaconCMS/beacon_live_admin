@@ -1,4 +1,4 @@
-# https://github.com/phoenixframework/phoenix_pubsub/blob/821add72bfbec2eced34dc0c26a2e19a2add60e4/test/support/cluster.ex#L3
+# https://github.com/phoenixframework/phoenix_pubsub/blob/821add72bfbec2eced34dc0c26a2e19a2add60e4/test/support/cluster.ex
 # https://github.com/cabol/nebulex/blob/974f54e53ac91bf4906c35fcbd8b67166a86895b/test/support/cluster.ex
 
 defmodule Beacon.LiveAdminTest.Cluster do
@@ -115,9 +115,13 @@ defmodule Beacon.LiveAdminTest.Cluster do
     repo_config = rpc(node, Beacon.Repo, :config, [])
 
     # rpc(node, ecto_adapter, :storage_down, [repo_config])
-    rpc(node, ecto_adapter, :storage_up, [repo_config])
+    case rpc(node, ecto_adapter, :storage_up, [repo_config]) do
+      :ok -> :ok
+      {:error, :already_up} -> :ok
+      error -> raise inspect(error)
+    end
 
-    rpc(node, Application, :ensure_all_started, [:beacon])
+    {:ok, _} = rpc(node, Application, :ensure_all_started, [:beacon])
 
     rpc(node, Supervisor, :start_link, [
       Beacon,
