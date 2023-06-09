@@ -2,12 +2,15 @@ defmodule Beacon.LiveAdmin.Cluster do
   @ets_table :beacon_live_admin_sites
 
   @doc """
-  Scans the cluster to find running sites and stores results in a ETS table.
+  Scans the cluster to find running sites and store them in a ETS table.
 
     ## Examples
 
-        iex> Beacon.LiveAdmin.discover_sites()
-        %{my_site: [:"node_a@region_a", :"node_b@region_b"], my_blog: [:"node_b@region_b"]}
+        iex> Beacon.LiveAdmin.Cluster.discover_sites()
+        %{
+          my_site: [:"node_a@region_a", :"node_b@region_b"], my_blog: [:"node_b@region_b"],
+          my_blog: [:"node_a@region_a"]
+        }
 
   """
   def discover_sites do
@@ -57,11 +60,12 @@ defmodule Beacon.LiveAdmin.Cluster do
   @doc """
   Calls a function for a running `site` in the cluster.
 
-  It will call the function in just one of the available nodes.
+  It will call the function in only one of the available nodes to avoid double execution of `fun`.
 
     ## Examples
 
-        iex> Beacon.LiveAdmin.call(:my_site, Beacon.Content, :create_page, [attrs])
+        iex> Beacon.LiveAdmin.Cluster.call(:my_site, Beacon, :reload_site, [:my_site])
+        :ok
 
   """
   def call(site, module, fun, args)
@@ -84,6 +88,7 @@ defmodule Beacon.LiveAdmin.Cluster do
   else
     defp find_node(site) when is_atom(site) do
       case :ets.match(@ets_table, {site, :"$1"}) do
+        # TODO: load balance and retry
         [[nodes]] -> Enum.random(nodes)
         _ -> nil
       end

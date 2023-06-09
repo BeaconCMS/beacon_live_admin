@@ -43,7 +43,25 @@ defmodule Beacon.LiveAdmin.Router do
   end
 
   @doc """
-  TODO
+  Mount Beacon LiveAdmin routes to manage running sites in the cluster.
+
+  ## Examples
+
+      defmodule MyAppWeb.Router do
+        use Phoenix.Router
+        use Beacon.LiveAdmin.Router
+
+        scope "/", MyAppWeb do
+          pipe_through :browser
+          beacon_live_admin "/admin", on_mount: [SomeHook]
+        end
+      end
+
+  ## Options
+
+    * `:on_mount` (optional) , an optional list of `on_mount` hooks passed to `live_session`.
+    This will allow for authenticated routes, among other uses.
+
   """
   defmacro beacon_live_admin(prefix, opts \\ []) do
     opts =
@@ -68,8 +86,7 @@ defmodule Beacon.LiveAdmin.Router do
         {additional_pages, opts} = Keyword.pop(opts, :additional_pages, [])
         pages = Beacon.LiveAdmin.Router.__pages__(additional_pages)
 
-        {session_name, session_opts} =
-          Beacon.LiveAdmin.Router.__session_options__(prefix, pages, opts)
+        {session_name, session_opts} = Beacon.LiveAdmin.Router.__session_options__(prefix, pages, opts)
 
         import Phoenix.Router, only: [get: 4]
         import Phoenix.LiveView.Router, only: [live: 4, live_session: 3]
@@ -99,7 +116,8 @@ defmodule Beacon.LiveAdmin.Router do
 
     [
       {"/pages", Beacon.LiveAdmin.PageEditorLive.Index, :index, %{}},
-      {"/pages/:id", Beacon.LiveAdmin.PageEditorLive.Show, :show, %{}}
+      {"/pages/new", Beacon.LiveAdmin.PageEditorLive.New, :new, %{}},
+      {"/pages/:id", Beacon.LiveAdmin.PageEditorLive.Edit, :edit, %{}}
     ]
     |> Enum.concat(additional_pages)
     |> Enum.map(fn {path, module, live_action, opts} ->
@@ -133,6 +151,17 @@ defmodule Beacon.LiveAdmin.Router do
   @doc false
   def __session_options__(prefix, pages, opts) do
     # TODO validate options
+    if Keyword.has_key?(opts, :root_layout) do
+      raise ArgumentError, """
+      you cannot assign a different root_layout
+      """
+    end
+
+    if Keyword.has_key?(opts, :layout) do
+      raise ArgumentError, """
+      you cannot assign a layout
+      """
+    end
 
     session_args = [
       pages

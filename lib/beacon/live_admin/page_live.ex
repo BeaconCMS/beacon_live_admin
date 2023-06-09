@@ -14,7 +14,7 @@ defmodule Beacon.LiveAdmin.PageLive do
   @impl true
   def mount(params, session, socket) do
     if connected?(socket) do
-      :net_kernel.monitor_nodes(true, node_type: :all) |> IO.inspect()
+      :net_kernel.monitor_nodes(true, node_type: :all)
     end
 
     {site, params} = Map.pop(params, "site")
@@ -55,6 +55,22 @@ defmodule Beacon.LiveAdmin.PageLive do
       %Socket{} = redirected_socket ->
         {:noreply, redirected_socket}
     end
+  end
+
+  @impl true
+  def handle_event(event, params, socket) do
+    maybe_apply_module(socket, :handle_event, [event, params], &{:noreply, &1})
+  end
+
+  # TODO nodeup
+  @impl true
+  def handle_info({:nodeup, _, _}, socket) do
+    {:noreply, socket}
+  end
+
+  # TODO nodedown
+  def handle_info({:nodedown, _, _}, socket) do
+    {:noreply, socket}
   end
 
   defp lookup_page!(socket, url) do

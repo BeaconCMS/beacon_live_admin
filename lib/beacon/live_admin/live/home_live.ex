@@ -25,7 +25,7 @@ defmodule Beacon.LiveAdmin.HomeLive do
       <main>
         <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
           <%= for site <- @running_sites do %>
-            <div class="max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 mt-10">
+            <div class="max-w-sm p-6 mt-10 rounded-lg bg-gray-50 shadow-sm ring-1 ring-gray-900/5">
               <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"><%= site %></h5>
               <.link
                 href={Beacon.LiveAdmin.Router.beacon_live_admin_path(@socket, site, "/pages")}
