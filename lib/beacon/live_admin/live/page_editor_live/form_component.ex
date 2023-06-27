@@ -12,7 +12,14 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
      socket
      |> assign(assigns)
      |> assign_form(changeset)
-     |> assign(:layouts, layouts)}
+     |> assign(:layouts, layouts)
+     |> assign(:language, language(page.format))
+     |> assign(:template, page.template)
+     |> assign(:changed_template, page.template)}
+  end
+
+  def update(%{changed_template: changed_template}, socket) do
+    {:ok, assign(socket, :changed_template, changed_template)}
   end
 
   defp assign_form(socket, changeset) do
@@ -35,14 +42,33 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
   end
 
   def handle_event("save", %{"page" => page_params}, socket) do
+    page_params = Map.put(page_params, "site", socket.assigns.site)
+    save_page(socket, socket.assigns.action, page_params)
+  end
+
+  defp save_page(socket, :new, page_params) do
     case Content.create_page(socket.assigns.site, page_params) do
-      {:ok, _page} ->
+      {:ok, page} ->
+        to = beacon_live_admin_path(socket, socket.assigns.site, "/pages/#{page.id}")
+
         {:noreply,
          socket
          |> put_flash(:info, "Page created successfully")
-         |> push_patch(to: beacon_live_admin_path(socket, socket.assigns.site, "/pages"))}
+         |> push_patch(to: to)}
 
-      {:error, changeset} ->
+      {:error, %Ecto.Changeset{} = changeset} ->
+        {:noreply, assign_form(socket, changeset)}
+    end
+  end
+
+  defp save_page(socket, :edit, page_params) do
+    case Content.update_page(socket.assigns.site, socket.assigns.page, page_params) do
+      {:ok, _page} ->
+        {:noreply,
+         socket
+         |> put_flash(:info, "Page updated successfully")}
+
+      {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign_form(socket, changeset)}
     end
   end
@@ -52,33 +78,32 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
     ~H"""
     <div>
       <.header>
-        <%= @title %>
+        <%= @page_title %>
         <:actions>
-          <.button phx-disable-with="Saving..." form="page-form" class="uppercase">
+          <.button :if={@action == :new} phx-disable-with="Saving..." form="page-form" class="uppercase">
             <.icon name="hero-document-plus" /> Create Draft Page
+          </.button>
+          <.button :if={@action == :edit} phx-disable-with="Saving..." form="page-form" class="uppercase">
+            <.icon name="hero-document-plus" /> Save Changes
           </.button>
         </:actions>
       </.header>
 
       <div class="mx-auto grid grid-cols-1 grid-rows-1 items-start gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
         <div class="mt-10 p-4 rounded-lg bg-gray-50 shadow-sm ring-1 ring-gray-900/5">
-          <.form :let={f} for={@form} id="page-form" phx-target={@myself} phx-change="validate" phx-submit="save">
+          <.form :let={f} for={@form} id="page-form" class="space-y-8" phx-target={@myself} phx-change="validate" phx-submit="save">
             <.input field={f[:path]} type="text" label="Path" />
             <.input field={f[:title]} type="text" label="Title" />
             <.input field={f[:description]} type="textarea" label="Description" />
-            <.input field={f[:pending_layout_id]} type="select" options={layouts_to_options(@layouts)} label="Layout" />
+            <.input field={f[:layout_id]} type="select" options={layouts_to_options(@layouts)} label="Layout" />
             <.input field={f[:format]} type="select" label="Format" options={template_format_options(@site)} />
+            <.input field={f[:template]} type="hidden" value={@changed_template} />
           </.form>
         </div>
         <div class="col-span-2">
           <div class="w-full mt-10 space-y-8">
-            <div class="py-3 bg-[#1e1e1e] rounded-lg">
-              <LiveMonacoEditor.code_editor
-                path="template"
-                style="min-height: 1000px; width: 100%;"
-                value="# HERE"
-                opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => "markdown", "fontSize" => 14})}
-              />
+            <div class="py-3 bg-[#282c34] rounded-lg">
+              <LiveMonacoEditor.code_editor path="template" style="min-height: 1000px; width: 100%;" value={@template} opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => @language})} />
             </div>
           </div>
         </div>

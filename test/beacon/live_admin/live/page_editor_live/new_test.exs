@@ -1,4 +1,4 @@
-defmodule Beacon.LiveAdmin.Live.PageEditorLive.IndexTest do
+defmodule Beacon.LiveAdmin.Live.PageEditorLive.NewTest do
   use Beacon.LiveAdmin.ConnCase, async: false
   import Beacon.LiveAdminTest.Cluster, only: [rpc: 4]
 
@@ -18,31 +18,20 @@ defmodule Beacon.LiveAdmin.Live.PageEditorLive.IndexTest do
         }
       ])
 
-    rpc(node, Beacon.Content, :create_page!, [
-      %{
-        skip_reload: true,
-        path: "home",
-        site: "site_a",
-        title: "site_a_home_page",
-        description: "site_a_home_page_desc",
-        status: :published,
-        layout_id: layout_id,
-        template: """
-        <main>
-          <h1>site_a home page</h1>
-        </main>
-        """
-      }
-    ])
-
     on_exit(fn ->
       rpc(node, Beacon.Repo, :delete_all, [Beacon.Content.Page, [log: false]])
       rpc(node, Beacon.Repo, :delete_all, [Beacon.Content.Layout, [log: false]])
     end)
   end
 
-  test "display all pages", %{conn: conn} do
-    {:ok, live, html} = live(conn, "/admin/site_a/pages")
-    assert html =~ "site_a_home_page"
+  test "create new page and patch to edit page", %{conn: conn} do
+    {:ok, live, html} = live(conn, "/admin/site_a/pages/new")
+
+    live
+    |> form("#page-form", page: %{path: "/my/page", title: "My Page", format: "heex"})
+    |> render_submit(%{page: %{"template" => "<div>test</div>"}})
+
+    assert has_element?(live, "h1", "Edit Page")
+    assert has_element?(live, "button", "Save Changes")
   end
 end

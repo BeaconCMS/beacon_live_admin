@@ -36,7 +36,7 @@ defmodule Beacon.LiveAdmin.MixProject do
       {:tailwind, "~> 0.2"},
       {:gettext, "~> 0.20"},
       {:jason, "~> 1.0"},
-      {:plug_cowboy, "~> 2.5"},
+      {:plug_cowboy, "~> 2.5"}
     ]
   end
 
@@ -55,8 +55,6 @@ defmodule Beacon.LiveAdmin.MixProject do
       {:live_monaco_editor, "~> 0.1"}
     end
   end
-
-
 
   defp aliases do
     [

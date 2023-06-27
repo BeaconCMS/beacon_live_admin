@@ -26,7 +26,9 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
 
   @impl true
   def handle_event("search", %{"search" => %{"query" => query}}, socket) do
-    path = beacon_live_admin_path(socket, socket.assigns.beacon_page.site, "/pages?query=#{query}")
+    path =
+      beacon_live_admin_path(socket, socket.assigns.beacon_page.site, "/pages?query=#{query}")
+
     {:noreply, push_patch(socket, to: path, replace: true)}
   end
 
@@ -36,7 +38,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
     <.header>
       Listing Pages
       <:actions>
-        <.link patch={beacon_live_admin_path(@socket, @beacon_page.site, "/pages/new")}>
+        <.link patch={beacon_live_admin_path(@socket, @beacon_page.site, "/pages/new")} phx-click={JS.push_focus()}>
           <.button>Create New Page</.button>
         </.link>
       </:actions>
@@ -52,11 +54,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
       </.simple_form>
     </div>
 
-    <.table
-      id="pages"
-      rows={@streams.pages}
-      row_click={fn {_id, page} -> JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/pages/#{page.id}")) end}
-    >
+    <.table id="pages" rows={@streams.pages} row_click={fn {_id, page} -> JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/pages/#{page.id}")) end}>
       <:col :let={{_id, page}} label="Title"><%= page.title %></:col>
       <:col :let={{_id, page}} label="Path"><%= page.path %></:col>
       <:action :let={{_id, page}}>
@@ -64,7 +62,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
           <.link navigate={beacon_live_admin_path(@socket, @beacon_page.site, "/pages/#{page.id}")}>Show</.link>
         </div>
         <.link patch={beacon_live_admin_path(@socket, @beacon_page.site, "/pages/#{page.id}")}>
-          <.icon name="hero-pencil-square"/>
+          <.icon name="hero-pencil-square" />
         </.link>
       </:action>
     </.table>

@@ -9,21 +9,32 @@ defmodule Beacon.LiveAdmin.PageEditorLive.New do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, page_title: "Create New Page", page: %Content.Page{})}
+    {:ok, assigns(socket)}
+  end
+
+  @impl true
+  def handle_params(_params, _url, socket) do
+    {:noreply, assigns(socket)}
+  end
+
+  defp assigns(socket) do
+    assign(socket, page_title: "Create New Page", page: %Content.Page{})
+  end
+
+  @impl true
+  def handle_event("template_editor_lost_focus", %{"value" => value}, socket) do
+    send_update(Beacon.LiveAdmin.PageEditorLive.FormComponent,
+      id: "page-editor-form-new",
+      changed_template: value
+    )
+
+    {:noreply, socket}
   end
 
   @impl true
   def render(assigns) do
     ~H"""
-    <.live_component
-      module={Beacon.LiveAdmin.PageEditorLive.FormComponent}
-      id={:new}
-      site={@beacon_page.site}
-      title={@page_title}
-      action={@live_action}
-      page={@page}
-      patch={"/pages"}
-    />
+    <.live_component module={Beacon.LiveAdmin.PageEditorLive.FormComponent} id="page-editor-form-new" site={@beacon_page.site} page_title={@page_title} action={@live_action} page={@page} patch="/pages" />
     """
   end
 end
