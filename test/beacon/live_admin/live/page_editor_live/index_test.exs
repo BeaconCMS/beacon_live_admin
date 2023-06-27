@@ -6,7 +6,7 @@ defmodule Beacon.LiveAdmin.Live.PageEditorLive.IndexTest do
     node = :"node1@127.0.0.1"
 
     %{id: layout_id} =
-      rpc(node, Beacon.Layouts, :create_layout!, [
+      rpc(node, Beacon.Content, :create_layout!, [
         %{
           site: "site_a",
           title: "Site A - Home Page",
@@ -18,7 +18,7 @@ defmodule Beacon.LiveAdmin.Live.PageEditorLive.IndexTest do
         }
       ])
 
-    rpc(node, Beacon.Pages, :create_page!, [
+    rpc(node, Beacon.Content, :create_page!, [
       %{
         skip_reload: true,
         path: "home",
@@ -36,8 +36,8 @@ defmodule Beacon.LiveAdmin.Live.PageEditorLive.IndexTest do
     ])
 
     on_exit(fn ->
-      rpc(node, Beacon.Repo, :delete_all, [Beacon.Pages.Page, [log: false]])
-      rpc(node, Beacon.Repo, :delete_all, [Beacon.Layouts.Layout, [log: false]])
+      rpc(node, Beacon.Repo, :delete_all, [Beacon.Content.Page, [log: false]])
+      rpc(node, Beacon.Repo, :delete_all, [Beacon.Content.Layout, [log: false]])
     end)
   end
 

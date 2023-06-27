@@ -59,7 +59,6 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
     >
       <:col :let={{_id, page}} label="Title"><%= page.title %></:col>
       <:col :let={{_id, page}} label="Path"><%= page.path %></:col>
-      <:col :let={{_id, page}} label="Status"><%= page.status %></:col>
       <:action :let={{_id, page}}>
         <div class="sr-only">
           <.link navigate={beacon_live_admin_path(@socket, @beacon_page.site, "/pages/#{page.id}")}>Show</.link>

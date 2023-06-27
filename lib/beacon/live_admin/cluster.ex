@@ -21,7 +21,7 @@ defmodule Beacon.LiveAdmin.Cluster do
     nodes()
     |> Map.new(fn node ->
       try do
-        sites = :erpc.call(node, Beacon.Registry, :registered_sites, [], :timer.seconds(10))
+        sites = :erpc.call(node, Beacon.Registry, :running_sites, [], :timer.seconds(10))
         {node, sites}
       rescue
         _exception ->

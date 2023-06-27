@@ -2,13 +2,14 @@ defmodule Beacon.LiveAdmin.PageEditorLive.New do
   @moduledoc false
 
   use Beacon.LiveAdmin.PageBuilder
+  alias Beacon.Content
 
   @impl true
   def menu_link(_), do: :skip
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, page_title: "Create New Page", page: %Beacon.Pages.Page{})}
+    {:ok, assign(socket, page_title: "Create New Page", page: %Content.Page{})}
   end
 
   @impl true

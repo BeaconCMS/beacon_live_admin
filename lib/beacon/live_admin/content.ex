@@ -18,7 +18,7 @@ defmodule Beacon.LiveAdmin.Content do
   end
 
   def list_pages(site, query) do
-    call(site, Beacon.Content, :list_pages, [site, query, [per_page: 20]])
+    call(site, Beacon.Content, :list_pages, [site, [query: query, per_page: 20]])
   end
 
   def create_page(site, attrs) do
