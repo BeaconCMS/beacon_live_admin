@@ -29,11 +29,12 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
   @impl true
   def handle_event(
         "validate",
-        %{"_target" => ["page", "format"], "page" => %{"format" => format}},
+        %{"_target" => ["page", "format"], "page" => page_params},
         socket
       ) do
-    socket = LiveMonacoEditor.change_language(socket, language(format), to: "template")
-    {:noreply, socket}
+    socket = LiveMonacoEditor.change_language(socket, language(page_params["format"]), to: "template")
+    changeset = Content.validate_page(socket.assigns.site, socket.assigns.page, page_params)
+    {:noreply, assign_form(socket, changeset)}
   end
 
   def handle_event("validate", %{"page" => page_params}, socket) do
@@ -56,7 +57,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
          |> put_flash(:info, "Page created successfully")
          |> push_patch(to: to)}
 
-      {:error, %Ecto.Changeset{} = changeset} ->
+      {:error, changeset} ->
         {:noreply, assign_form(socket, changeset)}
     end
   end
@@ -80,12 +81,8 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
       <.header>
         <%= @page_title %>
         <:actions>
-          <.button :if={@action == :new} phx-disable-with="Saving..." form="page-form" class="uppercase">
-            <.icon name="hero-document-plus" /> Create Draft Page
-          </.button>
-          <.button :if={@action == :edit} phx-disable-with="Saving..." form="page-form" class="uppercase">
-            <.icon name="hero-document-plus" /> Save Changes
-          </.button>
+          <.button :if={@action == :new} phx-disable-with="Saving..." form="page-form" class="uppercase">Create Draft Page</.button>
+          <.button :if={@action == :edit} phx-disable-with="Saving..." form="page-form" class="uppercase">Save Changes</.button>
         </:actions>
       </.header>
 
