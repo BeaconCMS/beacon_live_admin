@@ -59,23 +59,24 @@ defmodule DemoWeb.CustomPage do
 end
 
 defmodule DemoWeb.Router do
-  use Phoenix.Router
+  use Phoenix.Router, helpers: false
   use Beacon.LiveAdmin.Router
+  import Plug.Conn
+  import Phoenix.Controller
+  import Phoenix.LiveView.Router
 
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
+    plug :fetch_live_flash
     plug :protect_from_forgery
+    plug :put_secure_browser_headers
     plug Beacon.LiveAdmin.Plug
   end
 
   scope "/" do
     pipe_through :browser
-
-    beacon_live_admin("/admin",
-      sites: [:dev],
-      additional_pages: [{"/custom", DemoWeb.CustomPage, :show, %{val: 1}}]
-    )
+    beacon_live_admin "/admin", sites: [:dev], additional_pages: [{"/custom", DemoWeb.CustomPage, :show, %{val: 1}}]
   end
 end
 

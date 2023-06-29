@@ -32,7 +32,9 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
         %{"_target" => ["page", "format"], "page" => page_params},
         socket
       ) do
-    socket = LiveMonacoEditor.change_language(socket, language(page_params["format"]), to: "template")
+    socket =
+      LiveMonacoEditor.change_language(socket, language(page_params["format"]), to: "template")
+
     changeset = Content.validate_page(socket.assigns.site, socket.assigns.page, page_params)
     {:noreply, assign_form(socket, changeset)}
   end
@@ -45,6 +47,23 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
   def handle_event("save", %{"page" => page_params}, socket) do
     page_params = Map.put(page_params, "site", socket.assigns.site)
     save_page(socket, socket.assigns.action, page_params)
+  end
+
+  def handle_event("publish", %{"id" => id}, socket) do
+    case Content.publish_page(socket.assigns.site, id) do
+      {:ok, _} ->
+        to = beacon_live_admin_path(socket, socket.assigns.site, "/pages")
+
+        {:noreply,
+         socket
+         |> put_flash(:info, "Page published successfully")
+         |> push_navigate(to: to)}
+
+      {:error, _} ->
+        {:noreply,
+         socket
+         |> put_flash(:error, "Failed to publish page")}
+    end
   end
 
   defp save_page(socket, :new, page_params) do
@@ -83,8 +102,31 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
         <:actions>
           <.button :if={@action == :new} phx-disable-with="Saving..." form="page-form" class="uppercase">Create Draft Page</.button>
           <.button :if={@action == :edit} phx-disable-with="Saving..." form="page-form" class="uppercase">Save Changes</.button>
+          <.button :if={@action == :edit} phx-click={show_modal("publish-confirm-modal")} phx-target={@myself} class="uppercase">Publish</.button>
         </:actions>
       </.header>
+
+      <.modal id="publish-confirm-modal">
+        Are you sure you want to publish this page?
+        <div class="py-4">
+          <button
+            type="button"
+            class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+            phx-click={JS.exec("data-cancel", to: "#publish-confirm-modal")}
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            class="inline-flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 sm:w-auto"
+            phx-click="publish"
+            phx-value-id={@page.id}
+            phx-target={@myself}
+          >
+            Publish
+          </button>
+        </div>
+      </.modal>
 
       <div class="mx-auto grid grid-cols-1 grid-rows-1 items-start gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
         <div class="mt-10 p-4 rounded-lg bg-gray-50 shadow-sm ring-1 ring-gray-900/5">

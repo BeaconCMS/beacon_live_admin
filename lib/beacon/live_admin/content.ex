@@ -28,6 +28,10 @@ defmodule Beacon.LiveAdmin.Content do
     call(site, Beacon.Content, :update_page, [page, attrs])
   end
 
+  def publish_page(site, page) do
+    call(site, Beacon.Content, :publish_page, [page])
+  end
+
   def get_page(site, id) do
     call(site, Beacon.Content, :get_page, [id])
   end
