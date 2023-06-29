@@ -1,18 +1,35 @@
-# Beacon.LiveAdmin
+# Beacon LiveAdmin
 
-To start your Phoenix server:
+Admin UI to manage content for sites built by [Beacon](https://github.com/BeaconCMS/beacon).
 
-  * Run `mix setup` to install and setup dependencies
-  * Start Phoenix endpoint with `mix phx.server` or inside IEx with `iex -S mix phx.server`
+## Status
 
-Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
+Pre-release version. You can expect incomplete features and breaking changes before a stable v0.1.0 is released.
 
-Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
+## Local Development
 
-## Learn more
+Execute the following to start a local dev environment:
 
-  * Official website: https://www.phoenixframework.org/
-  * Guides: https://hexdocs.pm/phoenix/overview.html
-  * Docs: https://hexdocs.pm/phoenix
-  * Forum: https://elixirforum.com/c/phoenix-forum
-  * Source: https://github.com/phoenixframework/phoenix
+```shell
+mix setup
+iex --sname admin -S mix dev
+```
+
+Open http://localhost:4002/admin
+
+Now in order to have some pages to manage you have to run a Beacon instance with sites and pages. Checkout [Beacon](https://github.com/BeaconCMS/beacon), execute its setup and dev environment:
+
+```shell
+git checkout git@github.com:BeaconCMS/beacon.git /path/to/beacon
+cd /path/to/beacon
+mix setup
+iex --sname core -S mix dev
+```
+
+And finally, in that iex shell you can connect to the node running beacon admin:
+
+```elixir
+{:ok, hostname} = :inet.gethostname()
+node = :"admin@#{List.to_string(hostname)}"
+Node.connect(node)
+```
