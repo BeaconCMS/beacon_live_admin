@@ -86,7 +86,8 @@ defmodule Beacon.LiveAdmin.Router do
         {additional_pages, opts} = Keyword.pop(opts, :additional_pages, [])
         pages = Beacon.LiveAdmin.Router.__pages__(additional_pages)
 
-        {session_name, session_opts} = Beacon.LiveAdmin.Router.__session_options__(prefix, pages, opts)
+        {session_name, session_opts} =
+          Beacon.LiveAdmin.Router.__session_options__(prefix, pages, opts)
 
         import Phoenix.Router, only: [get: 4]
         import Phoenix.LiveView.Router, only: [live: 4, live_session: 3]
@@ -153,15 +154,21 @@ defmodule Beacon.LiveAdmin.Router do
     # TODO validate options
     if Keyword.has_key?(opts, :root_layout) do
       raise ArgumentError, """
-      you cannot assign a different root_layout
+      you cannot assign a different root_layout.
+
+      Beacon.LiveAdmin depends on {Beacon.LiveAdmin.Layouts, :admin}
       """
     end
 
     if Keyword.has_key?(opts, :layout) do
       raise ArgumentError, """
-      you cannot assign a layout
+      you cannot assign a layout.
+
+      Beacon.LiveAdmin depends on {Beacon.LiveAdmin.Layouts, :admin}
       """
     end
+
+    on_mounts = get_on_mount_list(Keyword.get(opts, :on_mount, []))
 
     session_args = [
       pages
@@ -170,10 +177,27 @@ defmodule Beacon.LiveAdmin.Router do
     {
       opts[:live_session_name] || String.to_atom("beacon_live_admin_#{prefix}"),
       [
+        root_layout: {Beacon.LiveAdmin.Layouts, :admin},
         session: {__MODULE__, :__session__, session_args},
-        root_layout: {Beacon.LiveAdmin.Layouts, :admin}
+        on_mount: on_mounts
       ]
     }
+  end
+
+  defp get_on_mount_list(on_mounts) when is_list(on_mounts) do
+    if Enum.member?(on_mounts, Beacon.LiveAdmin.Hooks.AssignAgent) do
+      on_mounts
+    else
+      on_mounts ++ [Beacon.LiveAdmin.Hooks.AssignAgent]
+    end
+  end
+
+  defp get_on_mount_list(on_mounts) do
+    raise ArgumentError, """
+    expected `on_mount` option to be a list.
+
+    Got: #{inspect(on_mounts)}
+    """
   end
 
   @doc false
@@ -212,6 +236,13 @@ defmodule Beacon.LiveAdmin.Router do
     path = build_path_with_prefix(prefix, site, path)
     params = for {key, val} <- params, do: {key, val}
     Phoenix.VerifiedRoutes.unverified_path(conn_or_socket, router, path, params)
+  end
+
+  def beacon_live_admin_path(conn_or_socket) do
+    router = router(conn_or_socket)
+    prefix = router.__beacon_live_admin_prefix__()
+    path = sanitize_path("#{prefix}")
+    Phoenix.VerifiedRoutes.unverified_path(conn_or_socket, router, path, %{})
   end
 
   defp router(%Plug.Conn{private: %{phoenix_router: router}}), do: router
