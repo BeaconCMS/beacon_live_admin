@@ -120,7 +120,8 @@ defmodule Beacon.LiveAdmin.Router do
     [
       {"/pages", Beacon.LiveAdmin.PageEditorLive.Index, :index, %{}},
       {"/pages/new", Beacon.LiveAdmin.PageEditorLive.New, :new, %{}},
-      {"/pages/:id", Beacon.LiveAdmin.PageEditorLive.Edit, :edit, %{}}
+      {"/pages/:id", Beacon.LiveAdmin.PageEditorLive.Edit, :edit, %{}},
+      {"/media_library", Beacon.LiveAdmin.MediaLibraryLive.Index, :index, %{}},
     ]
     |> Enum.concat(additional_pages)
     |> Enum.map(fn {path, module, live_action, opts} ->
@@ -231,7 +232,7 @@ defmodule Beacon.LiveAdmin.Router do
       "/my_admin/my_site/pages?status=draft"
 
   """
-  @spec beacon_live_admin_path(conn_or_socket, Beacon.LiveAdmin.Types.Site.t(), String.t(), map()) :: String.t()
+  @spec beacon_live_admin_path(conn_or_socket, Beacon.LiveAdmin.Types.Site.t(), String.t(), map() | keyword()) :: String.t()
   def beacon_live_admin_path(conn_or_socket, site, path, params \\ %{})
       when is_atom(site) and is_binary(path) do
     router = router(conn_or_socket)
