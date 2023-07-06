@@ -1,7 +1,9 @@
 defmodule Beacon.LiveAdmin.Router do
   @moduledoc """
-  TODO
+  Routing for Beacon LiveAdmin.
   """
+
+  @type conn_or_socket :: Phoenix.LiveView.Socket.t() | Plug.Conn.t()
 
   defmacro __using__(_opts) do
     quote do
@@ -218,17 +220,18 @@ defmodule Beacon.LiveAdmin.Router do
   end
 
   @doc """
-  Generates prefix `path` for live admin.
+  Generates a `path` with the proper admin prefix for a `site`.
 
-    ## Examples
+  ## Examples
 
-        iex> Beacon.LiveAdmin.Router.beacon_live_admin_path(@socket, :my_site, "/pages")
-        "/my_admin/my_site/pages"
+      iex> Beacon.LiveAdmin.Router.beacon_live_admin_path(@socket, :my_site, "/pages")
+      "/my_admin/my_site/pages"
 
-        iex> Beacon.LiveAdmin.Router.beacon_live_admin_path(@socket, :my_site, "/pages", status: :draft)
-        "/my_admin/my_site/pages?status=draft"
+      iex> Beacon.LiveAdmin.Router.beacon_live_admin_path(@socket, :my_site, "/pages", status: :draft)
+      "/my_admin/my_site/pages?status=draft"
 
   """
+  @spec beacon_live_admin_path(conn_or_socket, Beacon.LiveAdmin.Types.Site.t(), String.t(), map()) :: String.t()
   def beacon_live_admin_path(conn_or_socket, site, path, params \\ %{})
       when is_atom(site) and is_binary(path) do
     router = router(conn_or_socket)
@@ -238,6 +241,16 @@ defmodule Beacon.LiveAdmin.Router do
     Phoenix.VerifiedRoutes.unverified_path(conn_or_socket, router, path, params)
   end
 
+  @doc """
+  Generates the root path with the admin prefix.
+
+  ## Example
+
+      iex> Beacon.LiveAdmin.Router.beacon_live_admin_path(@socket)
+      "/my_admin"
+
+  """
+  @spec beacon_live_admin_path(conn_or_socket) :: String.t()
   def beacon_live_admin_path(conn_or_socket) do
     router = router(conn_or_socket)
     prefix = router.__beacon_live_admin_prefix__()
@@ -256,7 +269,8 @@ defmodule Beacon.LiveAdmin.Router do
     sanitize_path("#{prefix}/#{site}/#{path}")
   end
 
-  defp sanitize_path(path) do
+  @doc false
+  def sanitize_path(path) do
     String.replace(path, "//", "/")
   end
 end

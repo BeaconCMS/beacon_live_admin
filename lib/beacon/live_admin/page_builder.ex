@@ -8,12 +8,18 @@ defmodule Beacon.LiveAdmin.PageBuilder.Page do
   defstruct site: nil, path: nil, module: nil, params: %{}, session: %{}
 end
 
+# https://github.com/phoenixframework/phoenix_live_dashboard/blob/32fef8da6a7df97f92f05bd6e7aab33be4036490/lib/phoenix/live_dashboard/page_builder.ex
 defmodule Beacon.LiveAdmin.PageBuilder do
   @moduledoc """
-  TODO
+  The foundation for building admin pages.
+
+  Either built-in pages and custom pages on your app should implement these callbacks
+  to properly mount the menu and the private assigns used by LiveAdmin.
+
   """
 
   use Phoenix.Component
+  alias Phoenix.LiveView.Socket
 
   @type session :: map()
   @type unsigned_params :: map()

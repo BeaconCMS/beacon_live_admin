@@ -35,5 +35,9 @@ beacon_live_admin-*.tar
 npm-debug.log
 /assets/node_modules/
 
+# Dialyzer PTLs
+/priv/plts/*.plt
+/priv/plts/*.plt.hash
+
 # Local iex config
 .iex.exs

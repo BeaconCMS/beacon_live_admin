@@ -2,12 +2,11 @@ defmodule Beacon.LiveAdmin.Hooks.Authorized do
   @moduledoc false
 
   import Phoenix.LiveView
-  alias Beacon.LiveAdmin.Authorization
 
   def on_mount({mod, action}, %{"site" => site}, _session, socket) do
     site = String.to_existing_atom(site)
 
-    if Authorization.authorized?(site, socket.assigns.agent, action, %{mod: mod}) do
+    if Beacon.LiveAdmin.Authorization.authorized?(site, socket.assigns.agent, action, %{mod: mod}) do
       {:cont, socket}
     else
       redirect_to = Beacon.LiveAdmin.Router.beacon_live_admin_path(socket)

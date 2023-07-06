@@ -7,14 +7,13 @@ defmodule Beacon.LiveAdmin.Hooks.AssignAgent do
   """
 
   import Phoenix.Component
-  alias Beacon.LiveAdmin.Authorization
 
   def on_mount(:default, %{"site" => site}, session, socket) do
     site = String.to_existing_atom(site)
 
     socket =
       assign_new(socket, :agent, fn ->
-        Authorization.get_agent(site, session)
+        Beacon.LiveAdmin.Authorization.get_agent(site, session)
       end)
 
     {:cont, socket}
