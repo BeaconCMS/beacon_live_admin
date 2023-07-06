@@ -9,36 +9,45 @@ defmodule Beacon.LiveAdmin.PageLive do
   use Beacon.LiveAdmin.Web, :live_view
   alias Beacon.LiveAdmin.PageBuilder.Menu
   alias Beacon.LiveAdmin.PageBuilder.Page
+  alias Beacon.LiveAdmin.Private
   alias Phoenix.LiveView.Socket
 
   @impl true
-  def mount(params, session, socket) do
+  def mount(%{"site" => site} = params, session, socket) do
+    site = String.to_existing_atom(site)
+
     if connected?(socket) do
       :net_kernel.monitor_nodes(true, node_type: :all)
     end
-
-    {site, params} = Map.pop(params, "site")
-    site = String.to_existing_atom(site)
 
     sites = Beacon.LiveAdmin.Cluster.running_sites()
     %{"pages" => pages, "beacon_live_admin_page_url" => current_url} = session
     page = lookup_page!(socket, current_url)
 
     socket =
-      assign(socket,
+      socket
+      |> assign(
         __beacon_sites__: sites,
         __beacon_pages__: pages,
         __beacon_menu__: %Menu{},
         beacon_page: %Page{}
       )
+      |> Private.build_on_mount_lifecycle(page.module)
 
-    with %Socket{redirected: nil} = socket <-
-           update_page(socket, site: site, path: page.path, module: page.module, params: params),
+    update_page = fn socket, site, page, params ->
+      update_page(socket, site: site, path: page.path, module: page.module, params: params)
+    end
+
+    with {:cont, socket} <- Private.mount(params, session, socket),
+         %Socket{redirected: nil} = socket <- update_page.(socket, site, page, params),
          %Socket{redirected: nil} = socket <- assign_menu_links(socket, pages) do
       maybe_apply_module(socket, :mount, [params, page.session], &{:ok, &1})
     else
       %Socket{} = redirected_socket ->
         {:ok, redirected_socket}
+
+      {:halt, socket} ->
+        {:ok, socket}
     end
   end
 

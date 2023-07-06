@@ -7,8 +7,8 @@ defmodule Beacon.LiveAdmin.Layouts do
 
   def asset_path(conn_or_socket, asset) when asset in [:css, :js] do
     prefix = router(conn_or_socket).__beacon_live_admin_assets_prefix__()
-    hash = BeaconWeb.Admin.AssetsController.current_hash(asset)
-    path = Beacon.Router.sanitize_path("#{prefix}/#{asset}-#{hash}")
+    hash = Beacon.LiveAdmin.AssetsController.current_hash(asset)
+    path = Beacon.LiveAdmin.Router.sanitize_path("#{prefix}/#{asset}-#{hash}")
     Phoenix.VerifiedRoutes.unverified_path(conn_or_socket, router(conn_or_socket), path)
   end
 
