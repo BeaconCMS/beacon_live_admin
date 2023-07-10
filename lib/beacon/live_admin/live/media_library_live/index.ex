@@ -24,7 +24,12 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.Index do
 
   @impl true
   def handle_params(params, _url, %{assigns: assigns} = socket) do
-    if Authorization.authorized?(assigns.beacon_page.site, assigns.agent, assigns.live_action, assigns.authn_context) do
+    if Authorization.authorized?(
+         assigns.beacon_page.site,
+         assigns.agent,
+         assigns.live_action,
+         assigns.authn_context
+       ) do
       search = Map.get(params, "search", "")
 
       socket =
@@ -69,8 +74,15 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.Index do
 
   @impl true
   def handle_event("search", %{"search" => search}, %{assigns: assigns} = socket) do
-    if Authorization.authorized?(assigns.beacon_page.site, assigns.agent, :search, assigns.authn_context) do
-      path = beacon_live_admin_path(socket, assigns.beacon_page.site, "/media_library", search: search)
+    if Authorization.authorized?(
+         assigns.beacon_page.site,
+         assigns.agent,
+         :search,
+         assigns.authn_context
+       ) do
+      path =
+        beacon_live_admin_path(socket, assigns.beacon_page.site, "/media_library", search: search)
+
       socket = push_patch(socket, to: path)
       {:noreply, socket}
     else
@@ -111,7 +123,8 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.Index do
 
     <.modal :if={@live_action in [:upload]} id="asset-modal" show on_cancel={JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/media_library"))}>
       <.live_component
-        module={BeaconWeb.Admin.MediaLibraryLive.UploadFormComponent}
+        module={Beacon.LiveAdmin.MediaLibraryLive.UploadFormComponent}
+        site={@beacon_page.site}
         id={@asset.id || :upload}
         title={@page_title}
         action={@live_action}
@@ -123,7 +136,7 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.Index do
 
     <.modal :if={@live_action in [:show]} id="asset-modal" show on_cancel={JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/media_library"))}>
       <.live_component
-        module={BeaconWeb.Admin.MediaLibraryLive.ShowComponent}
+        module={Beacon.LiveAdmin.MediaLibraryLive.ShowComponent}
         id={@asset.id}
         title={@page_title}
         action={@live_action}

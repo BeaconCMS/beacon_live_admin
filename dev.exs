@@ -76,7 +76,11 @@ defmodule DemoWeb.Router do
 
   scope "/" do
     pipe_through :browser
-    beacon_live_admin "/admin", sites: [:dev], additional_pages: [{"/custom", DemoWeb.CustomPage, :show, %{val: 1}}]
+
+    beacon_live_admin("/admin",
+      sites: [:dev],
+      additional_pages: [{"/custom", DemoWeb.CustomPage, :show, %{val: 1}}]
+    )
   end
 end
 

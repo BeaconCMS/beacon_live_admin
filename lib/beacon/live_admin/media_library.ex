@@ -19,4 +19,24 @@ defmodule Beacon.LiveAdmin.MediaLibrary do
   def search(site, query) do
     call(site, Beacon.MediaLibrary, :search, [site, query])
   end
+
+  def url_for(site, asset) do
+    call(site, Beacon.MediaLibrary, :url_for, [asset])
+  end
+
+  def urls_for(site, asset) do
+    call(site, Beacon.MediaLibrary, :urls_for, [asset])
+  end
+
+  def is_image?(site, asset) do
+    call(site, Beacon.MediaLibrary, :is_image?, [asset])
+  end
+
+  def new_upload_metadata(site, path, opts) do
+    call(site, Beacon.MediaLibrary.UploadMetadata, :new, [site, path, opts])
+  end
+
+  def upload(site, upload_metadata) do
+    call(site, Beacon.MediaLibrary, :upload, [upload_metadata])
+  end
 end
