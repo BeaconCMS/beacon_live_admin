@@ -118,6 +118,9 @@ defmodule Beacon.LiveAdmin.Router do
     additional_pages = additional_pages || []
 
     [
+      {"/layouts", Beacon.LiveAdmin.LayoutEditorLive.Index, :index, %{}},
+      {"/layouts/new", Beacon.LiveAdmin.LayoutEditorLive.New, :new, %{}},
+      {"/layouts/:id", Beacon.LiveAdmin.LayoutEditorLive.Edit, :edit, %{}},
       {"/pages", Beacon.LiveAdmin.PageEditorLive.Index, :index, %{}},
       {"/pages/new", Beacon.LiveAdmin.PageEditorLive.New, :new, %{}},
       {"/pages/:id", Beacon.LiveAdmin.PageEditorLive.Edit, :edit, %{}},
