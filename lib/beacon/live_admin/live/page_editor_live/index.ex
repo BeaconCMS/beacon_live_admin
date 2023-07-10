@@ -12,13 +12,13 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    pages = Content.list_pages(socket.assigns.beacon_page.site, nil)
+    pages = Content.list_pages(socket.assigns.beacon_page.site)
     {:ok, stream(socket, :pages, pages)}
   end
 
   @impl true
   def handle_params(%{"query" => query}, _uri, socket) do
-    pages = Content.list_pages(socket.assigns.beacon_page.site, query)
+    pages = Content.list_pages(socket.assigns.beacon_page.site, query: query)
     {:noreply, stream(socket, :pages, pages, reset: true)}
   end
 

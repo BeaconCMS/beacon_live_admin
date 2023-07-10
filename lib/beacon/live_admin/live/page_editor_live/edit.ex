@@ -8,7 +8,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
   def menu_link(_), do: :skip
 
   @impl true
-  def mount(params, _session, socket) do
+  def mount(_params, _session, socket) do
     {:ok, assign(socket, page_title: "Edit Page", page: nil)}
   end
 

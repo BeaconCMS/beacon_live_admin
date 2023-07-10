@@ -8,8 +8,33 @@ defmodule Beacon.LiveAdmin.Content do
 
   import Beacon.LiveAdmin.Cluster, only: [call: 4]
 
-  def list_layouts(site) do
-    call(site, Beacon.Content, :list_layouts, [site])
+  def change_layout(site, layout, params \\ %{}) do
+    call(site, Beacon.Content, :change_layout, [layout, params])
+  end
+
+  def create_layout(site, attrs) do
+    call(site, Beacon.Content, :create_layout, [attrs])
+  end
+
+  def update_layout(site, layout, attrs) do
+    call(site, Beacon.Content, :update_layout, [layout, attrs])
+  end
+
+  def publish_layout(site, id) do
+    call(site, Beacon.Content, :publish_layout, [id])
+  end
+
+  def get_layout(site, id) do
+    call(site, Beacon.Content, :get_layout, [id])
+  end
+
+  def list_layouts(site, opts \\ []) do
+    opts =
+      opts
+      |> Keyword.put_new(:query, nil)
+      |> Keyword.put_new(:per_page, 20)
+
+    call(site, Beacon.Content, :list_layouts, [site, opts])
   end
 
   def change_page(site, page) do
@@ -28,15 +53,21 @@ defmodule Beacon.LiveAdmin.Content do
     call(site, Beacon.Content, :update_page, [page, attrs])
   end
 
-  def publish_page(site, page) do
-    call(site, Beacon.Content, :publish_page, [page])
+  def publish_page(site, id) do
+    call(site, Beacon.Content, :publish_page, [id])
   end
 
   def get_page(site, id) do
     call(site, Beacon.Content, :get_page, [id])
   end
 
-  def list_pages(site, query) do
-    call(site, Beacon.Content, :list_pages, [site, [query: query, per_page: 20]])
+  def list_pages(site, opts \\ []) do
+    opts =
+      opts
+      |> Keyword.put_new(:query, nil)
+      |> Keyword.put_new(:per_page, 20)
+
+
+    call(site, Beacon.Content, :list_pages, [site, opts])
   end
 end
