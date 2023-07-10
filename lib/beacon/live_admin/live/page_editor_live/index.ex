@@ -22,7 +22,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
     {:noreply, stream(socket, :pages, pages, reset: true)}
   end
 
-  def handle_params(params, _uri, socket) do
+  def handle_params(_params, _uri, socket) do
     {:noreply, socket}
   end
 

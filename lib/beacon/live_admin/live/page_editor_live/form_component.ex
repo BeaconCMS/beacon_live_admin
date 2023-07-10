@@ -1,6 +1,6 @@
 defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
   use Beacon.LiveAdmin.Web, :live_component
-  alias Beacon.LiveAdmin
+  alias Beacon.LiveAdmin.Config
   alias Beacon.LiveAdmin.Content
 
   @impl true
@@ -159,9 +159,9 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
   end
 
   defp template_format_options(site) do
-    config = LiveAdmin.config!(site)
+    template_formats = Config.template_formats(site)
 
-    Keyword.new(config.template_formats, fn {identifier, description} ->
+    Keyword.new(template_formats, fn {identifier, description} ->
       {String.to_atom(description), identifier}
     end)
   end
