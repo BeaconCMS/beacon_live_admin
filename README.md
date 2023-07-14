@@ -22,28 +22,20 @@ mix setup
 iex --sname admin -S mix dev
 ```
 
-Note this node will be name __admin__
+Keep this instance running.
 
-Now open http://localhost:4002/admin but you'll notice that no site is displayed, so let's start one.
+3. Open another terminal or tab, clone [Beacon](https://github.com/BeaconCMS/beacon) into another directory and follow the [Local Development instructions](https://github.com/BeaconCMS/beacon#local-development) to get a site up and running.
 
-Clone [Beacon](https://github.com/BeaconCMS/beacon) into another directory and follow the instructions:
+4. Open http://localhost:4002/admin 
 
-1. Setup your local env
+You'll notice that no site is displayed, that's because Beacon LiveAdmin looks for sites running in the cluster and the two nodes aren't connected yet.
 
-```shell
-mix setup
-```
-
-2. Run Beacon
-
-```shell
-iex --sname core -S mix dev
-```
-
-3. And finally, connect the nodes to let LiveAdmin manage the sites running in the __core__ node
+5. In the beacon iex terminal (the last one you started) execute the following:
 
 ```elixir
 {:ok, hostname} = :inet.gethostname()
 node = :"admin@#{List.to_string(hostname)}"
 Node.connect(node)
 ```
+
+Now you should see a site listed in the admin home page.
