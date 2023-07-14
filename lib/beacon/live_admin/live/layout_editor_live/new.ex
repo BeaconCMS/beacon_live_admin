@@ -34,7 +34,15 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.New do
   @impl true
   def render(assigns) do
     ~H"""
-    <.live_component module={Beacon.LiveAdmin.LayoutEditorLive.FormComponent} id="layout-editor-form-new" site={@beacon_page.site} page_title={@page_title} action={@live_action} beacon_layout={@beacon_layout} patch="/layouts" />
+    <.live_component
+      module={Beacon.LiveAdmin.LayoutEditorLive.FormComponent}
+      id="layout-editor-form-new"
+      site={@beacon_page.site}
+      page_title={@page_title}
+      action={@live_action}
+      beacon_layout={@beacon_layout}
+      patch="/layouts"
+    />
     """
   end
 end

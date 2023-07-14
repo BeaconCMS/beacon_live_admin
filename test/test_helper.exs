@@ -48,11 +48,11 @@ Supervisor.start_link(
 Beacon.LiveAdminTest.Cluster.spawn([:"node1@127.0.0.1", :"node2@127.0.0.1"])
 
 Beacon.LiveAdminTest.Cluster.start_beacon(:"node1@127.0.0.1",
-  sites: [[site: :site_a], [site: :site_b]]
+  sites: [[site: :site_a, endpoint: MyApp.Endpoint], [site: :site_b, endpoint: MyApp.Endpoint]]
 )
 
 Beacon.LiveAdminTest.Cluster.start_beacon(:"node2@127.0.0.1",
-  sites: [[site: :site_a], [site: :site_c]]
+  sites: [[site: :site_a, endpoint: MyApp.Endpoint], [site: :site_c, endpoint: MyApp.Endpoint]]
 )
 
 ExUnit.start()

@@ -67,7 +67,6 @@ defmodule Beacon.LiveAdmin.Content do
       |> Keyword.put_new(:query, nil)
       |> Keyword.put_new(:per_page, 20)
 
-
     call(site, Beacon.Content, :list_pages, [site, opts])
   end
 end
