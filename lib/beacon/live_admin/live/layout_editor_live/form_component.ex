@@ -6,20 +6,24 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.FormComponent do
   @impl true
   def update(%{site: site, beacon_layout: beacon_layout} = assigns, socket) do
     changeset = Content.change_layout(site, beacon_layout)
-    layouts = Content.list_layouts(site)
 
     {:ok,
      socket
      |> assign(assigns)
      |> assign_form(changeset)
-     |> assign(:layouts, layouts)
      |> assign(:body, beacon_layout.body)
-     |> assign(:changed_body, beacon_layout.body)}
+     |> assign(:changed_body, beacon_layout.body)
+     |> assign(:status, layout_status(beacon_layout))}
   end
 
   def update(%{changed_body: changed_body}, socket) do
     {:ok, assign(socket, :changed_body, changed_body)}
   end
+
+  defp layout_status(%{site: nil, id: nil}), do: nil
+
+  defp layout_status(%{site: site, id: id}),
+    do: Beacon.LiveAdmin.Content.get_latest_layout_event(site, id).event
 
   defp assign_form(socket, changeset) do
     assign(socket, :form, to_form(changeset))
@@ -122,6 +126,17 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.FormComponent do
         </div>
       </.modal>
 
+      <div class="text-gray-500">
+        <.link patch={beacon_live_admin_path(@socket, @site, "/layouts/#{@beacon_layout.id}/history")}>
+          <span :if={@status == :created}>
+            <.icon name="hero-document-plus-solid" class="h-5 w-5" /> <%= display_status(@status) %>
+          </span>
+          <span :if={@status == :published}>
+            <.icon name="hero-eye-solid" class="h-5 w-5" /> <%= display_status(@status) %>
+          </span>
+        </.link>
+      </div>
+
       <div class="mx-auto grid grid-cols-1 grid-rows-1 items-start gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
         <div class="mt-10 p-4 rounded-lg bg-gray-50 shadow-sm ring-1 ring-gray-900/5">
           <.form :let={f} for={@form} id="layout-form" class="space-y-8" phx-target={@myself} phx-change="validate" phx-submit="save">
@@ -140,4 +155,7 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.FormComponent do
     </div>
     """
   end
+
+  defp display_status(:published), do: "Published (public)"
+  defp display_status(:created), do: "Draft (not public)"
 end

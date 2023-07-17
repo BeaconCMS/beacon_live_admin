@@ -7,18 +7,18 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.Index do
   on_mount {Beacon.LiveAdmin.Hooks.Authorized, {:layout_editor, :index}}
 
   @impl true
-  def menu_link(:index), do: {:ok, "Layout"}
+  def menu_link(:index), do: {:ok, "Layouts"}
   def menu_link(_), do: :skip
 
   @impl true
   def mount(_params, _session, socket) do
-    layouts = Content.list_layouts(socket.assigns.beacon_page.site)
+    layouts = list_layouts(socket.assigns.beacon_page.site)
     {:ok, stream(socket, :layouts, layouts)}
   end
 
   @impl true
   def handle_params(%{"query" => query}, _uri, socket) do
-    layouts = Content.list_layouts(socket.assigns.beacon_page.site, query: query)
+    layouts = list_layouts(socket.assigns.beacon_page.site, query: query)
     {:noreply, stream(socket, :layouts, layouts, reset: true)}
   end
 
@@ -50,7 +50,7 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.Index do
       <.simple_form :let={f} for={%{}} as={:search} phx-change="search">
         <div class="flex gap-4 items-center">
           <div class="flex-grow">
-            <.input field={f[:query]} type="search" autofocus={true} placeholder="Search by path or title (showing up to 20 results)" />
+            <.input field={f[:query]} type="search" autofocus={true} placeholder="Search by title (showing up to 20 results)" />
           </div>
         </div>
       </.simple_form>
@@ -58,6 +58,7 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.Index do
 
     <.table id="layouts" rows={@streams.layouts} row_click={fn {_id, layout} -> JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/layouts/#{layout.id}")) end}>
       <:col :let={{_id, layout}} label="Title"><%= layout.title %></:col>
+      <:col :let={{_id, layout}} label="Status"><%= display_status(layout.status) %></:col>
       <:action :let={{_id, layout}}>
         <div class="sr-only">
           <.link navigate={beacon_live_admin_path(@socket, @beacon_page.site, "/layouts/#{layout.id}")}>Show</.link>
@@ -69,4 +70,15 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.Index do
     </.table>
     """
   end
+
+  defp list_layouts(site, opts \\ []) do
+    site
+    |> Content.list_layouts(opts)
+    |> Enum.map(fn layout ->
+      Map.put(layout, :status, Content.get_latest_layout_event(layout.site, layout.id).event)
+    end)
+  end
+
+  defp display_status(:published), do: "Published"
+  defp display_status(:created), do: "Draft"
 end

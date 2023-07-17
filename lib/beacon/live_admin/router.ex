@@ -121,6 +121,7 @@ defmodule Beacon.LiveAdmin.Router do
       {"/layouts", Beacon.LiveAdmin.LayoutEditorLive.Index, :index, %{}},
       {"/layouts/new", Beacon.LiveAdmin.LayoutEditorLive.New, :new, %{}},
       {"/layouts/:id", Beacon.LiveAdmin.LayoutEditorLive.Edit, :edit, %{}},
+      {"/layouts/:id/history", Beacon.LiveAdmin.LayoutEditorLive.History, :history, %{}},
       {"/pages", Beacon.LiveAdmin.PageEditorLive.Index, :index, %{}},
       {"/pages/new", Beacon.LiveAdmin.PageEditorLive.New, :new, %{}},
       {"/pages/:id", Beacon.LiveAdmin.PageEditorLive.Edit, :edit, %{}},

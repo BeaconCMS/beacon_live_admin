@@ -28,6 +28,14 @@ defmodule Beacon.LiveAdmin.Content do
     call(site, Beacon.Content, :get_layout, [id])
   end
 
+  def list_layout_events(site, id) do
+    call(site, Beacon.Content, :list_layout_events, [site, id])
+  end
+
+  def get_latest_layout_event(site, id) do
+    call(site, Beacon.Content, :get_latest_layout_event, [site, id])
+  end
+
   def list_layouts(site, opts \\ []) do
     opts =
       opts
