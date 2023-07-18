@@ -31,24 +31,33 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.History do
             <.icon :if={event.event == :created} name="hero-document-plus-solid" class="h-4 w-4 text-blue-800" />
           </span>
           <h3 class="flex items-center mb-1 text-lg font-semibold text-gray-900">
-            <%= Phoenix.Naming.humanize(event.event) %> <span :if={idx == 0} class="bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded ml-3">Latest</span>
+            <%= Phoenix.Naming.humanize(event.event) %> <span class="text-sm text-gray-500 ml-2"><%= format_datetime(event.inserted_at) %></span>
+            <span :if={idx == 0} class="bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded ml-3">Latest</span>
           </h3>
-          <time class="block mb-2 text-sm font-normal leading-none text-gray-800"><%= format_datetime(event.inserted_at) %></time>
-          <div :if={event.snapshot}>
-            <div class="w-full mt-4">
-              <div class="py-3 bg-[#282c34] rounded-lg">
-                <LiveMonacoEditor.code_editor
-                  path={event.snapshot.id}
-                  style="min-height: 200px; width: 100%;"
-                  value={event.snapshot.layout.body}
-                  opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => "html", "readOnly" => "true"})}
-                />
+
+          <ol :if={event.snapshot}>
+            <li>
+              <h4 class="text-gray-600">Title</h4>
+              <%= event.snapshot.layout.title %>
+            </li>
+            <li class="mt-4">
+              <h4 class="text-gray-600">Body</h4>
+              <div class="w-full mt-2">
+                <div class="py-3 bg-[#282c34] rounded-lg">
+                  <LiveMonacoEditor.code_editor
+                    path={event.snapshot.id}
+                    style="min-height: 200px; width: 100%;"
+                    value={event.snapshot.layout.body}
+                    opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => "html", "readOnly" => "true"})}
+                  />
+                </div>
               </div>
-            </div>
-            <div>
-              <%= inspect(event.snapshot.layout.meta_tags) %>
-            </div>
-          </div>
+            </li>
+            <li class="mt-4">
+              <h4 class="text-gray-600">Meta Tags</h4>
+              <%= format_meta_tags(event.snapshot.layout.meta_tags) %>
+            </li>
+          </ol>
         </li>
       </ol>
     </div>
@@ -57,5 +66,31 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.History do
 
   defp format_datetime(datetime) do
     Calendar.strftime(datetime, "%B %d, %Y")
+  end
+
+  defp format_meta_tags(meta_tags) do
+    # TODO: custom attributes
+    meta_tags =
+      Enum.map(meta_tags, fn meta_tag ->
+        %{name: meta_tag["name"], property: meta_tag["property"], content: meta_tag["content"]}
+      end)
+
+    assigns = %{meta_tags: meta_tags}
+
+    ~H"""
+    <.table id="meta_tags" rows={@meta_tags}>
+      <:col :let={meta_tag} label="name">
+        <%= meta_tag.name %>
+      </:col>
+
+      <:col :let={meta_tag} label="property">
+        <%= meta_tag.property %>
+      </:col>
+
+      <:col :let={meta_tag} label="content">
+        <%= meta_tag.content %>
+      </:col>
+    </.table>
+    """
   end
 end
