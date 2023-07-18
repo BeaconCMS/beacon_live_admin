@@ -55,7 +55,7 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.History do
             </li>
             <li class="mt-4">
               <h4 class="text-gray-600">Meta Tags</h4>
-              <%= format_meta_tags(event.snapshot.layout.meta_tags) %>
+              <%= render_meta_tags(event.snapshot.layout.meta_tags) %>
             </li>
           </ol>
         </li>
@@ -68,27 +68,29 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.History do
     Calendar.strftime(datetime, "%B %d, %Y")
   end
 
-  defp format_meta_tags(meta_tags) do
-    # TODO: custom attributes
-    meta_tags =
-      Enum.map(meta_tags, fn meta_tag ->
-        %{name: meta_tag["name"], property: meta_tag["property"], content: meta_tag["content"]}
+  defp render_meta_tags(meta_tags) do
+    attributes =
+      meta_tags
+      |> Enum.flat_map(fn meta_tag -> Map.keys(meta_tag) end)
+      |> Enum.uniq()
+      |> Enum.sort(fn a, b ->
+        case {a, b} do
+          {"name", _} -> true
+          {_, "name"} -> false
+          {"property", _} -> true
+          {_, "property"} -> false
+          {"content", _} -> true
+          {_, "content"} -> false
+          {a, b} -> a <= b
+        end
       end)
 
-    assigns = %{meta_tags: meta_tags}
+    assigns = %{attributes: attributes, meta_tags: meta_tags}
 
     ~H"""
     <.table id="meta_tags" rows={@meta_tags}>
-      <:col :let={meta_tag} label="name">
-        <%= meta_tag.name %>
-      </:col>
-
-      <:col :let={meta_tag} label="property">
-        <%= meta_tag.property %>
-      </:col>
-
-      <:col :let={meta_tag} label="content">
-        <%= meta_tag.content %>
+      <:col :let={meta_tag} :for={attr <- @attributes} label={attr}>
+        <%= meta_tag[attr] %>
       </:col>
     </.table>
     """

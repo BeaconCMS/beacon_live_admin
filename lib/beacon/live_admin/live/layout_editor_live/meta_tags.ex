@@ -79,6 +79,10 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.MetaTags do
     {:noreply, assign(socket, :new_attribute_modal_visible?, true)}
   end
 
+  def handle_event("hide-new-attribute-modal", _, socket) do
+    {:noreply, assign(socket, :new_attribute_modal_visible?, false)}
+  end
+
   def handle_event("save-new-attribute", %{"attribute" => %{"name" => name}}, socket) do
     # Basic validation
     extra_attributes =
