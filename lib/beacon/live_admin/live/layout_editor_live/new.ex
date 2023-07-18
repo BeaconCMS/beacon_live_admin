@@ -39,7 +39,7 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.New do
       id="layout-editor-form-new"
       site={@beacon_page.site}
       page_title={@page_title}
-      action={@live_action}
+      live_action={@live_action}
       beacon_layout={@beacon_layout}
       patch="/layouts"
     />

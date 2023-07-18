@@ -127,7 +127,7 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.Index do
         site={@beacon_page.site}
         id={@asset.id || :upload}
         title={@page_title}
-        action={@live_action}
+        live_action={@live_action}
         asset={@asset}
         navigate={beacon_live_admin_path(@socket, @beacon_page.site, "/media_library")}
         agent={@agent}
@@ -139,7 +139,7 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.Index do
         module={Beacon.LiveAdmin.MediaLibraryLive.ShowComponent}
         id={@asset.id}
         title={@page_title}
-        action={@live_action}
+        live_action={@live_action}
         asset={@asset}
         navigate={beacon_live_admin_path(@socket, @beacon_page.site, "/media_library")}
         agent={@agent}

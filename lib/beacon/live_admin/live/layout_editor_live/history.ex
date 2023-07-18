@@ -15,13 +15,15 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.History do
   @impl true
   def handle_params(%{"id" => id}, _url, socket) do
     events = Content.list_layout_events(socket.assigns.beacon_page.site, id)
-    {:noreply, assign(socket, events: events)}
+    {:noreply, assign(socket, events: events, layout_id: id)}
   end
 
   @impl true
   def render(assigns) do
     ~H"""
     <div>
+      <Beacon.LiveAdmin.AdminComponents.layout_menu socket={@socket} site={@beacon_page.site} current_action={@live_action} layout_id={@layout_id} />
+
       <ol class="relative border-l border-gray-200">
         <li :for={{event, idx} <- Enum.with_index(@events)} class="mb-10 ml-6">
           <span class="absolute flex items-center justify-center w-6 h-6 bg-blue-100 rounded-full -left-3 ring-8 ring-white">
@@ -42,6 +44,9 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.History do
                   opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => "html", "readOnly" => "true"})}
                 />
               </div>
+            </div>
+            <div>
+              <%= inspect(event.snapshot.layout.meta_tags) %>
             </div>
           </div>
         </li>

@@ -41,7 +41,7 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.FormComponent do
 
   def handle_event("save", %{"layout" => layout_params}, socket) do
     layout_params = Map.put(layout_params, "site", socket.assigns.site)
-    save_layout(socket, socket.assigns.action, layout_params)
+    save_layout(socket, socket.assigns.live_action, layout_params)
   end
 
   def handle_event("publish", %{"id" => id}, socket) do
@@ -92,12 +92,26 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.FormComponent do
   def render(assigns) do
     ~H"""
     <div>
+      <Beacon.LiveAdmin.AdminComponents.layout_menu socket={@socket} site={@site} current_action={@live_action} layout_id={@beacon_layout.id} />
+
       <.header>
-        <%= @page_title %>
+        <%= layout_name(@form.source) %>
+
+        <div class="text-sm text-gray-500">
+          <.link patch={beacon_live_admin_path(@socket, @site, "/layouts/#{@beacon_layout.id}/history")}>
+            <span :if={@status == :created}>
+              <.icon name="hero-document-plus-solid" class="h-5 w-5" /> <%= display_status(@status) %>
+            </span>
+            <span :if={@status == :published}>
+              <.icon name="hero-eye-solid" class="h-5 w-5" /> <%= display_status(@status) %>
+            </span>
+          </.link>
+        </div>
+
         <:actions>
-          <.button :if={@action == :new} phx-disable-with="Saving..." form="layout-form" class="uppercase">Create Draft Layout</.button>
-          <.button :if={@action == :edit} phx-disable-with="Saving..." form="layout-form" class="uppercase">Save Changes</.button>
-          <.button :if={@action == :edit} phx-click={show_modal("publish-confirm-modal")} phx-target={@myself} class="uppercase">Publish</.button>
+          <.button :if={@live_action == :new} phx-disable-with="Saving..." form="layout-form" class="uppercase">Create Draft Layout</.button>
+          <.button :if={@live_action == :edit} phx-disable-with="Saving..." form="layout-form" class="uppercase">Save Changes</.button>
+          <.button :if={@live_action == :edit} phx-click={show_modal("publish-confirm-modal")} phx-target={@myself} class="uppercase">Publish</.button>
         </:actions>
       </.header>
 
@@ -126,17 +140,6 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.FormComponent do
         </div>
       </.modal>
 
-      <div class="text-gray-500">
-        <.link patch={beacon_live_admin_path(@socket, @site, "/layouts/#{@beacon_layout.id}/history")}>
-          <span :if={@status == :created}>
-            <.icon name="hero-document-plus-solid" class="h-5 w-5" /> <%= display_status(@status) %>
-          </span>
-          <span :if={@status == :published}>
-            <.icon name="hero-eye-solid" class="h-5 w-5" /> <%= display_status(@status) %>
-          </span>
-        </.link>
-      </div>
-
       <div class="mx-auto grid grid-cols-1 grid-rows-1 items-start gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
         <div class="mt-10 p-4 rounded-lg bg-gray-50 shadow-sm ring-1 ring-gray-900/5">
           <.form :let={f} for={@form} id="layout-form" class="space-y-8" phx-target={@myself} phx-change="validate" phx-submit="save">
@@ -155,6 +158,8 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.FormComponent do
     </div>
     """
   end
+
+  defp layout_name(source), do: Ecto.Changeset.get_field(source, :title)
 
   defp display_status(:published), do: "Published (public)"
   defp display_status(:created), do: "Draft (not public)"

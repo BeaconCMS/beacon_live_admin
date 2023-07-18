@@ -31,7 +31,15 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
   @impl true
   def render(assigns) do
     ~H"""
-    <.live_component module={Beacon.LiveAdmin.PageEditorLive.FormComponent} id="page-editor-form-edit" site={@beacon_page.site} page_title={@page_title} action={@live_action} page={@page} patch="/pages" />
+    <.live_component
+      module={Beacon.LiveAdmin.PageEditorLive.FormComponent}
+      id="page-editor-form-edit"
+      site={@beacon_page.site}
+      page_title={@page_title}
+      live_action={@live_action}
+      page={@page}
+      patch="/pages"
+    />
     """
   end
 end

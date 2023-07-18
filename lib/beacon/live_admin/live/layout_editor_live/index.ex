@@ -61,7 +61,7 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.Index do
       <:col :let={{_id, layout}} label="Status"><%= display_status(layout.status) %></:col>
       <:action :let={{_id, layout}}>
         <div class="sr-only">
-          <.link navigate={beacon_live_admin_path(@socket, @beacon_page.site, "/layouts/#{layout.id}")}>Show</.link>
+          <.link navigate={beacon_live_admin_path(@socket, @beacon_page.site, "/layouts/#{layout.id}")}>Edit</.link>
         </div>
         <.link patch={beacon_live_admin_path(@socket, @beacon_page.site, "/layouts/#{layout.id}")}>
           <.icon name="hero-pencil-square" />
