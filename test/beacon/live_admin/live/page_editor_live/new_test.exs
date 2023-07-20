@@ -1,4 +1,4 @@
-defmodule Beacon.LiveAdmin.Live.PageEditorLive.NewTest do
+defmodule Beacon.LiveAdmin.PageEditorLive.NewTest do
   use Beacon.LiveAdmin.ConnCase, async: false
   import Beacon.LiveAdminTest.Cluster, only: [rpc: 4]
 

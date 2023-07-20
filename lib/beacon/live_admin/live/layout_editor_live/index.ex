@@ -13,13 +13,13 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.Index do
   @impl true
   def mount(_params, _session, socket) do
     layouts = list_layouts(socket.assigns.beacon_page.site)
-    {:ok, stream(socket, :layouts, layouts)}
+    {:ok, assign(socket, :beacon_layouts, layouts)}
   end
 
   @impl true
   def handle_params(%{"query" => query}, _uri, socket) do
     layouts = list_layouts(socket.assigns.beacon_page.site, query: query)
-    {:noreply, stream(socket, :layouts, layouts, reset: true)}
+    {:noreply, assign(socket, :beacon_layouts, layouts)}
   end
 
   def handle_params(_params, _uri, socket) do
@@ -29,9 +29,13 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.Index do
   @impl true
   def handle_event("search", %{"search" => %{"query" => query}}, socket) do
     path =
-      beacon_live_admin_path(socket, socket.assigns.beacon_page.site, "/layouts?query=#{query}")
+      beacon_live_admin_path(
+        socket,
+        socket.assigns.beacon_page.site,
+        "/layouts?query=#{query}"
+      )
 
-    {:noreply, push_patch(socket, to: path, replace: true)}
+    {:noreply, push_patch(socket, to: path)}
   end
 
   @impl true
@@ -41,7 +45,7 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.Index do
       Listing Layouts
       <:actions>
         <.link patch={beacon_live_admin_path(@socket, @beacon_page.site, "/layouts/new")} phx-click={JS.push_focus()}>
-          <.button>Create New Layout</.button>
+          <.button class="uppercase">Create New Layout</.button>
         </.link>
       </:actions>
     </.header>
@@ -56,10 +60,10 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.Index do
       </.simple_form>
     </div>
 
-    <.table id="layouts" rows={@streams.layouts} row_click={fn {_id, layout} -> JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/layouts/#{layout.id}")) end}>
-      <:col :let={{_id, layout}} label="Title"><%= layout.title %></:col>
-      <:col :let={{_id, layout}} label="Status"><%= display_status(layout.status) %></:col>
-      <:action :let={{_id, layout}}>
+    <.table id="layouts" rows={@beacon_layouts} row_click={fn layout -> JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/layouts/#{layout.id}")) end}>
+      <:col :let={layout} label="Title"><%= layout.title %></:col>
+      <:col :let={layout} label="Status"><%= display_status(layout.status) %></:col>
+      <:action :let={layout}>
         <div class="sr-only">
           <.link navigate={beacon_live_admin_path(@socket, @beacon_page.site, "/layouts/#{layout.id}")}>Edit</.link>
         </div>

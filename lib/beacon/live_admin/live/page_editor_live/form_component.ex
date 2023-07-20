@@ -109,7 +109,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
       <.modal id="publish-confirm-modal">
         <h3 class="text-base font-semibold leading-6 text-gray-900" id="modal-title">Publish Page</h3>
         <div class="mt-2">
-          <p class="text-sm text-gray-500">Are you sure you want to publish this page and make it public? Please make sure all changes were saved.</p>
+          <p class="text-sm text-gray-500">Are you sure you want to publish this page and make it public? Please make sure all changes were saved before publishing it.</p>
         </div>
         <div class="py-4">
           <button

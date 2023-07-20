@@ -1,6 +1,5 @@
 defmodule Beacon.LiveAdmin.LayoutEditorLive.FormComponent do
   use Beacon.LiveAdmin.Web, :live_component
-  alias Beacon.LiveAdmin.Config
   alias Beacon.LiveAdmin.Content
 
   @impl true
@@ -78,9 +77,12 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.FormComponent do
 
   defp save_layout(socket, :edit, layout_params) do
     case Content.update_layout(socket.assigns.site, socket.assigns.beacon_layout, layout_params) do
-      {:ok, _layout} ->
+      {:ok, layout} ->
+        changeset = Content.change_layout(socket.assigns.site, layout)
+
         {:noreply,
          socket
+         |> assign_form(changeset)
          |> put_flash(:info, "Layout updated successfully")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
@@ -118,7 +120,7 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.FormComponent do
       <.modal id="publish-confirm-modal">
         <h3 class="text-base font-semibold leading-6 text-gray-900" id="modal-title">Publish Layout</h3>
         <div class="mt-2">
-          <p class="text-sm text-gray-500">Are you sure you want to publish this layout and make it public? Please make sure all changes were saved.</p>
+          <p class="text-sm text-gray-500">Are you sure you want to publish this layout and make it public? Please make sure all changes were saved before publishing it.</p>
         </div>
         <div class="py-4">
           <button
@@ -135,7 +137,7 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.FormComponent do
             phx-value-id={@beacon_layout.id}
             phx-target={@myself}
           >
-            Publish
+            Confirm
           </button>
         </div>
       </.modal>
