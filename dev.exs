@@ -40,9 +40,7 @@ defmodule DemoWeb.CustomPage do
   end
 
   @impl true
-  def menu_link(_live_action) do
-    {:ok, "Custom"}
-  end
+  def menu_link(_prefix, _live_action), do: {:root, "Custom"}
 
   @impl true
   def mount(_params, session, socket) do

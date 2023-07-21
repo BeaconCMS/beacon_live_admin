@@ -26,9 +26,9 @@ defmodule Beacon.LiveAdmin.PageBuilder do
 
   @callback init(term()) :: {:ok, session()}
 
-  @callback menu_link(live_actionn :: atom) ::
-              {:ok, String.t()}
-              | {:disabled, String.t()}
+  @callback menu_link(prefix :: String.t(), live_actionn :: atom) ::
+              {:root, String.t()}
+              | {:submenu, String.t()}
               | :skip
 
   @callback mount(unsigned_params(), session(), socket :: Socket.t()) ::

@@ -8,7 +8,8 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.MetaTags do
   @default_attributes ["name", "property", "content"]
 
   @impl true
-  def menu_link(_), do: :skip
+  def menu_link("/layouts", :meta_tags), do: {:submenu, "Layouts"}
+  def menu_link(_, _), do: :skip
 
   @impl true
   def mount(_params, _session, socket) do
@@ -99,7 +100,7 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.MetaTags do
 
   def handle_event("save", %{"layout" => layout_params}, socket) do
     beacon_layout = socket.assigns.beacon_layout
-    meta_tags = coerce_meta_tag_param(layout_params, "meta_tags") |> dbg
+    meta_tags = coerce_meta_tag_param(layout_params, "meta_tags")
 
     case Content.update_layout(beacon_layout.site, beacon_layout, meta_tags) do
       {:ok, beacon_layout} ->

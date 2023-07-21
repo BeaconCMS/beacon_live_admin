@@ -53,7 +53,7 @@ defmodule Beacon.LiveAdmin.PageLive do
 
   @impl true
   def handle_params(params, url, socket) do
-    %{__beacon_sites__: sites, __beacon_pages__: pages} = socket.assigns
+    %{__beacon_pages__: pages} = socket.assigns
     page = lookup_page!(socket, url)
 
     with %Socket{redirected: nil} = socket <-
@@ -94,34 +94,54 @@ defmodule Beacon.LiveAdmin.PageLive do
         failed to find a page for URL #{url}
         """
 
-        # TODO: custom exception?
+        # TODO: custom exception 404
         raise msg
     end
   end
 
   # TODO subpath /pages/:id -> Pages menu
   defp assign_menu_links(socket, pages) do
-    current_path = socket.assigns.beacon_page.path
+    ["", current_prefix | _] = String.split(socket.assigns.beacon_page.path, "/")
+    current_prefix = "/" <> current_prefix
 
-    {links, socket} =
-      Enum.map_reduce(pages, socket, fn {path, module, live_action, _session}, socket ->
-        current? = path == current_path
-        menu_link = module.menu_link(live_action)
+    links =
+      pages
+      |> Enum.reduce(%{}, fn {path, module, live_action, _session}, acc ->
+        ["", prefix | _] = String.split(path, "/")
+        prefix = "/" <> prefix
+
+        current? = prefix == current_prefix
+        menu_link = module.menu_link(prefix, live_action)
 
         case {current?, menu_link} do
-          {true, {:ok, anchor}} ->
-            {{:current, anchor, path}, socket}
+          {true, {:root, anchor}} ->
+            value = {:current, anchor}
+            Map.update(acc, prefix, value, fn _ -> value end)
 
-          {false, {:ok, anchor}} ->
-            {{:enabled, anchor, path}, socket}
+          {true, {:submenu, anchor}} ->
+            value = {:current, anchor}
+            Map.update(acc, prefix, value, fn _ -> value end)
 
-          {false, {:disabled, anchor}} ->
-            {{:disabled, anchor}, socket}
+          {false, {:root, anchor}} ->
+            value = {:enabled, anchor}
+            Map.update(acc, prefix, value, fn _ -> value end)
 
-          {_, :skip} ->
-            {:skip, socket}
+          _ ->
+            acc
         end
       end)
+      |> Enum.sort(fn {a, _}, {b, _} ->
+        case {a, b} do
+          {"/layouts", _} -> true
+          {_, "/layouts"} -> false
+          {"/pages", _} -> true
+          {_, "/pages"} -> false
+          {"/media_library", _} -> true
+          {_, "/media_library"} -> false
+          {a, b} -> a <= b
+        end
+      end)
+      |> Enum.map(fn {prefix, {state, anchor}} -> {state, anchor, prefix} end)
 
     update_menu(socket, links: links)
   end

@@ -154,7 +154,7 @@ defmodule Beacon.LiveAdmin.Router do
 
         """
 
-        # TODO: custom exception?
+        # TODO: custom exception 404
         raise msg
     end
   end

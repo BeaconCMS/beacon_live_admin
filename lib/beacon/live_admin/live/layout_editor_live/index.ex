@@ -7,8 +7,7 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.Index do
   on_mount {Beacon.LiveAdmin.Hooks.Authorized, {:layout_editor, :index}}
 
   @impl true
-  def menu_link(:index), do: {:ok, "Layouts"}
-  def menu_link(_), do: :skip
+  def menu_link(_, :index), do: {:root, "Layouts"}
 
   @impl true
   def mount(_params, _session, socket) do

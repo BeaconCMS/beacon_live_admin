@@ -5,7 +5,8 @@ defmodule Beacon.LiveAdmin.PageEditorLive.New do
   alias Beacon.Content
 
   @impl true
-  def menu_link(_), do: :skip
+  def menu_link("/pages", :new), do: {:submenu, "Pages"}
+  def menu_link(_, _), do: :skip
 
   @impl true
   def mount(_params, _session, socket) do

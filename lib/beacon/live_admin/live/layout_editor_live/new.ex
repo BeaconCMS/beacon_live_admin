@@ -5,7 +5,8 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.New do
   alias Beacon.Content
 
   @impl true
-  def menu_link(_), do: :skip
+  def menu_link("/layouts", :new), do: {:submenu, "Layouts"}
+  def menu_link(_, _), do: :skip
 
   @impl true
   def mount(_params, _session, socket) do
