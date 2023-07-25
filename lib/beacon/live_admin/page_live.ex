@@ -82,6 +82,10 @@ defmodule Beacon.LiveAdmin.PageLive do
     {:noreply, socket}
   end
 
+  def handle_info(msg, socket) do
+    maybe_apply_module(socket, :handle_info, [msg], &{:noreply, &1})
+  end
+
   defp lookup_page!(socket, url) do
     %URI{host: host, path: path} = URI.parse(url)
 

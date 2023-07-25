@@ -83,9 +83,12 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
 
   defp save_page(socket, :edit, page_params) do
     case Content.update_page(socket.assigns.site, socket.assigns.page, page_params) do
-      {:ok, _page} ->
+      {:ok, page} ->
+        changeset = Content.change_page(socket.assigns.site, page)
+
         {:noreply,
          socket
+         |> assign_form(changeset)
          |> put_flash(:info, "Page updated successfully")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
@@ -97,6 +100,8 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
   def render(assigns) do
     ~H"""
     <div>
+      <Beacon.LiveAdmin.AdminComponents.page_menu socket={@socket} site={@site} current_action={@live_action} page_id={@page.id} />
+
       <.header>
         <%= @page_title %>
         <:actions>

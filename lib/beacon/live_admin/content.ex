@@ -50,7 +50,7 @@ defmodule Beacon.LiveAdmin.Content do
   end
 
   def validate_page(site, page, params) do
-    call(site, Beacon.Content, :validate_page, [site, page, params])
+    call(site, Beacon.Content, :validate_page, [page, params])
   end
 
   def create_page(site, attrs) do
@@ -67,6 +67,14 @@ defmodule Beacon.LiveAdmin.Content do
 
   def get_page(site, id) do
     call(site, Beacon.Content, :get_page, [id])
+  end
+
+  def get_latest_page_event(site, id) do
+    call(site, Beacon.Content, :get_latest_page_event, [site, id])
+  end
+
+  def list_page_events(site, id) do
+    call(site, Beacon.Content, :list_page_events, [site, id])
   end
 
   def list_pages(site, opts \\ []) do
