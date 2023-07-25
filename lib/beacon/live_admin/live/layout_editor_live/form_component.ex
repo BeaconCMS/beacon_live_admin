@@ -100,7 +100,7 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.FormComponent do
         <%= layout_name(@form.source) %>
 
         <div class="text-sm text-gray-500">
-          <.link patch={beacon_live_admin_path(@socket, @site, "/layouts/#{@beacon_layout.id}/history")}>
+          <.link patch={beacon_live_admin_path(@socket, @site, "/layouts/#{@beacon_layout.id}/revisions")}>
             <span :if={@status == :created}>
               <.icon name="hero-document-plus-solid" class="h-5 w-5" /> <%= display_status(@status) %>
             </span>

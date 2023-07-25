@@ -1,11 +1,11 @@
-defmodule Beacon.LiveAdmin.LayoutEditorLive.History do
+defmodule Beacon.LiveAdmin.LayoutEditorLive.Revisions do
   @moduledoc false
 
   use Beacon.LiveAdmin.PageBuilder
   alias Beacon.LiveAdmin.Content
 
   @impl true
-  def menu_link("/layouts", :history), do: {:submenu, "Layouts"}
+  def menu_link("/layouts", :revisions), do: {:submenu, "Layouts"}
   def menu_link(_, _), do: :skip
 
   @impl true
@@ -36,12 +36,12 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.History do
             <span :if={idx == 0} class="bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded ml-3">Latest</span>
           </h3>
 
-          <ol :if={event.snapshot}>
+          <ol :if={event.snapshot} class="space-y-3">
             <li>
               <h4 class="text-gray-600">Title</h4>
               <%= event.snapshot.layout.title %>
             </li>
-            <li class="mt-4">
+            <li>
               <h4 class="text-gray-600">Body</h4>
               <div class="w-full mt-2">
                 <div class="py-3 bg-[#282c34] rounded-lg">
@@ -54,7 +54,7 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.History do
                 </div>
               </div>
             </li>
-            <li class="mt-4">
+            <li>
               <h4 class="text-gray-600">Meta Tags</h4>
               <%= render_meta_tags(event.snapshot.layout.meta_tags) %>
             </li>

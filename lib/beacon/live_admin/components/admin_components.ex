@@ -36,7 +36,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
       <.link patch={beacon_live_admin_path(@socket, @site, "/layouts/#{@layout_id}/meta_tags")} class={if(@current_action == :meta_tags, do: @active_class, else: @regular_class)}>Meta Tags</.link>
     </li>
     <li class="mr-2">
-      <.link patch={beacon_live_admin_path(@socket, @site, "/layouts/#{@layout_id}/history")} class={if(@current_action == :history, do: @active_class, else: @regular_class)}>History</.link>
+      <.link patch={beacon_live_admin_path(@socket, @site, "/layouts/#{@layout_id}/revisions")} class={if(@current_action == :revisions, do: @active_class, else: @regular_class)}>Revisions</.link>
     </li>
     """
   end
@@ -76,7 +76,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
       <.link patch={beacon_live_admin_path(@socket, @site, "/pages/#{@page_id}/schema")} class={if(@current_action == :schema, do: @active_class, else: @regular_class)}>Schema</.link>
     </li>
     <li class="mr-2">
-      <.link patch={beacon_live_admin_path(@socket, @site, "/pages/#{@page_id}/history")} class={if(@current_action == :history, do: @active_class, else: @regular_class)}>History</.link>
+      <.link patch={beacon_live_admin_path(@socket, @site, "/pages/#{@page_id}/revisions")} class={if(@current_action == :revisions, do: @active_class, else: @regular_class)}>Revisions</.link>
     </li>
     """
   end
