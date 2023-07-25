@@ -11,7 +11,6 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.MetaTags do
   def menu_link("/layouts", :meta_tags), do: {:submenu, "Layouts"}
   def menu_link(_, _), do: :skip
 
-
   @impl true
   def handle_params(%{"id" => id}, _url, socket) do
     site = socket.assigns.beacon_page.site

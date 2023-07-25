@@ -58,10 +58,23 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Revisions do
               <div class="w-full mt-2">
                 <div class="py-3 bg-[#282c34] rounded-lg">
                   <LiveMonacoEditor.code_editor
-                    path={event.snapshot.id}
+                    path={event.snapshot.id <> "-body"}
                     style="min-height: 200px; width: 100%;"
                     value={event.snapshot.page.template}
                     opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => "html", "readOnly" => "true"})}
+                  />
+                </div>
+              </div>
+            </li>
+            <li>
+              <h4 class="text-gray-600">Schema</h4>
+              <div class="w-full mt-2">
+                <div class="py-3 bg-[#282c34] rounded-lg">
+                  <LiveMonacoEditor.code_editor
+                    path={event.snapshot.id <> "-schema"}
+                    style="min-height: 200px; width: 100%;"
+                    value={Jason.encode!(event.snapshot.page.raw_schema, pretty: true)}
+                    opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => "json", "readOnly" => "true"})}
                   />
                 </div>
               </div>
