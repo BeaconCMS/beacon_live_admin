@@ -115,7 +115,11 @@ defmodule Beacon.LiveAdmin.Router do
   @doc false
   def __pages__(additional_pages) do
     # TODO validate additional_pages
-    additional_pages = additional_pages || []
+    additional_pages =
+      Enum.map(additional_pages || [], fn
+        {_path, _module, _live_action, _opts} = page -> page
+        {path, module, live_action} -> {path, module, live_action, %{}}
+      end)
 
     [
       {"/layouts", Beacon.LiveAdmin.LayoutEditorLive.Index, :index, %{}},
