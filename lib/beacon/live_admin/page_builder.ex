@@ -53,7 +53,10 @@ defmodule Beacon.LiveAdmin.PageBuilder do
     quote location: :keep, bind_quoted: [opts: opts] do
       use Phoenix.Component
       import Beacon.LiveAdmin.CoreComponents
-      import Beacon.LiveAdmin.Router, only: [beacon_live_admin_path: 1, beacon_live_admin_path: 3, beacon_live_admin_path: 4]
+
+      import Beacon.LiveAdmin.Router,
+        only: [beacon_live_admin_path: 1, beacon_live_admin_path: 3, beacon_live_admin_path: 4]
+
       import Phoenix.LiveView
       alias Phoenix.LiveView.JS
 
