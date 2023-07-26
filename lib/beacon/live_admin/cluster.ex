@@ -3,72 +3,38 @@ defmodule Beacon.LiveAdmin.Cluster do
   alias Beacon.LiveAdmin.Config
   alias Beacon.LiveAdmin.PubSub
 
+  @name __MODULE__
+  @timeout :timer.minutes(1)
   @ets_table :beacon_live_admin_sites
 
-  @doc false
   def start_link(opts) do
-    GenServer.start_link(__MODULE__, opts, name: Cluster)
+    GenServer.start_link(__MODULE__, opts, name: @name)
   end
 
-  @doc false
   @impl true
   def init(opts) do
-    :net_kernel.monitor_nodes(true, node_type: :all)
+    :ok = :net_kernel.monitor_nodes(true, node_type: :all)
     {:ok, opts}
   end
 
-  @doc false
   def discover_sites do
-    # add or remove nodes from ets state when nodes changes
-    # instead of recreating everything
-    :ets.delete_all_objects(@ets_table)
-
-    nodes()
-    |> Map.new(fn node ->
-      try do
-        sites = :erpc.call(node, Beacon.Registry, :running_sites, [], :timer.seconds(10))
-        {node, sites}
-      rescue
-        _exception ->
-          {node, []}
-      end
-    end)
-    |> group_sites()
-    |> Map.new(fn site ->
-      true = :ets.insert(@ets_table, site)
-      site
-    end)
+    GenServer.call(@name, :discover_sites, @timeout)
   end
 
-  @doc false
   def reload_sites! do
-    sites = discover_sites()
+    GenServer.call(@name, :reload_sites, @timeout)
+  end
 
-    for {site, [node | _]} <- sites do
-      for field <- Config.extra_page_fields(site) do
-        {:module, ^field} = :erpc.call(node, Beacon.Cluster, :load_module, [Node.self(), field])
-      end
+  def maybe_reload_sites! do
+    case running_sites() do
+      [] -> reload_sites!()
+      _ -> :skip
     end
-
-    PubSub.notify_sites_changed(__MODULE__)
-
-    {:ok, sites}
   end
 
   @doc false
   def nodes do
     [Node.self()] ++ Node.list()
-  end
-
-  @doc false
-  def group_sites(mapping) do
-    Enum.reduce(mapping, %{}, fn {node, sites}, acc ->
-      new = :maps.from_list(:lists.map(&{&1, [node]}, sites))
-
-      Map.merge(acc, new, fn _k, v1, v2 ->
-        Enum.dedup(v1 ++ v2)
-      end)
-    end)
   end
 
   @doc false
@@ -118,16 +84,74 @@ defmodule Beacon.LiveAdmin.Cluster do
 
   ## Callbacks
 
+  @impl true
+  def handle_call(:discover_sites, _from, state) do
+    sites = do_discover_sites()
+    {:reply, sites, state}
+  end
+
+  def handle_call(:reload_sites, _from, state) do
+    sites = do_reload_sites!()
+    {:reply, sites, state}
+  end
+
+  defp do_discover_sites do
+    # add or remove nodes from ets state when nodes changes
+    # instead of recreating everything
+    :ets.delete_all_objects(@ets_table)
+
+    nodes()
+    |> Map.new(fn node ->
+      try do
+        sites = :erpc.call(node, Beacon.Registry, :running_sites, [], :timer.seconds(10))
+        {node, sites}
+      rescue
+        _exception ->
+          {node, []}
+      end
+    end)
+    |> group_sites()
+    |> Map.new(fn site ->
+      true = :ets.insert(@ets_table, site)
+      site
+    end)
+  end
+
+  defp do_reload_sites! do
+    sites = do_discover_sites()
+
+    for {site, [node | _]} <- sites do
+      for field <- Config.extra_page_fields(site) do
+        {:module, ^field} = :erpc.call(node, Beacon.Cluster, :load_module, [Node.self(), field])
+      end
+    end
+
+    PubSub.notify_sites_changed(__MODULE__)
+
+    sites
+  end
+
+  @doc false
+  def group_sites(mapping) do
+    Enum.reduce(mapping, %{}, fn {node, sites}, acc ->
+      new = :maps.from_list(:lists.map(&{&1, [node]}, sites))
+
+      Map.merge(acc, new, fn _k, v1, v2 ->
+        Enum.dedup(v1 ++ v2)
+      end)
+    end)
+  end
+
   @doc false
   @impl true
   def handle_info({:nodeup, _, _}, state) do
-    {:ok, _sites} = reload_sites!() |> dbg
+    do_reload_sites!()
     {:noreply, state}
   end
 
   @doc false
   def handle_info({:nodedown, _, _}, state) do
-    {:ok, _sites} = reload_sites!() |> dbg
+    do_reload_sites!()
     {:noreply, state}
   end
 end

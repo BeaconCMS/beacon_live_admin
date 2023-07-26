@@ -7,6 +7,7 @@ defmodule Beacon.LiveAdmin.PageLive do
   @moduledoc false
 
   use Beacon.LiveAdmin.Web, :live_view
+  alias Beacon.LiveAdmin.Cluster
   alias Beacon.LiveAdmin.PageBuilder.Menu
   alias Beacon.LiveAdmin.PageBuilder.Page
   alias Beacon.LiveAdmin.Private
@@ -20,6 +21,8 @@ defmodule Beacon.LiveAdmin.PageLive do
       # TODO: pubsub cluster
       # TODO: nodedow -> notify/alert user
     end
+
+    Cluster.maybe_reload_sites!()
 
     sites = Beacon.LiveAdmin.Cluster.running_sites()
     %{"pages" => pages, "beacon_live_admin_page_url" => current_url} = session
