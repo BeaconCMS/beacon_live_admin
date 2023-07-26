@@ -5,8 +5,6 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.MetaTags do
   alias Beacon.LiveAdmin.Content
   alias Beacon.LiveAdmin.MetaTagsComponent
 
-  @default_attributes ["name", "property", "content"]
-
   @impl true
   def menu_link("/layouts", :meta_tags), do: {:submenu, "Layouts"}
   def menu_link(_, _), do: :skip

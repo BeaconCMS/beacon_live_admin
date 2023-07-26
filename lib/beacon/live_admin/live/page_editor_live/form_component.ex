@@ -15,7 +15,8 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
      |> assign(:layouts, layouts)
      |> assign(:language, language(page.format))
      |> assign(:template, page.template)
-     |> assign(:changed_template, page.template)}
+     |> assign(:changed_template, page.template)
+     |> assign_extra_fields(changeset)}
   end
 
   def update(%{changed_template: changed_template}, socket) do
@@ -24,6 +25,20 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
 
   defp assign_form(socket, changeset) do
     assign(socket, :form, to_form(changeset))
+  end
+
+  defp assign_extra_fields(socket, changeset) do
+    params = Ecto.Changeset.get_field(changeset, :extra)
+
+    extra_fields =
+      Content.page_extra_fields(
+        socket.assigns.page.site,
+        socket.assigns.form,
+        params,
+        changeset.errors
+      )
+
+    assign(socket, :extra_fields, extra_fields)
   end
 
   @impl true
@@ -41,7 +56,11 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
 
   def handle_event("validate", %{"page" => page_params}, socket) do
     changeset = Content.validate_page(socket.assigns.site, socket.assigns.page, page_params)
-    {:noreply, assign_form(socket, changeset)}
+
+    {:noreply,
+     socket
+     |> assign_form(changeset)
+     |> assign_extra_fields(changeset)}
   end
 
   def handle_event("save", %{"page" => page_params}, socket) do
@@ -89,6 +108,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
         {:noreply,
          socket
          |> assign_form(changeset)
+         |> assign_extra_fields(changeset)
          |> put_flash(:info, "Page updated successfully")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
@@ -145,6 +165,10 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
             <.input field={f[:layout_id]} type="select" options={layouts_to_options(@layouts)} label="Layout" />
             <.input field={f[:format]} type="select" label="Format" options={template_format_options(@site)} />
             <.input field={f[:template]} type="hidden" value={@changed_template} />
+
+            <%= for mod <- extra_page_fields(@site) do %>
+              <%= extra_page_field(@extra_fields, mod) %>
+            <% end %>
           </.form>
         </div>
         <div class="col-span-2">
@@ -174,4 +198,17 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
   defp language("heex" = _format), do: "html"
   defp language(:heex), do: "html"
   defp language(format), do: to_string(format)
+
+  defp extra_page_fields(site), do: Config.extra_page_fields(site)
+
+  defp extra_page_field(extra_fields, mod) do
+    env = __ENV__
+    field = extra_fields[mod.name()]
+
+    Phoenix.LiveView.TagEngine.component(
+      &mod.render/1,
+      [field: field],
+      {env.module, env.function, env.file, env.line}
+    )
+  end
 end
