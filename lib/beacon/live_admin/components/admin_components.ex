@@ -10,7 +10,11 @@ defmodule Beacon.LiveAdmin.AdminComponents do
   attr :layout_id, :string
 
   def layout_menu(assigns) do
-    assigns = assign(assigns, active_class: @menu_link_active_class, regular_class: @menu_link_regular_class)
+    assigns =
+      assign(assigns,
+        active_class: @menu_link_active_class,
+        regular_class: @menu_link_regular_class
+      )
 
     ~H"""
     <div class="text-sm font-medium text-center text-gray-500 border-b border-gray-200 mb-10">
@@ -47,7 +51,11 @@ defmodule Beacon.LiveAdmin.AdminComponents do
   attr :page_id, :string
 
   def page_menu(assigns) do
-    assigns = assign(assigns, active_class: @menu_link_active_class, regular_class: @menu_link_regular_class)
+    assigns =
+      assign(assigns,
+        active_class: @menu_link_active_class,
+        regular_class: @menu_link_regular_class
+      )
 
     ~H"""
     <div class="text-sm font-medium text-center text-gray-500 border-b border-gray-200 mb-10">
