@@ -2,15 +2,16 @@ defmodule Beacon.LiveAdmin.HomeLive do
   @moduledoc false
 
   use Beacon.LiveAdmin.Web, :live_view
+  alias Beacon.LiveAdmin.Cluster
+  alias Beacon.LiveAdmin.PubSub
 
   @impl true
   def mount(_params, _session, socket) do
     if connected?(socket) do
-      :net_kernel.monitor_nodes(true, node_type: :all)
+      PubSub.subscribe()
     end
 
-    running_sites = Beacon.LiveAdmin.Cluster.running_sites()
-    {:ok, assign(socket, :running_sites, running_sites)}
+    {:ok, assign(socket, :running_sites, Cluster.running_sites())}
   end
 
   @impl true
@@ -57,13 +58,7 @@ defmodule Beacon.LiveAdmin.HomeLive do
   end
 
   @impl true
-  def handle_info({:nodeup, _, _}, socket) do
-    Beacon.LiveAdmin.Cluster.discover_sites()
-    {:noreply, assign(socket, :running_sites, Beacon.LiveAdmin.Cluster.running_sites())}
-  end
-
-  def handle_info({:nodedown, _, _}, socket) do
-    Beacon.LiveAdmin.Cluster.discover_sites()
+  def handle_info({Cluster, :sites_changed}, socket) do
     {:noreply, assign(socket, :running_sites, Beacon.LiveAdmin.Cluster.running_sites())}
   end
 end

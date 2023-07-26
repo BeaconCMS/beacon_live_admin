@@ -1,18 +1,23 @@
 defmodule Beacon.LiveAdmin.Cluster do
+  use GenServer
+  alias Beacon.LiveAdmin.Config
+  alias Beacon.LiveAdmin.PubSub
+
   @ets_table :beacon_live_admin_sites
 
-  @doc """
-  Scans the cluster to find running sites and store them in a ETS table.
+  @doc false
+  def start_link(opts) do
+    GenServer.start_link(__MODULE__, opts, name: Cluster)
+  end
 
-    ## Examples
+  @doc false
+  @impl true
+  def init(opts) do
+    :net_kernel.monitor_nodes(true, node_type: :all)
+    {:ok, opts}
+  end
 
-        iex> Beacon.LiveAdmin.Cluster.discover_sites()
-        %{
-          my_site: [:"node_a@region_a", :"node_b@region_b"], my_blog: [:"node_b@region_b"],
-          my_blog: [:"node_a@region_a"]
-        }
-
-  """
+  @doc false
   def discover_sites do
     # add or remove nodes from ets state when nodes changes
     # instead of recreating everything
@@ -36,6 +41,21 @@ defmodule Beacon.LiveAdmin.Cluster do
   end
 
   @doc false
+  def reload_sites! do
+    sites = discover_sites()
+
+    for {site, [node | _]} <- sites do
+      for field <- Config.extra_page_fields(site) do
+        {:module, ^field} = :erpc.call(node, Beacon.Cluster, :load_module, [Node.self(), field])
+      end
+    end
+
+    PubSub.notify_sites_changed(__MODULE__)
+
+    {:ok, sites}
+  end
+
+  @doc false
   def nodes do
     [Node.self()] ++ Node.list()
   end
@@ -51,6 +71,7 @@ defmodule Beacon.LiveAdmin.Cluster do
     end)
   end
 
+  @doc false
   def running_sites do
     @ets_table
     |> :ets.match({:"$1", :_})
@@ -93,5 +114,20 @@ defmodule Beacon.LiveAdmin.Cluster do
         _ -> nil
       end
     end
+  end
+
+  ## Callbacks
+
+  @doc false
+  @impl true
+  def handle_info({:nodeup, _, _}, state) do
+    {:ok, _sites} = reload_sites!() |> dbg
+    {:noreply, state}
+  end
+
+  @doc false
+  def handle_info({:nodedown, _, _}, state) do
+    {:ok, _sites} = reload_sites!() |> dbg
+    {:noreply, state}
   end
 end

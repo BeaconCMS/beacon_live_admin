@@ -17,7 +17,8 @@ defmodule Beacon.LiveAdmin.PageLive do
     site = String.to_existing_atom(site)
 
     if connected?(socket) do
-      :net_kernel.monitor_nodes(true, node_type: :all)
+      # TODO: pubsub cluster
+      # TODO: nodedow -> notify/alert user
     end
 
     sites = Beacon.LiveAdmin.Cluster.running_sites()
@@ -71,17 +72,7 @@ defmodule Beacon.LiveAdmin.PageLive do
     maybe_apply_module(socket, :handle_event, [event, params], &{:noreply, &1})
   end
 
-  # TODO nodeup
   @impl true
-  def handle_info({:nodeup, _, _}, socket) do
-    {:noreply, socket}
-  end
-
-  # TODO nodedown
-  def handle_info({:nodedown, _, _}, socket) do
-    {:noreply, socket}
-  end
-
   def handle_info(msg, socket) do
     maybe_apply_module(socket, :handle_info, [msg], &{:noreply, &1})
   end

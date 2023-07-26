@@ -6,7 +6,8 @@ defmodule Beacon.LiveAdmin.Application do
   @impl true
   def start(_type, _args) do
     children = [
-      {Phoenix.PubSub, name: Beacon.LiveAdmin.PubSub}
+      {Phoenix.PubSub, name: Beacon.LiveAdmin.PubSub},
+      Beacon.LiveAdmin.Cluster
     ]
 
     :ets.new(:beacon_live_admin_sites, [:set, :named_table, :public, read_concurrency: true])
