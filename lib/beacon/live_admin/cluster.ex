@@ -1,6 +1,5 @@
 defmodule Beacon.LiveAdmin.Cluster do
   use GenServer
-  alias Beacon.LiveAdmin.Config
   alias Beacon.LiveAdmin.PubSub
 
   @name __MODULE__

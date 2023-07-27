@@ -32,7 +32,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
 
     extra_fields =
       Content.page_extra_fields(
-        socket.assigns.page.site,
+        socket.assigns.site,
         socket.assigns.form,
         params,
         changeset.errors

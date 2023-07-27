@@ -62,7 +62,7 @@ defmodule Beacon.LiveAdmin.Content do
   end
 
   def validate_page(site, page, params) do
-    call(site, Beacon.Content, :validate_page, [page, params])
+    call(site, Beacon.Content, :validate_page, [site, page, params])
   end
 
   def create_page(site, attrs) do
