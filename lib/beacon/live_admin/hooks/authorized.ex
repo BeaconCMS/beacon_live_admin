@@ -15,7 +15,7 @@ defmodule Beacon.LiveAdmin.Hooks.Authorized do
   end
 
   # site is not defined on the initial page
-  def on_mount({_mod, _action}, params, _session, socket) do
+  def on_mount({_mod, _action}, _params, _session, socket) do
     {:cont, socket}
   end
 end

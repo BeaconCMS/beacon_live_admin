@@ -11,7 +11,7 @@ defmodule Beacon.LiveAdmin.HomeLive do
       PubSub.subscribe()
     end
 
-    Cluster.maybe_reload_sites!()
+    Cluster.maybe_discover_sites()
 
     {:ok, assign(socket, :running_sites, Cluster.running_sites())}
   end

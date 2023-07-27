@@ -21,13 +21,9 @@ defmodule Beacon.LiveAdmin.Cluster do
     GenServer.call(@name, :discover_sites, @timeout)
   end
 
-  def reload_sites! do
-    GenServer.call(@name, :reload_sites, @timeout)
-  end
-
-  def maybe_reload_sites! do
+  def maybe_discover_sites() do
     case running_sites() do
-      [] -> reload_sites!()
+      [] -> discover_sites()
       _ -> :skip
     end
   end
@@ -90,41 +86,27 @@ defmodule Beacon.LiveAdmin.Cluster do
     {:reply, sites, state}
   end
 
-  def handle_call(:reload_sites, _from, state) do
-    sites = do_reload_sites!()
-    {:reply, sites, state}
-  end
-
   defp do_discover_sites do
     # add or remove nodes from ets state when nodes changes
     # instead of recreating everything
     :ets.delete_all_objects(@ets_table)
 
-    nodes()
-    |> Map.new(fn node ->
-      try do
-        sites = :erpc.call(node, Beacon.Registry, :running_sites, [], :timer.seconds(10))
-        {node, sites}
-      rescue
-        _exception ->
-          {node, []}
-      end
-    end)
-    |> group_sites()
-    |> Map.new(fn site ->
-      true = :ets.insert(@ets_table, site)
-      site
-    end)
-  end
-
-  defp do_reload_sites! do
-    sites = do_discover_sites()
-
-    for {site, [node | _]} <- sites do
-      for field <- Config.extra_page_fields(site) do
-        {:module, ^field} = :erpc.call(node, Beacon.Cluster, :load_module, [Node.self(), field])
-      end
-    end
+    sites =
+      nodes()
+      |> Map.new(fn node ->
+        try do
+          sites = :erpc.call(node, Beacon.Registry, :running_sites, [], :timer.seconds(10))
+          {node, sites}
+        rescue
+          _exception ->
+            {node, []}
+        end
+      end)
+      |> group_sites()
+      |> Map.new(fn site ->
+        true = :ets.insert(@ets_table, site)
+        site
+      end)
 
     PubSub.notify_sites_changed(__MODULE__)
 
@@ -145,13 +127,13 @@ defmodule Beacon.LiveAdmin.Cluster do
   @doc false
   @impl true
   def handle_info({:nodeup, _, _}, state) do
-    do_reload_sites!()
+    do_discover_sites()
     {:noreply, state}
   end
 
   @doc false
   def handle_info({:nodedown, _, _}, state) do
-    do_reload_sites!()
+    do_discover_sites()
     {:noreply, state}
   end
 end

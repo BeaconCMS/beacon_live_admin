@@ -167,7 +167,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
             <.input field={f[:template]} type="hidden" value={@changed_template} />
 
             <%= for mod <- extra_page_fields(@site) do %>
-              <%= extra_page_field(@extra_fields, mod) %>
+              <%= extra_page_field(@site, @extra_fields, mod) %>
             <% end %>
           </.form>
         </div>
@@ -201,14 +201,10 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
 
   defp extra_page_fields(site), do: Config.extra_page_fields(site)
 
-  defp extra_page_field(extra_fields, mod) do
+  defp extra_page_field(site, extra_fields, mod) do
     env = __ENV__
-    field = extra_fields[mod.name()]
-
-    Phoenix.LiveView.TagEngine.component(
-      &mod.render/1,
-      [field: field],
-      {env.module, env.function, env.file, env.line}
-    )
+    name = Content.page_field_name(site, mod)
+    html = Content.render_page_field(site, mod, extra_fields[name], env)
+    {:safe, html}
   end
 end

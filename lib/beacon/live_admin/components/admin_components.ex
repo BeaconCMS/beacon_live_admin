@@ -1,5 +1,6 @@
 defmodule Beacon.LiveAdmin.AdminComponents do
-  use Beacon.LiveAdmin.Web, :live_component
+  use Phoenix.Component
+  import Beacon.LiveAdmin.Router, only: [beacon_live_admin_path: 3]
 
   @menu_link_active_class "inline-block p-4 text-blue-600 border-b-2 border-blue-600 rounded-t-lg active"
   @menu_link_regular_class "inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300"

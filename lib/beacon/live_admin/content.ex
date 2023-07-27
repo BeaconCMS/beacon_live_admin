@@ -53,6 +53,14 @@ defmodule Beacon.LiveAdmin.Content do
     call(site, Beacon.Content.PageField, :extra_fields, [site, form, params, errors])
   end
 
+  def page_field_name(site, mod) do
+    call(site, mod, :name, [])
+  end
+
+  def render_page_field(site, mod, field, env) do
+    call(site, Beacon.Content.PageField, :render_field, [mod, field, env])
+  end
+
   def validate_page(site, page, params) do
     call(site, Beacon.Content, :validate_page, [page, params])
   end
