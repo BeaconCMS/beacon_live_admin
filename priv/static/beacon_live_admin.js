@@ -864,6 +864,34 @@ var BeaconLiveAdmin = (() => {
       hook.pushEvent(eventName, { value: editor.getValue() });
     });
   });
+  window.addEventListener("beacon_admin:clipcopy", (event) => {
+    const result_id = `${event.target.id}-copy-to-clipboard-result`;
+    const el = document.getElementById(result_id);
+    if ("clipboard" in navigator) {
+      if (event.target.tagName === "INPUT") {
+        txt = event.target.value;
+      } else {
+        txt = event.target.textContent;
+      }
+      navigator.clipboard.writeText(txt).then(() => {
+        el.innerText = "Copied to clipboard";
+        el.classList.remove("invisible", "text-red-500", "opacity-0");
+        el.classList.add("text-green-500", "opacity-100", "-translate-y-2");
+        setTimeout(function() {
+          el.classList.remove("text-green-500", "opacity-100", "-translate-y-2");
+          el.classList.add("invisible", "text-red-500", "opacity-0");
+        }, 2e3);
+      }).catch(() => {
+        el.innerText = "Could not copy";
+        el.classList.remove("invisible", "text-green-500", "opacity-0");
+        el.classList.add("text-red-500", "opacity-100", "-translate-y-2");
+      });
+    } else {
+      alert(
+        "Sorry, your browser does not support clipboard copy."
+      );
+    }
+  });
   var socketPath = document.querySelector("html").getAttribute("phx-socket") || "/live";
   var csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content");
   var liveSocket = new LiveView.LiveSocket(socketPath, Phoenix.Socket, {
