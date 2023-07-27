@@ -88,4 +88,12 @@ defmodule Beacon.LiveAdmin.AdminComponents do
     </li>
     """
   end
+
+  attr :source, :string, default: nil
+
+  def thumbnail(assigns) do
+    ~H"""
+    <image src={@source} width="50" height="50" />
+    """
+  end
 end

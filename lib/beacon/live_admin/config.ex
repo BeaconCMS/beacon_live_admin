@@ -14,8 +14,8 @@ defmodule Beacon.LiveAdmin.Config do
     fetch!(site).template_formats
   end
 
-  def allowed_media_types(site) do
-    fetch!(site).allowed_media_types
+  def allowed_media_accept_types(site) do
+    fetch!(site).allowed_media_accept_types
   end
 
   def extra_page_fields(site) do

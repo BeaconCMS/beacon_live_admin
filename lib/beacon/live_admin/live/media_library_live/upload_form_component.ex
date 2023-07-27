@@ -13,7 +13,7 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.UploadFormComponent do
       |> allow_upload(:asset,
         auto_upload: true,
         progress: &handle_progres/3,
-        accept: Config.allowed_media_types(assigns.site),
+        accept: Config.allowed_media_accept_types(assigns.site),
         max_entries: 1
       )
 

@@ -6,7 +6,7 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.Index do
   alias Beacon.LiveAdmin.Authorization
   alias Beacon.MediaLibrary.Asset
 
-  on_mount {Beacon.LiveAdmin.Hooks.Authorized, {:page_editor, :index}}
+  on_mount {Beacon.LiveAdmin.Hooks.Authorized, {:media_library, :index}}
 
   @impl true
   def menu_link(_, action) when action in [:index, :upload, :show], do: {:root, "Media Library"}
@@ -93,6 +93,10 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.Index do
     MediaLibrary.list_assets(site)
   end
 
+  defp source_for(site, asset) do
+    MediaLibrary.url_for(site, asset)
+  end
+
   @impl true
   def render(assigns) do
     ~H"""
@@ -110,9 +114,9 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.Index do
     </form>
 
     <.table id="assets" rows={@assets} row_id={fn asset -> asset.id end}>
+      <:col :let={asset} label=""><Beacon.LiveAdmin.AdminComponents.thumbnail source={source_for(asset.site, asset.thumbnail)} /></:col>
       <:col :let={asset} label="Name"><%= asset.file_name %></:col>
       <:col :let={asset} label="Type"><%= asset.media_type %></:col>
-      <:col :let={asset} label="Site"><%= asset.site %></:col>
       <:action :let={asset}>
         <.link :if={Authorization.authorized?(@beacon_page.site, @agent, :upload, @authn_context)} patch={beacon_live_admin_path(@socket, @beacon_page.site, "/media_library/#{asset.id}")}>
           View
