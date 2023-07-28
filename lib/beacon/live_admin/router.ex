@@ -262,6 +262,20 @@ defmodule Beacon.LiveAdmin.Router do
   end
 
   @doc """
+  Generates a `url` with the proper admin prefix for a `site`.
+
+  ## Example
+
+      iex> Beacon.LiveAdmin.Router.beacon_live_admin_url(MyApp.Endpoint, @socket, :my_site, "/pages")
+      "https://myapp.com/my_admin/my_site/pages"
+
+  """
+  def beacon_live_admin_url(endpoint, conn_or_socket, site, path, params \\ %{})
+      when is_atom(site) and is_binary(path) do
+    endpoint.url() <> beacon_live_admin_path(conn_or_socket, site, path, params)
+  end
+
+  @doc """
   Generates the root path with the admin prefix.
 
   ## Example
