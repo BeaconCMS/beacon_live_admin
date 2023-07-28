@@ -19,16 +19,13 @@ defmodule Beacon.LiveAdmin.HomeLive do
   @impl true
   def render(assigns) do
     ~H"""
-<<<<<<< HEAD
+
     <div class="w-full min-h-screen bg-gray-50">
-=======
-    <div class="min-h-screen bg-gray-50">
       <header class="px-4 pt-7 sm:px-6 lg:px-8">
         <div class="max-w-screen-xl mx-auto">
           <h1 class="text-2xl font-medium leading-8 text-gray-900">Welcome Admin!</h1>
         </div>
       </header>
->>>>>>> a593bbf (WIP: Improve /admin page UI.)
       <main class="px-4 pt-10 sm:px-6 lg:px-8">
         <section aria-labelledby="admin-sites" class="h-[calc(100vh_-_60px)] max-w-screen-xl mx-auto bg-white rounded-t-[20px]">
           <div class="grid grid-cols-1 gap-6 p-6 md:grid-cols-2">
@@ -51,17 +48,13 @@ defmodule Beacon.LiveAdmin.HomeLive do
                     Pages
                   </.link>
 
-                  <.link
-<<<<<<< HEAD
+                  <.lin
                     href={Beacon.LiveAdmin.Router.beacon_live_admin_path(@socket, site, "/components")}
                     class="whitespace-nowrap text-sm leading-5 py-3.5  font-bold tracking-widest text-center uppercase bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 active:bg-blue-800 px-6 text-gray-50"
                   >
                     Components
                   </.link>
-
                   <.link
-=======
->>>>>>> a593bbf (WIP: Improve /admin page UI.)
                     href={Beacon.LiveAdmin.Router.beacon_live_admin_path(@socket, site, "/media_library")}
                     class="whitespace-nowrap text-sm leading-5 py-3.5  font-bold tracking-widest text-center uppercase bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 active:bg-blue-800 px-6 text-gray-50"
                   >

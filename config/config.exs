@@ -27,7 +27,7 @@ if Mix.env() == :dev do
       )
 
   config :tailwind,
-    version: "3.2.7",
+    version: "3.3.3",
     default: [
       args: ~w(
       --minify
