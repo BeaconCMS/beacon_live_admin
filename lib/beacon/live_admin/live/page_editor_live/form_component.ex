@@ -151,7 +151,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
             phx-value-id={@page.id}
             phx-target={@myself}
           >
-            Publish
+            Confirm
           </button>
         </div>
       </.modal>
