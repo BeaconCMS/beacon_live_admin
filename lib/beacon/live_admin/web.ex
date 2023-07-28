@@ -61,7 +61,14 @@ defmodule Beacon.LiveAdmin.Web do
       import Phoenix.HTML
       import Beacon.LiveAdmin.CoreComponents
       import Beacon.LiveAdmin.Gettext
-      import Beacon.LiveAdmin.Router, only: [beacon_live_admin_path: 3, beacon_live_admin_path: 4]
+
+      import Beacon.LiveAdmin.Router,
+        only: [
+          beacon_live_admin_path: 3,
+          beacon_live_admin_path: 4,
+          beacon_live_admin_static_path: 1
+        ]
+
       alias Phoenix.LiveView.JS
     end
   end
