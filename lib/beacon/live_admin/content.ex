@@ -97,4 +97,12 @@ defmodule Beacon.LiveAdmin.Content do
 
     call(site, Beacon.Content, :list_pages, [site, opts])
   end
+
+  def create_page_variant(site, attrs) do
+    call(site, Beacon.Content, :create_page_variant, [attrs])
+  end
+
+  def update_page_variants(site, page, variants) do
+    call(site, Beacon.Content, :update_page_variants, [page, variants])
+  end
 end

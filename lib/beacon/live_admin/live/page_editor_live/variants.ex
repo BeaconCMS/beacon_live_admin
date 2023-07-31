@@ -11,46 +11,28 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
     {:ok, socket}
   end
 
-  def handle_params(%{"id" => id} = params, _url, socket) do
-    page = Content.get_page(socket.assigns.beacon_page.site, id)
+  def handle_params(params, _url, %{assigns: %{page: %{}}} = socket) do
+    {:noreply, assign_selected(socket, params["variant"])}
+  end
 
-    index =
-      params
-      |> Map.get("index", "0")
-      |> String.to_integer()
-
-    variants =
-      Enum.with_index(page.variants, fn variant, index ->
-        variant
-        |> Map.from_struct()
-        |> Map.put(:index, index)
-      end)
+  def handle_params(params, _url, socket) do
+    page = Content.get_page(socket.assigns.beacon_page.site, params["page"])
+    changeset = Ecto.Changeset.change({%{}, %{name: :string, weight: :integer}})
 
     socket =
-      assign(socket,
-        page: page,
-        variants: variants,
-        language: language(page.format),
-        template: Enum.at(variants, index).template
-      )
+      socket
+      |> assign(page: page)
+      |> assign(variant_changeset: changeset)
+      |> assign(language: language(page.format))
+      |> assign(page_title: "Variants")
+      |> assign_selected(params["variant"])
 
     {:noreply, socket}
   end
 
-  def handle_event("add", _, socket) do
-    new_variant = %{
-      name: "New Variant",
-      weight: 0,
-      template: IO.inspect(socket.assigns.page.template),
-      index: length(socket.assigns.variants)
-    }
-
-    {:noreply, assign(socket, variants: socket.assigns.variants ++ [new_variant])}
-  end
-
-  def handle_event("select-" <> index, _, socket) do
+  def handle_event("select-" <> variant_id, _, socket) do
     %{page: page} = socket.assigns
-    path = beacon_live_admin_path(socket, page.site, "/pages/#{page.id}/variants/#{index}")
+    path = beacon_live_admin_path(socket, page.site, "/pages/#{page.id}/variants/#{variant_id}")
 
     {:noreply, push_redirect(socket, to: path)}
   end
@@ -59,33 +41,90 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
     {:noreply, socket}
   end
 
+  def handle_event("save_changes", %{"variant" => params}, socket) do
+    %{page: page, selected: selected, beacon_page: %{site: site}} = socket.assigns
+
+    updated_variant = %{selected | name: params["name"], weight: params["weight"]}
+
+    updated_variants = [updated_variant | Enum.reject(page.variants, &(&1.id == selected.id))]
+
+    {:ok, updated_page} = Content.update_page_variants(site, page, updated_variants)
+
+    {:noreply, assign(socket, page: updated_page)}
+  end
+
+  def handle_event("create_new", _params, socket) do
+    %{page: page, beacon_page: %{site: site}} = socket.assigns
+    attrs = %{page_id: page.id, name: "New Variant", weight: 0, template: page.template}
+
+    {:ok, updated_page} = Content.create_page_variant(site, attrs)
+
+    {:noreply, assign(socket, page: updated_page)}
+  end
+
   def render(assigns) do
     ~H"""
     <div>
       <Beacon.LiveAdmin.AdminComponents.page_menu socket={@socket} site={@beacon_page.site} current_action={@live_action} page_id={@page.id} />
 
+      <.header>
+        <%= @page_title %>
+      </.header>
+
       <div class="mx-auto grid grid-cols-1 grid-rows-1 items-start gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
         <div>
-          <.button type="button" phx-click="add">
+          <.button type="button" phx-click="create_new">
             New Variant
           </.button>
-          <.table id="variants" rows={@variants} row_click={fn row -> "select-#{row.index}" end}>
+          <.table id="variants" rows={@page.variants} row_click={fn row -> "select-#{row.id}" end}>
             <:col :let={variant} :for={{attr, suffix} <- [{:name, ""}, {:weight, " (%)"}]} label={"#{attr}#{suffix}"}>
-              <%= variant[attr] %>
+              <%= Map.fetch!(variant, attr) %>
             </:col>
           </.table>
         </div>
 
         <div class="w-full col-span-2">
+          <.form :let={f} for={to_form(@variant_changeset, as: :variant)} class="flex items-center" phx-submit="save_changes">
+            <div class="text-4xl mr-4 w-max">
+              Name
+            </div>
+            <div class="w-1/2">
+              <.input field={f[:name]} type="text" value={@selected.name} />
+            </div>
+            <div class="text-4xl mx-4 w-max">
+              Weight
+            </div>
+            <div class="w-1/12">
+              <.input field={f[:weight]} type="number" value={@selected.weight} min="0" max="100" />
+            </div>
+            <.button phx-disable-with="Saving..." class="ml-4 w-1/6 uppercase">Save Changes</.button>
+          </.form>
           <div class="w-full mt-10 space-y-8">
             <div class="py-3 bg-[#282c34] rounded-lg">
-              <LiveMonacoEditor.code_editor path="variant" style="min-height: 1000px; width: 100%;" value={@template} opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => @language})} />
+              <LiveMonacoEditor.code_editor
+                path="variant"
+                style="min-height: 1000px; width: 100%;"
+                value={@selected.template}
+                opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => @language})}
+              />
             </div>
           </div>
         </div>
       </div>
     </div>
     """
+  end
+
+  defp assign_selected(socket, nil) do
+    case socket.assigns.page.variants do
+      [] -> assign(socket, selected: %{name: "", weight: "", template: ""})
+      [variant | _] -> assign(socket, selected: variant)
+    end
+  end
+
+  defp assign_selected(socket, variant_id) do
+    selected = Enum.find(socket.assigns.page.variants, &(&1.id == variant_id))
+    assign(socket, selected: selected)
   end
 
   defp language("heex" = _format), do: "html"
