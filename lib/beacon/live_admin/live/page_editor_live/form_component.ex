@@ -76,7 +76,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
         {:noreply,
          socket
          |> put_flash(:info, "Page published successfully")
-         |> push_navigate(to: to)}
+         |> push_navigate(to: to, replace: true)}
 
       {:error, _} ->
         {:noreply,
