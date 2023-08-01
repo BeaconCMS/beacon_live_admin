@@ -16,7 +16,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
   end
 
   def handle_params(params, _url, socket) do
-    page = Content.get_page(socket.assigns.beacon_page.site, params["page"])
+    page = Content.get_page(socket.assigns.beacon_page.site, params["page"], [:variants])
     changeset = Ecto.Changeset.change({%{}, %{name: :string, weight: :integer}})
 
     socket =
@@ -44,20 +44,22 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
   def handle_event("save_changes", %{"variant" => params}, socket) do
     %{page: page, selected: selected, beacon_page: %{site: site}} = socket.assigns
 
-    updated_variant = %{selected | name: params["name"], weight: params["weight"]}
+    attrs = %{name: params["name"], weight: params["weight"]}
+    {:ok, updated_page} = Content.update_variant_for_page(site, page, selected, attrs)
 
-    updated_variants = [updated_variant | Enum.reject(page.variants, &(&1.id == selected.id))]
+    socket =
+      socket
+      |> assign(page: updated_page)
+      |> assign_selected(params["variant"])
 
-    {:ok, updated_page} = Content.update_page_variants(site, page, updated_variants)
-
-    {:noreply, assign(socket, page: updated_page)}
+    {:noreply, socket}
   end
 
   def handle_event("create_new", _params, socket) do
     %{page: page, beacon_page: %{site: site}} = socket.assigns
-    attrs = %{page_id: page.id, name: "New Variant", weight: 0, template: page.template}
 
-    {:ok, updated_page} = Content.create_page_variant(site, attrs)
+    attrs = %{name: "New Variant", weight: 0, template: page.template}
+    {:ok, updated_page} = Content.create_variant_for_page(site, page, attrs)
 
     {:noreply, assign(socket, page: updated_page)}
   end

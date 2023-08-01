@@ -81,6 +81,10 @@ defmodule Beacon.LiveAdmin.Content do
     call(site, Beacon.Content, :get_page, [id])
   end
 
+  def get_page(site, id, preloads) do
+    call(site, Beacon.Content, :get_page, [id, preloads])
+  end
+
   def get_latest_page_event(site, id) do
     call(site, Beacon.Content, :get_latest_page_event, [site, id])
   end
@@ -98,11 +102,11 @@ defmodule Beacon.LiveAdmin.Content do
     call(site, Beacon.Content, :list_pages, [site, opts])
   end
 
-  def create_page_variant(site, attrs) do
-    call(site, Beacon.Content, :create_page_variant, [attrs])
+  def create_variant_for_page(site, page, attrs) do
+    call(site, Beacon.Content, :create_variant_for_page, [page, attrs])
   end
 
-  def update_page_variants(site, page, variants) do
-    call(site, Beacon.Content, :update_page_variants, [page, variants])
+  def update_variant_for_page(site, page, variant, attrs) do
+    call(site, Beacon.Content, :update_variant_for_page, [page, variant, attrs])
   end
 end
