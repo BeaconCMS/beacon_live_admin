@@ -12,6 +12,10 @@ defmodule Beacon.LiveAdmin.MediaLibrary do
     call(site, Beacon.MediaLibrary, :get_asset_by, [site, clauses])
   end
 
+  def soft_delete(site, asset) do
+    call(site, Beacon.MediaLibrary, :soft_delete, [asset])
+  end
+
   def list_assets(site) do
     call(site, Beacon.MediaLibrary, :list_assets, [site])
   end
