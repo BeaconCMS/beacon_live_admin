@@ -26,7 +26,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
       |> assign(language: language(page.format))
       |> assign(page_title: "Variants")
       |> assign_selected(params["variant"])
-      |> assign_variant_changeset()
+      |> assign_form()
 
     {:noreply, socket}
   end
@@ -45,25 +45,31 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
   def handle_event("validate", %{"page_variant" => params}, socket) do
     %{selected: selected, beacon_page: %{site: site}} = socket.assigns
 
-    changeset =
+    form =
       site
       |> Content.change_page_variant(selected, params)
       |> Map.put(:action, :insert)
+      |> to_form()
 
-    {:noreply, assign(socket, variant_changeset: changeset)}
+    {:noreply, assign(socket, form: form)}
   end
 
   def handle_event("save_changes", %{"page_variant" => params}, socket) do
     %{page: page, selected: selected, beacon_page: %{site: site}} = socket.assigns
 
     attrs = %{name: params["name"], weight: params["weight"], template: params["template"]}
-    {:ok, updated_page} = Content.update_variant_for_page(site, page, selected, attrs)
 
     socket =
-      socket
-      |> assign(page: updated_page)
-      |> assign_selected(selected.id)
-      |> assign_variant_changeset()
+      case Content.update_variant_for_page(site, page, selected, attrs) do
+        {:ok, updated_page} ->
+          socket
+          |> assign(page: updated_page)
+          |> assign_selected(selected.id)
+          |> assign_form()
+
+        {:error, changeset} ->
+          assign(socket, form: to_form(changeset))
+      end
 
     {:noreply, socket}
   end
@@ -99,7 +105,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
         </div>
 
         <div class="w-full col-span-2">
-          <.form :let={f} for={to_form(@variant_changeset)} class="flex items-center" phx-change="validate" phx-submit="save_changes">
+          <.form :let={f} for={@form} class="flex items-center" phx-change="validate" phx-submit="save_changes">
             <div class="text-4xl mr-4 w-max">
               Name
             </div>
@@ -116,6 +122,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
 
             <.button phx-disable-with="Saving..." class="ml-4 w-1/6 uppercase">Save Changes</.button>
           </.form>
+          <%= template_error(@form[:template]) %>
           <div class="w-full mt-10 space-y-8">
             <div class="py-3 bg-[#282c34] rounded-lg">
               <LiveMonacoEditor.code_editor
@@ -144,10 +151,36 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
     assign(socket, selected: selected, changed_template: selected.template)
   end
 
-  defp assign_variant_changeset(socket) do
+  defp assign_form(socket) do
     %{selected: selected, beacon_page: %{site: site}} = socket.assigns
-    changeset = Content.change_page_variant(site, selected)
-    assign(socket, variant_changeset: changeset)
+
+    form =
+      site
+      |> Content.change_page_variant(selected)
+      |> to_form()
+
+    assign(socket, form: form)
+  end
+
+  defp template_error(field) do
+    {message, compilation_error} =
+      case field.errors do
+        [{message, [compilation_error: compilation_error]} | _] -> {message, compilation_error}
+        [{message, _}] -> {message, nil}
+        _ -> {nil, nil}
+      end
+
+    assigns = %{
+      message: message,
+      compilation_error: compilation_error
+    }
+
+    ~H"""
+    <.error :if={@message}><%= @message %></.error>
+    <code :if={@compilation_error} class="mt-3 text-sm text-rose-600 phx-no-feedback:hidden">
+      <pre><%= @compilation_error %></pre>
+    </code>
+    """
   end
 
   defp language("heex" = _format), do: "html"
