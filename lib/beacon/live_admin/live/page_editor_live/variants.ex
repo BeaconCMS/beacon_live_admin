@@ -11,21 +11,22 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
     {:ok, socket}
   end
 
+  # For switching between selected variants, first load has already happened
   def handle_params(params, _url, %{assigns: %{page: %{}}} = socket) do
     {:noreply, assign_selected(socket, params["variant"])}
   end
 
+  # For the first page load
   def handle_params(params, _url, socket) do
     page = Content.get_page(socket.assigns.beacon_page.site, params["page"], [:variants])
-    changeset = Ecto.Changeset.change({%{}, %{name: :string, weight: :integer}})
 
     socket =
       socket
       |> assign(page: page)
-      |> assign(variant_changeset: changeset)
       |> assign(language: language(page.format))
       |> assign(page_title: "Variants")
       |> assign_selected(params["variant"])
+      |> assign_variant_changeset()
 
     {:noreply, socket}
   end
@@ -37,20 +38,32 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
     {:noreply, push_redirect(socket, to: path)}
   end
 
-  def handle_event("variant_editor_lost_focus", %{"value" => _template}, socket) do
-    {:noreply, socket}
+  def handle_event("variant_editor_lost_focus", %{"value" => template}, socket) do
+    {:noreply, assign(socket, changed_template: template)}
   end
 
-  def handle_event("save_changes", %{"variant" => params}, socket) do
+  def handle_event("validate", %{"page_variant" => params}, socket) do
+    %{selected: selected, beacon_page: %{site: site}} = socket.assigns
+
+    changeset =
+      site
+      |> Content.change_page_variant(selected, params)
+      |> Map.put(:action, :insert)
+
+    {:noreply, assign(socket, variant_changeset: changeset)}
+  end
+
+  def handle_event("save_changes", %{"page_variant" => params}, socket) do
     %{page: page, selected: selected, beacon_page: %{site: site}} = socket.assigns
 
-    attrs = %{name: params["name"], weight: params["weight"]}
+    attrs = %{name: params["name"], weight: params["weight"], template: params["template"]}
     {:ok, updated_page} = Content.update_variant_for_page(site, page, selected, attrs)
 
     socket =
       socket
       |> assign(page: updated_page)
-      |> assign_selected(params["variant"])
+      |> assign_selected(selected.id)
+      |> assign_variant_changeset()
 
     {:noreply, socket}
   end
@@ -86,19 +99,21 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
         </div>
 
         <div class="w-full col-span-2">
-          <.form :let={f} for={to_form(@variant_changeset, as: :variant)} class="flex items-center" phx-submit="save_changes">
+          <.form :let={f} for={to_form(@variant_changeset)} class="flex items-center" phx-change="validate" phx-submit="save_changes">
             <div class="text-4xl mr-4 w-max">
               Name
             </div>
             <div class="w-1/2">
-              <.input field={f[:name]} type="text" value={@selected.name} />
+              <.input field={f[:name]} type="text" />
             </div>
             <div class="text-4xl mx-4 w-max">
               Weight
             </div>
             <div class="w-1/12">
-              <.input field={f[:weight]} type="number" value={@selected.weight} min="0" max="100" />
+              <.input field={f[:weight]} type="number" min="0" max="100" />
             </div>
+            <.input field={f[:template]} type="hidden" value={@changed_template} />
+
             <.button phx-disable-with="Saving..." class="ml-4 w-1/6 uppercase">Save Changes</.button>
           </.form>
           <div class="w-full mt-10 space-y-8">
@@ -119,14 +134,20 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
 
   defp assign_selected(socket, nil) do
     case socket.assigns.page.variants do
-      [] -> assign(socket, selected: %{name: "", weight: "", template: ""})
-      [variant | _] -> assign(socket, selected: variant)
+      [] -> assign(socket, selected: %{name: "", weight: "", template: ""}, changed_template: "")
+      [variant | _] -> assign(socket, selected: variant, changed_template: variant.template)
     end
   end
 
   defp assign_selected(socket, variant_id) do
     selected = Enum.find(socket.assigns.page.variants, &(&1.id == variant_id))
-    assign(socket, selected: selected)
+    assign(socket, selected: selected, changed_template: selected.template)
+  end
+
+  defp assign_variant_changeset(socket) do
+    %{selected: selected, beacon_page: %{site: site}} = socket.assigns
+    changeset = Content.change_page_variant(site, selected)
+    assign(socket, variant_changeset: changeset)
   end
 
   defp language("heex" = _format), do: "html"

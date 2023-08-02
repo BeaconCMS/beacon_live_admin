@@ -102,6 +102,10 @@ defmodule Beacon.LiveAdmin.Content do
     call(site, Beacon.Content, :list_pages, [site, opts])
   end
 
+  def change_page_variant(site, variant, attrs \\ %{}) do
+    call(site, Beacon.Content, :change_page_variant, [variant, attrs])
+  end
+
   def create_variant_for_page(site, page, attrs) do
     call(site, Beacon.Content, :create_variant_for_page, [page, attrs])
   end
