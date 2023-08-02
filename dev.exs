@@ -69,7 +69,6 @@ defmodule DemoWeb.Router do
     plug :fetch_live_flash
     plug :protect_from_forgery
     plug :put_secure_browser_headers
-    plug Beacon.LiveAdmin.Plug
   end
 
   scope "/" do
@@ -98,6 +97,7 @@ defmodule DemoWeb.Endpoint do
   plug Phoenix.CodeReloader
   plug Plug.Session, @session_options
   plug Plug.RequestId
+  plug Beacon.LiveAdmin.Plug
   plug DemoWeb.Router
 end
 

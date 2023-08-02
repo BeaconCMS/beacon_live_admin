@@ -51,7 +51,7 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.FormComponent do
         {:noreply,
          socket
          |> put_flash(:info, "Layout published successfully")
-         |> push_navigate(to: to)}
+         |> push_redirect(to: to, replace: true)}
 
       {:error, _} ->
         {:noreply,
@@ -150,6 +150,7 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.FormComponent do
           </.form>
         </div>
         <div class="col-span-2">
+          <%= template_error(@form[:body]) %>
           <div class="w-full mt-10 space-y-8">
             <div class="py-3 bg-[#282c34] rounded-lg">
               <LiveMonacoEditor.code_editor path="body" style="min-height: 1000px; width: 100%;" value={@body} opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => "html"})} />
@@ -165,4 +166,25 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.FormComponent do
 
   defp display_status(:published), do: "Published (public)"
   defp display_status(:created), do: "Draft (not public)"
+
+  defp template_error(field) do
+    {message, compilation_error} =
+      case field.errors do
+        [{message, [compilation_error: compilation_error]} | _] -> {message, compilation_error}
+        [{message, _}] -> {message, nil}
+        _ -> {nil, nil}
+      end
+
+    assigns = %{
+      message: message,
+      compilation_error: compilation_error
+    }
+
+    ~H"""
+    <.error :if={@message}><%= @message %></.error>
+    <code :if={@compilation_error} class="mt-3 text-sm text-rose-600 phx-no-feedback:hidden">
+      <pre><%= @compilation_error %></pre>
+    </code>
+    """
+  end
 end

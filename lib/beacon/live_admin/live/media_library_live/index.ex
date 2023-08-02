@@ -72,6 +72,27 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.Index do
   end
 
   @impl true
+  def handle_event("delete", %{"id" => id}, %{assigns: assigns} = socket) do
+    site = socket.assigns.beacon_page.site
+
+    if Authorization.authorized?(
+         site,
+         assigns.agent,
+         :delete,
+         Map.put(assigns.authn_context, :resource_id, id)
+       ) do
+      asset = MediaLibrary.get_asset_by(site, id: id)
+      {:ok, _} = MediaLibrary.soft_delete(site, asset)
+
+      path = beacon_live_admin_path(socket, site, "/media_library", search: socket.assigns.search)
+      socket = push_patch(socket, to: path)
+
+      {:noreply, socket}
+    else
+      {:noreply, socket}
+    end
+  end
+
   def handle_event("search", %{"search" => search}, %{assigns: assigns} = socket) do
     if Authorization.authorized?(
          assigns.beacon_page.site,
@@ -120,6 +141,15 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.Index do
       <:action :let={asset}>
         <.link :if={Authorization.authorized?(@beacon_page.site, @agent, :upload, @authn_context)} patch={beacon_live_admin_path(@socket, @beacon_page.site, "/media_library/#{asset.id}")}>
           View
+        </.link>
+      </:action>
+      <:action :let={asset}>
+        <.link
+          :if={Authorization.authorized?(@beacon_page.site, @agent, :delete, Map.put(@authn_context, :resource, asset))}
+          phx-click={JS.push("delete", value: %{id: asset.id})}
+          data-confirm="The asset will be marked as deleted but it will not be actually removed from the storage. Are you sure?"
+        >
+          Delete
         </.link>
       </:action>
     </.table>

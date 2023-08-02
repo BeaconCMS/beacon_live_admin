@@ -28,7 +28,7 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.ShowComponent do
     ~H"""
     <div>
       <.header class="mb-8"><%= @asset.file_name %></.header>
-      <BeaconWeb.Components.image_set :if={@is_image?} asset={@asset} class="mb-8" />
+      <Beacon.LiveAdmin.Components.image_set :if={@is_image?} site={@asset.site} env={__ENV__} asset={@asset} class="mb-8" />
       <ul>
         <%= for {{key, url}, index} <- @urls do %>
           <li class="flex m-8">

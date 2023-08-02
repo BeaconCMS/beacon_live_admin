@@ -32,7 +32,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
 
     extra_fields =
       Content.page_extra_fields(
-        socket.assigns.page.site,
+        socket.assigns.site,
         socket.assigns.form,
         params,
         changeset.errors
@@ -76,7 +76,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
         {:noreply,
          socket
          |> put_flash(:info, "Page published successfully")
-         |> push_navigate(to: to)}
+         |> push_navigate(to: to, replace: true)}
 
       {:error, _} ->
         {:noreply,
@@ -151,7 +151,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
             phx-value-id={@page.id}
             phx-target={@myself}
           >
-            Publish
+            Confirm
           </button>
         </div>
       </.modal>
@@ -172,6 +172,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
           </.form>
         </div>
         <div class="col-span-2">
+          <%= template_error(@form[:template]) %>
           <div class="w-full mt-10 space-y-8">
             <div class="py-3 bg-[#282c34] rounded-lg">
               <LiveMonacoEditor.code_editor path="template" style="min-height: 1000px; width: 100%;" value={@template} opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => @language})} />
@@ -206,5 +207,26 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
     name = Content.page_field_name(site, mod)
     html = Content.render_page_field(site, mod, extra_fields[name], env)
     {:safe, html}
+  end
+
+  defp template_error(field) do
+    {message, compilation_error} =
+      case field.errors do
+        [{message, [compilation_error: compilation_error]} | _] -> {message, compilation_error}
+        [{message, _}] -> {message, nil}
+        _ -> {nil, nil}
+      end
+
+    assigns = %{
+      message: message,
+      compilation_error: compilation_error
+    }
+
+    ~H"""
+    <.error :if={@message}><%= @message %></.error>
+    <code :if={@compilation_error} class="mt-3 text-sm text-rose-600 phx-no-feedback:hidden">
+      <pre><%= @compilation_error %></pre>
+    </code>
+    """
   end
 end

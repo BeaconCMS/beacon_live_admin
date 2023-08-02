@@ -281,6 +281,35 @@ defmodule Beacon.LiveAdmin.Router do
     Phoenix.VerifiedRoutes.unverified_path(conn_or_socket, router, path, %{})
   end
 
+  @doc """
+  Generates a `url` with the proper admin prefix for a `site`.
+
+  ## Example
+
+      iex> Beacon.LiveAdmin.Router.beacon_live_admin_url(MyApp.Endpoint, @socket, :my_site, "/pages")
+      "https://myapp.com/my_admin/my_site/pages"
+
+  """
+  def beacon_live_admin_url(endpoint, conn_or_socket, site, path, params \\ %{})
+      when is_atom(site) and is_binary(path) do
+    endpoint.url() <> beacon_live_admin_path(conn_or_socket, site, path, params)
+  end
+
+  @doc """
+  Generate the path to serve files in `priv/static`.
+
+  See the actual configuration in `Beacon.LiveAdmin.Plug`.
+
+  ## Example
+
+      iex> Beacon.LiveAdmin.Router.beacon_live_admin_static_path("/images/logo.webp")
+      "__beacon_live_admin_static/images/logo.webp"
+
+  """
+  def beacon_live_admin_static_path(file) do
+    sanitize_path("__beacon_live_admin_static/" <> file)
+  end
+
   defp router(%Plug.Conn{private: %{phoenix_router: router}}), do: router
   defp router(%Phoenix.LiveView.Socket{router: router}), do: router
 
