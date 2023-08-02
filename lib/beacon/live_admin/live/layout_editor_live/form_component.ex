@@ -146,7 +146,7 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.FormComponent do
         <div class="mt-10 p-4 rounded-lg bg-gray-50 shadow-sm ring-1 ring-gray-900/5">
           <.form :let={f} for={@form} id="layout-form" class="space-y-8" phx-target={@myself} phx-change="validate" phx-submit="save">
             <.input field={f[:title]} type="text" label="Title" />
-            <.input field={f[:body]} type="hidden" value={@changed_body} />
+            <input type="hidden" name="layout[body]" id="layout-form_body" value={@changed_body} />
           </.form>
         </div>
         <div class="col-span-2">
