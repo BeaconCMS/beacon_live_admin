@@ -76,9 +76,15 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
 
   def handle_event("create_new", _params, socket) do
     %{page: page, beacon_page: %{site: site}} = socket.assigns
+    selected = socket.assigns.selected || %{id: nil}
 
     attrs = %{name: "New Variant", weight: 0, template: page.template}
     {:ok, updated_page} = Content.create_variant_for_page(site, page, attrs)
+
+    socket =
+      socket
+      |> assign(page: updated_page)
+      |> assign_selected(selected.id)
 
     {:noreply, assign(socket, page: updated_page)}
   end
@@ -97,14 +103,14 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
           <.button type="button" phx-click="create_new">
             New Variant
           </.button>
-          <.table id="variants" rows={@page.variants} row_click={fn row -> "select-#{row.id}" end}>
+          <.table :if={@selected} id="variants" rows={@page.variants} row_click={fn row -> "select-#{row.id}" end}>
             <:col :let={variant} :for={{attr, suffix} <- [{:name, ""}, {:weight, " (%)"}]} label={"#{attr}#{suffix}"}>
               <%= Map.fetch!(variant, attr) %>
             </:col>
           </.table>
         </div>
 
-        <div class="w-full col-span-2">
+        <div :if={@form} class="w-full col-span-2">
           <.form :let={f} for={@form} class="flex items-center" phx-change="validate" phx-submit="save_changes">
             <div class="text-4xl mr-4 w-max">
               Name
@@ -141,7 +147,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
 
   defp assign_selected(socket, nil) do
     case socket.assigns.page.variants do
-      [] -> assign(socket, selected: %{name: "", weight: "", template: ""}, changed_template: "")
+      [] -> assign(socket, selected: nil, changed_template: "")
       [variant | _] -> assign(socket, selected: variant, changed_template: variant.template)
     end
   end
@@ -152,12 +158,16 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
   end
 
   defp assign_form(socket) do
-    %{selected: selected, beacon_page: %{site: site}} = socket.assigns
-
     form =
-      site
-      |> Content.change_page_variant(selected)
-      |> to_form()
+      case socket.assigns do
+        %{selected: nil} ->
+          nil
+
+        %{selected: selected, beacon_page: %{site: site}} ->
+          site
+          |> Content.change_page_variant(selected)
+          |> to_form()
+      end
 
     assign(socket, form: form)
   end
