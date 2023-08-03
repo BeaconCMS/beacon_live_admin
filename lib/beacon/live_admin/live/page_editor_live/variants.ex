@@ -2,6 +2,8 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
   @moduledoc false
   use Beacon.LiveAdmin.PageBuilder
 
+  import Beacon.LiveAdmin.PageEditorLive.Edit, only: [template_error: 1]
+
   alias Beacon.LiveAdmin.Content
 
   def menu_link("/pages", :variants), do: {:submenu, "Pages"}
@@ -23,6 +25,8 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
     socket =
       socket
       |> assign(page: page)
+      |> assign(unsaved_changes: false)
+      |> assign(show_modal: false)
       |> assign(language: language(page.format))
       |> assign(page_title: "Variants")
       |> assign_selected(params["variant"])
@@ -35,23 +39,48 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
     %{page: page} = socket.assigns
     path = beacon_live_admin_path(socket, page.site, "/pages/#{page.id}/variants/#{variant_id}")
 
-    {:noreply, push_redirect(socket, to: path)}
+    if socket.assigns.unsaved_changes do
+      {:noreply, assign(socket, show_modal: true, confirm_nav_path: path)}
+    else
+      {:noreply, push_redirect(socket, to: path)}
+    end
   end
 
   def handle_event("variant_editor_lost_focus", %{"value" => template}, socket) do
-    {:noreply, assign(socket, changed_template: template)}
+    %{selected: selected, beacon_page: %{site: site}, form: form} = socket.assigns
+
+    changeset =
+      site
+      |> Content.change_page_variant(selected, %{
+        "template" => template,
+        "name" => form.params["name"] || Map.fetch!(form.data, :name),
+        "weight" => form.params["weight"] || Map.fetch!(form.data, :weight)
+      })
+      |> Map.put(:action, :insert)
+
+    socket =
+      socket
+      |> assign(form: to_form(changeset))
+      |> assign(changed_template: template)
+      |> assign(unsaved_changes: !(changeset.changes == %{}))
+
+    {:noreply, socket}
   end
 
   def handle_event("validate", %{"page_variant" => params}, socket) do
     %{selected: selected, beacon_page: %{site: site}} = socket.assigns
 
-    form =
+    changeset =
       site
       |> Content.change_page_variant(selected, params)
       |> Map.put(:action, :insert)
-      |> to_form()
 
-    {:noreply, assign(socket, form: form)}
+    socket =
+      socket
+      |> assign(form: to_form(changeset))
+      |> assign(unsaved_changes: !(changeset.changes == %{}))
+
+    {:noreply, socket}
   end
 
   def handle_event("save_changes", %{"page_variant" => params}, socket) do
@@ -66,6 +95,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
           |> assign(page: updated_page)
           |> assign_selected(selected.id)
           |> assign_form()
+          |> assign(unsaved_changes: false)
 
         {:error, changeset} ->
           changeset = Map.put(changeset, :action, :insert)
@@ -90,6 +120,14 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
     {:noreply, assign(socket, page: updated_page)}
   end
 
+  def handle_event("stay_here", _params, socket) do
+    {:noreply, assign(socket, show_modal: false, confirm_nav_path: nil)}
+  end
+
+  def handle_event("discard_changes", _params, socket) do
+    {:noreply, push_redirect(socket, to: socket.assigns.confirm_nav_path)}
+  end
+
   def render(assigns) do
     ~H"""
     <div>
@@ -98,6 +136,17 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
       <.header>
         <%= @page_title %>
       </.header>
+
+      <.modal :if={@show_modal} id="confirm-nav" show>
+        <p>You've made unsaved changes to this variant!</p>
+        <p>Navigating to another variant without saving will cause these changes to be lost.</p>
+        <.button type="button" phx-click="stay_here">
+          Stay here
+        </.button>
+        <.button type="button" phx-click="discard_changes">
+          Discard changes
+        </.button>
+      </.modal>
 
       <div class="mx-auto grid grid-cols-1 grid-rows-1 items-start gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
         <div>
@@ -125,7 +174,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
             <div class="w-1/12">
               <.input field={f[:weight]} type="number" min="0" max="100" />
             </div>
-            <.input field={f[:template]} type="hidden" value={@changed_template} />
+            <input type="hidden" name="page_variant[template]" id="page_variant-form_template" value={@changed_template} />
 
             <.button phx-disable-with="Saving..." class="ml-4 w-1/6 uppercase">Save Changes</.button>
           </.form>
@@ -171,27 +220,6 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
       end
 
     assign(socket, form: form)
-  end
-
-  defp template_error(field) do
-    {message, compilation_error} =
-      case field.errors do
-        [{message, [compilation_error: compilation_error]} | _] -> {message, compilation_error}
-        [{message, _}] -> {message, nil}
-        _ -> {nil, nil}
-      end
-
-    assigns = %{
-      message: message,
-      compilation_error: compilation_error
-    }
-
-    ~H"""
-    <.error :if={@message}><%= @message %></.error>
-    <code :if={@compilation_error} class="mt-3 text-sm text-rose-600 phx-no-feedback:hidden">
-      <pre><%= @compilation_error %></pre>
-    </code>
-    """
   end
 
   defp language("heex" = _format), do: "html"
