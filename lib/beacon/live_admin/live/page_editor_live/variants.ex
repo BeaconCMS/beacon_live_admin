@@ -9,18 +9,14 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
   def menu_link("/pages", :variants), do: {:submenu, "Pages"}
   def menu_link(_, _), do: :skip
 
-  def mount(_params, _session, socket) do
-    {:ok, socket}
-  end
-
   # For switching between selected variants, first load has already happened
   def handle_params(params, _url, %{assigns: %{page: %{}}} = socket) do
-    {:noreply, assign_selected(socket, params["variant"])}
+    {:noreply, assign_selected(socket, params["variant_id"])}
   end
 
   # For the first page load
   def handle_params(params, _url, socket) do
-    page = Content.get_page(socket.assigns.beacon_page.site, params["page"], [:variants])
+    page = Content.get_page(socket.assigns.beacon_page.site, params["page_id"], [:variants])
 
     socket =
       socket
@@ -29,7 +25,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
       |> assign(show_modal: false)
       |> assign(language: language(page.format))
       |> assign(page_title: "Variants")
-      |> assign_selected(params["variant"])
+      |> assign_selected(params["variant_id"])
       |> assign_form()
 
     {:noreply, socket}
