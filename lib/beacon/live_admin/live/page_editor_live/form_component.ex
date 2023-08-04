@@ -1,5 +1,8 @@
 defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
   use Beacon.LiveAdmin.Web, :live_component
+
+  import Beacon.LiveAdmin.PageEditorLive.Edit, only: [template_error: 1]
+
   alias Beacon.LiveAdmin.Config
   alias Beacon.LiveAdmin.Content
 
@@ -207,26 +210,5 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
     name = Content.page_field_name(site, mod)
     html = Content.render_page_field(site, mod, extra_fields[name], env)
     {:safe, html}
-  end
-
-  defp template_error(field) do
-    {message, compilation_error} =
-      case field.errors do
-        [{message, [compilation_error: compilation_error]} | _] -> {message, compilation_error}
-        [{message, _}] -> {message, nil}
-        _ -> {nil, nil}
-      end
-
-    assigns = %{
-      message: message,
-      compilation_error: compilation_error
-    }
-
-    ~H"""
-    <.error :if={@message}><%= @message %></.error>
-    <code :if={@compilation_error} class="mt-3 text-sm text-rose-600 phx-no-feedback:hidden">
-      <pre><%= @compilation_error %></pre>
-    </code>
-    """
   end
 end
