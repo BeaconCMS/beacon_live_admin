@@ -10,7 +10,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
   def menu_link(_, _), do: :skip
 
   # For switching between selected variants, first load has already happened
-  def handle_params(params, _url, %{assigns: %{page: %{}}} = socket) do
+  def handle_params(params, _url, %{assigns: %{page: %{variants: [_ | _]}}} = socket) do
     {:noreply, assign_selected(socket, params["variant_id"])}
   end
 
