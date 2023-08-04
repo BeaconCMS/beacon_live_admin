@@ -133,6 +133,9 @@ defmodule Beacon.LiveAdmin.Router do
       {"/pages/:id/meta_tags", Beacon.LiveAdmin.PageEditorLive.MetaTags, :meta_tags, %{}},
       {"/pages/:id/schema", Beacon.LiveAdmin.PageEditorLive.Schema, :schema, %{}},
       {"/pages/:id/revisions", Beacon.LiveAdmin.PageEditorLive.Revisions, :revisions, %{}},
+      {"/components", Beacon.LiveAdmin.ComponentsLive.Index, :index, %{}},
+      {"/components/new", Beacon.LiveAdmin.ComponentsLive.New, :new, %{}},
+      {"/components/:id", Beacon.LiveAdmin.ComponentsLive.Edit, :edit, %{}},
       {"/media_library", Beacon.LiveAdmin.MediaLibraryLive.Index, :index, %{}},
       {"/media_library/upload", Beacon.LiveAdmin.MediaLibraryLive.Index, :upload, %{}},
       {"/media_library/:id", Beacon.LiveAdmin.MediaLibraryLive.Index, :show, %{}}
