@@ -3,10 +3,8 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.NewTest do
   import Beacon.LiveAdminTest.Cluster, only: [rpc: 4]
 
   setup do
-    node = :"node1@127.0.0.1"
-
     on_exit(fn ->
-      rpc(node, Beacon.Repo, :delete_all, [Beacon.Content.Layout, [log: false]])
+      rpc(node1(), Beacon.Repo, :delete_all, [Beacon.Content.Layout, [log: false]])
     end)
   end
 

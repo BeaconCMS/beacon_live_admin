@@ -255,11 +255,10 @@ defmodule Beacon.LiveAdmin.Router do
   @spec beacon_live_admin_path(
           conn_or_socket,
           Beacon.LiveAdmin.Types.Site.t(),
-          String.t(),
+          String.t() | atom(),
           map() | keyword()
         ) :: String.t()
-  def beacon_live_admin_path(conn_or_socket, site, path, params \\ %{})
-      when is_atom(site) and is_binary(path) do
+  def beacon_live_admin_path(conn_or_socket, site, path, params \\ %{}) when is_atom(site) do
     router = router(conn_or_socket)
     prefix = router.__beacon_live_admin_prefix__()
     path = build_path_with_prefix(prefix, site, path)
@@ -289,7 +288,7 @@ defmodule Beacon.LiveAdmin.Router do
 
   ## Example
 
-      iex> Beacon.LiveAdmin.Router.beacon_live_admin_url(MyApp.Endpoint, @socket, :my_site, "/pages")
+      iex> Beacon.LiveAdmin.Router.beacon_live_admin_url(MyAppWeb.Endpoint, @socket, :my_site, "/pages")
       "https://myapp.com/my_admin/my_site/pages"
 
   """

@@ -1,19 +1,63 @@
 defmodule Beacon.LiveAdmin.RouterTest do
   use ExUnit.Case, async: true
 
+  import Beacon.LiveAdmin.Router, only: [beacon_live_admin_path: 3, beacon_live_admin_path: 4]
   alias Beacon.LiveAdmin.Router
 
-  test "beacon_live_admin_path" do
-    socket = %Phoenix.LiveView.Socket{
-      endpoint: Beacon.LiveAdminTest.Endpoint,
-      router: Beacon.LiveAdminTest.Router
-    }
+  defmodule RouterSimple do
+    use Phoenix.Router
+    use Beacon.LiveAdmin.Router
+    import Plug.Conn
+    import Phoenix.Controller
+    import Phoenix.LiveView.Router
 
-    assert Router.beacon_live_admin_path(socket, :my_site, "/pages") ==
-             "/admin/my_site/pages"
+    scope "/" do
+      beacon_live_admin("/admin")
+    end
+  end
 
-    assert Router.beacon_live_admin_path(socket, :my_site, "/pages", status: :draft) ==
-             "/admin/my_site/pages?status=draft"
+  defmodule RouterNested do
+    use Phoenix.Router
+    use Beacon.LiveAdmin.Router
+    import Plug.Conn
+    import Phoenix.Controller
+    import Phoenix.LiveView.Router
+
+    scope "/parent" do
+      scope "/nested" do
+        beacon_live_admin("/admin")
+      end
+    end
+  end
+
+  defmodule Endpoint do
+    use Phoenix.Endpoint, otp_app: :beacon
+  end
+
+  describe "beacon_admin_path" do
+    setup do
+      start_supervised!(Endpoint)
+      :ok
+    end
+
+    test "plain route" do
+      socket = %Phoenix.LiveView.Socket{endpoint: Endpoint, router: RouterSimple}
+
+      assert beacon_live_admin_path(socket, :my_site, "/pages") == "/admin/my_site/pages"
+
+      assert beacon_live_admin_path(socket, :my_site, :pages, %{foo: :bar}) ==
+               "/admin/my_site/pages?foo=bar"
+    end
+
+    test "nested route" do
+      socket = %Phoenix.LiveView.Socket{endpoint: Endpoint, router: RouterNested}
+
+      assert beacon_live_admin_path(socket, :my_site, "/pages") ==
+               "/parent/nested/admin/my_site/pages"
+
+      assert beacon_live_admin_path(socket, :my_site, :pages, %{foo: :bar}) ==
+               "/parent/nested/admin/my_site/pages?foo=bar"
+    end
   end
 
   describe "session options" do

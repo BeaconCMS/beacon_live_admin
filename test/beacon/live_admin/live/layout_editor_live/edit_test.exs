@@ -3,26 +3,11 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.EditTest do
   import Beacon.LiveAdminTest.Cluster, only: [rpc: 4]
 
   setup do
-    node = :"node1@127.0.0.1"
-
-    layout =
-      rpc(node, Beacon.Content, :create_layout!, [
-        %{
-          site: "site_a",
-          title: "Site A - Main Layout",
-          stylesheet_urls: [],
-          body: """
-          <header>Site A Header</header>
-          <%= @inner_content %>
-          """
-        }
-      ])
-
     on_exit(fn ->
-      rpc(node, Beacon.Repo, :delete_all, [Beacon.Content.Layout, [log: false]])
+      rpc(node1(), Beacon.Repo, :delete_all, [Beacon.Content.Layout, [log: false]])
     end)
 
-    [layout: layout]
+    [layout: layout_fixture()]
   end
 
   test "save changes", %{conn: conn, layout: layout} do

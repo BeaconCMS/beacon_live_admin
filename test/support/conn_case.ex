@@ -4,10 +4,11 @@ defmodule Beacon.LiveAdmin.ConnCase do
   using do
     quote do
       @endpoint Beacon.LiveAdminTest.Endpoint
-      import Plug.Conn
+      import Beacon.LiveAdmin.ConnCase
+      import Beacon.LiveAdmin.Fixtures
       import Phoenix.ConnTest
       import Phoenix.LiveViewTest
-      import Beacon.LiveAdmin.ConnCase
+      import Plug.Conn
     end
   end
 
