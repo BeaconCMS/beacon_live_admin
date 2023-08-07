@@ -113,4 +113,8 @@ defmodule Beacon.LiveAdmin.Content do
   def update_variant_for_page(site, page, variant, attrs) do
     call(site, Beacon.Content, :update_variant_for_page, [page, variant, attrs])
   end
+
+  def delete_variant_from_page(site, page, variant) do
+    call(site, Beacon.Content, :delete_variant_from_page, [page, variant])
+  end
 end

@@ -20,7 +20,8 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
       socket
       |> assign(page: page)
       |> assign(unsaved_changes: false)
-      |> assign(show_modal: false)
+      |> assign(show_nav_modal: false)
+      |> assign(show_delete_modal: false)
       |> assign(language: language(page.format))
       |> assign(page_title: "Variants")
       |> assign_selected(params["variant_id"])
@@ -34,7 +35,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
     path = beacon_live_admin_path(socket, page.site, "/pages/#{page.id}/variants/#{variant_id}")
 
     if socket.assigns.unsaved_changes do
-      {:noreply, assign(socket, show_modal: true, confirm_nav_path: path)}
+      {:noreply, assign(socket, show_nav_modal: true, confirm_nav_path: path)}
     else
       {:noreply, push_redirect(socket, to: path)}
     end
@@ -114,8 +115,25 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
     {:noreply, assign(socket, page: updated_page)}
   end
 
+  def handle_event("delete", _, socket) do
+    {:noreply, assign(socket, show_delete_modal: true)}
+  end
+
+  def handle_event("delete_confirm", _, socket) do
+    %{selected: variant, page: page, beacon_page: %{site: site}} = socket.assigns
+    path = beacon_live_admin_path(socket, site, "/pages/#{page.id}/variants")
+
+    {:ok, _} = Content.delete_variant_from_page(site, page, variant)
+
+    {:noreply, push_redirect(socket, to: path)}
+  end
+
+  def handle_event("delete_cancel", _, socket) do
+    {:noreply, assign(socket, show_delete_modal: false)}
+  end
+
   def handle_event("stay_here", _params, socket) do
-    {:noreply, assign(socket, show_modal: false, confirm_nav_path: nil)}
+    {:noreply, assign(socket, show_nav_modal: false, confirm_nav_path: nil)}
   end
 
   def handle_event("discard_changes", _params, socket) do
@@ -131,7 +149,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
         <%= @page_title %>
       </.header>
 
-      <.modal :if={@show_modal} id="confirm-nav" show>
+      <.modal :if={@show_nav_modal} id="confirm-nav" show>
         <p>You've made unsaved changes to this variant!</p>
         <p>Navigating to another variant without saving will cause these changes to be lost.</p>
         <.button type="button" phx-click="stay_here">
@@ -139,6 +157,16 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
         </.button>
         <.button type="button" phx-click="discard_changes">
           Discard changes
+        </.button>
+      </.modal>
+
+      <.modal :if={@show_delete_modal} id="confirm-delete" show>
+        <p>Are you sure you want to delete this variant?</p>
+        <.button type="button" phx-click="delete_confirm">
+          Delete
+        </.button>
+        <.button type="button" phx-click="delete_cancel">
+          Cancel
         </.button>
       </.modal>
 
@@ -159,7 +187,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
             <div class="text-4xl mr-4 w-max">
               Name
             </div>
-            <div class="w-1/2">
+            <div class="w-5/12">
               <.input field={f[:name]} type="text" />
             </div>
             <div class="text-4xl mx-4 w-max">
@@ -170,7 +198,8 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
             </div>
             <input type="hidden" name="page_variant[template]" id="page_variant-form_template" value={@changed_template} />
 
-            <.button phx-disable-with="Saving..." class="ml-4 w-1/6 uppercase">Save Changes</.button>
+            <.button phx-disable-with="Saving..." class="mx-4 w-1/6 uppercase">Save Changes</.button>
+            <.button type="button" phx-click="delete" class="w-1/12 uppercase">Delete</.button>
           </.form>
           <%= template_error(@form[:template]) %>
           <div class="w-full mt-10 space-y-8">
