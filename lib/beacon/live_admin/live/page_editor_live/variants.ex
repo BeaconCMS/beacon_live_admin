@@ -2,8 +2,6 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
   @moduledoc false
   use Beacon.LiveAdmin.PageBuilder
 
-  import Beacon.LiveAdmin.PageEditorLive.Edit, only: [template_error: 1]
-
   alias Beacon.LiveAdmin.Content
 
   def menu_link("/pages", :variants), do: {:submenu, "Pages"}
@@ -52,7 +50,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
         "name" => form.params["name"] || Map.fetch!(form.data, :name),
         "weight" => form.params["weight"] || Map.fetch!(form.data, :weight)
       })
-      |> Map.put(:action, :insert)
+      |> Map.put(:action, :validate)
 
     socket =
       socket
@@ -69,7 +67,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
     changeset =
       site
       |> Content.change_page_variant(selected, params)
-      |> Map.put(:action, :insert)
+      |> Map.put(:action, :validate)
 
     socket =
       socket
@@ -94,7 +92,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
           |> assign(unsaved_changes: false)
 
         {:error, changeset} ->
-          changeset = Map.put(changeset, :action, :insert)
+          changeset = Map.put(changeset, :action, :update)
           assign(socket, form: to_form(changeset))
       end
 
