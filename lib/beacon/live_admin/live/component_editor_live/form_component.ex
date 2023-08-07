@@ -1,4 +1,4 @@
-defmodule Beacon.LiveAdmin.Components.FormComponent do
+defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
   use Beacon.LiveAdmin.Web, :live_component
   alias Beacon.LiveAdmin.Content
 

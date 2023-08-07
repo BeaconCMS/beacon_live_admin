@@ -1,4 +1,4 @@
-defmodule Beacon.LiveAdmin.ComponentsLive.Index do
+defmodule Beacon.LiveAdmin.ComponentEditorLive.Index do
   @moduledoc false
 
   use Beacon.LiveAdmin.PageBuilder

@@ -1,4 +1,4 @@
-defmodule Beacon.LiveAdmin.ComponentsLive.Edit do
+defmodule Beacon.LiveAdmin.ComponentEditorLive.Edit do
   @moduledoc false
 
   use Beacon.LiveAdmin.PageBuilder
@@ -21,7 +21,7 @@ defmodule Beacon.LiveAdmin.ComponentsLive.Edit do
 
   @impl true
   def handle_event("body_editor_lost_focus", %{"value" => value}, socket) do
-    send_update(Beacon.LiveAdmin.Components.FormComponent,
+    send_update(Beacon.LiveAdmin.ComponentEditorLive.FormComponent,
       id: "components-form-edit",
       changed_body: value
     )
@@ -33,7 +33,7 @@ defmodule Beacon.LiveAdmin.ComponentsLive.Edit do
   def render(assigns) do
     ~H"""
     <.live_component
-      module={Beacon.LiveAdmin.Components.FormComponent}
+      module={Beacon.LiveAdmin.ComponentEditorLive.FormComponent}
       id="components-form-edit"
       site={@beacon_page.site}
       page_title={@page_title}
