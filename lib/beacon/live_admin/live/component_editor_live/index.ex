@@ -45,7 +45,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.Index do
   defp body_excerpt(body) do
     case String.split_at(body, 100) do
       {excerpt, ""} -> excerpt
-      {excerpt, _} -> excerpt <> " ..."
+      {excerpt, _} -> [excerpt, " ..."]
     end
   end
 end
