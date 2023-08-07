@@ -8,8 +8,8 @@ defmodule Beacon.LiveAdmin.Content do
 
   import Beacon.LiveAdmin.Cluster, only: [call: 4]
 
-  def change_layout(site, layout, params \\ %{}) do
-    call(site, Beacon.Content, :change_layout, [layout, params])
+  def change_layout(site, layout, attrs \\ %{}) do
+    call(site, Beacon.Content, :change_layout, [layout, attrs])
   end
 
   def create_layout(site, attrs) do
@@ -49,8 +49,8 @@ defmodule Beacon.LiveAdmin.Content do
     call(site, Beacon.Content, :change_page, [page])
   end
 
-  def page_extra_fields(site, form, params, errors) do
-    call(site, Beacon.Content.PageField, :extra_fields, [site, form, params, errors])
+  def page_extra_fields(site, form, attrs, errors) do
+    call(site, Beacon.Content.PageField, :extra_fields, [site, form, attrs, errors])
   end
 
   def page_field_name(site, mod) do
@@ -61,8 +61,8 @@ defmodule Beacon.LiveAdmin.Content do
     call(site, Beacon.Content.PageField, :render_field, [mod, field, env])
   end
 
-  def validate_page(site, page, params) do
-    call(site, Beacon.Content, :validate_page, [site, page, params])
+  def validate_page(site, page, attrs) do
+    call(site, Beacon.Content, :validate_page, [site, page, attrs])
   end
 
   def create_page(site, attrs) do
@@ -116,5 +116,29 @@ defmodule Beacon.LiveAdmin.Content do
 
   def delete_variant_from_page(site, page, variant) do
     call(site, Beacon.Content, :delete_variant_from_page, [page, variant])
+  end
+
+  def component_categories(site) do
+    call(site, Beacon.Content, :component_categories, [])
+  end
+
+  def change_component(site, component, attrs \\ %{}) do
+    call(site, Beacon.Content, :change_component, [component, attrs])
+  end
+
+  def list_components(site) do
+    call(site, Beacon.Content, :list_components, [site])
+  end
+
+  def get_component(site, id) do
+    call(site, Beacon.Content, :get_component_by, [site, [id: id]])
+  end
+
+  def create_component(site, attrs) do
+    call(site, Beacon.Content, :create_component, [attrs])
+  end
+
+  def update_component(site, component, attrs) do
+    call(site, Beacon.Content, :update_component, [component, attrs])
   end
 end
