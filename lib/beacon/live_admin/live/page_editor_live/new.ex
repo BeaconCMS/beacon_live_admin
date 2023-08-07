@@ -9,11 +9,6 @@ defmodule Beacon.LiveAdmin.PageEditorLive.New do
   def menu_link(_, _), do: :skip
 
   @impl true
-  def mount(_params, _session, socket) do
-    {:ok, assigns(socket)}
-  end
-
-  @impl true
   def handle_params(_params, _url, socket) do
     {:noreply, assigns(socket)}
   end

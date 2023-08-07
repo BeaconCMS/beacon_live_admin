@@ -134,6 +134,8 @@ defmodule Beacon.LiveAdmin.PageLive do
           {_, "/layouts"} -> false
           {"/pages", _} -> true
           {_, "/pages"} -> false
+          {"/components", _} -> true
+          {_, "/components"} -> false
           {"/media_library", _} -> true
           {_, "/media_library"} -> false
           {a, b} -> a <= b

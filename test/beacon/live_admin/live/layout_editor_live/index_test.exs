@@ -2,7 +2,7 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.IndexTest do
   use Beacon.LiveAdmin.ConnCase, async: false
   import Beacon.LiveAdminTest.Cluster, only: [rpc: 4]
 
-  setup tags do
+  setup do
     node = :"node1@127.0.0.1"
 
     rpc(node, Beacon.Content, :create_layout!, [

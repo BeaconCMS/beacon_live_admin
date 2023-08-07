@@ -10,7 +10,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, page_title: "Edit Page", page: nil)}
+    {:ok, assign(socket, page: nil)}
   end
 
   @impl true
