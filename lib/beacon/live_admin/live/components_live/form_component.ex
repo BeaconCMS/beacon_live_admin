@@ -1,6 +1,5 @@
 defmodule Beacon.LiveAdmin.Components.FormComponent do
   use Beacon.LiveAdmin.Web, :live_component
-  alias Beacon.LiveAdmin.Config
   alias Beacon.LiveAdmin.Content
 
   @impl true
@@ -32,14 +31,15 @@ defmodule Beacon.LiveAdmin.Components.FormComponent do
   defp save_component(socket, :new, component_params) do
     case Content.create_component(socket.assigns.site, component_params) do
       {:ok, component} ->
-        changeset = Content.change_component(socket.assigns.site, component)
+        to = beacon_live_admin_path(socket, socket.assigns.site, "/components/#{component.id}")
 
         {:noreply,
          socket
-         |> assign_form(changeset)
-         |> put_flash(:info, "Commponent created successfully")}
+         |> put_flash(:info, "Component created successfully")
+         |> push_patch(to: to)}
 
       {:error, changeset} ->
+        changeset = Map.put(changeset, :action, :insert)
         {:noreply, assign_form(socket, changeset)}
     end
   end
@@ -54,7 +54,8 @@ defmodule Beacon.LiveAdmin.Components.FormComponent do
          |> assign_form(changeset)
          |> put_flash(:info, "Component updated successfully")}
 
-      {:error, %Ecto.Changeset{} = changeset} ->
+      {:error, changeset} ->
+        changeset = Map.put(changeset, :action, :update)
         {:noreply, assign_form(socket, changeset)}
     end
   end
@@ -79,6 +80,7 @@ defmodule Beacon.LiveAdmin.Components.FormComponent do
           </.form>
         </div>
         <div class="col-span-2">
+          <%= template_error(@form[:body]) %>
           <div class="w-full mt-10 space-y-8">
             <div class="py-3 bg-[#282c34] rounded-lg">
               <LiveMonacoEditor.code_editor path="body" style="min-height: 1000px; width: 100%;" value={@body} opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => "html"})} />
@@ -91,27 +93,6 @@ defmodule Beacon.LiveAdmin.Components.FormComponent do
   end
 
   defp categories_to_options(site) do
-    Enum.map(Content.component_categories(site), &{&1, &1})
-  end
-
-  defp template_error(field) do
-    {message, compilation_error} =
-      case field.errors do
-        [{message, [compilation_error: compilation_error]} | _] -> {message, compilation_error}
-        [{message, _}] -> {message, nil}
-        _ -> {nil, nil}
-      end
-
-    assigns = %{
-      message: message,
-      compilation_error: compilation_error
-    }
-
-    ~H"""
-    <.error :if={@message}><%= @message %></.error>
-    <code :if={@compilation_error} class="mt-3 text-sm text-rose-600 phx-no-feedback:hidden">
-      <pre><%= @compilation_error %></pre>
-    </code>
-    """
+    Enum.map(Content.component_categories(site), &{Phoenix.Naming.humanize(&1), &1})
   end
 end
