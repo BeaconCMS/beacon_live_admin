@@ -2,7 +2,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.EditTest do
   use Beacon.LiveAdmin.ConnCase, async: false
   import Beacon.LiveAdminTest.Cluster, only: [rpc: 4]
 
-  setup tags do
+  setup do
     node = :"node1@127.0.0.1"
 
     %{id: layout_id} =
