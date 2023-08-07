@@ -1,8 +1,6 @@
 defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
   use Beacon.LiveAdmin.Web, :live_component
 
-  import Beacon.LiveAdmin.PageEditorLive.Edit, only: [template_error: 1]
-
   alias Beacon.LiveAdmin.Config
   alias Beacon.LiveAdmin.Content
 
@@ -53,12 +51,19 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
     socket =
       LiveMonacoEditor.change_language(socket, language(page_params["format"]), to: "template")
 
-    changeset = Content.validate_page(socket.assigns.site, socket.assigns.page, page_params)
+    changeset =
+      socket.assigns.site
+      |> Content.validate_page(socket.assigns.page, page_params)
+      |> Map.put(:action, :validate)
+
     {:noreply, assign_form(socket, changeset)}
   end
 
   def handle_event("validate", %{"page" => page_params}, socket) do
-    changeset = Content.validate_page(socket.assigns.site, socket.assigns.page, page_params)
+    changeset =
+      socket.assigns.site
+      |> Content.validate_page(socket.assigns.page, page_params)
+      |> Map.put(:action, :validate)
 
     {:noreply,
      socket
@@ -81,10 +86,9 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
          |> put_flash(:info, "Page published successfully")
          |> push_navigate(to: to, replace: true)}
 
-      {:error, _} ->
-        {:noreply,
-         socket
-         |> put_flash(:error, "Failed to publish page")}
+      {:error, changeset} ->
+        changeset = Map.put(changeset, :action, :publish)
+        {:noreply, assign_form(socket, changeset)}
     end
   end
 
@@ -99,6 +103,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
          |> push_patch(to: to)}
 
       {:error, changeset} ->
+        changeset = Map.put(changeset, :action, :insert)
         {:noreply, assign_form(socket, changeset)}
     end
   end
@@ -114,7 +119,8 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
          |> assign_extra_fields(changeset)
          |> put_flash(:info, "Page updated successfully")}
 
-      {:error, %Ecto.Changeset{} = changeset} ->
+      {:error, changeset} ->
+        changeset = Map.put(changeset, :action, :update)
         {:noreply, assign_form(socket, changeset)}
     end
   end
