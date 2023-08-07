@@ -71,6 +71,7 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.FormComponent do
          |> push_patch(to: to)}
 
       {:error, changeset} ->
+        changeset = Map.put(changeset, :action, :insert)
         {:noreply, assign_form(socket, changeset)}
     end
   end
@@ -85,7 +86,8 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.FormComponent do
          |> assign_form(changeset)
          |> put_flash(:info, "Layout updated successfully")}
 
-      {:error, %Ecto.Changeset{} = changeset} ->
+      {:error, changeset} ->
+        changeset = Map.put(changeset, :action, :update)
         {:noreply, assign_form(socket, changeset)}
     end
   end
@@ -166,25 +168,4 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.FormComponent do
 
   defp display_status(:published), do: "Published (public)"
   defp display_status(:created), do: "Draft (not public)"
-
-  defp template_error(field) do
-    {message, compilation_error} =
-      case field.errors do
-        [{message, [compilation_error: compilation_error]} | _] -> {message, compilation_error}
-        [{message, _}] -> {message, nil}
-        _ -> {nil, nil}
-      end
-
-    assigns = %{
-      message: message,
-      compilation_error: compilation_error
-    }
-
-    ~H"""
-    <.error :if={@message}><%= @message %></.error>
-    <code :if={@compilation_error} class="mt-3 text-sm text-rose-600 phx-no-feedback:hidden">
-      <pre><%= @compilation_error %></pre>
-    </code>
-    """
-  end
 end
