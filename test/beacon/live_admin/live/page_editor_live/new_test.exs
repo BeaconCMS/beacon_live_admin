@@ -3,25 +3,14 @@ defmodule Beacon.LiveAdmin.PageEditorLive.NewTest do
   import Beacon.LiveAdminTest.Cluster, only: [rpc: 4]
 
   setup do
-    node = :"node1@127.0.0.1"
-
-    %{id: layout_id} =
-      rpc(node, Beacon.Content, :create_layout!, [
-        %{
-          site: "site_a",
-          title: "Site A - Home Page",
-          stylesheet_urls: [],
-          body: """
-          <header>Site A Header</header>
-          <%= @inner_content %>
-          """
-        }
-      ])
-
     on_exit(fn ->
-      rpc(node, Beacon.Repo, :delete_all, [Beacon.Content.Page, [log: false]])
-      rpc(node, Beacon.Repo, :delete_all, [Beacon.Content.Layout, [log: false]])
+      rpc(node1(), Beacon.Repo, :delete_all, [Beacon.Content.Page, [log: false]])
+      rpc(node1(), Beacon.Repo, :delete_all, [Beacon.Content.Layout, [log: false]])
     end)
+
+    layout_fixture()
+
+    :ok
   end
 
   test "create new page and patch to edit page", %{conn: conn} do
