@@ -162,7 +162,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
 
       <.modal :if={@show_delete_modal} id="confirm-delete" show>
         <p>Are you sure you want to delete this variant?</p>
-        <p>Note: deleted variants will still be active until the page is re-published!
+        <p>Note: deleted variants will still be active until the page is re-published!</p>
         <.button type="button" phx-click="delete_confirm">
           Delete
         </.button>
