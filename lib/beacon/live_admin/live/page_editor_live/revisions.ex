@@ -101,7 +101,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Revisions do
           <%= @event.snapshot.page.format %>
         </li>
         <li>
-          <h4 class="text-gray-600">Body</h4>
+          <h4 class="text-gray-600">Template</h4>
           <div class="w-full mt-2">
             <div class="py-3 bg-[#282c34] rounded-lg">
               <LiveMonacoEditor.code_editor
