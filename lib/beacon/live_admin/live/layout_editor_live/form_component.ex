@@ -10,13 +10,13 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.FormComponent do
      socket
      |> assign(assigns)
      |> assign_form(changeset)
-     |> assign(:body, beacon_layout.body)
-     |> assign(:changed_body, beacon_layout.body)
+     |> assign(:template, beacon_layout.template)
+     |> assign(:changed_template, beacon_layout.template)
      |> assign(:status, layout_status(beacon_layout))}
   end
 
-  def update(%{changed_body: changed_body}, socket) do
-    {:ok, assign(socket, :changed_body, changed_body)}
+  def update(%{changed_template: changed_template}, socket) do
+    {:ok, assign(socket, :changed_template, changed_template)}
   end
 
   defp layout_status(%{site: nil, id: nil}), do: nil
@@ -148,14 +148,14 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.FormComponent do
         <div class="mt-10 p-4 rounded-lg bg-gray-50 shadow-sm ring-1 ring-gray-900/5">
           <.form :let={f} for={@form} id="layout-form" class="space-y-8" phx-target={@myself} phx-change="validate" phx-submit="save">
             <.input field={f[:title]} type="text" label="Title" />
-            <input type="hidden" name="layout[body]" id="layout-form_body" value={@changed_body} />
+            <input type="hidden" name="layout[template]" id="layout-form_template" value={@changed_template} />
           </.form>
         </div>
         <div class="col-span-2">
-          <%= template_error(@form[:body]) %>
+          <%= template_error(@form[:template]) %>
           <div class="w-full mt-10 space-y-8">
             <div class="py-3 bg-[#282c34] rounded-lg">
-              <LiveMonacoEditor.code_editor path="body" style="min-height: 1000px; width: 100%;" value={@body} opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => "html"})} />
+              <LiveMonacoEditor.code_editor path="template" style="min-height: 1000px; width: 100%;" value={@template} opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => "html"})} />
             </div>
           </div>
         </div>
