@@ -132,7 +132,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Revisions do
         </li>
         <li>
           <h4 class="text-gray-600">Variants</h4>
-          <.table :if={@event.snapshot.page.variants != []} id="variants" rows={@event.snapshot.page.variants}>
+          <.table id="variants" rows={variants(@event.snapshot.page)}>
             <:col :let={variant} label="name">
               <%= variant.name %>
             </:col>
@@ -184,4 +184,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Revisions do
     </.table>
     """
   end
+
+  defp variants(%{variants: variants}) when is_list(variants), do: variants
+  defp variants(_page), do: []
 end
