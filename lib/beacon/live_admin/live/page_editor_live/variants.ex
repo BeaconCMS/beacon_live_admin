@@ -149,7 +149,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
         <%= @page_title %>
       </.header>
 
-      <.modal :if={@show_nav_modal} id="confirm-nav" show>
+      <.modal :if={@show_nav_modal} id="confirm-nav" on_cancel={JS.push("stay_here")} show>
         <p>You've made unsaved changes to this variant!</p>
         <p>Navigating to another variant without saving will cause these changes to be lost.</p>
         <.button type="button" phx-click="stay_here">
@@ -160,7 +160,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
         </.button>
       </.modal>
 
-      <.modal :if={@show_delete_modal} id="confirm-delete" show>
+      <.modal :if={@show_delete_modal} id="confirm-delete" on_cancel={JS.push("delete_cancel")} show>
         <p>Are you sure you want to delete this variant?</p>
         <p>Note: deleted variants will still be active until the page is re-published!</p>
         <.button type="button" phx-click="delete_confirm">
