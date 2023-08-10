@@ -48,7 +48,7 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.Revisions do
                   <LiveMonacoEditor.code_editor
                     path={event.snapshot.id}
                     style="min-height: 200px; width: 100%;"
-                    value={event.snapshot.layout.template}
+                    value={template(event.snapshot.layout)}
                     opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => "html", "readOnly" => "true"})}
                   />
                 </div>
@@ -68,6 +68,9 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.Revisions do
   defp format_datetime(datetime) do
     Calendar.strftime(datetime, "%B %d, %Y")
   end
+
+  defp template(%{schema_version: 1} = layout), do: layout.body
+  defp template(layout), do: layout.template
 
   defp render_meta_tags(meta_tags) do
     attributes =
