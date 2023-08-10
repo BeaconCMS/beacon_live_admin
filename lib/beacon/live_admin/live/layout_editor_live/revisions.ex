@@ -69,8 +69,8 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.Revisions do
     Calendar.strftime(datetime, "%B %d, %Y")
   end
 
-  defp template(%{schema_version: 1} = layout), do: layout.body
-  defp template(layout), do: layout.template
+  defp template(%{body: body}), do: body
+  defp template(%{template: template}), do: template
 
   defp render_meta_tags(meta_tags) do
     attributes =
