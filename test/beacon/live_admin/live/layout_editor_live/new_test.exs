@@ -14,7 +14,7 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.NewTest do
     html =
       live
       |> form("#layout-form", layout: %{title: "Main Layout"})
-      |> render_submit(%{layout: %{"body" => "<div>test</div>"}})
+      |> render_submit(%{layout: %{"template" => "<div>test</div>"}})
 
     assert has_element?(live, "h1", "Main Layout")
     assert has_element?(live, "a", "Draft (not public)")

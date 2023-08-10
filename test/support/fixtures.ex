@@ -13,7 +13,7 @@ defmodule Beacon.LiveAdmin.Fixtures do
         title: "Site A - Main Layout",
         meta_tags: [],
         stylesheet_urls: [],
-        body: """
+        template: """
         <header>site_a_header</header>
         <%= @inner_content %>
         """

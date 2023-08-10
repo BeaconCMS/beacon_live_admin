@@ -42,13 +42,13 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.Revisions do
               <%= event.snapshot.layout.title %>
             </li>
             <li>
-              <h4 class="text-gray-600">Body</h4>
+              <h4 class="text-gray-600">Template</h4>
               <div class="w-full mt-2">
                 <div class="py-3 bg-[#282c34] rounded-lg">
                   <LiveMonacoEditor.code_editor
                     path={event.snapshot.id}
                     style="min-height: 200px; width: 100%;"
-                    value={event.snapshot.layout.body}
+                    value={event.snapshot.layout.template}
                     opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => "html", "readOnly" => "true"})}
                   />
                 </div>
