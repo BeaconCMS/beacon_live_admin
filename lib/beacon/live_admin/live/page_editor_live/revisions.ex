@@ -38,6 +38,14 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Revisions do
     {:noreply, socket}
   end
 
+  def handle_event(<<"template-", _::binary>>, _, socket) do
+    {:noreply, socket}
+  end
+
+  def handle_event(<<"schema-", _::binary>>, _, socket) do
+    {:noreply, socket}
+  end
+
   @impl true
   def render(assigns) do
     ~H"""
@@ -105,7 +113,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Revisions do
           <div class="w-full mt-2">
             <div class="py-3 bg-[#282c34] rounded-lg">
               <LiveMonacoEditor.code_editor
-                path={@event.snapshot.id <> "-body"}
+                path={"template-" <> @event.snapshot.id}
                 style="min-height: 200px; width: 100%;"
                 value={@event.snapshot.page.template}
                 opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => "html", "readOnly" => "true"})}
@@ -118,7 +126,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Revisions do
           <div class="w-full mt-2">
             <div class="py-3 bg-[#282c34] rounded-lg">
               <LiveMonacoEditor.code_editor
-                path={@event.snapshot.id <> "-schema"}
+                path={"schema-" <> @event.snapshot.id}
                 style="min-height: 200px; width: 100%;"
                 value={Jason.encode!(@event.snapshot.page.raw_schema, pretty: true)}
                 opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => "json", "readOnly" => "true"})}
