@@ -24,4 +24,22 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.IndexTest do
     {:ok, live, html} = live(conn, "/admin/site_a/components")
     assert html =~ "Site A - Header"
   end
+
+  test "search components by name", %{conn: conn} do
+    {:ok, live, html} = live(conn, "/admin/site_a/components")
+
+    html =
+      live
+      |> element("form")
+      |> render_change(%{search: %{query: "nope"}})
+
+    refute html =~ "Site A - Header"
+
+    html =
+      live
+      |> element("form")
+      |> render_change(%{search: %{query: "header"}})
+
+    assert html =~ "Site A - Header"
+  end
 end
