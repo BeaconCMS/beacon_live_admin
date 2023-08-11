@@ -20,7 +20,7 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.Edit do
   end
 
   @impl true
-  def handle_event("body_editor_lost_focus", %{"value" => value}, socket) do
+  def handle_event("template_editor_lost_focus", %{"value" => value}, socket) do
     send_update(Beacon.LiveAdmin.LayoutEditorLive.FormComponent,
       id: "layout-editor-form-edit",
       changed_template: value
