@@ -148,9 +148,9 @@ defmodule Beacon.LiveAdmin.PageLive do
   end
 
   defp maybe_apply_module(socket, fun, params, default) do
-    if function_exported?(socket.assigns.beacon_page.module, fun, length(params) + 1) do
-      mod = socket.assigns.beacon_page.module
+    mod = socket.assigns.beacon_page.module
 
+    if exported?(mod, fun, length(params) + 1) do
       Logger.debug("""
       Applying #{fun} in #{mod}
       Parameters: #{inspect(params)}
@@ -158,8 +158,18 @@ defmodule Beacon.LiveAdmin.PageLive do
 
       apply(mod, fun, params ++ [socket])
     else
+      Logger.debug("""
+      Module/Function not exported: #{inspect(mod)}/#{inspect(fun)}
+      Parameters: #{inspect(params)}
+      """)
+
       default.(socket)
     end
+  end
+
+  # https://github.com/phoenixframework/phoenix_live_view/blob/8fedc6927fd937fe381553715e723754b3596a97/lib/phoenix_live_view/channel.ex#L435-L437
+  defp exported?(m, f, a) do
+    function_exported?(m, f, a) || (Code.ensure_loaded?(m) && function_exported?(m, f, a))
   end
 
   defp update_page(socket, assigns) do

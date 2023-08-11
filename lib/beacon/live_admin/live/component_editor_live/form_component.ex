@@ -51,6 +51,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
 
         {:noreply,
          socket
+         |> assign(:component, component)
          |> assign_form(changeset)
          |> put_flash(:info, "Component updated successfully")}
 

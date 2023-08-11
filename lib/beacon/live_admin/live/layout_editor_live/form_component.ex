@@ -83,6 +83,7 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.FormComponent do
 
         {:noreply,
          socket
+         |> assign(:layout, layout)
          |> assign_form(changeset)
          |> put_flash(:info, "Layout updated successfully")}
 

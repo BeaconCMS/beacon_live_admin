@@ -115,6 +115,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
 
         {:noreply,
          socket
+         |> assign(:page, page)
          |> assign_form(changeset)
          |> assign_extra_fields(changeset)
          |> put_flash(:info, "Page updated successfully")}
