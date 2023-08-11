@@ -118,6 +118,22 @@ defmodule Beacon.LiveAdmin.Content do
     call(site, Beacon.Content, :delete_variant_from_page, [page, variant])
   end
 
+  def change_page_event_handler(site, event_handler, attrs \\ %{}) do
+    call(site, Beacon.Content, :change_page_event_handler, [event_handler, attrs])
+  end
+
+  def create_event_handler_for_page(site, page, attrs) do
+    call(site, Beacon.Content, :create_event_handler_for_page, [page, attrs])
+  end
+
+  def update_event_handler_for_page(site, page, event_handler, attrs) do
+    call(site, Beacon.Content, :update_event_handler_for_page, [page, event_handler, attrs])
+  end
+
+  def delete_event_handler_from_page(site, page, event_handler) do
+    call(site, Beacon.Content, :delete_event_handler_from_page, [page, event_handler])
+  end
+
   def component_categories(site) do
     call(site, Beacon.Content, :component_categories, [])
   end

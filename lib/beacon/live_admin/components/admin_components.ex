@@ -90,6 +90,9 @@ defmodule Beacon.LiveAdmin.AdminComponents do
     <li class="mr-2">
       <.link patch={beacon_live_admin_path(@socket, @site, "/pages/#{@page_id}/revisions")} class={if(@current_action == :revisions, do: @active_class, else: @regular_class)}>Revisions</.link>
     </li>
+    <li class="mr-2">
+      <.link patch={beacon_live_admin_path(@socket, @site, "/pages/#{@page_id}/events")} class={if(@current_action == :events, do: @active_class, else: @regular_class)}>Events</.link>
+    </li>
     """
   end
 
