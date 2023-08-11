@@ -9,7 +9,7 @@ config :phoenix, :json_library, Jason
 if Mix.env() == :dev do
   esbuild = fn args ->
     [
-      args: ~w(./js/app.js --bundle) ++ args,
+      args: ~w(./js/beacon_live_admin.js --bundle) ++ args,
       cd: Path.expand("../assets", __DIR__),
       env: %{"NODE_PATH" => Path.expand("../deps", __DIR__)}
     ]
@@ -17,18 +17,8 @@ if Mix.env() == :dev do
 
   config :esbuild,
     version: "0.17.18",
-    module:
-      esbuild.(~w(--format=esm --sourcemap --outfile=../priv/static/beacon_live_admin.esm.js)),
-    main:
-      esbuild.(~w(--format=cjs --sourcemap --outfile=../priv/static/beacon_live_admin.cjs.js)),
-    cdn:
-      esbuild.(
-        ~w(--format=iife --target=es2016 --global-name=BeaconLiveAdmin --outfile=../priv/static/beacon_live_admin.js)
-      ),
-    cdn_min:
-      esbuild.(
-        ~w(--format=iife --target=es2016 --global-name=BeaconLiveAdmin --minify --outfile=../priv/static/beacon_live_admin.min.js)
-      )
+    cdn: esbuild.(~w(--format=iife --target=es2016 --global-name=BeaconLiveAdmin --outfile=../priv/static/beacon_live_admin.js)),
+    cdn_min: esbuild.(~w(--format=iife --target=es2016 --global-name=BeaconLiveAdmin --minify --outfile=../priv/static/beacon_live_admin.min.js))
 
   config :tailwind,
     version: "3.2.7",
@@ -36,7 +26,7 @@ if Mix.env() == :dev do
       args: ~w(
       --minify
       --config=tailwind.config.js
-      --input=css/app.css
+      --input=css/beacon_live_admin.css
       --output=../priv/static/beacon_live_admin.min.css
     ),
       cd: Path.expand("../assets", __DIR__)

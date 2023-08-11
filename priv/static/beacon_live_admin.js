@@ -179,7 +179,7 @@ var BeaconLiveAdmin = (() => {
     }
   });
 
-  // js/app.js
+  // js/beacon_live_admin.js
   var import_topbar = __toESM(require_topbar());
 
   // ../deps/live_monaco_editor/priv/static/live_monaco_editor.esm.js
@@ -850,7 +850,7 @@ var BeaconLiveAdmin = (() => {
     }
   };
 
-  // js/app.js
+  // js/beacon_live_admin.js
   var Hooks = {};
   Hooks.CodeEditorHook = CodeEditorHook;
   import_topbar.default.config({ barColors: { 0: "#29d" }, shadowColor: "rgba(0, 0, 0, .3)" });

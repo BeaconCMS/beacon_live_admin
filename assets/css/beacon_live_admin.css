@@ -1,7 +1,4 @@
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
-
 @import "../../deps/live_monaco_editor/priv/static/live_monaco_editor.min.css";
-
-/* This file is for your main application CSS */
