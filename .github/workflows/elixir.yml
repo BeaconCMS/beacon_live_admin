@@ -70,7 +70,10 @@ jobs:
       - name: install cmark-gfm
         run: sudo apt-get install -y cmark-gfm
 
-      - run: mix test
+      - name: Run tests
+        run: |
+          epmd -daemon
+          mix test
 
   quality:
     name: quality (OTP ${{matrix.otp}} | Elixir ${{matrix.elixir}})
