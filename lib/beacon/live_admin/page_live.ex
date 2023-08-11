@@ -7,6 +7,7 @@ defmodule Beacon.LiveAdmin.PageLive do
   @moduledoc false
 
   use Beacon.LiveAdmin.Web, :live_view
+  require Logger
   alias Beacon.LiveAdmin.Cluster
   alias Beacon.LiveAdmin.PageBuilder.Menu
   alias Beacon.LiveAdmin.PageBuilder.Page
@@ -148,7 +149,14 @@ defmodule Beacon.LiveAdmin.PageLive do
 
   defp maybe_apply_module(socket, fun, params, default) do
     if function_exported?(socket.assigns.beacon_page.module, fun, length(params) + 1) do
-      apply(socket.assigns.beacon_page.module, fun, params ++ [socket])
+      mod = socket.assigns.beacon_page.module
+
+      Logger.debug("""
+      Applying #{fun} in #{mod}
+      Parameters: #{inspect(params)}
+      """)
+
+      apply(mod, fun, params ++ [socket])
     else
       default.(socket)
     end
