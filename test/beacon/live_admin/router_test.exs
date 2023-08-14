@@ -20,7 +20,6 @@ defmodule Beacon.LiveAdmin.RouterTest do
     use Phoenix.Router
     use Beacon.LiveAdmin.Router
     import Plug.Conn
-    import Phoenix.Controller
     import Phoenix.LiveView.Router
 
     scope "/parent" do
@@ -80,8 +79,7 @@ defmodule Beacon.LiveAdmin.RouterTest do
                 root_layout: {Beacon.LiveAdmin.Layouts, :admin},
                 session: {Beacon.LiveAdmin.Router, :__session__, [[]]},
                 on_mount: [SomeHook, Beacon.LiveAdmin.Hooks.AssignAgent]
-              ]} =
-               Router.__session_options__("prefix", [], on_mount: [SomeHook])
+              ]} = Router.__session_options__("prefix", [], on_mount: [SomeHook])
     end
 
     test "preserve Hooks.AssignAgent position if defined by user" do
