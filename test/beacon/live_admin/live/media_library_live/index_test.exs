@@ -10,7 +10,7 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.IndexTest do
 
   test "index", %{conn: conn} do
     media_library_asset_fixture(node1(), file_name: "test_index.webp")
-    {:ok, view, html} = live(conn, "/admin/site_a/media_library")
+    {:ok, _view, html} = live(conn, "/admin/site_a/media_library")
     assert html =~ "test_index.webp"
   end
 

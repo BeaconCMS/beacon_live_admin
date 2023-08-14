@@ -10,7 +10,7 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.UploadFormComponentTest do
 
   describe "uploads" do
     @tag :skip
-    test "upload valid files", %{conn: conn} do
+    test "upload valid files", %{conn: _conn} do
       # TODO: https://github.com/BeaconCMS/beacon/pull/316
       false
     end

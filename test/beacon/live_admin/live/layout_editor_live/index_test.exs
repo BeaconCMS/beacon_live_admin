@@ -13,13 +13,13 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.IndexTest do
   end
 
   test "display all layouts", %{conn: conn} do
-    {:ok, live, html} = live(conn, "/admin/site_a/layouts")
+    {:ok, _live, html} = live(conn, "/admin/site_a/layouts")
     assert html =~ "Site A - Main Layout"
     assert html =~ "Draft"
   end
 
   test "search layouts by title", %{conn: conn} do
-    {:ok, live, html} = live(conn, "/admin/site_a/layouts")
+    {:ok, live, _html} = live(conn, "/admin/site_a/layouts")
 
     html =
       live

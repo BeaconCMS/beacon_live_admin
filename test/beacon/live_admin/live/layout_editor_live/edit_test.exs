@@ -11,7 +11,7 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.EditTest do
   end
 
   test "save changes", %{conn: conn, layout: layout} do
-    {:ok, live, html} = live(conn, "/admin/site_a/layouts/#{layout.id}")
+    {:ok, live, _html} = live(conn, "/admin/site_a/layouts/#{layout.id}")
 
     live
     |> form("#layout-form", layout: %{title: "Other Layout"})
@@ -26,7 +26,7 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.EditTest do
     {:ok, _live, html} = live(conn, "/admin/site_a/layouts")
     refute html =~ "Published"
 
-    {:ok, live, html} = live(conn, "/admin/site_a/layouts/#{layout.id}")
+    {:ok, live, _html} = live(conn, "/admin/site_a/layouts/#{layout.id}")
 
     live
     |> element("button", "Confirm")
