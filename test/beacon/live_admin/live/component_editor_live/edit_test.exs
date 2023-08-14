@@ -24,7 +24,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.EditTest do
   end
 
   test "save changes", %{conn: conn, component: component} do
-    {:ok, live, html} = live(conn, "/admin/site_a/components/#{component.id}")
+    {:ok, live, _html} = live(conn, "/admin/site_a/components/#{component.id}")
 
     live
     |> form("#component-form", component: %{name: "Site A - Other"})

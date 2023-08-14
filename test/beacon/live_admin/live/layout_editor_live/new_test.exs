@@ -9,12 +9,11 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.NewTest do
   end
 
   test "create a new draft layout", %{conn: conn} do
-    {:ok, live, html} = live(conn, "/admin/site_a/layouts/new")
+    {:ok, live, _html} = live(conn, "/admin/site_a/layouts/new")
 
-    html =
-      live
-      |> form("#layout-form", layout: %{title: "Main Layout"})
-      |> render_submit(%{layout: %{"template" => "<div>test</div>"}})
+    live
+    |> form("#layout-form", layout: %{title: "Main Layout"})
+    |> render_submit(%{layout: %{"template" => "<div>test</div>"}})
 
     assert has_element?(live, "h1", "Main Layout")
     assert has_element?(live, "a", "Draft (not public)")
