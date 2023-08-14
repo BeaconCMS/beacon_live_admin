@@ -8,7 +8,6 @@ defmodule Beacon.LiveAdmin.RouterTest do
     use Phoenix.Router
     use Beacon.LiveAdmin.Router
     import Plug.Conn
-    import Phoenix.Controller
     import Phoenix.LiveView.Router
 
     scope "/" do
