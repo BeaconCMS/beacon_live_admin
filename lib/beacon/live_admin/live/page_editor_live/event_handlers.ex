@@ -4,7 +4,6 @@ defmodule Beacon.LiveAdmin.PageEditorLive.EventHandlers do
 
   alias Beacon.LiveAdmin.Content
 
-  @impl true
   def menu_link("/pages", :events), do: {:submenu, "Pages"}
   def menu_link(_, _), do: :skip
 
