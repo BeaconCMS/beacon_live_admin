@@ -14,7 +14,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.NewTest do
   end
 
   test "create new page and patch to edit page", %{conn: conn} do
-    {:ok, live, html} = live(conn, "/admin/site_a/pages/new")
+    {:ok, live, _html} = live(conn, "/admin/site_a/pages/new")
 
     live
     |> form("#page-form", page: %{path: "/my/page", title: "My Page", format: "heex"})

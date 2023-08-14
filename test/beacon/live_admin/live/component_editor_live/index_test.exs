@@ -21,12 +21,12 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.IndexTest do
   end
 
   test "display all components", %{conn: conn} do
-    {:ok, live, html} = live(conn, "/admin/site_a/components")
+    {:ok, _live, html} = live(conn, "/admin/site_a/components")
     assert html =~ "Site A - Header"
   end
 
   test "search components by name", %{conn: conn} do
-    {:ok, live, html} = live(conn, "/admin/site_a/components")
+    {:ok, live, _html} = live(conn, "/admin/site_a/components")
 
     html =
       live
