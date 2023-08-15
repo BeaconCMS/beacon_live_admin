@@ -127,6 +127,8 @@ defmodule Beacon.LiveAdmin.Router do
       {"/layouts/:id", Beacon.LiveAdmin.LayoutEditorLive.Edit, :edit, %{}},
       {"/layouts/:id/meta_tags", Beacon.LiveAdmin.LayoutEditorLive.MetaTags, :meta_tags, %{}},
       {"/layouts/:id/revisions", Beacon.LiveAdmin.LayoutEditorLive.Revisions, :revisions, %{}},
+      {"/layouts/:id/resource_links", Beacon.LiveAdmin.LayoutEditorLive.ResourceLinks,
+       :resource_links, %{}},
       {"/pages", Beacon.LiveAdmin.PageEditorLive.Index, :index, %{}},
       {"/pages/new", Beacon.LiveAdmin.PageEditorLive.New, :new, %{}},
       {"/pages/:id", Beacon.LiveAdmin.PageEditorLive.Edit, :edit, %{}},
