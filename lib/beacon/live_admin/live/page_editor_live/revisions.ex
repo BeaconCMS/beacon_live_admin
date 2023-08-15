@@ -24,8 +24,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Revisions do
 
   @impl true
   def handle_event("show_modal", params, socket) do
-    event = Enum.find(socket.assigns.events, &(&1.id == params["event_id"]))
-    page = event.snapshot.page
+    %{snapshot: %{page: page}} = Enum.find(socket.assigns.events, &(&1.id == params["event_id"]))
 
     {content, language} =
       case params do
