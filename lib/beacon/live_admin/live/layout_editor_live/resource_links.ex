@@ -112,7 +112,7 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.ResourceLinks do
 
         <div>
           <.button type="button" phx-click="add">New Resource Link</.button>
-          <.button type="button" phx-click="show-new-attribute-modal">New RL Attribute</.button>
+          <.button type="button" phx-click="show-new-attribute-modal">New Attribute</.button>
         </div>
 
         <div class="overflow-x-auto mt-8">
