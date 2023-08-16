@@ -70,22 +70,24 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.Revisions do
         </li>
         <li>
           <h4 class="text-gray-600">Meta Tags</h4>
-          <.meta_tags_table meta_tags={@event.snapshot.layout.meta_tags} />
+          <.meta_tags_table layout={@event.snapshot.layout} />
         </li>
         <li>
           <h4 class="text-gray-600">Resource Links</h4>
-          <.resource_links_table resource_links={@event.snapshot.layout.resource_links} />
+          <.resource_links_table layout={@event.snapshot.layout} />
         </li>
       </ol>
     </li>
     """
   end
 
-  attr :meta_tags, :list
+  attr :layout, :map
 
   def meta_tags_table(assigns) do
+    meta_tags = assigns.layout.meta_tags
+
     attributes =
-      assigns.meta_tags
+      meta_tags
       |> Enum.flat_map(&Map.keys/1)
       |> Enum.uniq()
       |> Enum.sort(fn a, b ->
@@ -100,7 +102,7 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.Revisions do
         end
       end)
 
-    assigns = Map.put(assigns, :attributes, attributes)
+    assigns = %{attributes: attributes, meta_tags: meta_tags}
 
     ~H"""
     <.table id="meta_tags" rows={@meta_tags}>
@@ -111,11 +113,13 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.Revisions do
     """
   end
 
-  attr :resource_links, :list
+  attr :layout, :map
 
   def resource_links_table(assigns) do
+    resource_links = resource_links(assigns.layout)
+
     attributes =
-      assigns.resource_links
+      resource_links
       |> Enum.flat_map(&Map.keys/1)
       |> Enum.uniq()
       |> Enum.sort(fn a, b ->
@@ -128,7 +132,7 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.Revisions do
         end
       end)
 
-    assigns = Map.put(assigns, :attributes, attributes)
+    assigns = %{attributes: attributes, resource_links: resource_links}
 
     ~H"""
     <.table id="resource_links" rows={@resource_links}>
@@ -147,4 +151,7 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.Revisions do
 
   defp template(%{body: body}), do: body
   defp template(%{template: template}), do: template
+
+  defp resource_links(%{resource_links: links}), do: links
+  defp resource_links(_layout), do: []
 end
