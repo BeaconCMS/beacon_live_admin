@@ -14,8 +14,9 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Revisions do
       assign(socket,
         page_id: id,
         events: Content.list_page_events(socket.assigns.beacon_page.site, id),
-        show_variant_modal: false,
-        variant_template: nil
+        show_modal: false,
+        modal_content: nil,
+        modal_language: nil
       )
 
     {:noreply, socket}
@@ -23,28 +24,29 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Revisions do
 
   @impl true
   def handle_event("show_modal", params, socket) do
-    %{"variant_id" => variant_id, "event_id" => event_id} = params
-    event = Enum.find(socket.assigns.events, &(&1.id == event_id))
-    variant = Enum.find(event.snapshot.page.variants, &(&1.id == variant_id))
+    %{snapshot: %{page: page}} = Enum.find(socket.assigns.events, &(&1.id == params["event_id"]))
 
-    {:noreply, assign(socket, show_variant_modal: true, variant_template: variant.template)}
+    {content, language} =
+      case params do
+        %{"variant_id" => variant_id} ->
+          variant = Enum.find(page.variants, &(&1.id == variant_id))
+          {variant.template, language(page.format)}
+
+        %{"event_handler_id" => event_handler_id} ->
+          event_handler = Enum.find(page.event_handlers, &(&1.id == event_handler_id))
+          {event_handler.code, "elixir"}
+      end
+
+    {:noreply, assign(socket, show_modal: true, modal_content: content, modal_language: language)}
   end
 
   def handle_event("hide_modal", _, socket) do
-    {:noreply, assign(socket, show_variant_modal: false, variant_template: nil)}
+    {:noreply, assign(socket, show_modal: false, modal_content: nil, modal_language: nil)}
   end
 
-  def handle_event("variant_template_editor_lost_focus", _, socket) do
-    {:noreply, socket}
-  end
-
-  def handle_event(<<"template-", _::binary>>, _, socket) do
-    {:noreply, socket}
-  end
-
-  def handle_event(<<"schema-", _::binary>>, _, socket) do
-    {:noreply, socket}
-  end
+  def handle_event("modal_editor_lost_focus", _, socket), do: {:noreply, socket}
+  def handle_event(<<"template-", _::binary>>, _, socket), do: {:noreply, socket}
+  def handle_event(<<"schema-", _::binary>>, _, socket), do: {:noreply, socket}
 
   @impl true
   def render(assigns) do
@@ -58,14 +60,14 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Revisions do
         <% end %>
       </ol>
 
-      <.modal :if={@show_variant_modal} id="variant-modal" on_cancel={JS.push("hide_modal")} show>
+      <.modal :if={@show_modal} id="modal" on_cancel={JS.push("hide_modal")} show>
         <div class="w-full mt-2">
           <div class="py-3 bg-[#282c34] rounded-lg">
             <LiveMonacoEditor.code_editor
-              path="variant_template"
+              path="modal"
               style="min-height: 200px; width: 100%;"
-              value={@variant_template}
-              opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => "json", "readOnly" => "true"})}
+              value={@modal_content}
+              opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => @modal_language, "readOnly" => "true"})}
             />
           </div>
         </div>
@@ -116,7 +118,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Revisions do
                 path={"template-" <> @event.snapshot.id}
                 style="min-height: 200px; width: 100%;"
                 value={@event.snapshot.page.template}
-                opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => "html", "readOnly" => "true"})}
+                opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => language(@event.snapshot.page.format), "readOnly" => "true"})}
               />
             </div>
           </div>
@@ -140,22 +142,53 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Revisions do
         </li>
         <li>
           <h4 class="text-gray-600">Variants</h4>
-          <.table id="variants" rows={variants(@event.snapshot.page)}>
-            <:col :let={variant} label="name">
-              <%= variant.name %>
-            </:col>
-            <:col :let={variant} label="weight">
-              <%= variant.weight %>
-            </:col>
-            <:col :let={variant} label="template">
-              <.link class="hover:underline text-blue-600" phx-click={JS.push("show_modal", value: %{event_id: @event.id, variant_id: variant.id})}>
-                Click here
-              </.link>
-            </:col>
-          </.table>
+          <.variants_table variants={variants(@event.snapshot.page)} event_id={@event.id} />
+        </li>
+        <li>
+          <h4 class="text-gray-600">Event Handlers</h4>
+          <.event_handlers_table event_handlers={event_handlers(@event.snapshot.page)} event_id={@event.id} />
         </li>
       </ol>
     </li>
+    """
+  end
+
+  attr :variants, :list
+  attr :event_id, :string
+
+  def variants_table(assigns) do
+    ~H"""
+    <.table :if={@variants != []} id="variants" rows={@variants}>
+      <:col :let={variant} label="name">
+        <%= variant.name %>
+      </:col>
+      <:col :let={variant} label="weight">
+        <%= variant.weight %>
+      </:col>
+      <:col :let={variant} label="template">
+        <.link class="hover:underline text-blue-600" phx-click={JS.push("show_modal", value: %{event_id: @event_id, variant_id: variant.id})}>
+          Click here
+        </.link>
+      </:col>
+    </.table>
+    """
+  end
+
+  attr :event_handlers, :list
+  attr :event_id, :string
+
+  def event_handlers_table(assigns) do
+    ~H"""
+    <.table :if={@event_handlers != []} id="event-handlers" rows={@event_handlers}>
+      <:col :let={event_handler} label="name">
+        <%= event_handler.name %>
+      </:col>
+      <:col :let={event_handler} label="code">
+        <.link class="hover:underline text-blue-600" phx-click={JS.push("show_modal", value: %{event_id: @event_id, event_handler_id: event_handler.id})}>
+          Click here
+        </.link>
+      </:col>
+    </.table>
     """
   end
 
@@ -195,4 +228,13 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Revisions do
 
   defp variants(%{variants: variants}) when is_list(variants), do: variants
   defp variants(_page), do: []
+
+  defp event_handlers(%{event_handlers: event_handlers}) when is_list(event_handlers),
+    do: event_handlers
+
+  defp event_handlers(_page), do: []
+
+  defp language("heex"), do: "html"
+  defp language(:heex), do: "html"
+  defp language(format), do: to_string(format)
 end
