@@ -79,7 +79,6 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Revisions do
   ## FUNCTION COMPONENTS
 
   attr :event, :map
-  attr :latest, :boolean, default: false
 
   def revision(assigns) do
     ~H"""
