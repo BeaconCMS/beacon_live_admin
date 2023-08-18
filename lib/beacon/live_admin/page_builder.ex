@@ -56,7 +56,12 @@ defmodule Beacon.LiveAdmin.PageBuilder do
       import Beacon.LiveAdmin.CoreComponents
 
       import Beacon.LiveAdmin.Router,
-        only: [beacon_live_admin_path: 1, beacon_live_admin_path: 3, beacon_live_admin_path: 4]
+        only: [
+          beacon_live_admin_path: 1,
+          beacon_live_admin_path: 3,
+          beacon_live_admin_path: 4,
+          beacon_live_admin_static_path: 1
+        ]
 
       import Phoenix.LiveView
       alias Phoenix.LiveView.JS

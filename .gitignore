@@ -40,5 +40,8 @@ npm-debug.log
 /priv/plts/*.plt
 /priv/plts/*.plt.hash
 
+# LSP
+/.elixir_ls
+
 # Local iex config
 .iex.exs

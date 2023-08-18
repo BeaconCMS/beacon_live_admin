@@ -314,7 +314,7 @@ defmodule Beacon.LiveAdmin.Router do
 
   """
   def beacon_live_admin_static_path(file) do
-    sanitize_path("__beacon_live_admin_static/" <> file)
+    sanitize_path("/__beacon_live_admin_static/" <> file)
   end
 
   defp router(%Plug.Conn{private: %{phoenix_router: router}}), do: router
