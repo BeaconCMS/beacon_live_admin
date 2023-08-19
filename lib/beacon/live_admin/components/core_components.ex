@@ -188,8 +188,8 @@ defmodule Beacon.LiveAdmin.CoreComponents do
     <button
       type={@type}
       class={[
-        "phx-submit-loading:opacity-75 rounded-lg bg-zinc-900 hover:bg-zinc-700 py-2 px-3",
-        "text-sm font-semibold leading-6 text-white active:text-white/80",
+        "phx-submit-loading:opacity-75 rounded-xl bg-blue-600 hover:bg-blue-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 active:bg-blue-800 py-3.5 px-6",
+        "text-sm/5 font-semibold tracking-wide text-white active:text-white/80",
         @class
       ]}
       {@rest}
@@ -358,10 +358,10 @@ defmodule Beacon.LiveAdmin.CoreComponents do
     ~H"""
     <header class={[@actions != [] && "flex items-center justify-between gap-6", @class]}>
       <div>
-        <h1 class="text-lg font-semibold leading-8 text-zinc-800">
+        <h1 class="font-medium leading-8 text-2xl/8 text-[#030913]">
           <%= render_slot(@inner_block) %>
         </h1>
-        <p :if={@subtitle != []} class="mt-2 text-sm leading-6 text-zinc-600">
+        <p :if={@subtitle != []} class="mt-2 text-sm leading-6 text-[#030913]">
           <%= render_slot(@subtitle) %>
         </p>
       </div>

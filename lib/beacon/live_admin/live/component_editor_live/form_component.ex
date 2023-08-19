@@ -72,21 +72,22 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
         </:actions>
       </.header>
 
-      <div class="mx-auto grid grid-cols-1 grid-rows-1 items-start gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
-        <div class="mt-10 p-4 rounded-lg bg-gray-50 shadow-sm ring-1 ring-gray-900/5">
+      <div class="grid items-start lg:h-[calc(100vh_-_144px)] border border-red-500 grid-cols-1 grid-rows-1 mx-auto mt-10 gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
+        <div class="p-4 bg-white rounded-[1.25rem] md:rounded-t-[1.25rem] md:rounded-b-none lg:h-full">
           <.form :let={f} for={@form} id="component-form" class="space-y-8" phx-target={@myself} phx-submit="save">
+            <legend class="text-sm font-bold tracking-wider text-gray-500 uppercase">Component settings</legend>
             <.input field={f[:name]} type="text" label="Name" />
             <.input field={f[:category]} type="select" options={categories_to_options(@site)} label="Category" />
             <input type="hidden" name="component[body]" id="component-form_body" value={@changed_body} />
           </.form>
         </div>
-        <div class="col-span-2">
+        <div class="h-full col-span-2">
           <%= template_error(@form[:body]) %>
-          <div class="w-full mt-10 space-y-8">
-            <div class="py-3 bg-[#282c34] rounded-lg">
+          <!--div class="space-y-8 " -->
+            <div class="py-6 w-full h-full rounded-[1.25rem] md:rounded-t-[1.25rem] md:rounded-b-none bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
               <LiveMonacoEditor.code_editor path="body" style="min-height: 1000px; width: 100%;" value={@body} opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => "html"})} />
             </div>
-          </div>
+          <!--div -->
         </div>
       </div>
     </div>

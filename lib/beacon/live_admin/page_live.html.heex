@@ -4,7 +4,7 @@
       <div class="flex items-center justify-center @[180px]:justify-start gap-0 @[180px]:gap-1.5 @[240px]:gap-2.5 @[300px]:gap-3.5 @[350px]:gap-4">
         <% # @Hanna, ask about image paths %>
         <img
-        src={beacon_live_admin_static_path("/images/narwin_logo.svg")}
+          src={beacon_live_admin_static_path("/images/narwin_logo.svg")}
           alt="Narwin"
           class="block bg-gray-400 rounded-full w-9 @[180px]:w-11 @[240px]:w-[54px] @[300px]:w-[62px] @[350px]:w-[72px] aspect-square "
           loading="lazy"
@@ -25,6 +25,6 @@
     </nav>
   </div>
 </aside>
-<main class="w-full px-4 py-16 sm:px-6 lg:px-8">
+<main class="w-full px-4 pt-16 sm:px-6 lg:px-8">
   <%= render_page(@beacon_page.module, assigns) %>
 </main> 
