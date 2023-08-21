@@ -11,8 +11,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    pages = list_pages(socket.assigns.beacon_page.site)
-    {:ok, assign(socket, :pages, pages)}
+    {:ok, assign(socket, :pages, [])}
   end
 
   @impl true
@@ -22,7 +21,8 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
   end
 
   def handle_params(_params, _uri, socket) do
-    {:noreply, socket}
+    pages = list_pages(socket.assigns.beacon_page.site)
+    {:noreply, assign(socket, :pages, pages)}
   end
 
   @impl true

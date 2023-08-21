@@ -11,19 +11,18 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    components = list_components(socket.assigns.beacon_page.site)
-    {:ok, assign(socket, :components, components)}
+    {:ok, assign(socket, :components, [])}
   end
 
   @impl true
   def handle_params(%{"query" => query}, _uri, socket) do
     components = list_components(socket.assigns.beacon_page.site, query: query)
-
     {:noreply, assign(socket, :components, components)}
   end
 
   def handle_params(_params, _uri, socket) do
-    {:noreply, socket}
+    components = list_components(socket.assigns.beacon_page.site)
+    {:noreply, assign(socket, :components, components)}
   end
 
   @impl true
