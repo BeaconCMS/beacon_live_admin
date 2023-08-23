@@ -162,4 +162,8 @@ defmodule Beacon.LiveAdmin.Content do
   def update_component(site, component, attrs) do
     call(site, Beacon.Content, :update_component, [component, attrs])
   end
+
+  def list_error_pages(site) do
+    call(site, Beacon.Content, :list_error_pages, [site])
+  end
 end
