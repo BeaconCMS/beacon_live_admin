@@ -145,6 +145,7 @@ defmodule Beacon.LiveAdmin.Router do
       {"/components/new", Beacon.LiveAdmin.ComponentEditorLive.New, :new, %{}},
       {"/components/:id", Beacon.LiveAdmin.ComponentEditorLive.Edit, :edit, %{}},
       {"/error_pages", Beacon.LiveAdmin.ErrorPageEditorLive.Index, :index, %{}},
+      {"/error_pages/:status", Beacon.LiveAdmin.ErrorPageEditorLive.Index, :index, %{}},
       {"/media_library", Beacon.LiveAdmin.MediaLibraryLive.Index, :index, %{}},
       {"/media_library/upload", Beacon.LiveAdmin.MediaLibraryLive.Index, :upload, %{}},
       {"/media_library/:id", Beacon.LiveAdmin.MediaLibraryLive.Index, :show, %{}}
