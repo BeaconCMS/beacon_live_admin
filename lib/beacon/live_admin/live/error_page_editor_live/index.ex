@@ -87,7 +87,7 @@ defmodule Beacon.LiveAdmin.ErrorPageEditorLive.Index do
           |> assign(error_pages: Content.list_error_pages(site))
           |> assign_selected(status)
           |> assign(show_create_modal: false)
-          |> push_patch(to: beacon_live_admin_path(socket, site, "/error_pages/#{status}"))
+          |> push_redirect(to: beacon_live_admin_path(socket, site, "/error_pages/#{status}"))
 
         {:error, changeset} ->
           assign(socket, create_form: to_form(changeset))
@@ -96,18 +96,20 @@ defmodule Beacon.LiveAdmin.ErrorPageEditorLive.Index do
     {:noreply, socket}
   end
 
-  def handle_event("save_changes", params, socket) do
+  def handle_event("save_changes", %{"error_page" => params}, socket) do
     %{selected: selected, beacon_page: %{site: site}} = socket.assigns
 
     attrs = %{layout_id: params["layout_id"], template: params["template"]}
 
     socket =
       case Content.update_error_page(site, selected, attrs) do
-        {:ok, _} ->
+        {:ok, updated_error_page} ->
           socket
+          |> assign_error_page_update(updated_error_page)
           |> assign_selected(selected.status)
           |> assign_form()
           |> assign(unsaved_changes: false)
+          |> put_flash(:info, "Error page updated successfully")
 
         {:error, changeset} ->
           changeset = Map.put(changeset, :action, :update)
@@ -157,8 +159,12 @@ defmodule Beacon.LiveAdmin.ErrorPageEditorLive.Index do
     end
   end
 
-  defp assign_selected(socket, status_str) do
-    selected = Enum.find(socket.assigns.error_pages, &("#{&1.status}" == status_str))
+  defp assign_selected(socket, status) when is_binary(status) do
+    assign_selected(socket, String.to_integer(status))
+  end
+
+  defp assign_selected(socket, status) when is_integer(status) do
+    selected = Enum.find(socket.assigns.error_pages, &(&1.status == status))
     assign(socket, selected: selected, changed_template: selected.template)
   end
 
@@ -175,6 +181,18 @@ defmodule Beacon.LiveAdmin.ErrorPageEditorLive.Index do
       end
 
     assign(socket, form: form)
+  end
+
+  defp assign_error_page_update(socket, updated_error_page) do
+    %{id: error_page_id} = updated_error_page
+
+    error_pages =
+      Enum.map(socket.assigns.error_pages, fn
+        %{id: ^error_page_id} -> updated_error_page
+        other -> other
+      end)
+
+    assign(socket, error_pages: error_pages)
   end
 
   def render(assigns) do

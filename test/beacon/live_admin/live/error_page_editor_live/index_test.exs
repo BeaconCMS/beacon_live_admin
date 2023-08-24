@@ -5,7 +5,7 @@ defmodule Beacon.LiveAdmin.ErrorPageEditorLive.IndexTest do
 
   setup do
     default_layout = layout_fixture(node1(), %{title: "Default"})
-    _another_layout = layout_fixture(node1(), %{title: "Another"})
+    another_layout = layout_fixture(node1(), %{title: "Another"})
     attrs = %{status: 404, layout_id: default_layout.id, template: "Not Found"}
     error_page_fixture(node1(), attrs)
     attrs = %{status: 500, layout_id: default_layout.id, template: "Internal Server Error"}
@@ -15,6 +15,8 @@ defmodule Beacon.LiveAdmin.ErrorPageEditorLive.IndexTest do
       rpc(node1(), Beacon.Repo, :delete_all, [Beacon.Content.ErrorPage, [log: false]])
       rpc(node1(), Beacon.Repo, :delete_all, [Beacon.Content.Layout, [log: false]])
     end)
+
+    [another_layout: another_layout]
   end
 
   test "select error page via path", %{conn: conn} do
@@ -39,6 +41,21 @@ defmodule Beacon.LiveAdmin.ErrorPageEditorLive.IndexTest do
 
     refute has_element?(view, "#create-modal")
     assert has_element?(view, "#status-display", "Status: 400")
+  end
+
+  test "update an error page", %{conn: conn, another_layout: layout} do
+    {:ok, view, html} = live(conn, "/admin/site_a/error_pages/404")
+
+    assert has_element?(view, "[selected=\"selected\"]", "Default")
+
+    view
+    |> form("#error-page-form", error_page: %{layout_id: layout.id})
+    |> render_submit()
+
+    assert has_element?(view, "p", "Error page updated successfully")
+
+    refute has_element?(view, "[selected=\"selected\"]", "Default")
+    assert has_element?(view, "[selected=\"selected\"]", "Another")
   end
 
   test "delete error page", %{conn: conn} do
