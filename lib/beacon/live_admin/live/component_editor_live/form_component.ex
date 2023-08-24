@@ -72,8 +72,8 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
         </:actions>
       </.header>
 
-      <div class="grid items-start lg:h-[calc(100vh_-_144px)] border border-red-500 grid-cols-1 grid-rows-1 mx-auto mt-10 gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
-        <div class="p-4 bg-white rounded-[1.25rem] md:rounded-t-[1.25rem] md:rounded-b-none lg:h-full">
+      <div class="grid items-start lg:h-[calc(100vh_-_144px)] grid-cols-1 mx-auto mt-10 gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
+        <div class="p-4 bg-white col-span-full lg:col-span-1 rounded-[1.25rem] lg:rounded-t-[1.25rem] lg:rounded-b-none lg:h-full">
           <.form :let={f} for={@form} id="component-form" class="space-y-8" phx-target={@myself} phx-submit="save">
             <legend class="text-sm font-bold tracking-wider text-gray-500 uppercase">Component settings</legend>
             <.input field={f[:name]} type="text" label="Name" />
@@ -81,12 +81,12 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
             <input type="hidden" name="component[body]" id="component-form_body" value={@changed_body} />
           </.form>
         </div>
-        <div class="h-full col-span-2">
+        <div class="h-full col-span-full lg:col-span-2">
           <%= template_error(@form[:body]) %>
           <!--div class="space-y-8 " -->
-            <div class="py-6 w-full h-full rounded-[1.25rem] md:rounded-t-[1.25rem] md:rounded-b-none bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
-              <LiveMonacoEditor.code_editor path="body" style="min-height: 1000px; width: 100%;" value={@body} opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => "html"})} />
-            </div>
+          <div class="py-6 w-full h-full rounded-[1.25rem] lg:rounded-t-[1.25rem] lg:rounded-b-none bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
+            <LiveMonacoEditor.code_editor path="body" style="min-height: 1000px; width: 100%;" value={@body} opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => "html"})} />
+          </div>
           <!--div -->
         </div>
       </div>

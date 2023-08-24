@@ -62,7 +62,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Revisions do
 
       <.modal :if={@show_modal} id="modal" on_cancel={JS.push("hide_modal")} show>
         <div class="w-full mt-2">
-          <div class="py-3 rounded-lg bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
+          <div class="py-6 rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
             <LiveMonacoEditor.code_editor
               path="modal"
               style="min-height: 200px; width: 100%;"
@@ -112,7 +112,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Revisions do
         <li>
           <h4 class="text-gray-600">Template</h4>
           <div class="w-full mt-2">
-            <div class="py-3 rounded-lg bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
+            <div class="py-6 rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
               <LiveMonacoEditor.code_editor
                 path={"template-" <> @event.snapshot.id}
                 style="min-height: 200px; width: 100%;"
@@ -125,7 +125,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Revisions do
         <li>
           <h4 class="text-gray-600">Schema</h4>
           <div class="w-full mt-2">
-            <div class="py-3 rounded-lg bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
+            <div class="py-6 rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
               <LiveMonacoEditor.code_editor
                 path={"schema-" <> @event.snapshot.id}
                 style="min-height: 200px; width: 100%;"
