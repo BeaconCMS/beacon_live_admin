@@ -145,19 +145,18 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.FormComponent do
         </div>
       </.modal>
 
-      <div class="grid items-start grid-cols-1 grid-rows-1 gap-8 mx-auto lg:mx-0 lg:max-w-none lg:grid-cols-3">
-        <div class="p-4 mt-10 rounded-lg shadow-sm bg-gray-50 ring-1 ring-gray-900/5">
+      <div class="grid items-start lg:h-[calc(100vh_-_144px)] grid-cols-1 mx-auto mt-10 gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
+        <div class="p-4 bg-white col-span-full lg:col-span-1 rounded-[1.25rem] lg:rounded-t-[1.25rem] lg:rounded-b-none lg:h-full">
           <.form :let={f} for={@form} id="layout-form" class="space-y-8" phx-target={@myself} phx-change="validate" phx-submit="save">
+            <legend class="text-sm font-bold tracking-widest text-[#445668] uppercase">Layout Settings</legend>
             <.input field={f[:title]} type="text" label="Title" />
             <input type="hidden" name="layout[template]" id="layout-form_template" value={@changed_template} />
           </.form>
         </div>
-        <div class="col-span-2">
+        <div class="h-full col-span-full lg:col-span-2">
           <%= template_error(@form[:template]) %>
-          <div class="w-full mt-10 space-y-8">
-            <div class="py-6 rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
-              <LiveMonacoEditor.code_editor path="template" style="min-height: 1000px; width: 100%;" value={@template} opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => "html"})} />
-            </div>
+          <div class="py-6 w-full h-full rounded-[1.25rem] lg:rounded-t-[1.25rem] lg:rounded-b-none bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
+            <LiveMonacoEditor.code_editor path="template" style="min-height: 1000px; width: 100%;" value={@template} opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => "html"})} />
           </div>
         </div>
       </div>

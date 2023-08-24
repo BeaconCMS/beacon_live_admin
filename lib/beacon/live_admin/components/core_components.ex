@@ -325,7 +325,7 @@ defmodule Beacon.LiveAdmin.CoreComponents do
 
   def label(assigns) do
     ~H"""
-    <label for={@for} class="block text-sm font-semibold leading-6 text-zinc-800">
+    <label for={@for} class="block font-semibold lg:text-md/5 lg:text-base/5 text-[#2D394B]">
       <%= render_slot(@inner_block) %>
     </label>
     """
