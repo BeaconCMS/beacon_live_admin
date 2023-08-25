@@ -58,7 +58,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Schema do
       </.header>
 
       <div class="w-full mt-10 space-y-8">
-        <div class="py-3 bg-[#282c34] rounded-lg">
+        <div class="py-6 rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
           <LiveMonacoEditor.code_editor path="raw_schema" style="min-height: 350px; width: 100%;" value={@raw_schema} opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => "json"})} />
         </div>
       </div>

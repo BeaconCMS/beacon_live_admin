@@ -40,13 +40,13 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.Revisions do
 
   def revision(assigns) do
     ~H"""
-    <li class="group mb-10 ml-6">
+    <li class="mb-10 ml-6 group">
       <span class="absolute flex items-center justify-center w-6 h-6 bg-blue-100 rounded-full -left-3 ring-8 ring-white">
-        <.icon :if={@event.event == :published} name="hero-eye-solid" class="h-4 w-4 text-blue-800" />
-        <.icon :if={@event.event == :created} name="hero-document-plus-solid" class="h-4 w-4 text-blue-800" />
+        <.icon :if={@event.event == :published} name="hero-eye-solid" class="w-4 h-4 text-blue-800" />
+        <.icon :if={@event.event == :created} name="hero-document-plus-solid" class="w-4 h-4 text-blue-800" />
       </span>
       <h3 class="flex items-center mb-1 text-lg font-semibold text-gray-900">
-        <%= Phoenix.Naming.humanize(@event.event) %> <span class="text-sm text-gray-500 ml-2"><%= format_datetime(@event.inserted_at) %></span>
+        <%= Phoenix.Naming.humanize(@event.event) %> <span class="ml-2 text-sm text-gray-500"><%= format_datetime(@event.inserted_at) %></span>
         <span class="hidden group-first:block bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded ml-3">Latest</span>
       </h3>
 
@@ -58,7 +58,7 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.Revisions do
         <li>
           <h4 class="text-gray-600">Template</h4>
           <div class="w-full mt-2">
-            <div class="py-3 bg-[#282c34] rounded-lg">
+            <div class="py-6 rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
               <LiveMonacoEditor.code_editor
                 path={@event.snapshot.id}
                 style="min-height: 200px; width: 100%;"

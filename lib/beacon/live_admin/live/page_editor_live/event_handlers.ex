@@ -171,7 +171,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.EventHandlers do
         </.button>
       </.modal>
 
-      <div class="mx-auto grid grid-cols-1 grid-rows-1 items-start gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
+      <div class="grid items-start grid-cols-1 grid-rows-1 mx-auto gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
         <div>
           <.button type="button" phx-click="create_new">
             New Event Handler
@@ -185,7 +185,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.EventHandlers do
 
         <div :if={@form} class="w-full col-span-2">
           <.form :let={f} for={@form} class="flex items-center" phx-change="validate" phx-submit="save_changes">
-            <div class="text-4xl mr-4 w-max">
+            <div class="mr-4 text-4xl w-max">
               Name
             </div>
             <div class="w-5/12">
@@ -193,12 +193,12 @@ defmodule Beacon.LiveAdmin.PageEditorLive.EventHandlers do
             </div>
             <input type="hidden" name="page_event_handler[code]" id="page_event_handler-form_code" value={@changed_code} />
 
-            <.button phx-disable-with="Saving..." class="mx-4 w-1/6 uppercase">Save Changes</.button>
+            <.button phx-disable-with="Saving..." class="w-1/6 mx-4 uppercase">Save Changes</.button>
             <.button type="button" phx-click="delete" class="w-1/12 uppercase">Delete</.button>
           </.form>
 
           <div class="w-full mt-10 space-y-8">
-            <div class="py-3 bg-[#282c34] rounded-lg">
+            <div class="py-6 rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
               <LiveMonacoEditor.code_editor
                 path="event_handler_code"
                 style="min-height: 1000px; width: 100%;"

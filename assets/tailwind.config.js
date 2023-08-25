@@ -1,6 +1,12 @@
 // See the Tailwind configuration guide for advanced usage
 // https://tailwindcss.com/docs/configuration
 
+/* @type {import('tailwindcss').Config } */ // Enables auto-complete for config keys. 
+// See the Tailwind configuration guide for advanced usage
+// https://tailwindcss.com/docs/configuration
+// const colors = require('tailwindcss/colors')
+const defaultTheme = require('tailwindcss/defaultTheme')
+
 const plugin = require("tailwindcss/plugin")
 const fs = require("fs")
 const path = require("path")
@@ -14,11 +20,15 @@ module.exports = {
     extend: {
       colors: {
         brand: "#FD4F00",
-      }
+      },
+      fontFamily: {
+        sans: ["Plus Jakarta Sans", 'sans-serif', ...defaultTheme.fontFamily.sans],
+      },
     },
   },
   plugins: [
     require("@tailwindcss/forms"),
+    require('@tailwindcss/container-queries'),
     // Allows prefixing tailwind classes with LiveView classes to add rules
     // only when LiveView classes are applied, for example:
     //
