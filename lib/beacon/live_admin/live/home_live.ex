@@ -22,7 +22,8 @@ defmodule Beacon.LiveAdmin.HomeLive do
     <div class="w-full min-h-screen bg-gray-50">
       <header class="px-4 pt-7 sm:px-6 lg:px-8">
         <div class="max-w-screen-xl mx-auto">
-          <h1 class="text-2xl font-medium leading-8 text-gray-900">Welcome Admin!</h1>
+          <!-- <h1 class="text-2xl font-medium leading-8 text-gray-900">Welcome Admin!</h1> -->
+          <h1 class="text-2xl font-medium leading-8 text-gray-900">Welcome!</h1>
         </div>
       </header>
       <main class="px-4 pt-10 sm:px-6 lg:px-8">
