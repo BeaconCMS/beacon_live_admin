@@ -182,4 +182,8 @@ defmodule Beacon.LiveAdmin.Content do
   def delete_error_page(site, error_page) do
     call(site, Beacon.Content, :delete_error_page, [error_page])
   end
+
+  def valid_error_statuses(site) do
+    call(site, Beacon.Content.ErrorPage, :valid_statuses, [])
+  end
 end

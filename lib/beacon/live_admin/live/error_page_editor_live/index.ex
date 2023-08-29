@@ -221,7 +221,7 @@ defmodule Beacon.LiveAdmin.ErrorPageEditorLive.Index do
 
       <.modal :if={@show_create_modal} id="create-modal" on_cancel={JS.push("cancel_create")} show>
         <.simple_form :let={f} for={@create_form} id="create-form" phx-submit="save_new">
-          <.input field={f[:status]} type="number" label="Status code for new error page:" />
+          <.input field={f[:status]} type="select" label="Status code for new error page:" options={Content.valid_error_statuses(@beacon_page.site)} />
           <:actions>
             <.button>Save</.button>
           </:actions>
