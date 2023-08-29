@@ -156,7 +156,7 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.FormComponent do
         <div class="h-full col-span-full lg:col-span-2">
           <%= template_error(@form[:template]) %>
           <div class="py-6 w-full h-full rounded-[1.25rem] lg:rounded-t-[1.25rem] lg:rounded-b-none bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
-            <LiveMonacoEditor.code_editor path="template" style="min-height: 1000px; width: 100%;" value={@template} opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => "html"})} />
+            <LiveMonacoEditor.code_editor path="template" class="h-full col-span-full lg:col-span-2" value={@template} opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => "html"})} />
           </div>
         </div>
       </div>
