@@ -1,7 +1,7 @@
 // See the Tailwind configuration guide for advanced usage
 // https://tailwindcss.com/docs/configuration
 
-/* @type {import('tailwindcss').Config } */ // Enables auto-complete for config keys. 
+/* @type {import('tailwindcss').Config } */ // Enables auto-complete for config keys.
 // See the Tailwind configuration guide for advanced usage
 // https://tailwindcss.com/docs/configuration
 // const colors = require('tailwindcss/colors')

@@ -1,4 +1,3 @@
-import "@fontsource/plus-jakarta-sans"
 import topbar from "../vendor/topbar"
 import { CodeEditorHook } from "../../deps/live_monaco_editor/priv/static/live_monaco_editor.esm"
 
