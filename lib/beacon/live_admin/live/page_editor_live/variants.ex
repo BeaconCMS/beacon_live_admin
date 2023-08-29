@@ -14,7 +14,8 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
 
   # For the first page load
   def handle_params(params, _url, socket) do
-    page = Content.get_page(socket.assigns.beacon_page.site, params["page_id"], [:variants])
+    page =
+      Content.get_page(socket.assigns.beacon_page.site, params["page_id"], preloads: [:variants])
 
     socket =
       socket

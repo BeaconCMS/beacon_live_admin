@@ -81,8 +81,8 @@ defmodule Beacon.LiveAdmin.Content do
     call(site, Beacon.Content, :get_page, [id])
   end
 
-  def get_page(site, id, preloads) do
-    call(site, Beacon.Content, :get_page, [id, preloads])
+  def get_page(site, id, opts) do
+    call(site, Beacon.Content, :get_page, [id, opts])
   end
 
   def get_latest_page_event(site, id) do
