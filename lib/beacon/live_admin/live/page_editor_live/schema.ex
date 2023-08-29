@@ -62,7 +62,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Schema do
           <LiveMonacoEditor.code_editor path="raw_schema" style="min-height: 350px; width: 100%;" value={@raw_schema} opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => "json"})} />
         </div>
       </div>
-      <.error :for={msg <- Enum.map(@form[:raw_schema].errors, &BeaconWeb.CoreComponents.translate_error/1)}><%= msg %></.error>
+      <.error :for={msg <- Enum.map(@form[:raw_schema].errors, &translate_error/1)}><%= msg %></.error>
     </div>
     """
   end
