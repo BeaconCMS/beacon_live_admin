@@ -37,7 +37,11 @@ defmodule Beacon.LiveAdmin.ErrorPageEditorLive.IndexTest do
 
     assert has_element?(view, "#create-modal")
 
-    view |> form("#create-form", %{status: 400}) |> render_submit()
+    {:ok, view, _html} =
+      view
+      |> form("#create-form", %{status: 400})
+      |> render_submit()
+      |> follow_redirect(conn, "/admin/site_a/error_pages/400")
 
     refute has_element?(view, "#create-modal")
     assert has_element?(view, "#status-display", "Status: 400")
