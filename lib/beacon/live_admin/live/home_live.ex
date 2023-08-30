@@ -20,6 +20,12 @@ defmodule Beacon.LiveAdmin.HomeLive do
   def render(assigns) do
     ~H"""
     <div class="w-full min-h-screen bg-gray-50">
+      <header class="px-4 pt-7 sm:px-6 lg:px-8">
+        <div class="max-w-screen-xl mx-auto">
+          <!-- <h1 class="text-2xl font-medium leading-8 text-gray-900">Welcome Admin!</h1> -->
+          <h1 class="text-2xl font-medium leading-8 text-gray-900">Welcome!</h1>
+        </div>
+      </header>
       <main class="px-4 pt-10 sm:px-6 lg:px-8">
         <section aria-labelledby="admin-sites" class="h-[calc(100vh_-_60px)] max-w-screen-xl mx-auto bg-white rounded-t-[20px]">
           <div class="grid grid-cols-1 gap-6 p-6 md:grid-cols-2">
@@ -48,7 +54,6 @@ defmodule Beacon.LiveAdmin.HomeLive do
                   >
                     Components
                   </.link>
-
                   <.link
                     href={Beacon.LiveAdmin.Router.beacon_live_admin_path(@socket, site, "/error_pages")}
                     class="whitespace-nowrap text-sm leading-5 py-3.5 font-bold tracking-widest text-center uppercase bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 active:bg-blue-800 px-6 text-gray-50"

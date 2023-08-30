@@ -9,7 +9,14 @@ config :phoenix, :json_library, Jason
 if Mix.env() == :dev do
   esbuild = fn args ->
     [
-      args: ~w(./js/beacon_live_admin.js --bundle) ++ args,
+      args: ~w(
+        ./js/beacon_live_admin.js
+        --bundle
+        --sourcemap
+        --loader:.ttf=dataurl
+        --loader:.woff=dataurl
+        --loader:.woff2=dataurl
+      ) ++ args,
       cd: Path.expand("../assets", __DIR__),
       env: %{"NODE_PATH" => Path.expand("../deps", __DIR__)}
     ]
@@ -27,7 +34,7 @@ if Mix.env() == :dev do
       )
 
   config :tailwind,
-    version: "3.2.7",
+    version: "3.3.3",
     default: [
       args: ~w(
       --minify

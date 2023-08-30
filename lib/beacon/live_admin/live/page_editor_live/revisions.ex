@@ -62,10 +62,10 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Revisions do
 
       <.modal :if={@show_modal} id="modal" on_cancel={JS.push("hide_modal")} show>
         <div class="w-full mt-2">
-          <div class="py-3 bg-[#282c34] rounded-lg">
+          <div class="py-6 rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
             <LiveMonacoEditor.code_editor
               path="modal"
-              style="min-height: 200px; width: 100%;"
+              class="h-full col-span-full lg:col-span-2"
               value={@modal_content}
               opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => @modal_language, "readOnly" => "true"})}
             />
@@ -82,13 +82,13 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Revisions do
 
   def revision(assigns) do
     ~H"""
-    <li class="group mb-10 ml-6">
+    <li class="mb-10 ml-6 group">
       <span class="absolute flex items-center justify-center w-6 h-6 bg-blue-100 rounded-full -left-3 ring-8 ring-white">
-        <.icon :if={@event.event == :published} name="hero-eye-solid" class="h-4 w-4 text-blue-800" />
-        <.icon :if={@event.event == :created} name="hero-document-plus-solid" class="h-4 w-4 text-blue-800" />
+        <.icon :if={@event.event == :published} name="hero-eye-solid" class="w-4 h-4 text-blue-800" />
+        <.icon :if={@event.event == :created} name="hero-document-plus-solid" class="w-4 h-4 text-blue-800" />
       </span>
       <h3 class="flex items-center mb-1 text-lg font-semibold text-gray-900">
-        <%= Phoenix.Naming.humanize(@event.event) %> <span class="text-sm text-gray-500 ml-2"><%= format_datetime(@event.inserted_at) %></span>
+        <%= Phoenix.Naming.humanize(@event.event) %> <span class="ml-2 text-sm text-gray-500"><%= format_datetime(@event.inserted_at) %></span>
         <span class="hidden group-first:block bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded ml-3">Latest</span>
       </h3>
 
@@ -112,10 +112,10 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Revisions do
         <li>
           <h4 class="text-gray-600">Template</h4>
           <div class="w-full mt-2">
-            <div class="py-3 bg-[#282c34] rounded-lg">
+            <div class="py-6 rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
               <LiveMonacoEditor.code_editor
                 path={"template-" <> @event.snapshot.id}
-                style="min-height: 200px; width: 100%;"
+                class="h-full col-span-full lg:col-span-2"
                 value={@event.snapshot.page.template}
                 opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => language(@event.snapshot.page.format), "readOnly" => "true"})}
               />
@@ -125,10 +125,10 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Revisions do
         <li>
           <h4 class="text-gray-600">Schema</h4>
           <div class="w-full mt-2">
-            <div class="py-3 bg-[#282c34] rounded-lg">
+            <div class="py-6 rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
               <LiveMonacoEditor.code_editor
                 path={"schema-" <> @event.snapshot.id}
-                style="min-height: 200px; width: 100%;"
+                class="h-full col-span-full lg:col-span-2"
                 value={Jason.encode!(@event.snapshot.page.raw_schema, pretty: true)}
                 opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => "json", "readOnly" => "true"})}
               />
@@ -165,7 +165,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Revisions do
         <%= variant.weight %>
       </:col>
       <:col :let={variant} label="template">
-        <.link class="hover:underline text-blue-600" phx-click={JS.push("show_modal", value: %{event_id: @event_id, variant_id: variant.id})}>
+        <.link class="text-blue-600 hover:underline" phx-click={JS.push("show_modal", value: %{event_id: @event_id, variant_id: variant.id})}>
           Click here
         </.link>
       </:col>
@@ -183,7 +183,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Revisions do
         <%= event_handler.name %>
       </:col>
       <:col :let={event_handler} label="code">
-        <.link class="hover:underline text-blue-600" phx-click={JS.push("show_modal", value: %{event_id: @event_id, event_handler_id: event_handler.id})}>
+        <.link class="text-blue-600 hover:underline" phx-click={JS.push("show_modal", value: %{event_id: @event_id, event_handler_id: event_handler.id})}>
           Click here
         </.link>
       </:col>
