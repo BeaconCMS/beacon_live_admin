@@ -201,7 +201,7 @@ defmodule Beacon.LiveAdmin.PageLive do
 
   defp maybe_link(socket, page, {:current, text, icon, path}) do
     path = Beacon.LiveAdmin.Router.beacon_live_admin_path(socket, page.site, path)
-    assigns = %{text: text, icon: icon, path: path} |> dbg
+    assigns = %{text: text, icon: icon, path: path}
 
     # force redirect to re-execute plug to fecth current url
     ~H"""
@@ -217,7 +217,7 @@ defmodule Beacon.LiveAdmin.PageLive do
 
   defp maybe_link(socket, page, {:enabled, text, icon, path}) do
     path = Beacon.LiveAdmin.Router.beacon_live_admin_path(socket, page.site, path)
-    assigns = %{text: text, icon: icon, path: path} |> dbg
+    assigns = %{text: text, icon: icon, path: path}
 
     # force redirect to re-execute plug to fecth current url
     ~H"""
