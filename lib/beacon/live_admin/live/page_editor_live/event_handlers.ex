@@ -150,6 +150,9 @@ defmodule Beacon.LiveAdmin.PageEditorLive.EventHandlers do
 
       <.header>
         <%= @page_title %>
+        <:actions>
+         <.button type="button" phx-click="create_new">New Event Handler</.button>
+        </:actions>
       </.header>
 
       <.modal :if={@show_nav_modal} id="confirm-nav" on_cancel={JS.push("stay_here")} show>
@@ -176,9 +179,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.EventHandlers do
 
       <div class="grid items-start grid-cols-1 grid-rows-1 mx-auto gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
         <div>
-          <.button type="button" phx-click="create_new">
-            New Event Handler
-          </.button>
+
           <.table :if={@selected} id="event-handlers" rows={@page.event_handlers} row_click={fn row -> "select-#{row.id}" end}>
             <:col :let={event_handler} label="name">
               <%= Map.fetch!(event_handler, :name) %>

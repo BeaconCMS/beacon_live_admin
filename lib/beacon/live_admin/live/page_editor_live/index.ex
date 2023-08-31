@@ -7,7 +7,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
   on_mount {Beacon.LiveAdmin.Hooks.Authorized, {:page_editor, :index}}
 
   @impl true
-  def menu_link(_, :index), do: {:root, "Pages", "hero-document-plus"}
+  def menu_link(_, :index), do: {:root, "Pages"}
 
   @impl true
   def mount(_params, _session, socket) do

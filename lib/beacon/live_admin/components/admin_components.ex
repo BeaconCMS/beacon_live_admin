@@ -375,7 +375,9 @@ defmodule Beacon.LiveAdmin.AdminComponents do
   def input(%{type: "select"} = assigns) do
     ~H"""
     <div phx-feedback-for={@name}>
-      <.label for={@id}><%= @label %></.label>
+      <%= if @label do %>
+        <.label for={@id}><%= @label %></.label>
+      <% end%>
       <select id={@id} name={@name} class="block w-full mt-1 bg-white border border-gray-300 rounded-md shadow-sm focus:border-zinc-400 focus:ring-0 sm:text-sm" multiple={@multiple} {@rest}>
         <option :if={@prompt} value=""><%= @prompt %></option>
         <%= Phoenix.HTML.Form.options_for_select(@options, @value) %>
@@ -388,12 +390,14 @@ defmodule Beacon.LiveAdmin.AdminComponents do
   def input(%{type: "textarea"} = assigns) do
     ~H"""
     <div phx-feedback-for={@name}>
-      <.label for={@id}><%= @label %></.label>
+      <%= if @label do %>
+        <.label for={@id}><%= @label %></.label>
+      <% end%>
       <textarea
         id={@id}
         name={@name}
         class={[
-          "mt-2 block w-full rounded-lg text-zinc-900 focus:ring-0 sm:text-sm sm:leading-6",
+          "block w-full rounded-lg text-zinc-900 focus:ring-0 sm:text-sm sm:leading-6",
           "phx-no-feedback:border-zinc-300 phx-no-feedback:focus:border-zinc-400",
           "min-h-[6rem] border-zinc-300 focus:border-zinc-400",
           @errors != [] && "border-rose-400 focus:border-rose-400"
@@ -409,14 +413,16 @@ defmodule Beacon.LiveAdmin.AdminComponents do
   def input(assigns) do
     ~H"""
     <div phx-feedback-for={@name}>
-      <.label for={@id}><%= @label %></.label>
+      <%= if @label do %>
+        <.label for={@id}><%= @label %></.label>
+      <% end%>
       <input
         type={@type}
         name={@name}
         id={@id}
         value={Phoenix.HTML.Form.normalize_value(@type, @value)}
         class={[
-          "mt-2 block w-full rounded-lg text-zinc-900 focus:ring-0 sm:text-sm sm:leading-6",
+          "block w-full rounded-lg text-zinc-900 focus:ring-0 sm:text-sm sm:leading-6",
           "phx-no-feedback:border-zinc-300 phx-no-feedback:focus:border-zinc-400",
           "border-zinc-300 focus:border-zinc-400",
           @errors != [] && "border-rose-400 focus:border-rose-400"
@@ -436,7 +442,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
 
   def label(assigns) do
     ~H"""
-    <label for={@for} class="block font-semibold lg:text-md/5 lg:text-base/5 text-[#2D394B]">
+    <label for={@for} class="mb-2 block font-medium capitalize text-sm/5 text-[#304254]">
       <%= render_slot(@inner_block) %>
     </label>
     """
