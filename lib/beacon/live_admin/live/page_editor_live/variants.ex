@@ -148,6 +148,10 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
 
       <.header>
         <%= @page_title %>
+        <:actions>
+          <.button type="button" phx-click="create_new">New Variant</.button>
+        </:actions>
+
       </.header>
 
       <.modal :if={@show_nav_modal} id="confirm-nav" on_cancel={JS.push("stay_here")} show>
@@ -174,9 +178,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
 
       <div class="grid items-start grid-cols-1 grid-rows-1 mx-auto gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
         <div>
-          <.button type="button" phx-click="create_new">
-            New Variant
-          </.button>
+
           <.table :if={@selected} id="variants" rows={@page.variants} row_click={fn row -> "select-#{row.id}" end}>
             <:col :let={variant} :for={{attr, suffix} <- [{:name, ""}, {:weight, " (%)"}]} label={"#{attr}#{suffix}"}>
               <%= Map.fetch!(variant, attr) %>

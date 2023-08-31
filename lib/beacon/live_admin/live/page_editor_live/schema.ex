@@ -18,6 +18,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Schema do
      socket
      |> assign(:page, page)
      |> assign_form(changeset)
+     |> assign(page_title: "Schema")
      |> assign(:raw_schema, Jason.encode!(page.raw_schema, pretty: true))}
   end
 
@@ -52,6 +53,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Schema do
       <Beacon.LiveAdmin.AdminComponents.page_menu socket={@socket} site={@page.site} current_action={@live_action} page_id={@page.id} />
 
       <.header>
+        <%= @page_title %>
         <:actions>
           <.button phx-disable-with="Saving..." phx-click="save" class="uppercase">Save Changes</.button>
         </:actions>

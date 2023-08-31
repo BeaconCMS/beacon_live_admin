@@ -7,7 +7,7 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.Index do
   on_mount {Beacon.LiveAdmin.Hooks.Authorized, {:layout_editor, :index}}
 
   @impl true
-  def menu_link(_, :index), do: {:root, "Layouts"}
+  def menu_link(_, :index), do: {:root, "Layouts", "hero-rectangle-group"}
 
   @impl true
   def mount(_params, _session, socket) do
@@ -51,7 +51,7 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.Index do
 
     <div class="my-4">
       <.simple_form :let={f} for={%{}} as={:search} phx-change="search">
-        <div class="flex gap-4 items-center">
+        <div class="flex items-center gap-4">
           <div class="flex-grow">
             <.input field={f[:query]} type="search" autofocus={true} placeholder="Search by title (showing up to 20 results)" />
           </div>

@@ -39,7 +39,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
       )
 
     ~H"""
-    <div class="text-sm font-medium text-center text-gray-500 border-b border-gray-200 mb-10">
+    <div class="mb-10 text-sm font-medium text-center text-gray-500 border-b border-gray-200">
       <ul class="flex flex-wrap -mb-px">
         <%= layout_menu_items(assigns) %>
       </ul>
@@ -85,7 +85,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
       )
 
     ~H"""
-    <div class="text-sm font-medium text-center text-gray-500 border-b border-gray-200 mb-10">
+    <div class="mb-10 text-sm font-medium text-center text-gray-500 border-b border-gray-200">
       <ul class="flex flex-wrap -mb-px">
         <%= page_menu_items(assigns) %>
       </ul>
@@ -299,8 +299,8 @@ defmodule Beacon.LiveAdmin.AdminComponents do
     <button
       type={@type}
       class={[
-        "phx-submit-loading:opacity-75 rounded-xl bg-blue-600 hover:bg-blue-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 active:bg-blue-800 py-3.5 px-6",
-        "text-sm/5 font-semibold tracking-wide text-white active:text-white/80",
+        "phx-submit-loading:opacity-75 rounded-xl whitespace-nowrap bg-blue-600 hover:bg-blue-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 active:bg-blue-800 py-3.5 px-6",
+        "text-sm/5 font-semibold tracking-[1.68px] text-white active:text-white/80 flex items-center gap-2",
         @class
       ]}
       {@rest}
@@ -376,7 +376,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
     ~H"""
     <div phx-feedback-for={@name}>
       <.label for={@id}><%= @label %></.label>
-      <select id={@id} name={@name} class="mt-1 block w-full rounded-md border border-gray-300 bg-white shadow-sm focus:border-zinc-400 focus:ring-0 sm:text-sm" multiple={@multiple} {@rest}>
+      <select id={@id} name={@name} class="block w-full mt-1 bg-white border border-gray-300 rounded-md shadow-sm focus:border-zinc-400 focus:ring-0 sm:text-sm" multiple={@multiple} {@rest}>
         <option :if={@prompt} value=""><%= @prompt %></option>
         <%= Phoenix.HTML.Form.options_for_select(@options, @value) %>
       </select>

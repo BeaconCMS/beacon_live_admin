@@ -102,6 +102,7 @@ defmodule Beacon.LiveAdmin.MetaTagsComponent do
     ~H"""
     <div>
       <.header>
+        <%= @page_title %>
         <:actions>
           <.button phx-disable-with="Saving..." form="meta-tags-form" class="uppercase">Save Changes</.button>
         </:actions>
@@ -112,7 +113,7 @@ defmodule Beacon.LiveAdmin.MetaTagsComponent do
         <.button type="button" phx-click="show-new-attribute-modal" phx-target={@myself}>New Meta Attribute</.button>
       </div>
 
-      <div class="overflow-x-auto mt-8">
+      <div class="mt-8 overflow-x-auto">
         <.form for={%{}} as={:meta_tags} id="meta-tags-form" class="space-y-2" phx-target={@myself} phx-submit="save">
           <%= for {meta_tag, i} <- Enum.with_index(@meta_tags) do %>
             <div class="flex items-end gap-2 my-2">
