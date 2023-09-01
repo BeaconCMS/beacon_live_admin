@@ -21,6 +21,7 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.ResourceLinks do
       |> assign(extra_attributes: [])
       |> assign(beacon_layout: beacon_layout)
       |> assign(show_modal: false)
+      |> assign(page_title: "Resource Links")
       |> assign_field(changeset)
       |> assign_attributes()
 
@@ -103,22 +104,22 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.ResourceLinks do
     <div>
       <Beacon.LiveAdmin.AdminComponents.layout_menu socket={@socket} site={@beacon_layout.site} current_action={@live_action} layout_id={@beacon_layout.id} />
 
-      <div>
-        <.header>
-          <:actions>
-            <.button phx-disable-with="Saving..." form="resource-links-form" class="uppercase">Save Changes</.button>
-          </:actions>
-        </.header>
-
-        <div>
+      <.header>
+        <%= @page_title %>
+        <:actions>
+          <.button phx-disable-with="Saving..." form="resource-links-form" class="uppercase">Save Changes</.button>
+        </:actions>
+      </.header>
+      <.main_content class="h-[calc(100vh_-_223px)]">
+        <div class="flex gap-4">
           <.button type="button" phx-click="add">New Resource Link</.button>
           <.button type="button" phx-click="show-new-attribute-modal">New Attribute</.button>
         </div>
 
-        <div class="overflow-x-auto mt-8">
-          <.form for={%{}} as={:resource_links} id="resource-links-form" class="space-y-2" phx-submit="save">
+        <div class="mt-8 overflow-x-auto">
+          <.form for={%{}} as={:resource_links} id="resource-links-form" class="divide-y divide-gray-100" phx-submit="save">
             <%= for {resource_link, i} <- Enum.with_index(@resource_links) do %>
-              <div class="flex items-end gap-2 my-2">
+              <div class="grid items-end grid-flow-col gap-2 py-5 ">
                 <%= for attribute <- @attributes do %>
                   <div class="min-w-[150px] shrink-0">
                     <.input
@@ -132,8 +133,11 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.ResourceLinks do
                     />
                   </div>
                 <% end %>
-
-                <.button type="button" phx-click="delete" phx-value-index={i} data-confirm="Are you sure?">Delete</.button>
+                <div class="justify-self-end">
+                  <button type="button" class="flex items-center justify-center w-10 h-10" phx-click="delete" phx-value-index={i} aria-label="Delete" title="delete" data-confirm="Are you sure?">
+                    <span aria-hidden="true" class="text-red-500 hover:text-red-700 hero-trash"></span>
+                  </button>
+                </div>
               </div>
             <% end %>
           </.form>
@@ -155,7 +159,7 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.ResourceLinks do
             </div>
           </.simple_form>
         </.modal>
-      </div>
+      </.main_content>
     </div>
     """
   end

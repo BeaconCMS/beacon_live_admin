@@ -18,6 +18,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Revisions do
         modal_content: nil,
         modal_language: nil
       )
+      |> assign(page_title: "Revisions")
 
     {:noreply, socket}
   end
@@ -53,6 +54,10 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Revisions do
     ~H"""
     <div class="content">
       <Beacon.LiveAdmin.AdminComponents.page_menu socket={@socket} site={@beacon_page.site} current_action={@live_action} page_id={@page_id} />
+      <.header>
+        <%= @page_title %>
+      </.header>
+
       <.main_content class="h-[calc(100vh_-_158px)]">
         <ol class="relative mt-4 ml-4 border-l border-gray-200">
           <%= for event <- @events do %>
@@ -90,7 +95,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Revisions do
           <.icon :if={@event.event == :created} name="hero-document-plus-solid" class="w-4 h-4 text-blue-800" />
         </div>
       </div>
-      <h3 class="flex items-center mb-1 text-lg font-semibold text-gray-900">
+      <h3 class="flex items-center pt-2 mb-1 text-lg font-semibold text-gray-900">
         <%= Phoenix.Naming.humanize(@event.event) %> <span class="ml-2 text-sm text-gray-500"><%= format_datetime(@event.inserted_at) %></span>
         <span class="hidden group-first:block bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded ml-3">Latest</span>
       </h3>
