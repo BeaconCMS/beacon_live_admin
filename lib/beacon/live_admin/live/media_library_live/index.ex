@@ -125,14 +125,15 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.Index do
       Media Library
       <:actions>
         <.link :if={Authorization.authorized?(@beacon_page.site, @agent, :upload, @authn_context)} patch={beacon_live_admin_path(@socket, @beacon_page.site, "/media_library/upload")}>
-          <.button>Upload</.button>
+          <.button class="uppercase">Upload new media</.button>
         </.link>
       </:actions>
     </.header>
 
-    <form id="search-form" phx-change="search">
-      <input type="search" name="search" value={@search} placeholder="Search assets" />
+    <form id="search-form" phx-change="search" class="mt-10">
+      <input type="search" name="search" value={@search} placeholder="Search assets" class="block w-full rounded-lg text-zinc-900 focus:ring-2 focus:ring-blue-200 sm:text-sm sm:leading-6 phx-no-feedback:border-zinc-300 phx-no-feedback:focus:border-blue-600 border-zinc-300 focus:border-blue-600" />
     </form>
+
     <.main_content class="h-[calc(100vh_-_170px)]">
       <.table id="assets" rows={@assets} row_id={fn asset -> asset.id end}>
         <:col :let={asset} label=""><Beacon.LiveAdmin.AdminComponents.thumbnail source={source_for(asset.site, asset.thumbnail)} /></:col>
