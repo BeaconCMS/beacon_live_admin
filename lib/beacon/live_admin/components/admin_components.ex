@@ -377,7 +377,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
     <div phx-feedback-for={@name}>
       <%= if @label do %>
         <.label for={@id}><%= @label %></.label>
-      <% end%>
+      <% end %>
       <select id={@id} name={@name} class="block w-full mt-1 bg-white border border-gray-300 rounded-md shadow-sm focus:border-zinc-400 focus:ring-0 sm:text-sm" multiple={@multiple} {@rest}>
         <option :if={@prompt} value=""><%= @prompt %></option>
         <%= Phoenix.HTML.Form.options_for_select(@options, @value) %>
@@ -392,7 +392,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
     <div phx-feedback-for={@name}>
       <%= if @label do %>
         <.label for={@id}><%= @label %></.label>
-      <% end%>
+      <% end %>
       <textarea
         id={@id}
         name={@name}
@@ -415,7 +415,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
     <div phx-feedback-for={@name}>
       <%= if @label do %>
         <.label for={@id}><%= @label %></.label>
-      <% end%>
+      <% end %>
       <input
         type={@type}
         name={@name}
@@ -498,7 +498,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
       <table class="w-[40rem] mt-11 sm:w-full">
         <thead class="text-sm leading-6 text-left text-zinc-500">
           <tr>
-            <th :for={col <- @col} class="p-0 pb-4 pr-6 font-normal"><%= col[:label] %></th>
+            <th :for={col <- @col} class="pt-0 pb-4 pl-0 pr-6 font-sans font-medium uppercase text-sm tracking-[1.68px]"><%= col[:label] %></th>
             <th class="relative p-0 pb-4"><span class="sr-only"><%= gettext("Actions") %></span></th>
           </tr>
         </thead>
@@ -575,7 +575,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
     """
   end
 
-    @doc """
+  @doc """
   Renders a rounded white panel that is pinned to the bottom of the screen and scrolls.
 
   """
@@ -584,7 +584,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
 
   def main_content(assigns) do
     ~H"""
-    <div class={"#{@class} p-4 mt-4 bg-white overflow-y-auto col-span-full rounded-t-[1.25rem]"}>
+    <div class={"#{@class} px-4 pt-4 mt-4 bg-white overflow-y-auto col-span-full rounded-t-[1.25rem]"}>
       <%= render_slot(@inner_block) %>
     </div>
     """

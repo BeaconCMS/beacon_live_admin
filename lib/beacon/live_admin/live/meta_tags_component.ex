@@ -131,7 +131,18 @@ defmodule Beacon.LiveAdmin.MetaTagsComponent do
                   </div>
                 <% end %>
                 <div class="justify-self-end">
-                  <button type="button" class="flex items-center justify-center w-10 h-10" phx-target={@myself} phx-click="delete" phx-value-index={i} aria-label="Delete" title="delete" data-confirm="Are you sure?"><span aria-hidden="true" class="text-red-500 hover:text-red-700 hero-trash"></span></button>
+                  <button
+                    type="button"
+                    class="flex items-center justify-center w-10 h-10"
+                    phx-target={@myself}
+                    phx-click="delete"
+                    phx-value-index={i}
+                    aria-label="Delete"
+                    title="delete"
+                    data-confirm="Are you sure?"
+                  >
+                    <span aria-hidden="true" class="text-red-500 hover:text-red-700 hero-trash"></span>
+                  </button>
                 </div>
               </div>
             <% end %>

@@ -57,7 +57,6 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
       </div>
     </.simple_form>
 
-
     <.table id="pages" rows={@pages} row_click={fn page -> JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/pages/#{page.id}")) end}>
       <:col :let={page} label="Title"><%= page.title %></:col>
       <:col :let={page} label="Path"><%= page.path %></:col>
