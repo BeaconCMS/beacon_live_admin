@@ -58,7 +58,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Revisions do
         <%= @page_title %>
       </.header>
 
-      <.main_content class="h-[calc(100vh_-_158px)]">
+      <.main_content class="h-[calc(100vh_-_206px)]">
         <ol class="relative mt-4 ml-4 border-l border-gray-200">
           <%= for event <- @events do %>
             <.revision event={event} />
