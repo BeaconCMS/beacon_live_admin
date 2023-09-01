@@ -574,4 +574,19 @@ defmodule Beacon.LiveAdmin.AdminComponents do
     </div>
     """
   end
+
+    @doc """
+  Renders a rounded white panel that is pinned to the bottom of the screen and scrolls.
+
+  """
+  slot :inner_block, required: true
+  attr :class, :string, default: ""
+
+  def main_content(assigns) do
+    ~H"""
+    <div class={"#{@class} p-4 mt-4 bg-white overflow-y-auto col-span-full rounded-t-[1.25rem]"}>
+      <%= render_slot(@inner_block) %>
+    </div>
+    """
+  end
 end

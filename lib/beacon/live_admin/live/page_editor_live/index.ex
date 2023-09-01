@@ -41,7 +41,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
   def render(assigns) do
     ~H"""
     <.header>
-      Listing Pages
+      Pages
       <:actions>
         <.link patch={beacon_live_admin_path(@socket, @beacon_page.site, "/pages/new")} phx-click={JS.push_focus()}>
           <.button class="uppercase">Create New Page</.button>
@@ -49,15 +49,14 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
       </:actions>
     </.header>
 
-    <div class="my-4">
-      <.simple_form :let={f} for={%{}} as={:search} phx-change="search">
-        <div class="flex items-center gap-4">
-          <div class="flex-grow">
-            <.input field={f[:query]} type="search" autofocus={true} placeholder="Search by path or title (showing up to 20 results)" />
-          </div>
+    <.simple_form :let={f} for={%{}} as={:search} phx-change="search">
+      <div class="flex items-center gap-4">
+        <div class="flex-grow">
+          <.input field={f[:query]} type="search" autofocus={true} placeholder="Search by path or title (showing up to 20 results)" />
         </div>
-      </.simple_form>
-    </div>
+      </div>
+    </.simple_form>
+
 
     <.table id="pages" rows={@pages} row_click={fn page -> JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/pages/#{page.id}")) end}>
       <:col :let={page} label="Title"><%= page.title %></:col>

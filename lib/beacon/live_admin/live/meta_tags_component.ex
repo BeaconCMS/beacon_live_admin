@@ -107,7 +107,7 @@ defmodule Beacon.LiveAdmin.MetaTagsComponent do
           <.button phx-disable-with="Saving..." form="meta-tags-form" class="uppercase">Save Changes</.button>
         </:actions>
       </.header>
-      <div class="p-4 mt-4 bg-white overflow-y-auto col-span-full rounded-t-[1.25rem] h-[calc(100vh_-_223px)]">
+      <.main_content class="h-[calc(100vh_-_223px)]">
         <div class="flex gap-4">
           <.button type="button" phx-click="add" phx-target={@myself}>New Meta Tag</.button>
           <.button type="button" phx-click="show-new-attribute-modal" phx-target={@myself}>New Meta Attribute</.button>
@@ -154,7 +154,7 @@ defmodule Beacon.LiveAdmin.MetaTagsComponent do
             </div>
           </.simple_form>
         </.modal>
-      </div>
+      </.main_content>
     </div>
     """
   end
