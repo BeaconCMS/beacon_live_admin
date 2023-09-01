@@ -378,7 +378,13 @@ defmodule Beacon.LiveAdmin.AdminComponents do
       <%= if @label do %>
         <.label for={@id}><%= @label %></.label>
       <% end %>
-      <select id={@id} name={@name} class="block w-full mt-1 bg-white border border-gray-300 rounded-md shadow-sm focus:border-zinc-400 focus:ring-0 sm:text-sm" multiple={@multiple} {@rest}>
+      <select
+        id={@id}
+        name={@name}
+        class="block w-full mt-1 bg-white border border-gray-300 rounded-md shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-200 sm:text-sm"
+        multiple={@multiple}
+        {@rest}
+      >
         <option :if={@prompt} value=""><%= @prompt %></option>
         <%= Phoenix.HTML.Form.options_for_select(@options, @value) %>
       </select>
@@ -397,9 +403,9 @@ defmodule Beacon.LiveAdmin.AdminComponents do
         id={@id}
         name={@name}
         class={[
-          "block w-full rounded-lg text-zinc-900 focus:ring-0 sm:text-sm sm:leading-6",
-          "phx-no-feedback:border-zinc-300 phx-no-feedback:focus:border-zinc-400",
-          "min-h-[6rem] border-zinc-300 focus:border-zinc-400",
+          "block w-full rounded-lg text-zinc-900 focus:ring-2 focus:ring-blue-200 sm:text-sm sm:leading-6",
+          "phx-no-feedback:border-zinc-300 phx-no-feedback:focus:border-blue-600",
+          "min-h-[6rem] border-zinc-300 focus:border-blue-600",
           @errors != [] && "border-rose-400 focus:border-rose-400"
         ]}
         {@rest}
@@ -422,9 +428,9 @@ defmodule Beacon.LiveAdmin.AdminComponents do
         id={@id}
         value={Phoenix.HTML.Form.normalize_value(@type, @value)}
         class={[
-          "block w-full rounded-lg text-zinc-900 focus:ring-0 sm:text-sm sm:leading-6",
-          "phx-no-feedback:border-zinc-300 phx-no-feedback:focus:border-zinc-400",
-          "border-zinc-300 focus:border-zinc-400",
+          "block w-full rounded-lg text-zinc-900 focus:ring-2 focus:ring-blue-200 sm:text-sm sm:leading-6",
+          "phx-no-feedback:border-zinc-300 phx-no-feedback:focus:border-blue-600",
+          "border-zinc-300 focus:border-blue-600",
           @errors != [] && "border-rose-400 focus:border-rose-400"
         ]}
         {@rest}
@@ -503,21 +509,23 @@ defmodule Beacon.LiveAdmin.AdminComponents do
           </tr>
         </thead>
         <tbody id={@id} phx-update={match?(%Phoenix.LiveView.LiveStream{}, @rows) && "stream"} class="relative text-sm leading-6 divide-y border-grey-100 divide-grey-100 text-[#111625] font-medium">
-          <tr :for={row <- @rows} id={@row_id && @row_id.(row)} class="group hover:bg-zinc-50">
+          <tr :for={row <- @rows} id={@row_id && @row_id.(row)} class="group hover:bg-[#F0F5F9]">
             <td :for={{col, i} <- Enum.with_index(@col)} phx-click={@row_click && @row_click.(row)} class={["relative p-0", @row_click && "hover:cursor-pointer"]}>
               <div class="block py-4 pr-6">
-                <span class="absolute right-0 -inset-y-px -left-4 group-hover:bg-zinc-50 sm:rounded-l-xl" />
+                <span class="absolute right-0 -inset-y-px -left-3 group-hover:bg-[#F0F5F9] sm:rounded-l-xl" />
                 <span class={["relative", i == 0 && "font-semibold text-zinc-900"]}>
                   <%= render_slot(col, @row_item.(row)) %>
                 </span>
               </div>
             </td>
             <td :if={@action != []} class="relative p-0 w-14">
-              <div class="relative flex py-4 text-sm font-medium text-right whitespace-nowrap">
-                <span class="absolute right-0 -inset-y-px -left-4 group-hover:bg-zinc-50 sm:rounded-l-xl" />
-                <span :for={action <- @action} class="relative font-semibold text-zinc-900 hover:text-zinc-700">
-                  <%= render_slot(action, @row_item.(row)) %>
-                </span>
+              <div class="block py-4 pl-6">
+                <div class="flex justify-end">
+                  <span class="absolute left-0 -inset-y-px -right-3 group-hover:bg-[#F0F5F9] sm:rounded-r-xl" />
+                  <span :for={action <- @action} class="relative text-sm font-medium font-semibold text-right text-zinc-900 hover:text-zinc-700 whitespace-nowrap">
+                    <%= render_slot(action, @row_item.(row)) %>
+                  </span>
+                </div>
               </div>
             </td>
           </tr>

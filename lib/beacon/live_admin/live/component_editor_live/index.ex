@@ -53,7 +53,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.Index do
       <.input field={f[:query]} type="search" autofocus={true} placeholder="Search by name (showing up to 20 results)" />
     </.simple_form>
 
-    <.main_content class="h-[calc(100vh_-_170px)]">
+    <.main_content class="h-[calc(100vh_-_210px)]">
       <.table id="components" rows={@components} row_click={fn component -> JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/components/#{component.id}")) end}>
         <:col :let={component} label="Name"><%= component.name %></:col>
         <:col :let={component} label="Category"><%= component.category %></:col>
@@ -62,7 +62,12 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.Index do
           <div class="sr-only">
             <.link navigate={beacon_live_admin_path(@socket, @beacon_page.site, "/components/#{component.id}")}>Show</.link>
           </div>
-          <.link title="Edit" aria-label="Edit component" class="flex items-center justify-center w-10 h-10" patch={beacon_live_admin_path(@socket, @beacon_page.site, "/components/#{component.id}")}>
+          <.link
+            patch={beacon_live_admin_path(@socket, @beacon_page.site, "/components/#{component.id}")}
+            title="Edit component"
+            aria-label="Edit component"
+            class="flex items-center justify-center w-10 h-10"
+          >
             <.icon name="hero-pencil-square text-[#61758A] hover:text-[#304254]" />
           </.link>
         </:action>

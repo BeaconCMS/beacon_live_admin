@@ -131,7 +131,7 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.Index do
     </.header>
 
     <form id="search-form" phx-change="search">
-      <input type="search" name="search" value={@search} placeholder="Search assets"  />
+      <input type="search" name="search" value={@search} placeholder="Search assets" />
     </form>
     <.main_content class="h-[calc(100vh_-_170px)]">
       <.table id="assets" rows={@assets} row_id={fn asset -> asset.id end}>
@@ -139,12 +139,18 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.Index do
         <:col :let={asset} label="Name"><%= asset.file_name %></:col>
         <:col :let={asset} label="Type"><%= asset.media_type %></:col>
         <:action :let={asset}>
-        <.link aria-label="View asset" title="View asset" class="flex items-center justify-center w-10 h-10" :if={Authorization.authorized?(@beacon_page.site, @agent, :upload, @authn_context)} patch={beacon_live_admin_path(@socket, @beacon_page.site, "/media_library/#{asset.id}")}>
+          <.link
+            :if={Authorization.authorized?(@beacon_page.site, @agent, :upload, @authn_context)}
+            aria-label="View asset"
+            title="View asset"
+            class="flex items-center justify-center w-10 h-10"
+            patch={beacon_live_admin_path(@socket, @beacon_page.site, "/media_library/#{asset.id}")}
+          >
             <.icon name="hero-eye text-[#61758A] hover:text-[#304254]" />
-        </.link>
+          </.link>
         </:action>
         <:action :let={asset}>
-        <.link
+          <.link
             :if={Authorization.authorized?(@beacon_page.site, @agent, :delete, Map.put(@authn_context, :resource, asset))}
             phx-click={JS.push("delete", value: %{id: asset.id})}
             aria-label="Delete asset"
@@ -152,7 +158,7 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.Index do
             class="flex items-center justify-center w-10 h-10"
             data-confirm="The asset will be marked as deleted but it will not be actually removed from the storage. Are you sure?"
           >
-          <.icon name="hero-trash text-[#F23630] hover:text-[#AE182D]" />
+            <.icon name="hero-trash text-[#F23630] hover:text-[#AE182D]" />
           </.link>
         </:action>
       </.table>
