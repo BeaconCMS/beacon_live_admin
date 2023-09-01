@@ -514,6 +514,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
             </td>
             <td :if={@action != []} class="relative p-0 w-14">
               <div class="relative flex py-4 text-sm font-medium text-right whitespace-nowrap">
+                <span class="absolute right-0 -inset-y-px -left-4 group-hover:bg-zinc-50 sm:rounded-l-xl" />
                 <span :for={action <- @action} class="relative font-semibold text-zinc-900 hover:text-zinc-700">
                   <%= render_slot(action, @row_item.(row)) %>
                 </span>

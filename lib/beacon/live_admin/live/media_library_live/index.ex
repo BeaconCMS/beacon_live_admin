@@ -140,17 +140,19 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.Index do
         <:col :let={asset} label="Type"><%= asset.media_type %></:col>
         <:action :let={asset}>
         <.link aria-label="View asset" title="View asset" class="flex items-center justify-center w-10 h-10" :if={Authorization.authorized?(@beacon_page.site, @agent, :upload, @authn_context)} patch={beacon_live_admin_path(@socket, @beacon_page.site, "/media_library/#{asset.id}")}>
-            <span class="hero-eye text-[#61758A]"></span>
+            <.icon name="hero-eye text-[#61758A] hover:text-[#304254]" />
         </.link>
         </:action>
         <:action :let={asset}>
         <.link
             :if={Authorization.authorized?(@beacon_page.site, @agent, :delete, Map.put(@authn_context, :resource, asset))}
             phx-click={JS.push("delete", value: %{id: asset.id})}
+            aria-label="Delete asset"
+            title="Delete asset"
             class="flex items-center justify-center w-10 h-10"
             data-confirm="The asset will be marked as deleted but it will not be actually removed from the storage. Are you sure?"
           >
-          <span class="text-red-500 hero-trash"></span>
+          <.icon name="hero-trash text-[#F23630] hover:text-[#AE182D]" />
           </.link>
         </:action>
       </.table>
