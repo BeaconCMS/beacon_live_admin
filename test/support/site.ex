@@ -28,3 +28,25 @@ defmodule MyApp.Endpoint do
 
   plug MyApp.Router
 end
+
+defmodule MyApp.AuthorizationSource do
+  @behaviour Beacon.Authorization.Behaviour
+
+  @impl true
+  def get_agent(%{"session_id" => "admin_session_123"}) do
+    %{role: :admin, session_id: "admin_session_123"}
+  end
+
+  def get_agent(%{"session_id" => "editor_session_123"}) do
+    %{role: :editor, session_id: "editor_session_123"}
+  end
+
+  def get_agent(%{"session_id" => "other_session_123"}) do
+    %{role: :other, session_id: "other_session_123"}
+  end
+
+  def get_agent(_), do: %{}
+
+  @impl true
+  def authorized?(_agent, _operation, _context), do: true
+end

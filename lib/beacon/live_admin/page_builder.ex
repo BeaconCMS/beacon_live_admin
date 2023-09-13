@@ -31,6 +31,11 @@ defmodule Beacon.LiveAdmin.PageBuilder do
               | {:submenu, String.t()}
               | :skip
 
+  @callback menu_link(prefix :: String.t(), live_actionn :: atom, icon :: String.t()) ::
+              {:root, String.t()}
+              | {:submenu, String.t()}
+              | :skip
+
   @callback mount(unsigned_params(), session(), socket :: Socket.t()) ::
               {:ok, Socket.t()} | {:ok, Socket.t(), keyword()}
 
@@ -47,15 +52,22 @@ defmodule Beacon.LiveAdmin.PageBuilder do
   @optional_callbacks mount: 3,
                       handle_params: 3,
                       handle_event: 3,
-                      handle_info: 2
+                      handle_info: 2,
+                      menu_link: 3
 
   defmacro __using__(opts) do
     quote location: :keep, bind_quoted: [opts: opts] do
       use Phoenix.Component
-      import Beacon.LiveAdmin.CoreComponents
+      import Beacon.LiveAdmin.AdminComponents
+      import Beacon.LiveAdmin.Components, only: [template_error: 1]
 
       import Beacon.LiveAdmin.Router,
-        only: [beacon_live_admin_path: 1, beacon_live_admin_path: 3, beacon_live_admin_path: 4]
+        only: [
+          beacon_live_admin_path: 1,
+          beacon_live_admin_path: 3,
+          beacon_live_admin_path: 4,
+          beacon_live_admin_static_path: 1
+        ]
 
       import Phoenix.LiveView
       alias Phoenix.LiveView.JS

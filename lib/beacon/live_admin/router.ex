@@ -127,12 +127,23 @@ defmodule Beacon.LiveAdmin.Router do
       {"/layouts/:id", Beacon.LiveAdmin.LayoutEditorLive.Edit, :edit, %{}},
       {"/layouts/:id/meta_tags", Beacon.LiveAdmin.LayoutEditorLive.MetaTags, :meta_tags, %{}},
       {"/layouts/:id/revisions", Beacon.LiveAdmin.LayoutEditorLive.Revisions, :revisions, %{}},
+      {"/layouts/:id/resource_links", Beacon.LiveAdmin.LayoutEditorLive.ResourceLinks,
+       :resource_links, %{}},
       {"/pages", Beacon.LiveAdmin.PageEditorLive.Index, :index, %{}},
       {"/pages/new", Beacon.LiveAdmin.PageEditorLive.New, :new, %{}},
       {"/pages/:id", Beacon.LiveAdmin.PageEditorLive.Edit, :edit, %{}},
       {"/pages/:id/meta_tags", Beacon.LiveAdmin.PageEditorLive.MetaTags, :meta_tags, %{}},
       {"/pages/:id/schema", Beacon.LiveAdmin.PageEditorLive.Schema, :schema, %{}},
       {"/pages/:id/revisions", Beacon.LiveAdmin.PageEditorLive.Revisions, :revisions, %{}},
+      {"/pages/:page_id/events", Beacon.LiveAdmin.PageEditorLive.EventHandlers, :events, %{}},
+      {"/pages/:page_id/events/:event_handler_id", Beacon.LiveAdmin.PageEditorLive.EventHandlers,
+       :events, %{}},
+      {"/pages/:page_id/variants", Beacon.LiveAdmin.PageEditorLive.Variants, :variants, %{}},
+      {"/pages/:page_id/variants/:variant_id", Beacon.LiveAdmin.PageEditorLive.Variants,
+       :variants, %{}},
+      {"/components", Beacon.LiveAdmin.ComponentEditorLive.Index, :index, %{}},
+      {"/components/new", Beacon.LiveAdmin.ComponentEditorLive.New, :new, %{}},
+      {"/components/:id", Beacon.LiveAdmin.ComponentEditorLive.Edit, :edit, %{}},
       {"/media_library", Beacon.LiveAdmin.MediaLibraryLive.Index, :index, %{}},
       {"/media_library/upload", Beacon.LiveAdmin.MediaLibraryLive.Index, :upload, %{}},
       {"/media_library/:id", Beacon.LiveAdmin.MediaLibraryLive.Index, :show, %{}}
@@ -249,11 +260,10 @@ defmodule Beacon.LiveAdmin.Router do
   @spec beacon_live_admin_path(
           conn_or_socket,
           Beacon.LiveAdmin.Types.Site.t(),
-          String.t(),
+          String.t() | atom(),
           map() | keyword()
         ) :: String.t()
-  def beacon_live_admin_path(conn_or_socket, site, path, params \\ %{})
-      when is_atom(site) and is_binary(path) do
+  def beacon_live_admin_path(conn_or_socket, site, path, params \\ %{}) when is_atom(site) do
     router = router(conn_or_socket)
     prefix = router.__beacon_live_admin_prefix__()
     path = build_path_with_prefix(prefix, site, path)
@@ -283,7 +293,7 @@ defmodule Beacon.LiveAdmin.Router do
 
   ## Example
 
-      iex> Beacon.LiveAdmin.Router.beacon_live_admin_url(MyApp.Endpoint, @socket, :my_site, "/pages")
+      iex> Beacon.LiveAdmin.Router.beacon_live_admin_url(MyAppWeb.Endpoint, @socket, :my_site, "/pages")
       "https://myapp.com/my_admin/my_site/pages"
 
   """
@@ -304,7 +314,7 @@ defmodule Beacon.LiveAdmin.Router do
 
   """
   def beacon_live_admin_static_path(file) do
-    sanitize_path("__beacon_live_admin_static/" <> file)
+    sanitize_path("/__beacon_live_admin_static/" <> file)
   end
 
   defp router(%Plug.Conn{private: %{phoenix_router: router}}), do: router

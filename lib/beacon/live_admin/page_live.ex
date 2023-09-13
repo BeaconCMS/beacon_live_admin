@@ -7,6 +7,7 @@ defmodule Beacon.LiveAdmin.PageLive do
   @moduledoc false
 
   use Beacon.LiveAdmin.Web, :live_view
+  require Logger
   alias Beacon.LiveAdmin.Cluster
   alias Beacon.LiveAdmin.PageBuilder.Menu
   alias Beacon.LiveAdmin.PageBuilder.Page
@@ -109,19 +110,24 @@ defmodule Beacon.LiveAdmin.PageLive do
         prefix = "/" <> prefix
 
         current? = prefix == current_prefix
-        menu_link = module.menu_link(prefix, live_action)
+
+        menu_link =
+          case module.menu_link(prefix, live_action) do
+            {state, anchor} -> {state, anchor, nil}
+            menu_link -> menu_link
+          end
 
         case {current?, menu_link} do
-          {true, {:root, anchor}} ->
-            value = {:current, anchor}
+          {true, {:root, anchor, icon}} ->
+            value = {:current, anchor, icon}
             Map.update(acc, prefix, value, fn _ -> value end)
 
-          {true, {:submenu, anchor}} ->
-            value = {:current, anchor}
+          {true, {:submenu, anchor, icon}} ->
+            value = {:current, anchor, icon}
             Map.update(acc, prefix, value, fn _ -> value end)
 
-          {false, {:root, anchor}} ->
-            value = {:enabled, anchor}
+          {false, {:root, anchor, icon}} ->
+            value = {:enabled, anchor, icon}
             Map.update(acc, prefix, value, fn _ -> value end)
 
           _ ->
@@ -134,22 +140,41 @@ defmodule Beacon.LiveAdmin.PageLive do
           {_, "/layouts"} -> false
           {"/pages", _} -> true
           {_, "/pages"} -> false
+          {"/components", _} -> true
+          {_, "/components"} -> false
           {"/media_library", _} -> true
           {_, "/media_library"} -> false
           {a, b} -> a <= b
         end
       end)
-      |> Enum.map(fn {prefix, {state, anchor}} -> {state, anchor, prefix} end)
+      |> Enum.map(fn {prefix, {state, anchor, icon}} -> {state, anchor, icon, prefix} end)
 
     update_menu(socket, links: links)
   end
 
   defp maybe_apply_module(socket, fun, params, default) do
-    if function_exported?(socket.assigns.beacon_page.module, fun, length(params) + 1) do
-      apply(socket.assigns.beacon_page.module, fun, params ++ [socket])
+    mod = socket.assigns.beacon_page.module
+
+    if exported?(mod, fun, length(params) + 1) do
+      Logger.debug("""
+      Applying #{fun} in #{mod}
+      Parameters: #{inspect(params)}
+      """)
+
+      apply(mod, fun, params ++ [socket])
     else
+      Logger.debug("""
+      Module/Function not exported: #{inspect(mod)}/#{inspect(fun)}
+      Parameters: #{inspect(params)}
+      """)
+
       default.(socket)
     end
+  end
+
+  # https://github.com/phoenixframework/phoenix_live_view/blob/8fedc6927fd937fe381553715e723754b3596a97/lib/phoenix_live_view/channel.ex#L435-L437
+  defp exported?(m, f, a) do
+    function_exported?(m, f, a) || (Code.ensure_loaded?(m) && function_exported?(m, f, a))
   end
 
   defp update_page(socket, assigns) do
@@ -174,30 +199,43 @@ defmodule Beacon.LiveAdmin.PageLive do
 
   ## Navbar handling
 
-  defp maybe_link(socket, page, {:current, text, path}) do
+  defp maybe_link(socket, page, {:current, text, icon, path}) do
     path = Beacon.LiveAdmin.Router.beacon_live_admin_path(socket, page.site, path)
-    assigns = %{text: text, path: path}
+    assigns = %{text: text, icon: icon, path: path}
 
     # force redirect to re-execute plug to fecth current url
     ~H"""
-    <.link href={@path} class="bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium"><%= @text %></.link>
+    <.link
+      href={@path}
+      class="w-full transition-colors outline-none active:text-blue-700 focus-visible:[&:not(:active)]:ring-2 @[350px]:focus-visible:[&:not(:active)]:ring-4 focus-visible:ring-purple-500 hover:bg-slate-100 flex rounded items-center justify-center @[180px]:justify-start gap-0 @[180px]:gap-1.5 @[240px]:gap-2  @[300px]:gap-2.5 px-[22px] py-3.5 @[180px]:p-3 @[240px]:py-3.5 @[240px]:px-3 @[350px]:py-4 antialiased font-semibold text-base @[240px]:text-lg  @[300px]:text-xl @[350px]:text-2xl text-slate-800"
+    >
+      <span :if={@icon} aria-hidden="true" class={@icon <> " aspect-square h-7 @[180px]:h-4.5 w-7 @[180px]:w-4.5 @[350px]:h-7 @[350px]:w-7"}></span>
+      <div class="hidden font-semibold @[180px]:block line-clamp-1"><%= @text %></div>
+    </.link>
     """
   end
 
-  defp maybe_link(socket, page, {:enabled, text, path}) do
+  defp maybe_link(socket, page, {:enabled, text, icon, path}) do
     path = Beacon.LiveAdmin.Router.beacon_live_admin_path(socket, page.site, path)
-    assigns = %{text: text, path: path}
+    assigns = %{text: text, icon: icon, path: path}
 
     # force redirect to re-execute plug to fecth current url
     ~H"""
-    <.link href={@path} class="text-gray-900 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium"><%= @text %></.link>
+    <.link
+      href={@path}
+      class="w-full transition-colors outline-none active:text-blue-700 focus-visible:[&:not(:active)]:ring-2 @[350px]:focus-visible:[&:not(:active)]:ring-4 focus-visible:ring-purple-500 hover:bg-slate-100 flex rounded items-center justify-center @[180px]:justify-start gap-0 @[180px]:gap-1.5 @[240px]:gap-2  @[300px]:gap-2.5 px-[22px] py-3.5 @[180px]:p-3 @[240px]:py-3.5 @[240px]:px-3 @[350px]:py-4 antialiased font-semibold text-base @[240px]:text-lg  @[300px]:text-xl @[350px]:text-2xl text-slate-800"
+    >
+      <span :if={@icon} aria-hidden="true" class={@icon <> " aspect-square h-7 @[180px]:h-4.5 w-7 @[180px]:w-4.5 @[350px]:h-7 @[350px]:w-7"}></span>
+      <div class="hidden font-semibold @[180px]:block line-clamp-1"><%= @text %></div>
+    </.link>
     """
   end
 
-  defp maybe_link(_socket, _page, {:disabled, text}) do
-    assigns = %{text: text}
+  defp maybe_link(_socket, _page, {:disabled, text, icon}) do
+    assigns = %{text: text, icon: icon}
 
     ~H"""
+    <span :if={@icon} aria-hidden="true" class={@icon <> " aspect-square h-7 @[180px]:h-4.5 w-7 @[180px]:w-4.5 @[350px]:h-7 @[350px]:w-7"}></span>
     <span class=""><%= @text %></span>
     """
   end

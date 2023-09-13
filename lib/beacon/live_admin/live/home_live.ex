@@ -19,41 +19,52 @@ defmodule Beacon.LiveAdmin.HomeLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="py-10">
-      <header>
-        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <h1 class="text-3xl font-bold leading-tight tracking-tight text-gray-900">Sites</h1>
+    <div class="w-full min-h-screen bg-gray-50">
+      <header class="px-4 pt-7 sm:px-6 lg:px-8">
+        <div class="max-w-screen-xl mx-auto">
+          <!-- <h1 class="text-2xl font-medium leading-8 text-gray-900">Welcome Admin!</h1> -->
+          <h1 class="text-2xl font-medium leading-8 text-gray-900">Welcome!</h1>
         </div>
       </header>
-      <main>
-        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
-          <%= for site <- @running_sites do %>
-            <div class="max-w-sm p-6 mt-10 rounded-lg bg-gray-50 shadow-sm ring-1 ring-gray-900/5">
-              <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900"><%= site %></h5>
+      <main class="px-4 pt-10 sm:px-6 lg:px-8">
+        <section aria-labelledby="admin-sites" class="h-[calc(100vh_-_60px)] max-w-screen-xl mx-auto bg-white rounded-t-[20px]">
+          <div class="grid grid-cols-1 gap-6 p-6 md:grid-cols-2">
+            <h2 id="admin-sites" class="text-xl font-semibold leading-6 text-gray-900 col-span-full">Sites</h2>
+            <%= for site <- @running_sites do %>
+              <div class="p-6 rounded-[20px] bg-white border border-gray-200 hover:border-white hover:ring-2 hover:ring-gray-200 hover:ring-offset-8 hover:ring-offset-white transition">
+                <h3 class="mb-2 text-sm font-semibold leading-8 tracking-wider text-gray-600 uppercase"><%= site %></h3>
+                <div class="flex flex-col flex-wrap gap-2 mt-10 md:flex-row">
+                  <.link
+                    href={Beacon.LiveAdmin.Router.beacon_live_admin_path(@socket, site, "/layouts")}
+                    class="whitespace-nowrap text-sm leading-5 py-3.5  font-bold tracking-widest text-center uppercase bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 active:bg-blue-800 px-6 text-gray-50"
+                  >
+                    Layouts
+                  </.link>
 
-              <.link
-                href={Beacon.LiveAdmin.Router.beacon_live_admin_path(@socket, site, "/layouts")}
-                class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300"
-              >
-                Layouts
-              </.link>
+                  <.link
+                    href={Beacon.LiveAdmin.Router.beacon_live_admin_path(@socket, site, "/pages")}
+                    class="whitespace-nowrap text-sm leading-5 py-3.5  font-bold tracking-widest text-center uppercase bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 active:bg-blue-800 px-6 text-gray-50"
+                  >
+                    Pages
+                  </.link>
 
-              <.link
-                href={Beacon.LiveAdmin.Router.beacon_live_admin_path(@socket, site, "/pages")}
-                class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300"
-              >
-                Pages
-              </.link>
-
-              <.link
-                href={Beacon.LiveAdmin.Router.beacon_live_admin_path(@socket, site, "/media_library")}
-                class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300"
-              >
-                Media Library
-              </.link>
-            </div>
-          <% end %>
-        </div>
+                  <.link
+                    href={Beacon.LiveAdmin.Router.beacon_live_admin_path(@socket, site, "/components")}
+                    class="whitespace-nowrap text-sm leading-5 py-3.5  font-bold tracking-widest text-center uppercase bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 active:bg-blue-800 px-6 text-gray-50"
+                  >
+                    Components
+                  </.link>
+                  <.link
+                    href={Beacon.LiveAdmin.Router.beacon_live_admin_path(@socket, site, "/media_library")}
+                    class="whitespace-nowrap text-sm leading-5 py-3.5  font-bold tracking-widest text-center uppercase bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 active:bg-blue-800 px-6 text-gray-50"
+                  >
+                    Media Library
+                  </.link>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </section>
       </main>
     </div>
     """

@@ -26,53 +26,69 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.Revisions do
       <Beacon.LiveAdmin.AdminComponents.layout_menu socket={@socket} site={@beacon_page.site} current_action={@live_action} layout_id={@layout_id} />
 
       <ol class="relative border-l border-gray-200">
-        <li :for={{event, idx} <- Enum.with_index(@events)} class="mb-10 ml-6">
-          <span class="absolute flex items-center justify-center w-6 h-6 bg-blue-100 rounded-full -left-3 ring-8 ring-white">
-            <.icon :if={event.event == :published} name="hero-eye-solid" class="h-4 w-4 text-blue-800" />
-            <.icon :if={event.event == :created} name="hero-document-plus-solid" class="h-4 w-4 text-blue-800" />
-          </span>
-          <h3 class="flex items-center mb-1 text-lg font-semibold text-gray-900">
-            <%= Phoenix.Naming.humanize(event.event) %> <span class="text-sm text-gray-500 ml-2"><%= format_datetime(event.inserted_at) %></span>
-            <span :if={idx == 0} class="bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded ml-3">Latest</span>
-          </h3>
-
-          <ol :if={event.snapshot} class="space-y-3">
-            <li>
-              <h4 class="text-gray-600">Title</h4>
-              <%= event.snapshot.layout.title %>
-            </li>
-            <li>
-              <h4 class="text-gray-600">Body</h4>
-              <div class="w-full mt-2">
-                <div class="py-3 bg-[#282c34] rounded-lg">
-                  <LiveMonacoEditor.code_editor
-                    path={event.snapshot.id}
-                    style="min-height: 200px; width: 100%;"
-                    value={event.snapshot.layout.body}
-                    opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => "html", "readOnly" => "true"})}
-                  />
-                </div>
-              </div>
-            </li>
-            <li>
-              <h4 class="text-gray-600">Meta Tags</h4>
-              <%= render_meta_tags(event.snapshot.layout.meta_tags) %>
-            </li>
-          </ol>
-        </li>
+        <%= for event <- @events do %>
+          <.revision event={event} />
+        <% end %>
       </ol>
     </div>
     """
   end
 
-  defp format_datetime(datetime) do
-    Calendar.strftime(datetime, "%B %d, %Y")
+  ## FUNCTION COMPONENTS
+
+  attr :event, :map
+
+  def revision(assigns) do
+    ~H"""
+    <li class="mb-10 ml-6 group">
+      <span class="absolute flex items-center justify-center w-6 h-6 bg-blue-100 rounded-full -left-3 ring-8 ring-white">
+        <.icon :if={@event.event == :published} name="hero-eye-solid" class="w-4 h-4 text-blue-800" />
+        <.icon :if={@event.event == :created} name="hero-document-plus-solid" class="w-4 h-4 text-blue-800" />
+      </span>
+      <h3 class="flex items-center mb-1 text-lg font-semibold text-gray-900">
+        <%= Phoenix.Naming.humanize(@event.event) %> <span class="ml-2 text-sm text-gray-500"><%= format_datetime(@event.inserted_at) %></span>
+        <span class="hidden group-first:block bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded ml-3">Latest</span>
+      </h3>
+
+      <ol :if={@event.snapshot} class="space-y-3">
+        <li>
+          <h4 class="text-gray-600">Title</h4>
+          <%= @event.snapshot.layout.title %>
+        </li>
+        <li>
+          <h4 class="text-gray-600">Template</h4>
+          <div class="w-full mt-2">
+            <div class="py-6 rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
+              <LiveMonacoEditor.code_editor
+                path={@event.snapshot.id}
+                class="h-full col-span-full lg:col-span-2"
+                value={template(@event.snapshot.layout)}
+                opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => "html", "readOnly" => "true"})}
+              />
+            </div>
+          </div>
+        </li>
+        <li>
+          <h4 class="text-gray-600">Meta Tags</h4>
+          <.meta_tags_table layout={@event.snapshot.layout} />
+        </li>
+        <li>
+          <h4 class="text-gray-600">Resource Links</h4>
+          <.resource_links_table layout={@event.snapshot.layout} />
+        </li>
+      </ol>
+    </li>
+    """
   end
 
-  defp render_meta_tags(meta_tags) do
+  attr :layout, :map
+
+  def meta_tags_table(assigns) do
+    meta_tags = assigns.layout.meta_tags
+
     attributes =
       meta_tags
-      |> Enum.flat_map(fn meta_tag -> Map.keys(meta_tag) end)
+      |> Enum.flat_map(&Map.keys/1)
       |> Enum.uniq()
       |> Enum.sort(fn a, b ->
         case {a, b} do
@@ -96,4 +112,46 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.Revisions do
     </.table>
     """
   end
+
+  attr :layout, :map
+
+  def resource_links_table(assigns) do
+    resource_links = resource_links(assigns.layout)
+
+    attributes =
+      resource_links
+      |> Enum.flat_map(&Map.keys/1)
+      |> Enum.uniq()
+      |> Enum.sort(fn a, b ->
+        case {a, b} do
+          {"rel", _} -> true
+          {_, "rel"} -> false
+          {"href", _} -> true
+          {_, "href"} -> false
+          {a, b} -> a <= b
+        end
+      end)
+
+    assigns = %{attributes: attributes, resource_links: resource_links}
+
+    ~H"""
+    <.table id="resource_links" rows={@resource_links}>
+      <:col :let={resource_link} :for={attr <- @attributes} label={attr}>
+        <%= resource_link[attr] %>
+      </:col>
+    </.table>
+    """
+  end
+
+  ## UTILS
+
+  defp format_datetime(datetime) do
+    Calendar.strftime(datetime, "%B %d, %Y")
+  end
+
+  defp template(%{body: body}), do: body
+  defp template(%{template: template}), do: template
+
+  defp resource_links(%{resource_links: links}), do: links
+  defp resource_links(_layout), do: []
 end

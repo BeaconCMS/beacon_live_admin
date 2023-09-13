@@ -1,4 +1,4 @@
-# https://github.com/phoenixframework/phoenix_pubsub/blob/821add72bfbec2eced34dc0c26a2e19a2add60e4/test/support/cluster.ex
+# https://github.com/phoenixframework/phoenix_pubsub/blob/43ab10bfcec56f82e915c246c2dd9dba438fe8da/test/support/cluster.ex
 # https://github.com/cabol/nebulex/blob/974f54e53ac91bf4906c35fcbd8b67166a86895b/test/support/cluster.ex
 
 defmodule Beacon.LiveAdminTest.Cluster do
@@ -90,10 +90,11 @@ defmodule Beacon.LiveAdminTest.Cluster do
     rpc(node, Application, :put_env, [
       :my_app,
       MyApp.Endpoint,
-      url: [host: "localhost", port: Enum.random(4010..4020)],
+      url: [host: "localhost", port: Enum.random(4010..4099)],
       secret_key_base: "TrXbWpjZWxk0GXclXOHFCoufQh1oRK0N5rev5GcpbPCsuf2C/kbYlMgeEEAXPayF",
       live_view: [signing_salt: "nXvN+c8y"],
       render_errors: [view: MyApp.ErrorView],
+      debug_errors: true,
       check_origin: false
     ])
 
@@ -123,11 +124,12 @@ defmodule Beacon.LiveAdminTest.Cluster do
 
     {:ok, _} = rpc(node, Application, :ensure_all_started, [:beacon])
 
-    rpc(node, Supervisor, :start_link, [
-      Beacon,
-      beacon_config,
-      [name: Beacon]
-    ])
+    children = [
+      {Beacon, beacon_config},
+      MyApp.Endpoint
+    ]
+
+    rpc(node, Supervisor, :start_link, [children, [strategy: :one_for_one]])
 
     # rpc(node, Ecto.Migrator, :run, [Beacon.Repo, :down, [all: true]])
     rpc(node, Ecto.Migrator, :run, [Beacon.Repo, :up, [all: true]])

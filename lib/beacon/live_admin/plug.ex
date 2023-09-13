@@ -9,6 +9,8 @@ defmodule Beacon.LiveAdmin.Plug do
   plug :fetch_session
   plug :page_url
 
+  def page_url(%{path_info: ["__beacon_live_admin", "assets" | _]} = conn, _opts), do: conn
+
   def page_url(conn, _opts) do
     Plug.Conn.put_session(
       conn,

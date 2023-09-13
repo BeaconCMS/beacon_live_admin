@@ -11,8 +11,7 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    layouts = list_layouts(socket.assigns.beacon_page.site)
-    {:ok, assign(socket, :beacon_layouts, layouts)}
+    {:ok, assign(socket, :beacon_layouts, [])}
   end
 
   @impl true
@@ -22,7 +21,8 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.Index do
   end
 
   def handle_params(_params, _uri, socket) do
-    {:noreply, socket}
+    layouts = list_layouts(socket.assigns.beacon_page.site)
+    {:noreply, assign(socket, :beacon_layouts, layouts)}
   end
 
   @impl true

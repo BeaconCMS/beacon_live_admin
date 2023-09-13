@@ -58,11 +58,11 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Schema do
       </.header>
 
       <div class="w-full mt-10 space-y-8">
-        <div class="py-3 bg-[#282c34] rounded-lg">
-          <LiveMonacoEditor.code_editor path="raw_schema" style="min-height: 350px; width: 100%;" value={@raw_schema} opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => "json"})} />
+        <div class="py-6 rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
+          <LiveMonacoEditor.code_editor path="raw_schema" class="h-full col-span-full lg:col-span-2" value={@raw_schema} opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => "json"})} />
         </div>
       </div>
-      <.error :for={msg <- Enum.map(@form[:raw_schema].errors, &BeaconWeb.CoreComponents.translate_error/1)}><%= msg %></.error>
+      <.error :for={msg <- Enum.map(@form[:raw_schema].errors, &translate_error/1)}><%= msg %></.error>
     </div>
     """
   end

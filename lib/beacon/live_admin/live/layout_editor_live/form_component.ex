@@ -10,13 +10,13 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.FormComponent do
      socket
      |> assign(assigns)
      |> assign_form(changeset)
-     |> assign(:body, beacon_layout.body)
-     |> assign(:changed_body, beacon_layout.body)
+     |> assign(:template, beacon_layout.template)
+     |> assign(:changed_template, beacon_layout.template)
      |> assign(:status, layout_status(beacon_layout))}
   end
 
-  def update(%{changed_body: changed_body}, socket) do
-    {:ok, assign(socket, :changed_body, changed_body)}
+  def update(%{changed_template: changed_template}, socket) do
+    {:ok, assign(socket, :changed_template, changed_template)}
   end
 
   defp layout_status(%{site: nil, id: nil}), do: nil
@@ -71,6 +71,7 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.FormComponent do
          |> push_patch(to: to)}
 
       {:error, changeset} ->
+        changeset = Map.put(changeset, :action, :insert)
         {:noreply, assign_form(socket, changeset)}
     end
   end
@@ -82,10 +83,12 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.FormComponent do
 
         {:noreply,
          socket
+         |> assign(:layout, layout)
          |> assign_form(changeset)
          |> put_flash(:info, "Layout updated successfully")}
 
-      {:error, %Ecto.Changeset{} = changeset} ->
+      {:error, changeset} ->
+        changeset = Map.put(changeset, :action, :update)
         {:noreply, assign_form(socket, changeset)}
     end
   end
@@ -102,10 +105,10 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.FormComponent do
         <div class="text-sm text-gray-500">
           <.link patch={beacon_live_admin_path(@socket, @site, "/layouts/#{@beacon_layout.id}/revisions")}>
             <span :if={@status == :created}>
-              <.icon name="hero-document-plus-solid" class="h-5 w-5" /> <%= display_status(@status) %>
+              <.icon name="hero-document-plus-solid" class="w-5 h-5" /> <%= display_status(@status) %>
             </span>
             <span :if={@status == :published}>
-              <.icon name="hero-eye-solid" class="h-5 w-5" /> <%= display_status(@status) %>
+              <.icon name="hero-eye-solid" class="w-5 h-5" /> <%= display_status(@status) %>
             </span>
           </.link>
         </div>
@@ -125,14 +128,14 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.FormComponent do
         <div class="py-4">
           <button
             type="button"
-            class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+            class="inline-flex justify-center w-full px-3 py-2 mt-3 text-sm font-semibold text-gray-900 bg-white rounded-md shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
             phx-click={JS.exec("data-cancel", to: "#publish-confirm-modal")}
           >
             Cancel
           </button>
           <button
             type="button"
-            class="inline-flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 sm:w-auto"
+            class="inline-flex justify-center w-full px-3 py-2 text-sm font-semibold text-white bg-blue-600 rounded-md shadow-sm hover:bg-blue-500 sm:w-auto"
             phx-click="publish"
             phx-value-id={@beacon_layout.id}
             phx-target={@myself}
@@ -142,19 +145,18 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.FormComponent do
         </div>
       </.modal>
 
-      <div class="mx-auto grid grid-cols-1 grid-rows-1 items-start gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
-        <div class="mt-10 p-4 rounded-lg bg-gray-50 shadow-sm ring-1 ring-gray-900/5">
+      <div class="grid items-start lg:h-[calc(100vh_-_144px)] grid-cols-1 mx-auto mt-10 gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
+        <div class="p-4 bg-white col-span-full lg:col-span-1 rounded-[1.25rem] lg:rounded-t-[1.25rem] lg:rounded-b-none lg:h-full">
           <.form :let={f} for={@form} id="layout-form" class="space-y-8" phx-target={@myself} phx-change="validate" phx-submit="save">
+            <legend class="text-sm font-bold tracking-widest text-[#445668] uppercase">Layout Settings</legend>
             <.input field={f[:title]} type="text" label="Title" />
-            <.input field={f[:body]} type="hidden" value={@changed_body} />
+            <input type="hidden" name="layout[template]" id="layout-form_template" value={@changed_template} />
           </.form>
         </div>
-        <div class="col-span-2">
-          <%= template_error(@form[:body]) %>
-          <div class="w-full mt-10 space-y-8">
-            <div class="py-3 bg-[#282c34] rounded-lg">
-              <LiveMonacoEditor.code_editor path="body" style="min-height: 1000px; width: 100%;" value={@body} opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => "html"})} />
-            </div>
+        <div class="h-full col-span-full lg:col-span-2">
+          <%= template_error(@form[:template]) %>
+          <div class="py-6 w-full h-full rounded-[1.25rem] lg:rounded-t-[1.25rem] lg:rounded-b-none bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
+            <LiveMonacoEditor.code_editor path="template" class="h-full col-span-full lg:col-span-2" value={@template} opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => "html"})} />
           </div>
         </div>
       </div>
@@ -166,25 +168,4 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.FormComponent do
 
   defp display_status(:published), do: "Published (public)"
   defp display_status(:created), do: "Draft (not public)"
-
-  defp template_error(field) do
-    {message, compilation_error} =
-      case field.errors do
-        [{message, [compilation_error: compilation_error]} | _] -> {message, compilation_error}
-        [{message, _}] -> {message, nil}
-        _ -> {nil, nil}
-      end
-
-    assigns = %{
-      message: message,
-      compilation_error: compilation_error
-    }
-
-    ~H"""
-    <.error :if={@message}><%= @message %></.error>
-    <code :if={@compilation_error} class="mt-3 text-sm text-rose-600 phx-no-feedback:hidden">
-      <pre><%= @compilation_error %></pre>
-    </code>
-    """
-  end
 end

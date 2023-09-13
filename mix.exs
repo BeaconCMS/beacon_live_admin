@@ -36,7 +36,7 @@ defmodule Beacon.LiveAdmin.MixProject do
       {:phoenix_html, "~> 3.3"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:phoenix_live_view, "~> 0.19"},
-      {:floki, ">= 0.30.0"},
+      {:floki, ">= 0.30.0", only: :test},
       {:esbuild, "~> 0.5", only: :dev},
       {:tailwind, "~> 0.2"},
       {:gettext, "~> 0.20"},
@@ -66,14 +66,12 @@ defmodule Beacon.LiveAdmin.MixProject do
     [
       setup: ["deps.get", "assets.setup", "assets.build"],
       dev: "run --no-halt dev.exs",
-      "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
-      "assets.build": [
-        "tailwind default",
-        "esbuild module",
-        "esbuild main",
-        "esbuild cdn",
-        "esbuild cdn_min"
+      "assets.setup": [
+        "cmd npm install --prefix assets",
+        "tailwind.install --if-missing --no-assets",
+        "esbuild.install --if-missing"
       ],
+      "assets.build": ["tailwind default", "esbuild cdn", "esbuild cdn_min"],
       "assets.deploy": ["tailwind default --minify", "esbuild default --minify", "phx.digest"]
     ]
   end

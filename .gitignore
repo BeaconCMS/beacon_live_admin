@@ -27,6 +27,7 @@ beacon_live_admin-*.tar
 
 # Ignore assets that are produced by build tools.
 /priv/static/assets/
+/priv/static/beacon_live_admin.min.css.map
 
 # Ignore digested assets cache.
 /priv/static/cache_manifest.json
@@ -38,6 +39,9 @@ npm-debug.log
 # Dialyzer PTLs
 /priv/plts/*.plt
 /priv/plts/*.plt.hash
+
+# LSP
+/.elixir_ls
 
 # Local iex config
 .iex.exs
