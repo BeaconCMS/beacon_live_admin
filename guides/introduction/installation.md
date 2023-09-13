@@ -1,20 +1,20 @@
 # Installation
 
-Beacon LiveAdmin is an application that runs in existing Phoenix LiveView applications. In this guide we'll install all required tools, generate a new Phoenix LiveView application, and install Beacon LiveAdmin.
+Beacon LiveAdmin is a Phoenix LiveView application to manage running sites, allowing you to build your site by creating resources like layouts, pages, components, and others. It runs as a library in your Phoenix LiveView application, in this guide we'll start from zero initilizating a new Phoenix LiveView application and installing Beacon LiveAdmin.
 
-Beacon LiveAdmin can be installed along with Beacon in the same application or in a separated application if you need to isolate it for performance or security reasons. LiveAdmin will find all running sites in the cluster as long as the applications are connected to each other, which can be achived with libs like [libcluster](https://hex.pm/packages/libcluster) or [dns_cluster](https://hex.pm/packages/dns_cluster).
+Beacon LiveAdmin can be [installed along with Beacon](https://github.com/BeaconCMS/beacon/blob/main/guides/introduction/installation.md) in the same application/node or in a separated application/node if you need to isolate it for performance or security reasons. It will find all running sites in the cluster as long as the nodes are connected to each other, which can be achived with libs like [libcluster](https://hex.pm/packages/libcluster) or [dns_cluster](https://hex.pm/packages/dns_cluster).
 
-This guide will show the steps of generating a separated application, but if have followed the [Beacon installation guide](https://github.com/BeaconCMS/beacon/blob/main/guides/introduction/installation.md) you may have an application named "my_app" working which can be used for this guide too, just skip directly to the step adding the `:beacon_live_admin` dependency.
+This guide will show the steps of generating a separated application, but if have followed the [Beacon installation guide](https://github.com/BeaconCMS/beacon/blob/main/guides/introduction/installation.md) you already have an application working which can be used for this guide too, just skip directly to step 4 - adding the `:beacon_live_admin` dependency.
 
-After the installation is done, please follow the guide [Your First Site](https://github.com/BeaconCMS/beacon/blob/main/guides/introduction/your_first_site.md) to learn how to setup a functioning site to manage in Beacon LiveAdmin.
+After the installation is done, you can follow the guide [Your First Site](https://github.com/BeaconCMS/beacon/blob/main/guides/introduction/your_first_site.md) to get started into creating the first layout, pages, and components for your site.
 
 ## TLDR
 
 We recommend following the guide thoroughly, but if you want a short version or just recap the main steps:
 
-1. Install Elixir v1.14+
+1. Install Elixir v1.13 or later.
 
-2. Install Phoenix v1.7+
+2. Install Phoenix v1.7 or later.
 
   ```sh
   mix archive.install hex phx_new
@@ -34,7 +34,7 @@ We recommend following the guide thoroughly, but if you want a short version or 
   
 5. Add `:beacon_live_admin` into `:import_deps` in file `.formatter.exs`
 
-6. Add to your application `router.ex` file:
+6. Add `beacon_live_admin` to your application `router.ex` file:
 
   ```elixir
   use Beacon.LiveAdmin.Router
@@ -59,9 +59,9 @@ We recommend following the guide thoroughly, but if you want a short version or 
 
 ## Detailed Instructions
 
-### Elixir 1.14 or later
+### Elixir 1.13 or later
 
-The minimum required version to run Beacon is Elixir v1.14. Make sure you have at least that version installed along with Hex:
+The minimum required version to run Beacon is Elixir v1.13. Make sure you have at least that version installed along with Hex:
 
 1. Check Elixir version:
 
@@ -69,7 +69,7 @@ The minimum required version to run Beacon is Elixir v1.14. Make sure you have a
 elixir --version
 ```
 
-2. Install or updated Hex
+2. Install or update Hex
 
 ```sh
 mix local.hex
@@ -79,7 +79,7 @@ If that command fails or Elixir version is outdated, please follow [Elixir Insta
 
 ### Phoenix 1.7 or later
 
-Beacon also requires a minimum Phoenix version to work properly, make sure you have the latest `phx_new` archive - the command to generate new Phoenix applications.
+Beacon also requires at least Phoenix v1.7 to work properly, make sure you have the latest `phx_new` archive - the command to generate new Phoenix applications.
 
 ```sh
 mix archive.install hex phx_new
@@ -93,7 +93,7 @@ We'll be using `phx_new` to generate a new application. You can run `mix help ph
 mix phx.new --install admin
 ```
 
-Or if you prefer an Umbrella application, run instead:
+Or if you prefer an Umbrella application, execute:
 
 ```sh
 mix phx.new --umbrella --install admin
@@ -118,7 +118,7 @@ Or add to `admin_web` if running in an Umbrella app.
 ```elixir
 [
  import_deps: [:ecto, :ecto_sql, :phoenix, :beacon_live_admin],
- # rest of file
+ # rest of file ommited
 ]
 ```
 
