@@ -200,14 +200,16 @@ defmodule Beacon.LiveAdmin.PageEditorLive.EventHandlers do
             <.button type="button" phx-click="delete" class="w-1/12 uppercase">Delete</.button>
           </.form>
 
-          <div class="w-full mt-10 space-y-8">
-            <div class="py-6 rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
-              <LiveMonacoEditor.code_editor
-                path="event_handler_code"
-                class="h-full col-span-full lg:col-span-2"
-                value={@selected.code}
-                opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => "elixir"})}
-              />
+          <div class="lg:h-[calc(100vh_-_144px)] mx-auto mt-10 lg:mx-0 lg:max-w-none">
+            <div class="h-full col-span-full lg:col-span-2">
+              <div class="py-6 w-full h-full rounded-[1.25rem] lg:rounded-t-[1.25rem] lg:rounded-b-none bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
+                <LiveMonacoEditor.code_editor
+                  path="event_handler_code"
+                  class="h-full col-span-full lg:col-span-2"
+                  value={@selected.code}
+                  opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => "elixir"})}
+                />
+              </div>
             </div>
           </div>
         </div>
