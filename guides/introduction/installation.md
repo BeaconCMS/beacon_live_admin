@@ -34,28 +34,27 @@ We recommend following the guide thoroughly, but if you want a short version or 
   
 5. Add `:beacon_live_admin` into `:import_deps` in file `.formatter.exs`
 
-6. Add `beacon_live_admin` to your application `router.ex` file:
+6. Run `mix setup`
+
+7. Add `beacon_live_admin` to your application `router.ex` file:
 
   ```elixir
-  use Beacon.LiveAdmin.Router
+  use Beacon.LiveAdmin.Router # <- add this line
   
   pipeline :browser do
-    plug :accepts, ["html"]
-    plug :fetch_session
-    plug :fetch_live_flash
-    plug :put_root_layout, {BeaconDemoWeb.Layouts, :root}
-    plug :protect_from_forgery
-    plug :put_secure_browser_headers
-    plug Beacon.LiveAdmin.Plug # <- add this plug
+    # ...
+    # ommited for brevity
+    plug Beacon.LiveAdmin.Plug # <- add this line
   end
 
+  # add the following scope
   scope "/admin" do
     pipe_through :browser
-    beacon_live_admin "/"
+    beacon_live_admin "/" 
   end
   ```
 
-7. Run `mix setup`
+Now you can follow the guide [your first site](https://github.com/BeaconCMS/beacon/blob/main/guides/introduction/your_first_site.md) to setup your first layout, pages, and components.
 
 ## Detailed Instructions
 
@@ -85,7 +84,7 @@ Beacon also requires at least Phoenix v1.7 to work properly, make sure you have 
 mix archive.install hex phx_new
 ```
 
-### Generating a new application
+### Generate a new application
 
 We'll be using `phx_new` to generate a new application. You can run `mix help phx.new` to show the full documentation with more options, but let's use the default values for our new site:
 
@@ -103,7 +102,7 @@ Beacon supports both.
 
 After it finishes you can open the generated directory: `cd admin`
 
-### Adding Beacon LiveAdmin
+### Install Beacon LiveAdmin
 
 1. Edit `mix.exs` to add `:beacon_live_admin` as a dependency:
 
@@ -122,31 +121,30 @@ Or add to `admin_web` if running in an Umbrella app.
 ]
 ```
 
-### Configuring the router
+3. Run `mix setup`
+
+### Mount admin in the router
 
 Beacon LiveAdmin requires calling a plug in the pipeline and calling the `beacon_live_admin` macro to mount the user interface. It will look like this:
 
   ```elixir
-  use Beacon.LiveAdmin.Router
+  use Beacon.LiveAdmin.Router # <- add this line
   
   pipeline :browser do
-    plug :accepts, ["html"]
-    plug :fetch_session
-    plug :fetch_live_flash
-    plug :put_root_layout, {BeaconDemoWeb.Layouts, :root}
-    plug :protect_from_forgery
-    plug :put_secure_browser_headers
-    plug Beacon.LiveAdmin.Plug # <- add this plug
+    # ...
+    # ommited for brevity
+    plug Beacon.LiveAdmin.Plug # <- add this line
   end
 
+  # add the following scope
   scope "/admin" do
     pipe_through :browser
-    beacon_live_admin "/"
+    beacon_live_admin "/" 
   end
   ```
   
 You're free to adapt the pipeline and change the path as you wish.
 
-### Install
+--
 
-Run `mix setup`
+Now you can follow the guide [your first site](https://github.com/BeaconCMS/beacon/blob/main/guides/introduction/your_first_site.md) to setup your first layout, pages, and components.
