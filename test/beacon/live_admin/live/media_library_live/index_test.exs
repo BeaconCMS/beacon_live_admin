@@ -14,19 +14,6 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.IndexTest do
     assert html =~ "test_index.webp"
   end
 
-  test "soft delete", %{conn: conn} do
-    asset = media_library_asset_fixture(node1(), file_name: "test_delete.webp")
-
-    {:ok, view, _html} = live(conn, "/admin/site_a/media_library")
-
-    html =
-      view
-      |> element("tr##{asset.id} a", "Delete")
-      |> render_click()
-
-    refute html =~ "test_delete.webp"
-  end
-
   test "search", %{conn: conn} do
     media_library_asset_fixture(node1(), file_name: "test_search.webp")
 

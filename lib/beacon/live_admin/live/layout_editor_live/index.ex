@@ -41,7 +41,7 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.Index do
   def render(assigns) do
     ~H"""
     <.header>
-      Listing Layouts
+      Layouts
       <:actions>
         <.link patch={beacon_live_admin_path(@socket, @beacon_page.site, "/layouts/new")} phx-click={JS.push_focus()}>
           <.button class="uppercase">Create New Layout</.button>
@@ -49,28 +49,24 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.Index do
       </:actions>
     </.header>
 
-    <div class="my-4">
-      <.simple_form :let={f} for={%{}} as={:search} phx-change="search">
-        <div class="flex gap-4 items-center">
-          <div class="flex-grow">
-            <.input field={f[:query]} type="search" autofocus={true} placeholder="Search by title (showing up to 20 results)" />
-          </div>
-        </div>
-      </.simple_form>
-    </div>
+    <.simple_form :let={f} for={%{}} as={:search} phx-change="search">
+      <.input field={f[:query]} type="search" autofocus={true} placeholder="Search by title (showing up to 20 results)" />
+    </.simple_form>
 
-    <.table id="layouts" rows={@beacon_layouts} row_click={fn layout -> JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/layouts/#{layout.id}")) end}>
-      <:col :let={layout} label="Title"><%= layout.title %></:col>
-      <:col :let={layout} label="Status"><%= display_status(layout.status) %></:col>
-      <:action :let={layout}>
-        <div class="sr-only">
-          <.link navigate={beacon_live_admin_path(@socket, @beacon_page.site, "/layouts/#{layout.id}")}>Edit</.link>
-        </div>
-        <.link patch={beacon_live_admin_path(@socket, @beacon_page.site, "/layouts/#{layout.id}")}>
-          <.icon name="hero-pencil-square" />
-        </.link>
-      </:action>
-    </.table>
+    <.main_content class="h-[calc(100vh_-_210px)]">
+      <.table id="layouts" rows={@beacon_layouts} row_click={fn layout -> JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/layouts/#{layout.id}")) end}>
+        <:col :let={layout} label="Title"><%= layout.title %></:col>
+        <:col :let={layout} label="Status"><%= display_status(layout.status) %></:col>
+        <:action :let={layout}>
+          <div class="sr-only">
+            <.link navigate={beacon_live_admin_path(@socket, @beacon_page.site, "/layouts/#{layout.id}")}>Edit</.link>
+          </div>
+          <.link patch={beacon_live_admin_path(@socket, @beacon_page.site, "/layouts/#{layout.id}")} title="Edit layout" aria-label="Edit layout" class="flex items-center justify-center w-10 h-10 group">
+            <.icon name="hero-pencil-square text-[#61758A] hover:text-[#304254]" />
+          </.link>
+        </:action>
+      </.table>
+    </.main_content>
     """
   end
 

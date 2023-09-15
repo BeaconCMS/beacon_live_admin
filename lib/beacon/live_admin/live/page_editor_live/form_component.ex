@@ -166,7 +166,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
         </div>
       </.modal>
 
-      <div class="grid items-start lg:h-[calc(100vh_-_144px)] grid-cols-1 mx-auto mt-10 gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
+      <div class="grid items-start lg:h-[calc(100vh_-_144px)] grid-cols-1 mx-auto mt-4 gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
         <div class="p-4 bg-white col-span-full lg:col-span-1 rounded-[1.25rem] lg:rounded-t-[1.25rem] lg:rounded-b-none lg:h-full">
           <.form :let={f} for={@form} id="page-form" class="space-y-8" phx-target={@myself} phx-change="validate" phx-submit="save">
             <legend class="text-sm font-bold tracking-widest text-[#445668] uppercase">Page settings</legend>
@@ -185,7 +185,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
         <div class="h-full col-span-full lg:col-span-2">
           <%= template_error(@form[:template]) %>
           <div class="py-6 w-full h-full rounded-[1.25rem] lg:rounded-t-[1.25rem] lg:rounded-b-none bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
-            <LiveMonacoEditor.code_editor path="template" class="h-full col-span-full lg:col-span-2" value={@template} opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => @language})} />
+            <LiveMonacoEditor.code_editor path="template" class="col-span-full lg:col-span-2" value={@template} opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => @language})} />
           </div>
         </div>
       </div>
