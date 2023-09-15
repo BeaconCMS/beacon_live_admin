@@ -73,7 +73,7 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.Revisions do
             <div class="py-6 rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829] h-[300px]">
               <LiveMonacoEditor.code_editor
                 path={@event.snapshot.id}
-                class="h-full col-span-full lg:col-span-2"
+                class="col-span-full lg:col-span-2"
                 value={template(@event.snapshot.layout)}
                 opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => "html", "readOnly" => "true"})}
               />

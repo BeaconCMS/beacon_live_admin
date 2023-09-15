@@ -70,7 +70,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Revisions do
             <div class="py-6 rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
               <LiveMonacoEditor.code_editor
                 path="modal"
-                class="h-full col-span-full lg:col-span-2"
+                class="col-span-full lg:col-span-2"
                 value={@modal_content}
                 opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => @modal_language, "readOnly" => "true"})}
               />
@@ -123,7 +123,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Revisions do
             <div class="py-6 rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829] h-[300px]">
               <LiveMonacoEditor.code_editor
                 path={"template-" <> @event.snapshot.id}
-                class="h-full col-span-full lg:col-span-2"
+                class="col-span-full lg:col-span-2"
                 value={@event.snapshot.page.template}
                 opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => language(@event.snapshot.page.format), "readOnly" => "true"})}
               />
@@ -136,7 +136,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Revisions do
             <div class="py-6 rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829] h-[300px]">
               <LiveMonacoEditor.code_editor
                 path={"schema-" <> @event.snapshot.id}
-                class="h-full col-span-full lg:col-span-2"
+                class="col-span-full lg:col-span-2"
                 value={Jason.encode!(@event.snapshot.page.raw_schema, pretty: true)}
                 opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => "json", "readOnly" => "true"})}
               />
