@@ -27,7 +27,6 @@ defmodule Beacon.LiveAdminTest.Router do
   end
 end
 
-
 defmodule Beacon.LiveAdminTest.Endpoint do
   use Phoenix.Endpoint, otp_app: :beacon_live_admin
 
