@@ -198,7 +198,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
             </.form>
             <%= template_error(@form[:template]) %>
             <div class="w-full mt-10 space-y-8">
-              <div class="py-6 h-[500px] lg:h-[calc(100vh_-_349px)] rounded-[1.25rem] lg:rounded-t-[1.25rem] lg:rounded-b-none bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
+              <div class="py-6 rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
                 <LiveMonacoEditor.code_editor path="variant" class="col-span-full lg:col-span-2" value={@selected.template} opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => @language})} />
               </div>
             </div>

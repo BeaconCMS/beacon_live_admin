@@ -60,7 +60,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Schema do
       </.header>
 
       <div class="w-full mt-4 space-y-8">
-        <div class="py-6 rounded-[1.25rem] min-h-[600px] lg:rounded-t-[1.25rem] lg:rounded-b-none lg:h-[calc(100vh_-_222px)] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
+        <div class="py-6 rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
           <LiveMonacoEditor.code_editor path="raw_schema" class="col-span-full lg:col-span-2" value={@raw_schema} opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => "json"})} />
         </div>
         <.error :for={msg <- Enum.map(@form[:raw_schema].errors, &translate_error/1)}><%= msg %></.error>
