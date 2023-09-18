@@ -120,10 +120,10 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Revisions do
         <li>
           <h4 class="text-gray-600">Template</h4>
           <div class="w-full mt-2">
-            <div class="py-6 rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829] h-[300px]">
+            <div class="py-6 rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
               <LiveMonacoEditor.code_editor
                 path={"template-" <> @event.snapshot.id}
-                class="col-span-full lg:col-span-2"
+                class="col-span-full lg:col-span-2 max-h-60"
                 value={@event.snapshot.page.template}
                 opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => language(@event.snapshot.page.format), "readOnly" => "true"})}
               />
@@ -133,10 +133,10 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Revisions do
         <li>
           <h4 class="text-gray-600">Schema</h4>
           <div class="w-full mt-2">
-            <div class="py-6 rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829] h-[300px]">
+            <div class="py-6 rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
               <LiveMonacoEditor.code_editor
                 path={"schema-" <> @event.snapshot.id}
-                class="col-span-full lg:col-span-2"
+                class="col-span-full lg:col-span-2 max-h-60"
                 value={Jason.encode!(@event.snapshot.page.raw_schema, pretty: true)}
                 opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => "json", "readOnly" => "true"})}
               />
