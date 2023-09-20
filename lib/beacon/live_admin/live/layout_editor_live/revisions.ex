@@ -70,10 +70,10 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.Revisions do
         <li>
           <h4 class="text-gray-600">Template</h4>
           <div class="w-full mt-2">
-            <div class="py-6 rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829] h-[300px]">
+            <div class="py-6 rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
               <LiveMonacoEditor.code_editor
                 path={@event.snapshot.id}
-                class="col-span-full lg:col-span-2"
+                class="col-span-full lg:col-span-2 max-h-60"
                 value={template(@event.snapshot.layout)}
                 opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => "html", "readOnly" => "true"})}
               />

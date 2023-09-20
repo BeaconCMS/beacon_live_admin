@@ -95,7 +95,7 @@ defmodule Beacon.LiveAdmin.RouterTest do
                )
     end
 
-    test "dose not assign root_layout" do
+    test "does not assign root_layout" do
       assert_raise ArgumentError, fn ->
         Router.__session_options__("admin", [], root_layout: {MyApp.Layouts, :other})
       end
