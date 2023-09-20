@@ -27,12 +27,15 @@ defmodule Beacon.LiveAdmin.PageLive do
 
     sites = Beacon.LiveAdmin.Cluster.running_sites()
 
-    %{"pages" => pages} = session 
-    current_url = Map.get(session, "beacon_live_admin_page_url") || raise """
-    Failed to resolve Beacon.LiveAdmin page URL
+    %{"pages" => pages} = session
 
-    You must add Beacon.LiveAdmin.Plug to the :browser pipeline that beacon_live_admin is piped through.
-    """
+    current_url =
+      Map.get(session, "beacon_live_admin_page_url") ||
+        raise """
+        failed to resolve Beacon.LiveAdmin page URL
+
+        You must add Beacon.LiveAdmin.Plug to the :browser pipeline that beacon_live_admin is piped through.
+        """
 
     page = lookup_page!(socket, current_url)
 
