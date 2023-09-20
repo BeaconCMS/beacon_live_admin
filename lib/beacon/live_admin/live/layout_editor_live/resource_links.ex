@@ -187,12 +187,13 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.ResourceLinks do
       {:ok, map} ->
         list =
           Enum.sort_by(map, &String.to_integer(elem(&1, 0)))
-          |> Enum.map(fn {position, map} ->
+          |> Enum.map(fn {_position, map} ->
             Enum.reduce(map, [], fn {key, value}, acc ->
               case value do
                 nil -> acc
                 "" -> acc
-                _ -> [{key, value} | acc] # only add non-empty values to the list
+                # only add non-empty values to the list
+                _ -> [{key, value} | acc]
               end
             end)
           end)
