@@ -185,11 +185,21 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.ResourceLinks do
 
     case Map.fetch(params, field) do
       {:ok, map} ->
-        list = 
-          Enum.filter(map, fn {_key, value} -> value != "" and value != nil end)
-          |> Enum.sort_by(map, fn {key, _value} -> String.to_integer(key) end)
+        list =
+          Enum.sort_by(map, &String.to_integer(elem(&1, 0)))
+          |> Enum.map(fn {position, map} ->
+            Enum.reduce(map, [], fn {key, value}, acc ->
+              case value do
+                nil -> acc
+                "" -> acc
+                _ -> [{key, value} | acc] # only add non-empty values to the list
+              end
+            end)
+          end)
+          |> List.flatten()
+          |> Enum.into(%{})
 
-        Map.put(params, field, Keyword.values(list))
+        Map.put(params, field, list)
 
       :error ->
         params
