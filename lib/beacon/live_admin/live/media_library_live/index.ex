@@ -125,59 +125,76 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.Index do
       Media Library
       <:actions>
         <.link :if={Authorization.authorized?(@beacon_page.site, @agent, :upload, @authn_context)} patch={beacon_live_admin_path(@socket, @beacon_page.site, "/media_library/upload")}>
-          <.button>Upload</.button>
+          <.button class="uppercase">Upload new media</.button>
         </.link>
       </:actions>
     </.header>
 
-    <form id="search-form" phx-change="search">
-      <input name="search" value={@search} placeholder="Search assets" type="search" />
+    <form id="search-form" phx-change="search" class="mt-10">
+      <input
+        type="search"
+        name="search"
+        value={@search}
+        placeholder="Search assets"
+        class="block w-full rounded-lg text-zinc-900 focus:ring-2 focus:ring-blue-200 sm:text-sm sm:leading-6 phx-no-feedback:border-zinc-300 phx-no-feedback:focus:border-blue-600 border-zinc-300 focus:border-blue-600"
+      />
     </form>
 
-    <.table id="assets" rows={@assets} row_id={fn asset -> asset.id end}>
-      <:col :let={asset} label=""><Beacon.LiveAdmin.AdminComponents.thumbnail source={source_for(asset.site, asset.thumbnail)} /></:col>
-      <:col :let={asset} label="Name"><%= asset.file_name %></:col>
-      <:col :let={asset} label="Type"><%= asset.media_type %></:col>
-      <:action :let={asset}>
-        <.link :if={Authorization.authorized?(@beacon_page.site, @agent, :upload, @authn_context)} patch={beacon_live_admin_path(@socket, @beacon_page.site, "/media_library/#{asset.id}")}>
-          View
-        </.link>
-      </:action>
-      <:action :let={asset}>
-        <.link
-          :if={Authorization.authorized?(@beacon_page.site, @agent, :delete, Map.put(@authn_context, :resource, asset))}
-          phx-click={JS.push("delete", value: %{id: asset.id})}
-          data-confirm="The asset will be marked as deleted but it will not be actually removed from the storage. Are you sure?"
-        >
-          Delete
-        </.link>
-      </:action>
-    </.table>
+    <.main_content class="h-[calc(100vh_-_170px)]">
+      <.table id="assets" rows={@assets} row_id={fn asset -> asset.id end}>
+        <:col :let={asset} label=""><Beacon.LiveAdmin.AdminComponents.thumbnail source={source_for(asset.site, asset.thumbnail)} /></:col>
+        <:col :let={asset} label="Name"><%= asset.file_name %></:col>
+        <:col :let={asset} label="Type"><%= asset.media_type %></:col>
+        <:action :let={asset}>
+          <.link
+            :if={Authorization.authorized?(@beacon_page.site, @agent, :upload, @authn_context)}
+            aria-label="View asset"
+            title="View asset"
+            class="flex items-center justify-center w-10 h-10"
+            patch={beacon_live_admin_path(@socket, @beacon_page.site, "/media_library/#{asset.id}")}
+          >
+            <.icon name="hero-eye text-[#61758A] hover:text-[#304254]" />
+          </.link>
+        </:action>
+        <:action :let={asset}>
+          <.link
+            :if={Authorization.authorized?(@beacon_page.site, @agent, :delete, Map.put(@authn_context, :resource, asset))}
+            phx-click={JS.push("delete", value: %{id: asset.id})}
+            aria-label="Delete asset"
+            title="Delete asset"
+            class="flex items-center justify-center w-10 h-10"
+            data-confirm="The asset will be marked as deleted but it will not be actually removed from the storage. Are you sure?"
+          >
+            <.icon name="hero-trash text-[#F23630] hover:text-[#AE182D]" />
+          </.link>
+        </:action>
+      </.table>
 
-    <.modal :if={@live_action in [:upload]} id="asset-modal" show on_cancel={JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/media_library"))}>
-      <.live_component
-        module={Beacon.LiveAdmin.MediaLibraryLive.UploadFormComponent}
-        site={@beacon_page.site}
-        id={@asset.id || :upload}
-        title={@page_title}
-        live_action={@live_action}
-        asset={@asset}
-        navigate={beacon_live_admin_path(@socket, @beacon_page.site, "/media_library")}
-        agent={@agent}
-      />
-    </.modal>
+      <.modal :if={@live_action in [:upload]} id="asset-modal" show on_cancel={JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/media_library"))}>
+        <.live_component
+          module={Beacon.LiveAdmin.MediaLibraryLive.UploadFormComponent}
+          site={@beacon_page.site}
+          id={@asset.id || :upload}
+          title={@page_title}
+          live_action={@live_action}
+          asset={@asset}
+          navigate={beacon_live_admin_path(@socket, @beacon_page.site, "/media_library")}
+          agent={@agent}
+        />
+      </.modal>
 
-    <.modal :if={@live_action in [:show]} id="asset-modal" show on_cancel={JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/media_library"))}>
-      <.live_component
-        module={Beacon.LiveAdmin.MediaLibraryLive.ShowComponent}
-        id={@asset.id}
-        title={@page_title}
-        live_action={@live_action}
-        asset={@asset}
-        navigate={beacon_live_admin_path(@socket, @beacon_page.site, "/media_library")}
-        agent={@agent}
-      />
-    </.modal>
+      <.modal :if={@live_action in [:show]} id="asset-modal" show on_cancel={JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/media_library"))}>
+        <.live_component
+          module={Beacon.LiveAdmin.MediaLibraryLive.ShowComponent}
+          id={@asset.id}
+          title={@page_title}
+          live_action={@live_action}
+          asset={@asset}
+          navigate={beacon_live_admin_path(@socket, @beacon_page.site, "/media_library")}
+          agent={@agent}
+        />
+      </.modal>
+    </.main_content>
     """
   end
 end

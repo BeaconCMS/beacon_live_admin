@@ -26,7 +26,17 @@ defmodule Beacon.LiveAdmin.PageLive do
     Cluster.maybe_discover_sites()
 
     sites = Beacon.LiveAdmin.Cluster.running_sites()
-    %{"pages" => pages, "beacon_live_admin_page_url" => current_url} = session
+
+    %{"pages" => pages} = session
+
+    current_url =
+      Map.get(session, "beacon_live_admin_page_url") ||
+        raise """
+        failed to resolve Beacon.LiveAdmin page URL
+
+        You must add Beacon.LiveAdmin.Plug to the :browser pipeline that beacon_live_admin is piped through.
+        """
+
     page = lookup_page!(socket, current_url)
 
     socket =
@@ -110,19 +120,24 @@ defmodule Beacon.LiveAdmin.PageLive do
         prefix = "/" <> prefix
 
         current? = prefix == current_prefix
-        menu_link = module.menu_link(prefix, live_action)
+
+        menu_link =
+          case module.menu_link(prefix, live_action) do
+            {state, anchor} -> {state, anchor, nil}
+            menu_link -> menu_link
+          end
 
         case {current?, menu_link} do
-          {true, {:root, anchor}} ->
-            value = {:current, anchor}
+          {true, {:root, anchor, icon}} ->
+            value = {:current, anchor, icon}
             Map.update(acc, prefix, value, fn _ -> value end)
 
-          {true, {:submenu, anchor}} ->
-            value = {:current, anchor}
+          {true, {:submenu, anchor, icon}} ->
+            value = {:current, anchor, icon}
             Map.update(acc, prefix, value, fn _ -> value end)
 
-          {false, {:root, anchor}} ->
-            value = {:enabled, anchor}
+          {false, {:root, anchor, icon}} ->
+            value = {:enabled, anchor, icon}
             Map.update(acc, prefix, value, fn _ -> value end)
 
           _ ->
@@ -144,7 +159,7 @@ defmodule Beacon.LiveAdmin.PageLive do
           {a, b} -> a <= b
         end
       end)
-      |> Enum.map(fn {prefix, {state, anchor}} -> {state, anchor, prefix} end)
+      |> Enum.map(fn {prefix, {state, anchor, icon}} -> {state, anchor, icon, prefix} end)
 
     update_menu(socket, links: links)
   end
@@ -196,9 +211,9 @@ defmodule Beacon.LiveAdmin.PageLive do
 
   ## Navbar handling
 
-  defp maybe_link(socket, page, {:current, text, path}) do
+  defp maybe_link(socket, page, {:current, text, icon, path}) do
     path = Beacon.LiveAdmin.Router.beacon_live_admin_path(socket, page.site, path)
-    assigns = %{text: text, path: path}
+    assigns = %{text: text, icon: icon, path: path}
 
     # force redirect to re-execute plug to fecth current url
     ~H"""
@@ -206,15 +221,15 @@ defmodule Beacon.LiveAdmin.PageLive do
       href={@path}
       class="w-full transition-colors outline-none active:text-blue-700 focus-visible:[&:not(:active)]:ring-2 @[350px]:focus-visible:[&:not(:active)]:ring-4 focus-visible:ring-purple-500 hover:bg-slate-100 flex rounded items-center justify-center @[180px]:justify-start gap-0 @[180px]:gap-1.5 @[240px]:gap-2  @[300px]:gap-2.5 px-[22px] py-3.5 @[180px]:p-3 @[240px]:py-3.5 @[240px]:px-3 @[350px]:py-4 antialiased font-semibold text-base @[240px]:text-lg  @[300px]:text-xl @[350px]:text-2xl text-slate-800"
     >
-      <!-- <span aria-hidden="true" class="hero-face-smile aspect-square h-7 @[180px]:h-4.5 w-7 @[180px]:w-4.5  @[350px]:h-7 @[350px]:w-7"></span> -->
+      <span :if={@icon} aria-hidden="true" class={@icon <> " aspect-square h-7 @[180px]:h-4.5 w-7 @[180px]:w-4.5 @[350px]:h-7 @[350px]:w-7"}></span>
       <div class="hidden font-semibold @[180px]:block line-clamp-1"><%= @text %></div>
     </.link>
     """
   end
 
-  defp maybe_link(socket, page, {:enabled, text, path}) do
+  defp maybe_link(socket, page, {:enabled, text, icon, path}) do
     path = Beacon.LiveAdmin.Router.beacon_live_admin_path(socket, page.site, path)
-    assigns = %{text: text, path: path}
+    assigns = %{text: text, icon: icon, path: path}
 
     # force redirect to re-execute plug to fecth current url
     ~H"""
@@ -222,16 +237,17 @@ defmodule Beacon.LiveAdmin.PageLive do
       href={@path}
       class="w-full transition-colors outline-none active:text-blue-700 focus-visible:[&:not(:active)]:ring-2 @[350px]:focus-visible:[&:not(:active)]:ring-4 focus-visible:ring-purple-500 hover:bg-slate-100 flex rounded items-center justify-center @[180px]:justify-start gap-0 @[180px]:gap-1.5 @[240px]:gap-2  @[300px]:gap-2.5 px-[22px] py-3.5 @[180px]:p-3 @[240px]:py-3.5 @[240px]:px-3 @[350px]:py-4 antialiased font-semibold text-base @[240px]:text-lg  @[300px]:text-xl @[350px]:text-2xl text-slate-800"
     >
-      <!-- <span aria-hidden="true" class="hero-face-smile aspect-square h-7 @[180px]:h-4.5 w-7 @[180px]:w-4.5  @[350px]:h-7 @[350px]:w-7"></span> -->
+      <span :if={@icon} aria-hidden="true" class={@icon <> " aspect-square h-7 @[180px]:h-4.5 w-7 @[180px]:w-4.5 @[350px]:h-7 @[350px]:w-7"}></span>
       <div class="hidden font-semibold @[180px]:block line-clamp-1"><%= @text %></div>
     </.link>
     """
   end
 
-  defp maybe_link(_socket, _page, {:disabled, text}) do
-    assigns = %{text: text}
+  defp maybe_link(_socket, _page, {:disabled, text, icon}) do
+    assigns = %{text: text, icon: icon}
 
     ~H"""
+    <span :if={@icon} aria-hidden="true" class={@icon <> " aspect-square h-7 @[180px]:h-4.5 w-7 @[180px]:w-4.5 @[350px]:h-7 @[350px]:w-7"}></span>
     <span class=""><%= @text %></span>
     """
   end

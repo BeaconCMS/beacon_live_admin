@@ -41,7 +41,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
   def render(assigns) do
     ~H"""
     <.header>
-      Listing Pages
+      Pages
       <:actions>
         <.link patch={beacon_live_admin_path(@socket, @beacon_page.site, "/pages/new")} phx-click={JS.push_focus()}>
           <.button class="uppercase">Create New Page</.button>
@@ -49,29 +49,25 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
       </:actions>
     </.header>
 
-    <div class="my-4">
-      <.simple_form :let={f} for={%{}} as={:search} phx-change="search">
-        <div class="flex gap-4 items-center">
-          <div class="flex-grow">
-            <.input field={f[:query]} type="search" autofocus={true} placeholder="Search by path or title (showing up to 20 results)" />
-          </div>
-        </div>
-      </.simple_form>
-    </div>
+    <.simple_form :let={f} for={%{}} as={:search} phx-change="search">
+      <.input field={f[:query]} type="search" autofocus={true} placeholder="Search by path or title (showing up to 20 results)" />
+    </.simple_form>
 
-    <.table id="pages" rows={@pages} row_click={fn page -> JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/pages/#{page.id}")) end}>
-      <:col :let={page} label="Title"><%= page.title %></:col>
-      <:col :let={page} label="Path"><%= page.path %></:col>
-      <:col :let={page} label="Status"><%= display_status(page.status) %></:col>
-      <:action :let={page}>
-        <div class="sr-only">
-          <.link navigate={beacon_live_admin_path(@socket, @beacon_page.site, "/pages/#{page.id}")}>Show</.link>
-        </div>
-        <.link patch={beacon_live_admin_path(@socket, @beacon_page.site, "/pages/#{page.id}")}>
-          <.icon name="hero-pencil-square" />
-        </.link>
-      </:action>
-    </.table>
+    <.main_content class="h-[calc(100vh_-_210px)]">
+      <.table id="pages" rows={@pages} row_click={fn page -> JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/pages/#{page.id}")) end}>
+        <:col :let={page} label="Title"><%= page.title %></:col>
+        <:col :let={page} label="Path"><%= page.path %></:col>
+        <:col :let={page} label="Status"><%= display_status(page.status) %></:col>
+        <:action :let={page}>
+          <div class="sr-only">
+            <.link navigate={beacon_live_admin_path(@socket, @beacon_page.site, "/pages/#{page.id}")}>Show</.link>
+          </div>
+          <.link patch={beacon_live_admin_path(@socket, @beacon_page.site, "/pages/#{page.id}")} title="Edit page" aria-label="Edit page" class="flex items-center justify-center w-10 h-10 group">
+            <.icon name="hero-pencil-square text-[#61758A] hover:text-[#304254]" />
+          </.link>
+        </:action>
+      </.table>
+    </.main_content>
     """
   end
 

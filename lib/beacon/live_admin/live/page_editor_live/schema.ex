@@ -18,6 +18,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Schema do
      socket
      |> assign(:page, page)
      |> assign_form(changeset)
+     |> assign(page_title: "Schema")
      |> assign(:raw_schema, Jason.encode!(page.raw_schema, pretty: true))}
   end
 
@@ -52,17 +53,18 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Schema do
       <Beacon.LiveAdmin.AdminComponents.page_menu socket={@socket} site={@page.site} current_action={@live_action} page_id={@page.id} />
 
       <.header>
+        <%= @page_title %>
         <:actions>
           <.button phx-disable-with="Saving..." phx-click="save" class="uppercase">Save Changes</.button>
         </:actions>
       </.header>
 
-      <div class="w-full mt-10 space-y-8">
+      <div class="w-full mt-4 space-y-8">
         <div class="py-6 rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
-          <LiveMonacoEditor.code_editor path="raw_schema" class="h-full col-span-full lg:col-span-2" value={@raw_schema} opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => "json"})} />
+          <LiveMonacoEditor.code_editor path="raw_schema" class="col-span-full lg:col-span-2" value={@raw_schema} opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => "json"})} />
         </div>
+        <.error :for={msg <- Enum.map(@form[:raw_schema].errors, &translate_error/1)}><%= msg %></.error>
       </div>
-      <.error :for={msg <- Enum.map(@form[:raw_schema].errors, &translate_error/1)}><%= msg %></.error>
     </div>
     """
   end
