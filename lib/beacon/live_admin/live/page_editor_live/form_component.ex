@@ -3,11 +3,16 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
 
   alias Beacon.LiveAdmin.Config
   alias Beacon.LiveAdmin.Content
+  alias Beacon.LiveAdmin.WebAPI
 
   @impl true
   def update(%{site: site, page: page} = assigns, socket) do
+    # FIXME: new pages
+    page = Map.put_new(page, :path, "/")
+
     changeset = Content.change_page(site, page)
     layouts = Content.list_layouts(site)
+    %{data: builder_page} = WebAPI.Page.show(site, page)
 
     {:ok,
      socket
@@ -15,6 +20,8 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
      |> assign_form(changeset)
      |> assign(:layouts, layouts)
      |> assign(:language, language(page.format))
+     |> assign(:template, page.template)
+     |> assign(:changed_template, page.template)
      |> assign_extra_fields(changeset)}
   end
 
@@ -122,6 +129,8 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
         <%= @page_title %>
         <:actions>
           <.button :if={@live_action == :new} phx-disable-with="Saving..." form="page-form" class="uppercase">Create Draft Page</.button>
+          <.button :if={@live_action == :edit && !@visual_mode} phx-click="enable_visual_mode" form="page-form" class="uppercase">Visual Editor</.button>
+          <.button :if={@live_action == :edit && @visual_mode} phx-click="disable_visual_mode" form="page-form" class="uppercase">Code Editor</.button>
           <.button :if={@live_action == :edit} phx-disable-with="Saving..." form="page-form" class="uppercase">Save Changes</.button>
           <.button :if={@live_action == :edit} phx-click={show_modal("publish-confirm-modal")} phx-target={@myself} class="uppercase">Publish</.button>
         </:actions>
@@ -161,7 +170,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
             <.input field={f[:description]} type="textarea" label="Description" />
             <.input field={f[:layout_id]} type="select" options={layouts_to_options(@layouts)} label="Layout" />
             <.input field={f[:format]} type="select" label="Format" options={template_format_options(@site)} />
-            <input type="hidden" name="page[template]" id="page-form_template" value={Phoenix.HTML.Form.input_value(f, :template)} />
+            <input type="hidden" name="page[template]" id="page-form_template" value={@changed_template} />
 
             <%= for mod <- extra_page_fields(@site) do %>
               <%= extra_page_field(@site, @extra_fields, mod) %>
@@ -171,13 +180,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
         <div class="col-span-full lg:col-span-2">
           <%= template_error(@form[:template]) %>
           <div class="py-6 w-full rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
-            <LiveMonacoEditor.code_editor
-              path="template"
-              class="col-span-full lg:col-span-2"
-              value={Phoenix.HTML.Form.input_value(@form, :template)}
-              change="set_template"
-              opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => @language})}
-            />
+            <LiveMonacoEditor.code_editor path="template" class="col-span-full lg:col-span-2" value={@template} opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => @language})} />
           </div>
         </div>
       </div>

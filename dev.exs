@@ -19,8 +19,9 @@ Application.put_env(:beacon_live_admin, DemoWeb.Endpoint,
   check_origin: false,
   pubsub_server: Demo.PubSub,
   watchers: [
-    esbuild: {Esbuild, :install_and_run, [:cdn_min, ~w(--watch)]},
-    tailwind: {Tailwind, :install_and_run, [:default, ~w(--watch)]}
+    # esbuild: {Esbuild, :install_and_run, [:cdn_min, ~w(--watch)]},
+    tailwind: {Tailwind, :install_and_run, [:default, ~w(--watch)]},
+    node: ["build.js", "--watch", cd: Path.expand("./assets", __DIR__)]
   ],
   live_reload: [
     patterns: [
