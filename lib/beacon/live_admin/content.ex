@@ -162,4 +162,28 @@ defmodule Beacon.LiveAdmin.Content do
   def update_component(site, component, attrs) do
     call(site, Beacon.Content, :update_component, [component, attrs])
   end
+
+  def live_data_formats(site) do
+    call(site, Beacon.Content, :live_data_formats, [])
+  end
+
+  def change_live_data(site, live_data, attrs \\ %{}) do
+    call(site, Beacon.Content, :change_live_data, [live_data, attrs])
+  end
+
+  def create_live_data(site, attrs) do
+    call(site, Beacon.Content, :create_live_data, [attrs])
+  end
+
+  def live_data_for_site(site, opts \\ []) do
+    call(site, Beacon.Content, :live_data_for_site, [site, opts])
+  end
+
+  def get_live_data(site, id) do
+    call(site, Beacon.Content, :get_live_data, [id])
+  end
+
+  def update_live_data(site, live_data, attrs) do
+    call(site, Beacon.Content, :update_live_data, [live_data, attrs])
+  end
 end
