@@ -26,7 +26,7 @@ Keep this instance running.
 
 3. Open another terminal or tab, clone [Beacon](https://github.com/BeaconCMS/beacon) into another directory and follow the [Local Development instructions](https://github.com/BeaconCMS/beacon#local-development) to get a site up and running.
 
-4. Open http://localhost:4002/admin 
+4. Open http://localhost:4002/admin
 
 You'll notice that no site is displayed, that's because Beacon LiveAdmin looks for sites running in the cluster and the two nodes aren't connected yet.
 
@@ -39,3 +39,12 @@ Node.connect(node)
 ```
 
 Now you should see a site listed in the admin home page.
+
+## Looking for help with your Elixir project?
+
+<img src="assets/images/dockyard_logo.png" width="256" alt="DockYard logo">
+
+At DockYard we are [ready to help you build your next Elixir project](https://dockyard.com/phoenix-consulting).
+We have a unique expertise in Elixir and Phoenix development that is unmatched and we love to [write about Elixir](https://dockyard.com/blog/categories/elixir).
+
+Have a project in mind? [Get in touch](https://dockyard.com/contact/hire-us)!
