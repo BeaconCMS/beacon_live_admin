@@ -201,83 +201,75 @@ defmodule Beacon.LiveAdmin.ErrorPageEditorLive.Index do
       <.header>
         <%= @page_title %>
         <:actions>
-          <.button phx-disable-with="Saving..." form="error-page-form" class="uppercase">Save Changes</.button>
-        </:actions>
-        <:actions>
-          <.button type="button" id="delete-error-page-button" phx-click="delete" phx-disable-with="Deleting..." class="uppercase">Delete</.button>
+          <.button type="button" id="new-error-page-button" phx-click="create_new" class="uppercase">
+            New Error Page
+          </.button>
         </:actions>
       </.header>
 
-      <.modal :if={@show_nav_modal} id="confirm-nav" on_cancel={JS.push("stay_here")} show>
-        <p>You've made unsaved changes to this error page!</p>
-        <p>Navigating to another error page without saving will cause these changes to be lost.</p>
-        <.button type="button" phx-click="stay_here">
-          Stay here
-        </.button>
-        <.button type="button" phx-click="discard_changes">
-          Discard changes
-        </.button>
-      </.modal>
-
-      <.modal :if={@show_create_modal} id="create-modal" on_cancel={JS.push("cancel_create")} show>
-        <.simple_form :let={f} for={@create_form} id="create-form" phx-submit="save_new">
-          <.input field={f[:status]} type="select" label="Status code for new error page:" options={Content.valid_error_statuses(@beacon_page.site)} />
-          <:actions>
-            <.button>Save</.button>
-          </:actions>
-        </.simple_form>
-      </.modal>
-
-      <.modal :if={@show_delete_modal} id="delete-modal" on_cancel={JS.push("delete_cancel")} show>
-        <p>Are you sure you want to delete this error page?</p>
-        <.button type="button" id="confirm-delete-button" phx-click="delete_confirm">
-          Delete
-        </.button>
-        <.button type="button" phx-click="delete_cancel">
-          Cancel
-        </.button>
-      </.modal>
-
-      <div class="mx-auto grid grid-cols-1 grid-rows-1 items-start gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
-        <div>
-          <.button type="button" id="new-error-page-button" phx-click="create_new">
-            New Error Page
+      <.main_content class="h-[calc(100vh_-_223px)]">
+        <.modal :if={@show_nav_modal} id="confirm-nav" on_cancel={JS.push("stay_here")} show>
+          <p>You've made unsaved changes to this error page!</p>
+          <p>Navigating to another error page without saving will cause these changes to be lost.</p>
+          <.button type="button" phx-click="stay_here">
+            Stay here
           </.button>
-          <.table id="error-pages" rows={@error_pages} row_click={fn row -> "select-#{row.status}" end}>
-            <:col :let={error_page} label="status">
-              <%= Map.fetch!(error_page, :status) %>
-            </:col>
-          </.table>
-        </div>
+          <.button type="button" phx-click="discard_changes">
+            Discard changes
+          </.button>
+        </.modal>
 
-        <div :if={@form} class="w-full col-span-2">
-          <.form :let={f} for={@form} id="error-page-form" class="items-center" phx-submit="save_changes">
-            <div class="flex mb-6">
-              <div class="mr-4 text-4xl" id="status-display">
-                Status: <%= @selected.status %>
-              </div>
-            </div>
-            <div class="flex mb-6">
-              <div class="text-4xl mr-4">
-                Layout:
-              </div>
-              <.input type="select" field={f[:layout_id]} name="error_page[layout_id]" options={Enum.map(@layouts, &{&1.title, &1.id})} value={@selected.layout_id} />
-            </div>
-            <.input type="hidden" field={f[:template]} name="error_page[template]" id="error_page-form_template" value={@changed_template} />
-          </.form>
+        <.modal :if={@show_create_modal} id="create-modal" on_cancel={JS.push("cancel_create")} show>
+          <.simple_form :let={f} for={@create_form} id="create-form" phx-submit="save_new">
+            <.input field={f[:status]} type="select" label="Status code for new error page:" options={Content.valid_error_statuses(@beacon_page.site)} />
+            <:actions>
+              <.button>Save</.button>
+            </:actions>
+          </.simple_form>
+        </.modal>
 
-          <div class="w-full mt-10 space-y-8">
-            <div class="py-3 bg-[#282c34] rounded-lg">
-              <LiveMonacoEditor.code_editor
-                path="error_page_template"
-                style="min-height: 1000px; width: 100%;"
-                value={@selected.template}
-                opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => "html"})}
-              />
+        <.modal :if={@show_delete_modal} id="delete-modal" on_cancel={JS.push("delete_cancel")} show>
+          <p>Are you sure you want to delete this error page?</p>
+          <.button type="button" id="confirm-delete-button" phx-click="delete_confirm">
+            Delete
+          </.button>
+          <.button type="button" phx-click="delete_cancel">
+            Cancel
+          </.button>
+        </.modal>
+
+        <div class="grid items-start grid-cols-1 grid-rows-1 mx-auto gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
+          <div class="h-full lg:overflow-y-auto pb-4 lg:h-[calc(100vh_-_239px)]">
+            <.table id="error-pages" rows={@error_pages} row_click={fn row -> "select-#{row.status}" end}>
+              <:col :let={error_page} label="status">
+                <%= Map.fetch!(error_page, :status) %>
+              </:col>
+            </.table>
+          </div>
+
+          <div :if={@form} class="w-full col-span-2">
+            <.form :let={f} for={@form} id="error-page-form" class="flex items-end gap-4" phx-submit="save_changes">
+              <.input label="Status" field={f[:status]} type="text" disabled readonly />
+              <.input label="Layout" field={f[:layout_id]} options={Enum.map(@layouts, &{&1.title, &1.id})} value={@selected.layout_id} type="select" />
+              <.input type="hidden" field={f[:template]} name="error_page[template]" id="error_page-form_template" value={@changed_template} />
+
+              <.button phx-disable-with="Saving..." class="ml-auto">Save Changes</.button>
+              <.button id="delete-error-page-button" type="button" phx-click="delete" class="">Delete</.button>
+            </.form>
+
+            <div class="w-full mt-10 space-y-8">
+              <div class="py-6 rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
+                <LiveMonacoEditor.code_editor
+                  path="error_page_template"
+                  class="col-span-full lg:col-span-2"
+                  value={@selected.template}
+                  opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => "html"})}
+                />
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </.main_content>
     </div>
     """
   end

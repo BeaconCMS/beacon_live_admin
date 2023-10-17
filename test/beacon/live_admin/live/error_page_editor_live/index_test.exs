@@ -21,13 +21,13 @@ defmodule Beacon.LiveAdmin.ErrorPageEditorLive.IndexTest do
 
   test "select error page via path", %{conn: conn} do
     {:ok, view, _html} = live(conn, "/admin/site_a/error_pages")
-    assert has_element?(view, "#status-display", "Status: 404")
+    assert has_element?(view, "input[name='error_page[status]'][value=404]")
 
     {:ok, view, _html} = live(conn, "/admin/site_a/error_pages/404")
-    assert has_element?(view, "#status-display", "Status: 404")
+    assert has_element?(view, "input[name='error_page[status]'][value=404]")
 
     {:ok, view, _html} = live(conn, "/admin/site_a/error_pages/500")
-    assert has_element?(view, "#status-display", "Status: 500")
+    assert has_element?(view, "input[name='error_page[status]'][value=500]")
   end
 
   test "create a new error page", %{conn: conn} do
@@ -44,7 +44,7 @@ defmodule Beacon.LiveAdmin.ErrorPageEditorLive.IndexTest do
       |> follow_redirect(conn, "/admin/site_a/error_pages/400")
 
     refute has_element?(view, "#create-modal")
-    assert has_element?(view, "#status-display", "Status: 400")
+    assert has_element?(view, "input[name='error_page[status]'][value=400]")
   end
 
   test "update an error page", %{conn: conn, another_layout: layout} do
