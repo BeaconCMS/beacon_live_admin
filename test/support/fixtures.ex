@@ -42,6 +42,20 @@ defmodule Beacon.LiveAdmin.Fixtures do
     rpc(node, Beacon.Content, :create_page!, [attrs])
   end
 
+  def error_page_fixture(node \\ node1(), attrs \\ %{}) do
+    layout_id = get_lazy(attrs, :layout_id, fn -> layout_fixture().id end)
+
+    attrs =
+      Enum.into(attrs, %{
+        site: "site_a",
+        status: Enum.random(111..999),
+        layout_id: layout_id,
+        template: "Oops"
+      })
+
+    rpc(node, Beacon.Content, :create_error_page!, [attrs])
+  end
+
   def media_library_asset_fixture(node \\ node1(), attrs \\ %{}) do
     file_metadata = file_metadata_fixture(node, attrs)
     rpc(node, Beacon.MediaLibrary, :upload, [file_metadata])

@@ -162,4 +162,28 @@ defmodule Beacon.LiveAdmin.Content do
   def update_component(site, component, attrs) do
     call(site, Beacon.Content, :update_component, [component, attrs])
   end
+
+  def change_error_page(site, error_page, attrs \\ %{}) do
+    call(site, Beacon.Content, :change_error_page, [error_page, attrs])
+  end
+
+  def create_error_page(site, attrs) do
+    call(site, Beacon.Content, :create_error_page, [attrs])
+  end
+
+  def list_error_pages(site) do
+    call(site, Beacon.Content, :list_error_pages, [site])
+  end
+
+  def update_error_page(site, error_page, attrs) do
+    call(site, Beacon.Content, :update_error_page, [error_page, attrs])
+  end
+
+  def delete_error_page(site, error_page) do
+    call(site, Beacon.Content, :delete_error_page, [error_page])
+  end
+
+  def valid_error_statuses(site) do
+    call(site, Beacon.Content.ErrorPage, :valid_statuses, [])
+  end
 end

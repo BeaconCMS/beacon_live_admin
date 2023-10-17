@@ -148,10 +148,12 @@ defmodule Beacon.LiveAdmin.PageLive do
         case {a, b} do
           {"/layouts", _} -> true
           {_, "/layouts"} -> false
-          {"/pages", _} -> true
-          {_, "/pages"} -> false
           {"/components", _} -> true
           {_, "/components"} -> false
+          {"/pages", _} -> true
+          {_, "/pages"} -> false
+          {"/error_pages", _} -> true
+          {_, "/error_pages"} -> false
           {"/media_library", _} -> true
           {_, "/media_library"} -> false
           {a, b} -> a <= b
