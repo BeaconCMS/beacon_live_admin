@@ -40,7 +40,8 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.MetaTags do
         {:noreply,
          socket
          |> assign(:beacon_layout, layout)
-         |> assign_field(changeset)}
+         |> assign_field(changeset)
+         |> put_flash(:info, "Layout updated successfully")}
 
       {:error, changeset} ->
         {:noreply, assign_field(socket, changeset)}
@@ -56,7 +57,7 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.MetaTags do
   def render(assigns) do
     ~H"""
     <div>
-      <Beacon.LiveAdmin.AdminComponents.layout_menu socket={@socket} site={@beacon_layout.site} current_action={@live_action} layout_id={@beacon_layout.id} />
+      <Beacon.LiveAdmin.AdminComponents.layout_header socket={@socket} flash={@flash} beacon_layout={@beacon_layout} live_action={@live_action} />
       <.live_component module={MetaTagsComponent} id="layout-meta-tags" site={@beacon_layout.site} page_title={@page_title} live_action={@live_action} field={@field} meta_tags={@beacon_layout.meta_tags} />
     </div>
     """

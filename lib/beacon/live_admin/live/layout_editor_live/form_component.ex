@@ -97,7 +97,7 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.FormComponent do
   def render(assigns) do
     ~H"""
     <div>
-      <Beacon.LiveAdmin.AdminComponents.layout_menu socket={@socket} site={@site} current_action={@live_action} layout_id={@beacon_layout.id} />
+      <Beacon.LiveAdmin.AdminComponents.layout_header socket={@socket} flash={@flash} beacon_layout={@beacon_layout} live_action={@live_action} />
 
       <.header>
         <%= layout_name(@form.source) %>
