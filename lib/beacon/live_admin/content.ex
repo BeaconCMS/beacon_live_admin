@@ -175,8 +175,20 @@ defmodule Beacon.LiveAdmin.Content do
     call(site, Beacon.Content, :create_live_data, [attrs])
   end
 
-  def live_data_for_site(site, opts \\ []) do
-    call(site, Beacon.Content, :live_data_for_site, [site, opts])
+  def live_data_for_site(site) do
+    call(site, Beacon.Content, :live_data_for_site, [site])
+  end
+
+  def live_data_paths_for_site(site) do
+    call(site, Beacon.Content, :live_data_paths_for_site, [site])
+  end
+
+  def live_data_paths_for_site(site, query) do
+    call(site, Beacon.Content, :live_data_paths_for_site, [site, query])
+  end
+
+  def live_data_for_path(site, path) do
+    call(site, Beacon.Content, :live_data_for_path, [site, path])
   end
 
   def get_live_data(site, id) do
@@ -185,5 +197,9 @@ defmodule Beacon.LiveAdmin.Content do
 
   def update_live_data(site, live_data, attrs) do
     call(site, Beacon.Content, :update_live_data, [live_data, attrs])
+  end
+
+  def delete_live_data(site, live_data) do
+    call(site, Beacon.Content, :delete_live_data, [live_data])
   end
 end
