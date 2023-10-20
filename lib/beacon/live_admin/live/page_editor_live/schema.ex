@@ -35,8 +35,11 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Schema do
     case Content.update_page(page.site, page, attrs) do
       {:ok, page} ->
         changeset = Content.change_page(page.site, page)
-        socket = put_flash(socket, :info, "Page updated successfully")
-        {:noreply, assign_form(socket, changeset)}
+
+        {:noreply,
+         socket
+         |> assign_form(changeset)
+         |> put_flash(:info, "Page updated successfully")}
 
       {:error, changeset} ->
         {:noreply, assign_form(socket, changeset)}
