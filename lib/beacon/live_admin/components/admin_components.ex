@@ -27,6 +27,18 @@ defmodule Beacon.LiveAdmin.AdminComponents do
   @menu_link_regular_class "inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300"
 
   attr :socket, :map
+  attr :flash, :map
+  attr :beacon_layout, :map
+  attr :live_action, :atom
+
+  def layout_header(assigns) do
+    ~H"""
+    <.flash_group flash={@flash} />
+    <Beacon.LiveAdmin.AdminComponents.layout_menu socket={@socket} site={@beacon_layout.site} current_action={@live_action} layout_id={@beacon_layout.id} />
+    """
+  end
+
+  attr :socket, :map
   attr :site, :atom
   attr :current_action, :atom
   attr :layout_id, :string
@@ -69,6 +81,18 @@ defmodule Beacon.LiveAdmin.AdminComponents do
     <li class="mr-2">
       <.link patch={beacon_live_admin_path(@socket, @site, "/layouts/#{@layout_id}/revisions")} class={if(@current_action == :revisions, do: @active_class, else: @regular_class)}>Revisions</.link>
     </li>
+    """
+  end
+
+  attr :socket, :map
+  attr :flash, :map
+  attr :page, :any
+  attr :live_action, :atom
+
+  def page_header(assigns) do
+    ~H"""
+    <.flash_group flash={@flash} />
+    <Beacon.LiveAdmin.AdminComponents.page_menu socket={@socket} site={@page.site} current_action={@live_action} page_id={@page.id} />
     """
   end
 

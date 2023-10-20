@@ -86,6 +86,7 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.ResourceLinks do
           |> assign(:beacon_layout, layout)
           |> assign_field(changeset)
           |> assign_attributes()
+          |> put_flash(:info, "Layout updated successfully")
 
         {:error, changeset} ->
           assign_field(socket, changeset)
@@ -102,7 +103,7 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.ResourceLinks do
   def render(assigns) do
     ~H"""
     <div>
-      <Beacon.LiveAdmin.AdminComponents.layout_menu socket={@socket} site={@beacon_layout.site} current_action={@live_action} layout_id={@beacon_layout.id} />
+      <Beacon.LiveAdmin.AdminComponents.layout_header socket={@socket} flash={@flash} beacon_layout={@beacon_layout} live_action={@live_action} />
 
       <.header>
         <%= @page_title %>
@@ -110,6 +111,7 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.ResourceLinks do
           <.button phx-disable-with="Saving..." form="resource-links-form" class="uppercase">Save Changes</.button>
         </:actions>
       </.header>
+
       <.main_content class="h-[calc(100vh_-_223px)]">
         <div class="flex gap-4">
           <.button type="button" phx-click="add">New Resource Link</.button>

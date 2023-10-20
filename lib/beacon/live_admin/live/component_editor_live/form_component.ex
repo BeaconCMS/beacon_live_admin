@@ -65,6 +65,8 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
   def render(assigns) do
     ~H"""
     <div>
+      <.flash_group flash={@flash} />
+
       <.header>
         <%= @page_title %>
         <:actions>
