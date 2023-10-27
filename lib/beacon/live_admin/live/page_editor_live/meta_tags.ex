@@ -40,7 +40,8 @@ defmodule Beacon.LiveAdmin.PageEditorLive.MetaTags do
         {:noreply,
          socket
          |> assign(:page, page)
-         |> assign_field(changeset)}
+         |> assign_field(changeset)
+         |> put_flash(:info, "Page updated successfully")}
 
       {:error, changeset} ->
         {:noreply, assign_field(socket, changeset)}
@@ -56,7 +57,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.MetaTags do
   def render(assigns) do
     ~H"""
     <div>
-      <Beacon.LiveAdmin.AdminComponents.page_menu socket={@socket} site={@page.site} current_action={@live_action} page_id={@page.id} />
+      <Beacon.LiveAdmin.AdminComponents.page_header socket={@socket} flash={@flash} page={@page} live_action={@live_action} />
       <.live_component module={MetaTagsComponent} id="page-meta-tags" page_title={@page_title} site={@page.site} live_action={@live_action} field={@field} meta_tags={@page.meta_tags} />
     </div>
     """

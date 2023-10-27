@@ -28,7 +28,7 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.Revisions do
   def render(assigns) do
     ~H"""
     <div>
-      <Beacon.LiveAdmin.AdminComponents.layout_menu socket={@socket} site={@beacon_page.site} current_action={@live_action} layout_id={@layout_id} />
+      <Beacon.LiveAdmin.AdminComponents.layout_header socket={@socket} flash={@flash} beacon_layout={@beacon_layout} live_action={@live_action} />
       <.header>
         <%= @page_title %>
       </.header>

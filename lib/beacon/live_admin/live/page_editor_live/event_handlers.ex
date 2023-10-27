@@ -94,6 +94,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.EventHandlers do
           |> assign_selected(selected.id)
           |> assign_form()
           |> assign(unsaved_changes: false)
+          |> put_flash(:info, "Page updated successfully")
 
         {:error, changeset} ->
           changeset = Map.put(changeset, :action, :update)
@@ -146,7 +147,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.EventHandlers do
   def render(assigns) do
     ~H"""
     <div>
-      <Beacon.LiveAdmin.AdminComponents.page_menu socket={@socket} site={@beacon_page.site} current_action={@live_action} page_id={@page.id} />
+      <Beacon.LiveAdmin.AdminComponents.page_header socket={@socket} flash={@flash} page={@page} live_action={@live_action} />
 
       <.header>
         <%= @page_title %>

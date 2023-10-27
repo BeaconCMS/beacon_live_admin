@@ -53,7 +53,8 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Revisions do
   def render(assigns) do
     ~H"""
     <div class="content">
-      <Beacon.LiveAdmin.AdminComponents.page_menu socket={@socket} site={@beacon_page.site} current_action={@live_action} page_id={@page_id} />
+      <Beacon.LiveAdmin.AdminComponents.page_header socket={@socket} flash={@flash} page={@page} live_action={@live_action} />
+
       <.header>
         <%= @page_title %>
       </.header>

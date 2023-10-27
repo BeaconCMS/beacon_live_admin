@@ -59,6 +59,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
       |> assign(form: to_form(changeset))
       |> assign(changed_template: template)
       |> assign(unsaved_changes: !(changeset.changes == %{}))
+      |> put_flash(:info, "Page updated successfully")
 
     {:noreply, socket}
   end
@@ -144,7 +145,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
   def render(assigns) do
     ~H"""
     <div>
-      <Beacon.LiveAdmin.AdminComponents.page_menu socket={@socket} site={@beacon_page.site} current_action={@live_action} page_id={@page.id} />
+      <Beacon.LiveAdmin.AdminComponents.page_header socket={@socket} flash={@flash} page={@page} live_action={@live_action} />
 
       <.header>
         <%= @page_title %>
