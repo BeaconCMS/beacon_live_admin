@@ -152,7 +152,6 @@ defmodule Beacon.LiveAdmin.Router do
       {"/error_pages/:status", Beacon.LiveAdmin.ErrorPageEditorLive.Index, :index, %{}},
       # live data
       {"/live_data", Beacon.LiveAdmin.LiveDataEditorLive.Index, :index, %{}},
-      {"/live_data/new", Beacon.LiveAdmin.LiveDataEditorLive.New, :new, %{}},
       {"/live_data/:path", Beacon.LiveAdmin.LiveDataEditorLive.Assigns, :assigns, %{}},
       {"/live_data/:path/:assign", Beacon.LiveAdmin.LiveDataEditorLive.Assigns, :assigns, %{}},
       # media library
