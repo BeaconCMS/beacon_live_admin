@@ -32,7 +32,7 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.FormComponent do
   defp save_live_data(socket, :new, live_data_params) do
     case Content.create_live_data(socket.assigns.site, live_data_params) do
       {:ok, live_data} ->
-        to = beacon_live_admin_path(socket, socket.assigns.site, "/live_data/#{live_data.id}")
+        to = beacon_live_admin_path(socket, socket.assigns.site, "/live_data/#{sanitize_path(live_data.path)}")
 
         {:noreply,
          socket
@@ -96,5 +96,9 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.FormComponent do
 
   defp formats_to_options(site) do
     Enum.map(Content.live_data_formats(site), &{Phoenix.Naming.humanize(&1), &1})
+  end
+
+  defp sanitize_path(path) do
+    URI.encode_www_form(path)
   end
 end
