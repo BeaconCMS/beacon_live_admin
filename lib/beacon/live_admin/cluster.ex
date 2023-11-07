@@ -1,9 +1,10 @@
 defmodule Beacon.LiveAdmin.Cluster do
   use GenServer
+  require Logger
   alias Beacon.LiveAdmin.PubSub
 
   @name __MODULE__
-  @timeout :timer.minutes(1)
+  @one_minute :timer.minutes(1)
   @ets_table :beacon_live_admin_sites
 
   def start_link(opts) do
@@ -17,7 +18,7 @@ defmodule Beacon.LiveAdmin.Cluster do
   end
 
   def discover_sites do
-    GenServer.call(@name, :discover_sites, @timeout)
+    GenServer.call(@name, :discover_sites, @one_minute)
   end
 
   def maybe_discover_sites() do
@@ -50,14 +51,40 @@ defmodule Beacon.LiveAdmin.Cluster do
         :ok
 
   """
-  def call(site, module, fun, args)
-      when is_atom(site) and is_atom(module) and is_atom(fun) and is_list(args) do
+  def call(site, mod, fun, args)
+      when is_atom(site) and is_atom(mod) and is_atom(fun) and is_list(args) do
     case find_node(site) do
-      nil -> {:error, :nodedown}
-      node -> :erpc.call(node, module, fun, args)
+      nil ->
+        message = "no running node found for site #{inspect(site)}"
+        raise Beacon.LiveAdmin.ClusterError, message: message
+
+      node ->
+        do_call(node, mod, fun, args)
     end
   rescue
-    exception -> exception
+    exception ->
+      Logger.debug(
+        "failed to call #{Exception.format_mfa(mod, fun, args)} for site #{inspect(site)}"
+      )
+
+      message = """
+      failed to call #{Exception.format_mfa(mod, fun, args)} for site #{inspect(site)}
+
+      Got:
+
+        #{Exception.message(exception)}
+
+      """
+
+      reraise Beacon.LiveAdmin.ClusterError, [message: message], __STACKTRACE__
+  end
+
+  defp do_call(node, mod, fun, args) do
+    if node == Node.self() do
+      apply(mod, fun, args)
+    else
+      :erpc.call(node, mod, fun, args)
+    end
   end
 
   if Code.ensure_loaded?(Mix.Project) and Mix.env() == :test do
@@ -86,8 +113,7 @@ defmodule Beacon.LiveAdmin.Cluster do
   end
 
   defp do_discover_sites do
-    # add or remove nodes from ets state when nodes changes
-    # instead of recreating everything
+    # TODO: add or remove nodes from ets state when nodes changes instead of recreating everything
     :ets.delete_all_objects(@ets_table)
 
     sites =
