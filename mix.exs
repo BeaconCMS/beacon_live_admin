@@ -1,10 +1,12 @@
 defmodule Beacon.LiveAdmin.MixProject do
   use Mix.Project
 
+  @version "0.1.0-dev"
+
   def project do
     [
       app: :beacon_live_admin,
-      version: "0.1.0-dev",
+      version: @version,
       elixir: "~> 1.13",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
@@ -32,6 +34,7 @@ defmodule Beacon.LiveAdmin.MixProject do
     [
       beacon_dep(),
       live_monaco_editor_dep(),
+      {:ecto, "~> 3.6"},
       phoenix_dep(),
       {:phoenix_html, "~> 3.3"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
