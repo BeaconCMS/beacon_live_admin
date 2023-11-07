@@ -32,10 +32,10 @@ defmodule Beacon.LiveAdmin.MixProject do
     [
       beacon_dep(),
       live_monaco_editor_dep(),
-      {:phoenix, "~> 1.7"},
+      phoenix_dep(),
       {:phoenix_html, "~> 3.3"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
-      {:phoenix_live_view, "~> 0.19"},
+      phoenix_live_view_dep(),
       {:floki, ">= 0.30.0", only: :test},
       {:esbuild, "~> 0.5", only: :dev},
       {:tailwind, "~> 0.2"},
@@ -46,19 +46,33 @@ defmodule Beacon.LiveAdmin.MixProject do
     ]
   end
 
+  defp phoenix_dep do
+    cond do
+      env = System.get_env("PHOENIX_VERSION") -> {:phoenix, env}
+      path = System.get_env("PHOENIX_PATH") -> {:phoenix, path}
+      :default -> {:phoenix, "~> 1.7"}
+    end
+  end
+
+  defp phoenix_live_view_dep do
+    cond do
+      env = System.get_env("PHOENIX_LIVE_VIEW_VERSION") -> {:phoenix_live_view, env}
+      path = System.get_env("PHOENIX_LIVE_VIEW_PATH") -> {:phoenix_live_view, path}
+      :default -> {:phoenix_live_view, "~> 0.19"}
+    end
+  end
+
   defp beacon_dep do
-    if path = System.get_env("BEACON_PATH") do
-      {:beacon, path: path, runtime: false}
-    else
-      {:beacon, github: "beaconCMS/beacon", runtime: false}
+    cond do
+      path = System.get_env("BEACON_PATH") -> {:beacon, path: path, runtime: false}
+      :default -> {:beacon, github: "beaconCMS/beacon", runtime: false}
     end
   end
 
   defp live_monaco_editor_dep do
-    if path = System.get_env("LIVE_MONACO_EDITOR_PATH") do
-      {:live_monaco_editor, path: path}
-    else
-      {:live_monaco_editor, "~> 0.1"}
+    cond do
+      path = System.get_env("LIVE_MONACO_EDITOR_PATH") -> {:live_monaco_editor, path: path}
+      :default -> {:live_monaco_editor, "~> 0.1"}
     end
   end
 
