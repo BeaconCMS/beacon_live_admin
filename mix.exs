@@ -75,7 +75,7 @@ defmodule Beacon.LiveAdmin.MixProject do
   defp live_monaco_editor_dep do
     cond do
       path = System.get_env("LIVE_MONACO_EDITOR_PATH") -> {:live_monaco_editor, path: path}
-      :default -> {:live_monaco_editor, "~> 0.1"}
+      :default -> {:live_monaco_editor, "~> 0.1.7"}
     end
   end
 
