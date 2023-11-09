@@ -10,32 +10,16 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.FormComponent do
      socket
      |> assign(assigns)
      |> assign_form(changeset)
-     |> assign(:template, beacon_layout.template)
-     |> assign(:changed_template, beacon_layout.template)
      |> assign(:status, layout_status(beacon_layout))}
   end
 
-  def update(%{changed_template: changed_template}, socket) do
-    {:ok, assign(socket, :changed_template, changed_template)}
-  end
-
-  defp layout_status(%{site: nil, id: nil}), do: nil
-
-  defp layout_status(%{site: site, id: id}),
-    do: Beacon.LiveAdmin.Content.get_latest_layout_event(site, id).event
-
-  defp assign_form(socket, changeset) do
-    assign(socket, :form, to_form(changeset))
+  def update(%{template: value}, socket) do
+    {:ok, assign_form(socket, %{"template" => value})}
   end
 
   @impl true
   def handle_event("validate", %{"layout" => layout_params}, socket) do
-    changeset =
-      socket.assigns.site
-      |> Content.change_layout(socket.assigns.beacon_layout, layout_params)
-      |> Map.put(:action, :validate)
-
-    {:noreply, assign_form(socket, changeset)}
+    {:noreply, assign_form(socket, layout_params)}
   end
 
   def handle_event("save", %{"layout" => layout_params}, socket) do
@@ -58,6 +42,19 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.FormComponent do
          socket
          |> put_flash(:error, "Failed to publish layout")}
     end
+  end
+
+  defp assign_form(socket, %Ecto.Changeset{} = changeset) do
+    assign(socket, :form, to_form(changeset))
+  end
+
+  defp assign_form(socket, attrs) when is_map(attrs) do
+    changeset =
+      socket.assigns.site
+      |> Content.change_layout(socket.assigns.beacon_layout, attrs)
+      |> Map.put(:action, :validate)
+
+    assign_form(socket, changeset)
   end
 
   defp save_layout(socket, :new, layout_params) do
@@ -150,19 +147,30 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.FormComponent do
           <.form :let={f} for={@form} id="layout-form" class="space-y-8" phx-target={@myself} phx-change="validate" phx-submit="save">
             <legend class="text-sm font-bold tracking-widest text-[#445668] uppercase">Layout Settings</legend>
             <.input field={f[:title]} type="text" label="Title" />
-            <input type="hidden" name="layout[template]" id="layout-form_template" value={@changed_template} />
+            <input type="hidden" name="layout[template]" id="layout-form_template" value={Phoenix.HTML.Form.input_value(f, :template)} />
           </.form>
         </div>
         <div class="col-span-full lg:col-span-2">
           <%= template_error(@form[:template]) %>
           <div class="py-6 w-full rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
-            <LiveMonacoEditor.code_editor path="template" class="col-span-full lg:col-span-2" value={@template} opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => "html"})} />
+            <LiveMonacoEditor.code_editor
+              path="template"
+              class="col-span-full lg:col-span-2"
+              value={Phoenix.HTML.Form.input_value(@form, :template)}
+              change="set_template"
+              opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => "html"})}
+            />
           </div>
         </div>
       </div>
     </div>
     """
   end
+
+  defp layout_status(%{site: nil, id: nil}), do: nil
+
+  defp layout_status(%{site: site, id: id}),
+    do: Beacon.LiveAdmin.Content.get_latest_layout_event(site, id).event
 
   defp layout_name(source), do: Ecto.Changeset.get_field(source, :title)
 
