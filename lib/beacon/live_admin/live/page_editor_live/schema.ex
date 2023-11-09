@@ -23,11 +23,10 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Schema do
   end
 
   @impl true
-  def handle_event("raw_schema_editor_lost_focus", %{"value" => value}, socket) do
+  def handle_event("set_raw_schema", %{"value" => value}, socket) do
     {:noreply, assign(socket, :raw_schema, value)}
   end
 
-  @impl true
   def handle_event("save", _, socket) do
     page = socket.assigns.page
     attrs = %{"raw_schema" => socket.assigns.raw_schema}
@@ -42,6 +41,14 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Schema do
          |> put_flash(:info, "Page updated successfully")}
 
       {:error, changeset} ->
+        {message, _} = Keyword.fetch!(changeset.errors, :raw_schema)
+
+        changeset =
+          page.site
+          |> Content.change_page(page)
+          |> Map.put(:action, :validate)
+          |> Ecto.Changeset.add_error(:raw_schema, "invalid", compilation_error: message)
+
         {:noreply, assign_form(socket, changeset)}
     end
   end
@@ -64,10 +71,16 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Schema do
       </.header>
 
       <div class="w-full mt-4 space-y-8">
+        <%= template_error(@form[:raw_schema]) %>
         <div class="py-6 rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
-          <LiveMonacoEditor.code_editor path="raw_schema" class="col-span-full lg:col-span-2" value={@raw_schema} opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => "json"})} />
+          <LiveMonacoEditor.code_editor
+            path="raw_schema"
+            class="col-span-full lg:col-span-2"
+            value={@raw_schema}
+            change="set_raw_schema"
+            opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => "json"})}
+          />
         </div>
-        <.error :for={msg <- Enum.map(@form[:raw_schema].errors, &translate_error/1)}><%= msg %></.error>
       </div>
     </div>
     """
