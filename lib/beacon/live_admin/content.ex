@@ -45,8 +45,8 @@ defmodule Beacon.LiveAdmin.Content do
     call(site, Beacon.Content, :list_layouts, [site, opts])
   end
 
-  def change_page(site, page) do
-    call(site, Beacon.Content, :change_page, [page])
+  def change_page(site, page, attrs \\ %{}) do
+    call(site, Beacon.Content, :change_page, [page, attrs])
   end
 
   def page_extra_fields(site, form, attrs, errors) do
