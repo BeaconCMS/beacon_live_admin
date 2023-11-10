@@ -42,10 +42,10 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
     end
   end
 
-  def handle_event("set_template", %{"value" => value}, socket) do
+  def handle_event("set_template", %{"value" => template}, socket) do
     %{selected: selected, beacon_page: %{site: site}, form: form} = socket.assigns
 
-    params = Map.merge(form.params, %{"template" => value})
+    params = Map.merge(form.params, %{"template" => template})
     changeset = Content.change_page_variant(site, selected, params)
 
     socket =
@@ -88,7 +88,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
 
         {:error, changeset} ->
           changeset = Map.put(changeset, :action, :update)
-          assign(socket, form: to_form(changeset))
+          assign_form(changeset)
       end
 
     {:noreply, socket}
@@ -132,10 +132,6 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
 
   def handle_event("discard_changes", _params, socket) do
     {:noreply, push_redirect(socket, to: socket.assigns.confirm_nav_path)}
-  end
-
-  defp assign_form(socket, changeset) do
-    assign(socket, :form, to_form(changeset))
   end
 
   def render(assigns) do
@@ -236,6 +232,10 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
       end
 
     assign(socket, form: form)
+  end
+
+  defp assign_form(socket, changeset) do
+    assign(socket, :form, to_form(changeset))
   end
 
   defp language("heex" = _format), do: "html"

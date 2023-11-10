@@ -14,10 +14,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.EventHandlers do
 
   # For the first page load
   def handle_params(params, _url, socket) do
-    page =
-      Content.get_page(socket.assigns.beacon_page.site, params["page_id"],
-        preloads: [:event_handlers]
-      )
+    page = Content.get_page(socket.assigns.beacon_page.site, params["page_id"], preloads: [:event_handlers])
 
     socket =
       socket
@@ -45,21 +42,15 @@ defmodule Beacon.LiveAdmin.PageEditorLive.EventHandlers do
     end
   end
 
-  def handle_event("event_handler_code_editor_lost_focus", %{"value" => code}, socket) do
+  def handle_event("set_code", %{"value" => code}, socket) do
     %{selected: selected, beacon_page: %{site: site}, form: form} = socket.assigns
 
-    changeset =
-      site
-      |> Content.change_page_event_handler(selected, %{
-        "code" => code,
-        "name" => form.params["name"] || Map.fetch!(form.data, :name)
-      })
-      |> Map.put(:action, :validate)
+    params = Map.merge(form.params, %{"code" => code})
+    changeset =  Content.change_page_event_handler(site, selected, params)
 
     socket =
       socket
-      |> assign(form: to_form(changeset))
-      |> assign(changed_code: code)
+      |> assign_form(changeset)
       |> assign(unsaved_changes: !(changeset.changes == %{}))
 
     {:noreply, socket}
@@ -75,7 +66,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.EventHandlers do
 
     socket =
       socket
-      |> assign(form: to_form(changeset))
+      |> assign_form(changeset)
       |> assign(unsaved_changes: !(changeset.changes == %{}))
 
     {:noreply, socket}
@@ -98,7 +89,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.EventHandlers do
 
         {:error, changeset} ->
           changeset = Map.put(changeset, :action, :update)
-          assign(socket, form: to_form(changeset))
+          assign_form(changeset)
       end
 
     {:noreply, socket}
@@ -190,7 +181,8 @@ defmodule Beacon.LiveAdmin.PageEditorLive.EventHandlers do
           <div :if={@form} class="w-full col-span-2">
             <.form :let={f} for={@form} class="flex items-end gap-4" phx-change="validate" phx-submit="save_changes">
               <.input field={f[:name]} label="name" type="text" />
-              <input type="hidden" name="page_event_handler[code]" id="page_event_handler-form_code" value={@changed_code} />
+              <input type="hidden" name="page_event_handler[code]" id="page_event_handler-form_code" value={Phoenix.HTML.Form.input_value(f, :code)} />
+
               <.button phx-disable-with="Saving..." class="ml-auto">Save Changes</.button>
               <.button type="button" phx-click="delete">Delete</.button>
             </.form>
@@ -201,6 +193,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.EventHandlers do
                   path="event_handler_code"
                   class="col-span-full lg:col-span-2"
                   value={@selected.code}
+                  change="set_code"
                   opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => "elixir"})}
                 />
               </div>
@@ -240,5 +233,9 @@ defmodule Beacon.LiveAdmin.PageEditorLive.EventHandlers do
       end
 
     assign(socket, form: form)
+  end
+
+  defp assign_form(socket, changeset) do
+    assign(socket, :form, to_form(changeset))
   end
 end
