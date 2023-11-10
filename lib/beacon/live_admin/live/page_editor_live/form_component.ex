@@ -15,31 +15,13 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
      |> assign_form(changeset)
      |> assign(:layouts, layouts)
      |> assign(:language, language(page.format))
-     |> assign(:template, page.template)
-     |> assign(:changed_template, page.template)
      |> assign_extra_fields(changeset)}
   end
 
-  def update(%{changed_template: changed_template}, socket) do
-    {:ok, assign(socket, :changed_template, changed_template)}
-  end
-
-  defp assign_form(socket, changeset) do
-    assign(socket, :form, to_form(changeset))
-  end
-
-  defp assign_extra_fields(socket, changeset) do
-    params = Ecto.Changeset.get_field(changeset, :extra)
-
-    extra_fields =
-      Content.page_extra_fields(
-        socket.assigns.site,
-        socket.assigns.form,
-        params,
-        changeset.errors
-      )
-
-    assign(socket, :extra_fields, extra_fields)
+  def update(%{template: value}, socket) do
+    params = Map.merge(socket.assigns.form.params, %{"template" => value})
+    changeset = Content.change_page(socket.assigns.site, socket.assigns.page, params)
+    {:ok, assign_form(socket, changeset)}
   end
 
   @impl true
@@ -126,6 +108,10 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
     end
   end
 
+  defp assign_form(socket, changeset) do
+    assign(socket, :form, to_form(changeset))
+  end
+
   @impl true
   def render(assigns) do
     ~H"""
@@ -175,7 +161,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
             <.input field={f[:description]} type="textarea" label="Description" />
             <.input field={f[:layout_id]} type="select" options={layouts_to_options(@layouts)} label="Layout" />
             <.input field={f[:format]} type="select" label="Format" options={template_format_options(@site)} />
-            <input type="hidden" name="page[template]" id="page-form_template" value={@changed_template} />
+            <input type="hidden" name="page[template]" id="page-form_template" value={Phoenix.HTML.Form.input_value(f, :template)} />
 
             <%= for mod <- extra_page_fields(@site) do %>
               <%= extra_page_field(@site, @extra_fields, mod) %>
@@ -185,12 +171,32 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
         <div class="col-span-full lg:col-span-2">
           <%= template_error(@form[:template]) %>
           <div class="py-6 w-full rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
-            <LiveMonacoEditor.code_editor path="template" class="col-span-full lg:col-span-2" value={@template} opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => @language})} />
+            <LiveMonacoEditor.code_editor
+              path="template"
+              class="col-span-full lg:col-span-2"
+              value={Phoenix.HTML.Form.input_value(@form, :template)}
+              change="set_template"
+              opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => @language})}
+            />
           </div>
         </div>
       </div>
     </div>
     """
+  end
+
+  defp assign_extra_fields(socket, changeset) do
+    params = Ecto.Changeset.get_field(changeset, :extra)
+
+    extra_fields =
+      Content.page_extra_fields(
+        socket.assigns.site,
+        socket.assigns.form,
+        params,
+        changeset.errors
+      )
+
+    assign(socket, :extra_fields, extra_fields)
   end
 
   defp layouts_to_options(layouts) do

@@ -897,14 +897,6 @@ var BeaconLiveAdmin = (() => {
   import_topbar.default.config({ barColors: { 0: "#29d" }, shadowColor: "rgba(0, 0, 0, .3)" });
   window.addEventListener("phx:page-loading-start", (_info) => import_topbar.default.show(300));
   window.addEventListener("phx:page-loading-stop", (_info) => import_topbar.default.hide());
-  window.addEventListener("lme:editor_mounted", (ev) => {
-    const hook = ev.detail.hook;
-    const editor = ev.detail.editor.standalone_code_editor;
-    const eventName = ev.detail.editor.path + "_editor_lost_focus";
-    editor.onDidBlurEditorWidget(() => {
-      hook.pushEvent(eventName, { value: editor.getValue() });
-    });
-  });
   window.addEventListener("beacon_admin:clipcopy", (event) => {
     const result_id = `${event.target.id}-copy-to-clipboard-result`;
     const el = document.getElementById(result_id);

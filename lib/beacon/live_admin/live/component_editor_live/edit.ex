@@ -20,10 +20,10 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.Edit do
   end
 
   @impl true
-  def handle_event("body_editor_lost_focus", %{"value" => value}, socket) do
+  def handle_event("set_body", %{"value" => value}, socket) do
     send_update(Beacon.LiveAdmin.ComponentEditorLive.FormComponent,
       id: "components-form-edit",
-      changed_body: value
+      body: value
     )
 
     {:noreply, socket}
