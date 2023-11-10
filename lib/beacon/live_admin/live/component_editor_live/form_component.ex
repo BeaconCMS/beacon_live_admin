@@ -9,17 +9,14 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
     {:ok,
      socket
      |> assign(assigns)
-     |> assign(:body, component.body)
-     |> assign(:changed_body, component.body)
      |> assign_form(changeset)}
   end
 
-  def update(%{changed_body: changed_body}, socket) do
-    {:ok, assign(socket, :changed_body, changed_body)}
-  end
+  def update(%{body: value}, socket) do
+    changeset =
+      Content.change_component(socket.assigns.site, socket.assigns.component, %{"body" => value})
 
-  defp assign_form(socket, changeset) do
-    assign(socket, :form, to_form(changeset))
+    {:ok, assign_form(socket, changeset)}
   end
 
   @impl true
@@ -61,6 +58,10 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
     end
   end
 
+  defp assign_form(socket, changeset) do
+    assign(socket, :form, to_form(changeset))
+  end
+
   @impl true
   def render(assigns) do
     ~H"""
@@ -80,13 +81,19 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
             <legend class="text-sm font-bold tracking-widest text-[#445668] uppercase">Component settings</legend>
             <.input field={f[:name]} type="text" label="Name" />
             <.input field={f[:category]} type="select" options={categories_to_options(@site)} label="Category" />
-            <input type="hidden" name="component[body]" id="component-form_body" value={@changed_body} />
+            <input type="hidden" name="component[body]" id="component-form_body" value={Phoenix.HTML.Form.input_value(f, :body)} />
           </.form>
         </div>
         <div class="col-span-full lg:col-span-2">
           <%= template_error(@form[:body]) %>
           <div class="py-6 w-full rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
-            <LiveMonacoEditor.code_editor path="body" class="col-span-full lg:col-span-2" value={@body} opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => "html"})} />
+            <LiveMonacoEditor.code_editor
+              path="body"
+              class="col-span-full lg:col-span-2"
+              value={Phoenix.HTML.Form.input_value(@form, :body)}
+              change="set_body"
+              opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => "html"})}
+            />
           </div>
         </div>
       </div>
