@@ -14,7 +14,10 @@ defmodule Beacon.LiveAdmin.PageEditorLive.EventHandlers do
 
   # For the first page load
   def handle_params(params, _url, socket) do
-    page = Content.get_page(socket.assigns.beacon_page.site, params["page_id"], preloads: [:event_handlers])
+    page =
+      Content.get_page(socket.assigns.beacon_page.site, params["page_id"],
+        preloads: [:event_handlers]
+      )
 
     socket =
       socket
@@ -46,7 +49,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.EventHandlers do
     %{selected: selected, beacon_page: %{site: site}, form: form} = socket.assigns
 
     params = Map.merge(form.params, %{"code" => code})
-    changeset =  Content.change_page_event_handler(site, selected, params)
+    changeset = Content.change_page_event_handler(site, selected, params)
 
     socket =
       socket
