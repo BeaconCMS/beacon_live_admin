@@ -12,19 +12,27 @@ defmodule Beacon.LiveAdmin.PageEditorLive.New do
 
   @impl true
   def handle_params(_params, _url, socket) do
-    %{data: components} =
-      BeaconWeb.API.ComponentJSON.index(%{
-        components: Content.list_components(socket.assigns.beacon_page.site, per_page: :infinity)
-      })
-
-    {:noreply, assign(socket, components: components)}
+    {:noreply, assigns(socket)}
   end
 
   defp assigns(socket) do
+    %{data: components} =
+      BeaconWeb.API.ComponentJSON.index(%{
+        components: [] # Content.list_components(socket.assigns.beacon_page.site, per_page: :infinity)
+      })
+
     assign(socket,
       page_title: "Create New Page",
       visual_mode: true,
-      page: %Content.Page{path: "", site: socket.assigns.beacon_page.site}
+      components: components,
+      page: %Content.Page{
+        path: "",
+        site: socket.assigns.beacon_page.site,
+        layout: %Content.Layout{
+          template: "",
+          site: socket.assigns.beacon_page.site
+        }
+      }
     )
   end
 
@@ -57,6 +65,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.New do
       site={@beacon_page.site}
       page_title={@page_title}
       visual_mode={@visual_mode}
+      components={@components}
       live_action={@live_action}
       page={@page}
       patch="/pages"
