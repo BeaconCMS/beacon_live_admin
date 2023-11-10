@@ -40,23 +40,15 @@ defmodule Beacon.LiveAdmin.ErrorPageEditorLive.Index do
     end
   end
 
-  def handle_event("error_page_template_editor_lost_focus", %{"value" => template}, socket) do
+  def handle_event("set_template", %{"value" => template}, socket) do
     %{selected: selected, beacon_page: %{site: site}, form: form} = socket.assigns
 
-    changeset =
-      site
-      |> Content.change_error_page(selected, %{
-        "site" => site,
-        "template" => template,
-        "status" => form.params["status"] || Map.fetch!(form.data, :status),
-        "layout_id" => form.params["layout_id"] || Map.fetch!(form.data, :layout_id)
-      })
-      |> Map.put(:action, :validate)
+    params = Map.merge(form.params, %{"template" => template})
+    changeset = Content.change_error_page(site, selected, params)
 
     socket =
       socket
-      |> assign(form: to_form(changeset))
-      |> assign(changed_template: template)
+      |> assign_form(changeset)
       |> assign(unsaved_changes: !(changeset.changes == %{}))
 
     {:noreply, socket}
@@ -183,6 +175,10 @@ defmodule Beacon.LiveAdmin.ErrorPageEditorLive.Index do
     assign(socket, form: form)
   end
 
+  defp assign_form(socket, changeset) do
+    assign(socket, :form, to_form(changeset))
+  end
+
   defp assign_error_page_update(socket, updated_error_page) do
     %{id: error_page_id} = updated_error_page
 
@@ -251,7 +247,7 @@ defmodule Beacon.LiveAdmin.ErrorPageEditorLive.Index do
             <.form :let={f} for={@form} id="error-page-form" class="flex items-end gap-4" phx-submit="save_changes">
               <.input label="Status" field={f[:status]} type="text" disabled readonly />
               <.input label="Layout" field={f[:layout_id]} options={Enum.map(@layouts, &{&1.title, &1.id})} value={@selected.layout_id} type="select" />
-              <.input type="hidden" field={f[:template]} name="error_page[template]" id="error_page-form_template" value={@changed_template} />
+              <.input type="hidden" field={f[:template]} name="error_page[template]" id="error_page-form_template" value={Phoenix.HTML.Form.input_value(f, :template)} />
 
               <.button phx-disable-with="Saving..." class="ml-auto">Save Changes</.button>
               <.button id="delete-error-page-button" type="button" phx-click="delete" class="">Delete</.button>
@@ -263,6 +259,7 @@ defmodule Beacon.LiveAdmin.ErrorPageEditorLive.Index do
                   path="error_page_template"
                   class="col-span-full lg:col-span-2"
                   value={@selected.template}
+                  change="set_template"
                   opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => "html"})}
                 />
               </div>
