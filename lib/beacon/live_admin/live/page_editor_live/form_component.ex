@@ -9,7 +9,6 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
   def update(%{site: site, page: page} = assigns, socket) do
     # FIXME: new pages
     page = Map.put_new(page, :path, "/")
-    page = Map.put(page, :template, "<div>FIXME</div>")
 
     changeset = Content.change_page(site, page)
     layouts = Content.list_layouts(site)

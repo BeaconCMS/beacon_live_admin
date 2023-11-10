@@ -77,7 +77,8 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
       {:ok, page} ->
         {:noreply, assign(socket, :page, page)}
 
-      {:error, changeset} ->
+      # FIXME: handle update ast error
+      {:error, _changeset} ->
         throw("How should we handle this?")
     end
   end
