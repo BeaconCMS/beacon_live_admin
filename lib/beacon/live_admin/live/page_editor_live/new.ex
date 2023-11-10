@@ -5,6 +5,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.New do
   alias Beacon.Content
 
   @impl true
+  @spec menu_link(any(), any()) :: :skip | {:submenu, <<_::40>>}
   def menu_link("/pages", :new), do: {:submenu, "Pages"}
   def menu_link(_, _), do: :skip
 
@@ -14,7 +15,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.New do
   end
 
   defp assigns(socket) do
-    assign(socket, page_title: "Create New Page", page: %Content.Page{})
+    assign(socket, page_title: "Create New Page", page: %Content.Page{path: "", site: socket.assigns.beacon_page.site})
   end
 
   @impl true
