@@ -19,9 +19,8 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
   end
 
   def update(%{template: value}, socket) do
-    changeset =
-      Content.change_page(socket.assigns.site, socket.assigns.page, %{"template" => value})
-
+    params = Map.merge(socket.assigns.form.params, %{"template" => value})
+    changeset = Content.change_page(socket.assigns.site, socket.assigns.page, params)
     {:ok, assign_form(socket, changeset)}
   end
 
@@ -75,10 +74,6 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
     end
   end
 
-  defp assign_form(socket, changeset) do
-    assign(socket, :form, to_form(changeset))
-  end
-
   defp save_page(socket, :new, page_params) do
     case Content.create_page(socket.assigns.site, page_params) do
       {:ok, page} ->
@@ -111,6 +106,10 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
         changeset = Map.put(changeset, :action, :update)
         {:noreply, assign_form(socket, changeset)}
     end
+  end
+
+  defp assign_form(socket, changeset) do
+    assign(socket, :form, to_form(changeset))
   end
 
   @impl true

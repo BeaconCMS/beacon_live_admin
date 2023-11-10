@@ -14,7 +14,8 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.FormComponent do
   end
 
   def update(%{template: value}, socket) do
-    {:ok, assign_form(socket, %{"template" => value})}
+    params = Map.merge(socket.assigns.form.params, %{"template" => value})
+    {:ok, assign_form(socket, params)}
   end
 
   @impl true
