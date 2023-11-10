@@ -9,9 +9,11 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
   def update(%{site: site, page: page} = assigns, socket) do
     # FIXME: new pages
     page = Map.put_new(page, :path, "/")
+    page = Map.put(page, :template, "<div>FIXME</div>")
 
     changeset = Content.change_page(site, page)
     layouts = Content.list_layouts(site)
+
     %{data: builder_page} = WebAPI.Page.show(site, page)
 
     {:ok,
@@ -22,6 +24,8 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
      |> assign(:language, language(page.format))
      |> assign(:template, page.template)
      |> assign(:changed_template, page.template)
+     |> assign(:builder_page, builder_page)
+     |> assign_new(:visual_mode, fn -> false end)
      |> assign_extra_fields(changeset)}
   end
 
