@@ -42,24 +42,16 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
     end
   end
 
-  def handle_event("variant_editor_lost_focus", %{"value" => template}, socket) do
+  def handle_event("set_template", %{"value" => value}, socket) do
     %{selected: selected, beacon_page: %{site: site}, form: form} = socket.assigns
 
-    changeset =
-      site
-      |> Content.change_page_variant(selected, %{
-        "template" => template,
-        "name" => form.params["name"] || Map.fetch!(form.data, :name),
-        "weight" => form.params["weight"] || Map.fetch!(form.data, :weight)
-      })
-      |> Map.put(:action, :validate)
+    params = Map.merge(form.params, %{"template" => value})
+    changeset = Content.change_page_variant(site, selected, params)
 
     socket =
       socket
-      |> assign(form: to_form(changeset))
-      |> assign(changed_template: template)
+      |> assign_form(changeset)
       |> assign(unsaved_changes: !(changeset.changes == %{}))
-      |> put_flash(:info, "Page updated successfully")
 
     {:noreply, socket}
   end
@@ -74,7 +66,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
 
     socket =
       socket
-      |> assign(form: to_form(changeset))
+      |> assign_form(changeset)
       |> assign(unsaved_changes: !(changeset.changes == %{}))
 
     {:noreply, socket}
@@ -142,6 +134,10 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
     {:noreply, push_redirect(socket, to: socket.assigns.confirm_nav_path)}
   end
 
+  defp assign_form(socket, changeset) do
+    assign(socket, :form, to_form(changeset))
+  end
+
   def render(assigns) do
     ~H"""
     <div>
@@ -191,8 +187,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
             <.form :let={f} for={@form} class="flex items-end gap-4" phx-change="validate" phx-submit="save_changes">
               <.input label="Name" field={f[:name]} type="text" />
               <.input label="weight" field={f[:weight]} type="number" min="0" max="100" />
-
-              <input type="hidden" name="page_variant[template]" id="page_variant-form_template" value={@changed_template} />
+              <input type="hidden" name="page_variant[template]" id="page_variant-form_template" value={Phoenix.HTML.Form.input_value(f, :template)} />
 
               <.button phx-disable-with="Saving..." class="ml-auto">Save Changes</.button>
               <.button type="button" phx-click="delete" class="">Delete</.button>
@@ -200,7 +195,13 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
             <%= template_error(@form[:template]) %>
             <div class="w-full mt-10 space-y-8">
               <div class="py-6 rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
-                <LiveMonacoEditor.code_editor path="variant" class="col-span-full lg:col-span-2" value={@selected.template} opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => @language})} />
+                <LiveMonacoEditor.code_editor
+                  path="variant"
+                  class="col-span-full lg:col-span-2"
+                  value={@selected.template}
+                  change="set_template"
+                  opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => @language})}
+                />
               </div>
             </div>
           </div>
