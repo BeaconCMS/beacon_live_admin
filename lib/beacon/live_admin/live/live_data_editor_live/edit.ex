@@ -25,15 +25,7 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Edit do
 
   def render(assigns) do
     ~H"""
-    <.live_component
-      module={FormComponent}
-      id="live-data-form-edit"
-      site={@beacon_page.site}
-      page_title={@page_title}
-      live_action={@live_action}
-      component={@live_data}
-      patch="/live_data"
-    />
+    <.live_component module={FormComponent} id="live-data-form-edit" site={@beacon_page.site} page_title={@page_title} live_action={@live_action} component={@live_data} patch="/live_data" />
     """
   end
 end

@@ -35,7 +35,13 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Assigns do
 
   def handle_event("select-" <> assign, _, socket) do
     %{beacon_page: %{site: site}, live_data_path: live_data_path} = socket.assigns
-    path = beacon_live_admin_path(socket, site, "/live_data/#{sanitize_path(live_data_path)}/#{assign}")
+
+    path =
+      beacon_live_admin_path(
+        socket,
+        site,
+        "/live_data/#{sanitize_path(live_data_path)}/#{assign}"
+      )
 
     if socket.assigns.unsaved_changes do
       {:noreply, assign(socket, show_nav_modal: true, confirm_nav_path: path)}
@@ -82,14 +88,20 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Assigns do
   end
 
   def handle_event("save_changes", %{"live_data" => params}, socket) do
-    %{selected: selected, beacon_page: %{site: site}, live_data_path: live_data_path} = socket.assigns
+    %{selected: selected, beacon_page: %{site: site}, live_data_path: live_data_path} =
+      socket.assigns
 
     attrs = %{assign: params["assign"], format: params["format"], code: params["code"]}
 
     socket =
       case Content.update_live_data(site, selected, attrs) do
         {:ok, live_data} ->
-          path = beacon_live_admin_path(socket, site, "/live_data/#{sanitize_path(live_data_path)}/#{live_data.assign}")
+          path =
+            beacon_live_admin_path(
+              socket,
+              site,
+              "/live_data/#{sanitize_path(live_data_path)}/#{live_data.assign}"
+            )
 
           socket
           |> assign_live_data()
@@ -125,7 +137,9 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Assigns do
   end
 
   def handle_event("delete_confirm", _, socket) do
-    %{selected: selected, beacon_page: %{site: site}, live_data_path: live_data_path} = socket.assigns
+    %{selected: selected, beacon_page: %{site: site}, live_data_path: live_data_path} =
+      socket.assigns
+
     path = beacon_live_admin_path(socket, site, "/live_data/#{sanitize_path(live_data_path)}")
 
     {:ok, _} = Content.delete_live_data(site, selected)
@@ -180,8 +194,12 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Assigns do
 
         <div class="grid items-start grid-cols-1 grid-rows-1 mx-auto gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
           <div class="h-full lg:overflow-y-auto pb-4 lg:h-[calc(100vh_-_239px)]">
+            <div class="text-xl flex gap-x-6">
+              <div>Path:</div>
+              <div><%= @live_data_path %></div>
+            </div>
             <.table :if={@selected} id="assigns" rows={@live_data} row_click={fn data -> "select-#{data.assign}" end}>
-              <:col :let={live_data} label={"assign"}>
+              <:col :let={live_data} label="assign">
                 @<%= live_data.assign %>
               </:col>
             </.table>
@@ -197,6 +215,10 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Assigns do
               <.button phx-disable-with="Saving..." class="ml-auto">Save Changes</.button>
               <.button type="button" phx-click="delete" class="">Delete</.button>
             </.form>
+            <div :if={@form[:format].value in [:elixir, "elixir"]} class="mt-4 flex gap-x-4">
+              <div>Variables available:</div>
+              <div><%= variables_available(@live_data_path) %></div>
+            </div>
             <%= template_error(@form[:code]) %>
             <div class="w-full mt-10 space-y-8">
               <div class="py-6 rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
@@ -219,7 +241,12 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Assigns do
 
   defp assign_selected(socket, assign) do
     selected = Enum.find(socket.assigns.live_data, &(&1.assign == assign))
-    assign(socket, selected: selected, changed_template: selected.code, changed_code: selected.code)
+
+    assign(socket,
+      selected: selected,
+      changed_template: selected.code,
+      changed_code: selected.code
+    )
   end
 
   defp assign_form(socket) do
@@ -245,5 +272,14 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Assigns do
 
   defp sanitize_path(path) do
     URI.encode_www_form(path)
+  end
+
+  defp variables_available(path) do
+    path
+    |> String.split("/", trim: true)
+    |> Enum.filter(&String.starts_with?(&1, ":"))
+    |> Enum.map(fn ":" <> param -> param end)
+    |> Kernel.++(["params"])
+    |> Enum.join(" ")
   end
 end

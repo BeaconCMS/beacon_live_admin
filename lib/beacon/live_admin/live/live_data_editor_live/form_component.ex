@@ -32,7 +32,12 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.FormComponent do
   defp save_live_data(socket, :new, live_data_params) do
     case Content.create_live_data(socket.assigns.site, live_data_params) do
       {:ok, live_data} ->
-        to = beacon_live_admin_path(socket, socket.assigns.site, "/live_data/#{sanitize_path(live_data.path)}")
+        to =
+          beacon_live_admin_path(
+            socket,
+            socket.assigns.site,
+            "/live_data/#{sanitize_path(live_data.path)}"
+          )
 
         {:noreply,
          socket
@@ -77,7 +82,8 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.FormComponent do
           <.form :let={f} for={@form} id="live-data-form" class="space-y-8" phx-target={@myself} phx-submit="save">
             <legend class="text-sm font-bold tracking-widest text-[#445668] uppercase">Live Data settings</legend>
             <div class="flex">
-              <p class="text-2xl self-end pb-2">@</p><.input field={f[:name]} type="text" label="Assign" />
+              <p class="text-2xl self-end pb-2">@</p>
+              <.input field={f[:name]} type="text" label="Assign" />
             </div>
             <.input field={f[:format]} type="select" options={formats_to_options(@site)} label="Format" />
             <input type="hidden" name="live_data[code]" id="live-data-form_code" value={@changed_code} />
