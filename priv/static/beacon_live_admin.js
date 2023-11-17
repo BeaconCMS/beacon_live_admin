@@ -803,7 +803,6 @@ var BeaconLiveAdmin = (() => {
         this._onMount.forEach((callback) => callback(monaco));
         this._setScreenDependantEditorOptions();
         const resizeObserver = new ResizeObserver((entries) => {
-          console.log("resizeObserver");
           entries.forEach(() => {
             if (this.el.offsetHeight > 0) {
               this._setScreenDependantEditorOptions();
@@ -813,7 +812,6 @@ var BeaconLiveAdmin = (() => {
         });
         resizeObserver.observe(this.el);
         this.standalone_code_editor.onDidContentSizeChange(() => {
-          console.log("onDidContentSizeChanges");
           const contentHeight = this.standalone_code_editor.getContentHeight();
           this.el.style.height = `${contentHeight}px`;
         });
@@ -848,12 +846,13 @@ var BeaconLiveAdmin = (() => {
         opts
       );
       this.codeEditor.onMount((monaco) => {
-        this.el.dispatchEvent(
-          new CustomEvent("lme:editor_mounted", {
-            detail: { hook: this, editor: this.codeEditor },
-            bubbles: true
-          })
-        );
+        if (this.el.dataset.changeEvent && this.el.dataset.changeEvent !== "") {
+          this.codeEditor.standalone_code_editor.onDidChangeModelContent(() => {
+            this.pushEvent(this.el.dataset.changeEvent, {
+              value: this.codeEditor.standalone_code_editor.getValue()
+            });
+          });
+        }
         this.handleEvent(
           "lme:change_language:" + this.el.dataset.path,
           (data) => {
@@ -874,6 +873,12 @@ var BeaconLiveAdmin = (() => {
         });
         this.el.removeAttribute("data-value");
         this.el.removeAttribute("data-opts");
+        this.el.dispatchEvent(
+          new CustomEvent("lme:editor_mounted", {
+            detail: { hook: this, editor: this.codeEditor },
+            bubbles: true
+          })
+        );
       });
       if (!this.codeEditor.isMounted()) {
         this.codeEditor.mount();
@@ -892,14 +897,6 @@ var BeaconLiveAdmin = (() => {
   import_topbar.default.config({ barColors: { 0: "#29d" }, shadowColor: "rgba(0, 0, 0, .3)" });
   window.addEventListener("phx:page-loading-start", (_info) => import_topbar.default.show(300));
   window.addEventListener("phx:page-loading-stop", (_info) => import_topbar.default.hide());
-  window.addEventListener("lme:editor_mounted", (ev) => {
-    const hook = ev.detail.hook;
-    const editor = ev.detail.editor.standalone_code_editor;
-    const eventName = ev.detail.editor.path + "_editor_lost_focus";
-    editor.onDidBlurEditorWidget(() => {
-      hook.pushEvent(eventName, { value: editor.getValue() });
-    });
-  });
   window.addEventListener("beacon_admin:clipcopy", (event) => {
     const result_id = `${event.target.id}-copy-to-clipboard-result`;
     const el = document.getElementById(result_id);

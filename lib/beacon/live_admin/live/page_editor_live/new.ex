@@ -18,10 +18,10 @@ defmodule Beacon.LiveAdmin.PageEditorLive.New do
   end
 
   @impl true
-  def handle_event("template_editor_lost_focus", %{"value" => value}, socket) do
+  def handle_event("set_template", %{"value" => value}, socket) do
     send_update(Beacon.LiveAdmin.PageEditorLive.FormComponent,
       id: "page-editor-form-new",
-      changed_template: value
+      template: value
     )
 
     {:noreply, socket}
