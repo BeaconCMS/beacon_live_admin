@@ -10,19 +10,14 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
   def menu_link(_, :index), do: {:root, "Pages"}
 
   @impl true
-  def mount(_params, _session, socket) do
-    {:ok, assign(socket, :pages, [])}
-  end
-
-  @impl true
   def handle_params(%{"query" => query}, _uri, socket) do
     pages = list_pages(socket.assigns.beacon_page.site, query: query)
-    {:noreply, assign(socket, :pages, pages)}
+    {:noreply, stream(socket, :pages, pages, reset: true)}
   end
 
   def handle_params(_params, _uri, socket) do
     pages = list_pages(socket.assigns.beacon_page.site)
-    {:noreply, assign(socket, :pages, pages)}
+    {:noreply, stream(socket, :pages, pages)}
   end
 
   @impl true
@@ -54,11 +49,11 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
     </.simple_form>
 
     <.main_content class="h-[calc(100vh_-_210px)]">
-      <.table id="pages" rows={@pages} row_click={fn page -> JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/pages/#{page.id}")) end}>
-        <:col :let={page} label="Title"><%= page.title %></:col>
-        <:col :let={page} label="Path"><%= page.path %></:col>
-        <:col :let={page} label="Status"><%= display_status(page.status) %></:col>
-        <:action :let={page}>
+      <.table id="pages" rows={@streams.pages} row_click={fn {_id, page} -> JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/pages/#{page.id}")) end}>
+        <:col :let={{_, page}} label="Title"><%= page.title %></:col>
+        <:col :let={{_, page}} label="Path"><%= page.path %></:col>
+        <:col :let={{_, page}} label="Status"><%= display_status(page.status) %></:col>
+        <:action :let={{_, page}}>
           <div class="sr-only">
             <.link navigate={beacon_live_admin_path(@socket, @beacon_page.site, "/pages/#{page.id}")}>Show</.link>
           </div>
