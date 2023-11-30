@@ -6,8 +6,15 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
 
   on_mount {Beacon.LiveAdmin.Hooks.Authorized, {:page_editor, :index}}
 
+  @per_page 20
+
   @impl true
   def menu_link(_, :index), do: {:root, "Pages"}
+
+  @impl true
+  def mount(_params, _session, socket) do
+    {:ok, assign(socket, pages: number_of_pages(socket.assigns.beacon_page.site))}
+  end
 
   @impl true
   def handle_params(%{"query" => query}, _uri, socket) do
@@ -72,6 +79,13 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
     |> Enum.map(fn page ->
       Map.put(page, :status, Content.get_latest_page_event(page.site, page.id).event)
     end)
+  end
+
+  defp number_of_pages(site) do
+    site
+    |> Content.count_pages()
+    |> Kernel./(@per_page)
+    |> ceil()
   end
 
   defp display_status(:unpublished), do: "Unpublished"
