@@ -15,7 +15,10 @@ defmodule Beacon.LiveAdmin.PageEditorLive.New do
   end
 
   defp assigns(socket) do
-    assign(socket, page_title: "Create New Page", page: %Content.Page{path: "", site: socket.assigns.beacon_page.site})
+    assign(socket,
+      page_title: "Create New Page",
+      page: %Content.Page{path: "", site: socket.assigns.beacon_page.site}
+    )
   end
 
   @impl true

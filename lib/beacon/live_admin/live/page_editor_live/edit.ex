@@ -56,19 +56,27 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
   end
 
   @impl true
-  def handle_event("render_component_in_page", %{ "component_id" => component_id, "page_id" => page_id }, socket) do
+  def handle_event(
+        "render_component_in_page",
+        %{"component_id" => component_id, "page_id" => page_id},
+        socket
+      ) do
     page = Content.get_page(socket.assigns.beacon_page.site, page_id)
     component = Content.get_component(socket.assigns.beacon_page.site, component_id)
-    %{data: %{ ast: ast } } = WebAPI.Component.show_ast(socket.assigns.beacon_page.site, component, page)
-    {:reply, %{ "ast" => ast }, socket}
+
+    %{data: %{ast: ast}} =
+      WebAPI.Component.show_ast(socket.assigns.beacon_page.site, component, page)
+
+    {:reply, %{"ast" => ast}, socket}
   end
 
-  def handle_event("update_page_ast", %{ "id" => id, "ast" => ast }, socket) do
+  def handle_event("update_page_ast", %{"id" => id, "ast" => ast}, socket) do
     page = Content.get_page(socket.assigns.beacon_page.site, id, preloads: [:layout])
 
-    case Content.update_page(socket.assigns.beacon_page.site, page, %{ "ast" => ast }) do
+    case Content.update_page(socket.assigns.beacon_page.site, page, %{"ast" => ast}) do
       {:ok, page} ->
         {:noreply, assign(socket, :page, page)}
+
       {:error, changeset} ->
         throw("How should we handle this?")
     end

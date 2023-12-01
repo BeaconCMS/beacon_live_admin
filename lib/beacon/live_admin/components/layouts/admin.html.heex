@@ -6,7 +6,8 @@
     <meta name="csrf-token" content={get_csrf_token()} />
     <title><%= assigns[:page_title] || "Beacon LiveAdmin" %></title>
     <link rel="stylesheet" href={asset_path(@conn, :css)} />
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com">
+    </script>
     <script defer src={asset_path(@conn, :js)}>
     </script>
   </head>

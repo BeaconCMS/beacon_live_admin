@@ -161,29 +161,34 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
         </div>
       </.modal>
 
-      <div class="grid items-start lg:h-[calc(100vh_-_144px)] grid-cols-1 mx-auto mt-4 gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
-        <div class="p-4 bg-white col-span-full lg:col-span-1 rounded-[1.25rem] lg:rounded-t-[1.25rem] lg:rounded-b-none lg:h-full">
-          <.form :let={f} for={@form} id="page-form" class="space-y-8" phx-target={@myself} phx-change="validate" phx-submit="save">
-            <legend class="text-sm font-bold tracking-widest text-[#445668] uppercase">Page settings</legend>
-            <.input field={f[:path]} type="text" label="Path" class="!text-red-500" />
-            <.input field={f[:title]} type="text" label="Title" />
-            <.input field={f[:description]} type="textarea" label="Description" />
-            <.input field={f[:layout_id]} type="select" options={layouts_to_options(@layouts)} label="Layout" />
-            <.input field={f[:format]} type="select" label="Format" options={template_format_options(@site)} />
-            <input type="hidden" name="page[template]" id="page-form_template" value={@changed_template} />
+      <%= if @visual_mode do %>
+        <.svelte name="components/UiBuilder" class="relative overflow-x-hidden" props={%{components: @components, page: @builder_page}} socket={@socket} />
+      <% else %>
+        <div class="grid items-start lg:h-[calc(100vh_-_144px)] grid-cols-1 mx-auto mt-4 gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
+          <div class="grid items-start lg:h-[calc(100vh_-_144px)] grid-cols-1 mx-auto mt-4 gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
+          <div class="p-4 bg-white col-span-full lg:col-span-1 rounded-[1.25rem] lg:rounded-t-[1.25rem] lg:rounded-b-none lg:h-full">
+            <.form :let={f} for={@form} id="page-form" class="space-y-8" phx-target={@myself} phx-change="validate" phx-submit="save">
+              <legend class="text-sm font-bold tracking-widest text-[#445668] uppercase">Page settings</legend>
+              <.input field={f[:path]} type="text" label="Path" class="!text-red-500" />
+              <.input field={f[:title]} type="text" label="Title" />
+              <.input field={f[:description]} type="textarea" label="Description" />
+              <.input field={f[:layout_id]} type="select" options={layouts_to_options(@layouts)} label="Layout" />
+              <.input field={f[:format]} type="select" label="Format" options={template_format_options(@site)} />
+              <input type="hidden" name="page[template]" id="page-form_template" value={@changed_template} />
 
-            <%= for mod <- extra_page_fields(@site) do %>
-              <%= extra_page_field(@site, @extra_fields, mod) %>
-            <% end %>
-          </.form>
-        </div>
-        <div class="col-span-full lg:col-span-2">
-          <%= template_error(@form[:template]) %>
-          <div class="py-6 w-full rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
-            <LiveMonacoEditor.code_editor path="template" class="col-span-full lg:col-span-2" value={@template} opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => @language})} />
+              <%= for mod <- extra_page_fields(@site) do %>
+                <%= extra_page_field(@site, @extra_fields, mod) %>
+              <% end %>
+            </.form>
+          </div>
+          <div class="col-span-full lg:col-span-2">
+            <%= template_error(@form[:template]) %>
+            <div class="py-6 w-full rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
+              <LiveMonacoEditor.code_editor path="template" class="col-span-full lg:col-span-2" value={@template} opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => @language})} />
+            </div>
           </div>
         </div>
-      </div>
+      <% end %>
     </div>
     """
   end
