@@ -22,7 +22,6 @@
       if ($slotTargetElement.attrs.selfClose) return;
       addBasicComponentToTarget($slotTargetElement);
     } else {
-      debugger;
       live.pushEvent("render_component_in_page", { component_id: $draggedObject.id, page_id: $page.id }, ({ast}: { ast: AstNode[] }) => {
         // This appends at the end. We might want at the beginning, or in a specific position
         live.pushEvent("update_page_ast", { id: $page.id, ast: [...$page.ast, ...ast] });

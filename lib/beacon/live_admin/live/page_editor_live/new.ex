@@ -27,7 +27,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.New do
         path: "",
         site: socket.assigns.beacon_page.site,
         layout: %Beacon.Content.Layout{
-          template: "",
+          template: "<%= @inner_content %>",
           site: socket.assigns.beacon_page.site
         }
       }
@@ -52,6 +52,25 @@ defmodule Beacon.LiveAdmin.PageEditorLive.New do
   @impl true
   def handle_event("disable_visual_mode", _args, socket) do
     {:noreply, assign(socket, visual_mode: false)}
+  end
+
+  @impl true
+  def handle_event(
+        "render_component_in_page",
+        %{"component_id" => component_id},
+        socket
+      ) do
+    component = Content.get_component(socket.assigns.beacon_page.site, component_id)
+
+    %{data: %{ast: ast}} =
+      WebAPI.Component.show_ast(socket.assigns.beacon_page.site, component, socket.assigns.page)
+    {:reply, %{"ast" => ast}, socket}
+  end
+
+
+  def handle_event("update_page_ast", %{"id" => id, "ast" => ast}, socket) do
+    page = Content.set_page_ast(socket.assigns.beacon_page.site, socket.assigns.page, ast)
+    {:noreply, assign(socket, :page, page)}
   end
 
   @impl true
