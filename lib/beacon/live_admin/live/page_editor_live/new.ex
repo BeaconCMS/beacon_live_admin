@@ -2,7 +2,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.New do
   @moduledoc false
 
   use Beacon.LiveAdmin.PageBuilder
-  alias Beacon.Content
+  alias Beacon.LiveAdmin.Content
   alias Beacon.LiveAdmin.WebAPI
 
   @impl true
@@ -16,19 +16,17 @@ defmodule Beacon.LiveAdmin.PageEditorLive.New do
   end
 
   defp assigns(socket) do
-    %{data: components} =
-      BeaconWeb.API.ComponentJSON.index(%{
-        components: [] # Content.list_components(socket.assigns.beacon_page.site, per_page: :infinity)
-      })
+    component_records = Content.list_components(socket.assigns.beacon_page.site, per_page: :infinity)
+    %{data: components} = BeaconWeb.API.ComponentJSON.index(%{components: component_records})
 
     assign(socket,
       page_title: "Create New Page",
       visual_mode: true,
       components: components,
-      page: %Content.Page{
+      page: %Beacon.Content.Page{
         path: "",
         site: socket.assigns.beacon_page.site,
-        layout: %Content.Layout{
+        layout: %Beacon.Content.Layout{
           template: "",
           site: socket.assigns.beacon_page.site
         }

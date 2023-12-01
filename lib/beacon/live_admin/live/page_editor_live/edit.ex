@@ -1,7 +1,6 @@
 defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
   @moduledoc false
 
-  require Logger
   require IEx
   use Beacon.LiveAdmin.PageBuilder
   alias Beacon.LiveAdmin.Content
@@ -13,18 +12,16 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
 
   @impl true
   def mount(_params, _session, socket) do
-    components = Content.list_components(socket.assigns.beacon_page.site, per_page: :infinity)
-    {:ok, assign(socket, page: nil, visual_mode: true, components: components)}
+    component_records = Content.list_components(socket.assigns.beacon_page.site, per_page: :infinity)
+    {:ok, assign(socket, page: nil, visual_mode: true, components: component_records)}
   end
 
   @impl true
   def handle_params(%{"id" => id}, _url, socket) do
     page = Content.get_page(socket.assigns.beacon_page.site, id, preloads: [:layout])
+    component_records =  Content.list_components(socket.assigns.beacon_page.site, per_page: :infinity)
 
-    %{data: components} =
-      BeaconWeb.API.ComponentJSON.index(%{
-        components: Content.list_components(socket.assigns.beacon_page.site, per_page: :infinity)
-      })
+    %{data: components} = BeaconWeb.API.ComponentJSON.index(%{ components: component_records })
 
     {:noreply,
      assign(socket,
