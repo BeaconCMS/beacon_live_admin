@@ -3,6 +3,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
 
   use Beacon.LiveAdmin.PageBuilder
   alias Beacon.LiveAdmin.Content
+  alias Beacon.LiveAdmin.Components.Pagination
 
   on_mount {Beacon.LiveAdmin.Hooks.Authorized, {:page_editor, :index}}
 
@@ -23,8 +24,8 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
   end
 
   def handle_params(_params, _uri, socket) do
-    pages = list_pages(socket.assigns.beacon_page.site)
-    {:noreply, stream(socket, :pages, pages)}
+    pages = list_pages(socket.assigns.beacon_page.site, per_page: @per_page)
+    {:noreply, stream(socket, :pages, pages, reset: true)}
   end
 
   @impl true
@@ -37,6 +38,14 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
       )
 
     {:noreply, push_patch(socket, to: path)}
+  end
+
+  def handle_event("set-page", %{"page" => page}, socket) do
+    page = String.to_integer(page)
+    offset = set_offset(page)
+    pages = list_pages(socket.assigns.beacon_page.site, offset: offset, per_page: @per_page)
+
+    {:noreply, stream(socket, :pages, pages, reset: true)}
   end
 
   @impl true
@@ -69,11 +78,13 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
           </.link>
         </:action>
       </.table>
+
+      <.live_component module={Pagination} id="pagination" pages={@pages} />
     </.main_content>
     """
   end
 
-  defp list_pages(site, opts \\ []) do
+  defp list_pages(site, opts) do
     site
     |> Content.list_pages(opts)
     |> Enum.map(fn page ->
@@ -87,6 +98,8 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
     |> Kernel./(@per_page)
     |> ceil()
   end
+
+  defp set_offset(page), do: page * @per_page - @per_page
 
   defp display_status(:unpublished), do: "Unpublished"
   defp display_status(:published), do: "Published"
