@@ -18,13 +18,18 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
   end
 
   @impl true
-  def handle_params(%{"query" => query}, _uri, socket) do
-    pages = list_pages(socket.assigns.beacon_page.site, query: query)
-    {:noreply, stream(socket, :pages, pages, reset: true)}
-  end
+  def handle_params(params, _uri, socket) do
+    query = params["query"]
+    offset = set_offset(params["page"])
+    socket = set_page(offset, params["page"], socket)
 
-  def handle_params(_params, _uri, socket) do
-    pages = list_pages(socket.assigns.beacon_page.site, per_page: @per_page)
+    pages =
+      list_pages(socket.assigns.beacon_page.site,
+        per_page: @per_page,
+        offset: offset,
+        query: query
+      )
+
     {:noreply, stream(socket, :pages, pages, reset: true)}
   end
 
@@ -63,13 +68,17 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
   end
 
   defp set_page(page, socket) do
-    offset = set_offset(page)
-    pages = list_pages(socket.assigns.beacon_page.site, offset: offset, per_page: @per_page)
+    path =
+      beacon_live_admin_path(
+        socket,
+        socket.assigns.beacon_page.site,
+        "/pages?page=#{page}"
+      )
 
     {:noreply,
      socket
      |> assign(page: page)
-     |> stream(:pages, pages, reset: true)}
+     |> push_patch(to: path)}
   end
 
   @impl true
@@ -123,7 +132,12 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
     |> ceil()
   end
 
+  defp set_offset(nil), do: 0
+  defp set_offset(page) when is_binary(page), do: String.to_integer(page) * @per_page - @per_page
   defp set_offset(page), do: page * @per_page - @per_page
+
+  defp set_page(0, _page, socket), do: socket
+  defp set_page(_offset, page, socket), do: assign(socket, page: String.to_integer(page))
 
   defp display_status(:unpublished), do: "Unpublished"
   defp display_status(:published), do: "Published"
