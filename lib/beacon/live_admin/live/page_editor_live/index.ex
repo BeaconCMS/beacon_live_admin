@@ -103,7 +103,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
         </:action>
       </.table>
 
-      <.live_component module={Pagination} id="pagination" pages={@pages} />
+      <.live_component module={Pagination} id="pagination" current_page={@page} pages={@pages} />
     </.main_content>
     """
   end
