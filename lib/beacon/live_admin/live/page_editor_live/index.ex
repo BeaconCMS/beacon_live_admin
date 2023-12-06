@@ -14,7 +14,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, pages: number_of_pages(socket.assigns.beacon_page.site))}
+    {:ok, assign(socket, page: 1, pages: number_of_pages(socket.assigns.beacon_page.site))}
   end
 
   @impl true
@@ -41,11 +41,35 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
   end
 
   def handle_event("set-page", %{"page" => page}, socket) do
-    page = String.to_integer(page)
+    page
+    |> String.to_integer()
+    |> set_page(socket)
+  end
+
+  def handle_event("prev-page", _, %{assigns: %{page: 1}} = socket) do
+    {:noreply, socket}
+  end
+
+  def handle_event("prev-page", _, socket) do
+    set_page(socket.assigns.page - 1, socket)
+  end
+
+  def handle_event("next-page", _, %{assigns: %{page: page, pages: page}} = socket) do
+    {:noreply, socket}
+  end
+
+  def handle_event("next-page", _, socket) do
+    set_page(socket.assigns.page + 1, socket)
+  end
+
+  defp set_page(page, socket) do
     offset = set_offset(page)
     pages = list_pages(socket.assigns.beacon_page.site, offset: offset, per_page: @per_page)
 
-    {:noreply, stream(socket, :pages, pages, reset: true)}
+    {:noreply,
+     socket
+     |> assign(page: page)
+     |> stream(:pages, pages, reset: true)}
   end
 
   @impl true
