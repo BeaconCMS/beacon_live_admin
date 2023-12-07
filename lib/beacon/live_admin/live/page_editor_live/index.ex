@@ -39,7 +39,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
       beacon_live_admin_path(
         socket,
         socket.assigns.beacon_page.site,
-        "/pages?query=#{query}"
+        "/pages?query=#{query}&page=#{socket.assigns.page}"
       )
 
     {:noreply, push_patch(socket, to: path)}
