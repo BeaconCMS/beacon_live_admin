@@ -10,16 +10,7 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Index do
   def menu_link(_, :new), do: {:root, "Live Data"}
   def menu_link(_, :edit), do: {:root, "Live Data"}
 
-  def mount(params, _session, socket) do
-    IO.inspect(socket.assigns.live_action, label: "mount")
-
-    socket =
-      socket
-      |> assign(live_data_paths: [])
-      |> assign(show_new_path_modal: socket.assigns.live_action == :new)
-      |> assign(show_edit_path_modal: socket.assigns.live_action == :edit)
-      |> assign_edit_path_form(params["path"])
-
+  def mount(_params, _session, socket) do
     {:ok, socket}
   end
 
@@ -38,7 +29,9 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Index do
       |> assign(live_data_paths: Content.live_data_paths_for_site(site))
       |> assign(show_new_path_modal: live_action == :new)
       |> assign(show_edit_path_modal: live_action == :edit)
+      |> assign(show_delete_path_modal: live_action == :delete)
       |> assign_edit_path_form(params["path"])
+      |> assign_selected(params["path"])
 
     {:noreply, socket}
   end
@@ -72,7 +65,14 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Index do
   end
 
   def handle_event("edit_path", %{"live_data" => params}, socket) do
-    Content.update_live_data_path(site, path)
+    %{beacon_page: %{site: site}, selected: selected} = socket.assigns
+    Content.update_live_data_path(site, selected, params)
+    {:noreply, socket}
+  end
+
+  def handle_event("delete_path", %{"live_data" => params}, socket) do
+    %{beacon_page: %{site: site}, selected: selected} = socket.assigns
+    Content.delete_live_data(site, selected)
     {:noreply, socket}
   end
 
@@ -86,6 +86,17 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Index do
       |> to_form(as: :live_data)
 
     assign(socket, edit_path_form: form)
+  end
+
+  defp assign_selected(socket, nil), do: assign(socket, selected: nil)
+
+  defp assign_selected(%{assigns: %{live_action: action}} = socket, _)
+       when action in [:index, :new],
+       do: assign(socket, selected: nil)
+
+  defp assign_selected(socket, path) do
+    %{beacon_page: %{site: site}} = socket.assigns
+    assign(socket, selected: Content.get_live_data(site, path))
   end
 
   def render(assigns) do
@@ -117,6 +128,9 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Index do
             class="flex items-center justify-center w-10 h-10 group"
           >
             <.icon name="hero-pencil-square text-[#61758A] hover:text-[#304254]" />
+          </.link>
+          <.link patch={beacon_live_admin_path(@socket, @beacon_page.site, "/live_data/")}>
+            Delete
           </.link>
         </:action>
       </.table>

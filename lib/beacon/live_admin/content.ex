@@ -187,43 +187,43 @@ defmodule Beacon.LiveAdmin.Content do
     call(site, Beacon.Content.ErrorPage, :valid_statuses, [])
   end
 
-  def live_data_formats(site) do
-    call(site, Beacon.Content, :live_data_formats, [])
+  def live_data_assign_formats(site) do
+    call(site, Beacon.Content, :live_data_assign_formats, [])
   end
 
-  def change_live_data(site, live_data, attrs \\ %{}) do
-    call(site, Beacon.Content, :change_live_data, [live_data, attrs])
+  def change_live_data_path(site, live_data, attrs \\ %{}) do
+    call(site, Beacon.Content, :change_live_data_path, [live_data, attrs])
   end
 
   def create_live_data(site, attrs) do
     call(site, Beacon.Content, :create_live_data, [attrs])
   end
 
-  def live_data_for_site(site) do
-    call(site, Beacon.Content, :live_data_for_site, [site])
+  def get_live_data(site, path) do
+    call(site, Beacon.Content, :get_live_data, [site, path])
   end
 
   def live_data_paths_for_site(site) do
     call(site, Beacon.Content, :live_data_paths_for_site, [site])
   end
 
-  def live_data_paths_for_site(site, query) do
-    call(site, Beacon.Content, :live_data_paths_for_site, [site, query])
+  def live_data_paths_for_site(site, opts) do
+    call(site, Beacon.Content, :live_data_paths_for_site, [site, opts])
   end
 
-  def live_data_for_path(site, path) do
-    call(site, Beacon.Content, :live_data_for_path, [site, path])
+  def update_live_data_path(site, live_data, attrs) do
+    call(site, Beacon.Content, :update_live_data_path, [live_data, attrs])
   end
 
-  def get_live_data(site, id) do
-    call(site, Beacon.Content, :get_live_data, [id])
-  end
-
-  def update_live_data(site, live_data, attrs) do
-    call(site, Beacon.Content, :update_live_data, [live_data, attrs])
+  def update_live_data_assign(site, live_data_assign, attrs) do
+    call(site, Beacon.Content, :update_live_data_assign, [live_data_assign, attrs])
   end
 
   def delete_live_data(site, live_data) do
     call(site, Beacon.Content, :delete_live_data, [live_data])
+  end
+
+  def delete_live_data_assign(site, live_data_assign) do
+    call(site, Beacon.Content, :delete_live_data_assign, [live_data_assign])
   end
 end
