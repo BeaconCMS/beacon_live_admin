@@ -83,6 +83,14 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
     end
   end
 
+  def handle_event("enable_visual_mode", _args, socket) do
+    {:noreply, assign(socket, visual_mode: true)}
+  end
+
+  def handle_event("disable_visual_mode", _args, socket) do
+    {:noreply, assign(socket, visual_mode: false)}
+  end
+
   defp save_page(socket, :new, page_params) do
     case Content.create_page(socket.assigns.site, page_params) do
       {:ok, page} ->
@@ -131,8 +139,8 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
         <%= @page_title %>
         <:actions>
           <.button :if={@live_action == :new} phx-disable-with="Saving..." form="page-form" class="uppercase">Create Draft Page</.button>
-          <.button :if={!@visual_mode} phx-click="enable_visual_mode" form="page-form" class="uppercase">Visual Editor</.button>
-          <.button :if={@visual_mode} phx-click="disable_visual_mode" form="page-form" class="uppercase">Code Editor</.button>
+          <.button :if={!@visual_mode} phx-click="enable_visual_mode" phx-target={@myself} form="page-form" class="uppercase">Visual Editor</.button>
+          <.button :if={@visual_mode} phx-click="disable_visual_mode" phx-target={@myself} form="page-form" class="uppercase">Code Editor</.button>
           <.button :if={@live_action == :edit} phx-disable-with="Saving..." form="page-form" class="uppercase">Save Changes</.button>
           <.button :if={@live_action == :edit} phx-click={show_modal("publish-confirm-modal")} phx-target={@myself} class="uppercase">Publish</.button>
         </:actions>

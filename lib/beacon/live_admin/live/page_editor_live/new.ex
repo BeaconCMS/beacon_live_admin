@@ -45,16 +45,6 @@ defmodule Beacon.LiveAdmin.PageEditorLive.New do
   end
 
   @impl true
-  def handle_event("enable_visual_mode", _args, socket) do
-    {:noreply, assign(socket, visual_mode: true)}
-  end
-
-  @impl true
-  def handle_event("disable_visual_mode", _args, socket) do
-    {:noreply, assign(socket, visual_mode: false)}
-  end
-
-  @impl true
   def handle_event(
         "render_component_in_page",
         %{"component_id" => component_id},
