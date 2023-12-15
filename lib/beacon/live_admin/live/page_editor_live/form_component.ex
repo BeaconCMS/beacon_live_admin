@@ -9,11 +9,15 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
   def update(%{site: site, page: page} = assigns, socket) do
     page = Map.put_new(page, :path, "/")
 
-    changeset = Content.change_page(site, page)
+    changeset = case socket.assigns do
+      %{form: form} ->
+        form.source
+      _ ->
+        Content.change_page(site, page)
+    end
     layouts = Content.list_layouts(site)
 
     %{data: builder_page} = WebAPI.Page.show(site, page)
-
     {:ok,
      socket
      |> assign(assigns)
