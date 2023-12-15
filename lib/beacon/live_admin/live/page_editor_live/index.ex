@@ -3,7 +3,6 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
 
   use Beacon.LiveAdmin.PageBuilder
   alias Beacon.LiveAdmin.Content
-  alias Beacon.LiveAdmin.Components.Pagination
 
   on_mount {Beacon.LiveAdmin.Hooks.Authorized, {:page_editor, :index}}
 
@@ -141,7 +140,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
         </:action>
       </.table>
 
-      <.live_component module={Pagination} id="pagination" current_page={@page} pages={@pages} />
+      <.pagination current_page={@page} pages={@pages} />
     </.main_content>
     """
   end
