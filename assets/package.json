@@ -1,6 +1,26 @@
 {
   "private": true,
+  "scripts": {
+    "format": "prettier --write .",
+    "format-check": "prettier --check ."
+  },
   "devDependencies": {
-    "@tailwindcss/container-queries": "^0.1.1"
+    "@tailwindcss/container-queries": "^0.1.1",
+    "esbuild": "^0.16.17",
+    "esbuild-plugin-import-glob": "^0.1.1",
+    "esbuild-svelte": "^0.8.0",
+    "eslint": "^8.40.0",
+    "eslint-config-prettier": "^8.8.0",
+    "prettier": "^2.8.8",
+    "svelte": "^4.2.1",
+    "svelte-preprocess": "^5.0.4",
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "@monaco-editor/loader": "^1.4.0",
+    "live_svelte": "file:../deps/live_svelte",
+    "phoenix": "file:../deps/phoenix",
+    "phoenix_html": "file:../deps/phoenix_html",
+    "phoenix_live_view": "file:../deps/phoenix_live_view"
   }
 }

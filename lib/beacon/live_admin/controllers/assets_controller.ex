@@ -13,7 +13,7 @@ defmodule Beacon.LiveAdmin.AssetsController do
   @external_resource css_path
   @css File.read!(css_path)
 
-  js_path = Path.join(__DIR__, "../../../../priv/static/beacon_live_admin.min.js")
+  js_path = Path.join(__DIR__, "../../../../priv/static/beacon_live_admin.js")
   @external_resource js_path
 
   @js """

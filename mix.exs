@@ -40,12 +40,12 @@ defmodule Beacon.LiveAdmin.MixProject do
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       phoenix_live_view_dep(),
       {:floki, ">= 0.30.0", only: :test},
-      {:esbuild, "~> 0.5", only: :dev},
       {:tailwind, "~> 0.2"},
       {:gettext, "~> 0.20"},
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.5"},
-      {:dialyxir, "~> 1.2", only: :dev, runtime: false}
+      {:dialyxir, "~> 1.2", only: :dev, runtime: false},
+      {:live_svelte, "~> 0.12"}
     ]
   end
 
@@ -81,15 +81,26 @@ defmodule Beacon.LiveAdmin.MixProject do
 
   defp aliases do
     [
-      setup: ["deps.get", "assets.setup", "assets.build"],
+      setup: ["deps.get", "assets.setup", "assets.build", "cmd --cd assets npm install"],
+      "format.all": ["format", "cmd npm run format --prefix ./assets"],
       dev: "run --no-halt dev.exs",
       "assets.setup": [
         "cmd npm install --prefix assets",
-        "tailwind.install --if-missing --no-assets",
-        "esbuild.install --if-missing"
+        "tailwind.install --if-missing --no-assets"
+        # "esbuild.install --if-missing"
       ],
-      "assets.build": ["tailwind default", "esbuild cdn", "esbuild cdn_min"],
-      "assets.deploy": ["tailwind default --minify", "esbuild default --minify", "phx.digest"]
+      "assets.build": [
+        "tailwind default",
+        # "esbuild cdn",
+        # "esbuild cdn_min"
+        "cmd --cd assets node build.js"
+      ],
+      "assets.deploy": [
+        "tailwind default --minify",
+        # "esbuild default --minify",
+        "cmd --cd assets node build.js --deploy",
+        "phx.digest"
+      ]
     ]
   end
 end
