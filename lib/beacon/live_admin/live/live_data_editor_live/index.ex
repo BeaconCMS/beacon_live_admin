@@ -70,7 +70,7 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Index do
     {:noreply, socket}
   end
 
-  def handle_event("delete_path", %{"live_data" => params}, socket) do
+  def handle_event("delete_path", %{"live_data" => _params}, socket) do
     %{beacon_page: %{site: site}, selected: selected} = socket.assigns
     Content.delete_live_data(site, selected)
     {:noreply, socket}
