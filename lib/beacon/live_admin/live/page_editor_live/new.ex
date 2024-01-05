@@ -4,22 +4,18 @@ defmodule Beacon.LiveAdmin.PageEditorLive.New do
   use Beacon.LiveAdmin.PageBuilder
   alias Beacon.LiveAdmin.Content
   alias Beacon.LiveAdmin.WebAPI
+  require Logger
 
   @impl true
   @spec menu_link(any(), any()) :: :skip | {:submenu, <<_::40>>}
   def menu_link("/pages", :new), do: {:submenu, "Pages"}
   def menu_link(_, _), do: :skip
 
-  @impl true
-  def handle_params(params, _url, socket) do
-    {:noreply, assigns(socket, params)}
-  end
-
-  defp assigns(socket, params \\ %{}) do
+  def mount(params, session, socket) do
     component_records = Content.list_components(socket.assigns.beacon_page.site, per_page: :infinity)
     %{data: components} = BeaconWeb.API.ComponentJSON.index(%{components: component_records})
 
-    assign(socket,
+    socket = assign(socket,
       page_title: "Create New Page",
       visual_mode: params["visual_mode"] === "true",
       components: components,
@@ -32,6 +28,13 @@ defmodule Beacon.LiveAdmin.PageEditorLive.New do
         }
       }
     )
+
+    {:ok, socket}
+  end
+
+  @impl true
+  def handle_params(params, _url, socket) do
+    {:noreply, assign(socket, visual_mode: params["visual_mode"] === "true")}
   end
 
   @impl true
@@ -46,14 +49,12 @@ defmodule Beacon.LiveAdmin.PageEditorLive.New do
 
   @impl true
   def handle_event("enable_visual_mode", _args, socket) do
-    socket = assign(socket, visual_mode: true)
     path = Beacon.LiveAdmin.Router.beacon_live_admin_path(socket, socket.assigns.beacon_page.site, "/pages/new", %{visual_mode: "true"})
     {:noreply, push_patch(socket, to: path)}
   end
 
   @impl true
   def handle_event("disable_visual_mode", _args, socket) do
-    socket = assign(socket, visual_mode: false)
     path = Beacon.LiveAdmin.Router.beacon_live_admin_path(socket, socket.assigns.beacon_page.site, "/pages/new")
     {:noreply, push_patch(socket, to: path)}
   end

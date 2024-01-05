@@ -4,6 +4,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
   alias Beacon.LiveAdmin.Config
   alias Beacon.LiveAdmin.Content
   alias Beacon.LiveAdmin.WebAPI
+  require Logger
 
   @impl true
   def update(%{site: site, page: page} = assigns, socket) do
@@ -11,20 +12,24 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
 
     changeset = Content.change_page(site, page)
     layouts = Content.list_layouts(site)
+    Logger.debug("###################################### page: #{inspect(page)}")
+    Logger.debug("###################################### changeset: #{inspect(changeset)}")
+    Logger.debug("###################################### page.template: #{inspect(page.template)}")
 
     %{data: builder_page} = WebAPI.Page.show(site, page)
+    socket = socket
+    |> assign(assigns)
+    |> assign_form(changeset)
+    |> assign(:layouts, layouts)
+    |> assign(:language, language(page.format))
+    |> assign(:template, page.template)
+    |> assign(:changed_template, page.template)
+    |> assign(:builder_page, builder_page)
+    |> assign_new(:visual_mode, fn -> false end)
+    |> assign_extra_fields(changeset)
 
-    {:ok,
-     socket
-     |> assign(assigns)
-     |> assign_form(changeset)
-     |> assign(:layouts, layouts)
-     |> assign(:language, language(page.format))
-     |> assign(:template, page.template)
-     |> assign(:changed_template, page.template)
-     |> assign(:builder_page, builder_page)
-     |> assign_new(:visual_mode, fn -> false end)
-     |> assign_extra_fields(changeset)}
+    Logger.debug("###################################### socket.form: #{inspect(socket.assigns.form)}")
+    {:ok, socket}
   end
 
   def update(%{template: value}, socket) do
@@ -122,6 +127,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
   end
 
   @impl true
+  @spec render(any()) :: Phoenix.LiveView.Rendered.t()
   def render(assigns) do
     ~H"""
     <div>
@@ -162,34 +168,44 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
           </button>
         </div>
       </.modal>
+      Page.template: <%= @page.template %>
+            Template: <%= @template %>
 
-      <%= if @visual_mode do %>
-        <.svelte name="components/UiBuilder" class="relative overflow-x-hidden" props={%{components: @components, page: @builder_page}} socket={@socket} />
-      <% else %>
-        <div class="grid items-start lg:h-[calc(100vh_-_144px)] grid-cols-1 mx-auto mt-4 gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
-          <div class="p-4 bg-white col-span-full lg:col-span-1 rounded-[1.25rem] lg:rounded-t-[1.25rem] lg:rounded-b-none lg:h-full">
-            <.form :let={f} for={@form} id="page-form" class="space-y-8" phx-target={@myself} phx-change="validate" phx-submit="save">
-              <legend class="text-sm font-bold tracking-widest text-[#445668] uppercase">Page settings</legend>
-              <.input field={f[:path]} type="text" label="Path" class="!text-red-500" />
-              <.input field={f[:title]} type="text" label="Title" />
-              <.input field={f[:description]} type="textarea" label="Description" />
-              <.input field={f[:layout_id]} type="select" options={layouts_to_options(@layouts)} label="Layout" />
-              <.input field={f[:format]} type="select" label="Format" options={template_format_options(@site)} />
-              <input type="hidden" name="page[template]" id="page-form_template" value={@changed_template} />
+      <.svelte name="components/UiBuilder" class={[
+        "relative overflow-x-hidden",
+        if(!@visual_mode, do: "hidden"),
+      ]} props={%{components: @components, page: @builder_page}} socket={@socket} />
+      <div
+        class={[
+          "grid items-start lg:h-[calc(100vh_-_144px)] grid-cols-1 mx-auto mt-4 gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3",
+          if(@visual_mode, do: "hidden"),
+        ]}>
+        <div class="p-4 bg-white col-span-full lg:col-span-1 rounded-[1.25rem] lg:rounded-t-[1.25rem] lg:rounded-b-none lg:h-full">
+          <.form :let={f} for={@form} id="page-form" class="space-y-8" phx-target={@myself} phx-change="validate" phx-submit="save">
+            <legend class="text-sm font-bold tracking-widest text-[#445668] uppercase">Page settings</legend>
+            <.input field={f[:path]} type="text" label="Path" class="!text-red-500" />
+            <.input field={f[:title]} type="text" label="Title" />
+            <.input field={f[:description]} type="textarea" label="Description" />
+            <.input field={f[:layout_id]} type="select" options={layouts_to_options(@layouts)} label="Layout" />
+            <.input field={f[:format]} type="select" label="Format" options={template_format_options(@site)} />
+            <input type="hidden" name="page[template]" id="page-form_template" value={@changed_template} />
 
-              <%= for mod <- extra_page_fields(@site) do %>
-                <%= extra_page_field(@site, @extra_fields, mod) %>
-              <% end %>
-            </.form>
-          </div>
-          <div class="col-span-full lg:col-span-2">
-            <%= template_error(@form[:template]) %>
-            <div class="py-6 w-full rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
-              <LiveMonacoEditor.code_editor path="template" class="col-span-full lg:col-span-2" value={@template} opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => @language})} />
-            </div>
+            <%= for mod <- extra_page_fields(@site) do %>
+              <%= extra_page_field(@site, @extra_fields, mod) %>
+            <% end %>
+          </.form>
+        </div>
+        <div class="col-span-full lg:col-span-2">
+          <%= template_error(@form[:template]) %>
+          <div class="py-6 w-full rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
+            <LiveMonacoEditor.code_editor
+              path="template"
+              class="col-span-full lg:col-span-2"
+              value={@template}
+              opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => @language})} />
           </div>
         </div>
-      <% end %>
+      </div>
     </div>
     """
   end
