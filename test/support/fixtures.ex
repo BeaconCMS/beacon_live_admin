@@ -84,4 +84,10 @@ defmodule Beacon.LiveAdmin.Fixtures do
 
     Path.join(["test", "support", "fixtures", file_name])
   end
+
+  def live_data_fixture(attrs \\ %{}) do
+    defaults = %{site: :site_a, path: "/foo/:id", assign: "bar", format: :elixir, code: "id"}
+    attrs = Enum.into(attrs, defaults)
+    rpc(node1(), Beacon.Content, :create_live_data, [attrs])
+  end
 end
