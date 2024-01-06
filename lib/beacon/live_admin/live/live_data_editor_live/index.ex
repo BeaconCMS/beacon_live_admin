@@ -45,7 +45,7 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Index do
 
   def handle_event("submit_path", %{"path" => path}, socket) do
     %{beacon_page: %{site: site}} = socket.assigns
-    attrs = %{path: path, assign: "foo", code: "bar", format: :text, site: site}
+    attrs = %{path: path, site: site}
 
     socket =
       case Content.create_live_data(site, attrs) do
