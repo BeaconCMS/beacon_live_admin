@@ -137,6 +137,10 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
   def render(assigns) do
     ~H"""
     <div>
+      <style>
+        <%= Beacon.LiveAdmin.Layouts.page_stylesheet(@page.site, @page.template) %>
+      </style>
+
       <Beacon.LiveAdmin.AdminComponents.page_header socket={@socket} flash={@flash} page={@page} live_action={@live_action} />
 
       <.header>
