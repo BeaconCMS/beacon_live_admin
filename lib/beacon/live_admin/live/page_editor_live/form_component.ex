@@ -9,15 +9,19 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
   def update(%{site: site, page: page} = assigns, socket) do
     page = Map.put_new(page, :path, "/")
 
-    changeset = case socket.assigns do
-      %{form: form} ->
-        form.source
-      _ ->
-        Content.change_page(site, page)
-    end
+    changeset =
+      case socket.assigns do
+        %{form: form} ->
+          form.source
+
+        _ ->
+          Content.change_page(site, page)
+      end
+
     layouts = Content.list_layouts(site)
 
     %{data: builder_page} = WebAPI.Page.show(site, page)
+
     {:ok,
      socket
      |> assign(assigns)
@@ -172,15 +176,18 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
     {:safe, html}
   end
 
-  defp compile_stylesheet(%{site: site, template: template}) when is_binary(template), do: Beacon.LiveAdmin.Layouts.page_stylesheet(site, template)
-  defp compile_stylesheet(%{site: _, template: _}), do: ""
+  defp compile_stylesheet(%{site: site, template: template}) when is_binary(template),
+    do: Beacon.LiveAdmin.Layouts.page_stylesheet(site, template)
 
+  defp compile_stylesheet(%{site: _, template: _}), do: ""
 
   @impl true
   def render(assigns) do
     ~H"""
     <div>
-      <style><%= compile_stylesheet(@page) %></style>
+      <style>
+        <%= compile_stylesheet(@page) %>
+      </style>
 
       <Beacon.LiveAdmin.AdminComponents.page_header socket={@socket} flash={@flash} page={@page} live_action={@live_action} />
 
@@ -245,7 +252,6 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
           </div>
         </div>
       </div>
-
     </div>
     """
   end

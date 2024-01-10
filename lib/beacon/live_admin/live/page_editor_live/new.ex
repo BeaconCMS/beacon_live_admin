@@ -16,7 +16,9 @@ defmodule Beacon.LiveAdmin.PageEditorLive.New do
   end
 
   defp assigns(socket, params \\ %{}) do
-    component_records = Content.list_components(socket.assigns.beacon_page.site, per_page: :infinity)
+    component_records =
+      Content.list_components(socket.assigns.beacon_page.site, per_page: :infinity)
+
     %{data: components} = BeaconWeb.API.ComponentJSON.index(%{components: component_records})
 
     assign(socket,
@@ -54,9 +56,9 @@ defmodule Beacon.LiveAdmin.PageEditorLive.New do
 
     %{data: %{ast: ast}} =
       WebAPI.Component.show_ast(socket.assigns.beacon_page.site, component, socket.assigns.page)
+
     {:reply, %{"ast" => ast}, socket}
   end
-
 
   def handle_event("update_page_ast", %{"id" => id, "ast" => ast}, socket) do
     page = Content.set_page_ast(socket.assigns.beacon_page.site, socket.assigns.page, ast)
