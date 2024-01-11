@@ -8,6 +8,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
 
   @impl true
   def update(%{site: site, page: page} = assigns, socket) do
+    # TODO: handle empty path in the json encoder
     page = Map.put_new(page, :path, "/")
 
     changeset =
@@ -19,15 +20,13 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
           Content.change_page(site, page)
       end
 
-    layouts = Content.list_layouts(site)
-
     %{data: builder_page} = WebAPI.Page.show(site, page)
 
     {:ok,
      socket
      |> assign(assigns)
      |> assign_form(changeset)
-     |> assign(:layouts, layouts)
+     |> assign_new(:layouts, fn -> Content.list_layouts(site) end)
      |> assign(:language, language(page.format))
      |> assign(:template, page.template)
      |> assign(:changed_template, page.template)
