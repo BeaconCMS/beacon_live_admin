@@ -224,9 +224,9 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
       <.header>
         <%= @page_title %>
         <:actions>
-          <.button :if={@live_action == :new} phx-disable-with="Saving..." form="page-form" class="uppercase">Create Draft Page</.button>
           <.button :if={!@visual_mode} phx-click="enable_visual_mode" phx-target={@myself} form="page-form" class="uppercase">Visual Editor</.button>
           <.button :if={@visual_mode} phx-click="disable_visual_mode" phx-target={@myself} form="page-form" class="uppercase">Code Editor</.button>
+          <.button :if={@live_action == :new} phx-disable-with="Saving..." form="page-form" class="uppercase">Create Draft Page</.button>
           <.button :if={@live_action == :edit} phx-disable-with="Saving..." form="page-form" class="uppercase">Save Changes</.button>
           <.button :if={@live_action == :edit} phx-click={show_modal("publish-confirm-modal")} phx-target={@myself} class="uppercase">Publish</.button>
         </:actions>

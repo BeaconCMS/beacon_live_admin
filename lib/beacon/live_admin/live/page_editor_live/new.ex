@@ -11,29 +11,25 @@ defmodule Beacon.LiveAdmin.PageEditorLive.New do
   def menu_link(_, _), do: :skip
 
   @impl true
-  def handle_params(params, _url, socket) do
-    {:noreply, assigns(socket, params)}
-  end
-
-  defp assigns(socket, params \\ %{}) do
+  def handle_params(_params, _url, socket) do
     component_records =
       Content.list_components(socket.assigns.beacon_page.site, per_page: :infinity)
 
     %{data: components} = BeaconWeb.API.ComponentJSON.index(%{components: component_records})
 
-    assign(socket,
-      page_title: "Create New Page",
-      visual_mode: params["visual_mode"] === "true",
-      components: components,
-      page: %Beacon.Content.Page{
-        path: "",
-        site: socket.assigns.beacon_page.site,
-        layout: %Beacon.Content.Layout{
-          template: "<%= @inner_content %>",
-          site: socket.assigns.beacon_page.site
-        }
-      }
-    )
+    {:noreply,
+     assign(socket,
+       page_title: "Create New Page",
+       components: components,
+       page: %Beacon.Content.Page{
+         path: "",
+         site: socket.assigns.beacon_page.site,
+         layout: %Beacon.Content.Layout{
+           template: "<%= @inner_content %>",
+           site: socket.assigns.beacon_page.site
+         }
+       }
+     )}
   end
 
   @impl true
@@ -60,9 +56,13 @@ defmodule Beacon.LiveAdmin.PageEditorLive.New do
     {:reply, %{"ast" => ast}, socket}
   end
 
-  def handle_event("update_page_ast", %{"id" => id, "ast" => ast}, socket) do
-    page = Content.set_page_ast(socket.assigns.beacon_page.site, socket.assigns.page, ast)
-    {:noreply, assign(socket, :page, page)}
+  def handle_event("update_page_ast", %{"ast" => ast}, socket) do
+    send_update(Beacon.LiveAdmin.PageEditorLive.FormComponent,
+      id: "page-editor-form-new",
+      ast: ast
+    )
+
+    {:noreply, socket}
   end
 
   @impl true
@@ -73,7 +73,6 @@ defmodule Beacon.LiveAdmin.PageEditorLive.New do
       id="page-editor-form-new"
       site={@beacon_page.site}
       page_title={@page_title}
-      visual_mode={@visual_mode}
       components={@components}
       live_action={@live_action}
       page={@page}
