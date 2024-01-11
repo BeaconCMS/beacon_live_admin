@@ -15,7 +15,9 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Assigns do
       |> assign(live_data: Content.get_live_data(socket.assigns.beacon_page.site, path))
       |> assign(unsaved_changes: false)
       |> assign(show_nav_modal: false)
+      |> assign(show_create_modal: false)
       |> assign(show_delete_modal: false)
+      |> assign(new_assign_form: to_form(%{"key" => ""}))
       |> assign(page_title: "LiveData Assigns")
       |> assign_selected(params["key"])
       |> assign_form()
@@ -114,11 +116,16 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Assigns do
     {:noreply, socket}
   end
 
-  def handle_event("create_new", _params, socket) do
+  def handle_event("show_create_modal", _params, socket) do
+    {:noreply, assign(socket, show_create_modal: true)}
+  end
+
+  def handle_event("submit_new", params, socket) do
     %{live_data: %{site: site} = live_data, selected: selected} = socket.assigns
     selected = selected || %{key: nil}
 
-    attrs = %{key: "foo", value: "bar", format: :text}
+    attrs = %{key: params["key"], value: "Your value here", format: :text}
+    # TODO: handle errors
     {:ok, updated_live_data} = Content.create_assign_for_live_data(site, live_data, attrs)
 
     socket =
@@ -126,7 +133,7 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Assigns do
       |> assign(live_data: updated_live_data)
       |> assign_selected(selected.key)
 
-    {:noreply, socket}
+    {:noreply, assign(socket, show_create_modal: false)}
   end
 
   def handle_event("delete", _, socket) do
@@ -142,6 +149,10 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Assigns do
      push_redirect(socket,
        to: beacon_live_admin_path(socket, site, "/live_data/#{sanitize_path(path)}")
      )}
+  end
+
+  def handle_event("create_cancel", _, socket) do
+    {:noreply, assign(socket, show_create_modal: false)}
   end
 
   def handle_event("delete_cancel", _, socket) do
@@ -162,7 +173,7 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Assigns do
       <.header>
         <%= @page_title %>
         <:actions>
-          <.button type="button" phx-click="create_new">New Live Data Assign</.button>
+          <.button type="button" phx-click="show_create_modal">New Live Data Assign</.button>
         </:actions>
       </.header>
       <.main_content class="h-[calc(100vh_-_223px)]">
@@ -187,6 +198,17 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Assigns do
               Cancel
             </.button>
           </div>
+        </.modal>
+
+        <.modal :if={@show_create_modal} id="create-modal" on_cancel={JS.push("create_cancel")} show>
+          <p class="text-2xl font-bold mb-12">New Assign</p>
+          <.form id="new-assign-form" for={@new_assign_form} phx-submit="submit_new">
+            <.input type="text" field={@new_assign_form[:key]} placeholder="project/:project_id/comments" />
+            <div class="flex mt-8 gap-x-[20px]">
+              <.button type="submit">Create</.button>
+              <.button type="button" phx-click={JS.push("create_cancel")}>Cancel</.button>
+            </div>
+          </.form>
         </.modal>
 
         <div class="grid items-start grid-cols-1 grid-rows-1 mx-auto gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">

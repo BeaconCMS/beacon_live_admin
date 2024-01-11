@@ -64,16 +64,28 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Index do
     {:noreply, socket}
   end
 
-  def handle_event("edit_path", %{"live_data" => params}, socket) do
+  def handle_event("edit_path", params, socket) do
     %{beacon_page: %{site: site}, selected: selected} = socket.assigns
-    Content.update_live_data_path(site, selected, params)
-    {:noreply, socket}
+    %{"live_data" => %{"path" => path}} = params
+
+    {:ok, _live_data} = Content.update_live_data_path(site, selected, path)
+
+    path = beacon_live_admin_path(socket, socket.assigns.beacon_page.site, "/live_data")
+    {:noreply, push_navigate(socket, to: path, replace: true)}
   end
 
-  def handle_event("delete_path", %{"live_data" => _params}, socket) do
+  def handle_event("delete_path", _params, socket) do
     %{beacon_page: %{site: site}, selected: selected} = socket.assigns
-    Content.delete_live_data(site, selected)
-    {:noreply, socket}
+
+    {:ok, _live_data} = Content.delete_live_data(site, selected)
+
+    path = beacon_live_admin_path(socket, socket.assigns.beacon_page.site, "/live_data")
+    {:noreply, push_navigate(socket, to: path, replace: true)}
+  end
+
+  def handle_event("close_modal", _params, socket) do
+    path = beacon_live_admin_path(socket, socket.assigns.beacon_page.site, "/live_data")
+    {:noreply, push_navigate(socket, to: path, replace: true)}
   end
 
   defp assign_edit_path_form(socket, nil), do: assign(socket, edit_path_form: to_form(%{}))
@@ -129,32 +141,29 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Index do
           >
             <.icon name="hero-pencil-square text-[#61758A] hover:text-[#304254]" />
           </.link>
-          <.link patch={beacon_live_admin_path(@socket, @beacon_page.site, "/live_data/")}>
-            Delete
-          </.link>
         </:action>
       </.table>
     </.main_content>
 
-    <.modal :if={@show_new_path_modal} id="new-path-modal" on_cancel={JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/live_data"))} show>
+    <.modal :if={@show_new_path_modal} id="new-path-modal" on_cancel={JS.push("close_modal")} show>
       <p class="text-2xl font-bold mb-12">New Path</p>
       <.form id="new-path-form" for={%{}} phx-submit="submit_path">
         <.input type="text" name="path" placeholder="project/:project_id/comments" value="" />
         <div class="flex mt-8 gap-x-[20px]">
-          <.button type="submit" phx-click={hide_modal("new-path-modal")}>Create</.button>
-          <.button type="button" phx-click={hide_modal("new-path-modal")}>Cancel</.button>
+          <.button type="submit">Create</.button>
+          <.button type="button" phx-click={JS.push("close_modal")}>Cancel</.button>
         </div>
       </.form>
     </.modal>
 
-    <.modal :if={@show_edit_path_modal} id="edit-path-modal" on_cancel={JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/live_data"))} show>
+    <.modal :if={@show_edit_path_modal} id="edit-path-modal" on_cancel={JS.push("close_modal")} show>
       <p class="text-2xl font-bold mb-12">Edit Path</p>
       <.form id="edit-path-form" for={@edit_path_form} phx-submit="edit_path">
         <.input field={@edit_path_form[:path]} type="text" />
         <div class="flex mt-8 gap-x-[20px]">
-          <.button type="submit" phx-click={hide_modal("new-path-modal")}>Update</.button>
-          <.button type="button" phx-click={hide_modal("new-path-modal")}>Cancel</.button>
-          <.button type="button" class="!bg-red-600" phx-click={}>Delete</.button>
+          <.button type="submit">Update</.button>
+          <.button type="button" phx-click={JS.push("close_modal")}>Cancel</.button>
+          <.button type="button" class="!bg-red-600" phx-click="delete_path">Delete</.button>
         </div>
       </.form>
     </.modal>
