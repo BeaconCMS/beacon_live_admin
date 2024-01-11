@@ -4,6 +4,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
   alias Beacon.LiveAdmin.Config
   alias Beacon.LiveAdmin.Content
   alias Beacon.LiveAdmin.WebAPI
+  alias Ecto.Changeset
 
   @impl true
   def update(%{site: site, page: page} = assigns, socket) do
@@ -39,6 +40,29 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
     params = Map.merge(socket.assigns.form.params, %{"template" => value})
     changeset = Content.change_page(socket.assigns.site, socket.assigns.page, params)
     {:ok, assign_form(socket, changeset)}
+  end
+
+  def update(%{ast: ast}, socket) do
+    template = Beacon.Template.HEEx.HEExDecoder.decode(ast)
+    params = Map.merge(socket.assigns.form.params, %{"template" => template})
+    changeset = Content.change_page(socket.assigns.site, socket.assigns.page, params)
+
+    case Changeset.apply_action(changeset, :update) do
+      {:ok, page} ->
+        # TODO: remove web api
+        %{data: builder_page} = WebAPI.Page.show(page.site, page)
+
+        {:ok,
+         socket
+         |> assign_form(changeset)
+         |> assign(:template, page.template)
+         |> assign(:changed_template, page.template)
+         |> assign(:builder_page, builder_page)}
+
+      _ ->
+        # TODO: handle errors
+        {:ok, socket}
+    end
   end
 
   @impl true

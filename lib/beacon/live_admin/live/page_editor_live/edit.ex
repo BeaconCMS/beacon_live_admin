@@ -95,17 +95,13 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
     {:reply, %{"ast" => ast}, socket}
   end
 
-  def handle_event("update_page_ast", %{"id" => id, "ast" => ast}, socket) do
-    page = Content.get_page(socket.assigns.beacon_page.site, id, preloads: [:layout])
+  def handle_event("update_page_ast", %{"ast" => ast}, socket) do
+    send_update(Beacon.LiveAdmin.PageEditorLive.FormComponent,
+      id: "page-editor-form-edit",
+      ast: ast
+    )
 
-    case Content.update_page(socket.assigns.beacon_page.site, page, %{"ast" => ast}) do
-      {:ok, page} ->
-        {:noreply, assign(socket, :page, page)}
-
-      # FIXME: handle update ast error
-      {:error, _changeset} ->
-        throw("How should we handle this?")
-    end
+    {:noreply, socket}
   end
 
   @impl true
