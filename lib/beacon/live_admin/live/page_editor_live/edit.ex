@@ -11,20 +11,19 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
   def menu_link(_, _), do: :skip
 
   @impl true
-  def mount(params, _session, socket) do
+  def mount(_params, _session, socket) do
     component_records =
       Content.list_components(socket.assigns.beacon_page.site, per_page: :infinity)
 
     {:ok,
      assign(socket,
        page: nil,
-       visual_mode: params["visual_mode"] === "true",
        components: component_records
      )}
   end
 
   @impl true
-  def handle_params(%{"id" => id} = params, _url, socket) do
+  def handle_params(%{"id" => id}, _url, socket) do
     page = Content.get_page(socket.assigns.beacon_page.site, id, preloads: [:layout])
 
     component_records =
@@ -36,7 +35,6 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
      assign(socket,
        page_title: "Edit Page",
        page: page,
-       visual_mode: params["visual_mode"] === "true",
        components: components
      )}
   end
@@ -51,36 +49,6 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
     {:noreply, socket}
   end
 
-  @impl true
-  def handle_event("enable_visual_mode", _args, socket) do
-    socket = assign(socket, visual_mode: true)
-
-    path =
-      Beacon.LiveAdmin.Router.beacon_live_admin_path(
-        socket,
-        socket.assigns.beacon_page.site,
-        "/pages/#{socket.assigns.page.id}",
-        %{visual_mode: "true"}
-      )
-
-    {:noreply, push_patch(socket, to: path)}
-  end
-
-  @impl true
-  def handle_event("disable_visual_mode", _args, socket) do
-    socket = assign(socket, visual_mode: false)
-
-    path =
-      Beacon.LiveAdmin.Router.beacon_live_admin_path(
-        socket,
-        socket.assigns.beacon_page.site,
-        "/pages/#{socket.assigns.page.id}"
-      )
-
-    {:noreply, push_patch(socket, to: path)}
-  end
-
-  @impl true
   def handle_event(
         "render_component_in_page",
         %{"component_id" => component_id, "page_id" => page_id},
@@ -113,7 +81,6 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
       site={@beacon_page.site}
       page_title={@page_title}
       live_action={@live_action}
-      visual_mode={@visual_mode}
       components={@components}
       page={@page}
       patch="/pages"
