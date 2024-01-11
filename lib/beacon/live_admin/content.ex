@@ -73,10 +73,6 @@ defmodule Beacon.LiveAdmin.Content do
     call(site, Beacon.Content, :update_page, [page, attrs])
   end
 
-  def set_page_ast(site, page, ast) do
-    call(site, Beacon.Content, :set_page_ast, [page, ast])
-  end
-
   def publish_page(site, id) do
     call(site, Beacon.Content, :publish_page, [id])
   end
