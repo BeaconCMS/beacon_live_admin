@@ -36,14 +36,16 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
      |> assign_extra_fields(changeset)}
   end
 
-  def update(%{template: value}, socket) do
-    params = Map.merge(socket.assigns.form.params, %{"template" => value})
-    changeset = Content.change_page(socket.assigns.site, socket.assigns.page, params)
-    {:ok, assign_form(socket, changeset)}
+  def update(%{template: template}, socket) do
+    update_template(socket, template)
   end
 
   def update(%{ast: ast}, socket) do
     template = Beacon.Template.HEEx.HEExDecoder.decode(ast)
+    update_template(socket, template)
+  end
+
+  defp update_template(socket, template) do
     params = Map.merge(socket.assigns.form.params, %{"template" => template})
     changeset = Content.change_page(socket.assigns.site, socket.assigns.page, params)
 
@@ -66,6 +68,11 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
   end
 
   @impl true
+  def handle_event("validate", %{"_target" => ["live_monaco_editor", "template"]}, socket) do
+    # ignore change events from the editor field
+    {:noreply, socket}
+  end
+
   def handle_event(
         "validate",
         %{"_target" => ["page", "format"], "page" => page_params},
@@ -272,7 +279,13 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
         <div class="col-span-full lg:col-span-2">
           <%= template_error(@form[:template]) %>
           <div class="py-6 w-full rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
-            <LiveMonacoEditor.code_editor path="template" class="col-span-full lg:col-span-2" value={@template} opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => @language})} />
+            <LiveMonacoEditor.code_editor
+              path="template"
+              class="col-span-full lg:col-span-2"
+              value={@template}
+              opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => @language})}
+              change="set_template"
+            />
           </div>
         </div>
       </div>
