@@ -105,7 +105,6 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
 
   def handle_event("save", %{"page" => page_params}, socket) do
     page_params = Map.put(page_params, "site", socket.assigns.site)
-    Logger.debug("###################################### page_params: #{inspect(page_params)}")
     save_page(socket, socket.assigns.live_action, page_params)
   end
 
@@ -229,8 +228,8 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
       <.header>
         <%= @page_title %>
         <:actions>
-          <.button :if={!@visual_mode} phx-click="enable_visual_mode" phx-target={@myself} form="page-form" class="uppercase">Visual Editor</.button>
-          <.button :if={@visual_mode} phx-click="disable_visual_mode" phx-target={@myself} form="page-form" class="uppercase">Code Editor</.button>
+          <.button type="button" :if={!@visual_mode} phx-click="enable_visual_mode" phx-target={@myself} class="uppercase">Visual Editor</.button>
+          <.button type="button" :if={@visual_mode} phx-click="disable_visual_mode" phx-target={@myself} class="uppercase">Code Editor</.button>
           <.button :if={@live_action == :new} phx-disable-with="Saving..." form="page-form" class="uppercase">Create Draft Page</.button>
           <.button :if={@live_action == :edit} phx-disable-with="Saving..." form="page-form" class="uppercase">Save Changes</.button>
           <.button :if={@live_action == :edit} phx-click={show_modal("publish-confirm-modal")} phx-target={@myself} class="uppercase">Publish</.button>
@@ -262,9 +261,9 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
         </div>
       </.modal>
 
-      <p>Page.template: <%= @page.template %></p>
+      <%!-- <p>Page.template: <%= @page.template %></p>
       <p>Template: <%= @template %></p>
-      <p>form: <%= inspect(@form) %></p>
+      <p>form: <%= inspect(@form) %></p> --%>
 
       <.svelte name="components/UiBuilder" class={[
         "relative overflow-x-hidden",
@@ -298,7 +297,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
               path="template"
               class="col-span-full lg:col-span-2"
               value={@template}
-              opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => @language})} 
+              opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => @language})}
               change="set_template"
             />
           </div>
