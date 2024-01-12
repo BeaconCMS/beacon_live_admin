@@ -4,32 +4,37 @@ defmodule Beacon.LiveAdmin.PageEditorLive.New do
   use Beacon.LiveAdmin.PageBuilder
   alias Beacon.LiveAdmin.Content
   alias Beacon.LiveAdmin.WebAPI
+  require Logger
 
   @impl true
   @spec menu_link(any(), any()) :: :skip | {:submenu, <<_::40>>}
   def menu_link("/pages", :new), do: {:submenu, "Pages"}
   def menu_link(_, _), do: :skip
 
-  @impl true
-  def handle_params(_params, _url, socket) do
-    component_records =
-      Content.list_components(socket.assigns.beacon_page.site, per_page: :infinity)
-
+  def mount(params, session, socket) do
+    component_records = Content.list_components(socket.assigns.beacon_page.site, per_page: :infinity)
     %{data: components} = BeaconWeb.API.ComponentJSON.index(%{components: component_records})
 
-    {:noreply,
-     assign(socket,
-       page_title: "Create New Page",
-       components: components,
-       page: %Beacon.Content.Page{
-         path: "",
-         site: socket.assigns.beacon_page.site,
-         layout: %Beacon.Content.Layout{
-           template: "<%= @inner_content %>",
-           site: socket.assigns.beacon_page.site
-         }
-       }
-     )}
+    socket = assign(socket,
+      page_title: "Create New Page",
+      visual_mode: params["visual_mode"] === "true",
+      components: components,
+      page: %Beacon.Content.Page{
+        path: "",
+        site: socket.assigns.beacon_page.site,
+        layout: %Beacon.Content.Layout{
+          template: "<%= @inner_content %>",
+          site: socket.assigns.beacon_page.site
+        }
+      }
+    )
+
+    {:ok, socket}
+  end
+
+  @impl true
+  def handle_params(params, _url, socket) do
+    {:noreply, assign(socket, visual_mode: params["visual_mode"] === "true")}
   end
 
   @impl true
@@ -41,6 +46,19 @@ defmodule Beacon.LiveAdmin.PageEditorLive.New do
 
     {:noreply, socket}
   end
+
+  @impl true
+  def handle_event("enable_visual_mode", _args, socket) do
+    path = Beacon.LiveAdmin.Router.beacon_live_admin_path(socket, socket.assigns.beacon_page.site, "/pages/new", %{visual_mode: "true"})
+    {:noreply, push_patch(socket, to: path)}
+  end
+
+  @impl true
+  def handle_event("disable_visual_mode", _args, socket) do
+    path = Beacon.LiveAdmin.Router.beacon_live_admin_path(socket, socket.assigns.beacon_page.site, "/pages/new")
+    {:noreply, push_patch(socket, to: path)}
+  end
+
 
   @impl true
   def handle_event(

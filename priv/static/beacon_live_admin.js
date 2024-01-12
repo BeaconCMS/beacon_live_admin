@@ -7744,7 +7744,6 @@ var BeaconLiveAdmin = (() => {
             return;
           addBasicComponentToTarget2($slotTargetElement);
         } else {
-          debugger;
           live.pushEvent(
             "render_component_in_page",
             {

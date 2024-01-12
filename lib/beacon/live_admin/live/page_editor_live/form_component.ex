@@ -5,6 +5,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
   alias Beacon.LiveAdmin.Content
   alias Beacon.LiveAdmin.WebAPI
   alias Ecto.Changeset
+  require Logger
 
   @impl true
   def update(%{site: site, page: page} = assigns, socket) do
@@ -19,7 +20,9 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
         _ ->
           Content.change_page(site, page)
       end
-
+    Logger.debug("###################################### page: #{inspect(page)}")
+    Logger.debug("###################################### changeset: #{inspect(changeset)}")
+    Logger.debug("###################################### page.template: #{inspect(page.template)}")
     %{data: builder_page} = WebAPI.Page.show(site, page)
 
     {:ok,
@@ -102,6 +105,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
 
   def handle_event("save", %{"page" => page_params}, socket) do
     page_params = Map.put(page_params, "site", socket.assigns.site)
+    Logger.debug("###################################### page_params: #{inspect(page_params)}")
     save_page(socket, socket.assigns.live_action, page_params)
   end
 
@@ -212,6 +216,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
   defp compile_stylesheet(%{site: _, template: _}), do: ""
 
   @impl true
+  @spec render(any()) :: Phoenix.LiveView.Rendered.t()
   def render(assigns) do
     ~H"""
     <div>
@@ -257,9 +262,19 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
         </div>
       </.modal>
 
-      <.svelte :if={@visual_mode} name="components/UiBuilder" class="relative overflow-x-hidden" props={%{components: @components, page: @builder_page}} socket={@socket} />
+      <p>Page.template: <%= @page.template %></p>
+      <p>Template: <%= @template %></p>
+      <p>form: <%= inspect(@form) %></p>
 
-      <div :if={!@visual_mode} class="grid items-start lg:h-[calc(100vh_-_144px)] grid-cols-1 mx-auto mt-4 gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
+      <.svelte name="components/UiBuilder" class={[
+        "relative overflow-x-hidden",
+        if(!@visual_mode, do: "hidden"),
+      ]} props={%{components: @components, page: @builder_page}} socket={@socket} />
+      <div
+        class={[
+          "grid items-start lg:h-[calc(100vh_-_144px)] grid-cols-1 mx-auto mt-4 gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3",
+          if(@visual_mode, do: "hidden"),
+        ]}>
         <div class="p-4 bg-white col-span-full lg:col-span-1 rounded-[1.25rem] lg:rounded-t-[1.25rem] lg:rounded-b-none lg:h-full">
           <.form :let={f} for={@form} id="page-form" class="space-y-8" phx-target={@myself} phx-change="validate" phx-submit="save">
             <legend class="text-sm font-bold tracking-widest text-[#445668] uppercase">Page settings</legend>
@@ -268,7 +283,8 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
             <.input field={f[:description]} type="textarea" label="Description" />
             <.input field={f[:layout_id]} type="select" options={layouts_to_options(@layouts)} label="Layout" />
             <.input field={f[:format]} type="select" label="Format" options={template_format_options(@site)} />
-            <input type="hidden" name="page[template]" id="page-form_template" value={@changed_template} />
+            <.input field={f[:template]} type="hidden"  name="page[template]" id="page-form_template" value={Phoenix.HTML.Form.input_value(f, :template)}/>
+            <!-- <input type="hidden" name="page[template]" id="page-form_template" value={@changed_template} /> -->
 
             <%= for mod <- extra_page_fields(@site) do %>
               <%= extra_page_field(@site, @extra_fields, mod) %>
@@ -282,7 +298,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
               path="template"
               class="col-span-full lg:col-span-2"
               value={@template}
-              opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => @language})}
+              opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => @language})} 
               change="set_template"
             />
           </div>

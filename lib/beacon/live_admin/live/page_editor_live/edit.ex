@@ -49,6 +49,19 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
     {:noreply, socket}
   end
 
+  @impl true
+  def handle_event("enable_visual_mode", _args, socket) do
+    path = Beacon.LiveAdmin.Router.beacon_live_admin_path(socket, socket.assigns.beacon_page.site, "/pages/#{socket.assigns.page.id}", %{visual_mode: "true"})
+    {:noreply, push_patch(socket, to: path)}
+  end
+
+  @impl true
+  def handle_event("disable_visual_mode", _args, socket) do
+    path = Beacon.LiveAdmin.Router.beacon_live_admin_path(socket, socket.assigns.beacon_page.site, "/pages/#{socket.assigns.page.id}")
+    {:noreply, push_patch(socket, to: path)}
+  end
+
+  @impl true
   def handle_event(
         "render_component_in_page",
         %{"component_id" => component_id, "page_id" => page_id},
