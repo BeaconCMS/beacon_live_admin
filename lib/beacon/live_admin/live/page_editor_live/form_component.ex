@@ -69,6 +69,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
 
   def handle_event("save", %{"page" => page_params}, socket) do
     page_params = Map.put(page_params, "site", socket.assigns.site)
+    Logger.debug("###################################### page_params: #{inspect(page_params)}")
     save_page(socket, socket.assigns.live_action, page_params)
   end
 
@@ -168,8 +169,9 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
           </button>
         </div>
       </.modal>
-      Page.template: <%= @page.template %>
-            Template: <%= @template %>
+      <p>Page.template: <%= @page.template %></p>
+      <p>Template: <%= @template %></p>
+      <p>form: <%= inspect(@form) %></p>
 
       <.svelte name="components/UiBuilder" class={[
         "relative overflow-x-hidden",
@@ -188,7 +190,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
             <.input field={f[:description]} type="textarea" label="Description" />
             <.input field={f[:layout_id]} type="select" options={layouts_to_options(@layouts)} label="Layout" />
             <.input field={f[:format]} type="select" label="Format" options={template_format_options(@site)} />
-            <input type="hidden" name="page[template]" id="page-form_template" value={@changed_template} />
+            <.input field={f[:template]} type="hidden"  name="page[template]" id="page-form_template" value={Phoenix.HTML.Form.input_value(f, :template)}/>
 
             <%= for mod <- extra_page_fields(@site) do %>
               <%= extra_page_field(@site, @extra_fields, mod) %>
@@ -202,6 +204,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
               path="template"
               class="col-span-full lg:col-span-2"
               value={@template}
+              change="set_template"
               opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => @language})} />
           </div>
         </div>
