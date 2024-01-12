@@ -92,6 +92,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.New do
       site={@beacon_page.site}
       page_title={@page_title}
       components={@components}
+      visual_mode={@visual_mode}
       live_action={@live_action}
       page={@page}
       patch="/pages"

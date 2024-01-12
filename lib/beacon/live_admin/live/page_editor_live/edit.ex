@@ -2,6 +2,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
   @moduledoc false
 
   require IEx
+  require Logger
   use Beacon.LiveAdmin.PageBuilder
   alias Beacon.LiveAdmin.Content
   alias Beacon.LiveAdmin.WebAPI
@@ -31,7 +32,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
       Content.list_components(socket.assigns.beacon_page.site, per_page: :infinity)
 
     %{data: components} = BeaconWeb.API.ComponentJSON.index(%{components: component_records})
-
+    Logger.debug("##################### handle_params: params: #{inspect(params)}")
     {:noreply,
      assign(socket,
        page_title: "Edit Page",
@@ -96,6 +97,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
       site={@beacon_page.site}
       page_title={@page_title}
       live_action={@live_action}
+      visual_mode={@visual_mode}
       components={@components}
       page={@page}
       patch="/pages"
