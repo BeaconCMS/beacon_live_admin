@@ -11,19 +11,20 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
   def menu_link(_, _), do: :skip
 
   @impl true
-  def mount(_params, _session, socket) do
+  def mount(params, _session, socket) do
     component_records =
       Content.list_components(socket.assigns.beacon_page.site, per_page: :infinity)
 
     {:ok,
      assign(socket,
        page: nil,
+       visual_mode: params["visual_mode"] === "true",
        components: component_records
      )}
   end
 
   @impl true
-  def handle_params(%{"id" => id}, _url, socket) do
+  def handle_params(%{"id" => id} = params, _url, socket) do
     page = Content.get_page(socket.assigns.beacon_page.site, id, preloads: [:layout])
 
     component_records =
@@ -35,6 +36,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
      assign(socket,
        page_title: "Edit Page",
        page: page,
+       visual_mode: params["visual_mode"] === "true",
        components: components
      )}
   end
