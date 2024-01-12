@@ -70,13 +70,17 @@ defmodule Beacon.LiveAdmin.PageEditorLive.New do
 
     %{data: %{ast: ast}} =
       WebAPI.Component.show_ast(socket.assigns.beacon_page.site, component, socket.assigns.page)
+
     {:reply, %{"ast" => ast}, socket}
   end
 
+  def handle_event("update_page_ast", %{"ast" => ast}, socket) do
+    send_update(Beacon.LiveAdmin.PageEditorLive.FormComponent,
+      id: "page-editor-form-new",
+      ast: ast
+    )
 
-  def handle_event("update_page_ast", %{"id" => id, "ast" => ast}, socket) do
-    page = Content.set_page_ast(socket.assigns.beacon_page.site, socket.assigns.page, ast)
-    {:noreply, assign(socket, :page, page)}
+    {:noreply, socket}
   end
 
   @impl true
@@ -87,7 +91,6 @@ defmodule Beacon.LiveAdmin.PageEditorLive.New do
       id="page-editor-form-new"
       site={@beacon_page.site}
       page_title={@page_title}
-      visual_mode={@visual_mode}
       components={@components}
       live_action={@live_action}
       page={@page}

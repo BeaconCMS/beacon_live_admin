@@ -11,23 +11,30 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
   def menu_link(_, _), do: :skip
 
   @impl true
-  def mount(params, _session, socket) do
-    component_records = Content.list_components(socket.assigns.beacon_page.site, per_page: :infinity)
-    {:ok, assign(socket, page: nil, visual_mode: params["visual_mode"] === "true", components: component_records)}
+  def mount(_params, _session, socket) do
+    component_records =
+      Content.list_components(socket.assigns.beacon_page.site, per_page: :infinity)
+
+    {:ok,
+     assign(socket,
+       page: nil,
+       components: component_records
+     )}
   end
 
   @impl true
-  def handle_params(%{"id" => id } = params, _url, socket) do
+  def handle_params(%{"id" => id}, _url, socket) do
     page = Content.get_page(socket.assigns.beacon_page.site, id, preloads: [:layout])
-    component_records =  Content.list_components(socket.assigns.beacon_page.site, per_page: :infinity)
 
-    %{data: components} = BeaconWeb.API.ComponentJSON.index(%{ components: component_records })
+    component_records =
+      Content.list_components(socket.assigns.beacon_page.site, per_page: :infinity)
+
+    %{data: components} = BeaconWeb.API.ComponentJSON.index(%{components: component_records})
 
     {:noreply,
      assign(socket,
        page_title: "Edit Page",
        page: page,
-       visual_mode: params["visual_mode"] === "true",
        components: components
      )}
   end
@@ -69,17 +76,13 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
     {:reply, %{"ast" => ast}, socket}
   end
 
-  def handle_event("update_page_ast", %{"id" => id, "ast" => ast}, socket) do
-    page = Content.get_page(socket.assigns.beacon_page.site, id, preloads: [:layout])
+  def handle_event("update_page_ast", %{"ast" => ast}, socket) do
+    send_update(Beacon.LiveAdmin.PageEditorLive.FormComponent,
+      id: "page-editor-form-edit",
+      ast: ast
+    )
 
-    case Content.update_page(socket.assigns.beacon_page.site, page, %{"ast" => ast}) do
-      {:ok, page} ->
-        {:noreply, assign(socket, :page, page)}
-
-      # FIXME: handle update ast error
-      {:error, _changeset} ->
-        throw("How should we handle this?")
-    end
+    {:noreply, socket}
   end
 
   @impl true
@@ -91,7 +94,6 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
       site={@beacon_page.site}
       page_title={@page_title}
       live_action={@live_action}
-      visual_mode={@visual_mode}
       components={@components}
       page={@page}
       patch="/pages"
