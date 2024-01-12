@@ -15,11 +15,14 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
   @impl true
   def mount(_params, _session, socket) do
     {:ok,
-     assign(socket,
+     socket
+     |> assign(
        page: 1,
        pages: number_of_pages(socket.assigns.beacon_page.site),
-       sort: @default_sort
-     )}
+       sort: @default_sort,
+       query: ""
+     )
+     |> stream_configure(:pages, dom_id: &"#{Ecto.UUID.generate()}-#{&1.id}")}
   end
 
   @impl true
@@ -39,36 +42,23 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
 
     {:noreply,
      socket
-     |> assign(sort: sort)
+     |> assign(sort: sort, query: query)
      |> stream(:pages, pages, reset: true)}
   end
 
   @impl true
-  # handles sorting only (uses push navigate)
-  def handle_event("search", %{"search" => %{"query" => "", "sort" => sort}}, socket) do
+  def handle_event("search", %{"search" => %{"query" => query, "sort" => sort}}, socket) do
     path =
       beacon_live_admin_path(
         socket,
         socket.assigns.beacon_page.site,
-        "/pages?page=#{socket.assigns.page}&sort=#{sort}"
+        "/pages?page=#{socket.assigns.page}&sort=#{sort}#{query_param(query)}"
       )
 
     {:noreply,
      socket
      |> assign(sort: set_sort(sort, socket))
-     |> push_navigate(to: path)}
-  end
-
-  # handles text searching (uses push patch)
-  def handle_event("search", %{"search" => %{"query" => query}}, socket) do
-    path =
-      beacon_live_admin_path(
-        socket,
-        socket.assigns.beacon_page.site,
-        "/pages?#{query_param(query)}page=#{socket.assigns.page}&sort=#{socket.assigns.sort}"
-      )
-
-    {:noreply, push_patch(socket, to: path)}
+     |> push_patch(to: path)}
   end
 
   def handle_event("set-page", %{"page" => page}, socket) do
@@ -122,7 +112,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
     <.simple_form :let={f} for={%{}} as={:search} phx-change="search">
       <div class="flex justify-between">
         <div class="basis-10/12">
-          <.input field={f[:query]} type="search" autofocus={true} placeholder="Search by path or title (showing up to 20 results)" />
+          <.input field={f[:query]} value={@query} type="search" autofocus={true} placeholder="Search by path or title (showing up to 20 results)" />
         </div>
         <div class="basis-1/12">
           <.input type="select" field={f[:sort]} value={@sort} options={[{"Title", "title"}, {"Path", "path"}]} />
@@ -131,7 +121,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
     </.simple_form>
 
     <.main_content class="h-[calc(100vh_-_210px)]">
-      <.table id="pages" rows={@streams.pages} row_click={fn {_id, page} -> JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/pages/#{page.id}")) end}>
+      <.table id="pages" rows={@streams.pages} row_click={fn {dom_id, page} -> JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/pages/#{page.id}")) end}>
         <:col :let={{_, page}} label="Title"><%= page.title %></:col>
         <:col :let={{_, page}} label="Path"><%= page.path %></:col>
         <:col :let={{_, page}} label="Status"><%= display_status(page.status) %></:col>
@@ -181,5 +171,5 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
   defp display_status(:created), do: "Draft"
 
   defp query_param(""), do: ""
-  defp query_param(query), do: "query=#{query}&"
+  defp query_param(query), do: "&query=#{query}"
 end
