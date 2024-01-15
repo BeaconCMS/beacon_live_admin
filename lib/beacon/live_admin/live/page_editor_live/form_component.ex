@@ -15,9 +15,11 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
     changeset =
       case socket.assigns do
         %{form: form} ->
+          Logger.debug("###################################### There is a @form")
           form.source
 
-        _ ->
+          _ ->
+            Logger.debug("###################################### There is no @form")
           Content.change_page(site, page)
       end
     Logger.debug("###################################### page: #{inspect(page)}")
@@ -31,7 +33,6 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
      |> assign_form(changeset)
      |> assign_new(:layouts, fn -> Content.list_layouts(site) end)
      |> assign(:language, language(page.format))
-    #  |> assign(:template, page.template)
      |> assign(:builder_page, builder_page)
      |> assign_new(:visual_mode, fn -> false end)
      |> assign_extra_fields(changeset)}
@@ -47,23 +48,20 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
   end
 
   defp update_template(socket, template) do
-    # socket = socket |> assign(:template, template)
     params = Map.merge(socket.assigns.form.params, %{"template" => template})
     changeset = Content.change_page(socket.assigns.site, socket.assigns.page, params)
-
-    Logger.debug("###################################### changeset: #{inspect(changeset)}")
-    {:ok, socket |> assign_form(changeset)}
-    # case Changeset.apply_action(changeset, :update) do
-    #   {:ok, page} ->
-    #     Logger.debug("###################################### about to reurn the updated form")
-    #     #  |> assign(:template, page.template)
-    #     #  |> assign(:changed_template, page.template)
-    #     #  |> assign(:builder_page, builder_page)}
-
-    #   _ ->
-    #     # TODO: handle errors
-    #     {:ok, socket}
-    # end
+    case Changeset.apply_action(changeset, :update) do
+      {:ok, page} ->
+        %{data: builder_page} = WebAPI.Page.show(page.site, page)
+        socket =
+          socket
+          |> assign_form(changeset)
+          |> assign(:builder_page, builder_page)
+        {:ok, socket}
+      _ ->
+        # TODO: handle errors
+        {:ok, socket}
+    end
   end
 
   @impl true
@@ -250,9 +248,9 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
         </div>
       </.modal>
 
-      <%!-- <p>Page.template: <%= @page.template %></p>
-      <p>Template: <%= @template %></p>
-      <p>form: <%= inspect(@form) %></p> --%>
+      <%!-- <p>Page.template: <%= @page.template %></p> --%>
+      <p>Template: <%= @form[:template].value %></p>
+      <%!-- <p>form: <%= inspect(@form) %></p> --%>
 
       <.svelte name="components/UiBuilder" class={[
         "relative overflow-x-hidden",
@@ -272,7 +270,6 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
             <.input field={f[:layout_id]} type="select" options={layouts_to_options(@layouts)} label="Layout" />
             <.input field={f[:format]} type="select" label="Format" options={template_format_options(@site)} />
             <.input field={f[:template]} type="hidden"  name="page[template]" id="page-form_template" value={Phoenix.HTML.Form.input_value(f, :template)}/>
-            <!-- <input type="hidden" name="page[template]" id="page-form_template" value={@changed_template} /> -->
 
             <%= for mod <- extra_page_fields(@site) do %>
               <%= extra_page_field(@site, @extra_fields, mod) %>
@@ -285,7 +282,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
             <LiveMonacoEditor.code_editor
               path="template"
               class="col-span-full lg:col-span-2"
-              value={@form.source.data.template}
+              value={@form[:template].value}
               opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => @language})}
               change="set_template"
             />
