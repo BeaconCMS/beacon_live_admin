@@ -18,13 +18,18 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
           Logger.debug("###################################### There is a @form")
           form.source
 
-          _ ->
-            Logger.debug("###################################### There is no @form")
+        _ ->
+          Logger.debug("###################################### There is no @form")
           Content.change_page(site, page)
       end
+
     Logger.debug("###################################### page: #{inspect(page)}")
     Logger.debug("###################################### changeset: #{inspect(changeset)}")
-    Logger.debug("###################################### page.template: #{inspect(page.template)}")
+
+    Logger.debug(
+      "###################################### page.template: #{inspect(page.template)}"
+    )
+
     %{data: builder_page} = WebAPI.Page.show(site, page)
 
     {:ok,
@@ -50,14 +55,18 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
   defp update_template(socket, template) do
     params = Map.merge(socket.assigns.form.params, %{"template" => template})
     changeset = Content.change_page(socket.assigns.site, socket.assigns.page, params)
+
     case Changeset.apply_action(changeset, :update) do
       {:ok, page} ->
         %{data: builder_page} = WebAPI.Page.show(page.site, page)
+
         socket =
           socket
           |> assign_form(changeset)
           |> assign(:builder_page, builder_page)
+
         {:ok, socket}
+
       _ ->
         # TODO: handle errors
         {:ok, socket}
@@ -215,8 +224,8 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
       <.header>
         <%= @page_title %>
         <:actions>
-          <.button type="button" :if={!@visual_mode} phx-click="enable_visual_mode" class="uppercase">Visual Editor</.button>
-          <.button type="button" :if={@visual_mode} phx-click="disable_visual_mode" class="uppercase">Code Editor</.button>
+          <.button :if={!@visual_mode} type="button" phx-click="enable_visual_mode" class="uppercase">Visual Editor</.button>
+          <.button :if={@visual_mode} type="button" phx-click="disable_visual_mode" class="uppercase">Code Editor</.button>
           <.button :if={@live_action == :new} phx-disable-with="Saving..." form="page-form" class="uppercase">Create Draft Page</.button>
           <.button :if={@live_action == :edit} phx-disable-with="Saving..." form="page-form" class="uppercase">Save Changes</.button>
           <.button :if={@live_action == :edit} phx-click={show_modal("publish-confirm-modal")} phx-target={@myself} class="uppercase">Publish</.button>
@@ -252,15 +261,19 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
       <p>Template: <%= @form[:template].value %></p>
       <%!-- <p>form: <%= inspect(@form) %></p> --%>
 
-      <.svelte name="components/UiBuilder" class={[
-        "relative overflow-x-hidden",
-        if(!@visual_mode, do: "hidden"),
-      ]} props={%{components: @components, page: @builder_page}} socket={@socket} />
-      <div
+      <.svelte
+        name="components/UiBuilder"
         class={[
-          "grid items-start lg:h-[calc(100vh_-_144px)] grid-cols-1 mx-auto mt-4 gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3",
-          if(@visual_mode, do: "hidden"),
-        ]}>
+          "relative overflow-x-hidden",
+          if(!@visual_mode, do: "hidden")
+        ]}
+        props={%{components: @components, page: @builder_page}}
+        socket={@socket}
+      />
+      <div class={[
+        "grid items-start lg:h-[calc(100vh_-_144px)] grid-cols-1 mx-auto mt-4 gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3",
+        if(@visual_mode, do: "hidden")
+      ]}>
         <div class="p-4 bg-white col-span-full lg:col-span-1 rounded-[1.25rem] lg:rounded-t-[1.25rem] lg:rounded-b-none lg:h-full">
           <.form :let={f} for={@form} id="page-form" class="space-y-8" phx-target={@myself} phx-change="validate" phx-submit="save">
             <legend class="text-sm font-bold tracking-widest text-[#445668] uppercase">Page settings</legend>
@@ -269,7 +282,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
             <.input field={f[:description]} type="textarea" label="Description" />
             <.input field={f[:layout_id]} type="select" options={layouts_to_options(@layouts)} label="Layout" />
             <.input field={f[:format]} type="select" label="Format" options={template_format_options(@site)} />
-            <.input field={f[:template]} type="hidden"  name="page[template]" id="page-form_template" value={Phoenix.HTML.Form.input_value(f, :template)}/>
+            <.input field={f[:template]} type="hidden" name="page[template]" id="page-form_template" value={Phoenix.HTML.Form.input_value(f, :template)} />
 
             <%= for mod <- extra_page_fields(@site) do %>
               <%= extra_page_field(@site, @extra_fields, mod) %>

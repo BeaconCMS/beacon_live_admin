@@ -33,6 +33,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
 
     %{data: components} = BeaconWeb.API.ComponentJSON.index(%{components: component_records})
     Logger.debug("##################### handle_params: params: #{inspect(params)}")
+
     {:noreply,
      assign(socket,
        page_title: "Edit Page",
@@ -54,13 +55,26 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
 
   @impl true
   def handle_event("enable_visual_mode", _args, socket) do
-    path = Beacon.LiveAdmin.Router.beacon_live_admin_path(socket, socket.assigns.beacon_page.site, "/pages/#{socket.assigns.page.id}", %{visual_mode: "true"})
+    path =
+      Beacon.LiveAdmin.Router.beacon_live_admin_path(
+        socket,
+        socket.assigns.beacon_page.site,
+        "/pages/#{socket.assigns.page.id}",
+        %{visual_mode: "true"}
+      )
+
     {:noreply, push_patch(socket, to: path)}
   end
 
   @impl true
   def handle_event("disable_visual_mode", _args, socket) do
-    path = Beacon.LiveAdmin.Router.beacon_live_admin_path(socket, socket.assigns.beacon_page.site, "/pages/#{socket.assigns.page.id}")
+    path =
+      Beacon.LiveAdmin.Router.beacon_live_admin_path(
+        socket,
+        socket.assigns.beacon_page.site,
+        "/pages/#{socket.assigns.page.id}"
+      )
+
     {:noreply, push_patch(socket, to: path)}
   end
 
