@@ -19,6 +19,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
 
     {:ok,
      assign(socket,
+       page_title: "Edit Page",
        page: page,
        components: components,
        editor: editor
@@ -28,7 +29,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
   @impl true
   def handle_params(params, _url, socket) do
     editor = Map.get(params, "editor", "code")
-    {:noreply, assign(socket, page_title: "Edit Page", editor: editor)}
+    {:noreply, assign(socket, editor: editor)}
   end
 
   @impl true
@@ -41,7 +42,6 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
     {:noreply, socket}
   end
 
-  @impl true
   def handle_event("enable_editor", %{"editor" => editor}, socket) do
     path =
       Beacon.LiveAdmin.Router.beacon_live_admin_path(

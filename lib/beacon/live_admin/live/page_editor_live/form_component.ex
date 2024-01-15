@@ -200,6 +200,9 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
 
   defp compile_stylesheet(%{site: _, template: _}), do: ""
 
+  defp svelte_page_builder_class("code" = _editor), do: "hidden"
+  defp svelte_page_builder_class("visual" = _editor), do: "relative overflow-x-hidden"
+
   @impl true
   @spec render(any()) :: Phoenix.LiveView.Rendered.t()
   def render(assigns) do
@@ -208,16 +211,6 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
       <style>
         <%= compile_stylesheet(@page) %>
       </style>
-
-      <%= inspect(@editor) %>
-
-      <p>
-        <%= String.slice(@form[:template].value, 0..100) %>
-      </p>
-
-      <p>
-        <%= String.slice(@builder_page.template, 0..100) %>
-      </p>
 
       <Beacon.LiveAdmin.AdminComponents.page_header socket={@socket} flash={@flash} page={@page} live_action={@live_action} />
 
@@ -257,15 +250,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
         </div>
       </.modal>
 
-      <.svelte
-        name="components/UiBuilder"
-        class={[
-          "relative overflow-x-hidden",
-          if(@editor == "code", do: "hidden")
-        ]}
-        props={%{components: @components, page: @builder_page}}
-        socket={@socket}
-      />
+      <.svelte name="components/UiBuilder" class={svelte_page_builder_class(@editor)} props={%{components: @components, page: @builder_page}} socket={@socket} />
 
       <div class={[
         "grid items-start lg:h-[calc(100vh_-_144px)] grid-cols-1 mx-auto mt-4 gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3",

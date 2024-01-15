@@ -1,8 +1,8 @@
 defmodule Beacon.LiveAdmin.Private do
   @doc false
 
-  # Call to private APIs.
-  # Those should be handled carefully and not be spread over the codebase.
+  # Concentrate calls to private APIs so it's easier to track breaking changes.
+  # Should be avoided as much as possible.
 
   def mount(params, session, socket) do
     Phoenix.LiveView.Lifecycle.mount(params, session, socket)
