@@ -31,8 +31,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
      |> assign_form(changeset)
      |> assign_new(:layouts, fn -> Content.list_layouts(site) end)
      |> assign(:language, language(page.format))
-     |> assign(:template, page.template)
-     |> assign(:changed_template, page.template)
+    #  |> assign(:template, page.template)
      |> assign(:builder_page, builder_page)
      |> assign_new(:visual_mode, fn -> false end)
      |> assign_extra_fields(changeset)}
@@ -48,25 +47,23 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
   end
 
   defp update_template(socket, template) do
+    # socket = socket |> assign(:template, template)
     params = Map.merge(socket.assigns.form.params, %{"template" => template})
     changeset = Content.change_page(socket.assigns.site, socket.assigns.page, params)
 
-    case Changeset.apply_action(changeset, :update) do
-      {:ok, page} ->
-        # TODO: remove web api
-        %{data: builder_page} = WebAPI.Page.show(page.site, page)
+    Logger.debug("###################################### changeset: #{inspect(changeset)}")
+    {:ok, socket |> assign_form(changeset)}
+    # case Changeset.apply_action(changeset, :update) do
+    #   {:ok, page} ->
+    #     Logger.debug("###################################### about to reurn the updated form")
+    #     #  |> assign(:template, page.template)
+    #     #  |> assign(:changed_template, page.template)
+    #     #  |> assign(:builder_page, builder_page)}
 
-        {:ok,
-         socket
-         |> assign_form(changeset)
-         |> assign(:template, page.template)
-         |> assign(:changed_template, page.template)
-         |> assign(:builder_page, builder_page)}
-
-      _ ->
-        # TODO: handle errors
-        {:ok, socket}
-    end
+    #   _ ->
+    #     # TODO: handle errors
+    #     {:ok, socket}
+    # end
   end
 
   @impl true
@@ -288,7 +285,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
             <LiveMonacoEditor.code_editor
               path="template"
               class="col-span-full lg:col-span-2"
-              value={@template}
+              value={@form.source.data.template}
               opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => @language})}
               change="set_template"
             />
