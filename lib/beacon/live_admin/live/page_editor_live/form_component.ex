@@ -5,7 +5,6 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
   alias Beacon.LiveAdmin.Content
   alias Beacon.LiveAdmin.WebAPI
   alias Ecto.Changeset
-  require Logger
 
   @impl true
   def update(%{site: site, page: page} = assigns, socket) do
@@ -15,31 +14,19 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
     changeset =
       case socket.assigns do
         %{form: form} ->
-          Logger.debug("###################################### There is a @form")
-          form.source
+          Content.change_page(site, page, form.params)
 
         _ ->
-          Logger.debug("###################################### There is no @form")
           Content.change_page(site, page)
       end
-
-    Logger.debug("###################################### page: #{inspect(page)}")
-    Logger.debug("###################################### changeset: #{inspect(changeset)}")
-
-    Logger.debug(
-      "###################################### page.template: #{inspect(page.template)}"
-    )
-
-    %{data: builder_page} = WebAPI.Page.show(site, page)
 
     {:ok,
      socket
      |> assign(assigns)
      |> assign_form(changeset)
+     |> assign_builder_page(changeset)
      |> assign_new(:layouts, fn -> Content.list_layouts(site) end)
      |> assign(:language, language(page.format))
-     |> assign(:builder_page, builder_page)
-     |> assign_new(:visual_mode, fn -> false end)
      |> assign_extra_fields(changeset)}
   end
 
@@ -49,33 +36,25 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
 
   def update(%{ast: ast}, socket) do
     template = Beacon.Template.HEEx.HEExDecoder.decode(ast)
-    update_template(socket, template)
+
+    socket
+    |> LiveMonacoEditor.set_value(template, to: "template")
+    |> update_template(template)
   end
 
   defp update_template(socket, template) do
     params = Map.merge(socket.assigns.form.params, %{"template" => template})
     changeset = Content.change_page(socket.assigns.site, socket.assigns.page, params)
 
-    case Changeset.apply_action(changeset, :update) do
-      {:ok, page} ->
-        %{data: builder_page} = WebAPI.Page.show(page.site, page)
-
-        socket =
-          socket
-          |> assign_form(changeset)
-          |> assign(:builder_page, builder_page)
-
-        {:ok, socket}
-
-      _ ->
-        # TODO: handle errors
-        {:ok, socket}
-    end
+    {:ok,
+     socket
+     |> assign_form(changeset)
+     |> assign_builder_page(changeset)}
   end
 
   @impl true
+  # ignore change events from the editor field
   def handle_event("validate", %{"_target" => ["live_monaco_editor", "template"]}, socket) do
-    # ignore change events from the editor field
     {:noreply, socket}
   end
 
@@ -166,6 +145,17 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
     assign(socket, :form, to_form(changeset))
   end
 
+  defp assign_builder_page(socket, changeset) do
+    with {:ok, page} <- Changeset.apply_action(changeset, :update),
+         %{data: builder_page} <- WebAPI.Page.show(page.site, page) do
+      assign(socket, :builder_page, builder_page)
+    else
+      # TODO: handle errors
+      _ ->
+        assign(socket, :builder_page, nil)
+    end
+  end
+
   defp assign_extra_fields(socket, changeset) do
     params = Ecto.Changeset.get_field(changeset, :extra)
 
@@ -219,13 +209,23 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
         <%= compile_stylesheet(@page) %>
       </style>
 
+      <%= inspect(@editor) %>
+
+      <p>
+        <%= String.slice(@form[:template].value, 0..100) %>
+      </p>
+
+      <p>
+        <%= String.slice(@builder_page.template, 0..100) %>
+      </p>
+
       <Beacon.LiveAdmin.AdminComponents.page_header socket={@socket} flash={@flash} page={@page} live_action={@live_action} />
 
       <.header>
         <%= @page_title %>
         <:actions>
-          <.button :if={!@visual_mode} type="button" phx-click="enable_visual_mode" class="uppercase">Visual Editor</.button>
-          <.button :if={@visual_mode} type="button" phx-click="disable_visual_mode" class="uppercase">Code Editor</.button>
+          <.button :if={@editor == "code"} type="button" phx-click="enable_editor" phx-value-editor="visual" class="uppercase">Visual Editor</.button>
+          <.button :if={@editor == "visual"} type="button" phx-click="enable_editor" phx-value-editor="code" class="uppercase">Code Editor</.button>
           <.button :if={@live_action == :new} phx-disable-with="Saving..." form="page-form" class="uppercase">Create Draft Page</.button>
           <.button :if={@live_action == :edit} phx-disable-with="Saving..." form="page-form" class="uppercase">Save Changes</.button>
           <.button :if={@live_action == :edit} phx-click={show_modal("publish-confirm-modal")} phx-target={@myself} class="uppercase">Publish</.button>
@@ -257,22 +257,19 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
         </div>
       </.modal>
 
-      <%!-- <p>Page.template: <%= @page.template %></p> --%>
-      <p>Template: <%= @form[:template].value %></p>
-      <%!-- <p>form: <%= inspect(@form) %></p> --%>
-
       <.svelte
         name="components/UiBuilder"
         class={[
           "relative overflow-x-hidden",
-          if(!@visual_mode, do: "hidden")
+          if(@editor == "code", do: "hidden")
         ]}
         props={%{components: @components, page: @builder_page}}
         socket={@socket}
       />
+
       <div class={[
         "grid items-start lg:h-[calc(100vh_-_144px)] grid-cols-1 mx-auto mt-4 gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3",
-        if(@visual_mode, do: "hidden")
+        if(@editor == "visual", do: "hidden")
       ]}>
         <div class="p-4 bg-white col-span-full lg:col-span-1 rounded-[1.25rem] lg:rounded-t-[1.25rem] lg:rounded-b-none lg:h-full">
           <.form :let={f} for={@form} id="page-form" class="space-y-8" phx-target={@myself} phx-change="validate" phx-submit="save">

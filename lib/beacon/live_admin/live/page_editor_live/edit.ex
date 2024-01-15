@@ -2,7 +2,6 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
   @moduledoc false
 
   require IEx
-  require Logger
   use Beacon.LiveAdmin.PageBuilder
   alias Beacon.LiveAdmin.Content
   alias Beacon.LiveAdmin.WebAPI
@@ -12,35 +11,24 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
   def menu_link(_, _), do: :skip
 
   @impl true
-  def mount(params, _session, socket) do
-    component_records =
-      Content.list_components(socket.assigns.beacon_page.site, per_page: :infinity)
+  def mount(%{"id" => id} = params, _session, socket) do
+    page = Content.get_page(socket.assigns.beacon_page.site, id, preloads: [:layout])
+    components = Content.list_components(socket.assigns.beacon_page.site, per_page: :infinity)
+    %{data: components} = BeaconWeb.API.ComponentJSON.index(%{components: components})
+    editor = Map.get(params, "editor", "code")
 
     {:ok,
      assign(socket,
-       page: nil,
-       visual_mode: params["visual_mode"] === "true",
-       components: component_records
+       page: page,
+       components: components,
+       editor: editor
      )}
   end
 
   @impl true
-  def handle_params(%{"id" => id} = params, _url, socket) do
-    page = Content.get_page(socket.assigns.beacon_page.site, id, preloads: [:layout])
-
-    component_records =
-      Content.list_components(socket.assigns.beacon_page.site, per_page: :infinity)
-
-    %{data: components} = BeaconWeb.API.ComponentJSON.index(%{components: component_records})
-    Logger.debug("##################### handle_params: params: #{inspect(params)}")
-
-    {:noreply,
-     assign(socket,
-       page_title: "Edit Page",
-       page: page,
-       visual_mode: params["visual_mode"] === "true",
-       components: components
-     )}
+  def handle_params(params, _url, socket) do
+    editor = Map.get(params, "editor", "code")
+    {:noreply, assign(socket, page_title: "Edit Page", editor: editor)}
   end
 
   @impl true
@@ -54,31 +42,18 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
   end
 
   @impl true
-  def handle_event("enable_visual_mode", _args, socket) do
+  def handle_event("enable_editor", %{"editor" => editor}, socket) do
     path =
       Beacon.LiveAdmin.Router.beacon_live_admin_path(
         socket,
         socket.assigns.beacon_page.site,
         "/pages/#{socket.assigns.page.id}",
-        %{visual_mode: "true"}
+        %{editor: editor}
       )
 
     {:noreply, push_patch(socket, to: path)}
   end
 
-  @impl true
-  def handle_event("disable_visual_mode", _args, socket) do
-    path =
-      Beacon.LiveAdmin.Router.beacon_live_admin_path(
-        socket,
-        socket.assigns.beacon_page.site,
-        "/pages/#{socket.assigns.page.id}"
-      )
-
-    {:noreply, push_patch(socket, to: path)}
-  end
-
-  @impl true
   def handle_event(
         "render_component_in_page",
         %{"component_id" => component_id, "page_id" => page_id},
@@ -111,7 +86,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
       site={@beacon_page.site}
       page_title={@page_title}
       live_action={@live_action}
-      visual_mode={@visual_mode}
+      editor={@editor}
       components={@components}
       page={@page}
       patch="/pages"
