@@ -195,10 +195,15 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
     {:safe, html}
   end
 
-  defp compile_stylesheet(%{site: site, template: template}) when is_binary(template),
-    do: Beacon.LiveAdmin.Layouts.page_stylesheet(site, template)
+  # track @form which gets updated on template changes
+  # to force recompiling the page stylesheet
+  defp compile_stylesheet(%{source: %Changeset{} = changeset}) do
+    site = Changeset.get_field(changeset, :site)
+    template = Changeset.get_field(changeset, :template)
+    Beacon.LiveAdmin.Layouts.page_stylesheet(site, template)
+  end
 
-  defp compile_stylesheet(%{site: _, template: _}), do: ""
+  defp compile_stylesheet(_), do: ""
 
   defp svelte_page_builder_class("code" = _editor), do: "hidden"
   defp svelte_page_builder_class("visual" = _editor), do: "relative overflow-x-hidden"
@@ -209,7 +214,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
     ~H"""
     <div>
       <style>
-        <%= compile_stylesheet(@page) %>
+        <%= compile_stylesheet(@form) %>
       </style>
 
       <Beacon.LiveAdmin.AdminComponents.page_header socket={@socket} flash={@flash} page={@page} live_action={@live_action} />
