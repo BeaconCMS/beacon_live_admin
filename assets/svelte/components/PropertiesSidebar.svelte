@@ -146,6 +146,7 @@
           <div 
             class="absolute h-8 bg-white opacity-70 w-full h-full p-4" 
             class:opacity-90={isDraggingOver}
+            role="list"
             on:drop|preventDefault={dropInside} 
             on:dragover={dragOver}
             on:dragleave={() => isDraggingOver = false}

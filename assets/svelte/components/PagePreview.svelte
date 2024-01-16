@@ -48,25 +48,28 @@
 </script>
 
 <div class="flex-1 px-8 py-4 flex max-h-full" data-test-id="main">
-  <BrowserFrame page={$page}>
-    <div 
-      on:drop|preventDefault={handleDragDrop}
-      on:dragover|preventDefault={dragOver}
-      style="--outlined-id: title-1"
-      id="fake-browser-content"
-      class="bg-white rounded-b-xl relative overflow-hidden flex-1 {isDraggingOver && 'border-dashed border-blue-500 border-2'}" 
-      data-test-id="browser-content">
-      <div id="page-wrapper" class="p-1 m-1" data-selected={$selectedAstElementId === 'root'}>
-        {#each $page.layout.ast as layoutAstNode}
-          <LayoutAstNode node={layoutAstNode}>
-            {#each $page.ast as astNode, index}
-              <PageAstNode node={astNode} nodeId="{index}"/>
-            {/each}
-          </LayoutAstNode>
-        {/each}
+  {#if $page}
+    <BrowserFrame page={$page}>
+      <div 
+        on:drop|preventDefault={handleDragDrop}
+        on:dragover|preventDefault={dragOver}
+        role="document"
+        style="--outlined-id: title-1"
+        id="fake-browser-content"
+        class="bg-white rounded-b-xl relative overflow-hidden flex-1 {isDraggingOver && 'border-dashed border-blue-500 border-2'}" 
+        data-test-id="browser-content">
+        <div id="page-wrapper" class="p-1 m-1" data-selected={$selectedAstElementId === 'root'}>
+          {#each $page.layout.ast as layoutAstNode}
+            <LayoutAstNode node={layoutAstNode}>
+              {#each $page.ast as astNode, index}
+                <PageAstNode node={astNode} nodeId="{index}"/>
+              {/each}
+            </LayoutAstNode>
+          {/each}
+        </div>
       </div>
-    </div>
-  </BrowserFrame>
+    </BrowserFrame>
+  {/if}
 </div>
 
 <style>
