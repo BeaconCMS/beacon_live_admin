@@ -1,7 +1,6 @@
 defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
   @moduledoc false
 
-  require IEx
   use Beacon.LiveAdmin.PageBuilder
   alias Beacon.LiveAdmin.Content
   alias Beacon.LiveAdmin.WebAPI
@@ -11,25 +10,27 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
   def menu_link(_, _), do: :skip
 
   @impl true
-  def mount(%{"id" => id} = params, _session, socket) do
-    page = Content.get_page(socket.assigns.beacon_page.site, id, preloads: [:layout])
-    components = Content.list_components(socket.assigns.beacon_page.site, per_page: :infinity)
-    %{data: components} = BeaconWeb.API.ComponentJSON.index(%{components: components})
-    editor = Map.get(params, "editor", "code")
-
-    {:ok,
-     assign(socket,
-       page_title: "Edit Page",
-       page: page,
-       components: components,
-       editor: editor
-     )}
-  end
-
-  @impl true
   def handle_params(params, _url, socket) do
     editor = Map.get(params, "editor", "code")
-    {:noreply, assign(socket, editor: editor)}
+    %{site: site} = socket.assigns.beacon_page
+
+    socket =
+      socket
+      |> assign_new(:layouts, fn -> Content.list_layouts(site) end)
+      |> assign_new(:components, fn ->
+        components = Content.list_components(site, per_page: :infinity)
+        %{data: components} = BeaconWeb.API.ComponentJSON.index(%{components: components})
+        components
+      end)
+      |> assign_new(:page, fn -> Content.get_page(site, params["id"], preloads: [:layout]) end)
+
+    socket =
+      assign(socket,
+        page_title: "Edit Page",
+        editor: editor
+      )
+
+    {:noreply, socket}
   end
 
   @impl true
@@ -83,12 +84,13 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
     <.live_component
       module={Beacon.LiveAdmin.PageEditorLive.FormComponent}
       id="page-editor-form-edit"
-      site={@beacon_page.site}
-      page_title={@page_title}
       live_action={@live_action}
-      editor={@editor}
-      components={@components}
+      page_title={@page_title}
+      site={@beacon_page.site}
+      layouts={@layouts}
       page={@page}
+      components={@components}
+      editor={@editor}
       patch="/pages"
     />
     """

@@ -19,3 +19,5 @@ if Mix.env() == :dev do
       cd: Path.expand("../assets", __DIR__)
     ]
 end
+
+import_config "#{config_env()}.exs"

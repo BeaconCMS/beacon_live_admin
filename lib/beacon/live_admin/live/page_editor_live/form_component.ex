@@ -25,7 +25,6 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
      |> assign(assigns)
      |> assign_form(changeset)
      |> assign_builder_page(changeset)
-     |> assign_new(:layouts, fn -> Content.list_layouts(site) end)
      |> assign(:language, language(page.format))
      |> assign_extra_fields(changeset)}
   end
@@ -71,7 +70,10 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
       |> Content.validate_page(socket.assigns.page, page_params)
       |> Map.put(:action, :validate)
 
-    {:noreply, assign_form(socket, changeset)}
+    {:noreply,
+     socket
+     |> assign_form(changeset)
+     |> assign_builder_page(changeset)}
   end
 
   def handle_event("validate", %{"page" => page_params}, socket) do
@@ -83,6 +85,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
     {:noreply,
      socket
      |> assign_form(changeset)
+     |> assign_builder_page(changeset)
      |> assign_extra_fields(changeset)}
   end
 
@@ -115,7 +118,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
         {:noreply,
          socket
          |> put_flash(:info, "Page created successfully")
-         |> push_patch(to: to)}
+         |> push_navigate(to: to)}
 
       {:error, changeset} ->
         changeset = Map.put(changeset, :action, :insert)
@@ -195,15 +198,13 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
     {:safe, html}
   end
 
-  # track @form which gets updated on template changes
-  # to force recompiling the page stylesheet
-  defp compile_stylesheet(%{source: %Changeset{} = changeset}) do
+  defp compile_stylesheet(%{source: %Changeset{} = changeset}, "visual" = _editor) do
     site = Changeset.get_field(changeset, :site)
-    template = Changeset.get_field(changeset, :template)
+    template = Changeset.get_field(changeset, :template) || ""
     Beacon.LiveAdmin.Layouts.page_stylesheet(site, template)
   end
 
-  defp compile_stylesheet(_), do: ""
+  defp compile_stylesheet(_, _), do: ""
 
   defp svelte_page_builder_class("code" = _editor), do: "hidden"
   defp svelte_page_builder_class("visual" = _editor), do: "relative overflow-x-hidden"
@@ -214,7 +215,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
     ~H"""
     <div>
       <style>
-        <%= compile_stylesheet(@form) %>
+        <%= compile_stylesheet(@form, @editor) %>
       </style>
 
       <Beacon.LiveAdmin.AdminComponents.page_header socket={@socket} flash={@flash} page={@page} live_action={@live_action} />

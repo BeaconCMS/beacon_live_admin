@@ -215,7 +215,8 @@ defmodule Beacon.LiveAdmin.PageLive do
     path = Beacon.LiveAdmin.Router.beacon_live_admin_path(socket, page.site, path)
     assigns = %{text: text, icon: icon, path: path}
 
-    # force redirect to re-execute plug to fecth current url
+    # use href to force redirecting to re-execute plug to fecth current url
+    # more info at https://github.com/phoenixframework/phoenix_live_view/pull/2654
     ~H"""
     <.link
       href={@path}

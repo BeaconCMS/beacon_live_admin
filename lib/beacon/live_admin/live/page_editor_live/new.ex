@@ -4,39 +4,51 @@ defmodule Beacon.LiveAdmin.PageEditorLive.New do
   use Beacon.LiveAdmin.PageBuilder
   alias Beacon.LiveAdmin.Content
   alias Beacon.LiveAdmin.WebAPI
-  require Logger
 
   @impl true
-  @spec menu_link(any(), any()) :: :skip | {:submenu, <<_::40>>}
   def menu_link("/pages", :new), do: {:submenu, "Pages"}
   def menu_link(_, _), do: :skip
 
   @impl true
-  def mount(params, _session, socket) do
-    components = Content.list_components(socket.assigns.beacon_page.site, per_page: :infinity)
-    %{data: components} = BeaconWeb.API.ComponentJSON.index(%{components: components})
-    editor = Map.get(params, "editor", "code")
-
-    {:ok,
-     assign(socket,
-       page_title: "Create New Page",
-       components: components,
-       page: %Beacon.Content.Page{
-         path: "",
-         site: socket.assigns.beacon_page.site,
-         layout: %Beacon.Content.Layout{
-           template: "<%= @inner_content %>",
-           site: socket.assigns.beacon_page.site
-         }
-       },
-       editor: editor
-     )}
-  end
-
-  @impl true
   def handle_params(params, _url, socket) do
     editor = Map.get(params, "editor", "code")
-    {:noreply, assign(socket, editor: editor)}
+    %{site: site} = socket.assigns.beacon_page
+
+    socket =
+      socket
+      |> assign_new(:layouts, fn -> Content.list_layouts(site) end)
+      |> assign_new(:components, fn ->
+        components = Content.list_components(site, per_page: :infinity)
+        %{data: components} = BeaconWeb.API.ComponentJSON.index(%{components: components})
+        components
+      end)
+
+    socket =
+      assign(socket,
+        page_title: "Create New Page",
+        editor: editor,
+        page: build_new_page(site, socket.assigns.layouts)
+      )
+
+    {:noreply, socket}
+  end
+
+  defp build_new_page(site, [layout | _] = _layouts) do
+    %Beacon.Content.Page{
+      path: "",
+      site: site,
+      layout_id: layout.id,
+      layout: layout
+    }
+  end
+
+  defp build_new_page(site, _layouts) do
+    %Beacon.Content.Page{
+      path: "",
+      site: site,
+      layout_id: nil,
+      layout: nil
+    }
   end
 
   @impl true
@@ -90,12 +102,13 @@ defmodule Beacon.LiveAdmin.PageEditorLive.New do
     <.live_component
       module={Beacon.LiveAdmin.PageEditorLive.FormComponent}
       id="page-editor-form-new"
-      site={@beacon_page.site}
+      live_action={@live_action}
       page_title={@page_title}
+      site={@beacon_page.site}
+      layouts={@layouts}
+      page={@page}
       components={@components}
       editor={@editor}
-      live_action={@live_action}
-      page={@page}
       patch="/pages"
     />
     """
