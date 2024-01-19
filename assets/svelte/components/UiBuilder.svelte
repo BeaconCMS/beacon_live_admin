@@ -4,12 +4,15 @@
 	import PagePreview from "./PagePreview.svelte";
 	import PropertiesSidebar from "./PropertiesSidebar.svelte";
 	import { page as pageStore } from "$lib/stores/page";
+	import { styles as stylesStore } from "$lib/stores/styles";
 	import type { ComponentDefinition, Page } from "$lib/types";
 
 	export let components: ComponentDefinition[];
 	export let page: Page;
+	export let styles: string;
 	export let live;
 	$: $pageStore = page;
+	$: $stylesStore = styles;
 
 	function addBasicComponentToTarget(e: CustomEvent) {
 		// This method is in PagePreview. 

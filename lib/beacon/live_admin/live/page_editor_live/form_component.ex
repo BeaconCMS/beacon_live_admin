@@ -214,9 +214,9 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
   def render(assigns) do
     ~H"""
     <div>
-      <style>
+      <%!-- <style>
         <%= compile_stylesheet(@form, @editor) %>
-      </style>
+      </style> --%>
 
       <Beacon.LiveAdmin.AdminComponents.page_header socket={@socket} flash={@flash} page={@page} live_action={@live_action} />
 
@@ -256,7 +256,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
         </div>
       </.modal>
 
-      <.svelte name="components/UiBuilder" class={svelte_page_builder_class(@editor)} props={%{components: @components, page: @builder_page}} socket={@socket} />
+      <.svelte name="components/UiBuilder" class={svelte_page_builder_class(@editor)} props={%{components: @components, page: @builder_page, styles: compile_stylesheet(@form, @editor) }} socket={@socket} />
 
       <div class={[
         "grid items-start lg:h-[calc(100vh_-_144px)] grid-cols-1 mx-auto mt-4 gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3",
