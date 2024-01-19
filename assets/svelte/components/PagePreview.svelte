@@ -1,7 +1,5 @@
 <script lang="ts">
-  import { Page, AstElement, AstNode } from "$lib/types"
-  import LayoutAstNode from './LayoutAstNode.svelte';
-  import PageAstNode from './PageAstNode.svelte';
+  import { AstElement, AstNode } from "$lib/types"
   import BrowserFrame from './BrowserFrame.svelte';
   import { selectedAstElementId } from "$lib/stores/page";
   import { currentComponentCategory } from "$lib/stores/currentComponentCategory";
@@ -59,13 +57,7 @@
         class="bg-white rounded-b-xl relative overflow-hidden flex-1 {isDraggingOver && 'border-dashed border-blue-500 border-2'}" 
         data-test-id="browser-content">
         <div id="page-wrapper" class="p-1 m-1" data-selected={$selectedAstElementId === 'root'}>
-          {#each $page.layout.ast as layoutAstNode}
-            <LayoutAstNode node={layoutAstNode}>
-              {#each $page.ast as astNode, index}
-                <PageAstNode node={astNode} nodeId="{index}"/>
-              {/each}
-            </LayoutAstNode>
-          {/each}
+          <page-wrapper></page-wrapper>
         </div>
       </div>
     </BrowserFrame>
@@ -73,11 +65,11 @@
 </div>
 
 <style>
-  :global([data-selected="true"], [data-highlighted="true"]) {
+  /* :global([data-selected="true"], [data-highlighted="true"]) {
     outline-color: #06b6d4; 
     outline-width: 2px;
     outline-style: dashed;    
-  }
+  } */
   :global(.contents[data-nochildren="true"], .contents[data-nochildren="true"]) {
     /* In the specific case of an element containing only an EEX expression that generates no children (only a text node),
     there is no child node to which apply the styles, so we have to apply them to the wrapper, so we have to overwrite the

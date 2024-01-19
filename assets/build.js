@@ -29,7 +29,12 @@ let optsClient = {
     importGlobPlugin(),
     sveltePlugin({
       preprocess: sveltePreprocess(),
-      compilerOptions: { dev: !deploy, hydratable: true, css: "injected" },
+      compilerOptions: { 
+        dev: !deploy, 
+        hydratable: true, 
+        css: "injected",
+        customElement: true
+      },
     }),
   ],
 }
@@ -50,7 +55,12 @@ let optsServer = {
     importGlobPlugin(),
     sveltePlugin({
       preprocess: sveltePreprocess(),
-      compilerOptions: { dev: !deploy, hydratable: true, generate: "ssr" },
+      compilerOptions: { 
+        dev: !deploy, 
+        hydratable: true, 
+        generate: "ssr",
+        customElement: true
+      },
     }),
   ],
 }
