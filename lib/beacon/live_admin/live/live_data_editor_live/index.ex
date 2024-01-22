@@ -45,10 +45,12 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Index do
 
   def handle_event("submit_path", %{"path" => path}, socket) do
     %{beacon_page: %{site: site}} = socket.assigns
-    attrs = %{path: path, site: site}
+
+    # TODO: remove this after https://github.com/BeaconCMS/beacon/issues/395 is resolved
+    path = String.trim_leading(path, "/")
 
     socket =
-      case Content.create_live_data(site, attrs) do
+      case Content.create_live_data(site, %{path: path, site: site}) do
         {:ok, live_data} ->
           socket
           |> assign(live_data_paths: Content.live_data_paths_for_site(site))
@@ -67,6 +69,9 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Index do
   def handle_event("edit_path", params, socket) do
     %{beacon_page: %{site: site}, selected: selected} = socket.assigns
     %{"live_data" => %{"path" => path}} = params
+
+    # TODO: remove this after https://github.com/BeaconCMS/beacon/issues/395 is resolved
+    path = String.trim_leading(path, "/")
 
     {:ok, _live_data} = Content.update_live_data_path(site, selected, path)
 
