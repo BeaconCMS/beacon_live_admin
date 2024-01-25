@@ -150,7 +150,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
 
   defp assign_builder_page(
          %{assigns: %{editor: "code", builder_page: builder_page}} = socket,
-         changeset
+         _changeset
        )
        when not is_nil(builder_page) do
     socket
