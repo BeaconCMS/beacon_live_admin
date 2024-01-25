@@ -148,6 +148,14 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
     assign(socket, :form, to_form(changeset))
   end
 
+  defp assign_builder_page(
+         %{assigns: %{editor: "code", builder_page: builder_page}} = socket,
+         changeset
+       )
+       when not is_nil(builder_page) do
+    socket
+  end
+
   defp assign_builder_page(socket, changeset) do
     with {:ok, page} <- Changeset.apply_action(changeset, :update),
          %{data: builder_page} <- WebAPI.Page.show(page.site, page) do
@@ -252,7 +260,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
         </div>
       </.modal>
 
-      <.svelte name="components/UiBuilder" class={svelte_page_builder_class(@editor)} props={%{components: @components, page: @builder_page, styles: compile_stylesheet(@form, @editor) }} socket={@socket} />
+      <.svelte name="components/UiBuilder" class={svelte_page_builder_class(@editor)} props={%{components: @components, page: @builder_page, styles: compile_stylesheet(@form, @editor)}} socket={@socket} />
 
       <div class={[
         "grid items-start lg:h-[calc(100vh_-_144px)] grid-cols-1 mx-auto mt-4 gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3",
