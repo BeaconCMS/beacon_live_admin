@@ -2,6 +2,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.Index do
   @moduledoc false
 
   use Beacon.LiveAdmin.PageBuilder
+  alias Beacon.LiveAdmin.Cluster
   alias Beacon.LiveAdmin.Content
 
   on_mount {Beacon.LiveAdmin.Hooks.Authorized, {:components, :index}}
@@ -11,7 +12,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, :components, [])}
+    {:ok, assign(socket, components: [], running_sites: Cluster.running_sites())}
   end
 
   @impl true
@@ -37,9 +38,18 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.Index do
     {:noreply, push_patch(socket, to: path)}
   end
 
+  def handle_event("change-site", %{"site" => site}, socket) do
+    site = String.to_existing_atom(site)
+    path = beacon_live_admin_path(socket, site, "/components")
+
+    {:noreply, push_navigate(socket, to: path)}
+  end
+
   @impl true
   def render(assigns) do
     ~H"""
+    <.site_selector selected_site={@beacon_page.site} options={@running_sites} />
+
     <.header>
       Components
       <:actions>

@@ -2,6 +2,7 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.Index do
   @moduledoc false
 
   use Beacon.LiveAdmin.PageBuilder
+  alias Beacon.LiveAdmin.Cluster
   alias Beacon.LiveAdmin.MediaLibrary
   alias Beacon.LiveAdmin.Authorization
   alias Beacon.MediaLibrary.Asset
@@ -17,6 +18,7 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.Index do
       socket
       |> assign(:authn_context, %{mod: :media_library})
       |> assign(assets: list_assets(socket.assigns.beacon_page.site), search: "")
+      |> assign(running_sites: Cluster.running_sites())
 
     {:ok, socket}
   end
@@ -110,6 +112,13 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.Index do
     end
   end
 
+  def handle_event("change-site", %{"site" => site}, socket) do
+    site = String.to_existing_atom(site)
+    path = beacon_live_admin_path(socket, site, "/media_library")
+
+    {:noreply, push_navigate(socket, to: path)}
+  end
+
   defp list_assets(site) do
     MediaLibrary.list_assets(site)
   end
@@ -121,6 +130,8 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.Index do
   @impl true
   def render(assigns) do
     ~H"""
+    <.site_selector selected_site={@beacon_page.site} options={@running_sites} />
+
     <.header>
       Media Library
       <:actions>

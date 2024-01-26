@@ -13,6 +13,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
   import Beacon.LiveAdmin.Router, only: [beacon_live_admin_path: 3]
 
   defdelegate header(assigns), to: CoreComponents
+  defdelegate site_selector(assigns), to: CoreComponents
   defdelegate icon(assigns), to: CoreComponents
   defdelegate show_modal(assigns), to: CoreComponents
   defdelegate hide_modal(assigns), to: CoreComponents
