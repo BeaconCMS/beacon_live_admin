@@ -13,13 +13,15 @@
     <slot/>
   {:else if node.rendered_html}
     {@html node.rendered_html}
-  {:else if node.attrs.selfClose}
+  {:else if node.attrs?.selfClose}
     <svelte:element this={node.tag} {...node.attrs}/>
   {:else}
     <svelte:element this={node.tag} {...node.attrs}>
-      {#each node.content as subnode, index}
-        <svelte:self node={subnode}/>
-      {/each}
+      {#if node.content}
+        {#each node.content as subnode, index}
+          <svelte:self node={subnode}/>
+        {/each}
+      {/if}
     </svelte:element>
   {/if}
 {:else}
