@@ -221,6 +221,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
   @spec render(any()) :: Phoenix.LiveView.Rendered.t()
   def render(assigns) do
     ~H"""
+
     <div>
       <Beacon.LiveAdmin.AdminComponents.page_header socket={@socket} flash={@flash} page={@page} live_action={@live_action} />
 
