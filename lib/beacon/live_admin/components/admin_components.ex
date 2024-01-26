@@ -646,10 +646,10 @@ defmodule Beacon.LiveAdmin.AdminComponents do
 
   ## Examples
 
-      <.site_selector selected_site={:dev} options={[:dev, :dy]} />
+      <.site_selector selected_site="dev" options={[:dev, :dy]} />
   """
-  attr :options, :list, default: []
   attr :selected_site, :string, default: ""
+  attr :options, :list, default: []
 
   def site_selector(assigns) do
     ~H"""
