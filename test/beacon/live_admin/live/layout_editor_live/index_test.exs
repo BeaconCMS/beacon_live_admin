@@ -23,14 +23,14 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.IndexTest do
 
     html =
       live
-      |> element("form")
+      |> element("#search-form")
       |> render_change(%{search: %{query: "nope"}})
 
     refute html =~ "Site A - Main Layout"
 
     html =
       live
-      |> element("form")
+      |> element("#search-form")
       |> render_change(%{search: %{query: "main"}})
 
     assert html =~ "Site A - Main Layout"

@@ -30,14 +30,14 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.IndexTest do
 
     html =
       live
-      |> element("form")
+      |> element("#search-form")
       |> render_change(%{search: %{query: "nope"}})
 
     refute html =~ "Site A - Header"
 
     html =
       live
-      |> element("form")
+      |> element("#search-form")
       |> render_change(%{search: %{query: "header"}})
 
     assert html =~ "Site A - Header"
