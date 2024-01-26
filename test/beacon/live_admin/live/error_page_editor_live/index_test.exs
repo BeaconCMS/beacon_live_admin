@@ -76,4 +76,14 @@ defmodule Beacon.LiveAdmin.ErrorPageEditorLive.IndexTest do
     refute has_element?(view, "#delete-modal")
     refute has_element?(view, "span", "500")
   end
+
+  test "display a site selector", %{conn: conn} do
+    {:ok, live, _html} = live(conn, "/admin/site_a/error_pages")
+
+    live
+    |> element("#site-selector-form")
+    |> render_change(%{site: "site_c"})
+
+    assert_redirected(live, "/admin/site_c/error_pages")
+  end
 end

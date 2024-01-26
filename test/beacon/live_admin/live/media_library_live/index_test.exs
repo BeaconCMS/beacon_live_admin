@@ -23,4 +23,14 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.IndexTest do
            |> element("#search-form")
            |> render_change(%{search: "ar"}) =~ "test_search.webp"
   end
+
+  test "display a site selector", %{conn: conn} do
+    {:ok, live, _html} = live(conn, "/admin/site_a/media_library")
+
+    live
+    |> element("#site-selector-form")
+    |> render_change(%{site: "site_c"})
+
+    assert_redirected(live, "/admin/site_c/media_library")
+  end
 end
