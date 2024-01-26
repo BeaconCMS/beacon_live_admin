@@ -114,7 +114,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
         <div class="basis-10/12">
           <.input field={f[:query]} value={@query} type="search" autofocus={true} placeholder="Search by path or title (showing up to 20 results)" />
         </div>
-        <div class="basis-1/12">
+        <div :if={@pages > 0} class="basis-1/12">
           <.input type="select" field={f[:sort]} value={@sort} options={[{"Title", "title"}, {"Path", "path"}]} />
         </div>
       </div>
@@ -135,7 +135,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
         </:action>
       </.table>
 
-      <.pagination current_page={@page} pages={@pages} />
+      <.pagination :if={@pages > 0} current_page={@page} pages={@pages} />
     </.main_content>
     """
   end
