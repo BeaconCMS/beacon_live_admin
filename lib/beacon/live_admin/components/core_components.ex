@@ -374,19 +374,6 @@ defmodule Beacon.LiveAdmin.CoreComponents do
     """
   end
 
-  attr :options, :list, default: []
-  attr :selected_site, :string, default: ""
-
-  def site_selector(assigns) do
-    ~H"""
-    <div class="flex justify-end">
-      <.form for={%{}} phx-change="change-site" class="-mt-16 w-1/12">
-        <.input type="select" name="site" options={@options} value={@selected_site} />
-      </.form>
-    </div>
-    """
-  end
-
   @doc ~S"""
   Renders a table with generic styling.
 

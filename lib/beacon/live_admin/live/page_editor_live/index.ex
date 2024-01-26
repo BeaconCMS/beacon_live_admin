@@ -49,6 +49,13 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
   end
 
   @impl true
+  def handle_event("change-site", %{"site" => site}, socket) do
+    site = String.to_existing_atom(site)
+    path = beacon_live_admin_path(socket, site, "/pages")
+
+    {:noreply, push_navigate(socket, to: path)}
+  end
+
   def handle_event("search", %{"search" => %{"query" => query, "sort" => sort}}, socket) do
     path =
       beacon_live_admin_path(
@@ -97,13 +104,6 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
      socket
      |> assign(page: page)
      |> push_patch(to: path)}
-  end
-
-  def handle_event("change-site", %{"site" => site}, socket) do
-    site = String.to_existing_atom(site)
-    path = beacon_live_admin_path(socket, site, "/pages")
-
-    {:noreply, push_navigate(socket, to: path)}
   end
 
   @impl true

@@ -13,7 +13,6 @@ defmodule Beacon.LiveAdmin.AdminComponents do
   import Beacon.LiveAdmin.Router, only: [beacon_live_admin_path: 3]
 
   defdelegate header(assigns), to: CoreComponents
-  defdelegate site_selector(assigns), to: CoreComponents
   defdelegate icon(assigns), to: CoreComponents
   defdelegate show_modal(assigns), to: CoreComponents
   defdelegate hide_modal(assigns), to: CoreComponents
@@ -638,6 +637,26 @@ defmodule Beacon.LiveAdmin.AdminComponents do
         <%= page %>
       </button>
       <button phx-click="next-page" disabled={@current_page == @pages} class="px-2 font-medium disabled:text-gray-400">next &#8594;</button>
+    </div>
+    """
+  end
+
+  @doc """
+  Renders a select input with the available sites to select.
+
+  ## Examples
+
+      <.site_selector selected_site={:dev} options={[:dev, :dy]} />
+  """
+  attr :options, :list, default: []
+  attr :selected_site, :string, default: ""
+
+  def site_selector(assigns) do
+    ~H"""
+    <div class="flex justify-end">
+      <.form for={%{}} phx-change="change-site" class="-mt-16 w-1/12">
+        <.input type="select" name="site" options={@options} value={@selected_site} />
+      </.form>
     </div>
     """
   end
