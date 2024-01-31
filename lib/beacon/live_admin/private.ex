@@ -21,14 +21,7 @@ defmodule Beacon.LiveAdmin.Private do
   # support LiveView up to v0.20.2
   if Version.compare(@phoenix_live_view_version, "0.20.2") in [:lt, :eq] do
     def build_on_mount_lifecycle(socket, page_module) do
-      update_in(socket.private.lifecycle.mount, fn hooks ->
-        page_hooks =
-          page_module.on_mount()
-          |> Enum.map(&Phoenix.LiveView.Lifecycle.on_mount(nil, &1))
-          |> Enum.reverse()
-
-        hooks ++ page_hooks
-      end)
+      update_in(socket.private.lifecycle.mount, &(&1 ++ Enum.reverse(page_module.on_mount())))
     end
   end
 
