@@ -66,7 +66,7 @@
 <div class="w-64 bg-white border-gray-100 border-solid border-r" id="left-sidebar" data-test-id="left-sidebar">
   <div class="sticky top-0">
     <div class="border-b border-gray-100 border-solid py-4 px-4" data-test-id="logo">
-      <span class="text-lg">Beacon CMS</span>
+      <span class="text-lg">Components</span>
     </div>
     <ul class="px-4" data-test-id="component-tree">
       {#each menuCategories as category}
