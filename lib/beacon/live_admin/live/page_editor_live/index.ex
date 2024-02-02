@@ -46,6 +46,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
      |> stream(:pages, pages, reset: true)}
   end
 
+  @impl true
   def handle_event("search", %{"search" => %{"query" => query, "sort" => sort}}, socket) do
     path =
       beacon_live_admin_path(

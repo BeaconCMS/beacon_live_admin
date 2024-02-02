@@ -11,7 +11,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, components: [])}
+    {:ok, assign(socket, :components, [])}
   end
 
   @impl true

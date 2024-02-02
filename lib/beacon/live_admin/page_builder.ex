@@ -77,6 +77,7 @@ defmodule Beacon.LiveAdmin.PageBuilder do
       Beacon.LiveAdmin.Private.register_on_mount_lifecycle_attribute(__MODULE__)
       @before_compile Beacon.LiveAdmin.PageBuilder
 
+      @impl true
       def init(opts), do: {:ok, opts}
       defoverridable init: 1
 

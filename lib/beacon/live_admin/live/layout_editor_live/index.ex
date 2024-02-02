@@ -11,7 +11,7 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, beacon_layouts: [])}
+    {:ok, assign(socket, :beacon_layouts, [])}
   end
 
   @impl true
