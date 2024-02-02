@@ -108,12 +108,10 @@ defmodule Beacon.LiveAdmin.PageLive do
         socket.assigns.beacon_page.site,
         socket.assigns.beacon_page.path,
         Table.query_params(socket.assigns.beacon_page.table, sort: sort)
-      ) |> dbg
+      )
 
     {:noreply, push_patch(socket, to: to)}
   end
-
-
 
   def handle_event(event, params, socket) do
     maybe_apply_module(socket, :handle_event, [event, params], &{:noreply, &1})

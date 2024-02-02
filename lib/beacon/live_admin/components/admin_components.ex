@@ -661,7 +661,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
     assigns = assign(assigns, :table, assigns.page.table)
 
     ~H"""
-    <div class="flex flex-row justify-center space-x-6 pt-8 text-xl font-semibold">
+    <div :if={@table.pages > 1} class="flex flex-row justify-center space-x-6 pt-8 text-xl font-semibold">
       <.link patch={Table.prev_path(@socket, @page)}>
         <.icon name="hero-arrow-long-left-solid" class="mr-2" /> prev
       </.link>

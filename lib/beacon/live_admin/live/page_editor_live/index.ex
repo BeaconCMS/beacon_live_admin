@@ -1,7 +1,7 @@
 defmodule Beacon.LiveAdmin.PageEditorLive.Index do
   @moduledoc false
 
-  use Beacon.LiveAdmin.PageBuilder, table: [ per_page: 2, sort: "title" ]
+  use Beacon.LiveAdmin.PageBuilder, table: [per_page: 20, sort: "title"]
 
   alias Beacon.LiveAdmin.Content
 
@@ -20,7 +20,9 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
     socket = Table.handle_params(socket, params, &Content.count_pages(&1.site))
 
     %{site: site} = socket.assigns.beacon_page
-    %{per_page: per_page, offset: offset, query: query, sort: sort} = socket.assigns.beacon_page.table
+
+    %{per_page: per_page, offset: offset, query: query, sort: sort} =
+      socket.assigns.beacon_page.table
 
     pages =
       list_pages(site,
@@ -52,7 +54,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
         <.table_search table={@beacon_page.table} placeholder="Search by path or title (showing up to 20 results)" />
       </div>
       <div class="basis-1/12">
-        <.table_sort table={@beacon_page.table} options={[{"Title", "title"}, {"Path", "path"}]}  />
+        <.table_sort table={@beacon_page.table} options={[{"Title", "title"}, {"Path", "path"}]} />
       </div>
     </div>
 
@@ -85,15 +87,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
     end)
   end
 
-
-  defp set_sort(nil, socket), do: socket.assigns.sort
-  defp set_sort("", socket), do: socket.assigns.sort
-  defp set_sort(sort, _socket), do: String.to_atom(sort)
-
   defp display_status(:unpublished), do: "Unpublished"
   defp display_status(:published), do: "Published"
   defp display_status(:created), do: "Draft"
-
-  defp query_param(""), do: ""
-  defp query_param(query), do: "&query=#{query}"
 end
