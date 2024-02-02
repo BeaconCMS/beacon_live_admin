@@ -94,12 +94,11 @@ defmodule Beacon.LiveAdmin.Content do
   end
 
   def list_pages(site, opts \\ []) do
-    opts =
-      opts
-      |> Keyword.put_new(:query, nil)
-      |> Keyword.put_new(:per_page, 20)
-
     call(site, Beacon.Content, :list_pages, [site, opts])
+  end
+
+  def count_pages(site) do
+    call(site, Beacon.Content, :count_pages, [site])
   end
 
   def change_page_variant(site, variant, attrs \\ %{}) do
