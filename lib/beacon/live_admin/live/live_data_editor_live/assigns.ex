@@ -27,7 +27,13 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Assigns do
 
   def handle_event("select-" <> key, _, socket) do
     %{live_data: %{site: site, path: path}} = socket.assigns
-    path = beacon_live_admin_path(socket, site, "/live_data/#{sanitize_path(path)}/#{key}")
+
+    path =
+      beacon_live_admin_path(
+        socket,
+        site,
+        "/live_data/#{sanitize(path)}/#{sanitize(key)}"
+      )
 
     if socket.assigns.unsaved_changes do
       {:noreply, assign(socket, show_nav_modal: true, confirm_nav_path: path)}
@@ -99,7 +105,7 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Assigns do
             beacon_live_admin_path(
               socket,
               site,
-              "/live_data/#{sanitize_path(live_data_path)}/#{live_data_assign.key}"
+              "/live_data/#{sanitize(live_data_path)}/#{sanitize(live_data_assign.key)}"
             )
 
           socket
@@ -147,7 +153,7 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Assigns do
 
     {:noreply,
      push_redirect(socket,
-       to: beacon_live_admin_path(socket, site, "/live_data/#{sanitize_path(path)}")
+       to: beacon_live_admin_path(socket, site, "/live_data/#{sanitize(path)}")
      )}
   end
 
@@ -268,6 +274,7 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Assigns do
   end
 
   defp assign_selected(socket, key) do
+    key = URI.decode_www_form(key)
     selected = Enum.find(socket.assigns.live_data.assigns, &(&1.key == key))
 
     assign(socket, selected: selected, changed_value: selected.value)
@@ -292,9 +299,7 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Assigns do
     assign(socket, :form, to_form(changeset))
   end
 
-  defp sanitize_path(path) do
-    URI.encode_www_form(path)
-  end
+  defp sanitize(path_or_key), do: URI.encode_www_form(path_or_key)
 
   defp variables_available(path) do
     path
