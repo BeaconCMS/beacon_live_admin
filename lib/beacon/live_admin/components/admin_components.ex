@@ -646,7 +646,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
   def table_sort(assigns) do
     ~H"""
     <.simple_form :let={f} for={%{}} as={:sort} phx-change="beacon:table-sort">
-      <.input type="select" field={f[:sort]} value={@table.sort} options={@options} />
+      <.input type="select" field={f[:sort]} value={@table.sort_by} options={@options} />
     </.simple_form>
     """
   end
@@ -666,7 +666,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
         <.icon name="hero-arrow-long-left-solid" class="mr-2" /> prev
       </.link>
 
-      <.link :for={page <- 1..@table.pages} patch={Table.goto_path(@socket, @page, page)} class={if @table.page == page, do: "text-indigo-700", else: ""}>
+      <.link :for={page <- 1..@table.pages} patch={Table.goto_path(@socket, @page, page)} class={if @table.current_page == page, do: "text-indigo-700", else: ""}>
         <%= page %>
       </.link>
 

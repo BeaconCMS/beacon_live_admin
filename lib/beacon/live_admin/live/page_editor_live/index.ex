@@ -1,7 +1,7 @@
 defmodule Beacon.LiveAdmin.PageEditorLive.Index do
   @moduledoc false
 
-  use Beacon.LiveAdmin.PageBuilder, table: [per_page: 20, sort: "title"]
+  use Beacon.LiveAdmin.PageBuilder, table: [per_page: 20, sort_by: "title"]
 
   alias Beacon.LiveAdmin.Content
 
@@ -17,11 +17,12 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
 
   @impl true
   def handle_params(params, _uri, socket) do
-    socket = Table.handle_params(socket, params, &Content.count_pages(&1.site))
+    socket =
+      Table.handle_params(socket, params, &Content.count_pages(&1.site, query: params["query"]))
 
     %{site: site} = socket.assigns.beacon_page
 
-    %{per_page: per_page, offset: offset, query: query, sort: sort} =
+    %{per_page: per_page, offset: offset, query: query, sort_by: sort_by} =
       socket.assigns.beacon_page.table
 
     pages =
@@ -29,7 +30,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
         per_page: per_page,
         offset: offset,
         query: query,
-        sort: sort
+        sort: sort_by
       )
 
     {:noreply, stream(socket, :pages, pages, reset: true)}
