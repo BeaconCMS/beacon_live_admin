@@ -203,7 +203,7 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Assigns do
         <.modal :if={@show_create_modal} id="create-modal" on_cancel={JS.push("create_cancel")} show>
           <p class="text-2xl font-bold mb-12">New Assign</p>
           <.form id="new-assign-form" for={@new_assign_form} phx-submit="submit_new">
-            <.input type="text" field={@new_assign_form[:key]} placeholder="project/:project_id/comments" />
+            <.input type="text" field={@new_assign_form[:key]} placeholder="assign_key" />
             <div class="flex mt-8 gap-x-[20px]">
               <.button type="submit">Create</.button>
               <.button type="button" phx-click={JS.push("create_cancel")}>Cancel</.button>
