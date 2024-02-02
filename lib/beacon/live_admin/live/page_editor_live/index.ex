@@ -74,7 +74,6 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
         </:action>
       </.table>
 
-      <%!-- <.pagination :if={@pages > 0} current_page={@beacon_page.table.page} pages={@pages} /> --%>
       <.table_pagination socket={@socket} page={@beacon_page} />
     </.main_content>
     """

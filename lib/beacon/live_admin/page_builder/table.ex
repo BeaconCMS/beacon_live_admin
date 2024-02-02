@@ -62,8 +62,7 @@ defmodule Beacon.LiveAdmin.PageBuilder.Table do
     page = params |> Map.get("page", "1") |> String.to_integer()
     pages = ceil(count_fn.(socket.assigns.beacon_page) / per_page)
     offset = page * per_page - per_page
-    # TODO: revisit safe_to_atom
-    sort_by = params |> Map.get("sort_by", sort_by) |> Beacon.Types.Atom.safe_to_atom()
+    sort_by = params |> Map.get("sort_by", sort_by) |> safe_to_atom()
     query = Map.get(params, "query", nil)
 
     update(socket,
@@ -74,6 +73,9 @@ defmodule Beacon.LiveAdmin.PageBuilder.Table do
       query: query
     )
   end
+
+  defp safe_to_atom(value) when is_atom(value), do: value
+  defp safe_to_atom(value) when is_binary(value), do: String.to_existing_atom(value)
 
   def query_params(%Table{} = table, new_params) when is_list(new_params) do
     new_params = Map.new(new_params)
