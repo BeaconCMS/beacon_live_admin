@@ -8,6 +8,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
 
   alias Phoenix.LiveView.JS
   alias Beacon.LiveAdmin.CoreComponents
+  alias Beacon.LiveAdmin.PageBuilder.Table
 
   import Beacon.LiveAdmin.Gettext
   import Beacon.LiveAdmin.Router, only: [beacon_live_admin_path: 3]
@@ -623,20 +624,55 @@ defmodule Beacon.LiveAdmin.AdminComponents do
   end
 
   @doc """
-  Renders navigation by defined pagination.
-
+  Renders a search input text to filter table results.
   """
-  attr :current_page, :integer, required: true
-  attr :pages, :integer, required: true
+  attr :table, Beacon.LiveAdmin.PageBuilder.Table, required: true
+  attr :placeholder, :string
 
-  def pagination(assigns) do
+  def table_search(assigns) do
+    ~H"""
+    <.simple_form :let={f} for={%{}} as={:search} phx-change="beacon:table-search">
+      <.input type="search" field={f[:query]} value={@table.query} autofocus={true} placeholder={@placeholder || "Search"} phx-debounce={200} />
+    </.simple_form>
+    """
+  end
+
+  @doc """
+  Renders a select input to sort table results.
+  """
+  attr :table, Beacon.LiveAdmin.PageBuilder.Table, required: true
+  attr :options, :list, required: true
+
+  def table_sort(assigns) do
+    ~H"""
+    <.simple_form :let={f} for={%{}} as={:sort} phx-change="beacon:table-sort">
+      <.input type="select" field={f[:sort]} value={@table.sort} options={@options} />
+    </.simple_form>
+    """
+  end
+
+  @doc """
+  Renders pagination to nagivate table results.
+  """
+  attr :socket, Phoenix.LiveView.Socket, required: true
+  attr :page, Beacon.LiveAdmin.PageBuilder.Page, required: true
+
+  def table_pagination(assigns) do
+    assigns = assign(assigns, :table, assigns.page.table)
+
     ~H"""
     <div class="flex flex-row justify-center space-x-6 pt-8 text-xl font-semibold">
-      <button phx-click="prev-page" disabled={@current_page == 1} class="px-2 font-medium disabled:text-gray-400">&#8592; prev</button>
-      <button :for={page <- 1..@pages} phx-click="set-page" phx-value-page={page} class={if @current_page == page, do: "text-indigo-700", else: ""}>
+      <.link patch={Table.prev_path(@socket, @page)}>
+        <.icon name="hero-arrow-long-left-solid" class="mr-2" /> prev
+      </.link>
+
+      <.link :for={page <- 1..@table.pages} patch={Table.goto_path(@socket, @page, page)} class={if @table.page == page, do: "text-indigo-700", else: ""}>
         <%= page %>
-      </button>
-      <button phx-click="next-page" disabled={@current_page == @pages} class="px-2 font-medium disabled:text-gray-400">next &#8594;</button>
+      </.link>
+
+      <.link patch={Table.next_path(@socket, @page)}>
+        next <.icon name="hero-arrow-long-right-solid" class="mr-2" />
+      </.link>
     </div>
     """
   end
