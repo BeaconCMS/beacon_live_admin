@@ -2,18 +2,12 @@ defmodule Beacon.LiveAdmin.ErrorPageEditorLive.Index do
   @moduledoc false
   use Beacon.LiveAdmin.PageBuilder
 
-  alias Beacon.LiveAdmin.Cluster
   alias Beacon.LiveAdmin.Content
 
   on_mount({Beacon.LiveAdmin.Hooks.Authorized, {:error_pages, :index}})
 
   @impl true
   def menu_link(_, :index), do: {:root, "Error Pages"}
-
-  @impl true
-  def mount(_params, _session, socket) do
-    {:ok, assign(socket, :running_sites, Cluster.running_sites())}
-  end
 
   @impl true
   def handle_params(params, _uri, socket) do
@@ -153,13 +147,6 @@ defmodule Beacon.LiveAdmin.ErrorPageEditorLive.Index do
     {:noreply, assign(socket, show_create_modal: false)}
   end
 
-  def handle_event("change-site", %{"site" => site}, socket) do
-    site = String.to_existing_atom(site)
-    path = beacon_live_admin_path(socket, site, "/error_pages")
-
-    {:noreply, push_navigate(socket, to: path)}
-  end
-
   defp assign_selected(socket, nil) do
     case socket.assigns.error_pages do
       [] -> assign(socket, selected: nil, changed_template: "")
@@ -211,8 +198,6 @@ defmodule Beacon.LiveAdmin.ErrorPageEditorLive.Index do
   def render(assigns) do
     ~H"""
     <div>
-      <.site_selector selected_site={@beacon_page.site} options={@running_sites} />
-
       <.header>
         <%= @page_title %>
         <:actions>

@@ -79,6 +79,19 @@ defmodule Beacon.LiveAdmin.PageBuilder do
 
       def init(opts), do: {:ok, opts}
       defoverridable init: 1
+
+      @impl true
+      def handle_event("change-site", %{"site" => site}, socket) do
+        site = String.to_existing_atom(site)
+
+        path =
+          case String.split(socket.assigns.beacon_page.path, "/") do
+            ["", path | _] -> beacon_live_admin_path(socket, site, path)
+            _ -> beacon_live_admin_path(socket)
+          end
+
+        {:noreply, push_navigate(socket, to: path)}
+      end
     end
   end
 

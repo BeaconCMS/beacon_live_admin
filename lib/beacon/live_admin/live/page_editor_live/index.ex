@@ -2,7 +2,6 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
   @moduledoc false
 
   use Beacon.LiveAdmin.PageBuilder
-  alias Beacon.LiveAdmin.Cluster
   alias Beacon.LiveAdmin.Content
 
   on_mount {Beacon.LiveAdmin.Hooks.Authorized, {:page_editor, :index}}
@@ -18,7 +17,6 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
     {:ok,
      socket
      |> assign(
-       running_sites: Cluster.running_sites(),
        page: 1,
        pages: number_of_pages(socket.assigns.beacon_page.site),
        sort: @default_sort,
@@ -46,14 +44,6 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
      socket
      |> assign(sort: sort, query: query)
      |> stream(:pages, pages, reset: true)}
-  end
-
-  @impl true
-  def handle_event("change-site", %{"site" => site}, socket) do
-    site = String.to_existing_atom(site)
-    path = beacon_live_admin_path(socket, site, "/pages")
-
-    {:noreply, push_navigate(socket, to: path)}
   end
 
   def handle_event("search", %{"search" => %{"query" => query, "sort" => sort}}, socket) do
@@ -109,8 +99,6 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
   @impl true
   def render(assigns) do
     ~H"""
-    <.site_selector selected_site={@beacon_page.site} options={@running_sites} />
-
     <.header>
       Pages
       <:actions>
