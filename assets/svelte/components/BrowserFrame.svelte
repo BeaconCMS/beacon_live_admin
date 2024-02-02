@@ -24,7 +24,7 @@
       </div>
     </div>
     <div class="py-3">
-      D | T | P
+      <!-- D | T | P or some selector to choose desktop, tablet or phone viewport size-->
     </div>
   </div>
   <slot/>
