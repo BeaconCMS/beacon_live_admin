@@ -80,9 +80,9 @@ defmodule Beacon.LiveAdmin.PageBuilder.Table do
   def query_params(%Table{} = table, new_params) when is_list(new_params) do
     new_params = Map.new(new_params)
 
-    # TODO remove empty k/v
     table
     |> Map.take([:page, :sort_by, :query])
     |> Map.merge(new_params)
+    |> Map.reject(fn {_k, v} -> v == "" or is_nil(v) end)
   end
 end
