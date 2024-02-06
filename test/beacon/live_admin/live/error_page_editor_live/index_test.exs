@@ -48,7 +48,7 @@ defmodule Beacon.LiveAdmin.ErrorPageEditorLive.IndexTest do
   end
 
   test "update an error page", %{conn: conn, another_layout: layout} do
-    {:ok, view, html} = live(conn, "/admin/site_a/error_pages/404")
+    {:ok, view, _html} = live(conn, "/admin/site_a/error_pages/404")
 
     assert has_element?(view, "[selected=\"selected\"]", "Default")
 

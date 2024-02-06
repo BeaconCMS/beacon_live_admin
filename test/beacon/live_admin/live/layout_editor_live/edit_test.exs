@@ -51,10 +51,7 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.EditTest do
     assert html =~ "Published"
   end
 
-  test "simple remove nils from resource_links", %{
-    conn: conn,
-    resource_links_layout: resource_links_layout
-  } do
+  test "simple remove nils from resource_links" do
     map =
       Beacon.LiveAdmin.LayoutEditorLive.ResourceLinks.coerce_resource_link_params(%{
         "resource_links" => %{
