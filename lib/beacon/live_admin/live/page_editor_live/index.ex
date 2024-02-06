@@ -48,8 +48,6 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
       </:actions>
     </.header>
 
-    <%= inspect(@beacon_page) %>
-
     <div class="flex justify-between">
       <div class="basis-10/12">
         <.table_search table={@beacon_page.table} placeholder="Search by path or title (showing up to 20 results)" />
