@@ -1,7 +1,7 @@
 defmodule Beacon.LiveAdmin.PageBuilder.Table do
   @moduledoc false
 
-  defstruct [:per_page, :current_page, :page_count, :offset, :sort_by, :query]
+  defstruct [:per_page, :current_page, :page_count, :sort_by, :query]
 
   import Beacon.LiveAdmin.Router, only: [beacon_live_admin_path: 4]
   alias Beacon.LiveAdmin.PageBuilder.Page
@@ -16,7 +16,6 @@ defmodule Beacon.LiveAdmin.PageBuilder.Table do
       per_page: per_page,
       current_page: 1,
       page_count: 0,
-      offset: 0,
       sort_by: sort_by,
       query: nil
     }
@@ -63,14 +62,12 @@ defmodule Beacon.LiveAdmin.PageBuilder.Table do
 
     current_page = params |> Map.get("page", "1") |> String.to_integer()
     page_count = ceil(count_fn.(socket.assigns.beacon_page) / per_page)
-    offset = current_page * per_page - per_page
     sort_by = params |> Map.get("sort_by", sort_by) |> safe_to_atom()
     query = Map.get(params, "query", nil)
 
     update(socket,
       current_page: current_page,
       page_count: page_count,
-      offset: offset,
       sort_by: sort_by,
       query: query
     )

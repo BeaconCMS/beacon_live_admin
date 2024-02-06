@@ -22,13 +22,13 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
 
     %{site: site} = socket.assigns.beacon_page
 
-    %{per_page: per_page, offset: offset, query: query, sort_by: sort_by} =
+    %{per_page: per_page, current_page: page, query: query, sort_by: sort_by} =
       socket.assigns.beacon_page.table
 
     pages =
       list_pages(site,
         per_page: per_page,
-        offset: offset,
+        page: page,
         query: query,
         sort: sort_by
       )
