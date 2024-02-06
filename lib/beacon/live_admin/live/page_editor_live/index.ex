@@ -50,7 +50,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
 
     <div class="flex justify-between">
       <div class="basis-10/12">
-        <.table_search table={@beacon_page.table} placeholder="Search by path or title (showing up to 20 results)" />
+        <.table_search table={@beacon_page.table} placeholder="Search by path or title (showing up to 15 results)" />
       </div>
       <div class="basis-1/12">
         <.table_sort table={@beacon_page.table} options={[{"Title", "title"}, {"Path", "path"}]} />
