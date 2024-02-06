@@ -101,13 +101,13 @@ defmodule Beacon.LiveAdmin.PageLive do
     {:noreply, push_patch(socket, to: to)}
   end
 
-  def handle_event("beacon:table-sort", %{"sort" => %{"sort" => sort}}, socket) do
+  def handle_event("beacon:table-sort", %{"sort" => %{"sort_by" => sort_by}}, socket) do
     to =
       beacon_live_admin_path(
         socket,
         socket.assigns.beacon_page.site,
         socket.assigns.beacon_page.path,
-        Table.query_params(socket.assigns.beacon_page.table, sort: sort)
+        Table.query_params(socket.assigns.beacon_page.table, sort_by: sort_by)
       )
 
     {:noreply, push_patch(socket, to: to)}

@@ -646,7 +646,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
   def table_sort(assigns) do
     ~H"""
     <.simple_form :let={f} for={%{}} as={:sort} phx-change="beacon:table-sort">
-      <.input type="select" field={f[:sort]} value={@table.sort_by} options={@options} />
+      <.input type="select" field={f[:sort_by]} value={@table.sort_by} options={@options} />
     </.simple_form>
     """
   end
