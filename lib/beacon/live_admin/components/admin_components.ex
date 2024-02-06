@@ -656,19 +656,28 @@ defmodule Beacon.LiveAdmin.AdminComponents do
   """
   attr :socket, Phoenix.LiveView.Socket, required: true
   attr :page, Beacon.LiveAdmin.PageBuilder.Page, required: true
+  attr :limit, :integer, default: 11
 
   def table_pagination(assigns) do
     assigns = assign(assigns, :table, assigns.page.table)
 
     ~H"""
-    <div :if={@table.pages > 1} class="flex flex-row justify-center space-x-6 pt-8 text-xl font-semibold">
+    <div :if={@table.page_count > 1} class="flex flex-row justify-center space-x-6 pt-8 text-xl font-semibold">
       <.link patch={Table.prev_path(@socket, @page)}>
         <.icon name="hero-arrow-long-left-solid" class="mr-2" /> prev
       </.link>
 
-      <.link :for={page <- 1..@table.pages} patch={Table.goto_path(@socket, @page, page)} class={if @table.current_page == page, do: "text-indigo-700", else: ""}>
-        <%= page %>
-      </.link>
+      <%= for page <- Beacon.LiveAdmin.PageBuilder.Table.nav_pages(@table.current_page, @table.page_count, @limit) do %>
+        <span :if={is_integer(page)}>
+          <.link patch={Table.goto_path(@socket, @page, page)} class={if @table.current_page == page, do: "text-indigo-700", else: ""}>
+            <%= page %>
+          </.link>
+        </span>
+
+        <span :if={page == :sep}>
+          ...
+        </span>
+      <% end %>
 
       <.link patch={Table.next_path(@socket, @page)}>
         next <.icon name="hero-arrow-long-right-solid" class="mr-2" />
