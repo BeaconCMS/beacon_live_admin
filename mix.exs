@@ -81,7 +81,7 @@ defmodule Beacon.LiveAdmin.MixProject do
 
   defp aliases do
     [
-      setup: ["deps.get", "assets.setup", "assets.build", "cmd --cd assets npm install"],
+      setup: ["deps.get", "assets.setup", "assets.build"],
       "format.all": ["format", "cmd npm run format --prefix ./assets"],
       dev: "run --no-halt dev.exs",
       "assets.setup": [
