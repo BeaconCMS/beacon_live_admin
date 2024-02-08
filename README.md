@@ -40,6 +40,26 @@ Node.connect(node)
 
 Now you should see a site listed in the admin home page.
 
+6. (Optional) Automically connect the nodes by creating a `.iex.exs` file in the root of each repository:
+
+In the beacon repo:
+
+```elixir
+{:ok, hostname} = :inet.gethostname()
+node = :"admin@#{List.to_string(hostname)}"
+Node.connect(node)
+```
+
+In the beacon_live_admin repo:
+
+```elixir
+{:ok, hostname} = :inet.gethostname()
+node = :"core@#{List.to_string(hostname)}"
+Node.connect(node)
+```
+
+This way you don't need to manually connect the nodes as shown on step 5.
+
 ## Looking for help with your Elixir project?
 
 <img src="assets/images/dockyard_logo.png" width="256" alt="DockYard logo">

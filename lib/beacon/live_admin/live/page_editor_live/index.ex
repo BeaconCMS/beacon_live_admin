@@ -1,7 +1,8 @@
 defmodule Beacon.LiveAdmin.PageEditorLive.Index do
   @moduledoc false
 
-  use Beacon.LiveAdmin.PageBuilder
+  use Beacon.LiveAdmin.PageBuilder, table: [sort_by: "title"]
+
   alias Beacon.LiveAdmin.Content
 
   on_mount {Beacon.LiveAdmin.Hooks.Authorized, {:page_editor, :index}}
@@ -11,30 +12,28 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, :pages, [])}
+    {:ok, stream_configure(socket, :pages, dom_id: &"#{Ecto.UUID.generate()}-#{&1.id}")}
   end
 
   @impl true
-  def handle_params(%{"query" => query}, _uri, socket) do
-    pages = list_pages(socket.assigns.beacon_page.site, query: query)
-    {:noreply, assign(socket, :pages, pages)}
-  end
+  def handle_params(params, _uri, socket) do
+    socket =
+      Table.handle_params(socket, params, &Content.count_pages(&1.site, query: params["query"]))
 
-  def handle_params(_params, _uri, socket) do
-    pages = list_pages(socket.assigns.beacon_page.site)
-    {:noreply, assign(socket, :pages, pages)}
-  end
+    %{site: site} = socket.assigns.beacon_page
 
-  @impl true
-  def handle_event("search", %{"search" => %{"query" => query}}, socket) do
-    path =
-      beacon_live_admin_path(
-        socket,
-        socket.assigns.beacon_page.site,
-        "/pages?query=#{query}"
+    %{per_page: per_page, current_page: page, query: query, sort_by: sort_by} =
+      socket.assigns.beacon_page.table
+
+    pages =
+      list_pages(site,
+        per_page: per_page,
+        page: page,
+        query: query,
+        sort: sort_by
       )
 
-    {:noreply, push_patch(socket, to: path)}
+    {:noreply, stream(socket, :pages, pages, reset: true)}
   end
 
   @impl true
@@ -49,16 +48,21 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
       </:actions>
     </.header>
 
-    <.simple_form :let={f} for={%{}} as={:search} phx-change="search">
-      <.input field={f[:query]} type="search" autofocus={true} placeholder="Search by path or title (showing up to 20 results)" />
-    </.simple_form>
+    <div class="flex justify-between">
+      <div class="basis-10/12">
+        <.table_search table={@beacon_page.table} placeholder="Search by path or title (showing up to 15 results)" />
+      </div>
+      <div class="basis-1/12">
+        <.table_sort table={@beacon_page.table} options={[{"Title", "title"}, {"Path", "path"}]} />
+      </div>
+    </div>
 
     <.main_content class="h-[calc(100vh_-_210px)]">
-      <.table id="pages" rows={@pages} row_click={fn page -> JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/pages/#{page.id}")) end}>
-        <:col :let={page} label="Title"><%= page.title %></:col>
-        <:col :let={page} label="Path"><%= page.path %></:col>
-        <:col :let={page} label="Status"><%= display_status(page.status) %></:col>
-        <:action :let={page}>
+      <.table id="pages" rows={@streams.pages} row_click={fn {_dom_id, page} -> JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/pages/#{page.id}")) end}>
+        <:col :let={{_, page}} label="Title"><%= page.title %></:col>
+        <:col :let={{_, page}} label="Path"><%= page.path %></:col>
+        <:col :let={{_, page}} label="Status"><%= display_status(page.status) %></:col>
+        <:action :let={{_, page}}>
           <div class="sr-only">
             <.link navigate={beacon_live_admin_path(@socket, @beacon_page.site, "/pages/#{page.id}")}>Show</.link>
           </div>
@@ -67,11 +71,13 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
           </.link>
         </:action>
       </.table>
+
+      <.table_pagination socket={@socket} page={@beacon_page} />
     </.main_content>
     """
   end
 
-  defp list_pages(site, opts \\ []) do
+  defp list_pages(site, opts) do
     site
     |> Content.list_pages(opts)
     |> Enum.map(fn page ->

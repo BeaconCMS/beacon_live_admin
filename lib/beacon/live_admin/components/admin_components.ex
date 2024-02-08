@@ -8,6 +8,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
 
   alias Phoenix.LiveView.JS
   alias Beacon.LiveAdmin.CoreComponents
+  alias Beacon.LiveAdmin.PageBuilder.Table
 
   import Beacon.LiveAdmin.Gettext
   import Beacon.LiveAdmin.Router, only: [beacon_live_admin_path: 3]
@@ -618,6 +619,91 @@ defmodule Beacon.LiveAdmin.AdminComponents do
     ~H"""
     <div class={"#{@class} px-4 pt-4 mt-4 bg-white overflow-y-auto col-span-full rounded-t-[1.25rem]"}>
       <%= render_slot(@inner_block) %>
+    </div>
+    """
+  end
+
+  @doc """
+  Renders a search input text to filter table results.
+  """
+  attr :table, Beacon.LiveAdmin.PageBuilder.Table, required: true
+  attr :placeholder, :string
+
+  def table_search(assigns) do
+    ~H"""
+    <.simple_form :let={f} for={%{}} as={:search} phx-change="beacon:table-search">
+      <.input type="search" field={f[:query]} value={@table.query} autofocus={true} placeholder={@placeholder || "Search"} phx-debounce={200} />
+    </.simple_form>
+    """
+  end
+
+  @doc """
+  Renders a select input to sort table results.
+  """
+  attr :table, Beacon.LiveAdmin.PageBuilder.Table, required: true
+  attr :options, :list, required: true
+
+  def table_sort(assigns) do
+    ~H"""
+    <.simple_form :let={f} for={%{}} as={:sort} phx-change="beacon:table-sort">
+      <.input type="select" field={f[:sort_by]} value={@table.sort_by} options={@options} />
+    </.simple_form>
+    """
+  end
+
+  @doc """
+  Renders pagination to nagivate table results.
+  """
+  attr :socket, Phoenix.LiveView.Socket, required: true
+  attr :page, Beacon.LiveAdmin.PageBuilder.Page, required: true
+  attr :limit, :integer, default: 11
+
+  def table_pagination(assigns) do
+    assigns = assign(assigns, :table, assigns.page.table)
+
+    ~H"""
+    <div :if={@table.page_count > 1} class="flex flex-row justify-center space-x-6 pt-8 text-xl font-semibold pt-10 pb-10">
+      <.link
+        :if={@table.current_page > 1}
+        patch={Table.prev_path(@socket, @page)}
+        class="border-b-4 border-transparent hover:text-blue-700 hover:border-blue-700 active:text-blue-800 focus:outline-none focus:duration-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300 focus-visible:rounded focus-visible:duration-300 transition-link duration-300 only-large"
+      >
+        <.icon name="hero-arrow-long-left-solid" class="mr-2" /> prev
+      </.link>
+      <span :if={@table.current_page == 1} class="font-heading font-semibold text-gray-400 cursor-default">
+        <.icon name="hero-arrow-long-left-solid" class="mr-2" /> prev
+      </span>
+
+      <%= for page <- Beacon.LiveAdmin.PageBuilder.Table.nav_pages(@table.current_page, @table.page_count, @limit) do %>
+        <span :if={is_integer(page)}>
+          <.link
+            patch={Table.goto_path(@socket, @page, page)}
+            class={
+              if @table.current_page == page,
+                do:
+                  "px-3 pb-0.5 pt-1.5 border-b-4 border-transparent hover:text-blue-700 hover:border-blue-700 active:text-blue-800 focus:outline-none focus:duration-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300 focus-visible:rounded focus-visible:duration-300 transition-link duration-300 only-large text-blue-600 border-blue-600",
+                else:
+                  "px-3 pb-0.5 pt-1.5 border-b-4 border-transparent hover:text-blue-700 hover:border-blue-700 active:text-blue-800 focus:outline-none focus:duration-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300 focus-visible:rounded focus-visible:duration-300 transition-link duration-300 only-large"
+            }
+          >
+            <%= page %>
+          </.link>
+        </span>
+        <span :if={page == :sep}>
+          ...
+        </span>
+      <% end %>
+
+      <.link
+        :if={@table.current_page < @table.page_count}
+        patch={Table.next_path(@socket, @page)}
+        class="border-b-4 border-transparent hover:text-blue-700 hover:border-blue-700 active:text-blue-800 focus:outline-none focus:duration-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300 focus-visible:rounded focus-visible:duration-300 transition-link duration-300 only-large"
+      >
+        next <.icon name="hero-arrow-long-right-solid" class="mr-2" />
+      </.link>
+      <span :if={@table.current_page == @table.page_count} class="font-heading font-semibold text-gray-400 cursor-default">
+        next <.icon name="hero-arrow-long-right-solid" class="mr-2" />
+      </span>
     </div>
     """
   end

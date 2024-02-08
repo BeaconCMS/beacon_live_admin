@@ -8,7 +8,7 @@ config :phoenix, :json_library, Jason
 
 if Mix.env() == :dev do
   config :tailwind,
-    version: "3.3.3",
+    version: "3.4.1",
     default: [
       args: ~w(
       --minify

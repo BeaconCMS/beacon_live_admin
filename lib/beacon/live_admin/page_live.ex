@@ -11,6 +11,7 @@ defmodule Beacon.LiveAdmin.PageLive do
   alias Beacon.LiveAdmin.Cluster
   alias Beacon.LiveAdmin.PageBuilder.Menu
   alias Beacon.LiveAdmin.PageBuilder.Page
+  alias Beacon.LiveAdmin.PageBuilder.Table
   alias Beacon.LiveAdmin.Private
   alias Phoenix.LiveView.Socket
 
@@ -50,7 +51,13 @@ defmodule Beacon.LiveAdmin.PageLive do
       |> Private.build_on_mount_lifecycle(page.module)
 
     update_page = fn socket, site, page, params ->
-      update_page(socket, site: site, path: page.path, module: page.module, params: params)
+      update_page(socket,
+        site: site,
+        path: page.path,
+        module: page.module,
+        params: params,
+        table: page.module.__beacon_page_table__()
+      )
     end
 
     with {:cont, socket} <- Private.mount(params, session, socket),
@@ -82,6 +89,30 @@ defmodule Beacon.LiveAdmin.PageLive do
   end
 
   @impl true
+  def handle_event("beacon:table-search", %{"search" => %{"query" => query}}, socket) do
+    to =
+      beacon_live_admin_path(
+        socket,
+        socket.assigns.beacon_page.site,
+        socket.assigns.beacon_page.path,
+        Table.query_params(socket.assigns.beacon_page.table, page: 1, query: query)
+      )
+
+    {:noreply, push_patch(socket, to: to)}
+  end
+
+  def handle_event("beacon:table-sort", %{"sort" => %{"sort_by" => sort_by}}, socket) do
+    to =
+      beacon_live_admin_path(
+        socket,
+        socket.assigns.beacon_page.site,
+        socket.assigns.beacon_page.path,
+        Table.query_params(socket.assigns.beacon_page.table, sort_by: sort_by)
+      )
+
+    {:noreply, push_patch(socket, to: to)}
+  end
+
   def handle_event(event, params, socket) do
     maybe_apply_module(socket, :handle_event, [event, params], &{:noreply, &1})
   end
