@@ -14,6 +14,8 @@ defmodule Beacon.LiveAdmin.Layouts do
     Phoenix.VerifiedRoutes.unverified_path(conn_or_socket, router(conn_or_socket), path)
   end
 
+  def site_stylesheet(site), do: Beacon.LiveAdmin.RuntimeCSS.fetch(site, :uncompressed)
+
   def page_stylesheet(site, template) do
     case Beacon.LiveAdmin.RuntimeCSS.compile(site, template) do
       {:ok, stylesheet} ->

@@ -209,14 +209,15 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
   defp compile_stylesheet(%{source: %Changeset{} = changeset}, "visual" = _editor) do
     site = Changeset.get_field(changeset, :site)
 
-    template =
-      List.to_string([
-        Map.get(Changeset.get_field(changeset, :layout, %{}), :template, ""),
-        "\n",
-        Changeset.get_field(changeset, :template) || ""
-      ])
+    site_stylesheet = Beacon.LiveAdmin.Layouts.site_stylesheet(site)
 
-    Beacon.LiveAdmin.Layouts.page_stylesheet(site, template)
+    page_stylesheet =
+      Beacon.LiveAdmin.Layouts.page_stylesheet(
+        site,
+        Changeset.get_field(changeset, :template) || ""
+      )
+
+    site_stylesheet <> "\n" <> page_stylesheet
   end
 
   defp compile_stylesheet(_, _), do: ""
