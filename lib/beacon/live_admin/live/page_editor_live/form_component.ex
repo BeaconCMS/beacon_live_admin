@@ -228,7 +228,6 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
   @spec render(any()) :: Phoenix.LiveView.Rendered.t()
   def render(assigns) do
     ~H"""
-
     <div>
       <Beacon.LiveAdmin.AdminComponents.page_header socket={@socket} flash={@flash} page={@page} live_action={@live_action} />
 
@@ -271,7 +270,12 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
       </.modal>
 
       <%= if @language == "html" do %>
-        <.svelte name="components/UiBuilder" class={svelte_page_builder_class(@editor)} props={%{components: @components, page: @builder_page, styles: compile_stylesheet(@form, @editor)}} socket={@socket} />
+        <.svelte
+          name="components/UiBuilder"
+          class={svelte_page_builder_class(@editor)}
+          props={%{components: @components, page: @builder_page, styles: compile_stylesheet(@form, @editor)}}
+          socket={@socket}
+        />
       <% end %>
 
       <div class={[

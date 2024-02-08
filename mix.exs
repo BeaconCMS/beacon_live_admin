@@ -87,17 +87,13 @@ defmodule Beacon.LiveAdmin.MixProject do
       "assets.setup": [
         "cmd npm install --prefix assets",
         "tailwind.install --if-missing --no-assets"
-        # "esbuild.install --if-missing"
       ],
       "assets.build": [
         "tailwind default",
-        # "esbuild cdn",
-        # "esbuild cdn_min"
         "cmd --cd assets node build.js"
       ],
       "assets.deploy": [
         "tailwind default --minify",
-        # "esbuild default --minify",
         "cmd --cd assets node build.js --deploy",
         "phx.digest"
       ]
