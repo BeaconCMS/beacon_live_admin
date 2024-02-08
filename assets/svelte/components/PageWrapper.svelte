@@ -5,19 +5,29 @@
   import PageAstNode from './PageAstNode.svelte';
   import { selectedAstElementId } from "$lib/stores/page";
   import { page } from "$lib/stores/page";
-  import { styles as stylesStore } from "$lib/stores/styles";
-  let span: HTMLSpanElement;
+  import { pageStylesheet as pageStylesheetStore } from "$lib/stores/pageStylesheet";
+  import { siteStylesheet as siteStylesheetStore } from "$lib/stores/siteStylesheet";
+  let spanSiteStylesheet: HTMLSpanElement;
+  let spanPageStylesheet: HTMLSpanElement;
   $: {
-    if (span) {
-      span.innerHTML = '';
+    if (spanSiteStylesheet) {
+      spanSiteStylesheet.innerHTML = '';
       let styleEl = document.createElement('style');
-      styleEl.innerHTML = $stylesStore;
-      span.append(styleEl);
+      styleEl.innerHTML = $siteStylesheetStore;
+      spanSiteStylesheet.append(styleEl);
+    }
+
+    if (spanPageStylesheet) {
+      spanPageStylesheet.innerHTML = '';
+      let styleEl = document.createElement('style');
+      styleEl.innerHTML = $pageStylesheetStore;
+      spanPageStylesheet.append(styleEl);
     }
   }
 </script>
 
-<span id="style-target" bind:this={span}></span>
+<span id="site-stylesheet-target" bind:this={spanSiteStylesheet}></span>
+<span id="page-stylesheet-target" bind:this={spanPageStylesheet}></span>
 
 {#each $page.layout.ast as layoutAstNode}
   <LayoutAstNode node={layoutAstNode}>
@@ -29,8 +39,8 @@
 
 <style>
     :global([data-selected="true"], [data-highlighted="true"]) {
-      outline-color: #06b6d4; 
+      outline-color: #06b6d4;
       outline-width: 2px;
-      outline-style: dashed;    
-    }  
+      outline-style: dashed;
+    }
 </style>

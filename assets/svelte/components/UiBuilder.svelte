@@ -4,18 +4,21 @@
 	import PagePreview from "./PagePreview.svelte";
 	import PropertiesSidebar from "./PropertiesSidebar.svelte";
 	import { page as pageStore } from "$lib/stores/page";
-	import { styles as stylesStore } from "$lib/stores/styles";
+	import { pageStylesheet as pageStylesheetStore } from "$lib/stores/pageStylesheet";
+	import { siteStylesheet as siteStylesheetStore } from "$lib/stores/siteStylesheet";
 	import type { ComponentDefinition, Page } from "$lib/types";
 
 	export let components: ComponentDefinition[];
 	export let page: Page;
-	export let styles: string;
+	export let pageStylesheet: string;
+	export let siteStylesheet: string;
 	export let live;
 	$: $pageStore = page;
-	$: $stylesStore = styles;
+	$: $pageStylesheetStore = pageStylesheet;
+	$: $siteStylesheetStore = siteStylesheet;
 
 	function addBasicComponentToTarget(e: CustomEvent) {
-		// This method is in PagePreview. 
+		// This method is in PagePreview.
 	}
 </script>
 <Backdrop/>
@@ -27,7 +30,7 @@
 	<PagePreview {live} />
 
 	<!-- Right sidebar -->
-	<PropertiesSidebar 
+	<PropertiesSidebar
 		{live}
 		on:droppedIntoTarget={e => addBasicComponentToTarget(e.detail)}/>
 </div>

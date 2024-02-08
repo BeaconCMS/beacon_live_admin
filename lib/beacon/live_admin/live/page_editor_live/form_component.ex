@@ -206,21 +206,23 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
     {:safe, html}
   end
 
-  defp compile_stylesheet(%{source: %Changeset{} = changeset}, "visual" = _editor) do
+  defp compile_page_stylesheet(%{source: %Changeset{} = changeset}, "visual" = _editor) do
     site = Changeset.get_field(changeset, :site)
 
-    site_stylesheet = Beacon.LiveAdmin.Layouts.site_stylesheet(site)
-
-    page_stylesheet =
-      Beacon.LiveAdmin.Layouts.page_stylesheet(
-        site,
-        Changeset.get_field(changeset, :template) || ""
-      )
-
-    site_stylesheet <> "\n" <> page_stylesheet
+    Beacon.LiveAdmin.Layouts.page_stylesheet(
+      site,
+      Changeset.get_field(changeset, :template) || ""
+    )
   end
 
-  defp compile_stylesheet(_, _), do: ""
+  defp compile_page_stylesheet(_, _), do: ""
+
+  defp site_stylesheet(%{source: %Changeset{} = changeset}, "visual" = _editor) do
+    site = Changeset.get_field(changeset, :site)
+    Beacon.LiveAdmin.Layouts.site_stylesheet(site)
+  end
+
+  defp site_stylesheet(_, _), do: ""
 
   defp svelte_page_builder_class("code" = _editor), do: "hidden"
   defp svelte_page_builder_class("visual" = _editor), do: "relative overflow-x-hidden"
@@ -272,7 +274,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
         :if={@editor == "visual"}
         name="components/UiBuilder"
         class={svelte_page_builder_class(@editor)}
-        props={%{components: @components, page: @builder_page, styles: compile_stylesheet(@form, @editor)}}
+        props={%{components: @components, page: @builder_page, pageStylesheet: compile_page_stylesheet(@form, @editor), siteStylesheet: site_stylesheet(@form, @editor)}}
         socket={@socket}
       />
 
