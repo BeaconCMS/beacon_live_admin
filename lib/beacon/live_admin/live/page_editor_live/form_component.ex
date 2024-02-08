@@ -234,9 +234,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
       <.header>
         <%= @page_title %>
         <:actions>
-          <%= if @language == "html" do %>
-            <.button :if={@editor == "code"} type="button" phx-click="enable_editor" phx-value-editor="visual" class="uppercase">Visual Editor</.button>
-          <% end %>
+          <.button :if={@editor == "code" && @page.format == :heex} type="button" phx-click="enable_editor" phx-value-editor="visual" class="uppercase">Visual Editor</.button>
           <.button :if={@editor == "visual"} type="button" phx-click="enable_editor" phx-value-editor="code" class="uppercase">Code Editor</.button>
           <.button :if={@live_action == :new} phx-disable-with="Saving..." form="page-form" class="uppercase">Create Draft Page</.button>
           <.button :if={@live_action == :edit} phx-disable-with="Saving..." form="page-form" class="uppercase">Save Changes</.button>
@@ -269,14 +267,13 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
         </div>
       </.modal>
 
-      <%= if @language == "html" do %>
-        <.svelte
-          name="components/UiBuilder"
-          class={svelte_page_builder_class(@editor)}
-          props={%{components: @components, page: @builder_page, styles: compile_stylesheet(@form, @editor)}}
-          socket={@socket}
-        />
-      <% end %>
+      <.svelte
+        :if={@editor == "visual"}
+        name="components/UiBuilder"
+        class={svelte_page_builder_class(@editor)}
+        props={%{components: @components, page: @builder_page, styles: compile_stylesheet(@form, @editor)}}
+        socket={@socket}
+      />
 
       <div class={[
         "grid items-start lg:h-[calc(100vh_-_144px)] grid-cols-1 mx-auto mt-4 gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3",
