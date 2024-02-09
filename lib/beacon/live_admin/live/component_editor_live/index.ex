@@ -49,7 +49,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.Index do
       </:actions>
     </.header>
 
-    <.simple_form :let={f} for={%{}} as={:search} phx-change="search">
+    <.simple_form :let={f} id="search-form" for={%{}} as={:search} phx-change="search">
       <.input field={f[:query]} type="search" autofocus={true} placeholder="Search by name (showing up to 20 results)" />
     </.simple_form>
 
