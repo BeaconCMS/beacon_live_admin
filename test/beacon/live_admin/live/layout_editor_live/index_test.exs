@@ -23,16 +23,26 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.IndexTest do
 
     html =
       live
-      |> element("form")
+      |> element("#search-form")
       |> render_change(%{search: %{query: "nope"}})
 
     refute html =~ "Site A - Main Layout"
 
     html =
       live
-      |> element("form")
+      |> element("#search-form")
       |> render_change(%{search: %{query: "main"}})
 
     assert html =~ "Site A - Main Layout"
+  end
+
+  test "display a site selector", %{conn: conn} do
+    {:ok, live, _html} = live(conn, "/admin/site_a/layouts")
+
+    live
+    |> element("#site-selector-form")
+    |> render_change(%{site: "site_c"})
+
+    assert_redirected(live, "/admin/site_c/layouts")
   end
 end

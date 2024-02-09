@@ -707,4 +707,24 @@ defmodule Beacon.LiveAdmin.AdminComponents do
     </div>
     """
   end
+
+  @doc """
+  Renders a select input with the available sites to select.
+
+  ## Examples
+
+      <.site_selector selected_site="dev" options={[:dev, :dy]} />
+  """
+  attr :selected_site, :string, default: ""
+  attr :options, :list, default: []
+
+  def site_selector(assigns) do
+    ~H"""
+    <div class="flex justify-end">
+      <.form id="site-selector-form" for={%{}} phx-change="change-site" class="-mt-16 w-1/12">
+        <.input type="select" name="site" options={@options} value={@selected_site} />
+      </.form>
+    </div>
+    """
+  end
 end

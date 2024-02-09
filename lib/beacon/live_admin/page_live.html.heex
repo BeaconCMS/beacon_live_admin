@@ -28,5 +28,7 @@
   </div>
 </aside>
 <main class="w-full px-4 pt-16 sm:px-6 lg:px-8">
+  <.site_selector selected_site={@beacon_page.site} options={@__beacon_sites__} />
+
   <%= render_page(@beacon_page.module, assigns) %>
 </main>
