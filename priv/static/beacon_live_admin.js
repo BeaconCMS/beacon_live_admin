@@ -485,7 +485,7 @@ var BeaconLiveAdmin = (() => {
   var state_local_default = index;
   var config = {
     paths: {
-      vs: "https://cdn.jsdelivr.net/npm/monaco-editor@0.36.1/min/vs"
+      vs: "https://cdn.jsdelivr.net/npm/monaco-editor@0.43.0/min/vs"
     }
   };
   var config_default = config;
@@ -790,7 +790,7 @@ var BeaconLiveAdmin = (() => {
     _mountEditor() {
       this.opts.value = this.value;
       loader_default.config({
-        paths: { vs: "https://cdn.jsdelivr.net/npm/monaco-editor@latest/min/vs" }
+        paths: { vs: "https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs" }
       });
       loader_default.init().then((monaco) => {
         monaco.editor.defineTheme("default", theme);
@@ -802,6 +802,22 @@ var BeaconLiveAdmin = (() => {
         this.standalone_code_editor = monaco.editor.create(this.el, this.opts);
         this._onMount.forEach((callback) => callback(monaco));
         this._setScreenDependantEditorOptions();
+        this.standalone_code_editor.addAction({
+          contextMenuGroupId: "word-wrapping",
+          id: "enable-word-wrapping",
+          label: "Enable word wrapping",
+          precondition: "config.editor.wordWrap == off",
+          keybindings: [monaco.KeyMod.Alt | monaco.KeyCode.KeyZ],
+          run: (editor) => editor.updateOptions({ wordWrap: "on" })
+        });
+        this.standalone_code_editor.addAction({
+          contextMenuGroupId: "word-wrapping",
+          id: "disable-word-wrapping",
+          label: "Disable word wrapping",
+          precondition: "config.editor.wordWrap == on",
+          keybindings: [monaco.KeyMod.Alt | monaco.KeyCode.KeyZ],
+          run: (editor) => editor.updateOptions({ wordWrap: "off" })
+        });
         const resizeObserver = new ResizeObserver((entries) => {
           entries.forEach(() => {
             if (this.el.offsetHeight > 0) {
@@ -848,9 +864,19 @@ var BeaconLiveAdmin = (() => {
       this.codeEditor.onMount((monaco) => {
         if (this.el.dataset.changeEvent && this.el.dataset.changeEvent !== "") {
           this.codeEditor.standalone_code_editor.onDidChangeModelContent(() => {
-            this.pushEvent(this.el.dataset.changeEvent, {
-              value: this.codeEditor.standalone_code_editor.getValue()
-            });
+            if (this.el.dataset.target && this.el.dataset.target !== "") {
+              this.pushEventTo(
+                this.el.dataset.target,
+                this.el.dataset.changeEvent,
+                {
+                  value: this.codeEditor.standalone_code_editor.getValue()
+                }
+              );
+            } else {
+              this.pushEvent(this.el.dataset.changeEvent, {
+                value: this.codeEditor.standalone_code_editor.getValue()
+              });
+            }
           });
         }
         this.handleEvent(
