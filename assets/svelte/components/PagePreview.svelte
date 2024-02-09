@@ -45,7 +45,7 @@
   }
 </script>
 
-<div class="flex-1 px-8 py-4 flex max-h-full" data-test-id="main">
+<div class="flex-1 px-8 pb-4 flex max-h-full" data-test-id="main">
   {#if $page}
     <BrowserFrame page={$page}>
       <div 

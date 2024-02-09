@@ -225,7 +225,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
   defp site_stylesheet(_, _), do: ""
 
   defp svelte_page_builder_class("code" = _editor), do: "hidden"
-  defp svelte_page_builder_class("visual" = _editor), do: "relative overflow-x-hidden"
+  defp svelte_page_builder_class("visual" = _editor), do: "mt-4 relative overflow-x-hidden"
 
   @impl true
   @spec render(any()) :: Phoenix.LiveView.Rendered.t()

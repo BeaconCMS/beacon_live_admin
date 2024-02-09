@@ -63,19 +63,19 @@
 </script>
 
 <!-- Left sidebar -->
-<div class="w-64 bg-white border-gray-100 border-solid border-r" id="left-sidebar" data-test-id="left-sidebar">
+<div class="w-64 bg-white border-slate-100 border-solid border-r" id="left-sidebar" data-test-id="left-sidebar">
   <div class="sticky top-0">
-    <div class="border-b border-gray-100 border-solid py-4 px-4" data-test-id="logo">
-      <span class="text-lg">Components</span>
+    <div class="border-b border-slate-100 border-solid py-4 px-4" data-test-id="logo">
+      <h2 class="text-lg font-bold">Components</h2>
     </div>
-    <ul class="px-4" data-test-id="component-tree">
+    <ul class="py-4" data-test-id="component-tree">
       {#each menuCategories as category}
-        <li class="pb-1" data-test-id="nav-item">
-          <h5 class="uppercase">{category.name}</h5>
+        <li class="mb-1 px-4" data-test-id="nav-item">
+          <h3 class="text-xs font-bold uppercase">{category.name}</h3>
         </li>
         {#each category.items as item}
-          <li class="pb-1" data-test-id="nav-item" on:mouseenter={() => expandCategoryMenu(item)} on:mouseleave={collapseCategoryMenu}>
-            <div class="pl-2">{sectionTitles[item.name]}</div>	
+          <li class="p-2 pl-6 hover:bg-slate-50 hover:cursor-pointer" data-test-id="nav-item" on:mouseenter={() => expandCategoryMenu(item)} on:mouseleave={collapseCategoryMenu}>
+            <div>{sectionTitles[item.name]}</div>	
           </li>
         {/each}
       {/each}
@@ -87,15 +87,15 @@
   <div class="bg-black/50 absolute inset-0 z-50" transition:fade={{duration: 300}} id="backdrop" data-test-id="backdrop"></div>
 {/if}	
 <div 
-  class="absolute w-96 -left-32 bg-white inset-y-0 shadow-sm z-50 pt-3 pb-4 px-5 transition-transform duration-300" 
+  class="absolute w-96 -left-32 bg-slate-50 inset-y-0 shadow-sm z-50 pt-3 pb-4 px-5 transition-transform duration-300" 
   class:translate-x-96={showExamples}
   id="component-previews"
   data-test-id="component-previews" 
   transition:translate={{x: 384}}
   on:mouseenter={abortCollapseCategoryMenu}
   on:mouseleave={collapseCategoryMenu}>
-  <h4 class="text-2xl">{sectionTitles[$currentComponentCategory?.name]}</h4>
-  <p>Select a component 👇  and drag it to the canvas 👉</p>
+  <h4 class="mb-4 font-bold text-2xl">{sectionTitles[$currentComponentCategory?.name]}</h4>
+  <p class="font-medium">Select a component 👇  and drag it to the canvas 👉</p>
   {#if currentDefinitions}
     {#each currentDefinitions as example}
       <div 
@@ -104,7 +104,7 @@
         on:dragend={dragEnd}
         class="pt-6" 
         data-test-id="component-preview-card">
-        <img class="rounded outline-offset-2 outline-blue-500 hover:outline hover:outline-2" src={example.thumbnail} alt={example.name} />
+        <img class="rounded ring-offset-2 ring-blue-500 transition hover:cursor-grab hover:ring-2" src={example.thumbnail} alt={example.name} />
       </div>
     {/each}
   {/if}
