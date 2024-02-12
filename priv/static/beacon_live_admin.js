@@ -923,12 +923,18 @@ var BeaconLiveAdmin = (() => {
   import_topbar.default.config({ barColors: { 0: "#29d" }, shadowColor: "rgba(0, 0, 0, .3)" });
   window.addEventListener("phx:page-loading-start", (_event) => {
     import_topbar.default.show(300);
+    if (!localStorage.getItem("beacon:admin:sidebar-visibility")) {
+      localStorage.setItem("beacon:admin:sidebar-visibility", "visible");
+    }
   });
   window.addEventListener("phx:page-loading-stop", (_event) => {
     import_topbar.default.hide();
     const sidebarVisivility = localStorage.getItem("beacon:admin:sidebar-visibility");
     let sidebar = document.getElementById("sidebar");
     let sidebarShow = document.getElementById("sidebar-show");
+    if (sidebarVisivility === "visible" && sidebar) {
+      sidebar.style.display = "block";
+    }
     if (sidebarVisivility === "hidden" && sidebar) {
       sidebar.style.display = "none";
     }
