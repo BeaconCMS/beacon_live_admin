@@ -149,7 +149,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.EventHandlers do
           <.button type="button" phx-click="create_new">New Event Handler</.button>
         </:actions>
       </.header>
-      <.main_content class="h-[calc(100vh_-_223px)]">
+      <.main_content>
         <.modal :if={@show_nav_modal} id="confirm-nav" on_cancel={JS.push("stay_here")} show>
           <p>You've made unsaved changes to this event handler!</p>
           <p>Navigating to another event handler without saving will cause these changes to be lost.</p>
