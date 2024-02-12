@@ -8,6 +8,10 @@ topbar.config({barColors: {0: "#29d"}, shadowColor: "rgba(0, 0, 0, .3)"})
 
 window.addEventListener("phx:page-loading-start", (_event) => {
   topbar.show(300)
+
+  if (!localStorage.getItem("beacon:admin:sidebar-visibility")) {
+    localStorage.setItem("beacon:admin:sidebar-visibility", "visible")
+  }
 })
 
 window.addEventListener("phx:page-loading-stop", (_event) => {
@@ -15,7 +19,9 @@ window.addEventListener("phx:page-loading-stop", (_event) => {
 
   const sidebarVisivility = localStorage.getItem("beacon:admin:sidebar-visibility")
   let sidebar = document.getElementById("sidebar")
+
   let sidebarShow = document.getElementById("sidebar-show")
+  if (sidebarVisivility === "visible" && sidebar) { sidebar.style.display = "block" }
   if (sidebarVisivility === "hidden" && sidebar) { sidebar.style.display = "none" }
   if (sidebarVisivility === "hidden" && sidebarShow) { sidebarShow.style.display = "block" }
 })
