@@ -111,18 +111,28 @@
 <div class="w-64 bg-white" data-test-id="right-sidebar">
   <div class="sticky top-0">
     {#if $selectedAstElement}
-      <div class="border-b text-lg font-medium leading-5 pt-7 pr-7 pb-5 pl-4 relative">
+      <div class="border-b text-lg font-medium leading-5 p-4 relative">
         {sidebarTitle}
         {#if !isRootNode}
           <button
           type="button" 
-          class="absolute py-3 top-3 right-5" 
-          on:click={selectParentNode}>↰</button>      
+          class="absolute p-2 top-2 right-9" 
+          on:click={selectParentNode}>
+            <span class="sr-only">Return</span>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 hover:text-blue-700 active:text-blue-900">
+              <path fill-rule="evenodd" d="M9.53 2.47a.75.75 0 0 1 0 1.06L4.81 8.25H15a6.75 6.75 0 0 1 0 13.5h-3a.75.75 0 0 1 0-1.5h3a5.25 5.25 0 1 0 0-10.5H4.81l4.72 4.72a.75.75 0 1 1-1.06 1.06l-6-6a.75.75 0 0 1 0-1.06l6-6a.75.75 0 0 1 1.06 0Z" clip-rule="evenodd" />
+            </svg>
+          </button>      
         {/if}
         <button
           type="button" 
-          class="absolute py-3 top-3 right-1" 
-          on:click={() => $selectedAstElementId = undefined}>×</button>
+          class="absolute p-2 top-2 right-1" 
+          on:click={() => $selectedAstElementId = undefined}>
+            <span class="sr-only">Close</span>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 hover:text-blue-700 active:text-blue-900">
+              <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25Zm-1.72 6.97a.75.75 0 1 0-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 1 0 1.06 1.06L12 13.06l1.72 1.72a.75.75 0 1 0 1.06-1.06L13.06 12l1.72-1.72a.75.75 0 1 0-1.06-1.06L12 10.94l-1.72-1.72Z" clip-rule="evenodd" />
+            </svg>
+          </button>
       </div>
       {#if attributesEditable}
         <SidebarSection clearOnUpdate={true} on:update={addClass} placeholder="Add new class" >
@@ -179,7 +189,7 @@
         </svelte:fragment>
       </SidebarSection>
     {:else}
-      <div class="pt-8">
+      <div class="p-4 pt-8 font-medium text-lg text-center">
         Select a component to edit its properties
       </div>
     {/if}
