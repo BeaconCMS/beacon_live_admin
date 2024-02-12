@@ -723,7 +723,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
 
   def site_selector(assigns) do
     ~H"""
-    <div class="p-1">
+    <div class="pr-2">
       <.form id="site-selector-form" for={%{}} phx-change="change-site">
         <.input type="select" name="site" options={@options} value={@selected_site} />
       </.form>
