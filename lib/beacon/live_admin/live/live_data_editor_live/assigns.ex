@@ -18,7 +18,7 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Assigns do
       |> assign(show_create_modal: false)
       |> assign(show_delete_modal: false)
       |> assign(new_assign_form: to_form(%{"key" => ""}))
-      |> assign(page_title: "LiveData Assigns")
+      |> assign(page_title: "Live Data")
       |> assign_selected(params["key"])
       |> assign_form()
 
