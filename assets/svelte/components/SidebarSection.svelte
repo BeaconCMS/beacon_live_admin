@@ -110,31 +110,41 @@
           {/if}
         {:else if astElements}
           {#each astElements as astElement, idx}
-            <p on:mouseenter={() => highlightAstElement(astElement)} on:mouseleave={() => unhighlightAstElement()}>
-              &lt;{astElement.tag}&gt; Element 
-              <button 
-                class="bg-blue-500 hover:bg-blue-700 text-white inline h-5 w-5 align-middle"
-                on:click={() => select(astElement)}>
-                <span class="sr-only">Open element</span>
-                <svg viewBox="0 0 24 24">
-                  <path fill="currentColor" d="M4,3H5V5H3V4A1,1 0 0,1 4,3M20,3A1,1 0 0,1 21,4V5H19V3H20M15,5V3H17V5H15M11,5V3H13V5H11M7,5V3H9V5H7M21,20A1,1 0 0,1 20,21H19V19H21V20M15,21V19H17V21H15M11,21V19H13V21H11M7,21V19H9V21H7M4,21A1,1 0 0,1 3,20V19H5V21H4M3,15H5V17H3V15M21,15V17H19V15H21M3,11H5V13H3V11M21,11V13H19V11H21M3,7H5V9H3V7M21,7V9H19V7H21Z"></path>
-                </svg>
-              </button>
-              <button 
-                class="bg-gray-500 hover:bg-gray-700 disabled:bg-gray-300 text-white inline h-5 w-5 align-middle"
-                disabled={idx === 0}
-                on:click={() => moveAstElement(-1, astElement)}>
-                <span class="sr-only">Move element up</span>
-                ↑
-              </button>
-              <button 
-                class="bg-gray-500 hover:bg-gray-700 disabled:bg-gray-300 text-white inline h-5 w-5 align-middle"
-                disabled={idx === astElements.length - 1}
-                on:click={() => moveAstElement(1, astElement)}>
-                <span class="sr-only">Move element down</span>
-                ↓
-              </button>
-            </p>
+            <!-- svelte-ignore a11y-no-static-element-interactions -->
+            <div on:mouseenter={() => highlightAstElement(astElement)} on:mouseleave={() => unhighlightAstElement()} class="mt-4">
+              <div class="flex items-center justify-between">
+                <span><code>&lt;{astElement.tag}&gt;</code> element</span>
+                <button 
+                  class="flex items-center justify-center gap-x-0.5 px-2 py-1 bg-cyan-300 font-bold text-xs uppercase tracking-wide rounded transition-colors hover:bg-cyan-700 hover:text-white"
+                  on:click={() => select(astElement)}>
+                  Edit
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-3 h-3">
+                    <path d="M21.731 2.269a2.625 2.625 0 0 0-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 0 0 0-3.712ZM19.513 8.199l-3.712-3.712-8.4 8.4a5.25 5.25 0 0 0-1.32 2.214l-.8 2.685a.75.75 0 0 0 .933.933l2.685-.8a5.25 5.25 0 0 0 2.214-1.32l8.4-8.4Z" />
+                    <path d="M5.25 5.25a3 3 0 0 0-3 3v10.5a3 3 0 0 0 3 3h10.5a3 3 0 0 0 3-3V13.5a.75.75 0 0 0-1.5 0v5.25a1.5 1.5 0 0 1-1.5 1.5H5.25a1.5 1.5 0 0 1-1.5-1.5V8.25a1.5 1.5 0 0 1 1.5-1.5h5.25a.75.75 0 0 0 0-1.5H5.25Z" />
+                  </svg>                          
+                </button>
+              </div>
+              <div class="mt-2 grid grid-cols-2 gap-x-1">
+                <button 
+                  class="flex items-center justify-center gap-x-0.5 px-1.5 py-1 bg-gray-500 font-bold text-xs uppercase tracking-wide rounded hover:bg-gray-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white"
+                  disabled={idx === 0}
+                  on:click={() => moveAstElement(-1, astElement)}>
+                  <span>Move up</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-3 h-3">
+                    <path fill-rule="evenodd" d="M11.47 2.47a.75.75 0 0 1 1.06 0l7.5 7.5a.75.75 0 1 1-1.06 1.06l-6.22-6.22V21a.75.75 0 0 1-1.5 0V4.81l-6.22 6.22a.75.75 0 1 1-1.06-1.06l7.5-7.5Z" clip-rule="evenodd" />
+                  </svg>                  
+                </button>
+                <button 
+                  class="flex items-center justify-center gap-x-0.5 px-1.5 py-1 bg-gray-500 font-bold text-xs uppercase tracking-wide rounded hover:bg-gray-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white"
+                  disabled={idx === astElements.length - 1}
+                  on:click={() => moveAstElement(1, astElement)}>
+                  <span >Move down</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-3 h-3">
+                    <path fill-rule="evenodd" d="M12 2.25a.75.75 0 0 1 .75.75v16.19l6.22-6.22a.75.75 0 1 1 1.06 1.06l-7.5 7.5a.75.75 0 0 1-1.06 0l-7.5-7.5a.75.75 0 1 1 1.06-1.06l6.22 6.22V3a.75.75 0 0 1 .75-.75Z" clip-rule="evenodd" />
+                  </svg>                  
+                </button>
+              </div>
+            </div>
           {/each}
         {/if}
       </slot>
