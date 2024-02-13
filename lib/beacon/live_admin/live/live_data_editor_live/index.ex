@@ -46,9 +46,6 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Index do
   def handle_event("submit_path", %{"path" => path}, socket) do
     %{beacon_page: %{site: site}} = socket.assigns
 
-    # TODO: remove this after https://github.com/BeaconCMS/beacon/issues/395 is resolved
-    path = String.trim_leading(path, "/")
-
     socket =
       case Content.create_live_data(site, %{path: path, site: site}) do
         {:ok, live_data} ->
