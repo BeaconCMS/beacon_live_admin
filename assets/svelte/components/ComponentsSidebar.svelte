@@ -68,7 +68,7 @@
     <div class="border-b border-slate-100 border-solid py-4 px-4" data-test-id="logo">
       <h2 class="text-lg font-bold">Components</h2>
     </div>
-    <ul class="py-4" data-test-id="component-tree">
+    <ul class="py-4 h-[calc(100vh_-_61px)] overflow-y-auto" data-test-id="component-tree">
       {#each menuCategories as category}
         <li class="mb-1 px-4" data-test-id="nav-item">
           <h3 class="text-xs font-bold uppercase">{category.name}</h3>
@@ -80,41 +80,45 @@
         {/each}
       {/each}
     </ul>
+    <!-- svelte-ignore a11y-no-static-element-interactions -->
+    <div 
+      class="absolute w-96 left-0 bg-slate-50 inset-y-0 shadow-sm z-50 pt-3 pb-4 px-5 transition-transform duration-500 opacity-0 invisible overflow-y-auto min-h-screen" 
+      class:translate-x-[255px]={showExamples}
+      class:!opacity-100={showExamples}
+      class:!visible={showExamples}
+      id="component-previews"
+      data-test-id="component-previews" 
+      transition:translate={{x: 384}}
+      on:mouseenter={abortCollapseCategoryMenu}
+      on:mouseleave={collapseCategoryMenu}>
+      <h4 class="mb-4 font-bold text-2xl">{sectionTitles[$currentComponentCategory?.name]}</h4>
+      <p class="font-medium">Select a component 👇  and drag it to the canvas 👉</p>
+      {#if currentDefinitions}
+        {#each currentDefinitions as example}
+          <!-- svelte-ignore a11y-no-static-element-interactions -->
+          <div 
+            draggable
+            on:dragstart={e => dragStart(example, e)}
+            on:dragend={dragEnd}
+            class="pt-6" 
+            data-test-id="component-preview-card">
+            <img class="rounded ring-offset-2 ring-blue-500 transition hover:cursor-grab hover:ring-2" src={example.thumbnail} alt={example.name} />
+          </div>
+        {/each}
+      {/if}
+    </div>
   </div>
 </div>
 
 {#if showExamples}
   <div class="bg-black/50 absolute inset-0 z-50" transition:fade={{duration: 300}} id="backdrop" data-test-id="backdrop"></div>
 {/if}	
-<div 
-  class="absolute w-96 -left-32 bg-slate-50 inset-y-0 shadow-sm z-50 pt-3 pb-4 px-5 transition-transform duration-300" 
-  class:translate-x-96={showExamples}
-  id="component-previews"
-  data-test-id="component-previews" 
-  transition:translate={{x: 384}}
-  on:mouseenter={abortCollapseCategoryMenu}
-  on:mouseleave={collapseCategoryMenu}>
-  <h4 class="mb-4 font-bold text-2xl">{sectionTitles[$currentComponentCategory?.name]}</h4>
-  <p class="font-medium">Select a component 👇  and drag it to the canvas 👉</p>
-  {#if currentDefinitions}
-    {#each currentDefinitions as example}
-      <div 
-        draggable
-        on:dragstart={e => dragStart(example, e)}
-        on:dragend={dragEnd}
-        class="pt-6" 
-        data-test-id="component-preview-card">
-        <img class="rounded ring-offset-2 ring-blue-500 transition hover:cursor-grab hover:ring-2" src={example.thumbnail} alt={example.name} />
-      </div>
-    {/each}
-  {/if}
-</div>
 
 <style>
 	#left-sidebar {
 		z-index: 1000;
 	}
-	#component-previews, #backdrop {
+	#backdrop {
 		z-index: 999;
 	}
 </style>
