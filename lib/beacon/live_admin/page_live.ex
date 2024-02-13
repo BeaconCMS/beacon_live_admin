@@ -282,16 +282,4 @@ defmodule Beacon.LiveAdmin.PageLive do
     <span class=""><%= @text %></span>
     """
   end
-
-  defp show_sidebar do
-    %JS{}
-    |> JS.show(to: "#sidebar", time: 300)
-    |> JS.dispatch("beacon:admin:sidebar-visible")
-  end
-
-  defp hide_sidebar do
-    %JS{}
-    |> JS.hide(to: "#sidebar", time: 300)
-    |> JS.dispatch("beacon:admin:sidebar-hidden")
-  end
 end
