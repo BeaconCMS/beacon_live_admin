@@ -116,9 +116,10 @@
         {#if !isRootNode}
           <button
           type="button" 
-          class="absolute p-2 top-2 right-9" 
+          class="absolute p-2 top-2 right-9 group" 
           on:click={selectParentNode}>
-            <span class="sr-only">Return</span>
+            <span class="sr-only">Up one level</span>
+            <span class="absolute opacity-0 invisible right-9 min-w-[100px] bg-amber-100 py-1 px-1.5 rounded text-xs text-medium transition group-hover:opacity-100 group-hover:visible">Up one level</span>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 hover:text-blue-700 active:text-blue-900">
               <path fill-rule="evenodd" d="M9.53 2.47a.75.75 0 0 1 0 1.06L4.81 8.25H15a6.75 6.75 0 0 1 0 13.5h-3a.75.75 0 0 1 0-1.5h3a5.25 5.25 0 1 0 0-10.5H4.81l4.72 4.72a.75.75 0 1 1-1.06 1.06l-6-6a.75.75 0 0 1 0-1.06l6-6a.75.75 0 0 1 1.06 0Z" clip-rule="evenodd" />
             </svg>
@@ -154,7 +155,7 @@
       <div class="relative">
         {#if $draggedObject && $draggedObject.category === "basic"}
           <div 
-            class="absolute h-8 bg-white opacity-70 w-full h-full p-4" 
+            class="absolute bg-white opacity-70 w-full h-full p-4" 
             class:opacity-90={isDraggingOver}
             role="list"
             on:drop|preventDefault={dropInside} 
