@@ -12,12 +12,6 @@ window.addEventListener("phx:page-loading-start", (_event) => {
 
 window.addEventListener("phx:page-loading-stop", (_event) => {
   topbar.hide()
-
-  const sidebarVisivility = localStorage.getItem("beacon:admin:sidebar-visibility")
-  let sidebar = document.getElementById("sidebar")
-  let sidebarShow = document.getElementById("sidebar-show")
-  if (sidebarVisivility === "hidden" && sidebar) { sidebar.style.display = "none" }
-  if (sidebarVisivility === "hidden" && sidebarShow) { sidebarShow.style.display = "block" }
 })
 
 window.addEventListener("beacon_admin:clipcopy", (event) => {
@@ -56,18 +50,6 @@ window.addEventListener("beacon_admin:clipcopy", (event) => {
     );
   }
 });
-
-window.addEventListener("beacon:admin:sidebar-visible", (_event) => {
-  localStorage.setItem("beacon:admin:sidebar-visibility", "visible")
-  let sidebarShow = document.getElementById("sidebar-show")
-  if (sidebarShow) { sidebarShow.style.display = "none" }
-})
-
-window.addEventListener("beacon:admin:sidebar-hidden", (_event) => {
-  localStorage.setItem("beacon:admin:sidebar-visibility", "hidden")
-  let sidebarShow = document.getElementById("sidebar-show")
-  if (sidebarShow) { sidebarShow.style.display = "block" }
-})
 
 let socketPath = document.querySelector("html").getAttribute("phx-socket") || "/live"
 let csrfToken = document .querySelector("meta[name='csrf-token']") .getAttribute("content")
