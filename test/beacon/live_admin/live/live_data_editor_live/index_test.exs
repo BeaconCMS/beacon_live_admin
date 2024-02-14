@@ -10,8 +10,8 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.IndexTest do
     end)
 
     page_fixture()
-    live_data_fixture(path: "/testpages/:page_id")
-    live_data_fixture(path: "/testobjects/:object_id")
+    live_data_fixture(node1(), path: "/testpages/:page_id")
+    live_data_fixture(node1(), path: "/testobjects/:object_id")
 
     :ok
   end

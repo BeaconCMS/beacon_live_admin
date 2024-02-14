@@ -197,7 +197,7 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Assigns do
         <.modal :if={@show_delete_modal} id="confirm-delete" on_cancel={JS.push("delete_cancel")} show>
           <p class="mb-2">Are you sure you want to delete this assign?</p>
           <div class="flex justify-end w-full gap-4 mt-10">
-            <.button type="button" phx-click="delete_confirm">
+            <.button id="delete-confirm" type="button" phx-click="delete_confirm">
               Delete
             </.button>
             <.button type="button" phx-click="delete_cancel">
@@ -231,7 +231,7 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Assigns do
           </div>
 
           <div :if={@form} class="w-full col-span-2">
-            <.form :let={f} for={@form} class="flex items-end gap-4" phx-change="validate" phx-submit="save_changes">
+            <.form id="edit-assign-form" :let={f} for={@form} class="flex items-end gap-4" phx-change="validate" phx-submit="save_changes">
               <.input label="Key" field={f[:key]} type="text" />
               <.input label="Format" field={f[:format]} type="select" options={["elixir", "text"]} />
 
