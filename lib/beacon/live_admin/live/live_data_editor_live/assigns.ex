@@ -231,7 +231,7 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Assigns do
           </div>
 
           <div :if={@form} class="w-full col-span-2">
-            <.form id="edit-assign-form" :let={f} for={@form} class="flex items-end gap-4" phx-change="validate" phx-submit="save_changes">
+            <.form :let={f} id="edit-assign-form" for={@form} class="flex items-end gap-4" phx-change="validate" phx-submit="save_changes">
               <.input label="Key" field={f[:key]} type="text" />
               <.input label="Format" field={f[:format]} type="select" options={["elixir", "text"]} />
 
@@ -277,7 +277,15 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Assigns do
     key = URI.decode_www_form(key)
     selected = Enum.find(socket.assigns.live_data.assigns, &(&1.key == key))
 
-    assign(socket, selected: selected, changed_value: selected.value)
+    if selected do
+      assign(socket, selected: selected, changed_value: selected.value)
+    else
+      path = beacon_live_admin_path(socket, socket.assigns.beacon_page.site, "/live_data")
+
+      socket
+      |> assign(selected: nil)
+      |> push_navigate(to: path, replace: true)
+    end
   end
 
   defp assign_form(socket) do
