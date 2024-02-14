@@ -111,11 +111,11 @@
         {:else if astElements}
           {#each astElements as astElement, idx}
             <!-- svelte-ignore a11y-no-static-element-interactions -->
-            <div on:mouseenter={() => highlightAstElement(astElement)} on:mouseleave={() => unhighlightAstElement()} class="mt-4">
+            <div on:mouseenter={() => highlightAstElement(astElement)} on:mouseleave={() => unhighlightAstElement()} class="mt-5">
               <div class="flex items-center justify-between">
                 <span><code>&lt;{astElement.tag}&gt;</code> element</span>
                 <button 
-                  class="flex items-center justify-center gap-x-0.5 px-2 py-1 bg-cyan-300 font-bold text-xs uppercase tracking-wide rounded transition-colors hover:bg-cyan-700 hover:text-white"
+                  class="flex items-center justify-center gap-x-0.5 px-2 py-1 bg-cyan-300 font-bold text-xs uppercase tracking-wide rounded transition-colors hover:bg-cyan-900 active:bg-cyan-700 hover:text-white"
                   on:click={() => select(astElement)}>
                   Edit
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-3 h-3">
@@ -126,7 +126,7 @@
               </div>
               <div class="mt-2 grid grid-cols-2 gap-x-1">
                 <button 
-                  class="flex items-center justify-center gap-x-0.5 px-1.5 py-1 bg-gray-500 font-bold text-xs uppercase tracking-wide rounded hover:bg-gray-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white"
+                  class="flex items-center justify-center gap-x-0.5 px-1.5 py-1 bg-cyan-800 font-bold text-xs uppercase tracking-wide rounded hover:bg-cyan-900 active:bg-cyan-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white"
                   disabled={idx === 0}
                   on:click={() => moveAstElement(-1, astElement)}>
                   <span>Move up</span>
@@ -135,7 +135,7 @@
                   </svg>                  
                 </button>
                 <button 
-                  class="flex items-center justify-center gap-x-0.5 px-1.5 py-1 bg-gray-500 font-bold text-xs uppercase tracking-wide rounded hover:bg-gray-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white"
+                  class="flex items-center justify-center gap-x-0.5 px-1.5 py-1 bg-cyan-800 font-bold text-xs uppercase tracking-wide rounded hover:bg-cyan-900 active:bg-cyan-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white"
                   disabled={idx === astElements.length - 1}
                   on:click={() => moveAstElement(1, astElement)}>
                   <span >Move down</span>
