@@ -1,6 +1,5 @@
 defmodule Beacon.LiveAdmin.LiveDataEditorLive.IndexTest do
   use Beacon.LiveAdmin.ConnCase, async: false
-
   import Beacon.LiveAdminTest.Cluster, only: [rpc: 4]
 
   setup do
@@ -60,20 +59,16 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.IndexTest do
   end
 
   test "edit existing path", %{conn: conn} do
-    {:ok, view, _html} = live(conn, "/admin/site_a/live_data")
+    {:ok, view, _html} = live(conn, "/admin/site_a/live_data/edit/%2Ftestpages%2F%3Apage_id")
 
-    view
-    |> element("#edit-path-button-/testpages/:page_id")
-    |> render_click()
-
-    {:ok, view, _html} =
+    {:ok, _view, html} =
       view
-      |> form("#edit-path-form")
-      |> render_submit(%{"path" => "/testposts/:post_id"})
+      |> form("#edit-path-form", live_data: %{path: "/testposts/:post_id"})
+      |> render_submit()
       |> follow_redirect(conn, "/admin/site_a/live_data")
 
-    assert render(view) =~ "/testposts/:post_id"
-    refute render(view) =~ "/testpages/:page_id"
+     assert html =~ "/testposts/:post_id"
+     refute html =~ "/testpages/:page_id"
   end
 
   test "raises when missing beacon_live_admin_url in the session" do

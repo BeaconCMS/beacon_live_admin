@@ -67,9 +67,6 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Index do
     %{beacon_page: %{site: site}, selected: selected} = socket.assigns
     %{"live_data" => %{"path" => path}} = params
 
-    # TODO: remove this after https://github.com/BeaconCMS/beacon/issues/395 is resolved
-    path = String.trim_leading(path, "/")
-
     {:ok, _live_data} = Content.update_live_data_path(site, selected, path)
 
     path = beacon_live_admin_path(socket, socket.assigns.beacon_page.site, "/live_data")
@@ -133,7 +130,9 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Index do
         <:col :let={live_data_path} label="Path"><%= live_data_path %></:col>
         <:action :let={live_data_path}>
           <div class="sr-only">
-            <.link navigate={beacon_live_admin_path(@socket, @beacon_page.site, "/live_data/edit/#{sanitize_path(live_data_path)}")}>Edit</.link>
+            <.link id={"edit-live-data-" <> live_data_path} navigate={beacon_live_admin_path(@socket, @beacon_page.site, "/live_data/edit/#{sanitize_path(live_data_path)}")} title="Edit live data">
+              Edit
+            </.link>
           </div>
           <.link
             patch={beacon_live_admin_path(@socket, @beacon_page.site, "/live_data/edit/#{sanitize_path(live_data_path)}")}
@@ -150,7 +149,7 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Index do
     <.modal :if={@show_new_path_modal} id="new-path-modal" on_cancel={JS.push("close_modal")} show>
       <p class="text-2xl font-bold mb-12">New Path</p>
       <.form id="new-path-form" for={%{}} phx-submit="submit_path">
-        <.input type="text" name="path" placeholder="project/:project_id/comments" value="" />
+        <.input type="text" name="path" placeholder="/project/:project_id/comments" value="" />
         <div class="flex mt-8 gap-x-[20px]">
           <.button type="submit">Create</.button>
           <.button type="button" phx-click={JS.push("close_modal")}>Cancel</.button>
