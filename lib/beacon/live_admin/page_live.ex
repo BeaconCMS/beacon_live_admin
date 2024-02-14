@@ -183,6 +183,8 @@ defmodule Beacon.LiveAdmin.PageLive do
           {_, "/components"} -> false
           {"/pages", _} -> true
           {_, "/pages"} -> false
+          {"/live_data", _} -> true
+          {_, "/live_data"} -> false
           {"/error_pages", _} -> true
           {_, "/error_pages"} -> false
           {"/media_library", _} -> true
