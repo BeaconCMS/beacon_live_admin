@@ -67,8 +67,8 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.IndexTest do
       |> render_submit()
       |> follow_redirect(conn, "/admin/site_a/live_data")
 
-     assert html =~ "/testposts/:post_id"
-     refute html =~ "/testpages/:page_id"
+    assert html =~ "/testposts/:post_id"
+    refute html =~ "/testpages/:page_id"
   end
 
   test "raises when missing beacon_live_admin_url in the session" do
