@@ -81,8 +81,22 @@ defmodule Beacon.LiveAdmin.PageBuilder do
       Beacon.LiveAdmin.Private.register_on_mount_lifecycle_attribute(__MODULE__)
       @before_compile Beacon.LiveAdmin.PageBuilder
 
+      @impl true
       def init(opts), do: {:ok, opts}
       defoverridable init: 1
+
+      @impl true
+      def handle_event("change-site", %{"site" => site}, socket) do
+        site = String.to_existing_atom(site)
+
+        path =
+          case String.split(socket.assigns.beacon_page.path, "/") do
+            ["", path | _] -> beacon_live_admin_path(socket, site, path)
+            _ -> beacon_live_admin_path(socket)
+          end
+
+        {:noreply, push_navigate(socket, to: path)}
+      end
 
       def __beacon_page_table__ do
         unquote(opts)

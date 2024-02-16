@@ -12173,8 +12173,12 @@ var BeaconLiveAdmin = (() => {
   var Hooks = {};
   Hooks.CodeEditorHook = CodeEditorHook;
   import_topbar.default.config({ barColors: { 0: "#29d" }, shadowColor: "rgba(0, 0, 0, .3)" });
-  window.addEventListener("phx:page-loading-start", (_info) => import_topbar.default.show(300));
-  window.addEventListener("phx:page-loading-stop", (_info) => import_topbar.default.hide());
+  window.addEventListener("phx:page-loading-start", (_event) => {
+    import_topbar.default.show(300);
+  });
+  window.addEventListener("phx:page-loading-stop", (_event) => {
+    import_topbar.default.hide();
+  });
   window.addEventListener("beacon_admin:clipcopy", (event) => {
     const result_id = `${event.target.id}-copy-to-clipboard-result`;
     const el = document.getElementById(result_id);

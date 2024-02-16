@@ -526,7 +526,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
 
     ~H"""
     <div class="px-4 overflow-y-auto sm:overflow-visible sm:px-0">
-      <table class="w-[40rem] mt-11 sm:w-full">
+      <table class="w-[40rem] mt-6 sm:w-full">
         <thead class="text-sm leading-6 text-left text-zinc-500">
           <tr>
             <th :for={col <- @col} class="pt-0 pb-4 pl-0 pr-6 font-sans font-semibold uppercase text-sm tracking-[1.68px]"><%= col[:label] %></th>
@@ -617,7 +617,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
 
   def main_content(assigns) do
     ~H"""
-    <div class={"#{@class} px-4 pt-4 mt-4 bg-white overflow-y-auto col-span-full rounded-t-[1.25rem]"}>
+    <div class={"#{@class} px-4 py-2 mt-6 bg-white col-span-full rounded-[1.1rem]"}>
       <%= render_slot(@inner_block) %>
     </div>
     """
@@ -646,7 +646,10 @@ defmodule Beacon.LiveAdmin.AdminComponents do
   def table_sort(assigns) do
     ~H"""
     <.simple_form :let={f} for={%{}} as={:sort} phx-change="beacon:table-sort">
-      <.input type="select" field={f[:sort_by]} value={@table.sort_by} options={@options} />
+      <div class="flex items-center gap-2 justify-end">
+        <label for="sort_sort_by" class="text-sm font-medium text-gray-900">Sort by</label>
+        <.input type="select" field={f[:sort_by]} value={@table.sort_by} options={@options} />
+      </div>
     </.simple_form>
     """
   end
@@ -666,7 +669,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
       <.link
         :if={@table.current_page > 1}
         patch={Table.prev_path(@socket, @page)}
-        class="border-b-4 border-transparent hover:text-blue-700 hover:border-blue-700 active:text-blue-800 focus:outline-none focus:duration-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300 focus-visible:rounded focus-visible:duration-300 transition-link duration-300 only-large"
+        class="border-b-4 border-transparent hover:text-blue-600 hover:border-blue-600 active:text-blue-700 focus:outline-none focus:duration-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300 focus-visible:rounded focus-visible:duration-300 transition-link duration-300 only-large"
       >
         <.icon name="hero-arrow-long-left-solid" class="mr-2" /> prev
       </.link>
@@ -681,9 +684,9 @@ defmodule Beacon.LiveAdmin.AdminComponents do
             class={
               if @table.current_page == page,
                 do:
-                  "px-3 pb-0.5 pt-1.5 border-b-4 border-transparent hover:text-blue-700 hover:border-blue-700 active:text-blue-800 focus:outline-none focus:duration-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300 focus-visible:rounded focus-visible:duration-300 transition-link duration-300 only-large text-blue-600 border-blue-600",
+                  "px-3 pb-0.5 pt-1.5 border-b-4 border-transparent hover:text-blue-600 hover:border-blue-600 active:text-blue-700 focus:outline-none focus:duration-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300 focus-visible:rounded focus-visible:duration-300 transition-link duration-300 only-large text-blue-700 border-blue-700",
                 else:
-                  "px-3 pb-0.5 pt-1.5 border-b-4 border-transparent hover:text-blue-700 hover:border-blue-700 active:text-blue-800 focus:outline-none focus:duration-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300 focus-visible:rounded focus-visible:duration-300 transition-link duration-300 only-large"
+                  "px-3 pb-0.5 pt-1.5 border-b-4 border-transparent hover:text-blue-600 hover:border-blue-600 active:text-blue-700 focus:outline-none focus:duration-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300 focus-visible:rounded focus-visible:duration-300 transition-link duration-300 only-large"
             }
           >
             <%= page %>
@@ -697,13 +700,33 @@ defmodule Beacon.LiveAdmin.AdminComponents do
       <.link
         :if={@table.current_page < @table.page_count}
         patch={Table.next_path(@socket, @page)}
-        class="border-b-4 border-transparent hover:text-blue-700 hover:border-blue-700 active:text-blue-800 focus:outline-none focus:duration-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300 focus-visible:rounded focus-visible:duration-300 transition-link duration-300 only-large"
+        class="border-b-4 border-transparent hover:text-blue-600 hover:border-blue-600 active:text-blue-800 focus:outline-none focus:duration-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300 focus-visible:rounded focus-visible:duration-300 transition-link duration-300 only-large"
       >
         next <.icon name="hero-arrow-long-right-solid" class="mr-2" />
       </.link>
       <span :if={@table.current_page == @table.page_count} class="font-heading font-semibold text-gray-400 cursor-default">
         next <.icon name="hero-arrow-long-right-solid" class="mr-2" />
       </span>
+    </div>
+    """
+  end
+
+  @doc """
+  Renders a select input with the available sites to select.
+
+  ## Examples
+
+      <.site_selector selected_site="dev" options={[:dev, :dy]} />
+  """
+  attr :selected_site, :string, default: ""
+  attr :options, :list, default: []
+
+  def site_selector(assigns) do
+    ~H"""
+    <div class="pr-2">
+      <.form id="site-selector-form" for={%{}} phx-change="change-site">
+        <.input type="select" name="site" options={@options} value={@selected_site} />
+      </.form>
     </div>
     """
   end

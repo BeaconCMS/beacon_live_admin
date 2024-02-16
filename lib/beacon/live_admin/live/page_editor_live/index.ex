@@ -49,15 +49,15 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
     </.header>
 
     <div class="flex justify-between">
-      <div class="basis-10/12">
+      <div class="basis-4/12">
         <.table_search table={@beacon_page.table} placeholder="Search by path or title (showing up to 15 results)" />
       </div>
-      <div class="basis-1/12">
+      <div class="basis-2/12">
         <.table_sort table={@beacon_page.table} options={[{"Title", "title"}, {"Path", "path"}]} />
       </div>
     </div>
 
-    <.main_content class="h-[calc(100vh_-_210px)]">
+    <.main_content>
       <.table id="pages" rows={@streams.pages} row_click={fn {_dom_id, page} -> JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/pages/#{page.id}")) end}>
         <:col :let={{_, page}} label="Title"><%= page.title %></:col>
         <:col :let={{_, page}} label="Path"><%= page.path %></:col>

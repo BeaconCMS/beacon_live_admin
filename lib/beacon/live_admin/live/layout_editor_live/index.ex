@@ -49,11 +49,11 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.Index do
       </:actions>
     </.header>
 
-    <.simple_form :let={f} for={%{}} as={:search} phx-change="search">
+    <.simple_form :let={f} id="search-form" for={%{}} as={:search} phx-change="search">
       <.input field={f[:query]} type="search" autofocus={true} placeholder="Search by title (showing up to 20 results)" />
     </.simple_form>
 
-    <.main_content class="h-[calc(100vh_-_210px)]">
+    <.main_content>
       <.table id="layouts" rows={@beacon_layouts} row_click={fn layout -> JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/layouts/#{layout.id}")) end}>
         <:col :let={layout} label="Title"><%= layout.title %></:col>
         <:col :let={layout} label="Status"><%= display_status(layout.status) %></:col>

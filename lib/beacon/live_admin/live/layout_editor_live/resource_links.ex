@@ -112,7 +112,7 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.ResourceLinks do
         </:actions>
       </.header>
 
-      <.main_content class="h-[calc(100vh_-_223px)]">
+      <.main_content>
         <div class="flex gap-4">
           <.button type="button" phx-click="add">New Resource Link</.button>
           <.button type="button" phx-click="show-new-attribute-modal">New Attribute</.button>

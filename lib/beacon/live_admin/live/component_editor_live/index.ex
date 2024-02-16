@@ -49,11 +49,11 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.Index do
       </:actions>
     </.header>
 
-    <.simple_form :let={f} for={%{}} as={:search} phx-change="search">
+    <.simple_form :let={f} id="search-form" for={%{}} as={:search} phx-change="search">
       <.input field={f[:query]} type="search" autofocus={true} placeholder="Search by name (showing up to 20 results)" />
     </.simple_form>
 
-    <.main_content class="h-[calc(100vh_-_210px)]">
+    <.main_content>
       <.table id="components" rows={@components} row_click={fn component -> JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/components/#{component.id}")) end}>
         <:col :let={component} label="Name"><%= component.name %></:col>
         <:col :let={component} label="Category"><%= component.category %></:col>

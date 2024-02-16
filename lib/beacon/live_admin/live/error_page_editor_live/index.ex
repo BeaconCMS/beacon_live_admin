@@ -6,8 +6,10 @@ defmodule Beacon.LiveAdmin.ErrorPageEditorLive.Index do
 
   on_mount {Beacon.LiveAdmin.Hooks.Authorized, {:error_pages, :index}}
 
+  @impl true
   def menu_link(_, :index), do: {:root, "Error Pages"}
 
+  @impl true
   def handle_params(params, _uri, socket) do
     %{beacon_page: %{site: site}} = socket.assigns
 
@@ -28,6 +30,7 @@ defmodule Beacon.LiveAdmin.ErrorPageEditorLive.Index do
     {:noreply, socket}
   end
 
+  @impl true
   def handle_event("select-" <> status, _, socket) do
     %{beacon_page: %{site: site}} = socket.assigns
 
@@ -191,6 +194,7 @@ defmodule Beacon.LiveAdmin.ErrorPageEditorLive.Index do
     assign(socket, error_pages: error_pages)
   end
 
+  @impl true
   def render(assigns) do
     ~H"""
     <div>
@@ -203,7 +207,7 @@ defmodule Beacon.LiveAdmin.ErrorPageEditorLive.Index do
         </:actions>
       </.header>
 
-      <.main_content class="h-[calc(100vh_-_223px)]">
+      <.main_content>
         <.modal :if={@show_nav_modal} id="confirm-nav" on_cancel={JS.push("stay_here")} show>
           <p>You've made unsaved changes to this error page!</p>
           <p>Navigating to another error page without saving will cause these changes to be lost.</p>
