@@ -182,7 +182,7 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Assigns do
           <.button type="button" phx-click="show_create_modal">New Live Data Assign</.button>
         </:actions>
       </.header>
-      <.main_content class="h-[calc(100vh_-_223px)]">
+      <.main_content>
         <.modal :if={@show_nav_modal} id="confirm-nav" on_cancel={JS.push("stay_here")} show>
           <p>You've made unsaved changes to this assign!</p>
           <p>Navigating to another assign without saving will cause these changes to be lost.</p>
@@ -234,8 +234,7 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Assigns do
             <.form :let={f} id="edit-assign-form" for={@form} class="flex items-end gap-4" phx-change="validate" phx-submit="save_changes">
               <.input label="Key" field={f[:key]} type="text" />
               <.input label="Format" field={f[:format]} type="select" options={["elixir", "text"]} />
-
-              <.input type="hidden" field={f[:value]} name="live_data_assign[value]" id="live_data_assign-form_value" value={Phoenix.HTML.Form.input_value(f, :value)} />
+              <input type="hidden" name="live_data_assign[value]" id="live_data_assign-form_value" value={Phoenix.HTML.Form.input_value(f, :value)} />
 
               <.button phx-disable-with="Saving..." class="ml-auto">Save Changes</.button>
               <.button type="button" phx-click="delete" class="">Delete</.button>

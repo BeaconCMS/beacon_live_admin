@@ -125,7 +125,7 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Index do
       <.input field={f[:query]} type="search" autofocus={true} placeholder="Search by path (showing up to 20 results)" />
     </.simple_form>
 
-    <.main_content class="h-[calc(100vh_-_210px)]">
+    <.main_content>
       <.table id="live_data" rows={@live_data_paths} row_click={fn live_data_path -> JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/live_data/#{sanitize_path(live_data_path)}")) end}>
         <:col :let={live_data_path} label="Path"><%= live_data_path %></:col>
         <:action :let={live_data_path}>
