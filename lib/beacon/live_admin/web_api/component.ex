@@ -7,8 +7,7 @@ defmodule Beacon.LiveAdmin.WebAPI.Component do
 
   def show_ast(site, component, page) do
     path = for segment <- String.split(page.path, "/"), segment != "", do: segment
-    # beacon_live_data = Beacon.DataSource.live_data(site, path, [])
-    beacon_live_data = call(site, Beacon.DataSource, :live_data, [site, path, []])
+    beacon_live_data = call(site, BeaconWeb.DataSource, :live_data, [site, path, []])
 
     call(site, BeaconWeb.API.ComponentJSON, :show_ast, [
       %{component: component, assigns: %{beacon_live_data: beacon_live_data}}
