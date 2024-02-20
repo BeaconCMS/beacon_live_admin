@@ -184,8 +184,8 @@
           <button 
             on:click={deleteComponent}
             type="button" 
-            class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded outline-dashed outline-2 w-full">
-            Delete
+            class="bg-red-500 hover:bg-red-700 active:bg-red-800 text-white font-bold py-2 px-4 rounded outline-2 w-full">
+            Delete <span class="sr-only">current {sidebarTitle} element</span>
           </button>
         </svelte:fragment>
       </SidebarSection>
