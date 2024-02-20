@@ -1,7 +1,7 @@
 defmodule Beacon.LiveAdmin.PageEditorLive.Index do
   @moduledoc false
 
-  use Beacon.LiveAdmin.PageBuilder, table: [sort_by: "title"]
+  use Beacon.LiveAdmin.PageBuilder, table: [sort_by: "path"]
 
   alias Beacon.LiveAdmin.Content
 
