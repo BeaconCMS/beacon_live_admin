@@ -97,12 +97,12 @@
         {#each currentDefinitions as example}
           <!-- svelte-ignore a11y-no-static-element-interactions -->
           <div 
-            draggable
+            draggable="true"
             on:dragstart={e => dragStart(example, e)}
             on:dragend={dragEnd}
             class="pt-6" 
             data-test-id="component-preview-card">
-            <img class="rounded ring-offset-2 ring-blue-500 transition hover:cursor-grab hover:ring-2" src={example.thumbnail} alt={example.name} />
+            <img class="w-full h-auto rounded ring-offset-2 ring-blue-500 transition hover:cursor-grab hover:ring-2" src={example.thumbnail} alt={example.name} />
           </div>
         {/each}
       {/if}
