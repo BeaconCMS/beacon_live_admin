@@ -75,7 +75,7 @@
       on:click|preventDefault|stopPropagation={() => $selectedAstElementId = nodeId}
       use:highlightContent={{selected: $selectedAstElement === node, highlighted: $highlightedAstElement === node}}
     >{@html node.rendered_html}</div>
-  {:else if node.attrs.selfClose}
+  {:else if node.attrs?.selfClose}
     <svelte:element
       this={node.tag}
       {...node.attrs}
