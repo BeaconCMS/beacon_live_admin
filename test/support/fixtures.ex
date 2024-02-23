@@ -27,7 +27,7 @@ defmodule Beacon.LiveAdmin.Fixtures do
 
     attrs =
       Enum.into(attrs, %{
-        path: "home",
+        path: "/home",
         site: "site_a",
         title: "site_a_home_page",
         description: "site_a_home_page_desc",

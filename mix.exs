@@ -36,7 +36,7 @@ defmodule Beacon.LiveAdmin.MixProject do
       live_monaco_editor_dep(),
       {:ecto, "~> 3.6"},
       phoenix_dep(),
-      {:phoenix_html, "~> 3.3"},
+      {:phoenix_html, "~> 4.0"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       phoenix_live_view_dep(),
       {:floki, ">= 0.30.0", only: :test},
