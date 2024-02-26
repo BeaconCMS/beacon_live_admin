@@ -102,7 +102,9 @@
             on:dragend={dragEnd}
             class="pt-6" 
             data-test-id="component-preview-card">
-            <img class="w-full h-auto rounded ring-offset-2 ring-blue-500 transition hover:cursor-grab hover:ring-2" src={example.thumbnail} alt={example.name} />
+              <p class="mb-1 text-xs font-bold uppercase tracking-wider">{example.name}</p>
+              <!-- TODO: replace image src with local placeholder image-->
+              <img class="w-full h-auto rounded ring-offset-2 ring-blue-500 transition hover:cursor-grab hover:ring-2" src="{example.thumbnail ? example.thumbnail : `https://placehold.co/400x75?text=${example.name}`}" alt={example.name} />
           </div>
         {/each}
       {/if}
