@@ -2456,7 +2456,7 @@ var BeaconLiveAdmin = (() => {
             };
           };
           await Promise.resolve();
-          if (!this.$$cn) {
+          if (!this.$$cn || this.$$c) {
             return;
           }
           const $$slots = {};
@@ -2669,7 +2669,7 @@ var BeaconLiveAdmin = (() => {
   };
 
   // node_modules/svelte/src/shared/version.js
-  var VERSION = "4.2.9";
+  var VERSION = "4.2.12";
   var PUBLIC_VERSION = "4";
 
   // node_modules/svelte/src/runtime/internal/dev.js
