@@ -77,6 +77,5 @@ if (watch) {
     })
 } else {
   esbuild.build(optsClient)
-  console.log("deploy: " + deploy)
 }
 
