@@ -45,11 +45,8 @@ window.addEventListener("beacon_admin:clipcopy", (event) => {
   }
 })
 
-let socketPath =
-  document.querySelector("html").getAttribute("phx-socket") || "/live"
-let csrfToken = document
-  .querySelector("meta[name='csrf-token']")
-  .getAttribute("content")
+let socketPath = document.querySelector("html").getAttribute("phx-socket") || "/live"
+let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 let liveSocket = new LiveView.LiveSocket(socketPath, Phoenix.Socket, {
   hooks: { ...getHooks(Components), ...Hooks },
   params: { _csrf_token: csrfToken },

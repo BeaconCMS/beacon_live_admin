@@ -93,10 +93,7 @@ var BeaconLiveAdmin = (() => {
           ctx.lineWidth = options.barThickness;
           ctx.beginPath();
           ctx.moveTo(0, options.barThickness / 2);
-          ctx.lineTo(
-            Math.ceil(currentProgress * canvas.width),
-            options.barThickness / 2
-          );
+          ctx.lineTo(Math.ceil(currentProgress * canvas.width), options.barThickness / 2);
           ctx.strokeStyle = lineGradient;
           ctx.stroke();
         }, createCanvas = function() {
@@ -133,11 +130,10 @@ var BeaconLiveAdmin = (() => {
               canvas.style.display = "block";
               topbar2.progress(0);
               if (options.autoRun) {
+                ;
                 (function loop2() {
                   progressTimerId = window2.requestAnimationFrame(loop2);
-                  topbar2.progress(
-                    "+" + 0.05 * Math.pow(1 - Math.sqrt(currentProgress), 2)
-                  );
+                  topbar2.progress("+" + 0.05 * Math.pow(1 - Math.sqrt(currentProgress), 2));
                 })();
               }
             }
@@ -162,6 +158,7 @@ var BeaconLiveAdmin = (() => {
               window2.cancelAnimationFrame(progressTimerId);
               progressTimerId = null;
             }
+            ;
             (function loop2() {
               if (topbar2.progress("+.1") >= 1) {
                 canvas.style.opacity -= 0.05;
@@ -5131,13 +5128,16 @@ var BeaconLiveAdmin = (() => {
   var rootAstElement = derived([page], ([$page]) => {
     return { tag: "root", attrs: {}, content: $page.ast };
   });
-  var selectedAstElement = derived([page, selectedAstElementId], ([$page, $selectedAstElementId]) => {
-    if ($selectedAstElementId) {
-      if ($selectedAstElementId === "root")
-        return get_store_value(rootAstElement);
-      return findAstElement($page.ast, $selectedAstElementId);
+  var selectedAstElement = derived(
+    [page, selectedAstElementId],
+    ([$page, $selectedAstElementId]) => {
+      if ($selectedAstElementId) {
+        if ($selectedAstElementId === "root")
+          return get_store_value(rootAstElement);
+        return findAstElement($page.ast, $selectedAstElementId);
+      }
     }
-  });
+  );
   function isAstElement(maybeNode) {
     return typeof maybeNode !== "string";
   }

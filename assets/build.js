@@ -78,4 +78,3 @@ if (watch) {
 } else {
   esbuild.build(optsClient)
 }
-
