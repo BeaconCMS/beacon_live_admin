@@ -136,7 +136,7 @@ jobs:
 
       - run: mix compile --warnings-as-errors
 
-      - run: mix format.check.all
+      - run: mix format.all.check
 
       - run: mix deps.unlock --check-unused
 
