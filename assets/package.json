@@ -12,6 +12,7 @@
     "eslint": "^8.57",
     "eslint-config-prettier": "^9.1",
     "prettier": "^3.2",
+    "prettier-plugin-svelte": "^3.2",
     "svelte": "^4.2",
     "svelte-preprocess": "^5.1",
     "typescript": "^5.3"

@@ -19,7 +19,7 @@ export const selectedAstElement: Readable<AstElement | undefined> = derived(
       if ($selectedAstElementId === "root") return get(rootAstElement)
       return findAstElement($page.ast, $selectedAstElementId)
     }
-  }
+  },
 )
 
 export function isAstElement(maybeNode: AstNode): maybeNode is AstElement {

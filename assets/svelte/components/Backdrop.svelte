@@ -1,8 +1,8 @@
 <script lang="ts" context="module">
-  import { writable, type Writable } from 'svelte/store';
-  import { fade } from 'svelte/transition';
+  import { writable, type Writable } from "svelte/store"
+  import { fade } from "svelte/transition"
 
-  export const backdropVisible: Writable<boolean> = writable(false);
+  export const backdropVisible: Writable<boolean> = writable(false)
 </script>
 
 {#if $backdropVisible}
