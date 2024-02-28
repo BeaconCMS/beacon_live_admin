@@ -94,8 +94,7 @@ defmodule Beacon.LiveAdmin.MixProject do
       ],
       "assets.deploy": [
         "tailwind default --minify",
-        "cmd --cd assets node build.js --deploy",
-        "phx.digest"
+        "cmd --cd assets node build.js --deploy"
       ]
     ]
   end

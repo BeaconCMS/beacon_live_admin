@@ -20,9 +20,9 @@ let optsClient = {
   minify: deploy,
   target: "es2020",
   conditions: ["svelte", "browser"],
-  outdir: "../priv/static/",
+  outfile: deploy ? "../priv/static/beacon_live_admin.min.js" : "../priv/static/beacon_live_admin.js",
   logLevel: "info",
-  sourcemap: watch ? "inline" : false,
+  sourcemap: "external",
   tsconfig: "./tsconfig.json",
   plugins: [
     importGlobPlugin(),
@@ -47,7 +47,7 @@ let optsServer = {
   conditions: ["svelte"],
   outdir: "../priv/svelte",
   logLevel: "info",
-  sourcemap: watch ? "inline" : false,
+  sourcemap: "external",
   tsconfig: "./tsconfig.json",
   plugins: [
     importGlobPlugin(),
@@ -77,4 +77,6 @@ if (watch) {
     })
 } else {
   esbuild.build(optsClient)
+  console.log("deploy: " + deploy)
 }
+
