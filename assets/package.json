@@ -6,9 +6,9 @@
   },
   "devDependencies": {
     "@tailwindcss/container-queries": "^0.1.1",
-    "esbuild": "^0.16.17",
-    "esbuild-plugin-import-glob": "^0.1.1",
-    "esbuild-svelte": "^0.8.0",
+    "esbuild": "^0.20",
+    "esbuild-plugin-import-glob": "^0.1",
+    "esbuild-svelte": "^0.8",
     "eslint": "^8.40.0",
     "eslint-config-prettier": "^8.8.0",
     "prettier": "^2.8.8",

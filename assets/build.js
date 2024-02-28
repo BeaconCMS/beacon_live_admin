@@ -23,17 +23,16 @@ let optsClient = {
   outdir: "../priv/static/",
   logLevel: "info",
   sourcemap: watch ? "inline" : false,
-  watch,
   tsconfig: "./tsconfig.json",
   plugins: [
     importGlobPlugin(),
     sveltePlugin({
       preprocess: sveltePreprocess(),
-      compilerOptions: { 
-        dev: !deploy, 
-        hydratable: true, 
+      compilerOptions: {
+        dev: !deploy,
+        hydratable: true,
         css: "injected",
-        customElement: true
+        customElement: true,
       },
     }),
   ],
@@ -43,39 +42,39 @@ let optsServer = {
   entryPoints: ["js/server.js"],
   platform: "node",
   bundle: true,
-  minify: false,
+  minify: deploy,
   target: "node19.6.1",
   conditions: ["svelte"],
   outdir: "../priv/svelte",
   logLevel: "info",
   sourcemap: watch ? "inline" : false,
-  watch,
   tsconfig: "./tsconfig.json",
   plugins: [
     importGlobPlugin(),
     sveltePlugin({
       preprocess: sveltePreprocess(),
-      compilerOptions: { 
-        dev: !deploy, 
-        hydratable: true, 
+      compilerOptions: {
+        dev: !deploy,
+        hydratable: true,
         generate: "ssr",
-        customElement: true
+        customElement: true,
       },
     }),
   ],
 }
 
-const client = esbuild.build(optsClient)
-const server = esbuild.build(optsServer)
+esbuild.build(optsServer)
 
 if (watch) {
-  client.then((_result) => {
-    process.stdin.on("close", () => process.exit(0))
-    process.stdin.resume()
-  })
-
-  server.then((_result) => {
-    process.stdin.on("close", () => process.exit(0))
-    process.stdin.resume()
-  })
+  esbuild
+    .context(optsClient)
+    .then((ctx) => {
+      ctx.watch()
+    })
+    .catch((error) => {
+      console.log(error)
+      process.exit(1)
+    })
+} else {
+  esbuild.build(optsClient)
 }
