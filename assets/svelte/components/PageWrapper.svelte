@@ -25,4 +25,8 @@
     outline-width: 2px;
     outline-style: dashed;
   }
+
+  :global(:before, :after) {
+    pointer-events: none;
+  }
 </style>
