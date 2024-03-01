@@ -6,11 +6,10 @@
   import { page } from "$lib/stores/page"
   import { siteStylesheetPath as siteStylesheetPathStore } from "$lib/stores/siteStylesheetPath"
   import { pageStylesheetPath as pageStylesheetPathStore } from "$lib/stores/pageStylesheetPath"
-
 </script>
 
-<link id="site-stylesheet-target" href={$siteStylesheetPathStore} />
-<link id="page-stylesheet-target" href={$pageStylesheetPathStore} />
+<link id="site-stylesheet-target" rel="stylesheet" href={$siteStylesheetPathStore} />
+<link id="page-stylesheet-target" rel="stylesheet" href={$pageStylesheetPathStore} />
 
 {#each $page.layout.ast as layoutAstNode}
   <LayoutAstNode node={layoutAstNode}>
