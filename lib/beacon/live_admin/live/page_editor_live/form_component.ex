@@ -8,9 +8,6 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
 
   @impl true
   def update(%{site: site, page: page} = assigns, socket) do
-    # TODO: handle empty path in the json encoder
-    page = Map.put_new(page, :path, "/")
-
     changeset =
       case socket.assigns do
         %{form: form} ->
@@ -24,7 +21,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
      socket
      |> assign(assigns)
      |> assign_form(changeset)
-     |> assign_builder_page(changeset)
+     |> maybe_assign_builder_page(changeset)
      |> assign(:language, language(page.format))
      |> assign_extra_fields(changeset)}
   end
@@ -48,7 +45,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
     {:ok,
      socket
      |> assign_form(changeset)
-     |> assign_builder_page(changeset)}
+     |> maybe_assign_builder_page(changeset)}
   end
 
   @impl true
@@ -73,7 +70,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
     {:noreply,
      socket
      |> assign_form(changeset)
-     |> assign_builder_page(changeset)}
+     |> maybe_assign_builder_page(changeset)}
   end
 
   def handle_event("validate", %{"page" => page_params}, socket) do
@@ -85,7 +82,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
     {:noreply,
      socket
      |> assign_form(changeset)
-     |> assign_builder_page(changeset)
+     |> maybe_assign_builder_page(changeset)
      |> assign_extra_fields(changeset)}
   end
 
@@ -148,16 +145,9 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
     assign(socket, :form, to_form(changeset))
   end
 
-  defp assign_builder_page(
-         %{assigns: %{editor: "code", builder_page: builder_page}} = socket,
-         _changeset
-       )
-       when not is_nil(builder_page) do
-    socket
-  end
-
-  defp assign_builder_page(socket, changeset) do
-    with {:ok, page} <- Changeset.apply_action(changeset, :update),
+  defp maybe_assign_builder_page(%{assigns: %{editor: "visual"}} = socket, changeset) do
+    with :heex <- Changeset.get_field(changeset, :format),
+         {:ok, page} <- Changeset.apply_action(changeset, :update),
          %{data: builder_page} <- WebAPI.Page.show(page.site, page) do
       assign(socket, :builder_page, builder_page)
     else
@@ -166,6 +156,8 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
         assign(socket, :builder_page, nil)
     end
   end
+
+  defp maybe_assign_builder_page(socket, _changeset), do: assign(socket, :builder_page, nil)
 
   defp assign_extra_fields(socket, changeset) do
     params = Ecto.Changeset.get_field(changeset, :extra)
