@@ -1,6 +1,7 @@
 defmodule Beacon.LiveAdmin.AssetsController do
   @moduledoc false
   import Plug.Conn
+  alias Beacon.LiveAdmin.Layouts
 
   phoenix_js_paths =
     for app <- [:phoenix, :phoenix_html, :phoenix_live_view] do
@@ -28,8 +29,8 @@ defmodule Beacon.LiveAdmin.AssetsController do
   """
 
   @hashes %{
-    :css => Base.encode16(:crypto.hash(:md5, @css), case: :lower),
-    :js => Base.encode16(:crypto.hash(:md5, @js), case: :lower)
+    :css => Layouts.hash(@css),
+    :js => Layouts.hash(@js)
   }
 
   def init(asset) when asset in [:css, :css_site, :css_page, :js], do: asset

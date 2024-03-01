@@ -24,7 +24,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
      |> assign_form(changeset)
      |> maybe_assign_builder_page(changeset)
      |> assign(:language, language(page.format))
-     |> assign_stylesheet_paths()
+     |> assign_stylesheet_paths(changeset)
      |> assign_extra_fields(changeset)}
   end
 
@@ -47,7 +47,8 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
     {:ok,
      socket
      |> assign_form(changeset)
-     |> maybe_assign_builder_page(changeset)}
+     |> maybe_assign_builder_page(changeset)
+     |> assign_stylesheet_paths(changeset)}
   end
 
   @impl true
@@ -161,11 +162,21 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
 
   defp maybe_assign_builder_page(socket, _changeset), do: assign(socket, :builder_page, nil)
 
-  defp assign_stylesheet_paths(socket) do
+  defp assign_stylesheet_paths(socket, changeset) do
     %{site: site, page: %{id: page_id}} = socket.assigns
-    site_stylesheet_path = Layouts.asset_path(socket, :css_site, site)
-    page_stylesheet_path = Layouts.asset_path(socket, :css_page, site, page_id)
-    assign(socket, site_stylesheet_path: site_stylesheet_path, page_stylesheet_path: page_stylesheet_path)
+
+    hash =
+      changeset
+      |> Changeset.get_field(:template)
+      |> Layouts.hash()
+
+    site_stylesheet_path = Layouts.asset_path(socket, :css_site, site, hash)
+    page_stylesheet_path = Layouts.asset_path(socket, :css_page, site, page_id, hash)
+
+    assign(socket,
+      site_stylesheet_path: site_stylesheet_path,
+      page_stylesheet_path: page_stylesheet_path
+    )
   end
 
   defp assign_extra_fields(socket, changeset) do
