@@ -3,27 +3,14 @@
 <script lang="ts">
   import LayoutAstNode from "./LayoutAstNode.svelte"
   import PageAstNode from "./PageAstNode.svelte"
-  import { selectedAstElementId } from "$lib/stores/page"
   import { page } from "$lib/stores/page"
   import { siteStylesheetPath as siteStylesheetPathStore } from "$lib/stores/siteStylesheetPath"
   import { pageStylesheetPath as pageStylesheetPathStore } from "$lib/stores/pageStylesheetPath"
-  let siteStylesheetLink: HTMLLinkElement
-  let pageStylesheetLink: HTMLLinkElement
-  $: {
-    if (siteStylesheetLink) {
-      siteStylesheetLink.rel = "stylesheet"
-      siteStylesheetLink.href = $siteStylesheetPathStore
-    }
 
-    if (pageStylesheetLink) {
-      pageStylesheetLink.rel = "stylesheet"
-      pageStylesheetLink.href = $pageStylesheetPathStore
-    }
-  }
 </script>
 
-<link id="site-stylesheet-target" bind:this={siteStylesheetLink} />
-<link id="page-stylesheet-target" bind:this={pageStylesheetLink} />
+<link id="site-stylesheet-target" href={$siteStylesheetPathStore} />
+<link id="page-stylesheet-target" href={$pageStylesheetPathStore} />
 
 {#each $page.layout.ast as layoutAstNode}
   <LayoutAstNode node={layoutAstNode}>
