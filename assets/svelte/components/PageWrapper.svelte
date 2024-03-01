@@ -5,29 +5,25 @@
   import PageAstNode from "./PageAstNode.svelte"
   import { selectedAstElementId } from "$lib/stores/page"
   import { page } from "$lib/stores/page"
-  import { pageStylesheet as pageStylesheetStore } from "$lib/stores/pageStylesheet"
-  import { siteStylesheet as siteStylesheetStore } from "$lib/stores/siteStylesheet"
-  let spanSiteStylesheet: HTMLSpanElement
-  let spanPageStylesheet: HTMLSpanElement
+  import { siteStylesheetPath as siteStylesheetPathStore } from "$lib/stores/siteStylesheetPath"
+  import { pageStylesheetPath as pageStylesheetPathStore } from "$lib/stores/pageStylesheetPath"
+  let siteStylesheetLink: HTMLLinkElement
+  let pageStylesheetLink: HTMLLinkElement
   $: {
-    if (spanSiteStylesheet) {
-      spanSiteStylesheet.innerHTML = ""
-      let styleEl = document.createElement("style")
-      styleEl.innerHTML = $siteStylesheetStore
-      spanSiteStylesheet.append(styleEl)
+    if (siteStylesheetLink) {
+      siteStylesheetLink.rel = "stylesheet"
+      siteStylesheetLink.href = $siteStylesheetPathStore
     }
 
-    if (spanPageStylesheet) {
-      spanPageStylesheet.innerHTML = ""
-      let styleEl = document.createElement("style")
-      styleEl.innerHTML = $pageStylesheetStore
-      spanPageStylesheet.append(styleEl)
+    if (pageStylesheetLink) {
+      pageStylesheetLink.rel = "stylesheet"
+      pageStylesheetLink.href = $pageStylesheetPathStore
     }
   }
 </script>
 
-<span id="site-stylesheet-target" bind:this={spanSiteStylesheet}></span>
-<span id="page-stylesheet-target" bind:this={spanPageStylesheet}></span>
+<link id="site-stylesheet-target" bind:this={siteStylesheetLink} />
+<link id="page-stylesheet-target" bind:this={pageStylesheetLink} />
 
 {#each $page.layout.ast as layoutAstNode}
   <LayoutAstNode node={layoutAstNode}>

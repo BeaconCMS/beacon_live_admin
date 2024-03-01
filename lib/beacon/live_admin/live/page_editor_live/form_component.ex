@@ -3,6 +3,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
 
   alias Beacon.LiveAdmin.Config
   alias Beacon.LiveAdmin.Content
+  alias Beacon.LiveAdmin.Layouts
   alias Beacon.LiveAdmin.WebAPI
   alias Ecto.Changeset
 
@@ -23,6 +24,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
      |> assign_form(changeset)
      |> maybe_assign_builder_page(changeset)
      |> assign(:language, language(page.format))
+     |> assign_stylesheet_paths()
      |> assign_extra_fields(changeset)}
   end
 
@@ -159,6 +161,13 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
 
   defp maybe_assign_builder_page(socket, _changeset), do: assign(socket, :builder_page, nil)
 
+  defp assign_stylesheet_paths(socket) do
+    %{site: site, page: %{id: page_id}} = socket.assigns
+    site_stylesheet_path = Layouts.asset_path(socket, :css_site, site)
+    page_stylesheet_path = Layouts.asset_path(socket, :css_page, site, page_id)
+    assign(socket, site_stylesheet_path: site_stylesheet_path, page_stylesheet_path: page_stylesheet_path)
+  end
+
   defp assign_extra_fields(socket, changeset) do
     params = Ecto.Changeset.get_field(changeset, :extra)
 
@@ -197,24 +206,6 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
     html = Content.render_page_field(site, mod, extra_fields[name], env)
     {:safe, html}
   end
-
-  defp compile_page_stylesheet(%{source: %Changeset{} = changeset}, "visual" = _editor) do
-    site = Changeset.get_field(changeset, :site)
-
-    Beacon.LiveAdmin.Layouts.page_stylesheet(
-      site,
-      Changeset.get_field(changeset, :template) || ""
-    )
-  end
-
-  defp compile_page_stylesheet(_, _), do: ""
-
-  defp site_stylesheet(%{source: %Changeset{} = changeset}, "visual" = _editor) do
-    site = Changeset.get_field(changeset, :site)
-    Beacon.LiveAdmin.Layouts.site_stylesheet(site)
-  end
-
-  defp site_stylesheet(_, _), do: ""
 
   defp svelte_page_builder_class("code" = _editor), do: "hidden"
   defp svelte_page_builder_class("visual" = _editor), do: "mt-4 relative"
@@ -266,7 +257,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
         :if={@editor == "visual"}
         name="components/UiBuilder"
         class={svelte_page_builder_class(@editor)}
-        props={%{components: @components, page: @builder_page, pageStylesheet: compile_page_stylesheet(@form, @editor), siteStylesheet: site_stylesheet(@form, @editor)}}
+        props={%{components: @components, page: @builder_page, siteStylesheetPath: @site_stylesheet_path, pageStylesheetPath: @page_stylesheet_path}}
         socket={@socket}
       />
 

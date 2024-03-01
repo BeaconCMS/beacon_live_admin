@@ -14,6 +14,24 @@ defmodule Beacon.LiveAdmin.Layouts do
     Phoenix.VerifiedRoutes.unverified_path(conn_or_socket, router(conn_or_socket), path)
   end
 
+  # FIXME: resolve asset md5 hash
+  def asset_path(conn_or_socket, :css_site = _asset, site) do
+    prefix = router(conn_or_socket).__beacon_live_admin_assets_prefix__()
+    # hash = Beacon.LiveAdmin.AssetsController.current_hash(asset)
+    hash = "TODO"
+    path = Beacon.LiveAdmin.Router.sanitize_path("#{prefix}/css-site-#{hash}/#{site}")
+    Phoenix.VerifiedRoutes.unverified_path(conn_or_socket, router(conn_or_socket), path)
+  end
+
+  # FIXME: resolve asset md5 hash
+  def asset_path(conn_or_socket, :css_page = _asset, site, page_id) do
+    prefix = router(conn_or_socket).__beacon_live_admin_assets_prefix__()
+    # hash = Beacon.LiveAdmin.AssetsController.current_hash(asset)
+    hash = "TODO"
+    path = Beacon.LiveAdmin.Router.sanitize_path("#{prefix}/css-page-#{hash}/#{site}/#{page_id}")
+    Phoenix.VerifiedRoutes.unverified_path(conn_or_socket, router(conn_or_socket), path)
+  end
+
   def site_stylesheet(site), do: Beacon.LiveAdmin.RuntimeCSS.fetch(site, :uncompressed)
 
   def page_stylesheet(site, template) do

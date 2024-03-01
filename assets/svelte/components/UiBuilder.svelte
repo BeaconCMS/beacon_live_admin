@@ -4,18 +4,18 @@
   import PagePreview from "./PagePreview.svelte"
   import PropertiesSidebar from "./PropertiesSidebar.svelte"
   import { page as pageStore } from "$lib/stores/page"
-  import { pageStylesheet as pageStylesheetStore } from "$lib/stores/pageStylesheet"
-  import { siteStylesheet as siteStylesheetStore } from "$lib/stores/siteStylesheet"
+  import { siteStylesheetPath as siteStylesheetPathStore } from "$lib/stores/siteStylesheetPath"
+  import { pageStylesheetPath as pageStylesheetPathStore } from "$lib/stores/pageStylesheetPath"
   import type { ComponentDefinition, Page } from "$lib/types"
 
   export let components: ComponentDefinition[]
   export let page: Page
-  export let pageStylesheet: string
-  export let siteStylesheet: string
+  export let siteStylesheetPath: string
+  export let pageStylesheetPath: string
   export let live
   $: $pageStore = page
-  $: $pageStylesheetStore = pageStylesheet
-  $: $siteStylesheetStore = siteStylesheet
+  $: $siteStylesheetPathStore = siteStylesheetPath
+  $: $pageStylesheetPathStore = pageStylesheetPath
 
   function addBasicComponentToTarget(e: CustomEvent) {
     // This method is in PagePreview.
