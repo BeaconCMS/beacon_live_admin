@@ -25,4 +25,11 @@ defmodule Beacon.LiveAdmin.PageEditorLive.NewTest do
     assert has_element?(live, "h1", "Edit Page")
     assert has_element?(live, "button", "Save Changes")
   end
+
+  describe "extra page fields" do
+    test "display with default value", %{conn: conn} do
+      {:ok, live, _html} = live(conn, "/admin/site_a/pages/new")
+      assert has_element?(live, ~s|input#page-form_extra_type[value="page"]|)
+    end
+  end
 end
