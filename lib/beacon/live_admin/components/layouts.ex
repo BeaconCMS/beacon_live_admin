@@ -20,30 +20,14 @@ defmodule Beacon.LiveAdmin.Layouts do
 
   def asset_path(conn_or_socket, :css_site = _asset, site, hash) do
     prefix = router(conn_or_socket).__beacon_live_admin_assets_prefix__()
-    path = Beacon.LiveAdmin.Router.sanitize_path("#{prefix}/css-site-#{hash}/#{site}")
+    path = Beacon.LiveAdmin.Router.sanitize_path("#{prefix}/#{site}/css-#{hash}")
     Phoenix.VerifiedRoutes.unverified_path(conn_or_socket, router(conn_or_socket), path)
   end
 
-  def asset_path(conn_or_socket, :css_page = _asset, site, page_id, hash) do
+  def asset_path(conn_or_socket, :css_page = _asset, view_id, hash) do
     prefix = router(conn_or_socket).__beacon_live_admin_assets_prefix__()
-    path = Beacon.LiveAdmin.Router.sanitize_path("#{prefix}/css-page-#{hash}/#{site}/#{page_id}")
+    path = Beacon.LiveAdmin.Router.sanitize_path("#{prefix}/page/#{view_id}/css-#{hash}")
     Phoenix.VerifiedRoutes.unverified_path(conn_or_socket, router(conn_or_socket), path)
-  end
-
-  def site_stylesheet(site), do: Beacon.LiveAdmin.RuntimeCSS.fetch(site, :uncompressed)
-
-  def page_stylesheet(site, template) do
-    case Beacon.LiveAdmin.RuntimeCSS.compile(site, template) do
-      {:ok, stylesheet} ->
-        stylesheet
-
-      {:error, error} ->
-        """
-        Failed to generate the page stylesheet:
-
-        #{inspect(error)}
-        """
-    end
   end
 
   defp router(%Plug.Conn{private: %{phoenix_router: router}}), do: router

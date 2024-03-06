@@ -13,4 +13,10 @@ defmodule Beacon.LiveAdmin.RuntimeCSS do
   def fetch(site, version) when is_atom(site) do
     call(site, Beacon.RuntimeCSS, :fetch, [site, version])
   end
+
+  def fetch_for_page(view_id) do
+    view_id
+    |> Beacon.LiveAdmin.PageEditorLive.FormComponent.whereis()
+    |> GenServer.call(:fetch_page_css, :timer.minutes(1))
+  end
 end

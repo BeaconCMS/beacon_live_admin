@@ -7,6 +7,39 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
   alias Beacon.LiveAdmin.WebAPI
   alias Ecto.Changeset
 
+  defp name(view_id) do
+    {:beacon_page_editor_live, view_id}
+  end
+
+  def whereis(view_id) do
+    name = name(view_id)
+
+    case :global.whereis_name(name) do
+      :undefined -> nil
+      pid -> pid
+    end
+  end
+
+  defp register do
+    view_id = System.unique_integer([:positive]) |> to_string()
+    name = name(view_id)
+
+    case :global.whereis_name(name) do
+      :undefined ->
+        :yes = :global.register_name(name, self())
+        view_id
+
+      _pid ->
+        view_id
+    end
+  end
+
+  @impl true
+  def mount(socket) do
+    view_id = register()
+    {:ok, assign(socket, view_id: view_id)}
+  end
+
   @impl true
   def update(%{site: site, page: page} = assigns, socket) do
     changeset =
@@ -17,6 +50,8 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
         _ ->
           Content.change_page(site, page)
       end
+
+    notify_changed_template(changeset)
 
     {:ok,
      socket
@@ -43,6 +78,8 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
   defp update_template(socket, template) do
     params = Map.merge(socket.assigns.form.params, %{"template" => template})
     changeset = Content.change_page(socket.assigns.site, socket.assigns.page, params)
+
+    notify_changed_template(changeset)
 
     {:ok,
      socket
@@ -163,7 +200,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
   defp maybe_assign_builder_page(socket, _changeset), do: assign(socket, :builder_page, nil)
 
   defp assign_stylesheet_paths(socket, changeset) do
-    %{site: site, page: %{id: page_id}} = socket.assigns
+    %{site: site, view_id: view_id} = socket.assigns
 
     hash =
       changeset
@@ -171,12 +208,16 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
       |> Layouts.hash()
 
     site_stylesheet_path = Layouts.asset_path(socket, :css_site, site, hash)
-    page_stylesheet_path = Layouts.asset_path(socket, :css_page, site, page_id, hash)
+    page_stylesheet_path = Layouts.asset_path(socket, :css_page, view_id, hash)
 
     assign(socket,
       site_stylesheet_path: site_stylesheet_path,
       page_stylesheet_path: page_stylesheet_path
     )
+  end
+
+  defp notify_changed_template(changeset) do
+    send(self(), {:template_changed, Changeset.get_field(changeset, :template)})
   end
 
   defp assign_extra_fields(socket, changeset) do

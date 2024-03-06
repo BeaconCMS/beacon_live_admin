@@ -2,6 +2,7 @@ defmodule Beacon.LiveAdmin.AssetsController do
   @moduledoc false
   import Plug.Conn
   alias Beacon.LiveAdmin.Layouts
+  alias Beacon.LiveAdmin.RuntimeCSS
 
   phoenix_js_paths =
     for app <- [:phoenix, :phoenix_html, :phoenix_live_view] do
@@ -49,27 +50,17 @@ defmodule Beacon.LiveAdmin.AssetsController do
   defp contents_and_type(:css, _params), do: {@css, "text/css"}
 
   defp contents_and_type(:css_site, %{"site" => site}) do
-    {Beacon.LiveAdmin.RuntimeCSS.fetch(site, :uncompressed), "text/css"}
+    {RuntimeCSS.fetch(site, :uncompressed), "text/css"}
   end
 
-  defp contents_and_type(:css_page, %{"site" => site, "page_id" => page_id}) do
-    css =
-      with %{site: site, template: template} <- Beacon.LiveAdmin.Content.get_page(site, page_id),
-           {:ok, stylesheet} <- Beacon.LiveAdmin.RuntimeCSS.compile(site, template) do
-        stylesheet
-      else
-        {:error, error} ->
-          """
-          /*
-          #{error}
-          /*
-          """
+  defp contents_and_type(:css_page, %{"view_id" => view_id}) do
+    case RuntimeCSS.fetch_for_page(view_id) do
+      {:ok, css} ->
+        {css, "text/css"}
 
-        _ ->
-          "/* failed to generate the page stylesheet */"
-      end
-
-    {css, "text/css"}
+      _ ->
+        {"/* failed to load css /*", "text/css"}
+    end
   end
 
   defp contents_and_type(:js, _params), do: {@js, "text/javascript"}
