@@ -3,27 +3,22 @@ defmodule Beacon.LiveAdmin.RuntimeCSS do
   alias Beacon.LiveAdmin.Content
   alias Beacon.LiveAdmin.Layouts
 
-  def compile(site, template) when is_binary(site) and is_binary(template) do
-    site = String.to_existing_atom(site)
-    compile(site, template)
-  end
-
   def compile(site, template) when is_atom(site) and is_binary(template) do
     call(site, Beacon.RuntimeCSS, :compile, [site, template])
   end
 
-  def fetch(site, version) when is_binary(site) do
-    site = String.to_existing_atom(site)
-    fetch(site, version)
+  def compile(site, templates) when is_atom(site) and is_list(templates) do
+    call(site, Beacon.RuntimeCSS, :compile, [site, templates])
   end
 
   def fetch(site, version) when is_atom(site) do
     call(site, Beacon.RuntimeCSS, :fetch, [site, version])
   end
 
-  def current_hash(site) do
+  def current_site_hash(site) do
     site
     |> site_templates()
+    |> IO.iodata_to_binary()
     |> Layouts.hash()
   end
 
@@ -45,7 +40,7 @@ defmodule Beacon.LiveAdmin.RuntimeCSS do
         [layout.template | acc]
       end)
 
-    IO.iodata_to_binary([components, "\n", layouts])
+    List.flatten([components, "\n", layouts])
   end
 
   def fetch_for_site(site) do

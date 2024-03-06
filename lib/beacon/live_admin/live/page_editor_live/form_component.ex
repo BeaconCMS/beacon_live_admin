@@ -4,6 +4,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
   alias Beacon.LiveAdmin.Config
   alias Beacon.LiveAdmin.Content
   alias Beacon.LiveAdmin.Layouts
+  alias Beacon.LiveAdmin.RuntimeCSS
   alias Beacon.LiveAdmin.WebAPI
   alias Ecto.Changeset
 
@@ -212,7 +213,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
     socket
     |> assign(page_stylesheet_path: page_stylesheet_path)
     |> assign_new(:site_stylesheet_path, fn ->
-      hash = Beacon.LiveAdmin.RuntimeCSS.current_hash(site)
+      hash = RuntimeCSS.current_site_hash(site)
       Layouts.asset_path(socket, :css_site, site, hash)
     end)
   end

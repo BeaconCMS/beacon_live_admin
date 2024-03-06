@@ -50,6 +50,7 @@ defmodule Beacon.LiveAdmin.AssetsController do
   defp contents_and_type(:css, _params), do: {@css, "text/css"}
 
   defp contents_and_type(:css_site, %{"site" => site}) do
+    site = String.to_existing_atom(site)
     {RuntimeCSS.fetch_for_site(site), "text/css"}
   end
 
