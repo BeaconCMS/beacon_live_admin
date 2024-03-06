@@ -50,17 +50,11 @@ defmodule Beacon.LiveAdmin.AssetsController do
   defp contents_and_type(:css, _params), do: {@css, "text/css"}
 
   defp contents_and_type(:css_site, %{"site" => site}) do
-    {RuntimeCSS.fetch(site, :uncompressed), "text/css"}
+    {RuntimeCSS.fetch_for_site(site), "text/css"}
   end
 
   defp contents_and_type(:css_page, %{"view_id" => view_id}) do
-    case RuntimeCSS.fetch_for_page(view_id) do
-      {:ok, css} ->
-        {css, "text/css"}
-
-      _ ->
-        {"/* failed to load css /*", "text/css"}
-    end
+    {RuntimeCSS.fetch_for_page(view_id), "text/css"}
   end
 
   defp contents_and_type(:js, _params), do: {@js, "text/javascript"}

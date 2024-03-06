@@ -204,20 +204,13 @@ defmodule Beacon.LiveAdmin.PageLive do
 
   defp maybe_apply_module(socket, fun, params, default) do
     mod = socket.assigns.beacon_page.module
+    params = params ++ [socket]
 
-    if exported?(mod, fun, length(params) + 1) do
-      Logger.debug("""
-      Applying #{fun} in #{mod}
-      Parameters: #{inspect(params)}
-      """)
-
-      apply(mod, fun, params ++ [socket])
+    if exported?(mod, fun, length(params)) do
+      Logger.debug("calling #{Exception.format_mfa(mod, fun, params)}")
+      apply(mod, fun, params)
     else
-      Logger.debug("""
-      Module/Function not exported: #{inspect(mod)}/#{inspect(fun)}
-      Parameters: #{inspect(params)}
-      """)
-
+      Logger.debug("not exported #{Exception.format_mfa(mod, fun, params)}")
       default.(socket)
     end
   end
