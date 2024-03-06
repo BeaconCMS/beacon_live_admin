@@ -1,6 +1,7 @@
 defmodule Beacon.LiveAdmin.RuntimeCSS do
   import Beacon.LiveAdmin.Cluster, only: [call: 4]
   alias Beacon.LiveAdmin.Content
+  alias Beacon.LiveAdmin.Layouts
 
   def compile(site, template) when is_binary(site) and is_binary(template) do
     site = String.to_existing_atom(site)
@@ -20,11 +21,16 @@ defmodule Beacon.LiveAdmin.RuntimeCSS do
     call(site, Beacon.RuntimeCSS, :fetch, [site, version])
   end
 
-  def current_hash(site, version) when is_atom(site) do
-    call(site, Beacon.RuntimeCSS, :current_hash, [site, version])
+  def current_hash(site) do
+    site
+    |> site_templates()
+    |> Layouts.hash()
   end
 
-  def fetch_for_site(site) do
+  @doc """
+  Site template includind layouts and components, no pages.
+  """
+  def site_templates(site) do
     components =
       site
       |> Content.list_components(per_page: :infinity)
@@ -39,9 +45,11 @@ defmodule Beacon.LiveAdmin.RuntimeCSS do
         [layout.template | acc]
       end)
 
-    template = IO.iodata_to_binary([components, "\n", layouts])
+    IO.iodata_to_binary([components, "\n", layouts])
+  end
 
-    case compile(site, template) do
+  def fetch_for_site(site) do
+    case compile(site, site_templates(site)) do
       {:ok, css} ->
         css
 
