@@ -7891,17 +7891,17 @@ var BeaconLiveAdmin = (() => {
   // svelte/components/PageWrapper.svelte
   var file8 = "svelte/components/PageWrapper.svelte";
   function add_css3(target) {
-    append_styles(target, "svelte-iffiy7", '[data-selected="true"], [data-highlighted="true"]{outline-color:#06b6d4;outline-width:2px;outline-style:dashed}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiUGFnZVdyYXBwZXIuc3ZlbHRlIiwibWFwcGluZ3MiOiJBQW9DVSxpREFBbUQsQ0FDekQsYUFBYSxDQUFFLE9BQU8sQ0FDdEIsYUFBYSxDQUFFLEdBQUcsQ0FDbEIsYUFBYSxDQUFFLE1BQ2pCIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIlBhZ2VXcmFwcGVyLnN2ZWx0ZSJdfQ== */');
+    append_styles(target, "svelte-xbvayw", '[data-selected="true"], [data-highlighted="true"]{outline-color:#06b6d4;outline-width:2px;outline-style:dashed}:before, :after{pointer-events:none}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiUGFnZVdyYXBwZXIuc3ZlbHRlIiwibWFwcGluZ3MiOiJBQXNCVSxpREFBbUQsQ0FDekQsYUFBYSxDQUFFLE9BQU8sQ0FDdEIsYUFBYSxDQUFFLEdBQUcsQ0FDbEIsYUFBYSxDQUFFLE1BQ2pCLENBRVEsZUFBaUIsQ0FDdkIsY0FBYyxDQUFFLElBQ2xCIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIlBhZ2VXcmFwcGVyLnN2ZWx0ZSJdfQ== */');
   }
   function get_each_context4(ctx, list, i) {
     const child_ctx = ctx.slice();
-    child_ctx[7] = list[i];
+    child_ctx[3] = list[i];
     return child_ctx;
   }
   function get_each_context_12(ctx, list, i) {
     const child_ctx = ctx.slice();
-    child_ctx[10] = list[i];
-    child_ctx[12] = i;
+    child_ctx[6] = list[i];
+    child_ctx[8] = i;
     return child_ctx;
   }
   function create_each_block_12(ctx) {
@@ -7911,11 +7911,11 @@ var BeaconLiveAdmin = (() => {
       props: {
         node: (
           /*astNode*/
-          ctx[10]
+          ctx[6]
         ),
         nodeId: String(
           /*index*/
-          ctx[12]
+          ctx[8]
         )
       },
       $$inline: true
@@ -7936,7 +7936,7 @@ var BeaconLiveAdmin = (() => {
         if (dirty & /*$page*/
         4)
           pageastnode_changes.node = /*astNode*/
-          ctx2[10];
+          ctx2[6];
         pageastnode.$set(pageastnode_changes);
       },
       i: function intro(local) {
@@ -7957,7 +7957,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_each_block_12.name,
       type: "each",
-      source: "(27:4) {#each $page.ast as astNode, index}",
+      source: "(15:4) {#each $page.ast as astNode, index}",
       ctx
     });
     return block;
@@ -8051,7 +8051,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_default_slot2.name,
       type: "slot",
-      source: "(26:2) <LayoutAstNode node={layoutAstNode}>",
+      source: "(14:2) <LayoutAstNode node={layoutAstNode}>",
       ctx
     });
     return block;
@@ -8063,7 +8063,7 @@ var BeaconLiveAdmin = (() => {
       props: {
         node: (
           /*layoutAstNode*/
-          ctx[7]
+          ctx[3]
         ),
         $$slots: { default: [create_default_slot2] },
         $$scope: { ctx }
@@ -8086,9 +8086,9 @@ var BeaconLiveAdmin = (() => {
         if (dirty & /*$page*/
         4)
           layoutastnode_changes.node = /*layoutAstNode*/
-          ctx2[7];
+          ctx2[3];
         if (dirty & /*$$scope, $page*/
-        8196) {
+        516) {
           layoutastnode_changes.$$scope = { dirty, ctx: ctx2 };
         }
         layoutastnode.$set(layoutastnode_changes);
@@ -8111,7 +8111,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_each_block4.name,
       type: "each",
-      source: "(25:0) {#each $page.layout.ast as layoutAstNode}",
+      source: "(13:0) {#each $page.layout.ast as layoutAstNode}",
       ctx
     });
     return block;
@@ -8147,9 +8147,9 @@ var BeaconLiveAdmin = (() => {
         this.h();
       },
       l: function claim(nodes) {
-        link0 = claim_element(nodes, "LINK", { id: true });
+        link0 = claim_element(nodes, "LINK", { id: true, rel: true, href: true });
         t0 = claim_space(nodes);
-        link1 = claim_element(nodes, "LINK", { id: true });
+        link1 = claim_element(nodes, "LINK", { id: true, rel: true, href: true });
         t1 = claim_space(nodes);
         for (let i = 0; i < each_blocks.length; i += 1) {
           each_blocks[i].l(nodes);
@@ -8159,16 +8159,28 @@ var BeaconLiveAdmin = (() => {
       },
       h: function hydrate() {
         attr_dev(link0, "id", "site-stylesheet-target");
-        add_location(link0, file8, 24, 0, 800);
+        attr_dev(link0, "rel", "stylesheet");
+        attr_dev(
+          link0,
+          "href",
+          /*$siteStylesheetPathStore*/
+          ctx[0]
+        );
+        add_location(link0, file8, 10, 0, 459);
         attr_dev(link1, "id", "page-stylesheet-target");
-        add_location(link1, file8, 25, 0, 868);
+        attr_dev(link1, "rel", "stylesheet");
+        attr_dev(
+          link1,
+          "href",
+          /*$pageStylesheetPathStore*/
+          ctx[1]
+        );
+        add_location(link1, file8, 11, 0, 545);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, link0, anchor);
-        ctx[5](link0);
         insert_hydration_dev(target, t0, anchor);
         insert_hydration_dev(target, link1, anchor);
-        ctx[6](link1);
         insert_hydration_dev(target, t1, anchor);
         for (let i = 0; i < each_blocks.length; i += 1) {
           if (each_blocks[i]) {
@@ -8179,6 +8191,24 @@ var BeaconLiveAdmin = (() => {
         current = true;
       },
       p: function update2(ctx2, [dirty]) {
+        if (!current || dirty & /*$siteStylesheetPathStore*/
+        1) {
+          attr_dev(
+            link0,
+            "href",
+            /*$siteStylesheetPathStore*/
+            ctx2[0]
+          );
+        }
+        if (!current || dirty & /*$pageStylesheetPathStore*/
+        2) {
+          attr_dev(
+            link1,
+            "href",
+            /*$pageStylesheetPathStore*/
+            ctx2[1]
+          );
+        }
         if (dirty & /*$page, String*/
         4) {
           each_value = ensure_array_like_dev(
@@ -8228,8 +8258,6 @@ var BeaconLiveAdmin = (() => {
           detach_dev(t1);
           detach_dev(each_1_anchor);
         }
-        ctx[5](null);
-        ctx[6](null);
         destroy_each(each_blocks, detaching);
       }
     };
@@ -8243,81 +8271,33 @@ var BeaconLiveAdmin = (() => {
     return block;
   }
   function instance8($$self, $$props, $$invalidate) {
-    let $pageStylesheetPathStore;
     let $siteStylesheetPathStore;
+    let $pageStylesheetPathStore;
     let $page;
-    validate_store(pageStylesheetPath, "pageStylesheetPathStore");
-    component_subscribe($$self, pageStylesheetPath, ($$value) => $$invalidate(3, $pageStylesheetPathStore = $$value));
     validate_store(siteStylesheetPath, "siteStylesheetPathStore");
-    component_subscribe($$self, siteStylesheetPath, ($$value) => $$invalidate(4, $siteStylesheetPathStore = $$value));
+    component_subscribe($$self, siteStylesheetPath, ($$value) => $$invalidate(0, $siteStylesheetPathStore = $$value));
+    validate_store(pageStylesheetPath, "pageStylesheetPathStore");
+    component_subscribe($$self, pageStylesheetPath, ($$value) => $$invalidate(1, $pageStylesheetPathStore = $$value));
     validate_store(page, "page");
     component_subscribe($$self, page, ($$value) => $$invalidate(2, $page = $$value));
     let { $$slots: slots = {}, $$scope } = $$props;
     validate_slots("page-wrapper", slots, []);
-    let siteStylesheetLink;
-    let pageStylesheetLink;
     const writable_props = [];
     Object.keys($$props).forEach((key) => {
       if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$" && key !== "slot")
         console.warn(`<page-wrapper> was created with unknown prop '${key}'`);
     });
-    function link0_binding($$value) {
-      binding_callbacks[$$value ? "unshift" : "push"](() => {
-        siteStylesheetLink = $$value;
-        $$invalidate(0, siteStylesheetLink), $$invalidate(4, $siteStylesheetPathStore), $$invalidate(1, pageStylesheetLink), $$invalidate(3, $pageStylesheetPathStore);
-      });
-    }
-    function link1_binding($$value) {
-      binding_callbacks[$$value ? "unshift" : "push"](() => {
-        pageStylesheetLink = $$value;
-        $$invalidate(1, pageStylesheetLink), $$invalidate(0, siteStylesheetLink), $$invalidate(4, $siteStylesheetPathStore), $$invalidate(3, $pageStylesheetPathStore);
-      });
-    }
     $$self.$capture_state = () => ({
       LayoutAstNode: LayoutAstNode_default,
       PageAstNode: PageAstNode_default,
       page,
       siteStylesheetPathStore: siteStylesheetPath,
       pageStylesheetPathStore: pageStylesheetPath,
-      siteStylesheetLink,
-      pageStylesheetLink,
-      $pageStylesheetPathStore,
       $siteStylesheetPathStore,
+      $pageStylesheetPathStore,
       $page
     });
-    $$self.$inject_state = ($$props2) => {
-      if ("siteStylesheetLink" in $$props2)
-        $$invalidate(0, siteStylesheetLink = $$props2.siteStylesheetLink);
-      if ("pageStylesheetLink" in $$props2)
-        $$invalidate(1, pageStylesheetLink = $$props2.pageStylesheetLink);
-    };
-    if ($$props && "$$inject" in $$props) {
-      $$self.$inject_state($$props.$$inject);
-    }
-    $$self.$$.update = () => {
-      if ($$self.$$.dirty & /*siteStylesheetLink, $siteStylesheetPathStore, pageStylesheetLink, $pageStylesheetPathStore*/
-      27) {
-        $: {
-          if (siteStylesheetLink) {
-            $$invalidate(0, siteStylesheetLink.rel = "stylesheet", siteStylesheetLink);
-            $$invalidate(0, siteStylesheetLink.href = $siteStylesheetPathStore, siteStylesheetLink);
-          }
-          if (pageStylesheetLink) {
-            $$invalidate(1, pageStylesheetLink.rel = "stylesheet", pageStylesheetLink);
-            $$invalidate(1, pageStylesheetLink.href = $pageStylesheetPathStore, pageStylesheetLink);
-          }
-        }
-      }
-    };
-    return [
-      siteStylesheetLink,
-      pageStylesheetLink,
-      $page,
-      $pageStylesheetPathStore,
-      $siteStylesheetPathStore,
-      link0_binding,
-      link1_binding
-    ];
+    return [$siteStylesheetPathStore, $pageStylesheetPathStore, $page];
   }
   var PageWrapper = class extends SvelteComponentDev {
     constructor(options) {
