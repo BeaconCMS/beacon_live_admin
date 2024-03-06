@@ -3,7 +3,6 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
 
   use Beacon.LiveAdmin.PageBuilder
   alias Beacon.LiveAdmin.Content
-  alias Beacon.LiveAdmin.RuntimeCSS
   alias Beacon.LiveAdmin.WebAPI
 
   @impl true
@@ -80,13 +79,13 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
   end
 
   @impl true
-  def handle_info({:template_changed, template}, socket) do
-    {:noreply, assign(socket, template: template)}
+  def handle_info({:template_changed, page_template}, socket) do
+    {:noreply, assign(socket, page_template: page_template)}
   end
 
-  def handle_call(:fetch_page_css, _from, socket) do
-    %{page: %{site: site}, template: template} = socket.assigns
-    {:reply, RuntimeCSS.compile(site, template), socket}
+  def handle_call(:fetch_page_template, _from, socket) do
+    %{page: %{site: site}, page_template: page_template} = socket.assigns
+    {:reply, {site, page_template}, socket}
   end
 
   @impl true
