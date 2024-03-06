@@ -207,13 +207,13 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
       |> Changeset.get_field(:template)
       |> Layouts.hash()
 
-    site_stylesheet_path = Layouts.asset_path(socket, :css_site, site, hash)
     page_stylesheet_path = Layouts.asset_path(socket, :css_page, view_id, hash)
 
-    assign(socket,
-      site_stylesheet_path: site_stylesheet_path,
-      page_stylesheet_path: page_stylesheet_path
-    )
+    socket
+    |> assign(page_stylesheet_path: page_stylesheet_path)
+    |> assign_new(:site_stylesheet_path, fn ->
+      Layouts.asset_path(socket, :css_site, site, hash)
+    end)
   end
 
   defp notify_changed_template(changeset) do
