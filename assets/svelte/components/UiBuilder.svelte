@@ -6,16 +6,19 @@
   import { page as pageStore } from "$lib/stores/page"
   import { siteStylesheetPath as siteStylesheetPathStore } from "$lib/stores/siteStylesheetPath"
   import { pageStylesheetPath as pageStylesheetPathStore } from "$lib/stores/pageStylesheetPath"
+  import { prevPageStylesheetPath as prevPageStylesheetPathStore } from "$lib/stores/prevPageStylesheetPath"
   import type { ComponentDefinition, Page } from "$lib/types"
 
   export let components: ComponentDefinition[]
   export let page: Page
   export let siteStylesheetPath: string
   export let pageStylesheetPath: string
+  export let prevPageStylesheetPath: string
   export let live
   $: $pageStore = page
   $: $siteStylesheetPathStore = siteStylesheetPath
   $: $pageStylesheetPathStore = pageStylesheetPath
+  $: $prevPageStylesheetPathStore = prevPageStylesheetPath
 
   function addBasicComponentToTarget(e: CustomEvent) {
     // This method is in PagePreview.

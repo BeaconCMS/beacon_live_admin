@@ -6,10 +6,12 @@
   import { page } from "$lib/stores/page"
   import { siteStylesheetPath as siteStylesheetPathStore } from "$lib/stores/siteStylesheetPath"
   import { pageStylesheetPath as pageStylesheetPathStore } from "$lib/stores/pageStylesheetPath"
+  import { prevPageStylesheetPath as prevPageStylesheetPathStore } from "$lib/stores/prevPageStylesheetPath"
 </script>
 
 <link id="site-stylesheet-target" rel="stylesheet" href={$siteStylesheetPathStore} />
 <link id="page-stylesheet-target" rel="stylesheet" href={$pageStylesheetPathStore} />
+<link id="prev-page-stylesheet-target" rel="stylesheet" href={$prevPageStylesheetPathStore} />
 
 {#each $page.layout.ast as layoutAstNode}
   <LayoutAstNode node={layoutAstNode}>
