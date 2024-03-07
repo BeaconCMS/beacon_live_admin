@@ -175,11 +175,18 @@
           </SidebarSection>
         {/each}
       {/if}
-      {#if $selectedAstElement.arg}
+      {#if $selectedAstElement.tag === "eex_block"}
         <SidebarSection on:update={updateText} value={$selectedAstElement.arg} large={true}>
           <svelte:fragment slot="heading">Block argument</svelte:fragment>
           <svelte:fragment slot="input"></svelte:fragment>
         </SidebarSection>
+        <SidebarSection on:update={updateText}>
+          <svelte:fragment slot="heading">Block content</svelte:fragment>
+          <svelte:fragment slot="input">
+            <p>The content of eex blocks can't be edited from the visual editor yet. Please use the code editor.</p>
+          </svelte:fragment>
+        </SidebarSection>
+        
       {/if}
 
       <div class="relative">
