@@ -207,7 +207,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
   defp maybe_assign_builder_page(socket, _changeset), do: assign(socket, :builder_page, nil)
 
   defp assign_stylesheet_paths(socket, changeset) do
-    %{site: site, view_id: view_id} = socket.assigns
+    %{view_id: view_id} = socket.assigns
 
     hash =
       changeset
@@ -222,6 +222,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
     socket
     |> assign(prev_page_stylesheet_path: prev_page_stylesheet_path)
     |> assign(current_page_stylesheet_path: current_page_stylesheet_path)
+    |> assign_new(:orig_page_stylesheet_path, fn -> current_page_stylesheet_path end)
   end
 
   defp notify_changed_template(changeset) do
@@ -316,7 +317,16 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
         :if={@editor == "visual"}
         name="components/UiBuilder"
         class={svelte_page_builder_class(@editor)}
-        props={%{components: @components, page: @builder_page, siteStylesheetPath: "", pageStylesheetPath: @current_page_stylesheet_path, prevPageStylesheetPath: @prev_page_stylesheet_path}}
+        props={
+          %{
+            components: @components,
+            page: @builder_page,
+            siteStylesheetPath: "",
+            origPageStylesheetPath: @orig_page_stylesheet_path,
+            pageStylesheetPath: @current_page_stylesheet_path,
+            prevPageStylesheetPath: @prev_page_stylesheet_path
+          }
+        }
         socket={@socket}
       />
 
