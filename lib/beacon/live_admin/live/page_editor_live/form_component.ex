@@ -321,10 +321,9 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
           %{
             components: @components,
             page: @builder_page,
-            siteStylesheetPath: "",
             origPageStylesheetPath: @orig_page_stylesheet_path,
-            pageStylesheetPath: @current_page_stylesheet_path,
-            prevPageStylesheetPath: @prev_page_stylesheet_path
+            prevPageStylesheetPath: @prev_page_stylesheet_path,
+            pageStylesheetPath: @current_page_stylesheet_path
           }
         }
         socket={@socket}

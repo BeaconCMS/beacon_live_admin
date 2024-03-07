@@ -4,16 +4,14 @@
   import LayoutAstNode from "./LayoutAstNode.svelte"
   import PageAstNode from "./PageAstNode.svelte"
   import { page } from "$lib/stores/page"
-  import { siteStylesheetPath as siteStylesheetPathStore } from "$lib/stores/siteStylesheetPath"
   import { origPageStylesheetPath as origPageStylesheetPathStore } from "$lib/stores/origPageStylesheetPath"
-  import { pageStylesheetPath as pageStylesheetPathStore } from "$lib/stores/pageStylesheetPath"
   import { prevPageStylesheetPath as prevPageStylesheetPathStore } from "$lib/stores/prevPageStylesheetPath"
+  import { pageStylesheetPath as pageStylesheetPathStore } from "$lib/stores/pageStylesheetPath"
 </script>
 
-<link id="site-stylesheet-target" rel="stylesheet" href={$siteStylesheetPathStore} />
 <link id="orig-page-stylesheet-target" rel="stylesheet" href={$origPageStylesheetPathStore} />
-<link id="page-stylesheet-target" rel="stylesheet" href={$pageStylesheetPathStore} />
 <link id="prev-page-stylesheet-target" rel="stylesheet" href={$prevPageStylesheetPathStore} />
+<link id="page-stylesheet-target" rel="stylesheet" href={$pageStylesheetPathStore} />
 
 {#each $page.layout.ast as layoutAstNode}
   <LayoutAstNode node={layoutAstNode}>
