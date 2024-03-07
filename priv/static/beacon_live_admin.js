@@ -7885,6 +7885,9 @@ var BeaconLiveAdmin = (() => {
   // svelte/stores/siteStylesheetPath.ts
   var siteStylesheetPath = writable(null);
 
+  // svelte/stores/origPageStylesheetPath.ts
+  var origPageStylesheetPath = writable(null);
+
   // svelte/stores/pageStylesheetPath.ts
   var pageStylesheetPath = writable(null);
 
@@ -7894,17 +7897,17 @@ var BeaconLiveAdmin = (() => {
   // svelte/components/PageWrapper.svelte
   var file8 = "svelte/components/PageWrapper.svelte";
   function add_css3(target) {
-    append_styles(target, "svelte-xbvayw", '[data-selected="true"], [data-highlighted="true"]{outline-color:#06b6d4;outline-width:2px;outline-style:dashed}:before, :after{pointer-events:none}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiUGFnZVdyYXBwZXIuc3ZlbHRlIiwibWFwcGluZ3MiOiJBQXdCVSxpREFBbUQsQ0FDekQsYUFBYSxDQUFFLE9BQU8sQ0FDdEIsYUFBYSxDQUFFLEdBQUcsQ0FDbEIsYUFBYSxDQUFFLE1BQ2pCLENBRVEsZUFBaUIsQ0FDdkIsY0FBYyxDQUFFLElBQ2xCIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIlBhZ2VXcmFwcGVyLnN2ZWx0ZSJdfQ== */');
+    append_styles(target, "svelte-xbvayw", '[data-selected="true"], [data-highlighted="true"]{outline-color:#06b6d4;outline-width:2px;outline-style:dashed}:before, :after{pointer-events:none}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiUGFnZVdyYXBwZXIuc3ZlbHRlIiwibWFwcGluZ3MiOiJBQTBCVSxpREFBbUQsQ0FDekQsYUFBYSxDQUFFLE9BQU8sQ0FDdEIsYUFBYSxDQUFFLEdBQUcsQ0FDbEIsYUFBYSxDQUFFLE1BQ2pCLENBRVEsZUFBaUIsQ0FDdkIsY0FBYyxDQUFFLElBQ2xCIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIlBhZ2VXcmFwcGVyLnN2ZWx0ZSJdfQ== */');
   }
   function get_each_context4(ctx, list, i) {
     const child_ctx = ctx.slice();
-    child_ctx[4] = list[i];
+    child_ctx[5] = list[i];
     return child_ctx;
   }
   function get_each_context_12(ctx, list, i) {
     const child_ctx = ctx.slice();
-    child_ctx[7] = list[i];
-    child_ctx[9] = i;
+    child_ctx[8] = list[i];
+    child_ctx[10] = i;
     return child_ctx;
   }
   function create_each_block_12(ctx) {
@@ -7914,11 +7917,11 @@ var BeaconLiveAdmin = (() => {
       props: {
         node: (
           /*astNode*/
-          ctx[7]
+          ctx[8]
         ),
         nodeId: String(
           /*index*/
-          ctx[9]
+          ctx[10]
         )
       },
       $$inline: true
@@ -7937,9 +7940,9 @@ var BeaconLiveAdmin = (() => {
       p: function update2(ctx2, dirty) {
         const pageastnode_changes = {};
         if (dirty & /*$page*/
-        8)
+        16)
           pageastnode_changes.node = /*astNode*/
-          ctx2[7];
+          ctx2[8];
         pageastnode.$set(pageastnode_changes);
       },
       i: function intro(local) {
@@ -7960,7 +7963,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_each_block_12.name,
       type: "each",
-      source: "(17:4) {#each $page.ast as astNode, index}",
+      source: "(19:4) {#each $page.ast as astNode, index}",
       ctx
     });
     return block;
@@ -7970,7 +7973,7 @@ var BeaconLiveAdmin = (() => {
     let current;
     let each_value_1 = ensure_array_like_dev(
       /*$page*/
-      ctx[3].ast
+      ctx[4].ast
     );
     let each_blocks = [];
     for (let i = 0; i < each_value_1.length; i += 1) {
@@ -8003,10 +8006,10 @@ var BeaconLiveAdmin = (() => {
       },
       p: function update2(ctx2, dirty) {
         if (dirty & /*$page, String*/
-        8) {
+        16) {
           each_value_1 = ensure_array_like_dev(
             /*$page*/
-            ctx2[3].ast
+            ctx2[4].ast
           );
           let i;
           for (i = 0; i < each_value_1.length; i += 1) {
@@ -8054,7 +8057,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_default_slot2.name,
       type: "slot",
-      source: "(16:2) <LayoutAstNode node={layoutAstNode}>",
+      source: "(18:2) <LayoutAstNode node={layoutAstNode}>",
       ctx
     });
     return block;
@@ -8066,7 +8069,7 @@ var BeaconLiveAdmin = (() => {
       props: {
         node: (
           /*layoutAstNode*/
-          ctx[4]
+          ctx[5]
         ),
         $$slots: { default: [create_default_slot2] },
         $$scope: { ctx }
@@ -8087,11 +8090,11 @@ var BeaconLiveAdmin = (() => {
       p: function update2(ctx2, dirty) {
         const layoutastnode_changes = {};
         if (dirty & /*$page*/
-        8)
+        16)
           layoutastnode_changes.node = /*layoutAstNode*/
-          ctx2[4];
+          ctx2[5];
         if (dirty & /*$$scope, $page*/
-        1032) {
+        2064) {
           layoutastnode_changes.$$scope = { dirty, ctx: ctx2 };
         }
         layoutastnode.$set(layoutastnode_changes);
@@ -8114,7 +8117,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_each_block4.name,
       type: "each",
-      source: "(15:0) {#each $page.layout.ast as layoutAstNode}",
+      source: "(17:0) {#each $page.layout.ast as layoutAstNode}",
       ctx
     });
     return block;
@@ -8126,11 +8129,13 @@ var BeaconLiveAdmin = (() => {
     let t1;
     let link2;
     let t2;
+    let link3;
+    let t3;
     let each_1_anchor;
     let current;
     let each_value = ensure_array_like_dev(
       /*$page*/
-      ctx[3].layout.ast
+      ctx[4].layout.ast
     );
     let each_blocks = [];
     for (let i = 0; i < each_value.length; i += 1) {
@@ -8147,6 +8152,8 @@ var BeaconLiveAdmin = (() => {
         t1 = space();
         link2 = element("link");
         t2 = space();
+        link3 = element("link");
+        t3 = space();
         for (let i = 0; i < each_blocks.length; i += 1) {
           each_blocks[i].c();
         }
@@ -8160,6 +8167,8 @@ var BeaconLiveAdmin = (() => {
         t1 = claim_space(nodes);
         link2 = claim_element(nodes, "LINK", { id: true, rel: true, href: true });
         t2 = claim_space(nodes);
+        link3 = claim_element(nodes, "LINK", { id: true, rel: true, href: true });
+        t3 = claim_space(nodes);
         for (let i = 0; i < each_blocks.length; i += 1) {
           each_blocks[i].l(nodes);
         }
@@ -8175,25 +8184,34 @@ var BeaconLiveAdmin = (() => {
           /*$siteStylesheetPathStore*/
           ctx[0]
         );
-        add_location(link0, file8, 11, 0, 567);
-        attr_dev(link1, "id", "page-stylesheet-target");
+        add_location(link0, file8, 12, 0, 675);
+        attr_dev(link1, "id", "orig-page-stylesheet-target");
         attr_dev(link1, "rel", "stylesheet");
         attr_dev(
           link1,
           "href",
-          /*$pageStylesheetPathStore*/
+          /*$origPageStylesheetPathStore*/
           ctx[1]
         );
-        add_location(link1, file8, 12, 0, 653);
-        attr_dev(link2, "id", "prev-page-stylesheet-target");
+        add_location(link1, file8, 13, 0, 761);
+        attr_dev(link2, "id", "page-stylesheet-target");
         attr_dev(link2, "rel", "stylesheet");
         attr_dev(
           link2,
           "href",
-          /*$prevPageStylesheetPathStore*/
+          /*$pageStylesheetPathStore*/
           ctx[2]
         );
-        add_location(link2, file8, 13, 0, 739);
+        add_location(link2, file8, 14, 0, 856);
+        attr_dev(link3, "id", "prev-page-stylesheet-target");
+        attr_dev(link3, "rel", "stylesheet");
+        attr_dev(
+          link3,
+          "href",
+          /*$prevPageStylesheetPathStore*/
+          ctx[3]
+        );
+        add_location(link3, file8, 15, 0, 942);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, link0, anchor);
@@ -8202,6 +8220,8 @@ var BeaconLiveAdmin = (() => {
         insert_hydration_dev(target, t1, anchor);
         insert_hydration_dev(target, link2, anchor);
         insert_hydration_dev(target, t2, anchor);
+        insert_hydration_dev(target, link3, anchor);
+        insert_hydration_dev(target, t3, anchor);
         for (let i = 0; i < each_blocks.length; i += 1) {
           if (each_blocks[i]) {
             each_blocks[i].m(target, anchor);
@@ -8220,29 +8240,38 @@ var BeaconLiveAdmin = (() => {
             ctx2[0]
           );
         }
-        if (!current || dirty & /*$pageStylesheetPathStore*/
+        if (!current || dirty & /*$origPageStylesheetPathStore*/
         2) {
           attr_dev(
             link1,
             "href",
-            /*$pageStylesheetPathStore*/
+            /*$origPageStylesheetPathStore*/
             ctx2[1]
           );
         }
-        if (!current || dirty & /*$prevPageStylesheetPathStore*/
+        if (!current || dirty & /*$pageStylesheetPathStore*/
         4) {
           attr_dev(
             link2,
             "href",
-            /*$prevPageStylesheetPathStore*/
+            /*$pageStylesheetPathStore*/
             ctx2[2]
           );
         }
-        if (dirty & /*$page, String*/
+        if (!current || dirty & /*$prevPageStylesheetPathStore*/
         8) {
+          attr_dev(
+            link3,
+            "href",
+            /*$prevPageStylesheetPathStore*/
+            ctx2[3]
+          );
+        }
+        if (dirty & /*$page, String*/
+        16) {
           each_value = ensure_array_like_dev(
             /*$page*/
-            ctx2[3].layout.ast
+            ctx2[4].layout.ast
           );
           let i;
           for (i = 0; i < each_value.length; i += 1) {
@@ -8287,6 +8316,8 @@ var BeaconLiveAdmin = (() => {
           detach_dev(t1);
           detach_dev(link2);
           detach_dev(t2);
+          detach_dev(link3);
+          detach_dev(t3);
           detach_dev(each_1_anchor);
         }
         destroy_each(each_blocks, detaching);
@@ -8303,17 +8334,20 @@ var BeaconLiveAdmin = (() => {
   }
   function instance8($$self, $$props, $$invalidate) {
     let $siteStylesheetPathStore;
+    let $origPageStylesheetPathStore;
     let $pageStylesheetPathStore;
     let $prevPageStylesheetPathStore;
     let $page;
     validate_store(siteStylesheetPath, "siteStylesheetPathStore");
     component_subscribe($$self, siteStylesheetPath, ($$value) => $$invalidate(0, $siteStylesheetPathStore = $$value));
+    validate_store(origPageStylesheetPath, "origPageStylesheetPathStore");
+    component_subscribe($$self, origPageStylesheetPath, ($$value) => $$invalidate(1, $origPageStylesheetPathStore = $$value));
     validate_store(pageStylesheetPath, "pageStylesheetPathStore");
-    component_subscribe($$self, pageStylesheetPath, ($$value) => $$invalidate(1, $pageStylesheetPathStore = $$value));
+    component_subscribe($$self, pageStylesheetPath, ($$value) => $$invalidate(2, $pageStylesheetPathStore = $$value));
     validate_store(prevPageStylesheetPath, "prevPageStylesheetPathStore");
-    component_subscribe($$self, prevPageStylesheetPath, ($$value) => $$invalidate(2, $prevPageStylesheetPathStore = $$value));
+    component_subscribe($$self, prevPageStylesheetPath, ($$value) => $$invalidate(3, $prevPageStylesheetPathStore = $$value));
     validate_store(page, "page");
-    component_subscribe($$self, page, ($$value) => $$invalidate(3, $page = $$value));
+    component_subscribe($$self, page, ($$value) => $$invalidate(4, $page = $$value));
     let { $$slots: slots = {}, $$scope } = $$props;
     validate_slots("page-wrapper", slots, []);
     const writable_props = [];
@@ -8326,15 +8360,18 @@ var BeaconLiveAdmin = (() => {
       PageAstNode: PageAstNode_default,
       page,
       siteStylesheetPathStore: siteStylesheetPath,
+      origPageStylesheetPathStore: origPageStylesheetPath,
       pageStylesheetPathStore: pageStylesheetPath,
       prevPageStylesheetPathStore: prevPageStylesheetPath,
       $siteStylesheetPathStore,
+      $origPageStylesheetPathStore,
       $pageStylesheetPathStore,
       $prevPageStylesheetPathStore,
       $page
     });
     return [
       $siteStylesheetPathStore,
+      $origPageStylesheetPathStore,
       $pageStylesheetPathStore,
       $prevPageStylesheetPathStore,
       $page
@@ -12375,7 +12412,7 @@ var BeaconLiveAdmin = (() => {
     propertiessidebar.$on(
       "droppedIntoTarget",
       /*droppedIntoTarget_handler*/
-      ctx[6]
+      ctx[7]
     );
     const block = {
       c: function create3() {
@@ -12405,7 +12442,7 @@ var BeaconLiveAdmin = (() => {
       h: function hydrate() {
         attr_dev(div, "class", "flex min-h-screen bg-gray-100");
         attr_dev(div, "data-test-id", "app-container");
-        add_location(div, file12, 28, 0, 1020);
+        add_location(div, file12, 31, 0, 1221);
       },
       m: function mount(target, anchor) {
         mount_component(backdrop, target, anchor);
@@ -12479,21 +12516,25 @@ var BeaconLiveAdmin = (() => {
   function instance12($$self, $$props, $$invalidate) {
     let $prevPageStylesheetPathStore;
     let $pageStylesheetPathStore;
+    let $origPageStylesheetPathStore;
     let $siteStylesheetPathStore;
     let $pageStore;
     validate_store(prevPageStylesheetPath, "prevPageStylesheetPathStore");
-    component_subscribe($$self, prevPageStylesheetPath, ($$value) => $$invalidate(7, $prevPageStylesheetPathStore = $$value));
+    component_subscribe($$self, prevPageStylesheetPath, ($$value) => $$invalidate(8, $prevPageStylesheetPathStore = $$value));
     validate_store(pageStylesheetPath, "pageStylesheetPathStore");
-    component_subscribe($$self, pageStylesheetPath, ($$value) => $$invalidate(8, $pageStylesheetPathStore = $$value));
+    component_subscribe($$self, pageStylesheetPath, ($$value) => $$invalidate(9, $pageStylesheetPathStore = $$value));
+    validate_store(origPageStylesheetPath, "origPageStylesheetPathStore");
+    component_subscribe($$self, origPageStylesheetPath, ($$value) => $$invalidate(10, $origPageStylesheetPathStore = $$value));
     validate_store(siteStylesheetPath, "siteStylesheetPathStore");
-    component_subscribe($$self, siteStylesheetPath, ($$value) => $$invalidate(9, $siteStylesheetPathStore = $$value));
+    component_subscribe($$self, siteStylesheetPath, ($$value) => $$invalidate(11, $siteStylesheetPathStore = $$value));
     validate_store(page, "pageStore");
-    component_subscribe($$self, page, ($$value) => $$invalidate(10, $pageStore = $$value));
+    component_subscribe($$self, page, ($$value) => $$invalidate(12, $pageStore = $$value));
     let { $$slots: slots = {}, $$scope } = $$props;
     validate_slots("UiBuilder", slots, []);
     let { components } = $$props;
     let { page: page2 } = $$props;
     let { siteStylesheetPath: siteStylesheetPath2 } = $$props;
+    let { origPageStylesheetPath: origPageStylesheetPath2 } = $$props;
     let { pageStylesheetPath: pageStylesheetPath2 } = $$props;
     let { prevPageStylesheetPath: prevPageStylesheetPath2 } = $$props;
     let { live } = $$props;
@@ -12506,6 +12547,9 @@ var BeaconLiveAdmin = (() => {
       }
       if (siteStylesheetPath2 === void 0 && !("siteStylesheetPath" in $$props || $$self.$$.bound[$$self.$$.props["siteStylesheetPath"]])) {
         console.warn("<UiBuilder> was created without expected prop 'siteStylesheetPath'");
+      }
+      if (origPageStylesheetPath2 === void 0 && !("origPageStylesheetPath" in $$props || $$self.$$.bound[$$self.$$.props["origPageStylesheetPath"]])) {
+        console.warn("<UiBuilder> was created without expected prop 'origPageStylesheetPath'");
       }
       if (pageStylesheetPath2 === void 0 && !("pageStylesheetPath" in $$props || $$self.$$.bound[$$self.$$.props["pageStylesheetPath"]])) {
         console.warn("<UiBuilder> was created without expected prop 'pageStylesheetPath'");
@@ -12521,6 +12565,7 @@ var BeaconLiveAdmin = (() => {
       "components",
       "page",
       "siteStylesheetPath",
+      "origPageStylesheetPath",
       "pageStylesheetPath",
       "prevPageStylesheetPath",
       "live"
@@ -12537,10 +12582,12 @@ var BeaconLiveAdmin = (() => {
         $$invalidate(2, page2 = $$props2.page);
       if ("siteStylesheetPath" in $$props2)
         $$invalidate(3, siteStylesheetPath2 = $$props2.siteStylesheetPath);
+      if ("origPageStylesheetPath" in $$props2)
+        $$invalidate(4, origPageStylesheetPath2 = $$props2.origPageStylesheetPath);
       if ("pageStylesheetPath" in $$props2)
-        $$invalidate(4, pageStylesheetPath2 = $$props2.pageStylesheetPath);
+        $$invalidate(5, pageStylesheetPath2 = $$props2.pageStylesheetPath);
       if ("prevPageStylesheetPath" in $$props2)
-        $$invalidate(5, prevPageStylesheetPath2 = $$props2.prevPageStylesheetPath);
+        $$invalidate(6, prevPageStylesheetPath2 = $$props2.prevPageStylesheetPath);
       if ("live" in $$props2)
         $$invalidate(1, live = $$props2.live);
     };
@@ -12551,17 +12598,20 @@ var BeaconLiveAdmin = (() => {
       PropertiesSidebar: PropertiesSidebar_default,
       pageStore: page,
       siteStylesheetPathStore: siteStylesheetPath,
+      origPageStylesheetPathStore: origPageStylesheetPath,
       pageStylesheetPathStore: pageStylesheetPath,
       prevPageStylesheetPathStore: prevPageStylesheetPath,
       components,
       page: page2,
       siteStylesheetPath: siteStylesheetPath2,
+      origPageStylesheetPath: origPageStylesheetPath2,
       pageStylesheetPath: pageStylesheetPath2,
       prevPageStylesheetPath: prevPageStylesheetPath2,
       live,
       addBasicComponentToTarget,
       $prevPageStylesheetPathStore,
       $pageStylesheetPathStore,
+      $origPageStylesheetPathStore,
       $siteStylesheetPathStore,
       $pageStore
     });
@@ -12572,10 +12622,12 @@ var BeaconLiveAdmin = (() => {
         $$invalidate(2, page2 = $$props2.page);
       if ("siteStylesheetPath" in $$props2)
         $$invalidate(3, siteStylesheetPath2 = $$props2.siteStylesheetPath);
+      if ("origPageStylesheetPath" in $$props2)
+        $$invalidate(4, origPageStylesheetPath2 = $$props2.origPageStylesheetPath);
       if ("pageStylesheetPath" in $$props2)
-        $$invalidate(4, pageStylesheetPath2 = $$props2.pageStylesheetPath);
+        $$invalidate(5, pageStylesheetPath2 = $$props2.pageStylesheetPath);
       if ("prevPageStylesheetPath" in $$props2)
-        $$invalidate(5, prevPageStylesheetPath2 = $$props2.prevPageStylesheetPath);
+        $$invalidate(6, prevPageStylesheetPath2 = $$props2.prevPageStylesheetPath);
       if ("live" in $$props2)
         $$invalidate(1, live = $$props2.live);
     };
@@ -12593,13 +12645,18 @@ var BeaconLiveAdmin = (() => {
         $:
           set_store_value(siteStylesheetPath, $siteStylesheetPathStore = siteStylesheetPath2, $siteStylesheetPathStore);
       }
-      if ($$self.$$.dirty & /*pageStylesheetPath*/
+      if ($$self.$$.dirty & /*origPageStylesheetPath*/
       16) {
+        $:
+          set_store_value(origPageStylesheetPath, $origPageStylesheetPathStore = origPageStylesheetPath2, $origPageStylesheetPathStore);
+      }
+      if ($$self.$$.dirty & /*pageStylesheetPath*/
+      32) {
         $:
           set_store_value(pageStylesheetPath, $pageStylesheetPathStore = pageStylesheetPath2, $pageStylesheetPathStore);
       }
       if ($$self.$$.dirty & /*prevPageStylesheetPath*/
-      32) {
+      64) {
         $:
           set_store_value(prevPageStylesheetPath, $prevPageStylesheetPathStore = prevPageStylesheetPath2, $prevPageStylesheetPathStore);
       }
@@ -12609,6 +12666,7 @@ var BeaconLiveAdmin = (() => {
       live,
       page2,
       siteStylesheetPath2,
+      origPageStylesheetPath2,
       pageStylesheetPath2,
       prevPageStylesheetPath2,
       droppedIntoTarget_handler
@@ -12621,8 +12679,9 @@ var BeaconLiveAdmin = (() => {
         components: 0,
         page: 2,
         siteStylesheetPath: 3,
-        pageStylesheetPath: 4,
-        prevPageStylesheetPath: 5,
+        origPageStylesheetPath: 4,
+        pageStylesheetPath: 5,
+        prevPageStylesheetPath: 6,
         live: 1
       });
       dispatch_dev("SvelteRegisterComponent", {
@@ -12653,15 +12712,22 @@ var BeaconLiveAdmin = (() => {
       this.$$set({ siteStylesheetPath: siteStylesheetPath2 });
       flush();
     }
-    get pageStylesheetPath() {
+    get origPageStylesheetPath() {
       return this.$$.ctx[4];
+    }
+    set origPageStylesheetPath(origPageStylesheetPath2) {
+      this.$$set({ origPageStylesheetPath: origPageStylesheetPath2 });
+      flush();
+    }
+    get pageStylesheetPath() {
+      return this.$$.ctx[5];
     }
     set pageStylesheetPath(pageStylesheetPath2) {
       this.$$set({ pageStylesheetPath: pageStylesheetPath2 });
       flush();
     }
     get prevPageStylesheetPath() {
-      return this.$$.ctx[5];
+      return this.$$.ctx[6];
     }
     set prevPageStylesheetPath(prevPageStylesheetPath2) {
       this.$$set({ prevPageStylesheetPath: prevPageStylesheetPath2 });
@@ -12675,7 +12741,7 @@ var BeaconLiveAdmin = (() => {
       flush();
     }
   };
-  create_custom_element(UiBuilder, { "components": {}, "page": {}, "siteStylesheetPath": {}, "pageStylesheetPath": {}, "prevPageStylesheetPath": {}, "live": {} }, [], [], true);
+  create_custom_element(UiBuilder, { "components": {}, "page": {}, "siteStylesheetPath": {}, "origPageStylesheetPath": {}, "pageStylesheetPath": {}, "prevPageStylesheetPath": {}, "live": {} }, [], [], true);
   var UiBuilder_default = UiBuilder;
 
   // import-glob:../svelte/**/*.svelte
