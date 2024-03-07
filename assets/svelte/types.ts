@@ -4,6 +4,7 @@ export interface AstElement {
   attrs: Record<string, string>
   content: AstNode[]
   rendered_html?: string
+  arg?: string
 }
 
 export enum ComponentCategoryId {

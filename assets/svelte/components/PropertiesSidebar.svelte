@@ -19,7 +19,7 @@
   )
   $: sidebarTitle = $selectedAstElement?.tag
   $: isRootNode = !!$selectedAstElementId && $selectedAstElementId === "root"
-  $: attributesEditable = $selectedAstElement?.tag !== "eex"
+  $: attributesEditable = !['eex', 'eex_block'].includes($selectedAstElement?.tag)
 
   async function addClass({ detail: newClass }: CustomEvent<string>) {
     let node = $selectedAstElement
@@ -175,6 +175,12 @@
           </SidebarSection>
         {/each}
       {/if}
+      {#if $selectedAstElement.arg}
+        <SidebarSection on:update={updateText} value={$selectedAstElement.arg} large={true}>
+          <svelte:fragment slot="heading">Block argument</svelte:fragment>
+          <svelte:fragment slot="input"></svelte:fragment>
+        </SidebarSection>
+      {/if}
 
       <div class="relative">
         {#if $draggedObject && $draggedObject.category === "basic"}
@@ -191,7 +197,7 @@
             </div>
           </div>
         {/if}
-        {#if $selectedAstElement.content.length > 0}
+        {#if $selectedAstElement.content?.length > 0}
           <SidebarSection
             astNodes={$selectedAstElement.content}
             large={$selectedAstElement.tag === "eex"}
