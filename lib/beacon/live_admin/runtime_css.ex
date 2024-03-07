@@ -54,12 +54,12 @@ defmodule Beacon.LiveAdmin.RuntimeCSS do
   end
 
   def fetch_for_page(view_id) do
-    {site, page_template} =
+    {site, templates} =
       view_id
       |> Beacon.LiveAdmin.PageEditorLive.FormComponent.whereis()
-      |> GenServer.call(:fetch_page_template, :timer.minutes(1))
+      |> GenServer.call(:fetch_templates, :timer.minutes(1))
 
-    case compile(site, page_template) do
+    case compile(site, templates) do
       {:ok, css} ->
         css
 

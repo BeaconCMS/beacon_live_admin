@@ -310,7 +310,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
         :if={@editor == "visual"}
         name="components/UiBuilder"
         class={svelte_page_builder_class(@editor)}
-        props={%{components: @components, page: @builder_page, siteStylesheetPath: @site_stylesheet_path, pageStylesheetPath: @page_stylesheet_path}}
+        props={%{components: @components, page: @builder_page, siteStylesheetPath: "", pageStylesheetPath: @page_stylesheet_path}}
         socket={@socket}
       />
 

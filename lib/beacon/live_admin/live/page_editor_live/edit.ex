@@ -24,10 +24,18 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
       end)
       |> assign_new(:page, fn -> Content.get_page(site, params["id"], preloads: [:layout]) end)
 
+    templates =
+      socket.assigns.components
+      |> Enum.map(& &1.body)
+      |> MapSet.new()
+      |> MapSet.put(socket.assigns.page.layout.template)
+      |> Enum.to_list()
+
     socket =
       assign(socket,
         page_title: "Edit Page",
-        editor: editor
+        editor: editor,
+        templates: templates
       )
 
     {:noreply, socket}
@@ -83,9 +91,9 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
     {:noreply, assign(socket, page_template: page_template)}
   end
 
-  def handle_call(:fetch_page_template, _from, socket) do
-    %{page: %{site: site}, page_template: page_template} = socket.assigns
-    {:reply, {site, page_template}, socket}
+  def handle_call(:fetch_templates, _from, socket) do
+    %{page: %{site: site}, templates: templates, page_template: page_template} = socket.assigns
+    {:reply, {site, [page_template | templates]}, socket}
   end
 
   @impl true
