@@ -51,7 +51,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
           Content.change_page(site, page)
       end
 
-    notify_changed_template(changeset)
+    send(self(), {:register_page_template, Changeset.get_field(changeset, :template)})
 
     {:ok,
      socket
@@ -59,6 +59,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
      |> assign_form(changeset)
      |> maybe_assign_builder_page(changeset)
      |> assign(:language, language(page.format))
+     |> assign(:css, MapSet.new())
      |> assign_stylesheet_paths(changeset)
      |> assign_extra_fields(changeset)}
   end
@@ -71,9 +72,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
     params = Map.merge(socket.assigns.form.params, %{"template" => template})
     changeset = Content.change_page(socket.assigns.site, socket.assigns.page, params)
 
-    {:ok,
-     socket
-     |> assign_form(changeset)}
+    {:ok, assign_form(socket, changeset)}
   end
 
   def update(%{ast: _ast}, %{assigns: %{editor: "code"}} = socket) do
@@ -85,13 +84,17 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
     params = Map.merge(socket.assigns.form.params, %{"template" => template})
     changeset = Content.change_page(socket.assigns.site, socket.assigns.page, params)
 
-    notify_changed_template(changeset)
+    # TODO: send event from svelte on css change
+    changed_css = "text-red-500"
+    css = MapSet.put(socket.assigns.css, changed_css)
+    send(self(), {:css_changed, css})
 
     {:ok,
      socket
      |> LiveMonacoEditor.set_value(template, to: "template")
      |> assign_form(changeset)
      |> maybe_assign_builder_page(changeset)
+     |> assign(:css, css)
      |> assign_stylesheet_paths(changeset)}
   end
 
@@ -207,26 +210,22 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
   defp maybe_assign_builder_page(socket, _changeset), do: assign(socket, :builder_page, nil)
 
   defp assign_stylesheet_paths(socket, changeset) do
-    %{view_id: view_id} = socket.assigns
+    %{view_id: view_id, css: css} = socket.assigns
 
-    hash =
-      changeset
-      |> Changeset.get_field(:template)
-      |> Layouts.hash()
-
-    current_page_stylesheet_path = Layouts.asset_path(socket, :css_page, view_id, hash)
-
-    prev_page_stylesheet_path =
-      socket.assigns[:current_page_stylesheet_path] || current_page_stylesheet_path
+    css = Enum.join(css, " ")
+    hash = Layouts.hash(css)
+    changed_page_stylesheet_path = Layouts.asset_path(socket, :css_page_changed, view_id, hash)
 
     socket
-    |> assign(prev_page_stylesheet_path: prev_page_stylesheet_path)
-    |> assign(current_page_stylesheet_path: current_page_stylesheet_path)
-    |> assign_new(:orig_page_stylesheet_path, fn -> current_page_stylesheet_path end)
-  end
+    |> assign(changed_page_stylesheet_path: changed_page_stylesheet_path)
+    |> assign_new(:page_stylesheet_path, fn ->
+      hash =
+        changeset
+        |> Changeset.get_field(:template)
+        |> Layouts.hash()
 
-  defp notify_changed_template(changeset) do
-    send(self(), {:template_changed, Changeset.get_field(changeset, :template)})
+      Layouts.asset_path(socket, :css_page, view_id, hash)
+    end)
   end
 
   defp assign_extra_fields(socket, changeset) do
@@ -321,9 +320,9 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
           %{
             components: @components,
             page: @builder_page,
-            origPageStylesheetPath: @orig_page_stylesheet_path,
-            prevPageStylesheetPath: @prev_page_stylesheet_path,
-            pageStylesheetPath: @current_page_stylesheet_path
+            origPageStylesheetPath: @changed_page_stylesheet_path,
+            # prevPageStylesheetPath: @prev_page_stylesheet_path,
+            pageStylesheetPath: @page_stylesheet_path
           }
         }
         socket={@socket}

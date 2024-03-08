@@ -58,6 +58,10 @@ defmodule Beacon.LiveAdmin.AssetsController do
     {RuntimeCSS.fetch_for_page(view_id), "text/css"}
   end
 
+  defp contents_and_type(:css_page_changed, %{"view_id" => view_id}) do
+    {RuntimeCSS.fetch_for_page_changed(view_id), "text/css"}
+  end
+
   defp contents_and_type(:js, _params), do: {@js, "text/javascript"}
 
   @doc """

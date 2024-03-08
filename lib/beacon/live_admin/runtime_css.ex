@@ -57,9 +57,24 @@ defmodule Beacon.LiveAdmin.RuntimeCSS do
     {site, templates} =
       view_id
       |> Beacon.LiveAdmin.PageEditorLive.FormComponent.whereis()
-      |> GenServer.call(:fetch_templates, :timer.minutes(1))
+      |> GenServer.call(:fetch_templates)
 
     case compile(site, templates) do
+      {:ok, css} ->
+        css
+
+      _ ->
+        {"/* failed to compile css /*", "text/css"}
+    end
+  end
+
+  def fetch_for_page_changed(view_id) do
+    {site, css} =
+      view_id
+      |> Beacon.LiveAdmin.PageEditorLive.FormComponent.whereis()
+      |> GenServer.call(:fetch_css)
+
+    case compile(site, css) do
       {:ok, css} ->
         css
 

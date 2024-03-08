@@ -17,11 +17,13 @@ defmodule Beacon.LiveAdmin.Router do
         scope "/__beacon_live_admin/assets", alias: false, as: false do
           get "/css-:md5", Beacon.LiveAdmin.AssetsController, :css, as: :beacon_live_admin_asset
 
-          # get "/:site/css-:md5", Beacon.LiveAdmin.AssetsController, :css_site,
-          #   as: :beacon_live_admin_asset
-
           get "/page/:view_id/css-:md5", Beacon.LiveAdmin.AssetsController, :css_page,
             as: :beacon_live_admin_asset
+
+          get "/page/:view_id/css-changed-:md5",
+              Beacon.LiveAdmin.AssetsController,
+              :css_page_changed,
+              as: :beacon_live_admin_asset
 
           get "/js-:md5", Beacon.LiveAdmin.AssetsController, :js, as: :beacon_live_admin_asset
         end

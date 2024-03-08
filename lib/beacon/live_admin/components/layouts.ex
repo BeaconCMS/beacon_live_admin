@@ -30,6 +30,12 @@ defmodule Beacon.LiveAdmin.Layouts do
     Phoenix.VerifiedRoutes.unverified_path(conn_or_socket, router(conn_or_socket), path)
   end
 
+  def asset_path(conn_or_socket, :css_page_changed = _asset, view_id, hash) do
+    prefix = router(conn_or_socket).__beacon_live_admin_assets_prefix__()
+    path = Beacon.LiveAdmin.Router.sanitize_path("#{prefix}/page/#{view_id}/css-changed-#{hash}")
+    Phoenix.VerifiedRoutes.unverified_path(conn_or_socket, router(conn_or_socket), path)
+  end
+
   defp router(%Plug.Conn{private: %{phoenix_router: router}}), do: router
   defp router(%Phoenix.LiveView.Socket{router: router}), do: router
 end

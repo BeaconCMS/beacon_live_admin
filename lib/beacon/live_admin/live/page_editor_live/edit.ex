@@ -35,7 +35,8 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
       assign(socket,
         page_title: "Edit Page",
         editor: editor,
-        templates: templates
+        templates: templates,
+        css: MapSet.new()
       )
 
     {:noreply, socket}
@@ -87,13 +88,22 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
   end
 
   @impl true
-  def handle_info({:template_changed, page_template}, socket) do
+  def handle_info({:register_page_template, page_template}, socket) do
     {:noreply, assign(socket, page_template: page_template)}
+  end
+
+  def handle_info({:css_changed, css}, socket) do
+    {:noreply, assign(socket, :css, Enum.to_list(css))}
   end
 
   def handle_call(:fetch_templates, _from, socket) do
     %{page: %{site: site}, templates: templates, page_template: page_template} = socket.assigns
     {:reply, {site, [page_template | templates]}, socket}
+  end
+
+  def handle_call(:fetch_css, _from, socket) do
+    %{page: %{site: site}, css: css} = socket.assigns
+    {:reply, {site, css}, socket}
   end
 
   @impl true
