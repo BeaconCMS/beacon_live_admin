@@ -21,10 +21,12 @@
   $: isRootNode = !!$selectedAstElementId && $selectedAstElementId === "root"
   $: attributesEditable = !["eex", "eex_block"].includes($selectedAstElement?.tag)
 
-  async function addClass({ detail: newClass }: CustomEvent<string>) {
+  async function addClasses({ detail: newClasses }: CustomEvent<string>) {
     let node = $selectedAstElement
     if (node) {
-      node.attrs.class = node.attrs.class ? `${node.attrs.class} ${newClass}` : newClass
+      let classes = newClasses.split(" ").map((c) => c.trim());
+      live.pushEvent("classes_added", { id: $page.id, classes })
+      node.attrs.class = node.attrs.class ? `${node.attrs.class} ${classes.join(" ")}` : newClasses.join(" ")
       live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast })
     }
   }
@@ -59,6 +61,14 @@
     let node = $selectedAstElement
     if (node && isAstElement(node)) {
       node.content = [e.detail]
+      live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast })
+    }
+  }
+  
+  async function updateArg(e: CustomEvent<string>) {
+    let node = $selectedAstElement
+    if (node && isAstElement(node)) {
+      node.arg = e.detail
       live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast })
     }
   }
@@ -155,7 +165,7 @@
         </button>
       </div>
       {#if attributesEditable}
-        <SidebarSection clearOnUpdate={true} on:update={addClass} placeholder="Add new class">
+        <SidebarSection clearOnUpdate={true} on:update={addClasses} placeholder="Add new class">
           <svelte:fragment slot="heading">Classes</svelte:fragment>
           <svelte:fragment slot="value">
             {#each classList as className}
@@ -176,11 +186,11 @@
         {/each}
       {/if}
       {#if $selectedAstElement.tag === "eex_block"}
-        <SidebarSection on:update={updateText} value={$selectedAstElement.arg} large={true}>
+        <SidebarSection on:update={updateArg} value={$selectedAstElement.arg} large={true}>
           <svelte:fragment slot="heading">Block argument</svelte:fragment>
           <svelte:fragment slot="input"></svelte:fragment>
         </SidebarSection>
-        <SidebarSection on:update={updateText}>
+        <SidebarSection>
           <svelte:fragment slot="heading">Block content</svelte:fragment>
           <svelte:fragment slot="input">
             <p>The content of eex blocks can't be edited from the visual editor yet. Please use the code editor.</p>
