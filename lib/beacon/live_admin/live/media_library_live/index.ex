@@ -5,6 +5,7 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.Index do
 
   alias Beacon.LiveAdmin.MediaLibrary
   alias Beacon.LiveAdmin.Authorization
+  alias Beacon.MediaLibrary.Asset
 
   on_mount {Beacon.LiveAdmin.Hooks.Authorized, {:media_library, :index}}
 
@@ -20,99 +21,109 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.Index do
   end
 
   @impl true
-  def handle_params(params, _uri, socket) do
-    socket =
-      Table.handle_params(
-        socket,
-        params,
-        &MediaLibrary.count_assets(&1.site, query: params["query"])
-      )
+  def handle_params(params, _url, %{assigns: assigns} = socket) do
+    if Authorization.authorized?(
+         assigns.beacon_page.site,
+         assigns.agent,
+         assigns.live_action,
+         assigns.authn_context
+       ) do
+      socket =
+        Table.handle_params(
+          socket,
+          params,
+          &MediaLibrary.count_assets(&1.site, query: params["query"])
+        )
 
-    %{site: site} = socket.assigns.beacon_page
+      %{per_page: per_page, current_page: page, query: query, sort_by: sort_by} =
+        socket.assigns.beacon_page.table
 
-    %{per_page: per_page, current_page: page, query: query, sort_by: sort_by} =
-      socket.assigns.beacon_page.table
+      assets =
+        MediaLibrary.list_assets(assigns.beacon_page.site,
+          per_page: per_page,
+          page: page,
+          query: query,
+          sort: sort_by
+        )
 
-    assets =
-      MediaLibrary.list_assets(site,
-        per_page: per_page,
-        page: page,
-        query: query,
-        sort: sort_by
-      )
-
-    {:noreply, stream(socket, :assets, assets, reset: true)}
+      {:noreply,
+       socket
+       |> stream(:assets, assets, reset: true)
+       |> apply_action(assigns.live_action, params)}
+    else
+      {:noreply, socket}
+    end
   end
 
-  # defp apply_action(socket, :index, %{"search" => search}) when search not in ["", nil] do
-  #   assets = MediaLibrary.search(socket.assigns.beacon_page.site, search)
-  #
-  #   socket
-  #   |> assign(assets: assets, search: search, page_title: search)
-  #   |> assign(:asset, nil)
-  # end
-  #
-  # defp apply_action(socket, :index, _params) do
-  #   socket
-  #   |> assign(:assets, list_assets(socket.assigns.beacon_page.site))
-  #   |> assign(:page_title, "Media Library")
-  #   |> assign(:asset, nil)
-  # end
-  #
-  # defp apply_action(socket, :upload, _params) do
-  #   socket
-  #   |> assign(:page_title, "Upload")
-  #   |> assign(:asset, %Asset{})
-  # end
-  #
-  # defp apply_action(socket, :show, %{"id" => id}) do
-  #   asset = MediaLibrary.get_asset_by(socket.assigns.beacon_page.site, id: id)
-  #
-  #   socket
-  #   |> assign(:page_title, "Upload")
-  #   |> assign(:asset, asset)
-  # end
-  #
-  # @impl true
-  # def handle_event("delete", %{"id" => id}, %{assigns: assigns} = socket) do
-  #   site = socket.assigns.beacon_page.site
-  #
-  #   if Authorization.authorized?(
-  #        site,
-  #        assigns.agent,
-  #        :delete,
-  #        Map.put(assigns.authn_context, :resource_id, id)
-  #      ) do
-  #     asset = MediaLibrary.get_asset_by(site, id: id)
-  #     {:ok, _} = MediaLibrary.soft_delete(site, asset)
-  #
-  #     path = beacon_live_admin_path(socket, site, "/media_library", search: socket.assigns.search)
-  #     socket = push_patch(socket, to: path)
-  #
-  #     {:noreply, socket}
-  #   else
-  #     {:noreply, socket}
-  #   end
-  # end
-  #
-  # def handle_event("search", %{"search" => search}, %{assigns: assigns} = socket) do
-  #   if Authorization.authorized?(
-  #        assigns.beacon_page.site,
-  #        assigns.agent,
-  #        :search,
-  #        assigns.authn_context
-  #      ) do
-  #     path =
-  #       beacon_live_admin_path(socket, assigns.beacon_page.site, "/media_library", search: search)
-  #
-  #     socket = push_patch(socket, to: path)
-  #     {:noreply, socket}
-  #   else
-  #     {:noreply, socket}
-  #   end
-  # end
+  defp apply_action(socket, :index, %{"search" => search}) when search not in ["", nil] do
+    assets = MediaLibrary.search(socket.assigns.beacon_page.site, search)
 
-  # defp source_for(site, asset), do: MediaLibrary.url_for(site, asset)
+    socket
+    |> assign(assets: assets, search: search, page_title: search)
+    |> assign(:asset, nil)
+  end
+
+  defp apply_action(socket, :index, _params) do
+    socket
+    |> assign(:assets, MediaLibrary.list_assets(socket.assigns.beacon_page.site))
+    |> assign(:page_title, "Media Library")
+    |> assign(:asset, nil)
+  end
+
+  defp apply_action(socket, :upload, _params) do
+    socket
+    |> assign(:page_title, "Upload")
+    |> assign(:asset, %Asset{})
+  end
+
+  defp apply_action(socket, :show, %{"id" => id}) do
+    asset = MediaLibrary.get_asset_by(socket.assigns.beacon_page.site, id: id)
+
+    socket
+    |> assign(:page_title, "Upload")
+    |> assign(:asset, asset)
+  end
+
+  @impl true
+  def handle_event("delete", %{"id" => id}, %{assigns: assigns} = socket) do
+    site = socket.assigns.beacon_page.site
+
+    if Authorization.authorized?(
+         site,
+         assigns.agent,
+         :delete,
+         Map.put(assigns.authn_context, :resource_id, id)
+       ) do
+      asset = MediaLibrary.get_asset_by(site, id: id)
+      {:ok, _} = MediaLibrary.soft_delete(site, asset)
+
+      path = beacon_live_admin_path(socket, site, "/media_library", search: socket.assigns.search)
+      socket = push_patch(socket, to: path)
+
+      {:noreply, socket}
+    else
+      {:noreply, socket}
+    end
+  end
+
+  def handle_event("search", %{"search" => search}, %{assigns: assigns} = socket) do
+    if Authorization.authorized?(
+         assigns.beacon_page.site,
+         assigns.agent,
+         :search,
+         assigns.authn_context
+       ) do
+      path =
+        beacon_live_admin_path(socket, assigns.beacon_page.site, "/media_library", search: search)
+
+      socket = push_patch(socket, to: path)
+      {:noreply, socket}
+    else
+      {:noreply, socket}
+    end
+  end
+
+  defp source_for(site, asset), do: MediaLibrary.url_for(site, asset)
 
   @impl true
   def render(assigns) do
@@ -137,6 +148,7 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.Index do
 
     <.main_content class="h-[calc(100vh_-_210px)]">
       <.table id="assets" rows={@streams.assets} row_click={fn {_dom_id, asset} -> JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/media_library/#{asset.id}")) end}>
+        <:col :let={{_, asset}} label=""><Beacon.LiveAdmin.AdminComponents.thumbnail source={source_for(asset.site, asset.thumbnail)} /></:col>
         <:col :let={{_, asset}} label="File Name"><%= asset.file_name %></:col>
         <:col :let={{_, asset}} label="type"><%= asset.media_type %></:col>
         <:action :let={{_, asset}}>
@@ -175,6 +187,30 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.Index do
           </.link>
         </:action>
       </.table>
+      <.modal :if={@live_action in [:upload]} id="asset-modal" show on_cancel={JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/media_library"))}>
+        <.live_component
+          module={Beacon.LiveAdmin.MediaLibraryLive.UploadFormComponent}
+          site={@beacon_page.site}
+          id={@asset.id || :upload}
+          title={@page_title}
+          live_action={@live_action}
+          asset={@asset}
+          navigate={beacon_live_admin_path(@socket, @beacon_page.site, "/media_library")}
+          agent={@agent}
+        />
+      </.modal>
+
+      <.modal :if={@live_action in [:show]} id="asset-modal" show on_cancel={JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/media_library"))}>
+        <.live_component
+          module={Beacon.LiveAdmin.MediaLibraryLive.ShowComponent}
+          id={@asset.id}
+          title={@page_title}
+          live_action={@live_action}
+          asset={@asset}
+          navigate={beacon_live_admin_path(@socket, @beacon_page.site, "/media_library")}
+          agent={@agent}
+        />
+      </.modal>
       <.table_pagination socket={@socket} page={@beacon_page} />
     </.main_content>
     """
