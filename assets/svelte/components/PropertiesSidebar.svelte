@@ -19,7 +19,7 @@
   )
   $: sidebarTitle = $selectedAstElement?.tag
   $: isRootNode = !!$selectedAstElementId && $selectedAstElementId === "root"
-  $: attributesEditable = !['eex', 'eex_block'].includes($selectedAstElement?.tag)
+  $: attributesEditable = !["eex", "eex_block"].includes($selectedAstElement?.tag)
 
   async function addClass({ detail: newClass }: CustomEvent<string>) {
     let node = $selectedAstElement
@@ -186,7 +186,6 @@
             <p>The content of eex blocks can't be edited from the visual editor yet. Please use the code editor.</p>
           </svelte:fragment>
         </SidebarSection>
-        
       {/if}
 
       <div class="relative">
