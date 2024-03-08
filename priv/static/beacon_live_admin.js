@@ -7882,29 +7882,26 @@ var BeaconLiveAdmin = (() => {
     default: () => PageWrapper_default
   });
 
-  // svelte/stores/origPageStylesheetPath.ts
-  var origPageStylesheetPath = writable(null);
+  // svelte/stores/pageBaselineCssPath.ts
+  var pageBaselineCssPath = writable(null);
 
-  // svelte/stores/prevPageStylesheetPath.ts
-  var prevPageStylesheetPath = writable(null);
-
-  // svelte/stores/pageStylesheetPath.ts
-  var pageStylesheetPath = writable(null);
+  // svelte/stores/pageChunksCssPath.ts
+  var pageChunksCssPath = writable(null);
 
   // svelte/components/PageWrapper.svelte
   var file8 = "svelte/components/PageWrapper.svelte";
   function add_css3(target) {
-    append_styles(target, "svelte-xbvayw", '[data-selected="true"], [data-highlighted="true"]{outline-color:#06b6d4;outline-width:2px;outline-style:dashed}:before, :after{pointer-events:none}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiUGFnZVdyYXBwZXIuc3ZlbHRlIiwibWFwcGluZ3MiOiJBQXdCVSxpREFBbUQsQ0FDekQsYUFBYSxDQUFFLE9BQU8sQ0FDdEIsYUFBYSxDQUFFLEdBQUcsQ0FDbEIsYUFBYSxDQUFFLE1BQ2pCLENBRVEsZUFBaUIsQ0FDdkIsY0FBYyxDQUFFLElBQ2xCIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIlBhZ2VXcmFwcGVyLnN2ZWx0ZSJdfQ== */');
+    append_styles(target, "svelte-xbvayw", '[data-selected="true"], [data-highlighted="true"]{outline-color:#06b6d4;outline-width:2px;outline-style:dashed}:before, :after{pointer-events:none}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiUGFnZVdyYXBwZXIuc3ZlbHRlIiwibWFwcGluZ3MiOiJBQXNCVSxpREFBbUQsQ0FDekQsYUFBYSxDQUFFLE9BQU8sQ0FDdEIsYUFBYSxDQUFFLEdBQUcsQ0FDbEIsYUFBYSxDQUFFLE1BQ2pCLENBRVEsZUFBaUIsQ0FDdkIsY0FBYyxDQUFFLElBQ2xCIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIlBhZ2VXcmFwcGVyLnN2ZWx0ZSJdfQ== */');
   }
   function get_each_context4(ctx, list, i) {
     const child_ctx = ctx.slice();
-    child_ctx[4] = list[i];
+    child_ctx[3] = list[i];
     return child_ctx;
   }
   function get_each_context_12(ctx, list, i) {
     const child_ctx = ctx.slice();
-    child_ctx[7] = list[i];
-    child_ctx[9] = i;
+    child_ctx[6] = list[i];
+    child_ctx[8] = i;
     return child_ctx;
   }
   function create_each_block_12(ctx) {
@@ -7914,11 +7911,11 @@ var BeaconLiveAdmin = (() => {
       props: {
         node: (
           /*astNode*/
-          ctx[7]
+          ctx[6]
         ),
         nodeId: String(
           /*index*/
-          ctx[9]
+          ctx[8]
         )
       },
       $$inline: true
@@ -7937,9 +7934,9 @@ var BeaconLiveAdmin = (() => {
       p: function update2(ctx2, dirty) {
         const pageastnode_changes = {};
         if (dirty & /*$page*/
-        8)
+        4)
           pageastnode_changes.node = /*astNode*/
-          ctx2[7];
+          ctx2[6];
         pageastnode.$set(pageastnode_changes);
       },
       i: function intro(local) {
@@ -7960,7 +7957,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_each_block_12.name,
       type: "each",
-      source: "(17:4) {#each $page.ast as astNode, index}",
+      source: "(15:4) {#each $page.ast as astNode, index}",
       ctx
     });
     return block;
@@ -7970,7 +7967,7 @@ var BeaconLiveAdmin = (() => {
     let current;
     let each_value_1 = ensure_array_like_dev(
       /*$page*/
-      ctx[3].ast
+      ctx[2].ast
     );
     let each_blocks = [];
     for (let i = 0; i < each_value_1.length; i += 1) {
@@ -8003,10 +8000,10 @@ var BeaconLiveAdmin = (() => {
       },
       p: function update2(ctx2, dirty) {
         if (dirty & /*$page, String*/
-        8) {
+        4) {
           each_value_1 = ensure_array_like_dev(
             /*$page*/
-            ctx2[3].ast
+            ctx2[2].ast
           );
           let i;
           for (i = 0; i < each_value_1.length; i += 1) {
@@ -8054,7 +8051,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_default_slot2.name,
       type: "slot",
-      source: "(16:2) <LayoutAstNode node={layoutAstNode}>",
+      source: "(14:2) <LayoutAstNode node={layoutAstNode}>",
       ctx
     });
     return block;
@@ -8066,7 +8063,7 @@ var BeaconLiveAdmin = (() => {
       props: {
         node: (
           /*layoutAstNode*/
-          ctx[4]
+          ctx[3]
         ),
         $$slots: { default: [create_default_slot2] },
         $$scope: { ctx }
@@ -8087,11 +8084,11 @@ var BeaconLiveAdmin = (() => {
       p: function update2(ctx2, dirty) {
         const layoutastnode_changes = {};
         if (dirty & /*$page*/
-        8)
+        4)
           layoutastnode_changes.node = /*layoutAstNode*/
-          ctx2[4];
+          ctx2[3];
         if (dirty & /*$$scope, $page*/
-        1032) {
+        516) {
           layoutastnode_changes.$$scope = { dirty, ctx: ctx2 };
         }
         layoutastnode.$set(layoutastnode_changes);
@@ -8114,7 +8111,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_each_block4.name,
       type: "each",
-      source: "(15:0) {#each $page.layout.ast as layoutAstNode}",
+      source: "(13:0) {#each $page.layout.ast as layoutAstNode}",
       ctx
     });
     return block;
@@ -8124,13 +8121,11 @@ var BeaconLiveAdmin = (() => {
     let t0;
     let link1;
     let t1;
-    let link2;
-    let t2;
     let each_1_anchor;
     let current;
     let each_value = ensure_array_like_dev(
       /*$page*/
-      ctx[3].layout.ast
+      ctx[2].layout.ast
     );
     let each_blocks = [];
     for (let i = 0; i < each_value.length; i += 1) {
@@ -8145,8 +8140,6 @@ var BeaconLiveAdmin = (() => {
         t0 = space();
         link1 = element("link");
         t1 = space();
-        link2 = element("link");
-        t2 = space();
         for (let i = 0; i < each_blocks.length; i += 1) {
           each_blocks[i].c();
         }
@@ -8158,8 +8151,6 @@ var BeaconLiveAdmin = (() => {
         t0 = claim_space(nodes);
         link1 = claim_element(nodes, "LINK", { id: true, rel: true, href: true });
         t1 = claim_space(nodes);
-        link2 = claim_element(nodes, "LINK", { id: true, rel: true, href: true });
-        t2 = claim_space(nodes);
         for (let i = 0; i < each_blocks.length; i += 1) {
           each_blocks[i].l(nodes);
         }
@@ -8167,41 +8158,30 @@ var BeaconLiveAdmin = (() => {
         this.h();
       },
       h: function hydrate() {
-        attr_dev(link0, "id", "orig-page-stylesheet-target");
+        attr_dev(link0, "id", "page-baseline-css-target");
         attr_dev(link0, "rel", "stylesheet");
         attr_dev(
           link0,
           "href",
-          /*$origPageStylesheetPathStore*/
+          /*$pageBaselineCssPathStore*/
           ctx[0]
         );
-        add_location(link0, file8, 11, 0, 579);
-        attr_dev(link1, "id", "prev-page-stylesheet-target");
+        add_location(link0, file8, 10, 0, 459);
+        attr_dev(link1, "id", "page-chunks-css-target");
         attr_dev(link1, "rel", "stylesheet");
         attr_dev(
           link1,
           "href",
-          /*$prevPageStylesheetPathStore*/
+          /*$pageChunksCssPathStore*/
           ctx[1]
         );
-        add_location(link1, file8, 12, 0, 674);
-        attr_dev(link2, "id", "page-stylesheet-target");
-        attr_dev(link2, "rel", "stylesheet");
-        attr_dev(
-          link2,
-          "href",
-          /*$pageStylesheetPathStore*/
-          ctx[2]
-        );
-        add_location(link2, file8, 13, 0, 769);
+        add_location(link1, file8, 11, 0, 548);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, link0, anchor);
         insert_hydration_dev(target, t0, anchor);
         insert_hydration_dev(target, link1, anchor);
         insert_hydration_dev(target, t1, anchor);
-        insert_hydration_dev(target, link2, anchor);
-        insert_hydration_dev(target, t2, anchor);
         for (let i = 0; i < each_blocks.length; i += 1) {
           if (each_blocks[i]) {
             each_blocks[i].m(target, anchor);
@@ -8211,38 +8191,29 @@ var BeaconLiveAdmin = (() => {
         current = true;
       },
       p: function update2(ctx2, [dirty]) {
-        if (!current || dirty & /*$origPageStylesheetPathStore*/
+        if (!current || dirty & /*$pageBaselineCssPathStore*/
         1) {
           attr_dev(
             link0,
             "href",
-            /*$origPageStylesheetPathStore*/
+            /*$pageBaselineCssPathStore*/
             ctx2[0]
           );
         }
-        if (!current || dirty & /*$prevPageStylesheetPathStore*/
+        if (!current || dirty & /*$pageChunksCssPathStore*/
         2) {
           attr_dev(
             link1,
             "href",
-            /*$prevPageStylesheetPathStore*/
+            /*$pageChunksCssPathStore*/
             ctx2[1]
           );
         }
-        if (!current || dirty & /*$pageStylesheetPathStore*/
-        4) {
-          attr_dev(
-            link2,
-            "href",
-            /*$pageStylesheetPathStore*/
-            ctx2[2]
-          );
-        }
         if (dirty & /*$page, String*/
-        8) {
+        4) {
           each_value = ensure_array_like_dev(
             /*$page*/
-            ctx2[3].layout.ast
+            ctx2[2].layout.ast
           );
           let i;
           for (i = 0; i < each_value.length; i += 1) {
@@ -8285,8 +8256,6 @@ var BeaconLiveAdmin = (() => {
           detach_dev(t0);
           detach_dev(link1);
           detach_dev(t1);
-          detach_dev(link2);
-          detach_dev(t2);
           detach_dev(each_1_anchor);
         }
         destroy_each(each_blocks, detaching);
@@ -8302,18 +8271,15 @@ var BeaconLiveAdmin = (() => {
     return block;
   }
   function instance8($$self, $$props, $$invalidate) {
-    let $origPageStylesheetPathStore;
-    let $prevPageStylesheetPathStore;
-    let $pageStylesheetPathStore;
+    let $pageBaselineCssPathStore;
+    let $pageChunksCssPathStore;
     let $page;
-    validate_store(origPageStylesheetPath, "origPageStylesheetPathStore");
-    component_subscribe($$self, origPageStylesheetPath, ($$value) => $$invalidate(0, $origPageStylesheetPathStore = $$value));
-    validate_store(prevPageStylesheetPath, "prevPageStylesheetPathStore");
-    component_subscribe($$self, prevPageStylesheetPath, ($$value) => $$invalidate(1, $prevPageStylesheetPathStore = $$value));
-    validate_store(pageStylesheetPath, "pageStylesheetPathStore");
-    component_subscribe($$self, pageStylesheetPath, ($$value) => $$invalidate(2, $pageStylesheetPathStore = $$value));
+    validate_store(pageBaselineCssPath, "pageBaselineCssPathStore");
+    component_subscribe($$self, pageBaselineCssPath, ($$value) => $$invalidate(0, $pageBaselineCssPathStore = $$value));
+    validate_store(pageChunksCssPath, "pageChunksCssPathStore");
+    component_subscribe($$self, pageChunksCssPath, ($$value) => $$invalidate(1, $pageChunksCssPathStore = $$value));
     validate_store(page, "page");
-    component_subscribe($$self, page, ($$value) => $$invalidate(3, $page = $$value));
+    component_subscribe($$self, page, ($$value) => $$invalidate(2, $page = $$value));
     let { $$slots: slots = {}, $$scope } = $$props;
     validate_slots("page-wrapper", slots, []);
     const writable_props = [];
@@ -8325,20 +8291,13 @@ var BeaconLiveAdmin = (() => {
       LayoutAstNode: LayoutAstNode_default,
       PageAstNode: PageAstNode_default,
       page,
-      origPageStylesheetPathStore: origPageStylesheetPath,
-      prevPageStylesheetPathStore: prevPageStylesheetPath,
-      pageStylesheetPathStore: pageStylesheetPath,
-      $origPageStylesheetPathStore,
-      $prevPageStylesheetPathStore,
-      $pageStylesheetPathStore,
+      pageBaselineCssPathStore: pageBaselineCssPath,
+      pageChunksCssPathStore: pageChunksCssPath,
+      $pageBaselineCssPathStore,
+      $pageChunksCssPathStore,
       $page
     });
-    return [
-      $origPageStylesheetPathStore,
-      $prevPageStylesheetPathStore,
-      $pageStylesheetPathStore,
-      $page
-    ];
+    return [$pageBaselineCssPathStore, $pageChunksCssPathStore, $page];
   }
   var PageWrapper = class extends SvelteComponentDev {
     constructor(options) {
@@ -12375,7 +12334,7 @@ var BeaconLiveAdmin = (() => {
     propertiessidebar.$on(
       "droppedIntoTarget",
       /*droppedIntoTarget_handler*/
-      ctx[6]
+      ctx[5]
     );
     const block = {
       c: function create3() {
@@ -12405,7 +12364,7 @@ var BeaconLiveAdmin = (() => {
       h: function hydrate() {
         attr_dev(div, "class", "flex min-h-screen bg-gray-100");
         attr_dev(div, "data-test-id", "app-container");
-        add_location(div, file12, 28, 0, 1044);
+        add_location(div, file12, 25, 0, 819);
       },
       m: function mount(target, anchor) {
         mount_component(backdrop, target, anchor);
@@ -12477,25 +12436,21 @@ var BeaconLiveAdmin = (() => {
   function addBasicComponentToTarget(e) {
   }
   function instance12($$self, $$props, $$invalidate) {
-    let $pageStylesheetPathStore;
-    let $prevPageStylesheetPathStore;
-    let $origPageStylesheetPathStore;
+    let $pageChunksCssPathStore;
+    let $pageBaselineCssPathStore;
     let $pageStore;
-    validate_store(pageStylesheetPath, "pageStylesheetPathStore");
-    component_subscribe($$self, pageStylesheetPath, ($$value) => $$invalidate(7, $pageStylesheetPathStore = $$value));
-    validate_store(prevPageStylesheetPath, "prevPageStylesheetPathStore");
-    component_subscribe($$self, prevPageStylesheetPath, ($$value) => $$invalidate(8, $prevPageStylesheetPathStore = $$value));
-    validate_store(origPageStylesheetPath, "origPageStylesheetPathStore");
-    component_subscribe($$self, origPageStylesheetPath, ($$value) => $$invalidate(9, $origPageStylesheetPathStore = $$value));
+    validate_store(pageChunksCssPath, "pageChunksCssPathStore");
+    component_subscribe($$self, pageChunksCssPath, ($$value) => $$invalidate(6, $pageChunksCssPathStore = $$value));
+    validate_store(pageBaselineCssPath, "pageBaselineCssPathStore");
+    component_subscribe($$self, pageBaselineCssPath, ($$value) => $$invalidate(7, $pageBaselineCssPathStore = $$value));
     validate_store(page, "pageStore");
-    component_subscribe($$self, page, ($$value) => $$invalidate(10, $pageStore = $$value));
+    component_subscribe($$self, page, ($$value) => $$invalidate(8, $pageStore = $$value));
     let { $$slots: slots = {}, $$scope } = $$props;
     validate_slots("UiBuilder", slots, []);
     let { components } = $$props;
     let { page: page2 } = $$props;
-    let { origPageStylesheetPath: origPageStylesheetPath2 } = $$props;
-    let { prevPageStylesheetPath: prevPageStylesheetPath2 } = $$props;
-    let { pageStylesheetPath: pageStylesheetPath2 } = $$props;
+    let { pageBaselineCssPath: pageBaselineCssPath2 } = $$props;
+    let { pageChunksCssPath: pageChunksCssPath2 } = $$props;
     let { live } = $$props;
     $$self.$$.on_mount.push(function() {
       if (components === void 0 && !("components" in $$props || $$self.$$.bound[$$self.$$.props["components"]])) {
@@ -12504,27 +12459,17 @@ var BeaconLiveAdmin = (() => {
       if (page2 === void 0 && !("page" in $$props || $$self.$$.bound[$$self.$$.props["page"]])) {
         console.warn("<UiBuilder> was created without expected prop 'page'");
       }
-      if (origPageStylesheetPath2 === void 0 && !("origPageStylesheetPath" in $$props || $$self.$$.bound[$$self.$$.props["origPageStylesheetPath"]])) {
-        console.warn("<UiBuilder> was created without expected prop 'origPageStylesheetPath'");
+      if (pageBaselineCssPath2 === void 0 && !("pageBaselineCssPath" in $$props || $$self.$$.bound[$$self.$$.props["pageBaselineCssPath"]])) {
+        console.warn("<UiBuilder> was created without expected prop 'pageBaselineCssPath'");
       }
-      if (prevPageStylesheetPath2 === void 0 && !("prevPageStylesheetPath" in $$props || $$self.$$.bound[$$self.$$.props["prevPageStylesheetPath"]])) {
-        console.warn("<UiBuilder> was created without expected prop 'prevPageStylesheetPath'");
-      }
-      if (pageStylesheetPath2 === void 0 && !("pageStylesheetPath" in $$props || $$self.$$.bound[$$self.$$.props["pageStylesheetPath"]])) {
-        console.warn("<UiBuilder> was created without expected prop 'pageStylesheetPath'");
+      if (pageChunksCssPath2 === void 0 && !("pageChunksCssPath" in $$props || $$self.$$.bound[$$self.$$.props["pageChunksCssPath"]])) {
+        console.warn("<UiBuilder> was created without expected prop 'pageChunksCssPath'");
       }
       if (live === void 0 && !("live" in $$props || $$self.$$.bound[$$self.$$.props["live"]])) {
         console.warn("<UiBuilder> was created without expected prop 'live'");
       }
     });
-    const writable_props = [
-      "components",
-      "page",
-      "origPageStylesheetPath",
-      "prevPageStylesheetPath",
-      "pageStylesheetPath",
-      "live"
-    ];
+    const writable_props = ["components", "page", "pageBaselineCssPath", "pageChunksCssPath", "live"];
     Object.keys($$props).forEach((key) => {
       if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$" && key !== "slot")
         console.warn(`<UiBuilder> was created with unknown prop '${key}'`);
@@ -12535,12 +12480,10 @@ var BeaconLiveAdmin = (() => {
         $$invalidate(0, components = $$props2.components);
       if ("page" in $$props2)
         $$invalidate(2, page2 = $$props2.page);
-      if ("origPageStylesheetPath" in $$props2)
-        $$invalidate(3, origPageStylesheetPath2 = $$props2.origPageStylesheetPath);
-      if ("prevPageStylesheetPath" in $$props2)
-        $$invalidate(4, prevPageStylesheetPath2 = $$props2.prevPageStylesheetPath);
-      if ("pageStylesheetPath" in $$props2)
-        $$invalidate(5, pageStylesheetPath2 = $$props2.pageStylesheetPath);
+      if ("pageBaselineCssPath" in $$props2)
+        $$invalidate(3, pageBaselineCssPath2 = $$props2.pageBaselineCssPath);
+      if ("pageChunksCssPath" in $$props2)
+        $$invalidate(4, pageChunksCssPath2 = $$props2.pageChunksCssPath);
       if ("live" in $$props2)
         $$invalidate(1, live = $$props2.live);
     };
@@ -12550,19 +12493,16 @@ var BeaconLiveAdmin = (() => {
       PagePreview: PagePreview_default,
       PropertiesSidebar: PropertiesSidebar_default,
       pageStore: page,
-      origPageStylesheetPathStore: origPageStylesheetPath,
-      prevPageStylesheetPathStore: prevPageStylesheetPath,
-      pageStylesheetPathStore: pageStylesheetPath,
+      pageBaselineCssPathStore: pageBaselineCssPath,
+      pageChunksCssPathStore: pageChunksCssPath,
       components,
       page: page2,
-      origPageStylesheetPath: origPageStylesheetPath2,
-      prevPageStylesheetPath: prevPageStylesheetPath2,
-      pageStylesheetPath: pageStylesheetPath2,
+      pageBaselineCssPath: pageBaselineCssPath2,
+      pageChunksCssPath: pageChunksCssPath2,
       live,
       addBasicComponentToTarget,
-      $pageStylesheetPathStore,
-      $prevPageStylesheetPathStore,
-      $origPageStylesheetPathStore,
+      $pageChunksCssPathStore,
+      $pageBaselineCssPathStore,
       $pageStore
     });
     $$self.$inject_state = ($$props2) => {
@@ -12570,12 +12510,10 @@ var BeaconLiveAdmin = (() => {
         $$invalidate(0, components = $$props2.components);
       if ("page" in $$props2)
         $$invalidate(2, page2 = $$props2.page);
-      if ("origPageStylesheetPath" in $$props2)
-        $$invalidate(3, origPageStylesheetPath2 = $$props2.origPageStylesheetPath);
-      if ("prevPageStylesheetPath" in $$props2)
-        $$invalidate(4, prevPageStylesheetPath2 = $$props2.prevPageStylesheetPath);
-      if ("pageStylesheetPath" in $$props2)
-        $$invalidate(5, pageStylesheetPath2 = $$props2.pageStylesheetPath);
+      if ("pageBaselineCssPath" in $$props2)
+        $$invalidate(3, pageBaselineCssPath2 = $$props2.pageBaselineCssPath);
+      if ("pageChunksCssPath" in $$props2)
+        $$invalidate(4, pageChunksCssPath2 = $$props2.pageChunksCssPath);
       if ("live" in $$props2)
         $$invalidate(1, live = $$props2.live);
     };
@@ -12588,29 +12526,23 @@ var BeaconLiveAdmin = (() => {
         $:
           set_store_value(page, $pageStore = page2, $pageStore);
       }
-      if ($$self.$$.dirty & /*origPageStylesheetPath*/
+      if ($$self.$$.dirty & /*pageBaselineCssPath*/
       8) {
         $:
-          set_store_value(origPageStylesheetPath, $origPageStylesheetPathStore = origPageStylesheetPath2, $origPageStylesheetPathStore);
+          set_store_value(pageBaselineCssPath, $pageBaselineCssPathStore = pageBaselineCssPath2, $pageBaselineCssPathStore);
       }
-      if ($$self.$$.dirty & /*prevPageStylesheetPath*/
+      if ($$self.$$.dirty & /*pageChunksCssPath*/
       16) {
         $:
-          set_store_value(prevPageStylesheetPath, $prevPageStylesheetPathStore = prevPageStylesheetPath2, $prevPageStylesheetPathStore);
-      }
-      if ($$self.$$.dirty & /*pageStylesheetPath*/
-      32) {
-        $:
-          set_store_value(pageStylesheetPath, $pageStylesheetPathStore = pageStylesheetPath2, $pageStylesheetPathStore);
+          set_store_value(pageChunksCssPath, $pageChunksCssPathStore = pageChunksCssPath2, $pageChunksCssPathStore);
       }
     };
     return [
       components,
       live,
       page2,
-      origPageStylesheetPath2,
-      prevPageStylesheetPath2,
-      pageStylesheetPath2,
+      pageBaselineCssPath2,
+      pageChunksCssPath2,
       droppedIntoTarget_handler
     ];
   }
@@ -12620,9 +12552,8 @@ var BeaconLiveAdmin = (() => {
       init2(this, options, instance12, create_fragment12, safe_not_equal, {
         components: 0,
         page: 2,
-        origPageStylesheetPath: 3,
-        prevPageStylesheetPath: 4,
-        pageStylesheetPath: 5,
+        pageBaselineCssPath: 3,
+        pageChunksCssPath: 4,
         live: 1
       });
       dispatch_dev("SvelteRegisterComponent", {
@@ -12646,25 +12577,18 @@ var BeaconLiveAdmin = (() => {
       this.$$set({ page: page2 });
       flush();
     }
-    get origPageStylesheetPath() {
+    get pageBaselineCssPath() {
       return this.$$.ctx[3];
     }
-    set origPageStylesheetPath(origPageStylesheetPath2) {
-      this.$$set({ origPageStylesheetPath: origPageStylesheetPath2 });
+    set pageBaselineCssPath(pageBaselineCssPath2) {
+      this.$$set({ pageBaselineCssPath: pageBaselineCssPath2 });
       flush();
     }
-    get prevPageStylesheetPath() {
+    get pageChunksCssPath() {
       return this.$$.ctx[4];
     }
-    set prevPageStylesheetPath(prevPageStylesheetPath2) {
-      this.$$set({ prevPageStylesheetPath: prevPageStylesheetPath2 });
-      flush();
-    }
-    get pageStylesheetPath() {
-      return this.$$.ctx[5];
-    }
-    set pageStylesheetPath(pageStylesheetPath2) {
-      this.$$set({ pageStylesheetPath: pageStylesheetPath2 });
+    set pageChunksCssPath(pageChunksCssPath2) {
+      this.$$set({ pageChunksCssPath: pageChunksCssPath2 });
       flush();
     }
     get live() {
@@ -12675,7 +12599,7 @@ var BeaconLiveAdmin = (() => {
       flush();
     }
   };
-  create_custom_element(UiBuilder, { "components": {}, "page": {}, "origPageStylesheetPath": {}, "prevPageStylesheetPath": {}, "pageStylesheetPath": {}, "live": {} }, [], [], true);
+  create_custom_element(UiBuilder, { "components": {}, "page": {}, "pageBaselineCssPath": {}, "pageChunksCssPath": {}, "live": {} }, [], [], true);
   var UiBuilder_default = UiBuilder;
 
   // import-glob:../svelte/**/*.svelte

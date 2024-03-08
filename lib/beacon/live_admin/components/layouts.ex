@@ -18,21 +18,15 @@ defmodule Beacon.LiveAdmin.Layouts do
     Phoenix.VerifiedRoutes.unverified_path(conn_or_socket, router(conn_or_socket), path)
   end
 
-  def asset_path(conn_or_socket, :css_site = _asset, site, hash) do
+  def asset_path(conn_or_socket, :css_page_baseline = _asset, view_id, hash) do
     prefix = router(conn_or_socket).__beacon_live_admin_assets_prefix__()
-    path = Beacon.LiveAdmin.Router.sanitize_path("#{prefix}/#{site}/css-#{hash}")
+    path = Beacon.LiveAdmin.Router.sanitize_path("#{prefix}/page/#{view_id}/css-baseline-#{hash}")
     Phoenix.VerifiedRoutes.unverified_path(conn_or_socket, router(conn_or_socket), path)
   end
 
-  def asset_path(conn_or_socket, :css_page = _asset, view_id, hash) do
+  def asset_path(conn_or_socket, :css_page_chunks = _asset, view_id, hash) do
     prefix = router(conn_or_socket).__beacon_live_admin_assets_prefix__()
-    path = Beacon.LiveAdmin.Router.sanitize_path("#{prefix}/page/#{view_id}/css-#{hash}")
-    Phoenix.VerifiedRoutes.unverified_path(conn_or_socket, router(conn_or_socket), path)
-  end
-
-  def asset_path(conn_or_socket, :css_page_changed = _asset, view_id, hash) do
-    prefix = router(conn_or_socket).__beacon_live_admin_assets_prefix__()
-    path = Beacon.LiveAdmin.Router.sanitize_path("#{prefix}/page/#{view_id}/css-changed-#{hash}")
+    path = Beacon.LiveAdmin.Router.sanitize_path("#{prefix}/page/#{view_id}/css-chunks-#{hash}")
     Phoenix.VerifiedRoutes.unverified_path(conn_or_socket, router(conn_or_socket), path)
   end
 

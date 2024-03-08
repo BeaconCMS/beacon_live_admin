@@ -214,17 +214,17 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
 
     css = Enum.join(css, " ")
     hash = Layouts.hash(css)
-    changed_page_stylesheet_path = Layouts.asset_path(socket, :css_page_changed, view_id, hash)
+    page_chunks_css_path = Layouts.asset_path(socket, :css_page_chunks, view_id, hash)
 
     socket
-    |> assign(changed_page_stylesheet_path: changed_page_stylesheet_path)
-    |> assign_new(:page_stylesheet_path, fn ->
+    |> assign(page_chunks_css_path: page_chunks_css_path)
+    |> assign_new(:page_baseline_css_path, fn ->
       hash =
         changeset
         |> Changeset.get_field(:template)
         |> Layouts.hash()
 
-      Layouts.asset_path(socket, :css_page, view_id, hash)
+      Layouts.asset_path(socket, :css_page_baseline, view_id, hash)
     end)
   end
 
@@ -320,9 +320,8 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
           %{
             components: @components,
             page: @builder_page,
-            origPageStylesheetPath: @changed_page_stylesheet_path,
-            # prevPageStylesheetPath: @prev_page_stylesheet_path,
-            pageStylesheetPath: @page_stylesheet_path
+            pageBaselineCssPath: @page_baseline_css_path,
+            pageChunksCssPath: @page_chunks_css_path
           }
         }
         socket={@socket}

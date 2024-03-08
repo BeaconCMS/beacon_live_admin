@@ -34,7 +34,7 @@ defmodule Beacon.LiveAdmin.AssetsController do
     :js => Layouts.hash(@js)
   }
 
-  def init(asset) when asset in [:css, :css_site, :css_page, :js], do: asset
+  def init(asset) when asset in [:css, :css_page_baseline, :css_page_chunks, :js], do: asset
 
   def call(conn, asset) do
     {contents, content_type} = contents_and_type(asset, conn.params)
@@ -49,17 +49,12 @@ defmodule Beacon.LiveAdmin.AssetsController do
 
   defp contents_and_type(:css, _params), do: {@css, "text/css"}
 
-  defp contents_and_type(:css_site, %{"site" => site}) do
-    site = String.to_existing_atom(site)
-    {RuntimeCSS.fetch_for_site(site), "text/css"}
+  defp contents_and_type(:css_page_baseline, %{"view_id" => view_id}) do
+    {RuntimeCSS.fetch_for_page_baseline(view_id), "text/css"}
   end
 
-  defp contents_and_type(:css_page, %{"view_id" => view_id}) do
-    {RuntimeCSS.fetch_for_page(view_id), "text/css"}
-  end
-
-  defp contents_and_type(:css_page_changed, %{"view_id" => view_id}) do
-    {RuntimeCSS.fetch_for_page_changed(view_id), "text/css"}
+  defp contents_and_type(:css_page_chunks, %{"view_id" => view_id}) do
+    {RuntimeCSS.fetch_for_page_chunks(view_id), "text/css"}
   end
 
   defp contents_and_type(:js, _params), do: {@js, "text/javascript"}

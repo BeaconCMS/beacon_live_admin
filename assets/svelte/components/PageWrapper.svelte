@@ -4,14 +4,12 @@
   import LayoutAstNode from "./LayoutAstNode.svelte"
   import PageAstNode from "./PageAstNode.svelte"
   import { page } from "$lib/stores/page"
-  import { origPageStylesheetPath as origPageStylesheetPathStore } from "$lib/stores/origPageStylesheetPath"
-  import { prevPageStylesheetPath as prevPageStylesheetPathStore } from "$lib/stores/prevPageStylesheetPath"
-  import { pageStylesheetPath as pageStylesheetPathStore } from "$lib/stores/pageStylesheetPath"
+  import { pageBaselineCssPath as pageBaselineCssPathStore } from "$lib/stores/pageBaselineCssPath"
+  import { pageChunksCssPath as pageChunksCssPathStore } from "$lib/stores/pageChunksCssPath"
 </script>
 
-<link id="orig-page-stylesheet-target" rel="stylesheet" href={$origPageStylesheetPathStore} />
-<link id="prev-page-stylesheet-target" rel="stylesheet" href={$prevPageStylesheetPathStore} />
-<link id="page-stylesheet-target" rel="stylesheet" href={$pageStylesheetPathStore} />
+<link id="page-baseline-css-target" rel="stylesheet" href={$pageBaselineCssPathStore} />
+<link id="page-chunks-css-target" rel="stylesheet" href={$pageChunksCssPathStore} />
 
 {#each $page.layout.ast as layoutAstNode}
   <LayoutAstNode node={layoutAstNode}>

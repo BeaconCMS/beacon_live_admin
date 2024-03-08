@@ -4,21 +4,18 @@
   import PagePreview from "./PagePreview.svelte"
   import PropertiesSidebar from "./PropertiesSidebar.svelte"
   import { page as pageStore } from "$lib/stores/page"
-  import { origPageStylesheetPath as origPageStylesheetPathStore } from "$lib/stores/origPageStylesheetPath"
-  import { prevPageStylesheetPath as prevPageStylesheetPathStore } from "$lib/stores/prevPageStylesheetPath"
-  import { pageStylesheetPath as pageStylesheetPathStore } from "$lib/stores/pageStylesheetPath"
+  import { pageBaselineCssPath as pageBaselineCssPathStore } from "$lib/stores/pageBaselineCssPath"
+  import { pageChunksCssPath as pageChunksCssPathStore } from "$lib/stores/pageChunksCssPath"
   import type { ComponentDefinition, Page } from "$lib/types"
 
   export let components: ComponentDefinition[]
   export let page: Page
-  export let origPageStylesheetPath: string
-  export let prevPageStylesheetPath: string
-  export let pageStylesheetPath: string
+  export let pageBaselineCssPath: string
+  export let pageChunksCssPath: string
   export let live
   $: $pageStore = page
-  $: $origPageStylesheetPathStore = origPageStylesheetPath
-  $: $prevPageStylesheetPathStore = prevPageStylesheetPath
-  $: $pageStylesheetPathStore = pageStylesheetPath
+  $: $pageBaselineCssPathStore = pageBaselineCssPath
+  $: $pageChunksCssPathStore = pageChunksCssPath
 
   function addBasicComponentToTarget(e: CustomEvent) {
     // This method is in PagePreview.
