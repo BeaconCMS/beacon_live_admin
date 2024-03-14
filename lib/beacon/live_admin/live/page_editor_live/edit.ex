@@ -24,20 +24,18 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
       end)
       |> assign_new(:page, fn -> Content.get_page(site, params["id"], preloads: [:layout]) end)
 
-    templates =
-      socket.assigns.components
-      |> Enum.map(& &1.body)
-      |> MapSet.new()
-      |> MapSet.put(socket.assigns.page.layout.template)
-      |> Enum.to_list()
-
     socket =
-      assign(socket,
+      socket
+      |> assign(
         page_title: "Edit Page",
         editor: editor,
-        templates: templates,
-        css: MapSet.new()
+        css_chunks: []
       )
+      |> assign_new(:templates, fn ->
+        Enum.uniq([
+          socket.assigns.page.layout.template | Enum.map(socket.assigns.components, & &1.body)
+        ])
+      end)
 
     {:noreply, socket}
   end
@@ -87,13 +85,21 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
     {:noreply, socket}
   end
 
+  def handle_event("classes_added", %{"classes" => css_classes}, socket) do
+    %{css_chunks: css_chunks} = socket.assigns
+    css_chunks = Enum.uniq(css_classes ++ css_chunks)
+
+    send_update(Beacon.LiveAdmin.PageEditorLive.FormComponent,
+      id: "page-editor-form-edit",
+      css_chunks: css_chunks
+    )
+
+    {:noreply, assign(socket, :css_chunks, css_chunks)}
+  end
+
   @impl true
   def handle_info({:register_page_template, page_template}, socket) do
     {:noreply, assign(socket, page_template: page_template)}
-  end
-
-  def handle_info({:css_changed, css}, socket) do
-    {:noreply, assign(socket, :css, Enum.to_list(css))}
   end
 
   def handle_call(:fetch_templates, _from, socket) do
@@ -101,9 +107,9 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
     {:reply, {site, [page_template | templates]}, socket}
   end
 
-  def handle_call(:fetch_css, _from, socket) do
-    %{page: %{site: site}, css: css} = socket.assigns
-    {:reply, {site, css}, socket}
+  def handle_call(:fetch_css_chunks, _from, socket) do
+    %{page: %{site: site}, css_chunks: css_chunks} = socket.assigns
+    {:reply, {site, css_chunks}, socket}
   end
 
   @impl true

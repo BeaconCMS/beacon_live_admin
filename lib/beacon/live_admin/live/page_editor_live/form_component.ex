@@ -59,7 +59,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
      |> assign_form(changeset)
      |> maybe_assign_builder_page(changeset)
      |> assign(:language, language(page.format))
-     |> assign(:css, MapSet.new())
+     |> assign(:css_chunks, [])
      |> assign_stylesheet_paths(changeset)
      |> assign_extra_fields(changeset)}
   end
@@ -84,17 +84,22 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
     params = Map.merge(socket.assigns.form.params, %{"template" => template})
     changeset = Content.change_page(socket.assigns.site, socket.assigns.page, params)
 
-    # TODO: send event from svelte on css change
-    changed_css = "text-red-500"
-    css = MapSet.put(socket.assigns.css, changed_css)
-    send(self(), {:css_changed, css})
-
     {:ok,
      socket
      |> LiveMonacoEditor.set_value(template, to: "template")
      |> assign_form(changeset)
      |> maybe_assign_builder_page(changeset)
-     |> assign(:css, css)
+     |> assign_stylesheet_paths(changeset)}
+  end
+
+  def update(%{css_chunks: css_chunks}, socket) do
+    %{site: site, page: page, form: form} = socket.assigns
+
+    changeset = Content.change_page(site, page, form.params)
+
+    {:ok,
+     socket
+     |> assign(:css_chunks, css_chunks)
      |> assign_stylesheet_paths(changeset)}
   end
 
@@ -210,10 +215,10 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
   defp maybe_assign_builder_page(socket, _changeset), do: assign(socket, :builder_page, nil)
 
   defp assign_stylesheet_paths(socket, changeset) do
-    %{view_id: view_id, css: css} = socket.assigns
+    %{view_id: view_id, css_chunks: css_chunks} = socket.assigns
 
-    css = Enum.join(css, " ")
-    hash = Layouts.hash(css)
+    css_chunks = Enum.join(css_chunks, " ")
+    hash = Layouts.hash(css_chunks)
     page_chunks_css_path = Layouts.asset_path(socket, :css_page_chunks, view_id, hash)
 
     socket

@@ -3,12 +3,12 @@ defmodule Beacon.LiveAdmin.RuntimeCSS do
   alias Beacon.LiveAdmin.Content
   alias Beacon.LiveAdmin.Layouts
 
-  def compile(site, template) when is_atom(site) and is_binary(template) do
-    call(site, Beacon.RuntimeCSS, :compile, [site, template])
+  def compile(site, source) when is_atom(site) and is_binary(source) do
+    call(site, Beacon.RuntimeCSS, :compile, [site, source])
   end
 
-  def compile(site, templates) when is_atom(site) and is_list(templates) do
-    call(site, Beacon.RuntimeCSS, :compile, [site, templates])
+  def compile(site, source) when is_atom(site) and is_list(source) do
+    call(site, Beacon.RuntimeCSS, :compile, [site, source])
   end
 
   def fetch(site, version) when is_atom(site) do
@@ -66,7 +66,7 @@ defmodule Beacon.LiveAdmin.RuntimeCSS do
     {site, css} =
       view_id
       |> Beacon.LiveAdmin.PageEditorLive.FormComponent.whereis()
-      |> GenServer.call(:fetch_css)
+      |> GenServer.call(:fetch_css_chunks)
 
     do_compile_css(site, css)
   end
