@@ -102,3 +102,15 @@ Beacon.LiveAdminTest.Cluster.start_beacon(:"node2@127.0.0.1",
     [site: :site_c, endpoint: MyApp.Endpoint]
   ]
 )
+
+Application.put_env(:phoenix, :serve_endpoints, true)
+
+Task.start(fn ->
+  children = [
+    {Phoenix.PubSub, [name: Demo.PubSub, adapter: Phoenix.PubSub.PG2]},
+    Beacon.LiveAdminTest.Endpoint
+  ]
+
+  {:ok, _} = Supervisor.start_link(children, strategy: :one_for_one)
+  Process.sleep(:infinity)
+end)
