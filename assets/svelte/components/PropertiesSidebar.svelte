@@ -26,7 +26,7 @@
     if (node) {
       let classes = newClasses.split(" ").map((c) => c.trim());
       live.pushEvent("classes_added", { id: $page.id, classes })
-      node.attrs.class = node.attrs.class ? `${node.attrs.class} ${classes.join(" ")}` : newClasses.join(" ")
+      node.attrs.class = node.attrs.class ? `${node.attrs.class} ${classes.join(" ")}` : classes.join(" ")
       live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast })
     }
   }
@@ -64,7 +64,7 @@
       live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast })
     }
   }
-  
+
   async function updateArg(e: CustomEvent<string>) {
     let node = $selectedAstElement
     if (node && isAstElement(node)) {
