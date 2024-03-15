@@ -10381,18 +10381,18 @@ var BeaconLiveAdmin = (() => {
   var file11 = "svelte/components/PropertiesSidebar.svelte";
   function get_each_context6(ctx, list, i) {
     const child_ctx = ctx.slice();
-    child_ctx[29] = list[i];
+    child_ctx[30] = list[i];
     const constants_0 = (
       /*entry*/
-      child_ctx[29]
+      child_ctx[30]
     );
-    child_ctx[30] = constants_0[0];
-    child_ctx[31] = constants_0[1];
+    child_ctx[31] = constants_0[0];
+    child_ctx[32] = constants_0[1];
     return child_ctx;
   }
   function get_each_context_13(ctx, list, i) {
     const child_ctx = ctx.slice();
-    child_ctx[34] = list[i];
+    child_ctx[35] = list[i];
     return child_ctx;
   }
   function create_else_block4(ctx) {
@@ -10412,7 +10412,7 @@ var BeaconLiveAdmin = (() => {
       },
       h: function hydrate() {
         attr_dev(div, "class", "p-4 pt-8 font-medium text-lg text-center");
-        add_location(div, file11, 230, 6, 10408);
+        add_location(div, file11, 240, 6, 10848);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, div, anchor);
@@ -10430,7 +10430,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_else_block4.name,
       type: "else",
-      source: "(242:4) {:else}",
+      source: "(253:4) {:else}",
       ctx
     });
     return block;
@@ -10575,23 +10575,23 @@ var BeaconLiveAdmin = (() => {
       },
       h: function hydrate() {
         attr_dev(span, "class", "sr-only");
-        add_location(span, file11, 141, 10, 6685);
+        add_location(span, file11, 151, 10, 7147);
         attr_dev(path, "fill-rule", "evenodd");
         attr_dev(path, "d", "M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25Zm-1.72 6.97a.75.75 0 1 0-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 1 0 1.06 1.06L12 13.06l1.72 1.72a.75.75 0 1 0 1.06-1.06L13.06 12l1.72-1.72a.75.75 0 1 0-1.06-1.06L12 10.94l-1.72-1.72Z");
         attr_dev(path, "clip-rule", "evenodd");
-        add_location(path, file11, 148, 12, 6939);
+        add_location(path, file11, 158, 12, 7401);
         attr_dev(svg, "xmlns", "http://www.w3.org/2000/svg");
         attr_dev(svg, "viewBox", "0 0 24 24");
         attr_dev(svg, "fill", "currentColor");
         attr_dev(svg, "class", "w-6 h-6 hover:text-blue-700 active:text-blue-900");
-        add_location(svg, file11, 142, 10, 6730);
+        add_location(svg, file11, 152, 10, 7192);
         attr_dev(button, "type", "button");
         attr_dev(button, "class", "absolute p-2 top-2 right-1");
-        add_location(button, file11, 140, 8, 6564);
+        add_location(button, file11, 150, 8, 7026);
         attr_dev(div0, "class", "border-b text-lg font-medium leading-5 p-4 relative");
-        add_location(div0, file11, 117, 6, 5435);
+        add_location(div0, file11, 127, 6, 5897);
         attr_dev(div1, "class", "relative");
-        add_location(div1, file11, 190, 6, 8871);
+        add_location(div1, file11, 200, 6, 9311);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, div0, anchor);
@@ -10626,7 +10626,7 @@ var BeaconLiveAdmin = (() => {
             button,
             "click",
             /*click_handler*/
-            ctx[20],
+            ctx[21],
             false,
             false,
             false,
@@ -10744,7 +10744,7 @@ var BeaconLiveAdmin = (() => {
         const sidebarsection_changes = {};
         if (dirty[0] & /*sidebarTitle*/
         64 | dirty[1] & /*$$scope*/
-        64) {
+        128) {
           sidebarsection_changes.$$scope = { dirty, ctx: ctx2 };
         }
         sidebarsection.$set(sidebarsection_changes);
@@ -10793,7 +10793,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_if_block7.name,
       type: "if",
-      source: "(129:4) {#if $selectedAstElement}",
+      source: "(140:4) {#if $selectedAstElement}",
       ctx
     });
     return block;
@@ -10853,21 +10853,21 @@ var BeaconLiveAdmin = (() => {
       },
       h: function hydrate() {
         attr_dev(span0, "class", "sr-only");
-        add_location(span0, file11, 121, 12, 5664);
+        add_location(span0, file11, 131, 12, 6126);
         attr_dev(span1, "class", "absolute opacity-0 invisible right-9 min-w-[100px] bg-amber-100 py-1 px-1.5 rounded text-xs text-medium transition group-hover:opacity-100 group-hover:visible");
-        add_location(span1, file11, 122, 12, 5718);
+        add_location(span1, file11, 132, 12, 6180);
         attr_dev(path, "fill-rule", "evenodd");
         attr_dev(path, "d", "M9.53 2.47a.75.75 0 0 1 0 1.06L4.81 8.25H15a6.75 6.75 0 0 1 0 13.5h-3a.75.75 0 0 1 0-1.5h3a5.25 5.25 0 1 0 0-10.5H4.81l4.72 4.72a.75.75 0 1 1-1.06 1.06l-6-6a.75.75 0 0 1 0-1.06l6-6a.75.75 0 0 1 1.06 0Z");
         attr_dev(path, "clip-rule", "evenodd");
-        add_location(path, file11, 132, 14, 6186);
+        add_location(path, file11, 142, 14, 6648);
         attr_dev(svg, "xmlns", "http://www.w3.org/2000/svg");
         attr_dev(svg, "viewBox", "0 0 24 24");
         attr_dev(svg, "fill", "currentColor");
         attr_dev(svg, "class", "w-6 h-6 hover:text-blue-700 active:text-blue-900");
-        add_location(svg, file11, 126, 12, 5965);
+        add_location(svg, file11, 136, 12, 6427);
         attr_dev(button, "type", "button");
         attr_dev(button, "class", "absolute p-2 top-2 right-9 group");
-        add_location(button, file11, 120, 10, 5560);
+        add_location(button, file11, 130, 10, 6022);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, button, anchor);
@@ -10904,7 +10904,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_if_block_54.name,
       type: "if",
-      source: "(132:8) {#if !isRootNode}",
+      source: "(143:8) {#if !isRootNode}",
       ctx
     });
     return block;
@@ -10930,7 +10930,7 @@ var BeaconLiveAdmin = (() => {
     });
     sidebarsection.$on(
       "update",
-      /*addClass*/
+      /*addClasses*/
       ctx[9]
     );
     let each_value = ensure_array_like_dev(
@@ -10939,7 +10939,7 @@ var BeaconLiveAdmin = (() => {
     );
     const get_key = (ctx2) => (
       /*entry*/
-      ctx2[29]
+      ctx2[30]
     );
     validate_each_keys(ctx, each_value, get_each_context6, get_key);
     for (let i = 0; i < each_value.length; i += 1) {
@@ -10979,12 +10979,12 @@ var BeaconLiveAdmin = (() => {
         const sidebarsection_changes = {};
         if (dirty[0] & /*classList*/
         4 | dirty[1] & /*$$scope*/
-        64) {
+        128) {
           sidebarsection_changes.$$scope = { dirty, ctx: ctx2 };
         }
         sidebarsection.$set(sidebarsection_changes);
         if (dirty[0] & /*editableAttrs, updateAttribute*/
-        8320) {
+        16512) {
           each_value = ensure_array_like_dev(
             /*editableAttrs*/
             ctx2[7]
@@ -11026,7 +11026,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_if_block_44.name,
       type: "if",
-      source: "(169:6) {#if attributesEditable}",
+      source: "(180:6) {#if attributesEditable}",
       ctx
     });
     return block;
@@ -11053,7 +11053,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_heading_slot_5.name,
       type: "slot",
-      source: '(171:10) <svelte:fragment slot=\\"heading\\">',
+      source: '(182:10) <svelte:fragment slot=\\"heading\\">',
       ctx
     });
     return block;
@@ -11061,7 +11061,7 @@ var BeaconLiveAdmin = (() => {
   function create_default_slot3(ctx) {
     let t_value = (
       /*className*/
-      ctx[34] + ""
+      ctx[35] + ""
     );
     let t;
     const block = {
@@ -11077,7 +11077,7 @@ var BeaconLiveAdmin = (() => {
       p: function update2(ctx2, dirty) {
         if (dirty[0] & /*classList*/
         4 && t_value !== (t_value = /*className*/
-        ctx2[34] + ""))
+        ctx2[35] + ""))
           set_data_dev(t, t_value);
       },
       d: function destroy(detaching) {
@@ -11090,7 +11090,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_default_slot3.name,
       type: "slot",
-      source: "(174:14) <Pill on:delete={() => deleteClass(className)}>",
+      source: "(185:14) <Pill on:delete={() => deleteClass(className)}>",
       ctx
     });
     return block;
@@ -11101,9 +11101,9 @@ var BeaconLiveAdmin = (() => {
     function delete_handler() {
       return (
         /*delete_handler*/
-        ctx[21](
+        ctx[22](
           /*className*/
-          ctx[34]
+          ctx[35]
         )
       );
     }
@@ -11131,7 +11131,7 @@ var BeaconLiveAdmin = (() => {
         const pill_changes = {};
         if (dirty[0] & /*classList*/
         4 | dirty[1] & /*$$scope*/
-        64) {
+        128) {
           pill_changes.$$scope = { dirty, ctx };
         }
         pill.$set(pill_changes);
@@ -11154,7 +11154,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_each_block_13.name,
       type: "each",
-      source: "(173:12) {#each classList as className}",
+      source: "(184:12) {#each classList as className}",
       ctx
     });
     return block;
@@ -11248,7 +11248,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_value_slot.name,
       type: "slot",
-      source: '(172:10) <svelte:fragment slot=\\"value\\">',
+      source: '(183:10) <svelte:fragment slot=\\"value\\">',
       ctx
     });
     return block;
@@ -11256,7 +11256,7 @@ var BeaconLiveAdmin = (() => {
   function create_heading_slot_4(ctx) {
     let t_value = (
       /*name*/
-      ctx[30] + ""
+      ctx[31] + ""
     );
     let t;
     const block = {
@@ -11272,7 +11272,7 @@ var BeaconLiveAdmin = (() => {
       p: function update2(ctx2, dirty) {
         if (dirty[0] & /*editableAttrs*/
         128 && t_value !== (t_value = /*name*/
-        ctx2[30] + ""))
+        ctx2[31] + ""))
           set_data_dev(t, t_value);
       },
       d: function destroy(detaching) {
@@ -11285,7 +11285,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_heading_slot_4.name,
       type: "slot",
-      source: '(186:12) <svelte:fragment slot=\\"heading\\">',
+      source: '(197:12) <svelte:fragment slot=\\"heading\\">',
       ctx
     });
     return block;
@@ -11297,9 +11297,9 @@ var BeaconLiveAdmin = (() => {
     function textChange_handler(...args) {
       return (
         /*textChange_handler*/
-        ctx[22](
+        ctx[23](
           /*name*/
-          ctx[30],
+          ctx[31],
           ...args
         )
       );
@@ -11309,10 +11309,10 @@ var BeaconLiveAdmin = (() => {
         clearOnUpdate: true,
         value: (
           /*value*/
-          ctx[31]
+          ctx[32]
         ),
         placeholder: "Set " + /*name*/
-        ctx[30],
+        ctx[31],
         $$slots: { heading: [create_heading_slot_4] },
         $$scope: { ctx }
       },
@@ -11346,14 +11346,14 @@ var BeaconLiveAdmin = (() => {
         if (dirty[0] & /*editableAttrs*/
         128)
           sidebarsection_changes.value = /*value*/
-          ctx[31];
+          ctx[32];
         if (dirty[0] & /*editableAttrs*/
         128)
           sidebarsection_changes.placeholder = "Set " + /*name*/
-          ctx[30];
+          ctx[31];
         if (dirty[0] & /*editableAttrs*/
         128 | dirty[1] & /*$$scope*/
-        64) {
+        128) {
           sidebarsection_changes.$$scope = { dirty, ctx };
         }
         sidebarsection.$set(sidebarsection_changes);
@@ -11379,7 +11379,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_each_block6.name,
       type: "each",
-      source: "(178:8) {#each editableAttrs as entry (entry)}",
+      source: "(189:8) {#each editableAttrs as entry (entry)}",
       ctx
     });
     return block;
@@ -11403,8 +11403,8 @@ var BeaconLiveAdmin = (() => {
     });
     sidebarsection0.$on(
       "update",
-      /*updateText*/
-      ctx[12]
+      /*updateArg*/
+      ctx[13]
     );
     sidebarsection1 = new SidebarSection_default({
       props: {
@@ -11416,11 +11416,6 @@ var BeaconLiveAdmin = (() => {
       },
       $$inline: true
     });
-    sidebarsection1.$on(
-      "update",
-      /*updateText*/
-      ctx[12]
-    );
     const block = {
       c: function create3() {
         create_component(sidebarsection0.$$.fragment);
@@ -11445,13 +11440,13 @@ var BeaconLiveAdmin = (() => {
           sidebarsection0_changes.value = /*$selectedAstElement*/
           ctx2[0].arg;
         if (dirty[1] & /*$$scope*/
-        64) {
+        128) {
           sidebarsection0_changes.$$scope = { dirty, ctx: ctx2 };
         }
         sidebarsection0.$set(sidebarsection0_changes);
         const sidebarsection1_changes = {};
         if (dirty[1] & /*$$scope*/
-        64) {
+        128) {
           sidebarsection1_changes.$$scope = { dirty, ctx: ctx2 };
         }
         sidebarsection1.$set(sidebarsection1_changes);
@@ -11480,7 +11475,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_if_block_34.name,
       type: "if",
-      source: '(190:6) {#if $selectedAstElement.tag === \\"eex_block\\"}',
+      source: '(201:6) {#if $selectedAstElement.tag === \\"eex_block\\"}',
       ctx
     });
     return block;
@@ -11507,7 +11502,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_heading_slot_3.name,
       type: "slot",
-      source: '(192:10) <svelte:fragment slot=\\"heading\\">',
+      source: '(203:10) <svelte:fragment slot=\\"heading\\">',
       ctx
     });
     return block;
@@ -11534,7 +11529,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_heading_slot_2.name,
       type: "slot",
-      source: '(196:10) <svelte:fragment slot=\\"heading\\">',
+      source: '(207:10) <svelte:fragment slot=\\"heading\\">',
       ctx
     });
     return block;
@@ -11555,7 +11550,7 @@ var BeaconLiveAdmin = (() => {
         this.h();
       },
       h: function hydrate() {
-        add_location(p, file11, 185, 12, 8692);
+        add_location(p, file11, 195, 12, 9132);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, p, anchor);
@@ -11571,7 +11566,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_input_slot_1.name,
       type: "slot",
-      source: '(197:10) <svelte:fragment slot=\\"input\\">',
+      source: '(208:10) <svelte:fragment slot=\\"input\\">',
       ctx
     });
     return block;
@@ -11600,7 +11595,7 @@ var BeaconLiveAdmin = (() => {
       },
       h: function hydrate() {
         attr_dev(div0, "class", "flex rounded-lg outline-dashed outline-2 h-full text-center justify-center items-center");
-        add_location(div0, file11, 200, 12, 9279);
+        add_location(div0, file11, 210, 12, 9719);
         attr_dev(div1, "class", "absolute bg-white opacity-70 w-full h-full p-4");
         attr_dev(div1, "role", "list");
         toggle_class(
@@ -11609,7 +11604,7 @@ var BeaconLiveAdmin = (() => {
           /*isDraggingOver*/
           ctx[3]
         );
-        add_location(div1, file11, 192, 10, 8972);
+        add_location(div1, file11, 202, 10, 9412);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, div1, anchor);
@@ -11618,13 +11613,13 @@ var BeaconLiveAdmin = (() => {
           dispose = [
             listen_dev(div1, "drop", prevent_default(
               /*dropInside*/
-              ctx[15]
+              ctx[16]
             ), false, true, false, false),
             listen_dev(
               div1,
               "dragover",
               /*dragOver*/
-              ctx[16],
+              ctx[17],
               false,
               false,
               false,
@@ -11634,7 +11629,7 @@ var BeaconLiveAdmin = (() => {
               div1,
               "dragleave",
               /*dragleave_handler*/
-              ctx[23],
+              ctx[24],
               false,
               false,
               false,
@@ -11667,7 +11662,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_if_block_24.name,
       type: "if",
-      source: '(204:8) {#if $draggedObject && $draggedObject.category === \\"basic\\"}',
+      source: '(215:8) {#if $draggedObject && $draggedObject.category === \\"basic\\"}',
       ctx
     });
     return block;
@@ -11693,12 +11688,12 @@ var BeaconLiveAdmin = (() => {
     sidebarsection.$on(
       "textChange",
       /*textChange_handler_1*/
-      ctx[24]
+      ctx[25]
     );
     sidebarsection.$on(
       "nodesChange",
       /*changeNodes*/
-      ctx[17]
+      ctx[18]
     );
     const block = {
       c: function create3() {
@@ -11722,7 +11717,7 @@ var BeaconLiveAdmin = (() => {
           sidebarsection_changes.large = /*$selectedAstElement*/
           ctx2[0].tag === "eex";
         if (dirty[1] & /*$$scope*/
-        64) {
+        128) {
           sidebarsection_changes.$$scope = { dirty, ctx: ctx2 };
         }
         sidebarsection.$set(sidebarsection_changes);
@@ -11745,7 +11740,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_if_block_15.name,
       type: "if",
-      source: "(218:8) {#if $selectedAstElement.content?.length > 0}",
+      source: "(229:8) {#if $selectedAstElement.content?.length > 0}",
       ctx
     });
     return block;
@@ -11772,7 +11767,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_heading_slot_1.name,
       type: "slot",
-      source: '(225:12) <svelte:fragment slot=\\"heading\\">',
+      source: '(236:12) <svelte:fragment slot=\\"heading\\">',
       ctx
     });
     return block;
@@ -11799,7 +11794,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_heading_slot.name,
       type: "slot",
-      source: '(231:8) <svelte:fragment slot=\\"heading\\">',
+      source: '(242:8) <svelte:fragment slot=\\"heading\\">',
       ctx
     });
     return block;
@@ -11845,10 +11840,10 @@ var BeaconLiveAdmin = (() => {
       },
       h: function hydrate() {
         attr_dev(span, "class", "sr-only");
-        add_location(span, file11, 225, 19, 10259);
+        add_location(span, file11, 235, 19, 10699);
         attr_dev(button, "type", "button");
         attr_dev(button, "class", "bg-red-500 hover:bg-red-700 active:bg-red-800 text-white font-bold py-2 px-4 rounded outline-2 w-full");
-        add_location(button, file11, 220, 10, 10033);
+        add_location(button, file11, 230, 10, 10473);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, button, anchor);
@@ -11862,7 +11857,7 @@ var BeaconLiveAdmin = (() => {
             button,
             "click",
             /*deleteComponent*/
-            ctx[14],
+            ctx[15],
             false,
             false,
             false,
@@ -11892,7 +11887,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_input_slot.name,
       type: "slot",
-      source: '(232:8) <svelte:fragment slot=\\"input\\">',
+      source: '(243:8) <svelte:fragment slot=\\"input\\">',
       ctx
     });
     return block;
@@ -11934,10 +11929,10 @@ var BeaconLiveAdmin = (() => {
       },
       h: function hydrate() {
         attr_dev(div0, "class", "sticky top-0 overflow-y-auto h-screen");
-        add_location(div0, file11, 115, 2, 5347);
+        add_location(div0, file11, 125, 2, 5809);
         attr_dev(div1, "class", "w-64 bg-white");
         attr_dev(div1, "data-test-id", "right-sidebar");
-        add_location(div1, file11, 114, 0, 5288);
+        add_location(div1, file11, 124, 0, 5750);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, div1, anchor);
@@ -12003,7 +11998,7 @@ var BeaconLiveAdmin = (() => {
     let $selectedAstElementId;
     let $draggedObject;
     validate_store(page, "page");
-    component_subscribe($$self, page, ($$value) => $$invalidate(25, $page = $$value));
+    component_subscribe($$self, page, ($$value) => $$invalidate(26, $page = $$value));
     validate_store(selectedAstElement, "selectedAstElement");
     component_subscribe($$self, selectedAstElement, ($$value) => $$invalidate(0, $selectedAstElement = $$value));
     validate_store(selectedAstElementId, "selectedAstElementId");
@@ -12043,11 +12038,13 @@ var BeaconLiveAdmin = (() => {
     let { live } = $$props;
     const dispatch2 = createEventDispatcher();
     let classList;
-    function addClass({ detail: newClass }) {
+    function addClasses({ detail: newClasses }) {
       return __awaiter(this, void 0, void 0, function* () {
         let node = $selectedAstElement;
         if (node) {
-          node.attrs.class = node.attrs.class ? `${node.attrs.class} ${newClass}` : newClass;
+          let classes = newClasses.split(" ").map((c) => c.trim());
+          live.pushEvent("classes_added", { id: $page.id, classes });
+          node.attrs.class = node.attrs.class ? `${node.attrs.class} ${classes.join(" ")}` : classes.join(" ");
           live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast });
         }
       });
@@ -12081,6 +12078,15 @@ var BeaconLiveAdmin = (() => {
         let node = $selectedAstElement;
         if (node && isAstElement(node)) {
           node.content = [e.detail];
+          live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast });
+        }
+      });
+    }
+    function updateArg(e) {
+      return __awaiter(this, void 0, void 0, function* () {
+        let node = $selectedAstElement;
+        if (node && isAstElement(node)) {
+          node.arg = e.detail;
           live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast });
         }
       });
@@ -12154,7 +12160,7 @@ var BeaconLiveAdmin = (() => {
     const textChange_handler_1 = (e) => updateText(e);
     $$self.$$set = ($$props2) => {
       if ("live" in $$props2)
-        $$invalidate(18, live = $$props2.live);
+        $$invalidate(19, live = $$props2.live);
     };
     $$self.$capture_state = () => ({
       __awaiter,
@@ -12171,11 +12177,12 @@ var BeaconLiveAdmin = (() => {
       live,
       dispatch: dispatch2,
       classList,
-      addClass,
+      addClasses,
       parentNodeId,
       selectParentNode,
       deleteClass,
       updateText,
+      updateArg,
       updateAttribute,
       deleteComponent,
       dropInside,
@@ -12195,9 +12202,9 @@ var BeaconLiveAdmin = (() => {
       if ("__awaiter" in $$props2)
         __awaiter = $$props2.__awaiter;
       if ("_a" in $$props2)
-        $$invalidate(19, _a = $$props2._a);
+        $$invalidate(20, _a = $$props2._a);
       if ("live" in $$props2)
-        $$invalidate(18, live = $$props2.live);
+        $$invalidate(19, live = $$props2.live);
       if ("classList" in $$props2)
         $$invalidate(2, classList = $$props2.classList);
       if ("isDraggingOver" in $$props2)
@@ -12216,9 +12223,9 @@ var BeaconLiveAdmin = (() => {
     }
     $$self.$$.update = () => {
       if ($$self.$$.dirty[0] & /*$selectedAstElement, _a*/
-      524289) {
+      1048577) {
         $: {
-          let classAttr = $$invalidate(19, _a = $selectedAstElement === null || $selectedAstElement === void 0 ? void 0 : $selectedAstElement.attrs) === null || _a === void 0 ? void 0 : _a.class;
+          let classAttr = $$invalidate(20, _a = $selectedAstElement === null || $selectedAstElement === void 0 ? void 0 : $selectedAstElement.attrs) === null || _a === void 0 ? void 0 : _a.class;
           $$invalidate(2, classList = classAttr ? classAttr.split(" ").filter((e) => e.trim().length > 0) : []);
         }
       }
@@ -12253,10 +12260,11 @@ var BeaconLiveAdmin = (() => {
       sidebarTitle,
       editableAttrs,
       $draggedObject,
-      addClass,
+      addClasses,
       selectParentNode,
       deleteClass,
       updateText,
+      updateArg,
       updateAttribute,
       deleteComponent,
       dropInside,
@@ -12274,7 +12282,7 @@ var BeaconLiveAdmin = (() => {
   var PropertiesSidebar = class extends SvelteComponentDev {
     constructor(options) {
       super(options);
-      init2(this, options, instance11, create_fragment11, safe_not_equal, { live: 18 }, null, [-1, -1]);
+      init2(this, options, instance11, create_fragment11, safe_not_equal, { live: 19 }, null, [-1, -1]);
       dispatch_dev("SvelteRegisterComponent", {
         component: this,
         tagName: "PropertiesSidebar",
@@ -12283,7 +12291,7 @@ var BeaconLiveAdmin = (() => {
       });
     }
     get live() {
-      return this.$$.ctx[18];
+      return this.$$.ctx[19];
     }
     set live(live) {
       this.$$set({ live });
