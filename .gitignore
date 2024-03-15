@@ -56,3 +56,12 @@ npm-debug.log
 
 # Ignore ssr build for svelte.
 /priv/svelte/
+/node_modules/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
