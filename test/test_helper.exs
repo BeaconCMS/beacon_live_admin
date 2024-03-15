@@ -66,7 +66,7 @@ defmodule Beacon.LiveAdminTest.PluglessEndpoint do
 
   plug Plug.Session,
     store: :cookie,
-    key: "_live_view_key",
+    key: "_beacon_live_admin_key",
     signing_salt: "/VEDsdfsffMnp5"
 
   plug Beacon.LiveAdminTest.PluglessRouter

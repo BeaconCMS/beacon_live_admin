@@ -23,14 +23,14 @@ defmodule MyApp.Endpoint do
 
   plug Plug.Session,
     store: :cookie,
-    key: "_live_view_key",
+    key: "_beacon_key",
     signing_salt: "/VEDsdfsffMnp5"
 
   plug MyApp.Router
 end
 
 defmodule MyApp.AuthorizationSource do
-  @behaviour Beacon.Authorization.Behaviour
+  @behaviour Beacon.Authorization.Policy
 
   @impl true
   def get_agent(%{"session_id" => "admin_session_123"}) do
