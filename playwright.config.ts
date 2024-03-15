@@ -25,7 +25,7 @@ export default defineConfig({
   use: {
     trace: "retain-on-failure",
     screenshot: "only-on-failure",
-    baseURL: "http://localhost:4002/",
+    baseURL: "http://localhost:5002/",
     ignoreHTTPSErrors: true,
   },
 
