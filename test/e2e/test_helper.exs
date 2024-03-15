@@ -22,7 +22,9 @@ defmodule Beacon.LiveAdminTest.E2E.Router do
   use Beacon.LiveAdmin.Router
 
   pipeline :browser do
+    plug :accepts, ["html"]
     plug :fetch_session
+    plug :protect_from_forgery
     plug Beacon.LiveAdmin.Plug
   end
 
