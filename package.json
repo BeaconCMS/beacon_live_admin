@@ -8,7 +8,7 @@
     "test": "test"
   },
   "scripts": {
-    "e2e:server": "MIX_ENV=e2e mix run test/e2e/test_helper.exs",
+    "e2e:server": "MIX_ENV=test mix run test/e2e/test_helper.exs",
     "e2e:test": "mix assets.build && cd test/e2e && npx playwright test"    
   },
   "keywords": [],

@@ -1,5 +1,5 @@
 Application.put_env(:beacon_live_admin, Beacon.LiveAdminTest.Endpoint,
-  url: [host: "localhost", port: 4000],
+  url: [host: "localhost", port: 5002],
   secret_key_base: "TrXbWpjZWxk0GXclXOHFCoufQh1oRK0N5rev5GcpbPCsuf2C/kbYlMgeEEAXPayF",
   live_view: [signing_salt: "nXvN+c8y"],
   render_errors: [view: Beacon.LiveAdminTest.ErrorView],
