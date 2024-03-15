@@ -1,0 +1,21 @@
+{
+  "name": "beacon_live_admin",
+  "version": "1.0.0",
+  "description": "Admin UI to manage content for sites built by [Beacon](https://github.com/BeaconCMS/beacon).",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "scripts": {
+    "e2e:server": "MIX_ENV=e2e mix run test/e2e/test_helper.exs",
+    "e2e:test": "mix assets.build && cd test/e2e && npx playwright test"    
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.42.1",
+    "@types/node": "^20.11.28"
+  }
+}
