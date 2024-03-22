@@ -14,9 +14,8 @@
   let styleWrapper: HTMLElement
 
   onMount(async () => {
-    await tailwindJitPromise;
+    await tailwindJitPromise
     const reloadStylesheet = async () => {
-
       const content = wrapper.outerHTML
 
       const css = await window.jitBrowserTailwindcss(
@@ -27,20 +26,17 @@
         content,
       )
 
-      // TODO: apply style to page
-      console.log(css);
-      let styleEl = document.createElement('style');
-      styleEl.textContent = css;
-      styleWrapper.appendChild(styleEl);
+      let styleEl = document.createElement("style")
+      styleEl.textContent = css
+      styleWrapper.appendChild(styleEl)
     }
 
     window.reloadStylesheet = reloadStylesheet
     reloadStylesheet()
-
   })
   page.subscribe(async ({ ast }) => {
-    await tick();
-    window.reloadStylesheet && window.reloadStylesheet();
+    await tick()
+    window.reloadStylesheet && window.reloadStylesheet()
   })
 </script>
 

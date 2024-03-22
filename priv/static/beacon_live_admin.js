@@ -1875,6 +1875,10 @@ var BeaconLiveAdmin = (() => {
       resolved_promise.then(flush);
     }
   }
+  function tick() {
+    schedule_update();
+    return resolved_promise;
+  }
   function add_render_callback(fn) {
     render_callbacks.push(fn);
   }
@@ -7888,20 +7892,19 @@ var BeaconLiveAdmin = (() => {
   __export(PageWrapper_exports, {
     default: () => PageWrapper_default
   });
-  var { console: console_12 } = globals;
   var file8 = "svelte/components/PageWrapper.svelte";
   function add_css3(target) {
-    append_styles(target, "svelte-xbvayw", '[data-selected="true"], [data-highlighted="true"]{outline-color:#06b6d4;outline-width:2px;outline-style:dashed}:before, :after{pointer-events:none}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiUGFnZVdyYXBwZXIuc3ZlbHRlIiwibWFwcGluZ3MiOiJBQStDVSxpREFBbUQsQ0FDekQsYUFBYSxDQUFFLE9BQU8sQ0FDdEIsYUFBYSxDQUFFLEdBQUcsQ0FDbEIsYUFBYSxDQUFFLE1BQ2pCLENBRVEsZUFBaUIsQ0FDdkIsY0FBYyxDQUFFLElBQ2xCIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIlBhZ2VXcmFwcGVyLnN2ZWx0ZSJdfQ== */');
+    append_styles(target, "svelte-xbvayw", '[data-selected="true"], [data-highlighted="true"]{outline-color:#06b6d4;outline-width:2px;outline-style:dashed}:before, :after{pointer-events:none}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiUGFnZVdyYXBwZXIuc3ZlbHRlIiwibWFwcGluZ3MiOiJBQXNEVSxpREFBbUQsQ0FDekQsYUFBYSxDQUFFLE9BQU8sQ0FDdEIsYUFBYSxDQUFFLEdBQUcsQ0FDbEIsYUFBYSxDQUFFLE1BQ2pCLENBRVEsZUFBaUIsQ0FDdkIsY0FBYyxDQUFFLElBQ2xCIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIlBhZ2VXcmFwcGVyLnN2ZWx0ZSJdfQ== */');
   }
   function get_each_context4(ctx, list, i) {
     const child_ctx = ctx.slice();
-    child_ctx[5] = list[i];
+    child_ctx[7] = list[i];
     return child_ctx;
   }
   function get_each_context_12(ctx, list, i) {
     const child_ctx = ctx.slice();
-    child_ctx[8] = list[i];
-    child_ctx[10] = i;
+    child_ctx[10] = list[i];
+    child_ctx[12] = i;
     return child_ctx;
   }
   function create_each_block_12(ctx) {
@@ -7911,11 +7914,11 @@ var BeaconLiveAdmin = (() => {
       props: {
         node: (
           /*astNode*/
-          ctx[8]
+          ctx[10]
         ),
         nodeId: String(
           /*index*/
-          ctx[10]
+          ctx[12]
         )
       },
       $$inline: true
@@ -7934,9 +7937,9 @@ var BeaconLiveAdmin = (() => {
       p: function update2(ctx2, dirty) {
         const pageastnode_changes = {};
         if (dirty & /*$page*/
-        2)
+        4)
           pageastnode_changes.node = /*astNode*/
-          ctx2[8];
+          ctx2[10];
         pageastnode.$set(pageastnode_changes);
       },
       i: function intro(local) {
@@ -7957,7 +7960,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_each_block_12.name,
       type: "each",
-      source: "(37:6) {#each $page.ast as astNode, index}",
+      source: "(44:6) {#each $page.ast as astNode, index}",
       ctx
     });
     return block;
@@ -7967,7 +7970,7 @@ var BeaconLiveAdmin = (() => {
     let current;
     let each_value_1 = ensure_array_like_dev(
       /*$page*/
-      ctx[1].ast
+      ctx[2].ast
     );
     let each_blocks = [];
     for (let i = 0; i < each_value_1.length; i += 1) {
@@ -8000,10 +8003,10 @@ var BeaconLiveAdmin = (() => {
       },
       p: function update2(ctx2, dirty) {
         if (dirty & /*$page, String*/
-        2) {
+        4) {
           each_value_1 = ensure_array_like_dev(
             /*$page*/
-            ctx2[1].ast
+            ctx2[2].ast
           );
           let i;
           for (i = 0; i < each_value_1.length; i += 1) {
@@ -8051,7 +8054,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_default_slot2.name,
       type: "slot",
-      source: "(36:4) <LayoutAstNode node={layoutAstNode}>",
+      source: "(43:4) <LayoutAstNode node={layoutAstNode}>",
       ctx
     });
     return block;
@@ -8063,7 +8066,7 @@ var BeaconLiveAdmin = (() => {
       props: {
         node: (
           /*layoutAstNode*/
-          ctx[5]
+          ctx[7]
         ),
         $$slots: { default: [create_default_slot2] },
         $$scope: { ctx }
@@ -8084,11 +8087,11 @@ var BeaconLiveAdmin = (() => {
       p: function update2(ctx2, dirty) {
         const layoutastnode_changes = {};
         if (dirty & /*$page*/
-        2)
+        4)
           layoutastnode_changes.node = /*layoutAstNode*/
-          ctx2[5];
+          ctx2[7];
         if (dirty & /*$$scope, $page*/
-        2050) {
+        8196) {
           layoutastnode_changes.$$scope = { dirty, ctx: ctx2 };
         }
         layoutastnode.$set(layoutastnode_changes);
@@ -8111,17 +8114,19 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_each_block4.name,
       type: "each",
-      source: "(35:2) {#each $page.layout.ast as layoutAstNode}",
+      source: "(42:2) {#each $page.layout.ast as layoutAstNode}",
       ctx
     });
     return block;
   }
   function create_fragment8(ctx) {
+    let span;
+    let t;
     let div;
     let current;
     let each_value = ensure_array_like_dev(
       /*$page*/
-      ctx[1].layout.ast
+      ctx[2].layout.ast
     );
     let each_blocks = [];
     for (let i = 0; i < each_value.length; i += 1) {
@@ -8132,6 +8137,8 @@ var BeaconLiveAdmin = (() => {
     });
     const block = {
       c: function create3() {
+        span = element("span");
+        t = space();
         div = element("div");
         for (let i = 0; i < each_blocks.length; i += 1) {
           each_blocks[i].c();
@@ -8139,7 +8146,10 @@ var BeaconLiveAdmin = (() => {
         this.h();
       },
       l: function claim(nodes) {
-        div = claim_element(nodes, "DIV", { id: true });
+        span = claim_element(nodes, "SPAN", {});
+        children(span).forEach(detach_dev);
+        t = claim_space(nodes);
+        div = claim_element(nodes, "DIV", {});
         var div_nodes = children(div);
         for (let i = 0; i < each_blocks.length; i += 1) {
           each_blocks[i].l(div_nodes);
@@ -8148,25 +8158,28 @@ var BeaconLiveAdmin = (() => {
         this.h();
       },
       h: function hydrate() {
-        attr_dev(div, "id", "page-wrapper-content");
-        add_location(div, file8, 36, 0, 1546);
+        add_location(span, file8, 42, 0, 1859);
+        add_location(div, file8, 43, 0, 1898);
       },
       m: function mount(target, anchor) {
+        insert_hydration_dev(target, span, anchor);
+        ctx[3](span);
+        insert_hydration_dev(target, t, anchor);
         insert_hydration_dev(target, div, anchor);
         for (let i = 0; i < each_blocks.length; i += 1) {
           if (each_blocks[i]) {
             each_blocks[i].m(div, null);
           }
         }
-        ctx[2](div);
+        ctx[4](div);
         current = true;
       },
       p: function update2(ctx2, [dirty]) {
         if (dirty & /*$page, String*/
-        2) {
+        4) {
           each_value = ensure_array_like_dev(
             /*$page*/
-            ctx2[1].layout.ast
+            ctx2[2].layout.ast
           );
           let i;
           for (i = 0; i < each_value.length; i += 1) {
@@ -8205,10 +8218,13 @@ var BeaconLiveAdmin = (() => {
       },
       d: function destroy(detaching) {
         if (detaching) {
+          detach_dev(span);
+          detach_dev(t);
           detach_dev(div);
         }
+        ctx[3](null);
         destroy_each(each_blocks, detaching);
-        ctx[2](null);
+        ctx[4](null);
       }
     };
     dispatch_dev("SvelteRegisterBlock", {
@@ -8223,7 +8239,7 @@ var BeaconLiveAdmin = (() => {
   function instance8($$self, $$props, $$invalidate) {
     let $page;
     validate_store(page, "page");
-    component_subscribe($$self, page, ($$value) => $$invalidate(1, $page = $$value));
+    component_subscribe($$self, page, ($$value) => $$invalidate(2, $page = $$value));
     let { $$slots: slots = {}, $$scope } = $$props;
     validate_slots("page-wrapper", slots, []);
     var __awaiter = this && this.__awaiter || function(thisArg, _arguments, P, generator) {
@@ -8253,28 +8269,42 @@ var BeaconLiveAdmin = (() => {
         step((generator = generator.apply(thisArg, _arguments || [])).next());
       });
     };
+    const tailwindJitPromise = import("https://unpkg.com/@mhsdesign/jit-browser-tailwindcss@0.4.0/dist/cdn.min.js");
     let wrapper;
-    onMount(() => {
-      console.log(wrapper);
-    });
-    const reloadStylesheet = () => __awaiter(void 0, void 0, void 0, function* () {
-      yield import("https://unpkg.com/@mhsdesign/jit-browser-tailwindcss@0.4.0/dist/cdn.min.js");
-      const content = `<div class="bg-red-500">el</div>`;
-      const css = yield window.jitBrowserTailwindcss(
-        `
+    let styleWrapper;
+    onMount(() => __awaiter(void 0, void 0, void 0, function* () {
+      yield tailwindJitPromise;
+      const reloadStylesheet = () => __awaiter(void 0, void 0, void 0, function* () {
+        const content = wrapper.outerHTML;
+        const css = yield window.jitBrowserTailwindcss(
+          `
       @tailwind components;
       @tailwind utilities;
       `,
-        content
-      );
-      console.log(css);
-    });
-    window.reloadStylesheet = reloadStylesheet;
+          content
+        );
+        let styleEl = document.createElement("style");
+        styleEl.textContent = css;
+        styleWrapper.appendChild(styleEl);
+      });
+      window.reloadStylesheet = reloadStylesheet;
+      reloadStylesheet();
+    }));
+    page.subscribe(({ ast }) => __awaiter(void 0, void 0, void 0, function* () {
+      yield tick();
+      window.reloadStylesheet && window.reloadStylesheet();
+    }));
     const writable_props = [];
     Object.keys($$props).forEach((key) => {
       if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$" && key !== "slot")
-        console_12.warn(`<page-wrapper> was created with unknown prop '${key}'`);
+        console.warn(`<page-wrapper> was created with unknown prop '${key}'`);
     });
+    function span_binding($$value) {
+      binding_callbacks[$$value ? "unshift" : "push"](() => {
+        styleWrapper = $$value;
+        $$invalidate(1, styleWrapper);
+      });
+    }
     function div_binding($$value) {
       binding_callbacks[$$value ? "unshift" : "push"](() => {
         wrapper = $$value;
@@ -8287,8 +8317,10 @@ var BeaconLiveAdmin = (() => {
       PageAstNode: PageAstNode_default,
       page,
       onMount,
+      tick,
+      tailwindJitPromise,
       wrapper,
-      reloadStylesheet,
+      styleWrapper,
       $page
     });
     $$self.$inject_state = ($$props2) => {
@@ -8296,11 +8328,13 @@ var BeaconLiveAdmin = (() => {
         __awaiter = $$props2.__awaiter;
       if ("wrapper" in $$props2)
         $$invalidate(0, wrapper = $$props2.wrapper);
+      if ("styleWrapper" in $$props2)
+        $$invalidate(1, styleWrapper = $$props2.styleWrapper);
     };
     if ($$props && "$$inject" in $$props) {
       $$self.$inject_state($$props.$$inject);
     }
-    return [wrapper, $page, div_binding];
+    return [wrapper, styleWrapper, $page, span_binding, div_binding];
   }
   var PageWrapper = class extends SvelteComponentDev {
     constructor(options) {
