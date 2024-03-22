@@ -59,8 +59,6 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
      |> assign_form(changeset)
      |> maybe_assign_builder_page(changeset)
      |> assign(:language, language(page.format))
-     |> assign(:css_chunks, [])
-     |> assign_stylesheet_paths(changeset)
      |> assign_extra_fields(changeset)}
   end
 
@@ -88,19 +86,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
      socket
      |> LiveMonacoEditor.set_value(template, to: "template")
      |> assign_form(changeset)
-     |> maybe_assign_builder_page(changeset)
-     |> assign_stylesheet_paths(changeset)}
-  end
-
-  def update(%{css_chunks: css_chunks}, socket) do
-    %{site: site, page: page, form: form} = socket.assigns
-
-    changeset = Content.change_page(site, page, form.params)
-
-    {:ok,
-     socket
-     |> assign(:css_chunks, css_chunks)
-     |> assign_stylesheet_paths(changeset)}
+     |> maybe_assign_builder_page(changeset)}
   end
 
   @impl true
@@ -214,25 +200,6 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
 
   defp maybe_assign_builder_page(socket, _changeset), do: assign(socket, :builder_page, nil)
 
-  defp assign_stylesheet_paths(socket, changeset) do
-    %{view_id: view_id, css_chunks: css_chunks} = socket.assigns
-
-    css_chunks = Enum.join(css_chunks, " ")
-    hash = Layouts.hash(css_chunks)
-    page_chunks_css_path = Layouts.asset_path(socket, :css_page_chunks, view_id, hash)
-
-    socket
-    |> assign(page_chunks_css_path: page_chunks_css_path)
-    |> assign_new(:page_baseline_css_path, fn ->
-      hash =
-        changeset
-        |> Changeset.get_field(:template)
-        |> Layouts.hash()
-
-      Layouts.asset_path(socket, :css_page_baseline, view_id, hash)
-    end)
-  end
-
   defp assign_extra_fields(socket, changeset) do
     params = Ecto.Changeset.get_field(changeset, :extra)
 
@@ -325,8 +292,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
           %{
             components: @components,
             page: @builder_page,
-            pageBaselineCssPath: @page_baseline_css_path,
-            pageChunksCssPath: @page_chunks_css_path
+            tailwindConfig: "some config"
           }
         }
         socket={@socket}

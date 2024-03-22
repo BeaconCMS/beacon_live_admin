@@ -4,18 +4,15 @@
   import PagePreview from "./PagePreview.svelte"
   import PropertiesSidebar from "./PropertiesSidebar.svelte"
   import { page as pageStore } from "$lib/stores/page"
-  import { pageBaselineCssPath as pageBaselineCssPathStore } from "$lib/stores/pageBaselineCssPath"
-  import { pageChunksCssPath as pageChunksCssPathStore } from "$lib/stores/pageChunksCssPath"
+  import { tailwindConfig as tailwindConfigStore } from "$lib/stores/tailwindConfig";
   import type { ComponentDefinition, Page } from "$lib/types"
 
   export let components: ComponentDefinition[]
   export let page: Page
-  export let pageBaselineCssPath: string
-  export let pageChunksCssPath: string
+  export let tailwindConfig: string;
   export let live
   $: $pageStore = page
-  $: $pageBaselineCssPathStore = pageBaselineCssPath
-  $: $pageChunksCssPathStore = pageChunksCssPath
+  $: $tailwindConfigStore = tailwindConfig;
 
   function addBasicComponentToTarget(e: CustomEvent) {
     // This method is in PagePreview.

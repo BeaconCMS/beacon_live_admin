@@ -4,8 +4,7 @@
   import LayoutAstNode from "./LayoutAstNode.svelte"
   import PageAstNode from "./PageAstNode.svelte"
   import { page } from "$lib/stores/page"
-  import { pageBaselineCssPath as pageBaselineCssPathStore } from "$lib/stores/pageBaselineCssPath"
-  import { pageChunksCssPath as pageChunksCssPathStore } from "$lib/stores/pageChunksCssPath"
+  import { tailwindConfig } from "$lib/stores/tailwindConfig"
   import { onMount, tick } from "svelte"
 
   const tailwindJitPromise = import("https://unpkg.com/@mhsdesign/jit-browser-tailwindcss@0.4.0/dist/cdn.min.js")
@@ -14,18 +13,16 @@
   let styleWrapper: HTMLElement
 
   onMount(async () => {
-    await tailwindJitPromise
+    await tailwindJitPromise;
+    const tailwind = window.createTailwindcss($tailwindConfig);
     const reloadStylesheet = async () => {
       const content = wrapper.outerHTML
 
-      const css = await window.jitBrowserTailwindcss(
-        `
-      @tailwind components;
-      @tailwind utilities;
-      `,
-        content,
-      )
-
+      const css = await tailwind.generateStylesFromContent(`
+          @tailwind base;
+          @tailwind components;
+          @tailwind utilities;
+      `, [content])
       let styleEl = document.createElement("style")
       styleEl.textContent = css
       styleWrapper.appendChild(styleEl)
