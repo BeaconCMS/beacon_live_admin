@@ -6,7 +6,7 @@
   import { page } from "$lib/stores/page"
   import { pageBaselineCssPath as pageBaselineCssPathStore } from "$lib/stores/pageBaselineCssPath"
   import { pageChunksCssPath as pageChunksCssPathStore } from "$lib/stores/pageChunksCssPath"
-  import { onMount } from "svelte"
+  import { onMount, tick } from "svelte"
 
   const tailwindJitPromise = import("https://unpkg.com/@mhsdesign/jit-browser-tailwindcss@0.4.0/dist/cdn.min.js")
 
@@ -37,6 +37,10 @@
     window.reloadStylesheet = reloadStylesheet
     reloadStylesheet()
 
+  })
+  page.subscribe(async ({ ast }) => {
+    await tick();
+    window.reloadStylesheet && window.reloadStylesheet();
   })
 </script>
 
