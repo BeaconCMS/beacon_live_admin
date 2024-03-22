@@ -8,33 +8,35 @@
   import { pageChunksCssPath as pageChunksCssPathStore } from "$lib/stores/pageChunksCssPath"
   import { onMount } from "svelte"
 
-  let wrapper: HTMLElement;
+  import("https://unpkg.com/@mhsdesign/jit-browser-tailwindcss@0.4.0/dist/cdn.min.js")
+
+  let wrapper: HTMLElement
+
   onMount(() => {
-    console.log(wrapper)
-  })
+    const reloadStylesheet = async () => {
+      await import("https://unpkg.com/@mhsdesign/jit-browser-tailwindcss@0.4.0/dist/cdn.min.js")
 
-  const reloadStylesheet = async () => {
-    await import("https://unpkg.com/@mhsdesign/jit-browser-tailwindcss@0.4.0/dist/cdn.min.js")
+      const content = wrapper.outerHTML
 
-    // TODO: fetch content from page nodes
-    const content = `<div class="bg-red-500">el</div>`
-
-    const css = await window.jitBrowserTailwindcss(
-      `
+      const css = await window.jitBrowserTailwindcss(
+        `
       @tailwind components;
       @tailwind utilities;
       `,
-      content,
-    )
+        content,
+      )
 
-    // TODO: apply style to page
-    console.log(css)
-  }
+      // TODO: apply style to page
+      console.log(css)
+    }
 
-  window.reloadStylesheet = reloadStylesheet
+    window.reloadStylesheet = reloadStylesheet
+    reloadStylesheet()
+
+  })
 </script>
 
-<div id="page-wrapper-content" bind:this={wrapper}>
+<div bind:this={wrapper}>
   {#each $page.layout.ast as layoutAstNode}
     <LayoutAstNode node={layoutAstNode}>
       {#each $page.ast as astNode, index}
