@@ -8,13 +8,14 @@
   import { pageChunksCssPath as pageChunksCssPathStore } from "$lib/stores/pageChunksCssPath"
   import { onMount } from "svelte"
 
-  import("https://unpkg.com/@mhsdesign/jit-browser-tailwindcss@0.4.0/dist/cdn.min.js")
+  const tailwindJitPromise = import("https://unpkg.com/@mhsdesign/jit-browser-tailwindcss@0.4.0/dist/cdn.min.js")
 
   let wrapper: HTMLElement
+  let styleWrapper: HTMLElement
 
-  onMount(() => {
+  onMount(async () => {
+    await tailwindJitPromise;
     const reloadStylesheet = async () => {
-      await import("https://unpkg.com/@mhsdesign/jit-browser-tailwindcss@0.4.0/dist/cdn.min.js")
 
       const content = wrapper.outerHTML
 
@@ -27,7 +28,10 @@
       )
 
       // TODO: apply style to page
-      console.log(css)
+      console.log(css);
+      let styleEl = document.createElement('style');
+      styleEl.textContent = css;
+      styleWrapper.appendChild(styleEl);
     }
 
     window.reloadStylesheet = reloadStylesheet
@@ -36,6 +40,7 @@
   })
 </script>
 
+<span bind:this={styleWrapper}></span>
 <div bind:this={wrapper}>
   {#each $page.layout.ast as layoutAstNode}
     <LayoutAstNode node={layoutAstNode}>
