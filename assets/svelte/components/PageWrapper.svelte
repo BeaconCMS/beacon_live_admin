@@ -8,9 +8,9 @@
   import { pageChunksCssPath as pageChunksCssPathStore } from "$lib/stores/pageChunksCssPath"
   import { onMount } from "svelte"
 
+  let wrapper: HTMLElement;
   onMount(() => {
-    const pageEl = document.getElementById("page-wrapper-content")
-    console.log(pageEl)
+    console.log(wrapper)
   })
 
   const reloadStylesheet = async () => {
@@ -34,7 +34,7 @@
   window.reloadStylesheet = reloadStylesheet
 </script>
 
-<div id="page-wrapper-content">
+<div id="page-wrapper-content" bind:this={wrapper}>
   {#each $page.layout.ast as layoutAstNode}
     <LayoutAstNode node={layoutAstNode}>
       {#each $page.ast as astNode, index}

@@ -6,7 +6,14 @@ var BeaconLiveAdmin = (() => {
   var __getProtoOf = Object.getPrototypeOf;
   var __hasOwnProp = Object.prototype.hasOwnProperty;
   var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-  var __commonJS = (cb, mod) => function __require() {
+  var __require = /* @__PURE__ */ ((x) => typeof require !== "undefined" ? require : typeof Proxy !== "undefined" ? new Proxy(x, {
+    get: (a, b) => (typeof require !== "undefined" ? require : a)[b]
+  }) : x)(function(x) {
+    if (typeof require !== "undefined")
+      return require.apply(this, arguments);
+    throw Error('Dynamic require of "' + x + '" is not supported');
+  });
+  var __commonJS = (cb, mod) => function __require2() {
     return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
   };
   var __export = (target, all) => {
@@ -7881,27 +7888,20 @@ var BeaconLiveAdmin = (() => {
   __export(PageWrapper_exports, {
     default: () => PageWrapper_default
   });
-
-  // svelte/stores/pageBaselineCssPath.ts
-  var pageBaselineCssPath = writable(null);
-
-  // svelte/stores/pageChunksCssPath.ts
-  var pageChunksCssPath = writable(null);
-
-  // svelte/components/PageWrapper.svelte
+  var { console: console_12 } = globals;
   var file8 = "svelte/components/PageWrapper.svelte";
   function add_css3(target) {
-    append_styles(target, "svelte-xbvayw", '[data-selected="true"], [data-highlighted="true"]{outline-color:#06b6d4;outline-width:2px;outline-style:dashed}:before, :after{pointer-events:none}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiUGFnZVdyYXBwZXIuc3ZlbHRlIiwibWFwcGluZ3MiOiJBQXNCVSxpREFBbUQsQ0FDekQsYUFBYSxDQUFFLE9BQU8sQ0FDdEIsYUFBYSxDQUFFLEdBQUcsQ0FDbEIsYUFBYSxDQUFFLE1BQ2pCLENBRVEsZUFBaUIsQ0FDdkIsY0FBYyxDQUFFLElBQ2xCIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIlBhZ2VXcmFwcGVyLnN2ZWx0ZSJdfQ== */');
+    append_styles(target, "svelte-xbvayw", '[data-selected="true"], [data-highlighted="true"]{outline-color:#06b6d4;outline-width:2px;outline-style:dashed}:before, :after{pointer-events:none}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiUGFnZVdyYXBwZXIuc3ZlbHRlIiwibWFwcGluZ3MiOiJBQStDVSxpREFBbUQsQ0FDekQsYUFBYSxDQUFFLE9BQU8sQ0FDdEIsYUFBYSxDQUFFLEdBQUcsQ0FDbEIsYUFBYSxDQUFFLE1BQ2pCLENBRVEsZUFBaUIsQ0FDdkIsY0FBYyxDQUFFLElBQ2xCIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIlBhZ2VXcmFwcGVyLnN2ZWx0ZSJdfQ== */');
   }
   function get_each_context4(ctx, list, i) {
     const child_ctx = ctx.slice();
-    child_ctx[3] = list[i];
+    child_ctx[5] = list[i];
     return child_ctx;
   }
   function get_each_context_12(ctx, list, i) {
     const child_ctx = ctx.slice();
-    child_ctx[6] = list[i];
-    child_ctx[8] = i;
+    child_ctx[8] = list[i];
+    child_ctx[10] = i;
     return child_ctx;
   }
   function create_each_block_12(ctx) {
@@ -7911,11 +7911,11 @@ var BeaconLiveAdmin = (() => {
       props: {
         node: (
           /*astNode*/
-          ctx[6]
+          ctx[8]
         ),
         nodeId: String(
           /*index*/
-          ctx[8]
+          ctx[10]
         )
       },
       $$inline: true
@@ -7934,9 +7934,9 @@ var BeaconLiveAdmin = (() => {
       p: function update2(ctx2, dirty) {
         const pageastnode_changes = {};
         if (dirty & /*$page*/
-        4)
+        2)
           pageastnode_changes.node = /*astNode*/
-          ctx2[6];
+          ctx2[8];
         pageastnode.$set(pageastnode_changes);
       },
       i: function intro(local) {
@@ -7957,7 +7957,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_each_block_12.name,
       type: "each",
-      source: "(15:4) {#each $page.ast as astNode, index}",
+      source: "(37:6) {#each $page.ast as astNode, index}",
       ctx
     });
     return block;
@@ -7967,7 +7967,7 @@ var BeaconLiveAdmin = (() => {
     let current;
     let each_value_1 = ensure_array_like_dev(
       /*$page*/
-      ctx[2].ast
+      ctx[1].ast
     );
     let each_blocks = [];
     for (let i = 0; i < each_value_1.length; i += 1) {
@@ -8000,10 +8000,10 @@ var BeaconLiveAdmin = (() => {
       },
       p: function update2(ctx2, dirty) {
         if (dirty & /*$page, String*/
-        4) {
+        2) {
           each_value_1 = ensure_array_like_dev(
             /*$page*/
-            ctx2[2].ast
+            ctx2[1].ast
           );
           let i;
           for (i = 0; i < each_value_1.length; i += 1) {
@@ -8051,7 +8051,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_default_slot2.name,
       type: "slot",
-      source: "(14:2) <LayoutAstNode node={layoutAstNode}>",
+      source: "(36:4) <LayoutAstNode node={layoutAstNode}>",
       ctx
     });
     return block;
@@ -8063,7 +8063,7 @@ var BeaconLiveAdmin = (() => {
       props: {
         node: (
           /*layoutAstNode*/
-          ctx[3]
+          ctx[5]
         ),
         $$slots: { default: [create_default_slot2] },
         $$scope: { ctx }
@@ -8084,11 +8084,11 @@ var BeaconLiveAdmin = (() => {
       p: function update2(ctx2, dirty) {
         const layoutastnode_changes = {};
         if (dirty & /*$page*/
-        4)
+        2)
           layoutastnode_changes.node = /*layoutAstNode*/
-          ctx2[3];
+          ctx2[5];
         if (dirty & /*$$scope, $page*/
-        516) {
+        2050) {
           layoutastnode_changes.$$scope = { dirty, ctx: ctx2 };
         }
         layoutastnode.$set(layoutastnode_changes);
@@ -8111,21 +8111,17 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_each_block4.name,
       type: "each",
-      source: "(13:0) {#each $page.layout.ast as layoutAstNode}",
+      source: "(35:2) {#each $page.layout.ast as layoutAstNode}",
       ctx
     });
     return block;
   }
   function create_fragment8(ctx) {
-    let link0;
-    let t0;
-    let link1;
-    let t1;
-    let each_1_anchor;
+    let div;
     let current;
     let each_value = ensure_array_like_dev(
       /*$page*/
-      ctx[2].layout.ast
+      ctx[1].layout.ast
     );
     let each_blocks = [];
     for (let i = 0; i < each_value.length; i += 1) {
@@ -8136,84 +8132,41 @@ var BeaconLiveAdmin = (() => {
     });
     const block = {
       c: function create3() {
-        link0 = element("link");
-        t0 = space();
-        link1 = element("link");
-        t1 = space();
+        div = element("div");
         for (let i = 0; i < each_blocks.length; i += 1) {
           each_blocks[i].c();
         }
-        each_1_anchor = empty();
         this.h();
       },
       l: function claim(nodes) {
-        link0 = claim_element(nodes, "LINK", { id: true, rel: true, href: true });
-        t0 = claim_space(nodes);
-        link1 = claim_element(nodes, "LINK", { id: true, rel: true, href: true });
-        t1 = claim_space(nodes);
+        div = claim_element(nodes, "DIV", { id: true });
+        var div_nodes = children(div);
         for (let i = 0; i < each_blocks.length; i += 1) {
-          each_blocks[i].l(nodes);
+          each_blocks[i].l(div_nodes);
         }
-        each_1_anchor = empty();
+        div_nodes.forEach(detach_dev);
         this.h();
       },
       h: function hydrate() {
-        attr_dev(link0, "id", "page-baseline-css-target");
-        attr_dev(link0, "rel", "stylesheet");
-        attr_dev(
-          link0,
-          "href",
-          /*$pageBaselineCssPathStore*/
-          ctx[0]
-        );
-        add_location(link0, file8, 10, 0, 459);
-        attr_dev(link1, "id", "page-chunks-css-target");
-        attr_dev(link1, "rel", "stylesheet");
-        attr_dev(
-          link1,
-          "href",
-          /*$pageChunksCssPathStore*/
-          ctx[1]
-        );
-        add_location(link1, file8, 11, 0, 548);
+        attr_dev(div, "id", "page-wrapper-content");
+        add_location(div, file8, 36, 0, 1546);
       },
       m: function mount(target, anchor) {
-        insert_hydration_dev(target, link0, anchor);
-        insert_hydration_dev(target, t0, anchor);
-        insert_hydration_dev(target, link1, anchor);
-        insert_hydration_dev(target, t1, anchor);
+        insert_hydration_dev(target, div, anchor);
         for (let i = 0; i < each_blocks.length; i += 1) {
           if (each_blocks[i]) {
-            each_blocks[i].m(target, anchor);
+            each_blocks[i].m(div, null);
           }
         }
-        insert_hydration_dev(target, each_1_anchor, anchor);
+        ctx[2](div);
         current = true;
       },
       p: function update2(ctx2, [dirty]) {
-        if (!current || dirty & /*$pageBaselineCssPathStore*/
-        1) {
-          attr_dev(
-            link0,
-            "href",
-            /*$pageBaselineCssPathStore*/
-            ctx2[0]
-          );
-        }
-        if (!current || dirty & /*$pageChunksCssPathStore*/
-        2) {
-          attr_dev(
-            link1,
-            "href",
-            /*$pageChunksCssPathStore*/
-            ctx2[1]
-          );
-        }
         if (dirty & /*$page, String*/
-        4) {
+        2) {
           each_value = ensure_array_like_dev(
             /*$page*/
-            ctx2[2].layout.ast
+            ctx2[1].layout.ast
           );
           let i;
           for (i = 0; i < each_value.length; i += 1) {
@@ -8225,7 +8178,7 @@ var BeaconLiveAdmin = (() => {
               each_blocks[i] = create_each_block4(child_ctx);
               each_blocks[i].c();
               transition_in(each_blocks[i], 1);
-              each_blocks[i].m(each_1_anchor.parentNode, each_1_anchor);
+              each_blocks[i].m(div, null);
             }
           }
           group_outros();
@@ -8252,13 +8205,10 @@ var BeaconLiveAdmin = (() => {
       },
       d: function destroy(detaching) {
         if (detaching) {
-          detach_dev(link0);
-          detach_dev(t0);
-          detach_dev(link1);
-          detach_dev(t1);
-          detach_dev(each_1_anchor);
+          detach_dev(div);
         }
         destroy_each(each_blocks, detaching);
+        ctx[2](null);
       }
     };
     dispatch_dev("SvelteRegisterBlock", {
@@ -8271,33 +8221,86 @@ var BeaconLiveAdmin = (() => {
     return block;
   }
   function instance8($$self, $$props, $$invalidate) {
-    let $pageBaselineCssPathStore;
-    let $pageChunksCssPathStore;
     let $page;
-    validate_store(pageBaselineCssPath, "pageBaselineCssPathStore");
-    component_subscribe($$self, pageBaselineCssPath, ($$value) => $$invalidate(0, $pageBaselineCssPathStore = $$value));
-    validate_store(pageChunksCssPath, "pageChunksCssPathStore");
-    component_subscribe($$self, pageChunksCssPath, ($$value) => $$invalidate(1, $pageChunksCssPathStore = $$value));
     validate_store(page, "page");
-    component_subscribe($$self, page, ($$value) => $$invalidate(2, $page = $$value));
+    component_subscribe($$self, page, ($$value) => $$invalidate(1, $page = $$value));
     let { $$slots: slots = {}, $$scope } = $$props;
     validate_slots("page-wrapper", slots, []);
+    var __awaiter = this && this.__awaiter || function(thisArg, _arguments, P, generator) {
+      function adopt(value) {
+        return value instanceof P ? value : new P(function(resolve) {
+          resolve(value);
+        });
+      }
+      return new (P || (P = Promise))(function(resolve, reject) {
+        function fulfilled(value) {
+          try {
+            step(generator.next(value));
+          } catch (e) {
+            reject(e);
+          }
+        }
+        function rejected(value) {
+          try {
+            step(generator["throw"](value));
+          } catch (e) {
+            reject(e);
+          }
+        }
+        function step(result) {
+          result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
+        }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+      });
+    };
+    let wrapper;
+    onMount(() => {
+      console.log(wrapper);
+    });
+    const reloadStylesheet = () => __awaiter(void 0, void 0, void 0, function* () {
+      yield import("https://unpkg.com/@mhsdesign/jit-browser-tailwindcss@0.4.0/dist/cdn.min.js");
+      const content = `<div class="bg-red-500">el</div>`;
+      const css = yield window.jitBrowserTailwindcss(
+        `
+      @tailwind components;
+      @tailwind utilities;
+      `,
+        content
+      );
+      console.log(css);
+    });
+    window.reloadStylesheet = reloadStylesheet;
     const writable_props = [];
     Object.keys($$props).forEach((key) => {
       if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$" && key !== "slot")
-        console.warn(`<page-wrapper> was created with unknown prop '${key}'`);
+        console_12.warn(`<page-wrapper> was created with unknown prop '${key}'`);
     });
+    function div_binding($$value) {
+      binding_callbacks[$$value ? "unshift" : "push"](() => {
+        wrapper = $$value;
+        $$invalidate(0, wrapper);
+      });
+    }
     $$self.$capture_state = () => ({
+      __awaiter,
       LayoutAstNode: LayoutAstNode_default,
       PageAstNode: PageAstNode_default,
       page,
-      pageBaselineCssPathStore: pageBaselineCssPath,
-      pageChunksCssPathStore: pageChunksCssPath,
-      $pageBaselineCssPathStore,
-      $pageChunksCssPathStore,
+      onMount,
+      wrapper,
+      reloadStylesheet,
       $page
     });
-    return [$pageBaselineCssPathStore, $pageChunksCssPathStore, $page];
+    $$self.$inject_state = ($$props2) => {
+      if ("__awaiter" in $$props2)
+        __awaiter = $$props2.__awaiter;
+      if ("wrapper" in $$props2)
+        $$invalidate(0, wrapper = $$props2.wrapper);
+    };
+    if ($$props && "$$inject" in $$props) {
+      $$self.$inject_state($$props.$$inject);
+    }
+    return [wrapper, $page, div_binding];
   }
   var PageWrapper = class extends SvelteComponentDev {
     constructor(options) {
@@ -12306,6 +12309,14 @@ var BeaconLiveAdmin = (() => {
   __export(UiBuilder_exports, {
     default: () => UiBuilder_default
   });
+
+  // svelte/stores/pageBaselineCssPath.ts
+  var pageBaselineCssPath = writable(null);
+
+  // svelte/stores/pageChunksCssPath.ts
+  var pageChunksCssPath = writable(null);
+
+  // svelte/components/UiBuilder.svelte
   var file12 = "svelte/components/UiBuilder.svelte";
   function create_fragment12(ctx) {
     let backdrop;
