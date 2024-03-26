@@ -13,16 +13,26 @@
   let styleWrapper: HTMLElement
 
   onMount(async () => {
-    await tailwindJitPromise;
-    const tailwind = window.createTailwindcss($tailwindConfig);
+    await tailwindJitPromise
+
+    import config from $tailwindConfig
+    delete config["content"]
+
+    const tailwind = window.createTailwindcss({
+      tailwindConfig: config
+    })
+
     const reloadStylesheet = async () => {
       const content = wrapper.outerHTML
 
-      const css = await tailwind.generateStylesFromContent(`
-          @tailwind base;
-          @tailwind components;
-          @tailwind utilities;
-      `, [content])
+      const css = await tailwind.generateStylesFromContent(
+        `
+      @tailwind base;
+      @tailwind components;
+      @tailwind utilities;
+      `,
+        [content],
+      )
       let styleEl = document.createElement("style")
       styleEl.textContent = css
       styleWrapper.appendChild(styleEl)

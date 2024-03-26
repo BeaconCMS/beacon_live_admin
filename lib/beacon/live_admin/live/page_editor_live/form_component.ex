@@ -3,6 +3,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
 
   alias Beacon.LiveAdmin.Config
   alias Beacon.LiveAdmin.Content
+  alias Beacon.LiveAdmin.RuntimeCSS
   alias Beacon.LiveAdmin.WebAPI
   alias Ecto.Changeset
 
@@ -56,7 +57,17 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
      |> assign_form(changeset)
      |> maybe_assign_builder_page(changeset)
      |> assign(:language, language(page.format))
-     |> assign_extra_fields(changeset)}
+     |> assign_extra_fields(changeset)
+     |> assign_new(:tailwind_config_path, fn ->
+       config = RuntimeCSS.config(site)
+       random_dir = :crypto.strong_rand_bytes(12) |> Base.encode16()
+       tmp_dir = Path.join(System.tmp_dir!(), random_dir)
+       # TODO: cleanup tmp dir
+       File.mkdir_p!(tmp_dir)
+       path = Path.join(tmp_dir, "tailwind.config.js")
+       File.write!(path, config)
+       path
+     end)}
   end
 
   def update(%{template: _template}, %{assigns: %{editor: "visual"}} = socket) do
@@ -289,7 +300,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
           %{
             components: @components,
             page: @builder_page,
-            tailwindConfig: "some config"
+            tailwindConfig: @tailwind_config_path
           }
         }
         socket={@socket}
