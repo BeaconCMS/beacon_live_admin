@@ -85,33 +85,6 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
     {:noreply, socket}
   end
 
-  def handle_event("classes_added", %{"classes" => css_classes}, socket) do
-    %{css_chunks: css_chunks} = socket.assigns
-    css_chunks = Enum.uniq(css_classes ++ css_chunks)
-
-    send_update(Beacon.LiveAdmin.PageEditorLive.FormComponent,
-      id: "page-editor-form-edit",
-      css_chunks: css_chunks
-    )
-
-    {:noreply, assign(socket, :css_chunks, css_chunks)}
-  end
-
-  @impl true
-  def handle_info({:register_page_template, page_template}, socket) do
-    {:noreply, assign(socket, page_template: page_template)}
-  end
-
-  def handle_call(:fetch_templates, _from, socket) do
-    %{page: %{site: site}, templates: templates, page_template: page_template} = socket.assigns
-    {:reply, {site, [page_template | templates]}, socket}
-  end
-
-  def handle_call(:fetch_css_chunks, _from, socket) do
-    %{page: %{site: site}, css_chunks: css_chunks} = socket.assigns
-    {:reply, {site, css_chunks}, socket}
-  end
-
   @impl true
   def render(assigns) do
     ~H"""

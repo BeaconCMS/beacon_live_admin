@@ -3,7 +3,6 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
 
   alias Beacon.LiveAdmin.Config
   alias Beacon.LiveAdmin.Content
-  alias Beacon.LiveAdmin.Layouts
   alias Beacon.LiveAdmin.WebAPI
   alias Ecto.Changeset
 
@@ -50,8 +49,6 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
         _ ->
           Content.change_page(site, page)
       end
-
-    send(self(), {:register_page_template, Changeset.get_field(changeset, :template)})
 
     {:ok,
      socket
