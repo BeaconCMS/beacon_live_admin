@@ -3,7 +3,6 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
 
   alias Beacon.LiveAdmin.Config
   alias Beacon.LiveAdmin.Content
-  # alias Beacon.LiveAdmin.RuntimeCSS
   alias Beacon.LiveAdmin.WebAPI
   alias Ecto.Changeset
 
@@ -59,7 +58,8 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
      |> assign(:language, language(page.format))
      |> assign_extra_fields(changeset)
      |> assign_new(:tailwind_config, fn ->
-       # config = RuntimeCSS.config(site)
+       Beacon.LiveAdmin.RuntimeCSS.config(site)
+
        # random_dir = :crypto.strong_rand_bytes(12) |> Base.encode16()
        # tmp_dir = Path.join(System.tmp_dir!(), random_dir)
        # # TODO: cleanup tmp dir
@@ -67,7 +67,6 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
        # path = Path.join(tmp_dir, "tailwind.config.js")
        # File.write!(path, config)
        # path
-       nil
      end)}
   end
 
