@@ -75,7 +75,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
            ["\n", "/* ", stylesheet.name, " */", "\n", stylesheet.content, "\n"]
          end)
 
-       IO.iodata_to_binary(tailwind ++ app_css)
+       IO.iodata_to_binary(tailwind ++ site)
      end)}
   end
 
