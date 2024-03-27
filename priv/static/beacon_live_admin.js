@@ -7892,19 +7892,24 @@ var BeaconLiveAdmin = (() => {
   __export(PageWrapper_exports, {
     default: () => PageWrapper_default
   });
+
+  // svelte/stores/tailwindConfig.ts
+  var tailwindConfig = writable();
+
+  // svelte/components/PageWrapper.svelte
   var file8 = "svelte/components/PageWrapper.svelte";
   function add_css3(target) {
-    append_styles(target, "svelte-xbvayw", '[data-selected="true"], [data-highlighted="true"]{outline-color:#06b6d4;outline-width:2px;outline-style:dashed}:before, :after{pointer-events:none}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiUGFnZVdyYXBwZXIuc3ZlbHRlIiwibWFwcGluZ3MiOiJBQXNMVSxpREFBbUQsQ0FDekQsYUFBYSxDQUFFLE9BQU8sQ0FDdEIsYUFBYSxDQUFFLEdBQUcsQ0FDbEIsYUFBYSxDQUFFLE1BQ2pCLENBRVEsZUFBaUIsQ0FDdkIsY0FBYyxDQUFFLElBQ2xCIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIlBhZ2VXcmFwcGVyLnN2ZWx0ZSJdfQ== */');
+    append_styles(target, "svelte-xbvayw", '[data-selected="true"], [data-highlighted="true"]{outline-color:#06b6d4;outline-width:2px;outline-style:dashed}:before, :after{pointer-events:none}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiUGFnZVdyYXBwZXIuc3ZlbHRlIiwibWFwcGluZ3MiOiJBQTREVSxpREFBbUQsQ0FDekQsYUFBYSxDQUFFLE9BQU8sQ0FDdEIsYUFBYSxDQUFFLEdBQUcsQ0FDbEIsYUFBYSxDQUFFLE1BQ2pCLENBRVEsZUFBaUIsQ0FDdkIsY0FBYyxDQUFFLElBQ2xCIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIlBhZ2VXcmFwcGVyLnN2ZWx0ZSJdfQ== */');
   }
   function get_each_context4(ctx, list, i) {
     const child_ctx = ctx.slice();
-    child_ctx[7] = list[i];
+    child_ctx[11] = list[i];
     return child_ctx;
   }
   function get_each_context_12(ctx, list, i) {
     const child_ctx = ctx.slice();
-    child_ctx[10] = list[i];
-    child_ctx[12] = i;
+    child_ctx[14] = list[i];
+    child_ctx[16] = i;
     return child_ctx;
   }
   function create_each_block_12(ctx) {
@@ -7914,11 +7919,11 @@ var BeaconLiveAdmin = (() => {
       props: {
         node: (
           /*astNode*/
-          ctx[10]
+          ctx[14]
         ),
         nodeId: String(
           /*index*/
-          ctx[12]
+          ctx[16]
         )
       },
       $$inline: true
@@ -7939,7 +7944,7 @@ var BeaconLiveAdmin = (() => {
         if (dirty & /*$page*/
         4)
           pageastnode_changes.node = /*astNode*/
-          ctx2[10];
+          ctx2[14];
         pageastnode.$set(pageastnode_changes);
       },
       i: function intro(local) {
@@ -7960,7 +7965,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_each_block_12.name,
       type: "each",
-      source: "(171:6) {#each $page.ast as astNode, index}",
+      source: "(52:6) {#each $page.ast as astNode, index}",
       ctx
     });
     return block;
@@ -8054,7 +8059,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_default_slot2.name,
       type: "slot",
-      source: "(170:4) <LayoutAstNode node={layoutAstNode}>",
+      source: "(51:4) <LayoutAstNode node={layoutAstNode}>",
       ctx
     });
     return block;
@@ -8066,7 +8071,7 @@ var BeaconLiveAdmin = (() => {
       props: {
         node: (
           /*layoutAstNode*/
-          ctx[7]
+          ctx[11]
         ),
         $$slots: { default: [create_default_slot2] },
         $$scope: { ctx }
@@ -8089,9 +8094,9 @@ var BeaconLiveAdmin = (() => {
         if (dirty & /*$page*/
         4)
           layoutastnode_changes.node = /*layoutAstNode*/
-          ctx2[7];
+          ctx2[11];
         if (dirty & /*$$scope, $page*/
-        8196) {
+        131076) {
           layoutastnode_changes.$$scope = { dirty, ctx: ctx2 };
         }
         layoutastnode.$set(layoutastnode_changes);
@@ -8114,7 +8119,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_each_block4.name,
       type: "each",
-      source: "(169:2) {#each $page.layout.ast as layoutAstNode}",
+      source: "(50:2) {#each $page.layout.ast as layoutAstNode}",
       ctx
     });
     return block;
@@ -8158,8 +8163,8 @@ var BeaconLiveAdmin = (() => {
         this.h();
       },
       h: function hydrate() {
-        add_location(span, file8, 170, 0, 7057);
-        add_location(div, file8, 171, 0, 7096);
+        add_location(span, file8, 48, 0, 2293);
+        add_location(div, file8, 49, 0, 2332);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, span, anchor);
@@ -8237,7 +8242,10 @@ var BeaconLiveAdmin = (() => {
     return block;
   }
   function instance8($$self, $$props, $$invalidate) {
+    let $tailwindConfig;
     let $page;
+    validate_store(tailwindConfig, "tailwindConfig");
+    component_subscribe($$self, tailwindConfig, ($$value) => $$invalidate(5, $tailwindConfig = $$value));
     validate_store(page, "page");
     component_subscribe($$self, page, ($$value) => $$invalidate(2, $page = $$value));
     let { $$slots: slots = {}, $$scope } = $$props;
@@ -8272,125 +8280,11 @@ var BeaconLiveAdmin = (() => {
     const tailwindJitPromise = import("https://unpkg.com/@mhsdesign/jit-browser-tailwindcss@0.4.0/dist/cdn.min.js");
     let wrapper;
     let styleWrapper;
+    let twConfig = $tailwindConfig;
+    let b64moduleData = "data:text/javascript;base64," + btoa(twConfig.replace("module.exports = ", "export default "));
+    let configPromise = import(b64moduleData);
     onMount(() => __awaiter(void 0, void 0, void 0, function* () {
-      yield tailwindJitPromise;
-      let tailwindConfig2 = {
-        theme: {
-          extend: {
-            maxWidth: {
-              xl: "37.5rem",
-              /* 600px */
-              720: "45rem",
-              /* 720px */
-              "3xl": "50rem",
-              /* 800px */
-              "4xl": "56.25rem",
-              /* 900px */
-              1200: "75rem",
-              /* 1200px */
-              1360: "85rem",
-              /* 1360px */
-              "7xl": "90rem"
-              /* 1440px */
-            },
-            gridTemplateColumns: {
-              intro: "minmax(55%, 800px) minmax(35%, 600px)",
-              "intro-reverse": "minmax(35%, 600px) minmax(55%, 800px)",
-              cta: "minmax(25%, 514px) minmax(62%, 890px)",
-              blog: "9rem 42rem 9rem",
-              "blog-desktop": "9rem 56.25rem 9rem"
-            },
-            gridTemplateRows: {
-              "featured-mobile": "190px 200px 124px",
-              "featured-desktop": "280px 360px 200px",
-              blog: "repeat(3, auto)"
-            },
-            spacing: {
-              4.5: "1.125rem",
-              15: "3.75rem",
-              21: "5.25rem",
-              25: "6.25rem",
-              30: "7.5rem"
-            },
-            height: {
-              15: "3.75rem",
-              21: "5.25rem",
-              25: "6.25rem"
-            },
-            aspectRatio: { blog: "36 / 13" },
-            fontFamily: {
-              body: ["Plus Jakarta Sans", "sans-serif"],
-              heading: ["Manrope", "sans-serif"]
-            },
-            fontSize: {
-              xxs: ["0.6875rem", "1rem"],
-              xs: ["0.75rem", "1.125rem"],
-              sm: ["0.875rem", "1.25rem"],
-              "3xl": ["2rem", "2.5rem"],
-              "4xl": ["2.5rem", "3rem"],
-              "5xl": ["3rem", "3.75rem"],
-              "6xl": ["3.75rem", "4.5rem"],
-              eyebrow: ["0.8125rem", "1.125rem"]
-            },
-            colors: {
-              gray: {
-                50: "#F0F5F9",
-                100: "#E1E8F0",
-                200: "#CAD5E0",
-                300: "#91A4B7",
-                400: "#61758A",
-                500: "#445668",
-                600: "#304254",
-                700: "#1C2A3A",
-                800: "#0D1829",
-                900: "#030913"
-              },
-              blue: {
-                50: "#F4F6FD",
-                100: "#EAEDFB",
-                200: "#D5DBF7",
-                300: "#ABB6EF",
-                400: "#8192E7",
-                500: "#576DDF",
-                600: "#2D49D7",
-                700: "#2037B8",
-                800: "#16279A",
-                900: "#0E1A7C"
-              },
-              yellow: { 300: "#FED69A", 900: "#924600" },
-              "dy-gradient-pink": "#F78683",
-              "dy-purple": "#4E53A8",
-              "dy-purple-light": "#D9CCFF",
-              "dy-green": "#048567",
-              "dy-red": "#C0120C",
-              featuredSkin: {
-                background: "var(--color-featured-bg)",
-                shadow: "var(--color-featured-shadow)"
-              }
-            },
-            letterSpacing: { widestXl: "0.3em" },
-            borderRadius: { "2.5xl": "1.25rem", "4xl": "2rem" },
-            boxShadow: {
-              "featured-base": "0 -36px 50px 0",
-              "featured-base-hover": "0 -36px 50px 4px",
-              "featured-oneColumn-xl-base": "-35px 28px 50px 0",
-              "featured-oneColumn-xl-base-hover": "-52px 51px 50px 0",
-              "featured-twoColumn-sm-base": "-24px 24px 50px 0",
-              "featured-twoColumn-sm-base-hover": "-24px 24px 60px 8px",
-              "featured-twoColumn-reverse-sm-base": "24px 24px 50px 0",
-              "featured-twoColumn-reverse-sm-base-hover": "24px 24px 60px 8px",
-              "featured-twoColumn-lg-base": "-64px 36px 80px 0",
-              "featured-twoColumn-lg-base-hover": "-64px 36px 90px 8px",
-              "featured-twoColumn-reverse-lg-base": "64px 36px 80px 0",
-              "featured-twoColumn-reverse-lg-base-hover": "64px 36px 90px 8px"
-            },
-            transitionDuration: { "0": "0ms" },
-            transitionProperty: {
-              link: "box-shadow, color, background-color, border-color, fill, stroke, opacity"
-            }
-          }
-        }
-      };
+      const [_, { default: tailwindConfig2 }] = yield Promise.all([tailwindJitPromise, configPromise]);
       const tailwind = window.createTailwindcss({ tailwindConfig: tailwindConfig2 });
       const reloadStylesheet = () => __awaiter(void 0, void 0, void 0, function* () {
         const content = wrapper.outerHTML;
@@ -8435,11 +8329,16 @@ var BeaconLiveAdmin = (() => {
       LayoutAstNode: LayoutAstNode_default,
       PageAstNode: PageAstNode_default,
       page,
+      tailwindConfig,
       onMount,
       tick,
       tailwindJitPromise,
       wrapper,
       styleWrapper,
+      twConfig,
+      b64moduleData,
+      configPromise,
+      $tailwindConfig,
       $page
     });
     $$self.$inject_state = ($$props2) => {
@@ -8449,6 +8348,12 @@ var BeaconLiveAdmin = (() => {
         $$invalidate(0, wrapper = $$props2.wrapper);
       if ("styleWrapper" in $$props2)
         $$invalidate(1, styleWrapper = $$props2.styleWrapper);
+      if ("twConfig" in $$props2)
+        twConfig = $$props2.twConfig;
+      if ("b64moduleData" in $$props2)
+        b64moduleData = $$props2.b64moduleData;
+      if ("configPromise" in $$props2)
+        configPromise = $$props2.configPromise;
     };
     if ($$props && "$$inject" in $$props) {
       $$self.$inject_state($$props.$$inject);
@@ -12461,11 +12366,6 @@ var BeaconLiveAdmin = (() => {
   __export(UiBuilder_exports, {
     default: () => UiBuilder_default
   });
-
-  // svelte/stores/tailwindConfig.ts
-  var tailwindConfig = writable();
-
-  // svelte/components/UiBuilder.svelte
   var file12 = "svelte/components/UiBuilder.svelte";
   function create_fragment12(ctx) {
     let backdrop;
