@@ -18,13 +18,10 @@
   onMount(async () => {
     const [_, { default: tailwindConfig }] = await Promise.all([tailwindJitPromise, configPromise])
 
-    const tailwind = window.createTailwindcss({
-      tailwindConfig,
-    })
+    const tailwind = window.createTailwindcss({ tailwindConfig })
 
     const reloadStylesheet = async () => {
       const content = wrapper.outerHTML
-
       const css = await tailwind.generateStylesFromContent($tailwindInput, [content])
       let styleEl = document.createElement("style")
       styleEl.textContent = css

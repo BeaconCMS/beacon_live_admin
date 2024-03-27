@@ -11,7 +11,6 @@
   let editorContainer: HTMLElement
   $: {
     if (editor) {
-      console.log("code editor value", value)
       editor.setValue(value)
     }
   }

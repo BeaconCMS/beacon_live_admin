@@ -7,10 +7,6 @@ defmodule Beacon.LiveAdmin.Layouts do
 
   def render("admin.html", assigns), do: admin(assigns)
 
-  def hash(term) when is_binary(term) do
-    Base.encode16(:crypto.hash(:md5, term), case: :lower)
-  end
-
   def asset_path(conn_or_socket, asset) when asset in [:css, :js] do
     prefix = router(conn_or_socket).__beacon_live_admin_assets_prefix__()
     hash = Beacon.LiveAdmin.AssetsController.current_hash(asset)

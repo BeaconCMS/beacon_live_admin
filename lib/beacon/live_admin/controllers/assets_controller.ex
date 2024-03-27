@@ -1,7 +1,6 @@
 defmodule Beacon.LiveAdmin.AssetsController do
   @moduledoc false
   import Plug.Conn
-  alias Beacon.LiveAdmin.Layouts
 
   phoenix_js_paths =
     for app <- [:phoenix, :phoenix_html, :phoenix_live_view] do
@@ -29,14 +28,14 @@ defmodule Beacon.LiveAdmin.AssetsController do
   """
 
   @hashes %{
-    :css => Layouts.hash(@css),
-    :js => Layouts.hash(@js)
+    :css => Base.encode16(:crypto.hash(:md5, @css), case: :lower),
+    :js => Base.encode16(:crypto.hash(:md5, @js), case: :lower)
   }
 
   def init(asset) when asset in [:css, :js], do: asset
 
   def call(conn, asset) do
-    {contents, content_type} = contents_and_type(asset, conn.params)
+    {contents, content_type} = contents_and_type(asset)
 
     conn
     |> put_resp_header("content-type", content_type)
@@ -46,9 +45,9 @@ defmodule Beacon.LiveAdmin.AssetsController do
     |> halt()
   end
 
-  defp contents_and_type(:css, _params), do: {@css, "text/css"}
+  defp contents_and_type(:css), do: {@css, "text/css"}
 
-  defp contents_and_type(:js, _params), do: {@js, "text/javascript"}
+  defp contents_and_type(:js), do: {@js, "text/javascript"}
 
   @doc """
   Returns the current hash for the given `asset`.
