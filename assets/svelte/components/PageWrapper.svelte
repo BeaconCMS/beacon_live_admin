@@ -11,11 +11,11 @@
 
   let wrapper: HTMLElement
   let styleWrapper: HTMLElement
-  let twConfig = $tailwindConfig;
-  let b64moduleData = "data:text/javascript;base64," + btoa(twConfig.replace('module.exports = ', 'export default '));
-  let configPromise = import(b64moduleData);
+  let twConfig = $tailwindConfig
+  let b64moduleData = "data:text/javascript;base64," + btoa(twConfig.replace("module.exports = ", "export default "))
+  let configPromise = import(b64moduleData)
   onMount(async () => {
-    const [_, { default: tailwindConfig }] = await Promise.all([tailwindJitPromise, configPromise]);
+    const [_, { default: tailwindConfig }] = await Promise.all([tailwindJitPromise, configPromise])
 
     const tailwind = window.createTailwindcss({
       tailwindConfig,
