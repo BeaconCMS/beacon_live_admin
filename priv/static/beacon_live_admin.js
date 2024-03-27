@@ -7892,24 +7892,19 @@ var BeaconLiveAdmin = (() => {
   __export(PageWrapper_exports, {
     default: () => PageWrapper_default
   });
-
-  // svelte/stores/tailwindConfig.ts
-  var tailwindConfig = writable();
-
-  // svelte/components/PageWrapper.svelte
   var file8 = "svelte/components/PageWrapper.svelte";
   function add_css3(target) {
-    append_styles(target, "svelte-xbvayw", '[data-selected="true"], [data-highlighted="true"]{outline-color:#06b6d4;outline-width:2px;outline-style:dashed}:before, :after{pointer-events:none}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiUGFnZVdyYXBwZXIuc3ZlbHRlIiwibWFwcGluZ3MiOiJBQW1EVSxpREFBbUQsQ0FDekQsYUFBYSxDQUFFLE9BQU8sQ0FDdEIsYUFBYSxDQUFFLEdBQUcsQ0FDbEIsYUFBYSxDQUFFLE1BQ2pCLENBRVEsZUFBaUIsQ0FDdkIsY0FBYyxDQUFFLElBQ2xCIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIlBhZ2VXcmFwcGVyLnN2ZWx0ZSJdfQ== */');
+    append_styles(target, "svelte-xbvayw", '[data-selected="true"], [data-highlighted="true"]{outline-color:#06b6d4;outline-width:2px;outline-style:dashed}:before, :after{pointer-events:none}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiUGFnZVdyYXBwZXIuc3ZlbHRlIiwibWFwcGluZ3MiOiJBQXNMVSxpREFBbUQsQ0FDekQsYUFBYSxDQUFFLE9BQU8sQ0FDdEIsYUFBYSxDQUFFLEdBQUcsQ0FDbEIsYUFBYSxDQUFFLE1BQ2pCLENBRVEsZUFBaUIsQ0FDdkIsY0FBYyxDQUFFLElBQ2xCIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIlBhZ2VXcmFwcGVyLnN2ZWx0ZSJdfQ== */');
   }
   function get_each_context4(ctx, list, i) {
     const child_ctx = ctx.slice();
-    child_ctx[8] = list[i];
+    child_ctx[7] = list[i];
     return child_ctx;
   }
   function get_each_context_12(ctx, list, i) {
     const child_ctx = ctx.slice();
-    child_ctx[11] = list[i];
-    child_ctx[13] = i;
+    child_ctx[10] = list[i];
+    child_ctx[12] = i;
     return child_ctx;
   }
   function create_each_block_12(ctx) {
@@ -7919,11 +7914,11 @@ var BeaconLiveAdmin = (() => {
       props: {
         node: (
           /*astNode*/
-          ctx[11]
+          ctx[10]
         ),
         nodeId: String(
           /*index*/
-          ctx[13]
+          ctx[12]
         )
       },
       $$inline: true
@@ -7944,7 +7939,7 @@ var BeaconLiveAdmin = (() => {
         if (dirty & /*$page*/
         4)
           pageastnode_changes.node = /*astNode*/
-          ctx2[11];
+          ctx2[10];
         pageastnode.$set(pageastnode_changes);
       },
       i: function intro(local) {
@@ -7965,7 +7960,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_each_block_12.name,
       type: "each",
-      source: "(47:6) {#each $page.ast as astNode, index}",
+      source: "(171:6) {#each $page.ast as astNode, index}",
       ctx
     });
     return block;
@@ -8059,7 +8054,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_default_slot2.name,
       type: "slot",
-      source: "(46:4) <LayoutAstNode node={layoutAstNode}>",
+      source: "(170:4) <LayoutAstNode node={layoutAstNode}>",
       ctx
     });
     return block;
@@ -8071,7 +8066,7 @@ var BeaconLiveAdmin = (() => {
       props: {
         node: (
           /*layoutAstNode*/
-          ctx[8]
+          ctx[7]
         ),
         $$slots: { default: [create_default_slot2] },
         $$scope: { ctx }
@@ -8094,9 +8089,9 @@ var BeaconLiveAdmin = (() => {
         if (dirty & /*$page*/
         4)
           layoutastnode_changes.node = /*layoutAstNode*/
-          ctx2[8];
+          ctx2[7];
         if (dirty & /*$$scope, $page*/
-        16388) {
+        8196) {
           layoutastnode_changes.$$scope = { dirty, ctx: ctx2 };
         }
         layoutastnode.$set(layoutastnode_changes);
@@ -8119,7 +8114,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_each_block4.name,
       type: "each",
-      source: "(45:2) {#each $page.layout.ast as layoutAstNode}",
+      source: "(169:2) {#each $page.layout.ast as layoutAstNode}",
       ctx
     });
     return block;
@@ -8163,8 +8158,8 @@ var BeaconLiveAdmin = (() => {
         this.h();
       },
       h: function hydrate() {
-        add_location(span, file8, 39, 0, 2026);
-        add_location(div, file8, 40, 0, 2065);
+        add_location(span, file8, 170, 0, 7057);
+        add_location(div, file8, 171, 0, 7096);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, span, anchor);
@@ -8242,10 +8237,7 @@ var BeaconLiveAdmin = (() => {
     return block;
   }
   function instance8($$self, $$props, $$invalidate) {
-    let $tailwindConfig;
     let $page;
-    validate_store(tailwindConfig, "tailwindConfig");
-    component_subscribe($$self, tailwindConfig, ($$value) => $$invalidate(5, $tailwindConfig = $$value));
     validate_store(page, "page");
     component_subscribe($$self, page, ($$value) => $$invalidate(2, $page = $$value));
     let { $$slots: slots = {}, $$scope } = $$props;
@@ -8282,14 +8274,131 @@ var BeaconLiveAdmin = (() => {
     let styleWrapper;
     onMount(() => __awaiter(void 0, void 0, void 0, function* () {
       yield tailwindJitPromise;
-      const tailwind = window.createTailwindcss($tailwindConfig);
+      let tailwindConfig2 = {
+        theme: {
+          extend: {
+            maxWidth: {
+              xl: "37.5rem",
+              /* 600px */
+              720: "45rem",
+              /* 720px */
+              "3xl": "50rem",
+              /* 800px */
+              "4xl": "56.25rem",
+              /* 900px */
+              1200: "75rem",
+              /* 1200px */
+              1360: "85rem",
+              /* 1360px */
+              "7xl": "90rem"
+              /* 1440px */
+            },
+            gridTemplateColumns: {
+              intro: "minmax(55%, 800px) minmax(35%, 600px)",
+              "intro-reverse": "minmax(35%, 600px) minmax(55%, 800px)",
+              cta: "minmax(25%, 514px) minmax(62%, 890px)",
+              blog: "9rem 42rem 9rem",
+              "blog-desktop": "9rem 56.25rem 9rem"
+            },
+            gridTemplateRows: {
+              "featured-mobile": "190px 200px 124px",
+              "featured-desktop": "280px 360px 200px",
+              blog: "repeat(3, auto)"
+            },
+            spacing: {
+              4.5: "1.125rem",
+              15: "3.75rem",
+              21: "5.25rem",
+              25: "6.25rem",
+              30: "7.5rem"
+            },
+            height: {
+              15: "3.75rem",
+              21: "5.25rem",
+              25: "6.25rem"
+            },
+            aspectRatio: { blog: "36 / 13" },
+            fontFamily: {
+              body: ["Plus Jakarta Sans", "sans-serif"],
+              heading: ["Manrope", "sans-serif"]
+            },
+            fontSize: {
+              xxs: ["0.6875rem", "1rem"],
+              xs: ["0.75rem", "1.125rem"],
+              sm: ["0.875rem", "1.25rem"],
+              "3xl": ["2rem", "2.5rem"],
+              "4xl": ["2.5rem", "3rem"],
+              "5xl": ["3rem", "3.75rem"],
+              "6xl": ["3.75rem", "4.5rem"],
+              eyebrow: ["0.8125rem", "1.125rem"]
+            },
+            colors: {
+              gray: {
+                50: "#F0F5F9",
+                100: "#E1E8F0",
+                200: "#CAD5E0",
+                300: "#91A4B7",
+                400: "#61758A",
+                500: "#445668",
+                600: "#304254",
+                700: "#1C2A3A",
+                800: "#0D1829",
+                900: "#030913"
+              },
+              blue: {
+                50: "#F4F6FD",
+                100: "#EAEDFB",
+                200: "#D5DBF7",
+                300: "#ABB6EF",
+                400: "#8192E7",
+                500: "#576DDF",
+                600: "#2D49D7",
+                700: "#2037B8",
+                800: "#16279A",
+                900: "#0E1A7C"
+              },
+              yellow: { 300: "#FED69A", 900: "#924600" },
+              "dy-gradient-pink": "#F78683",
+              "dy-purple": "#4E53A8",
+              "dy-purple-light": "#D9CCFF",
+              "dy-green": "#048567",
+              "dy-red": "#C0120C",
+              featuredSkin: {
+                background: "var(--color-featured-bg)",
+                shadow: "var(--color-featured-shadow)"
+              }
+            },
+            letterSpacing: { widestXl: "0.3em" },
+            borderRadius: { "2.5xl": "1.25rem", "4xl": "2rem" },
+            boxShadow: {
+              "featured-base": "0 -36px 50px 0",
+              "featured-base-hover": "0 -36px 50px 4px",
+              "featured-oneColumn-xl-base": "-35px 28px 50px 0",
+              "featured-oneColumn-xl-base-hover": "-52px 51px 50px 0",
+              "featured-twoColumn-sm-base": "-24px 24px 50px 0",
+              "featured-twoColumn-sm-base-hover": "-24px 24px 60px 8px",
+              "featured-twoColumn-reverse-sm-base": "24px 24px 50px 0",
+              "featured-twoColumn-reverse-sm-base-hover": "24px 24px 60px 8px",
+              "featured-twoColumn-lg-base": "-64px 36px 80px 0",
+              "featured-twoColumn-lg-base-hover": "-64px 36px 90px 8px",
+              "featured-twoColumn-reverse-lg-base": "64px 36px 80px 0",
+              "featured-twoColumn-reverse-lg-base-hover": "64px 36px 90px 8px"
+            },
+            transitionDuration: { "0": "0ms" },
+            transitionProperty: {
+              link: "box-shadow, color, background-color, border-color, fill, stroke, opacity"
+            }
+          }
+        }
+      };
+      const tailwind = window.createTailwindcss({ tailwindConfig: tailwindConfig2 });
       const reloadStylesheet = () => __awaiter(void 0, void 0, void 0, function* () {
         const content = wrapper.outerHTML;
         const css = yield tailwind.generateStylesFromContent(
           `
-          @tailwind base;
-          @tailwind components;
-          @tailwind utilities;
+      @tailwind base;
+      @tailwind components;
+      @tailwind utilities;
       `,
           [content]
         );
@@ -8326,13 +8435,11 @@ var BeaconLiveAdmin = (() => {
       LayoutAstNode: LayoutAstNode_default,
       PageAstNode: PageAstNode_default,
       page,
-      tailwindConfig,
       onMount,
       tick,
       tailwindJitPromise,
       wrapper,
       styleWrapper,
-      $tailwindConfig,
       $page
     });
     $$self.$inject_state = ($$props2) => {
@@ -10461,7 +10568,7 @@ var BeaconLiveAdmin = (() => {
       },
       h: function hydrate() {
         attr_dev(div, "class", "p-4 pt-8 font-medium text-lg text-center");
-        add_location(div, file11, 240, 6, 10848);
+        add_location(div, file11, 240, 6, 10850);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, div, anchor);
@@ -10624,23 +10731,23 @@ var BeaconLiveAdmin = (() => {
       },
       h: function hydrate() {
         attr_dev(span, "class", "sr-only");
-        add_location(span, file11, 151, 10, 7147);
+        add_location(span, file11, 151, 10, 7149);
         attr_dev(path, "fill-rule", "evenodd");
         attr_dev(path, "d", "M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25Zm-1.72 6.97a.75.75 0 1 0-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 1 0 1.06 1.06L12 13.06l1.72 1.72a.75.75 0 1 0 1.06-1.06L13.06 12l1.72-1.72a.75.75 0 1 0-1.06-1.06L12 10.94l-1.72-1.72Z");
         attr_dev(path, "clip-rule", "evenodd");
-        add_location(path, file11, 158, 12, 7401);
+        add_location(path, file11, 158, 12, 7403);
         attr_dev(svg, "xmlns", "http://www.w3.org/2000/svg");
         attr_dev(svg, "viewBox", "0 0 24 24");
         attr_dev(svg, "fill", "currentColor");
         attr_dev(svg, "class", "w-6 h-6 hover:text-blue-700 active:text-blue-900");
-        add_location(svg, file11, 152, 10, 7192);
+        add_location(svg, file11, 152, 10, 7194);
         attr_dev(button, "type", "button");
         attr_dev(button, "class", "absolute p-2 top-2 right-1");
-        add_location(button, file11, 150, 8, 7026);
+        add_location(button, file11, 150, 8, 7028);
         attr_dev(div0, "class", "border-b text-lg font-medium leading-5 p-4 relative");
-        add_location(div0, file11, 127, 6, 5897);
+        add_location(div0, file11, 127, 6, 5899);
         attr_dev(div1, "class", "relative");
-        add_location(div1, file11, 200, 6, 9311);
+        add_location(div1, file11, 200, 6, 9313);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, div0, anchor);
@@ -10902,21 +11009,21 @@ var BeaconLiveAdmin = (() => {
       },
       h: function hydrate() {
         attr_dev(span0, "class", "sr-only");
-        add_location(span0, file11, 131, 12, 6126);
+        add_location(span0, file11, 131, 12, 6128);
         attr_dev(span1, "class", "absolute opacity-0 invisible right-9 min-w-[100px] bg-amber-100 py-1 px-1.5 rounded text-xs text-medium transition group-hover:opacity-100 group-hover:visible");
-        add_location(span1, file11, 132, 12, 6180);
+        add_location(span1, file11, 132, 12, 6182);
         attr_dev(path, "fill-rule", "evenodd");
         attr_dev(path, "d", "M9.53 2.47a.75.75 0 0 1 0 1.06L4.81 8.25H15a6.75 6.75 0 0 1 0 13.5h-3a.75.75 0 0 1 0-1.5h3a5.25 5.25 0 1 0 0-10.5H4.81l4.72 4.72a.75.75 0 1 1-1.06 1.06l-6-6a.75.75 0 0 1 0-1.06l6-6a.75.75 0 0 1 1.06 0Z");
         attr_dev(path, "clip-rule", "evenodd");
-        add_location(path, file11, 142, 14, 6648);
+        add_location(path, file11, 142, 14, 6650);
         attr_dev(svg, "xmlns", "http://www.w3.org/2000/svg");
         attr_dev(svg, "viewBox", "0 0 24 24");
         attr_dev(svg, "fill", "currentColor");
         attr_dev(svg, "class", "w-6 h-6 hover:text-blue-700 active:text-blue-900");
-        add_location(svg, file11, 136, 12, 6427);
+        add_location(svg, file11, 136, 12, 6429);
         attr_dev(button, "type", "button");
         attr_dev(button, "class", "absolute p-2 top-2 right-9 group");
-        add_location(button, file11, 130, 10, 6022);
+        add_location(button, file11, 130, 10, 6024);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, button, anchor);
@@ -11599,7 +11706,7 @@ var BeaconLiveAdmin = (() => {
         this.h();
       },
       h: function hydrate() {
-        add_location(p, file11, 195, 12, 9132);
+        add_location(p, file11, 195, 12, 9134);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, p, anchor);
@@ -11644,7 +11751,7 @@ var BeaconLiveAdmin = (() => {
       },
       h: function hydrate() {
         attr_dev(div0, "class", "flex rounded-lg outline-dashed outline-2 h-full text-center justify-center items-center");
-        add_location(div0, file11, 210, 12, 9719);
+        add_location(div0, file11, 210, 12, 9721);
         attr_dev(div1, "class", "absolute bg-white opacity-70 w-full h-full p-4");
         attr_dev(div1, "role", "list");
         toggle_class(
@@ -11653,7 +11760,7 @@ var BeaconLiveAdmin = (() => {
           /*isDraggingOver*/
           ctx[3]
         );
-        add_location(div1, file11, 202, 10, 9412);
+        add_location(div1, file11, 202, 10, 9414);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, div1, anchor);
@@ -11889,10 +11996,10 @@ var BeaconLiveAdmin = (() => {
       },
       h: function hydrate() {
         attr_dev(span, "class", "sr-only");
-        add_location(span, file11, 235, 19, 10699);
+        add_location(span, file11, 235, 19, 10701);
         attr_dev(button, "type", "button");
         attr_dev(button, "class", "bg-red-500 hover:bg-red-700 active:bg-red-800 text-white font-bold py-2 px-4 rounded outline-2 w-full");
-        add_location(button, file11, 230, 10, 10473);
+        add_location(button, file11, 230, 10, 10475);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, button, anchor);
@@ -11978,10 +12085,10 @@ var BeaconLiveAdmin = (() => {
       },
       h: function hydrate() {
         attr_dev(div0, "class", "sticky top-0 overflow-y-auto h-screen");
-        add_location(div0, file11, 125, 2, 5809);
+        add_location(div0, file11, 125, 2, 5811);
         attr_dev(div1, "class", "w-64 bg-white");
         attr_dev(div1, "data-test-id", "right-sidebar");
-        add_location(div1, file11, 124, 0, 5750);
+        add_location(div1, file11, 124, 0, 5752);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, div1, anchor);
@@ -12092,7 +12199,6 @@ var BeaconLiveAdmin = (() => {
         let node = $selectedAstElement;
         if (node) {
           let classes = newClasses.split(" ").map((c) => c.trim());
-          live.pushEvent("classes_added", { id: $page.id, classes });
           node.attrs.class = node.attrs.class ? `${node.attrs.class} ${classes.join(" ")}` : classes.join(" ");
           live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast });
         }
@@ -12355,6 +12461,11 @@ var BeaconLiveAdmin = (() => {
   __export(UiBuilder_exports, {
     default: () => UiBuilder_default
   });
+
+  // svelte/stores/tailwindConfig.ts
+  var tailwindConfig = writable();
+
+  // svelte/components/UiBuilder.svelte
   var file12 = "svelte/components/UiBuilder.svelte";
   function create_fragment12(ctx) {
     let backdrop;
