@@ -5,6 +5,7 @@
   import PageAstNode from "./PageAstNode.svelte"
   import { page } from "$lib/stores/page"
   import { tailwindConfig } from "$lib/stores/tailwindConfig"
+  import { tailwindInput } from "$lib/stores/tailwindInput"
   import { onMount, tick } from "svelte"
 
   const tailwindJitPromise = import("https://unpkg.com/@mhsdesign/jit-browser-tailwindcss@0.4.0/dist/cdn.min.js")
@@ -24,14 +25,7 @@
     const reloadStylesheet = async () => {
       const content = wrapper.outerHTML
 
-      const css = await tailwind.generateStylesFromContent(
-        `
-      @tailwind base;
-      @tailwind components;
-      @tailwind utilities;
-      `,
-        [content],
-      )
+      const css = await tailwind.generateStylesFromContent($tailwindInput, [content])
       let styleEl = document.createElement("style")
       styleEl.textContent = css
       styleWrapper.appendChild(styleEl)

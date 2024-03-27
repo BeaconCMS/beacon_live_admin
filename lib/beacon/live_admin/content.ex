@@ -8,6 +8,10 @@ defmodule Beacon.LiveAdmin.Content do
 
   import Beacon.LiveAdmin.Cluster, only: [call: 4]
 
+  def list_stylesheets(site) do
+    call(site, Beacon.Content, :list_stylesheets, [site])
+  end
+
   def change_layout(site, layout, attrs \\ %{}) do
     call(site, Beacon.Content, :change_layout, [layout, attrs])
   end

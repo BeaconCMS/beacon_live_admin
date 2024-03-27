@@ -57,16 +57,25 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
      |> maybe_assign_builder_page(changeset)
      |> assign(:language, language(page.format))
      |> assign_extra_fields(changeset)
-     |> assign_new(:tailwind_config, fn ->
-       Beacon.LiveAdmin.RuntimeCSS.config(site)
+     |> assign_new(:tailwind_config, fn -> Beacon.LiveAdmin.RuntimeCSS.config(site) end)
+     |> assign_new(:tailwind_input, fn ->
+       tailwind = [
+         "@tailwind base;",
+         "\n",
+         "@tailwind components;",
+         "\n",
+         "@tailwind utilities;",
+         "\n"
+       ]
 
-       # random_dir = :crypto.strong_rand_bytes(12) |> Base.encode16()
-       # tmp_dir = Path.join(System.tmp_dir!(), random_dir)
-       # # TODO: cleanup tmp dir
-       # File.mkdir_p!(tmp_dir)
-       # path = Path.join(tmp_dir, "tailwind.config.js")
-       # File.write!(path, config)
-       # path
+       site =
+         site
+         |> Content.list_stylesheets()
+         |> Enum.map(fn stylesheet ->
+           ["\n", "/* ", stylesheet.name, " */", "\n", stylesheet.content, "\n"]
+         end)
+
+       IO.iodata_to_binary(tailwind ++ app_css)
      end)}
   end
 
@@ -300,7 +309,8 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
           %{
             components: @components,
             page: @builder_page,
-            tailwindConfig: @tailwind_config
+            tailwindConfig: @tailwind_config,
+            tailwindInput: @tailwind_input
           }
         }
         socket={@socket}
