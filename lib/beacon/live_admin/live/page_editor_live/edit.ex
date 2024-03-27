@@ -28,14 +28,8 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
       socket
       |> assign(
         page_title: "Edit Page",
-        editor: editor,
-        css_chunks: []
+        editor: editor
       )
-      |> assign_new(:templates, fn ->
-        Enum.uniq([
-          socket.assigns.page.layout.template | Enum.map(socket.assigns.components, & &1.body)
-        ])
-      end)
 
     {:noreply, socket}
   end
