@@ -51,6 +51,11 @@ defmodule Beacon.LiveAdmin.Cluster do
         :ok
 
   """
+  def call(site, mod, fun, args) when is_binary(site) do
+    site = String.to_existing_atom(site)
+    call(site, mod, fun, args)
+  end
+
   def call(site, mod, fun, args)
       when is_atom(site) and is_atom(mod) and is_atom(fun) and is_list(args) do
     case find_node(site) do

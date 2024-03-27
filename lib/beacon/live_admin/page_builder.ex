@@ -59,8 +59,6 @@ defmodule Beacon.LiveAdmin.PageBuilder do
   defmacro __using__(opts) do
     quote location: :keep, bind_quoted: [opts: opts] do
       use Phoenix.Component
-      import Beacon.LiveAdmin.AdminComponents
-      import Beacon.LiveAdmin.Components, only: [template_error: 1]
 
       import Beacon.LiveAdmin.Router,
         only: [
@@ -71,6 +69,10 @@ defmodule Beacon.LiveAdmin.PageBuilder do
         ]
 
       import Phoenix.LiveView
+      import Beacon.LiveAdmin.AdminComponents
+      import Beacon.LiveAdmin.Components, only: [template_error: 1]
+      import LiveSvelte
+
       alias Phoenix.LiveView.JS
       alias Beacon.LiveAdmin.PageBuilder.Table
 

@@ -1,4 +1,4 @@
-name: Elixir CI
+name: CI
 
 on:
   push:
@@ -132,11 +132,13 @@ jobs:
         run: mix dialyzer --plt
         if: steps.cache-plt.outputs.cache-hit != 'true'
 
+      - run: mix assets.setup
+
       - run: mix tailwind.install
 
       - run: mix compile --warnings-as-errors
 
-      - run: mix format --check-formatted
+      - run: mix format.all.check
 
       - run: mix deps.unlock --check-unused
 
