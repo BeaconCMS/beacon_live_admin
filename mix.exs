@@ -11,12 +11,7 @@ defmodule Beacon.LiveAdmin.MixProject do
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
-      deps: deps(),
-      dialyzer: [
-        plt_file: {:no_warn, "priv/plts/dialyzer.plt"},
-        plt_add_apps: [:mix],
-        list_unused_filters: true
-      ]
+     deps: deps()
     ]
   end
 
@@ -44,8 +39,7 @@ defmodule Beacon.LiveAdmin.MixProject do
       {:tailwind, "~> 0.2"},
       {:gettext, "~> 0.20"},
       {:jason, "~> 1.0"},
-      {:plug_cowboy, "~> 2.5"},
-      {:dialyxir, "~> 1.2", only: :dev, runtime: false}
+      {:plug_cowboy, "~> 2.5"}
     ]
   end
 
