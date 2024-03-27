@@ -6,39 +6,6 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
   alias Beacon.LiveAdmin.WebAPI
   alias Ecto.Changeset
 
-  defp name(view_id) do
-    {:beacon_page_editor_live, view_id}
-  end
-
-  def whereis(view_id) do
-    name = name(view_id)
-
-    case :global.whereis_name(name) do
-      :undefined -> nil
-      pid -> pid
-    end
-  end
-
-  defp register do
-    view_id = System.unique_integer([:positive]) |> to_string()
-    name = name(view_id)
-
-    case :global.whereis_name(name) do
-      :undefined ->
-        :yes = :global.register_name(name, self())
-        view_id
-
-      _pid ->
-        view_id
-    end
-  end
-
-  @impl true
-  def mount(socket) do
-    view_id = register()
-    {:ok, assign(socket, view_id: view_id)}
-  end
-
   @impl true
   def update(%{site: site, page: page} = assigns, socket) do
     changeset =
@@ -268,8 +235,8 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
       <.header>
         <%= @page_title %>
         <:actions>
-          <.button :if={@editor == "code" && @page.format == :heex} type="button" phx-click="enable_editor" phx-value-editor="visual" class="uppercase">Visual Editor</.button>
-          <.button :if={@editor == "visual"} type="button" phx-click="enable_editor" phx-value-editor="code" class="uppercase">Code Editor</.button>
+          <.button :if={@live_action == :edit && @editor == "code" && @page.format == :heex} type="button" phx-click="enable_editor" phx-value-editor="visual" class="uppercase">Visual Editor</.button>
+          <.button :if={@live_action == :edit && @editor == "visual"} type="button" phx-click="enable_editor" phx-value-editor="code" class="uppercase">Code Editor</.button>
           <.button :if={@live_action == :new} phx-disable-with="Saving..." form="page-form" class="uppercase">Create Draft Page</.button>
           <.button :if={@live_action == :edit} phx-disable-with="Saving..." form="page-form" class="uppercase">Save Changes</.button>
           <.button :if={@live_action == :edit} phx-click={show_modal("publish-confirm-modal")} phx-target={@myself} class="uppercase">Publish</.button>
