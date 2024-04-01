@@ -123,8 +123,6 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.Index do
     end
   end
 
-  defp source_for(site, asset), do: MediaLibrary.url_for(site, asset)
-
   @impl true
   def render(assigns) do
     ~H"""
@@ -146,9 +144,9 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.Index do
       </div>
     </div>
 
-    <.main_content class="h-[calc(100vh_-_210px)]">
+    <.main_content>
       <.table id="assets" rows={@streams.assets} row_click={fn {_dom_id, asset} -> JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/media_library/#{asset.id}")) end}>
-        <:col :let={{_, asset}} label=""><Beacon.LiveAdmin.AdminComponents.thumbnail source={source_for(asset.site, asset.thumbnail)} /></:col>
+        <:col :let={{_, asset}} label=""><Beacon.LiveAdmin.AdminComponents.thumbnail source={MediaLibrary.url_for(asset.site, asset.thumbnail)} /></:col>
         <:col :let={{_, asset}} label="File Name"><%= asset.file_name %></:col>
         <:col :let={{_, asset}} label="type"><%= asset.media_type %></:col>
         <:action :let={{_, asset}}>
