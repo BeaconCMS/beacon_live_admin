@@ -136,10 +136,10 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.Index do
     </.header>
 
     <div class="flex justify-between">
-      <div class="basis-10/12">
+      <div class="basis-8/12">
         <.table_search table={@beacon_page.table} placeholder="Search by file name (showing up to 15 results)" />
       </div>
-      <div class="basis-1/12">
+      <div class="basis-2/12">
         <.table_sort table={@beacon_page.table} options={[{"File Name", "file_name"}, {"Type", "type"}]} />
       </div>
     </div>
