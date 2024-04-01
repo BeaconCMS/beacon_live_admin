@@ -119,9 +119,9 @@ jobs:
 
       - run: mix deps.get
 
-      - run: mix tailwind.install --no-assets
-
       - run: mix compile --warnings-as-errors
+
+      - run: mix assets.setup
 
       - run: mix format.all.check
 
