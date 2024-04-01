@@ -3878,7 +3878,6 @@ var BeaconLiveAdmin = (() => {
   var loader_default2 = loader2;
 
   // svelte/components/CodeEditor.svelte
-  var { console: console_1 } = globals;
   var file3 = "svelte/components/CodeEditor.svelte";
   function create_fragment3(ctx) {
     let div;
@@ -3894,7 +3893,7 @@ var BeaconLiveAdmin = (() => {
       },
       h: function hydrate() {
         attr_dev(div, "class", "w-52 h-24 py-0.5 px-0.5 bg-gray-100");
-        add_location(div, file3, 40, 0, 1711);
+        add_location(div, file3, 39, 0, 1662);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, div, anchor);
@@ -3976,13 +3975,13 @@ var BeaconLiveAdmin = (() => {
     });
     $$self.$$.on_mount.push(function() {
       if (value === void 0 && !("value" in $$props || $$self.$$.bound[$$self.$$.props["value"]])) {
-        console_1.warn("<CodeEditor> was created without expected prop 'value'");
+        console.warn("<CodeEditor> was created without expected prop 'value'");
       }
     });
     const writable_props = ["value"];
     Object.keys($$props).forEach((key) => {
       if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$" && key !== "slot")
-        console_1.warn(`<CodeEditor> was created with unknown prop '${key}'`);
+        console.warn(`<CodeEditor> was created with unknown prop '${key}'`);
     });
     function div_binding($$value) {
       binding_callbacks[$$value ? "unshift" : "push"](() => {
@@ -4028,7 +4027,6 @@ var BeaconLiveAdmin = (() => {
       2) {
         $: {
           if (editor) {
-            console.log("code editor value", value);
             editor.setValue(value);
           }
         }
@@ -7896,20 +7894,23 @@ var BeaconLiveAdmin = (() => {
   // svelte/stores/tailwindConfig.ts
   var tailwindConfig = writable();
 
+  // svelte/stores/tailwindInput.ts
+  var tailwindInput = writable();
+
   // svelte/components/PageWrapper.svelte
   var file8 = "svelte/components/PageWrapper.svelte";
   function add_css3(target) {
-    append_styles(target, "svelte-xbvayw", '[data-selected="true"], [data-highlighted="true"]{outline-color:#06b6d4;outline-width:2px;outline-style:dashed}:before, :after{pointer-events:none}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiUGFnZVdyYXBwZXIuc3ZlbHRlIiwibWFwcGluZ3MiOiJBQTREVSxpREFBbUQsQ0FDekQsYUFBYSxDQUFFLE9BQU8sQ0FDdEIsYUFBYSxDQUFFLEdBQUcsQ0FDbEIsYUFBYSxDQUFFLE1BQ2pCLENBRVEsZUFBaUIsQ0FDdkIsY0FBYyxDQUFFLElBQ2xCIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIlBhZ2VXcmFwcGVyLnN2ZWx0ZSJdfQ== */');
+    append_styles(target, "svelte-xbvayw", '[data-selected="true"], [data-highlighted="true"]{outline-color:#06b6d4;outline-width:2px;outline-style:dashed}:before, :after{pointer-events:none}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiUGFnZVdyYXBwZXIuc3ZlbHRlIiwibWFwcGluZ3MiOiJBQW1EVSxpREFBbUQsQ0FDekQsYUFBYSxDQUFFLE9BQU8sQ0FDdEIsYUFBYSxDQUFFLEdBQUcsQ0FDbEIsYUFBYSxDQUFFLE1BQ2pCLENBRVEsZUFBaUIsQ0FDdkIsY0FBYyxDQUFFLElBQ2xCIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIlBhZ2VXcmFwcGVyLnN2ZWx0ZSJdfQ== */');
   }
   function get_each_context4(ctx, list, i) {
     const child_ctx = ctx.slice();
-    child_ctx[11] = list[i];
+    child_ctx[12] = list[i];
     return child_ctx;
   }
   function get_each_context_12(ctx, list, i) {
     const child_ctx = ctx.slice();
-    child_ctx[14] = list[i];
-    child_ctx[16] = i;
+    child_ctx[15] = list[i];
+    child_ctx[17] = i;
     return child_ctx;
   }
   function create_each_block_12(ctx) {
@@ -7919,11 +7920,11 @@ var BeaconLiveAdmin = (() => {
       props: {
         node: (
           /*astNode*/
-          ctx[14]
+          ctx[15]
         ),
         nodeId: String(
           /*index*/
-          ctx[16]
+          ctx[17]
         )
       },
       $$inline: true
@@ -7944,7 +7945,7 @@ var BeaconLiveAdmin = (() => {
         if (dirty & /*$page*/
         4)
           pageastnode_changes.node = /*astNode*/
-          ctx2[14];
+          ctx2[15];
         pageastnode.$set(pageastnode_changes);
       },
       i: function intro(local) {
@@ -7965,7 +7966,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_each_block_12.name,
       type: "each",
-      source: "(52:6) {#each $page.ast as astNode, index}",
+      source: "(47:6) {#each $page.ast as astNode, index}",
       ctx
     });
     return block;
@@ -8059,7 +8060,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_default_slot2.name,
       type: "slot",
-      source: "(51:4) <LayoutAstNode node={layoutAstNode}>",
+      source: "(46:4) <LayoutAstNode node={layoutAstNode}>",
       ctx
     });
     return block;
@@ -8071,7 +8072,7 @@ var BeaconLiveAdmin = (() => {
       props: {
         node: (
           /*layoutAstNode*/
-          ctx[11]
+          ctx[12]
         ),
         $$slots: { default: [create_default_slot2] },
         $$scope: { ctx }
@@ -8094,9 +8095,9 @@ var BeaconLiveAdmin = (() => {
         if (dirty & /*$page*/
         4)
           layoutastnode_changes.node = /*layoutAstNode*/
-          ctx2[11];
+          ctx2[12];
         if (dirty & /*$$scope, $page*/
-        131076) {
+        262148) {
           layoutastnode_changes.$$scope = { dirty, ctx: ctx2 };
         }
         layoutastnode.$set(layoutastnode_changes);
@@ -8119,7 +8120,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_each_block4.name,
       type: "each",
-      source: "(50:2) {#each $page.layout.ast as layoutAstNode}",
+      source: "(45:2) {#each $page.layout.ast as layoutAstNode}",
       ctx
     });
     return block;
@@ -8163,8 +8164,8 @@ var BeaconLiveAdmin = (() => {
         this.h();
       },
       h: function hydrate() {
-        add_location(span, file8, 48, 0, 2293);
-        add_location(div, file8, 49, 0, 2332);
+        add_location(span, file8, 39, 0, 2267);
+        add_location(div, file8, 40, 0, 2306);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, span, anchor);
@@ -8242,10 +8243,13 @@ var BeaconLiveAdmin = (() => {
     return block;
   }
   function instance8($$self, $$props, $$invalidate) {
+    let $tailwindInput;
     let $tailwindConfig;
     let $page;
+    validate_store(tailwindInput, "tailwindInput");
+    component_subscribe($$self, tailwindInput, ($$value) => $$invalidate(5, $tailwindInput = $$value));
     validate_store(tailwindConfig, "tailwindConfig");
-    component_subscribe($$self, tailwindConfig, ($$value) => $$invalidate(5, $tailwindConfig = $$value));
+    component_subscribe($$self, tailwindConfig, ($$value) => $$invalidate(6, $tailwindConfig = $$value));
     validate_store(page, "page");
     component_subscribe($$self, page, ($$value) => $$invalidate(2, $page = $$value));
     let { $$slots: slots = {}, $$scope } = $$props;
@@ -8288,14 +8292,7 @@ var BeaconLiveAdmin = (() => {
       const tailwind = window.createTailwindcss({ tailwindConfig: tailwindConfig2 });
       const reloadStylesheet = () => __awaiter(void 0, void 0, void 0, function* () {
         const content = wrapper.outerHTML;
-        const css = yield tailwind.generateStylesFromContent(
-          `
-      @tailwind base;
-      @tailwind components;
-      @tailwind utilities;
-      `,
-          [content]
-        );
+        const css = yield tailwind.generateStylesFromContent($tailwindInput, [content]);
         let styleEl = document.createElement("style");
         styleEl.textContent = css;
         styleWrapper.appendChild(styleEl);
@@ -8330,6 +8327,7 @@ var BeaconLiveAdmin = (() => {
       PageAstNode: PageAstNode_default,
       page,
       tailwindConfig,
+      tailwindInput,
       onMount,
       tick,
       tailwindJitPromise,
@@ -8338,6 +8336,7 @@ var BeaconLiveAdmin = (() => {
       twConfig,
       b64moduleData,
       configPromise,
+      $tailwindInput,
       $tailwindConfig,
       $page
     });
@@ -12402,7 +12401,7 @@ var BeaconLiveAdmin = (() => {
     propertiessidebar.$on(
       "droppedIntoTarget",
       /*droppedIntoTarget_handler*/
-      ctx[4]
+      ctx[5]
     );
     const block = {
       c: function create3() {
@@ -12432,7 +12431,7 @@ var BeaconLiveAdmin = (() => {
       h: function hydrate() {
         attr_dev(div, "class", "flex min-h-screen bg-gray-100");
         attr_dev(div, "data-test-id", "app-container");
-        add_location(div, file12, 22, 0, 618);
+        add_location(div, file12, 25, 0, 765);
       },
       m: function mount(target, anchor) {
         mount_component(backdrop, target, anchor);
@@ -12504,17 +12503,21 @@ var BeaconLiveAdmin = (() => {
   function addBasicComponentToTarget(e) {
   }
   function instance12($$self, $$props, $$invalidate) {
+    let $tailwindInputStore;
     let $tailwindConfigStore;
     let $pageStore;
+    validate_store(tailwindInput, "tailwindInputStore");
+    component_subscribe($$self, tailwindInput, ($$value) => $$invalidate(6, $tailwindInputStore = $$value));
     validate_store(tailwindConfig, "tailwindConfigStore");
-    component_subscribe($$self, tailwindConfig, ($$value) => $$invalidate(5, $tailwindConfigStore = $$value));
+    component_subscribe($$self, tailwindConfig, ($$value) => $$invalidate(7, $tailwindConfigStore = $$value));
     validate_store(page, "pageStore");
-    component_subscribe($$self, page, ($$value) => $$invalidate(6, $pageStore = $$value));
+    component_subscribe($$self, page, ($$value) => $$invalidate(8, $pageStore = $$value));
     let { $$slots: slots = {}, $$scope } = $$props;
     validate_slots("UiBuilder", slots, []);
     let { components } = $$props;
     let { page: page2 } = $$props;
     let { tailwindConfig: tailwindConfig2 } = $$props;
+    let { tailwindInput: tailwindInput2 } = $$props;
     let { live } = $$props;
     $$self.$$.on_mount.push(function() {
       if (components === void 0 && !("components" in $$props || $$self.$$.bound[$$self.$$.props["components"]])) {
@@ -12526,11 +12529,14 @@ var BeaconLiveAdmin = (() => {
       if (tailwindConfig2 === void 0 && !("tailwindConfig" in $$props || $$self.$$.bound[$$self.$$.props["tailwindConfig"]])) {
         console.warn("<UiBuilder> was created without expected prop 'tailwindConfig'");
       }
+      if (tailwindInput2 === void 0 && !("tailwindInput" in $$props || $$self.$$.bound[$$self.$$.props["tailwindInput"]])) {
+        console.warn("<UiBuilder> was created without expected prop 'tailwindInput'");
+      }
       if (live === void 0 && !("live" in $$props || $$self.$$.bound[$$self.$$.props["live"]])) {
         console.warn("<UiBuilder> was created without expected prop 'live'");
       }
     });
-    const writable_props = ["components", "page", "tailwindConfig", "live"];
+    const writable_props = ["components", "page", "tailwindConfig", "tailwindInput", "live"];
     Object.keys($$props).forEach((key) => {
       if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$" && key !== "slot")
         console.warn(`<UiBuilder> was created with unknown prop '${key}'`);
@@ -12543,6 +12549,8 @@ var BeaconLiveAdmin = (() => {
         $$invalidate(2, page2 = $$props2.page);
       if ("tailwindConfig" in $$props2)
         $$invalidate(3, tailwindConfig2 = $$props2.tailwindConfig);
+      if ("tailwindInput" in $$props2)
+        $$invalidate(4, tailwindInput2 = $$props2.tailwindInput);
       if ("live" in $$props2)
         $$invalidate(1, live = $$props2.live);
     };
@@ -12553,11 +12561,14 @@ var BeaconLiveAdmin = (() => {
       PropertiesSidebar: PropertiesSidebar_default,
       pageStore: page,
       tailwindConfigStore: tailwindConfig,
+      tailwindInputStore: tailwindInput,
       components,
       page: page2,
       tailwindConfig: tailwindConfig2,
+      tailwindInput: tailwindInput2,
       live,
       addBasicComponentToTarget,
+      $tailwindInputStore,
       $tailwindConfigStore,
       $pageStore
     });
@@ -12568,6 +12579,8 @@ var BeaconLiveAdmin = (() => {
         $$invalidate(2, page2 = $$props2.page);
       if ("tailwindConfig" in $$props2)
         $$invalidate(3, tailwindConfig2 = $$props2.tailwindConfig);
+      if ("tailwindInput" in $$props2)
+        $$invalidate(4, tailwindInput2 = $$props2.tailwindInput);
       if ("live" in $$props2)
         $$invalidate(1, live = $$props2.live);
     };
@@ -12585,8 +12598,20 @@ var BeaconLiveAdmin = (() => {
         $:
           set_store_value(tailwindConfig, $tailwindConfigStore = tailwindConfig2, $tailwindConfigStore);
       }
+      if ($$self.$$.dirty & /*tailwindInput*/
+      16) {
+        $:
+          set_store_value(tailwindInput, $tailwindInputStore = tailwindInput2, $tailwindInputStore);
+      }
     };
-    return [components, live, page2, tailwindConfig2, droppedIntoTarget_handler];
+    return [
+      components,
+      live,
+      page2,
+      tailwindConfig2,
+      tailwindInput2,
+      droppedIntoTarget_handler
+    ];
   }
   var UiBuilder = class extends SvelteComponentDev {
     constructor(options) {
@@ -12595,6 +12620,7 @@ var BeaconLiveAdmin = (() => {
         components: 0,
         page: 2,
         tailwindConfig: 3,
+        tailwindInput: 4,
         live: 1
       });
       dispatch_dev("SvelteRegisterComponent", {
@@ -12625,6 +12651,13 @@ var BeaconLiveAdmin = (() => {
       this.$$set({ tailwindConfig: tailwindConfig2 });
       flush();
     }
+    get tailwindInput() {
+      return this.$$.ctx[4];
+    }
+    set tailwindInput(tailwindInput2) {
+      this.$$set({ tailwindInput: tailwindInput2 });
+      flush();
+    }
     get live() {
       return this.$$.ctx[1];
     }
@@ -12633,7 +12666,7 @@ var BeaconLiveAdmin = (() => {
       flush();
     }
   };
-  create_custom_element(UiBuilder, { "components": {}, "page": {}, "tailwindConfig": {}, "live": {} }, [], [], true);
+  create_custom_element(UiBuilder, { "components": {}, "page": {}, "tailwindConfig": {}, "tailwindInput": {}, "live": {} }, [], [], true);
   var UiBuilder_default = UiBuilder;
 
   // import-glob:../svelte/**/*.svelte
