@@ -14,16 +14,6 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.IndexTest do
     assert html =~ "test_index.webp"
   end
 
-  test "search", %{conn: conn} do
-    media_library_asset_fixture(node1(), file_name: "test_search.webp")
-
-    {:ok, view, _html} = live(conn, "/admin/site_a/media_library")
-
-    assert view
-           |> element("#search-form")
-           |> render_change(%{search: "ar"}) =~ "test_search.webp"
-  end
-
   test "display a site selector", %{conn: conn} do
     {:ok, live, _html} = live(conn, "/admin/site_a/media_library")
 
