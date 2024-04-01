@@ -207,7 +207,7 @@ defmodule Beacon.LiveAdmin.ErrorPageEditorLive.Index do
         </:actions>
       </.header>
 
-      <.main_content class="h-[calc(100vh_-_223px)]">
+      <.main_content>
         <.modal :if={@show_nav_modal} id="confirm-nav" on_cancel={JS.push("stay_here")} show>
           <p>You've made unsaved changes to this error page!</p>
           <p>Navigating to another error page without saving will cause these changes to be lost.</p>

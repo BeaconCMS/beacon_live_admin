@@ -1,0 +1,319 @@
+defmodule Beacon.LiveAdmin.LiveDataEditorLive.Assigns do
+  @moduledoc false
+  use Beacon.LiveAdmin.PageBuilder
+
+  alias Beacon.LiveAdmin.Content
+
+  def menu_link("/live_data", :assigns), do: {:submenu, "Live Data"}
+  def menu_link(_, _), do: :skip
+
+  def handle_params(params, _url, socket) do
+    path = URI.decode_www_form(params["path"])
+
+    socket =
+      socket
+      |> assign(live_data: Content.get_live_data(socket.assigns.beacon_page.site, path))
+      |> assign(unsaved_changes: false)
+      |> assign(show_nav_modal: false)
+      |> assign(show_create_modal: false)
+      |> assign(show_delete_modal: false)
+      |> assign(new_assign_form: to_form(%{"key" => ""}))
+      |> assign(page_title: "Live Data")
+      |> assign_selected(params["key"])
+      |> assign_form()
+
+    {:noreply, socket}
+  end
+
+  def handle_event("select-" <> key, _, socket) do
+    %{live_data: %{site: site, path: path}} = socket.assigns
+
+    path =
+      beacon_live_admin_path(
+        socket,
+        site,
+        "/live_data/#{sanitize(path)}/#{sanitize(key)}"
+      )
+
+    if socket.assigns.unsaved_changes do
+      {:noreply, assign(socket, show_nav_modal: true, confirm_nav_path: path)}
+    else
+      {:noreply, push_redirect(socket, to: path)}
+    end
+  end
+
+  def handle_event("live_data_assign_editor_lost_focus", %{"value" => value}, socket) do
+    %{selected: selected, live_data: %{site: site}, form: form} = socket.assigns
+
+    changeset =
+      site
+      |> Content.change_live_data_assign(selected, %{
+        "value" => value,
+        "key" => form.params["key"] || Map.fetch!(form.data, :key),
+        "format" => form.params["format"] || Map.fetch!(form.data, :format)
+      })
+      |> Map.put(:action, :validate)
+
+    socket =
+      socket
+      |> assign(form: to_form(changeset))
+      |> assign(changed_value: value)
+      |> assign(unsaved_changes: !(changeset.changes == %{}))
+
+    {:noreply, socket}
+  end
+
+  def handle_event("validate", %{"live_data_assign" => params}, socket) do
+    %{selected: selected, live_data: %{site: site}} = socket.assigns
+
+    changeset =
+      site
+      |> Content.change_live_data_assign(selected, params)
+      |> Map.put(:action, :validate)
+
+    socket =
+      socket
+      |> assign(form: to_form(changeset))
+      |> assign(unsaved_changes: !(changeset.changes == %{}))
+
+    {:noreply, socket}
+  end
+
+  def handle_event("set_value", %{"value" => value}, socket) do
+    %{selected: selected, beacon_page: %{site: site}, form: form} = socket.assigns
+
+    params = Map.merge(form.params, %{"value" => value})
+    changeset = Content.change_live_data_assign(site, selected, params)
+
+    socket =
+      socket
+      |> assign_form(changeset)
+      |> assign(unsaved_changes: !(changeset.changes == %{}))
+
+    {:noreply, socket}
+  end
+
+  def handle_event("save_changes", %{"live_data_assign" => params}, socket) do
+    %{selected: selected, live_data: %{site: site, path: live_data_path}} = socket.assigns
+
+    attrs = %{key: params["key"], value: params["value"], format: params["format"]}
+
+    socket =
+      case Content.update_live_data_assign(site, selected, attrs) do
+        {:ok, live_data_assign} ->
+          path =
+            beacon_live_admin_path(
+              socket,
+              site,
+              "/live_data/#{sanitize(live_data_path)}/#{sanitize(live_data_assign.key)}"
+            )
+
+          socket
+          |> assign(live_data: Content.get_live_data(site, live_data_path))
+          |> assign_form()
+          |> assign(unsaved_changes: false)
+          |> push_patch(to: path)
+
+        {:error, changeset} ->
+          changeset = Map.put(changeset, :action, :update)
+          assign(socket, form: to_form(changeset))
+      end
+
+    {:noreply, socket}
+  end
+
+  def handle_event("show_create_modal", _params, socket) do
+    {:noreply, assign(socket, show_create_modal: true)}
+  end
+
+  def handle_event("submit_new", params, socket) do
+    %{live_data: %{site: site} = live_data, selected: selected} = socket.assigns
+    selected = selected || %{key: nil}
+
+    attrs = %{key: params["key"], value: "Your value here", format: :text}
+    # TODO: handle errors
+    {:ok, updated_live_data} = Content.create_assign_for_live_data(site, live_data, attrs)
+
+    socket =
+      socket
+      |> assign(live_data: updated_live_data)
+      |> assign_selected(selected.key)
+
+    {:noreply, assign(socket, show_create_modal: false)}
+  end
+
+  def handle_event("delete", _, socket) do
+    {:noreply, assign(socket, show_delete_modal: true)}
+  end
+
+  def handle_event("delete_confirm", _, socket) do
+    %{selected: selected, live_data: %{site: site, path: path}} = socket.assigns
+
+    {:ok, _} = Content.delete_live_data_assign(site, selected)
+
+    {:noreply,
+     push_redirect(socket,
+       to: beacon_live_admin_path(socket, site, "/live_data/#{sanitize(path)}")
+     )}
+  end
+
+  def handle_event("create_cancel", _, socket) do
+    {:noreply, assign(socket, show_create_modal: false)}
+  end
+
+  def handle_event("delete_cancel", _, socket) do
+    {:noreply, assign(socket, show_delete_modal: false)}
+  end
+
+  def handle_event("stay_here", _params, socket) do
+    {:noreply, assign(socket, show_nav_modal: false, confirm_nav_path: nil)}
+  end
+
+  def handle_event("discard_changes", _params, socket) do
+    {:noreply, push_redirect(socket, to: socket.assigns.confirm_nav_path)}
+  end
+
+  def render(assigns) do
+    ~H"""
+    <div>
+      <.header>
+        <%= @page_title %>
+        <:actions>
+          <.button type="button" phx-click="show_create_modal">New Live Data Assign</.button>
+        </:actions>
+      </.header>
+      <.main_content>
+        <.modal :if={@show_nav_modal} id="confirm-nav" on_cancel={JS.push("stay_here")} show>
+          <p>You've made unsaved changes to this assign!</p>
+          <p>Navigating to another assign without saving will cause these changes to be lost.</p>
+          <.button type="button" phx-click="stay_here">
+            Stay here
+          </.button>
+          <.button type="button" phx-click="discard_changes">
+            Discard changes
+          </.button>
+        </.modal>
+
+        <.modal :if={@show_delete_modal} id="confirm-delete" on_cancel={JS.push("delete_cancel")} show>
+          <p class="mb-2">Are you sure you want to delete this assign?</p>
+          <div class="flex justify-end w-full gap-4 mt-10">
+            <.button id="delete-confirm" type="button" phx-click="delete_confirm">
+              Delete
+            </.button>
+            <.button type="button" phx-click="delete_cancel">
+              Cancel
+            </.button>
+          </div>
+        </.modal>
+
+        <.modal :if={@show_create_modal} id="create-modal" on_cancel={JS.push("create_cancel")} show>
+          <p class="text-2xl font-bold mb-12">New Assign</p>
+          <.form id="new-assign-form" for={@new_assign_form} phx-submit="submit_new">
+            <.input type="text" field={@new_assign_form[:key]} placeholder="assign_key" />
+            <div class="flex mt-8 gap-x-[20px]">
+              <.button type="submit">Create</.button>
+              <.button type="button" phx-click={JS.push("create_cancel")}>Cancel</.button>
+            </div>
+          </.form>
+        </.modal>
+
+        <div class="grid items-start grid-cols-1 grid-rows-1 mx-auto gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
+          <div class="h-full lg:overflow-y-auto pb-4 lg:h-[calc(100vh_-_239px)]">
+            <div class="text-xl flex gap-x-6">
+              <div>Path:</div>
+              <div><%= @live_data.path %></div>
+            </div>
+            <.table :if={@selected} id="assigns" rows={@live_data.assigns} row_click={fn assign -> "select-#{assign.key}" end}>
+              <:col :let={assign} label="assign">
+                @<%= assign.key %>
+              </:col>
+            </.table>
+          </div>
+
+          <div :if={@form} class="w-full col-span-2">
+            <.form :let={f} id="edit-assign-form" for={@form} class="flex items-end gap-4" phx-change="validate" phx-submit="save_changes">
+              <.input label="Key" field={f[:key]} type="text" />
+              <.input label="Format" field={f[:format]} type="select" options={["elixir", "text"]} />
+              <input type="hidden" name="live_data_assign[value]" id="live_data_assign-form_value" value={Phoenix.HTML.Form.input_value(f, :value)} />
+
+              <.button phx-disable-with="Saving..." class="ml-auto">Save Changes</.button>
+              <.button type="button" phx-click="delete" class="">Delete</.button>
+            </.form>
+            <div :if={@form[:format].value in [:elixir, "elixir"]} class="mt-4 flex gap-x-4">
+              <div>Variables available:</div>
+              <div><%= variables_available(@live_data.path) %></div>
+            </div>
+            <%= template_error(@form[:value]) %>
+            <div class="w-full mt-10 space-y-8">
+              <div class="py-6 rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
+                <LiveMonacoEditor.code_editor
+                  path="live_data_assign"
+                  class="col-span-full lg:col-span-2"
+                  value={@selected.value}
+                  change="set_value"
+                  opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => "elixir"})}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </.main_content>
+    </div>
+    """
+  end
+
+  defp assign_selected(socket, nil) do
+    case socket.assigns.live_data.assigns do
+      [] ->
+        assign(socket, selected: nil, changed_value: "")
+
+      [live_data_assign | _] ->
+        assign(socket, selected: live_data_assign, changed_value: live_data_assign.value)
+    end
+  end
+
+  defp assign_selected(socket, key) do
+    key = URI.decode_www_form(key)
+    selected = Enum.find(socket.assigns.live_data.assigns, &(&1.key == key))
+
+    if selected do
+      assign(socket, selected: selected, changed_value: selected.value)
+    else
+      path = beacon_live_admin_path(socket, socket.assigns.beacon_page.site, "/live_data")
+
+      socket
+      |> assign(selected: nil)
+      |> push_navigate(to: path, replace: true)
+    end
+  end
+
+  defp assign_form(socket) do
+    form =
+      case socket.assigns do
+        %{selected: nil} ->
+          nil
+
+        %{selected: selected, live_data: %{site: site}} ->
+          site
+          |> Content.change_live_data_assign(selected)
+          |> to_form()
+      end
+
+    assign(socket, form: form)
+  end
+
+  defp assign_form(socket, changeset) do
+    assign(socket, :form, to_form(changeset))
+  end
+
+  defp sanitize(path_or_key), do: URI.encode_www_form(path_or_key)
+
+  defp variables_available(path) do
+    path
+    |> String.split("/", trim: true)
+    |> Enum.filter(&String.starts_with?(&1, ":"))
+    |> Enum.map(fn ":" <> param -> param end)
+    |> Kernel.++(["params"])
+    |> Enum.join(" ")
+  end
+end

@@ -3,28 +3,83 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
 
   alias Beacon.LiveAdmin.Config
   alias Beacon.LiveAdmin.Content
+  alias Beacon.LiveAdmin.RuntimeCSS
+  alias Beacon.LiveAdmin.WebAPI
+  alias Ecto.Changeset
 
   @impl true
   def update(%{site: site, page: page} = assigns, socket) do
-    changeset = Content.change_page(site, page)
-    layouts = Content.list_layouts(site)
+    changeset =
+      case socket.assigns do
+        %{form: form} ->
+          Content.change_page(site, page, form.params)
+
+        _ ->
+          Content.change_page(site, page)
+      end
 
     {:ok,
      socket
      |> assign(assigns)
      |> assign_form(changeset)
-     |> assign(:layouts, layouts)
+     |> maybe_assign_builder_page(changeset)
      |> assign(:language, language(page.format))
-     |> assign_extra_fields(changeset)}
+     |> assign_extra_fields(changeset)
+     |> assign_new(:tailwind_config, fn -> RuntimeCSS.config(site) end)
+     |> assign_new(:tailwind_input, fn ->
+       tailwind = [
+         "@tailwind base;",
+         "\n",
+         "@tailwind components;",
+         "\n",
+         "@tailwind utilities;",
+         "\n"
+       ]
+
+       site =
+         site
+         |> Content.list_stylesheets()
+         |> Enum.map(fn stylesheet ->
+           ["\n", "/* ", stylesheet.name, " */", "\n", stylesheet.content, "\n"]
+         end)
+
+       IO.iodata_to_binary(tailwind ++ site)
+     end)}
   end
 
-  def update(%{template: value}, socket) do
-    params = Map.merge(socket.assigns.form.params, %{"template" => value})
+  def update(%{template: _template}, %{assigns: %{editor: "visual"}} = socket) do
+    {:ok, socket}
+  end
+
+  def update(%{template: template}, %{assigns: %{editor: "code"}} = socket) do
+    params = Map.merge(socket.assigns.form.params, %{"template" => template})
     changeset = Content.change_page(socket.assigns.site, socket.assigns.page, params)
+
     {:ok, assign_form(socket, changeset)}
   end
 
+  def update(%{ast: _ast}, %{assigns: %{editor: "code"}} = socket) do
+    {:ok, socket}
+  end
+
+  def update(%{ast: ast}, %{assigns: %{editor: "visual"}} = socket) do
+    template = Beacon.Template.HEEx.HEExDecoder.decode(ast)
+    params = Map.merge(socket.assigns.form.params, %{"template" => template})
+    changeset = Content.change_page(socket.assigns.site, socket.assigns.page, params)
+
+    {:ok,
+     socket
+     |> LiveMonacoEditor.set_value(template, to: "template")
+     |> assign_form(changeset)
+     |> maybe_assign_builder_page(changeset)}
+  end
+
   @impl true
+  # ignore change events from the editor field
+  def handle_event("validate", %{"_target" => ["live_monaco_editor", "template"]}, socket) do
+    {:noreply, socket}
+  end
+
   def handle_event(
         "validate",
         %{"_target" => ["page", "format"], "page" => page_params},
@@ -38,7 +93,10 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
       |> Content.validate_page(socket.assigns.page, page_params)
       |> Map.put(:action, :validate)
 
-    {:noreply, assign_form(socket, changeset)}
+    {:noreply,
+     socket
+     |> assign_form(changeset)
+     |> maybe_assign_builder_page(changeset)}
   end
 
   def handle_event("validate", %{"page" => page_params}, socket) do
@@ -50,6 +108,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
     {:noreply,
      socket
      |> assign_form(changeset)
+     |> maybe_assign_builder_page(changeset)
      |> assign_extra_fields(changeset)}
   end
 
@@ -82,7 +141,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
         {:noreply,
          socket
          |> put_flash(:info, "Page created successfully")
-         |> push_patch(to: to)}
+         |> push_navigate(to: to)}
 
       {:error, changeset} ->
         changeset = Map.put(changeset, :action, :insert)
@@ -112,78 +171,19 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
     assign(socket, :form, to_form(changeset))
   end
 
-  @impl true
-  def render(assigns) do
-    ~H"""
-    <div>
-      <Beacon.LiveAdmin.AdminComponents.page_header socket={@socket} flash={@flash} page={@page} live_action={@live_action} />
-
-      <.header>
-        <%= @page_title %>
-        <:actions>
-          <.button :if={@live_action == :new} phx-disable-with="Saving..." form="page-form" class="uppercase">Create Draft Page</.button>
-          <.button :if={@live_action == :edit} phx-disable-with="Saving..." form="page-form" class="uppercase">Save Changes</.button>
-          <.button :if={@live_action == :edit} phx-click={show_modal("publish-confirm-modal")} phx-target={@myself} class="uppercase">Publish</.button>
-        </:actions>
-      </.header>
-
-      <.modal id="publish-confirm-modal">
-        <h3 class="text-base font-semibold leading-6 text-gray-900" id="modal-title">Publish Page</h3>
-        <div class="mt-2">
-          <p class="text-sm text-gray-500">Are you sure you want to publish this page and make it public? Please make sure all changes were saved before publishing it.</p>
-        </div>
-        <div class="py-4">
-          <button
-            type="button"
-            class="inline-flex justify-center w-full px-3 py-2 mt-3 text-sm font-semibold text-gray-900 bg-white rounded-md shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
-            phx-click={JS.exec("data-cancel", to: "#publish-confirm-modal")}
-          >
-            Cancel
-          </button>
-          <button
-            type="button"
-            class="inline-flex justify-center w-full px-3 py-2 text-sm font-semibold text-white bg-blue-600 rounded-md shadow-sm hover:bg-blue-500 sm:w-auto"
-            phx-click="publish"
-            phx-value-id={@page.id}
-            phx-target={@myself}
-          >
-            Confirm
-          </button>
-        </div>
-      </.modal>
-
-      <div class="grid items-start lg:h-[calc(100vh_-_144px)] grid-cols-1 mx-auto mt-4 gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
-        <div class="p-4 bg-white col-span-full lg:col-span-1 rounded-[1.25rem] lg:rounded-t-[1.25rem] lg:rounded-b-none lg:h-full">
-          <.form :let={f} for={@form} id="page-form" class="space-y-8" phx-target={@myself} phx-change="validate" phx-submit="save">
-            <legend class="text-sm font-bold tracking-widest text-[#445668] uppercase">Page settings</legend>
-            <.input field={f[:path]} type="text" label="Path" class="!text-red-500" />
-            <.input field={f[:title]} type="text" label="Title" />
-            <.input field={f[:description]} type="textarea" label="Description" />
-            <.input field={f[:layout_id]} type="select" options={layouts_to_options(@layouts)} label="Layout" />
-            <.input field={f[:format]} type="select" label="Format" options={template_format_options(@site)} />
-            <input type="hidden" name="page[template]" id="page-form_template" value={Phoenix.HTML.Form.input_value(f, :template)} />
-
-            <%= for mod <- extra_page_fields(@site) do %>
-              <%= extra_page_field(@site, @extra_fields, mod) %>
-            <% end %>
-          </.form>
-        </div>
-        <div class="col-span-full lg:col-span-2">
-          <%= template_error(@form[:template]) %>
-          <div class="py-6 w-full rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
-            <LiveMonacoEditor.code_editor
-              path="template"
-              class="col-span-full lg:col-span-2"
-              value={Phoenix.HTML.Form.input_value(@form, :template)}
-              change="set_template"
-              opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => @language})}
-            />
-          </div>
-        </div>
-      </div>
-    </div>
-    """
+  defp maybe_assign_builder_page(%{assigns: %{editor: "visual"}} = socket, changeset) do
+    with :heex <- Changeset.get_field(changeset, :format),
+         {:ok, page} <- Changeset.apply_action(changeset, :update),
+         %{data: builder_page} <- WebAPI.Page.show(page.site, page) do
+      assign(socket, :builder_page, builder_page)
+    else
+      # TODO: handle errors
+      _ ->
+        assign(socket, :builder_page, nil)
+    end
   end
+
+  defp maybe_assign_builder_page(socket, _changeset), do: assign(socket, :builder_page, nil)
 
   defp assign_extra_fields(socket, changeset) do
     params = Ecto.Changeset.get_field(changeset, :extra)
@@ -218,9 +218,105 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
   defp extra_page_fields(site), do: Config.extra_page_fields(site)
 
   defp extra_page_field(site, extra_fields, mod) do
-    env = __ENV__
     name = Content.page_field_name(site, mod)
-    html = Content.render_page_field(site, mod, extra_fields[name], env)
+    html = Content.render_page_field(site, mod, extra_fields[name], __ENV__)
     {:safe, html}
+  end
+
+  defp svelte_page_builder_class("code" = _editor), do: "hidden"
+  defp svelte_page_builder_class("visual" = _editor), do: "mt-4 relative"
+
+  @impl true
+  @spec render(any()) :: Phoenix.LiveView.Rendered.t()
+  def render(assigns) do
+    ~H"""
+    <div>
+      <Beacon.LiveAdmin.AdminComponents.page_header socket={@socket} flash={@flash} page={@page} live_action={@live_action} />
+
+      <.header>
+        <%= @page_title %>
+        <:actions>
+          <.button :if={@live_action == :edit && @editor == "code" && @page.format == :heex} type="button" phx-click="enable_editor" phx-value-editor="visual" class="uppercase">Visual Editor</.button>
+          <.button :if={@live_action == :edit && @editor == "visual"} type="button" phx-click="enable_editor" phx-value-editor="code" class="uppercase">Code Editor</.button>
+          <.button :if={@live_action == :new} phx-disable-with="Saving..." form="page-form" class="uppercase">Create Draft Page</.button>
+          <.button :if={@live_action == :edit} phx-disable-with="Saving..." form="page-form" class="uppercase">Save Changes</.button>
+          <.button :if={@live_action == :edit} phx-click={show_modal("publish-confirm-modal")} phx-target={@myself} class="uppercase">Publish</.button>
+        </:actions>
+      </.header>
+
+      <.modal id="publish-confirm-modal">
+        <h3 class="text-base font-semibold leading-6 text-gray-900" id="modal-title">Publish Page</h3>
+        <div class="mt-2">
+          <p class="text-sm text-gray-500">Are you sure you want to publish this page and make it public? Please make sure all changes were saved before publishing it.</p>
+        </div>
+        <div class="py-4">
+          <button
+            type="button"
+            class="inline-flex justify-center w-full px-3 py-2 mt-3 text-sm font-semibold text-gray-900 bg-white rounded-md shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+            phx-click={JS.exec("data-cancel", to: "#publish-confirm-modal")}
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            class="inline-flex justify-center w-full px-3 py-2 text-sm font-semibold text-white bg-blue-600 rounded-md shadow-sm hover:bg-blue-500 sm:w-auto"
+            phx-click="publish"
+            phx-value-id={@page.id}
+            phx-target={@myself}
+          >
+            Confirm
+          </button>
+        </div>
+      </.modal>
+
+      <.svelte
+        :if={@editor == "visual"}
+        name="components/UiBuilder"
+        class={svelte_page_builder_class(@editor)}
+        props={
+          %{
+            components: @components,
+            page: @builder_page,
+            tailwindConfig: @tailwind_config,
+            tailwindInput: @tailwind_input
+          }
+        }
+        socket={@socket}
+      />
+
+      <div class={[
+        "grid items-start lg:h-[calc(100vh_-_144px)] grid-cols-1 mx-auto mt-4 gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3",
+        if(@editor == "visual", do: "hidden")
+      ]}>
+        <div class="p-4 bg-white col-span-full lg:col-span-1 rounded-[1.25rem] lg:rounded-t-[1.25rem] lg:rounded-b-none lg:h-full">
+          <.form :let={f} for={@form} id="page-form" class="space-y-8" phx-target={@myself} phx-change="validate" phx-submit="save">
+            <legend class="text-sm font-bold tracking-widest text-[#445668] uppercase">Page settings</legend>
+            <.input field={f[:path]} type="text" label="Path" class="!text-red-500" />
+            <.input field={f[:title]} type="text" label="Title" />
+            <.input field={f[:description]} type="textarea" label="Description" />
+            <.input field={f[:layout_id]} type="select" options={layouts_to_options(@layouts)} label="Layout" />
+            <.input field={f[:format]} type="select" label="Format" options={template_format_options(@site)} />
+            <.input field={f[:template]} type="hidden" name="page[template]" id="page-form_template" value={Phoenix.HTML.Form.input_value(f, :template)} />
+
+            <%= for mod <- extra_page_fields(@site) do %>
+              <%= extra_page_field(@site, @extra_fields, mod) %>
+            <% end %>
+          </.form>
+        </div>
+        <div class="col-span-full lg:col-span-2">
+          <%= template_error(@form[:template]) %>
+          <div class="py-6 w-full rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
+            <LiveMonacoEditor.code_editor
+              path="template"
+              class="col-span-full lg:col-span-2"
+              value={@form[:template].value}
+              opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => @language})}
+              change="set_template"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+    """
   end
 end

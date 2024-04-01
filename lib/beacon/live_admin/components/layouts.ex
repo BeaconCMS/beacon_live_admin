@@ -1,4 +1,6 @@
 defmodule Beacon.LiveAdmin.Layouts do
+  @moduledoc false
+
   use Beacon.LiveAdmin.Web, :html
 
   embed_templates "layouts/*"
