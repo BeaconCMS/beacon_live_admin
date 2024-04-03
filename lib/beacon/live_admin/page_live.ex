@@ -8,7 +8,6 @@ defmodule Beacon.LiveAdmin.PageLive do
 
   use Beacon.LiveAdmin.Web, :live_view
   require Logger
-  alias Beacon.LiveAdmin.Cluster
   alias Beacon.LiveAdmin.PageBuilder.Menu
   alias Beacon.LiveAdmin.PageBuilder.Page
   alias Beacon.LiveAdmin.PageBuilder.Table
@@ -23,8 +22,6 @@ defmodule Beacon.LiveAdmin.PageLive do
       # TODO: pubsub cluster
       # TODO: nodedow -> notify/alert user
     end
-
-    Cluster.maybe_discover_sites()
 
     sites = Beacon.LiveAdmin.Cluster.running_sites()
 

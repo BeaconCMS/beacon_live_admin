@@ -3,17 +3,15 @@ defmodule Beacon.LiveAdmin.ClusterTest do
 
   alias Beacon.LiveAdmin.Cluster
 
-  test "group_sites" do
-    mapping = %{
-      node_a: [:site_1, :site_2],
-      node_b: [],
-      node_c: [:site_1, :site_3]
-    }
+  test "running_sites" do
+    assert Enum.sort(Cluster.running_sites()) == [:site_a, :site_b, :site_c]
+  end
 
-    assert Cluster.group_sites(mapping) == %{
-             site_1: [:node_a, :node_c],
-             site_2: [:node_a],
-             site_3: [:node_c]
-           }
+  test "find nodes" do
+    assert Enum.sort(Cluster.find_nodes(:site_a)) == [:"node1@127.0.0.1"]
+  end
+
+  test "call function on remote node" do
+    assert Cluster.call(:site_a, Node, :self, []) == :"node1@127.0.0.1"
   end
 end

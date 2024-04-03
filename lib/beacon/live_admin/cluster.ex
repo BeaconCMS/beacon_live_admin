@@ -1,43 +1,39 @@
 defmodule Beacon.LiveAdmin.Cluster do
+  @moduledoc """
+  Cluster management. Discover all sites running in the cluster and executes functions globally.
+  """
+
   use GenServer
   require Logger
-  alias Beacon.LiveAdmin.PubSub
 
-  @name __MODULE__
-  @one_minute :timer.minutes(1)
-  @ets_table :beacon_live_admin_sites
+  @scope :beacon_cluster
+  @remote_call_retries 3
 
+  @doc false
   def start_link(opts) do
-    GenServer.start_link(__MODULE__, opts, name: @name)
+    GenServer.start_link(__MODULE__, opts, name: __MODULE__)
   end
 
+  @doc false
   @impl true
   def init(opts) do
+    {:ok, _} = :pg.start_link(@scope)
+    :pg.monitor_scope(@scope)
     :ok = :net_kernel.monitor_nodes(true, node_type: :all)
     {:ok, opts}
   end
 
-  def discover_sites do
-    GenServer.call(@name, :discover_sites, @one_minute)
-  end
-
-  def maybe_discover_sites() do
-    case running_sites() do
-      [] -> discover_sites()
-      _ -> :skip
-    end
-  end
-
   @doc false
-  def nodes do
-    [Node.self()] ++ Node.list()
-  end
+  def nodes, do: [Node.self()] ++ Node.list()
 
-  @doc false
+  @doc """
+  Returns a list of sites running in all connected nodes in the cluster.
+
+  It doesn't try to refresh the list of running sites,
+  it only returns the results cached when calling `discover_sites/0`.
+  """
   def running_sites do
-    @ets_table
-    |> :ets.match({:"$1", :_})
-    |> List.flatten()
+    :pg.which_groups(@scope)
   end
 
   @doc """
@@ -47,33 +43,55 @@ defmodule Beacon.LiveAdmin.Cluster do
 
     ## Examples
 
-        iex> Beacon.LiveAdmin.Cluster.call(:my_site, Beacon, :reload_site, [:my_site])
+        iex> Beacon.LiveAdmin.Cluster.call(:my_site, Beacon, :boot, [:my_site])
         :ok
 
   """
+  @spec call(atom(), module(), fun :: (-> any()), [any()]) :: any()
   def call(site, mod, fun, args) when is_binary(site) do
-    site = String.to_existing_atom(site)
-    call(site, mod, fun, args)
+    site
+    |> String.to_existing_atom()
+    |> call(mod, fun, args)
   end
 
   def call(site, mod, fun, args)
       when is_atom(site) and is_atom(mod) and is_atom(fun) and is_list(args) do
-    case find_node(site) do
-      nil ->
-        message = "no running node found for site #{inspect(site)}"
-        raise Beacon.LiveAdmin.ClusterError, message: message
+    id = Module.concat([mod, fun])
+    nodes = find_nodes(site)
 
-      node ->
-        do_call(node, mod, fun, args)
+    if nodes == [] do
+      message =
+        "no nodes available to call #{Exception.format_mfa(mod, fun, args)} for site #{inspect(site)}"
+
+      Logger.debug(message)
+      raise Beacon.LiveAdmin.ClusterError, message: message
+    end
+
+    :global.trans(
+      {id, self()},
+      fn ->
+        node = pick_node(nodes)
+        do_call(site, node, mod, fun, args)
+      end,
+      nodes,
+      @remote_call_retries
+    )
+  end
+
+  defp do_call(site, node, mod, fun, args) do
+    if node == Node.self() do
+      apply(mod, fun, args)
+    else
+      :erpc.call(node, mod, fun, args)
     end
   rescue
     exception ->
       Logger.debug(
-        "failed to call #{Exception.format_mfa(mod, fun, args)} for site #{inspect(site)}"
+        "failed to call #{Exception.format_mfa(mod, fun, args)} for site #{inspect(site)} on node #{inspect(node)}"
       )
 
       message = """
-      failed to call #{Exception.format_mfa(mod, fun, args)} for site #{inspect(site)}
+      failed to call #{Exception.format_mfa(mod, fun, args)} for site #{inspect(site)} on node #{inspect(node)}
 
       Got:
 
@@ -84,86 +102,38 @@ defmodule Beacon.LiveAdmin.Cluster do
       reraise Beacon.LiveAdmin.ClusterError, [message: message], __STACKTRACE__
   end
 
-  defp do_call(node, mod, fun, args) do
-    if node == Node.self() do
-      apply(mod, fun, args)
-    else
-      :erpc.call(node, mod, fun, args)
-    end
+  @doc false
+  def find_nodes(site) when is_atom(site) do
+    Enum.map(:pg.get_members(@scope, site), &GenServer.call(&1, :current_node))
   end
 
-  if Code.ensure_loaded?(Mix.Project) and Mix.env() == :test do
-    defp find_node(site) when is_atom(site) do
-      case :ets.match(@ets_table, {site, :"$1"}) do
-        [[nodes]] -> List.first(nodes)
-        _ -> nil
-      end
-    end
-  else
-    defp find_node(site) when is_atom(site) do
-      case :ets.match(@ets_table, {site, :"$1"}) do
-        # TODO: load balance and retry
-        [[nodes]] -> Enum.random(nodes)
-        _ -> nil
-      end
-    end
+  @doc false
+  defp pick_node(nodes) do
+    Enum.random(nodes)
   end
 
   ## Callbacks
 
-  @impl true
-  def handle_call(:discover_sites, _from, state) do
-    sites = do_discover_sites()
-    {:reply, sites, state}
-  end
-
-  defp do_discover_sites do
-    # TODO: add or remove nodes from ets state when nodes changes instead of recreating everything
-    :ets.delete_all_objects(@ets_table)
-
-    sites =
-      nodes()
-      |> Map.new(fn node ->
-        try do
-          sites = :erpc.call(node, Beacon.Registry, :running_sites, [], :timer.seconds(10))
-          {node, sites}
-        rescue
-          _exception ->
-            {node, []}
-        end
-      end)
-      |> group_sites()
-      |> Map.new(fn site ->
-        true = :ets.insert(@ets_table, site)
-        site
-      end)
-
-    PubSub.notify_sites_changed(__MODULE__)
-
-    sites
-  end
-
-  @doc false
-  def group_sites(mapping) do
-    Enum.reduce(mapping, %{}, fn {node, sites}, acc ->
-      new = :maps.from_list(:lists.map(&{&1, [node]}, sites))
-
-      Map.merge(acc, new, fn _k, v1, v2 ->
-        Enum.dedup(v1 ++ v2)
-      end)
-    end)
-  end
-
   @doc false
   @impl true
   def handle_info({:nodeup, _, _}, state) do
-    do_discover_sites()
+    Beacon.LiveAdmin.PubSub.notify_sites_changed(__MODULE__)
     {:noreply, state}
   end
 
   @doc false
   def handle_info({:nodedown, _, _}, state) do
-    do_discover_sites()
+    Beacon.LiveAdmin.PubSub.notify_sites_changed(__MODULE__)
+    {:noreply, state}
+  end
+
+  def handle_info({_ref, :join, _site, _members}, state) do
+    Beacon.LiveAdmin.PubSub.notify_sites_changed(__MODULE__)
+    {:noreply, state}
+  end
+
+  def handle_info({_ref, :leave, _site, _members}, state) do
+    Beacon.LiveAdmin.PubSub.notify_sites_changed(__MODULE__)
     {:noreply, state}
   end
 end

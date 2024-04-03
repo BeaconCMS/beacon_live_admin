@@ -133,7 +133,5 @@ defmodule Beacon.LiveAdminTest.Cluster do
 
     # rpc(node, Ecto.Migrator, :run, [Beacon.Repo, :down, [all: true]])
     rpc(node, Ecto.Migrator, :run, [Beacon.Repo, :up, [all: true]])
-
-    Beacon.LiveAdmin.Cluster.discover_sites()
   end
 end
