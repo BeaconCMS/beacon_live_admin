@@ -10,8 +10,6 @@ defmodule Beacon.LiveAdmin.Application do
       Beacon.LiveAdmin.Cluster
     ]
 
-    :ets.new(:beacon_live_admin_sites, [:set, :named_table, :public, read_concurrency: true])
-
     opts = [strategy: :one_for_one, name: Beacon.LiveAdmin.Supervisor]
     Supervisor.start_link(children, opts)
   end
