@@ -7,7 +7,6 @@ defmodule Beacon.LiveAdmin.Cluster do
   require Logger
 
   @scope :beacon_cluster
-  @remote_call_retries 3
 
   @doc false
   def start_link(opts) do
@@ -56,7 +55,6 @@ defmodule Beacon.LiveAdmin.Cluster do
 
   def call(site, mod, fun, args)
       when is_atom(site) and is_atom(mod) and is_atom(fun) and is_list(args) do
-    id = Module.concat([mod, fun])
     nodes = find_nodes(site)
 
     if nodes == [] do
@@ -67,15 +65,8 @@ defmodule Beacon.LiveAdmin.Cluster do
       raise Beacon.LiveAdmin.ClusterError, message: message
     end
 
-    :global.trans(
-      {id, self()},
-      fn ->
-        node = pick_node(nodes)
-        do_call(site, node, mod, fun, args)
-      end,
-      nodes,
-      @remote_call_retries
-    )
+    node = pick_node(nodes)
+    do_call(site, node, mod, fun, args)
   end
 
   defp do_call(site, node, mod, fun, args) do
