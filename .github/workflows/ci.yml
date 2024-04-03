@@ -17,7 +17,7 @@ jobs:
       matrix:
         include:
           # minimum required versions
-          - otp: "23"
+          - otp: "25.1"
             elixir: "1.13.0"
             phoenix-version: "1.7.0"
             phoenix-live-view-version: "0.20.2"
