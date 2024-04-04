@@ -6,6 +6,11 @@ Admin UI to manage content for sites built by [Beacon](https://github.com/Beacon
 
 Pre-release version. You can expect incomplete features and breaking changes before a stable v0.1.0 is released.
 
+## Minimum Requirements
+
+- Erlang/OTP v25.1
+- Elixir v1.13.4
+
 ## Local Development
 
 LiveAdmin requires at least one site running to manage, so let's start LiveAdmin first and then start a sample site.
@@ -59,6 +64,16 @@ Node.connect(node)
 ```
 
 This way you don't need to manually connect the nodes as shown on step 5.
+
+## Troubleshooting
+
+Running tests requires booting a VM to run Beacon sites, which may be blocked by the firewall in your environment.
+
+Make sure both `epmd` and `beam.smp` processes are allowed and try running the application before running tests:
+
+```shell
+iex --sname admin -S mix dev
+```
 
 ## Looking for help with your Elixir project?
 
