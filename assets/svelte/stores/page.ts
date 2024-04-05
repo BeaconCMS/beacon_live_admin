@@ -47,7 +47,7 @@ export function _findAstElementId(ast: AstNode[], astNode: AstNode, id: string):
     if (currentNode === astNode) {
       return id + i
     } else if (isAstElement(currentNode)) {
-      let result = _findAstElementId(currentNode.content, astNode, id + i + ".")
+      let result = currentNode.content && _findAstElementId(currentNode.content, astNode, id + i + ".")
       if (result) {
         return result
       }
