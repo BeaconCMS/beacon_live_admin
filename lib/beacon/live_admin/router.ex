@@ -91,7 +91,7 @@ defmodule Beacon.LiveAdmin.Router do
         {session_name, session_opts} =
           Beacon.LiveAdmin.Router.__session_options__(prefix, pages, opts)
 
-        import Phoenix.Router, only: [get: 3, get: 4]
+        import Phoenix.Router, only: [get: 3, post: 3]
         import Phoenix.LiveView.Router, only: [live: 4, live_session: 3]
 
         live_session session_name, session_opts do
@@ -104,8 +104,8 @@ defmodule Beacon.LiveAdmin.Router do
           end
 
           # if Code.ensure_loaded?(Mix.Project) and Mix.env() == :test do
-              get "/:site/_test/setup", Beacon.LiveAdmin.TestController, :setup
-              get "/:site/_test/teardown", Beacon.LiveAdmin.TestController, :teardown
+              post "/:site/_test/setup", Beacon.LiveAdmin.TestController, :setup
+              post "/:site/_test/teardown", Beacon.LiveAdmin.TestController, :teardown
           # end
         end
       end
