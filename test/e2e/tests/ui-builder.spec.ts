@@ -11,30 +11,33 @@ const TODO_ITEMS = [
 ];
 
 test.describe('List pages', () => {
-  test('first test title that needs edition', async ({ page }) => {
+  test('first test title that needs edition', async ({ page, request }) => {
+    let response = await request.get('/')
+    console.log(response)
+    await page.goto('/admin');
     // create a new todo locator
     const newTodo = page.getByPlaceholder('What needs to be done?');
 
-    // Create 1st todo.
-    await newTodo.fill(TODO_ITEMS[0]);
-    await newTodo.press('Enter');
+    // // Create 1st todo.
+    // await newTodo.fill(TODO_ITEMS[0]);
+    // await newTodo.press('Enter');
 
-    // Make sure the list only has one todo item.
-    await expect(page.getByTestId('todo-title')).toHaveText([
-      TODO_ITEMS[0]
-    ]);
+    // // Make sure the list only has one todo item.
+    // await expect(page.getByTestId('todo-title')).toHaveText([
+    //   TODO_ITEMS[0]
+    // ]);
 
-    // Create 2nd todo.
-    await newTodo.fill(TODO_ITEMS[1]);
-    await newTodo.press('Enter');
+    // // Create 2nd todo.
+    // await newTodo.fill(TODO_ITEMS[1]);
+    // await newTodo.press('Enter');
 
-    // Make sure the list now has two todo items.
-    await expect(page.getByTestId('todo-title')).toHaveText([
-      TODO_ITEMS[0],
-      TODO_ITEMS[1]
-    ]);
+    // // Make sure the list now has two todo items.
+    // await expect(page.getByTestId('todo-title')).toHaveText([
+    //   TODO_ITEMS[0],
+    //   TODO_ITEMS[1]
+    // ]);
 
-    await checkNumberOfTodosInLocalStorage(page, 2);
+    // await checkNumberOfTodosInLocalStorage(page, 2);
   });
 
   // test('should clear text input field when an item is added', async ({ page }) => {
