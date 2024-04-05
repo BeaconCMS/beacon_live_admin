@@ -38,7 +38,6 @@
 
   function preventLinkNavigation(event: MouseEvent) {
     if (event.target instanceof HTMLAnchorElement) {
-      debugger;
       event.preventDefault()
     }
   }
