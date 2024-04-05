@@ -15,7 +15,7 @@
     classList = classAttr ? classAttr.split(" ").filter((e) => e.trim().length > 0) : []
   }
   $: editableAttrs = Object.entries($selectedAstElement?.attrs || {}).filter(
-    ([k, _]) => k !== "class" && k !== "selfClose" && !/data-/.test(k),
+    ([k, _]) => k !== "class" && k !== "self_close" && !/data-/.test(k),
   )
   $: sidebarTitle = $selectedAstElement?.tag
   $: isRootNode = !!$selectedAstElementId && $selectedAstElementId === "root"
