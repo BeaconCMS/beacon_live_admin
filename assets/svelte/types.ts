@@ -58,6 +58,7 @@ export interface ComponentDefinition {
   category: ComponentCategoryId
   name: string
   thumbnail: string
+  body: string
 }
 
 export interface Component {

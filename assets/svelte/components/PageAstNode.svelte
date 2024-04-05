@@ -68,8 +68,8 @@
     }
   }
 </script>
-
 {#if isAstElement(node)}
+  {@const isDragTarget = $slotTargetElement === node}
   {#if node.tag === "html_comment"}
     {@html "<!--" + node.content + "-->"}
   {:else if node.tag === "eex_comment"}
@@ -92,7 +92,7 @@
       {...node.attrs}
       data-selected={$selectedAstElement === node}
       data-highlighted={$highlightedAstElement === node}
-      data-slot-target={$slotTargetElement === node && !$slotTargetElement.attrs.selfClose}
+      data-slot-target={isDragTarget && !$slotTargetElement.attrs.selfClose}
       on:dragenter|stopPropagation={handleDragEnter}
       on:dragleave|stopPropagation={handleDragLeave}
       on:mouseover|stopPropagation={handleMouseOver}
@@ -105,7 +105,7 @@
       {...node.attrs}
       data-selected={$selectedAstElement === node}
       data-highlighted={$highlightedAstElement === node}
-      data-slot-target={$slotTargetElement === node}
+      data-slot-target={isDragTarget}
       on:dragenter|stopPropagation={handleDragEnter}
       on:dragleave|stopPropagation={handleDragLeave}
       on:mouseover|stopPropagation={handleMouseOver}
@@ -115,8 +115,18 @@
       {#each node.content as subnode, index}
         <svelte:self node={subnode} nodeId="{nodeId}.{index}" />
       {/each}
+      {#if isDragTarget && $draggedObject}
+        <div class="dragged-element-placeholder">{@html $draggedObject.body}</div>
+      {/if}
     </svelte:element>
   {/if}
 {:else}
   {node}
 {/if}
+
+<style>
+  .dragged-element-placeholder {
+    outline: 2px dashed red;
+  }
+</style>
+
