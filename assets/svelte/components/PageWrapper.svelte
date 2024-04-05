@@ -35,10 +35,16 @@
     await tick()
     window.reloadStylesheet && window.reloadStylesheet()
   })
+
+  function preventLinkNavigation(event: MouseEvent) {
+    if (event.target instanceof HTMLAnchorElement) {
+      event.preventDefault()
+    }
+  }
 </script>
 
 <span bind:this={styleWrapper}></span>
-<div bind:this={wrapper}>
+<div bind:this={wrapper} on:click={preventLinkNavigation}>
   {#each $page.layout.ast as layoutAstNode}
     <LayoutAstNode node={layoutAstNode}>
       {#each $page.ast as astNode, index}
