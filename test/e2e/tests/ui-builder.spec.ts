@@ -9,7 +9,7 @@ const TODO_ITEMS = [
 
 test.describe('List pages', () => {
   test('first test title that needs edition', async ({ page, request }) => {
-    let response = await request.post('/foobar/_test/setup', {
+    let response = await request.post('/dockyard_com/_test/setup', {
       data: {
         title: '[Bug] report 1',
         body: 'Bug description',
