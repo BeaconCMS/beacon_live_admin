@@ -21,6 +21,7 @@
     const tailwind = window.createTailwindcss({ tailwindConfig })
 
     const reloadStylesheet = async () => {
+      if (!wrapper) return
       const content = wrapper.outerHTML
       const css = await tailwind.generateStylesFromContent($tailwindInput, [content])
       let styleEl = document.createElement("style")

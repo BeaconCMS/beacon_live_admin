@@ -6,10 +6,13 @@
     highlightedAstElement,
     isAstElement,
   } from "$lib/stores/page"
+  import { draggedObject } from "$lib/stores/dragAndDrop"
+  import { updateNodeContent } from "$lib/utils/ast-manipulation"
   import type { AstNode } from "$lib/types"
   export let node: AstNode
   export let nodeId: string
-  import { draggedObject } from "$lib/stores/dragAndDrop"
+  export let live;
+  
 
   function handleDragEnter() {
     if (isAstElement(node) && $draggedObject?.category === "basic") {
@@ -32,6 +35,12 @@
 
   function handleClick() {
     $selectedAstElementId = nodeId
+  }
+
+  function handleContentEdited(e: Event) {
+    if (isAstElement(node) && e.target.innerText !== node.content) {
+      updateNodeContent(node, e.target.innerText)
+    }
   }
 
   // When rendering raw html, we can't add the usual classes to the wrapper.
@@ -70,6 +79,8 @@
 </script>
 {#if isAstElement(node)}
   {@const isDragTarget = $slotTargetElement === node}
+  {@const isSelectedNode = $selectedAstElement === node}
+  {@const isHighlightedNode = $highlightedAstElement === node}
   {#if node.tag === "html_comment"}
     {@html "<!--" + node.content + "-->"}
   {:else if node.tag === "eex_comment"}
@@ -82,7 +93,7 @@
       on:mouseover|stopPropagation={handleMouseOver}
       on:mouseout|stopPropagation={handleMouseOut}
       on:click|preventDefault|stopPropagation={() => ($selectedAstElementId = nodeId)}
-      use:highlightContent={{ selected: $selectedAstElement === node, highlighted: $highlightedAstElement === node }}
+      use:highlightContent={{ selected: isSelectedNode, highlighted: isHighlightedNode }}
     >
       {@html node.rendered_html}
     </div>
@@ -90,8 +101,8 @@
     <svelte:element
       this={node.tag}
       {...node.attrs}
-      data-selected={$selectedAstElement === node}
-      data-highlighted={$highlightedAstElement === node}
+      data-selected={isSelectedNode}
+      data-highlighted={isHighlightedNode}
       data-slot-target={isDragTarget && !$slotTargetElement.attrs.selfClose}
       on:dragenter|stopPropagation={handleDragEnter}
       on:dragleave|stopPropagation={handleDragLeave}
@@ -103,9 +114,11 @@
     <svelte:element
       this={node.tag}
       {...node.attrs}
-      data-selected={$selectedAstElement === node}
-      data-highlighted={$highlightedAstElement === node}
+      data-selected={isSelectedNode}
+      data-highlighted={isHighlightedNode}
       data-slot-target={isDragTarget}
+      contenteditable={isSelectedNode}
+      on:blur={handleContentEdited}
       on:dragenter|stopPropagation={handleDragEnter}
       on:dragleave|stopPropagation={handleDragLeave}
       on:mouseover|stopPropagation={handleMouseOver}

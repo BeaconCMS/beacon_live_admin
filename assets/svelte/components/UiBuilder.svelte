@@ -4,6 +4,7 @@
   import PagePreview from "./PagePreview.svelte"
   import PropertiesSidebar from "./PropertiesSidebar.svelte"
   import { page as pageStore } from "$lib/stores/page"
+  import { live as liveStore } from "$lib/stores/live"
   import { tailwindConfig as tailwindConfigStore } from "$lib/stores/tailwindConfig"
   import { tailwindInput as tailwindInputStore } from "$lib/stores/tailwindInput"
   import type { ComponentDefinition, Page } from "$lib/types"
@@ -16,6 +17,7 @@
   $: $pageStore = page
   $: $tailwindConfigStore = tailwindConfig
   $: $tailwindInputStore = tailwindInput
+  $: $liveStore = live
 
   function addBasicComponentToTarget(e: CustomEvent) {
     // This method is in PagePreview.
@@ -31,5 +33,5 @@
   <PagePreview {live} />
 
   <!-- Right sidebar -->
-  <PropertiesSidebar {live} on:droppedIntoTarget={(e) => addBasicComponentToTarget(e.detail)} />
+  <PropertiesSidebar on:droppedIntoTarget={(e) => addBasicComponentToTarget(e.detail)} />
 </div>
