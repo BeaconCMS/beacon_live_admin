@@ -7,13 +7,12 @@
     isAstElement,
   } from "$lib/stores/page"
   import { draggedObject } from "$lib/stores/dragAndDrop"
-  import { updateNodeContent } from "$lib/utils/ast-manipulation"
+  import { updateNodeContent, updateAst } from "$lib/utils/ast-manipulation"
   import type { AstNode } from "$lib/types"
   export let node: AstNode
   export let nodeId: string
   export let live;
   
-
   function handleDragEnter() {
     if (isAstElement(node) && $draggedObject?.category === "basic") {
       $slotTargetElement = node
@@ -37,9 +36,26 @@
     $selectedAstElementId = nodeId
   }
 
-  function handleContentEdited(e: Event) {
-    if (isAstElement(node) && e.target.innerText !== node.content) {
-      updateNodeContent(node, e.target.innerText)
+  function handleContentEdited({ target }: Event) {
+    let children = target.children;
+    if (!isAstElement(node)) {
+      return;
+    }
+    if (children.length === 0) {
+      if (target.innerText !== node.content) {
+        updateNodeContent(node, target.innerText)
+      }
+    } else if (node.content.filter(e => typeof e === "string").length === 1) {
+      let tmpClone = target.cloneNode(true);
+      Array.from(tmpClone.children).forEach(c => tmpClone.removeChild(c));
+      let stringChildIndex = node.content.findIndex(e => typeof e === 'string')
+      let newText = tmpClone.textContent.trim();
+      if (node.content[stringChildIndex] !== newText) {
+        node.content[stringChildIndex] = newText;
+        updateAst();
+      }
+    } else {
+      alert('Cannot elements with more than two children')
     }
   }
 

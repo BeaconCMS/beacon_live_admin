@@ -4,10 +4,14 @@ import { get } from "svelte/store";
 import type { Page } from "$lib/types";
 
 export function updateNodeContent(node, text) {
-  let currentPage: Page = get(page);
-  let live = get(liveStore);
   if (node && isAstElement(node)) {
     node.content = [text];
-    live.pushEvent("update_page_ast", { id: currentPage.id, ast: currentPage.ast })
+    updateAst();
   }
+}
+
+export function updateAst() {
+  let currentPage: Page = get(page);
+  let live = get(liveStore);
+  live.pushEvent("update_page_ast", { id: currentPage.id, ast: currentPage.ast })
 }
