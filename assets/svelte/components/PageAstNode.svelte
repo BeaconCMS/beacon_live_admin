@@ -12,7 +12,11 @@
   export let node: AstNode
   export let nodeId: string
   export let live;
-  
+  $: isDragTarget = $slotTargetElement === node;
+  $: isSelectedNode = $selectedAstElement === node;
+  $: isHighlightedNode = $highlightedAstElement === node;
+  $: isEditable = isSelectedNode && isAstElement(node) && node.content.filter(e => typeof e === "string").length === 1;
+
   function handleDragEnter() {
     if (isAstElement(node) && $draggedObject?.category === "basic") {
       $slotTargetElement = node
@@ -45,7 +49,7 @@
       if (target.innerText !== node.content) {
         updateNodeContent(node, target.innerText)
       }
-    } else if (node.content.filter(e => typeof e === "string").length === 1) {
+    } else {
       let tmpClone = target.cloneNode(true);
       Array.from(tmpClone.children).forEach(c => tmpClone.removeChild(c));
       let stringChildIndex = node.content.findIndex(e => typeof e === 'string')
@@ -54,9 +58,9 @@
         node.content[stringChildIndex] = newText;
         updateAst();
       }
-    } else {
-      alert('Cannot elements with more than two children')
     }
+    // There isn't a way (for now) of editing an element that has more than one text node
+    // because there's no easy way ot telling which one was edited.
   }
 
   // When rendering raw html, we can't add the usual classes to the wrapper.
@@ -94,9 +98,6 @@
   }
 </script>
 {#if isAstElement(node)}
-  {@const isDragTarget = $slotTargetElement === node}
-  {@const isSelectedNode = $selectedAstElement === node}
-  {@const isHighlightedNode = $highlightedAstElement === node}
   {#if node.tag === "html_comment"}
     {@html "<!--" + node.content + "-->"}
   {:else if node.tag === "eex_comment"}
@@ -133,7 +134,7 @@
       data-selected={isSelectedNode}
       data-highlighted={isHighlightedNode}
       data-slot-target={isDragTarget}
-      contenteditable={isSelectedNode}
+      contenteditable={isEditable}
       on:blur={handleContentEdited}
       on:dragenter|stopPropagation={handleDragEnter}
       on:dragleave|stopPropagation={handleDragLeave}
