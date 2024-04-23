@@ -66,11 +66,13 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.EditTest do
       })
 
     assert map == %{
-             "resource_links" => %{
-               "href" => "https://example.com",
-               "rel" => "preload",
-               "type" => "foo"
-             }
+             "resource_links" => [
+               %{
+                 "href" => "https://example.com",
+                 "rel" => "preload",
+                 "type" => "foo"
+               }
+             ]
            }
   end
 end
