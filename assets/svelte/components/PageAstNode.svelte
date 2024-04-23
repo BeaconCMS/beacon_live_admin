@@ -6,10 +6,16 @@
     highlightedAstElement,
     isAstElement,
   } from "$lib/stores/page"
+  import { draggedObject } from "$lib/stores/dragAndDrop"
+  import { updateNodeContent, updateAst } from "$lib/utils/ast-manipulation"
   import type { AstNode } from "$lib/types"
   export let node: AstNode
   export let nodeId: string
-  import { draggedObject } from "$lib/stores/dragAndDrop"
+  export let live;
+  $: isDragTarget = $slotTargetElement === node;
+  $: isSelectedNode = $selectedAstElement === node;
+  $: isHighlightedNode = $highlightedAstElement === node;
+  $: isEditable = isSelectedNode && isAstElement(node) && node.content.filter(e => typeof e === "string").length === 1;
 
   function handleDragEnter() {
     if (isAstElement(node) && $draggedObject?.category === "basic") {
@@ -32,6 +38,29 @@
 
   function handleClick() {
     $selectedAstElementId = nodeId
+  }
+
+  function handleContentEdited({ target }: Event) {
+    let children = target.children;
+    if (!isAstElement(node)) {
+      return;
+    }
+    if (children.length === 0) {
+      if (target.innerText !== node.content) {
+        updateNodeContent(node, target.innerText)
+      }
+    } else {
+      let tmpClone = target.cloneNode(true);
+      Array.from(tmpClone.children).forEach(c => tmpClone.removeChild(c));
+      let stringChildIndex = node.content.findIndex(e => typeof e === 'string')
+      let newText = tmpClone.textContent.trim();
+      if (node.content[stringChildIndex] !== newText) {
+        node.content[stringChildIndex] = newText;
+        updateAst();
+      }
+    }
+    // There isn't a way (for now) of editing an element that has more than one text node
+    // because there's no easy way ot telling which one was edited.
   }
 
   // When rendering raw html, we can't add the usual classes to the wrapper.
@@ -70,7 +99,6 @@
 </script>
 
 {#if isAstElement(node)}
-  {@const isDragTarget = $slotTargetElement === node}
   {#if node.tag === "html_comment"}
     {@html "<!--" + node.content + "-->"}
   {:else if node.tag === "eex_comment"}
@@ -83,7 +111,7 @@
       on:mouseover|stopPropagation={handleMouseOver}
       on:mouseout|stopPropagation={handleMouseOut}
       on:click|preventDefault|stopPropagation={() => ($selectedAstElementId = nodeId)}
-      use:highlightContent={{ selected: $selectedAstElement === node, highlighted: $highlightedAstElement === node }}
+      use:highlightContent={{ selected: isSelectedNode, highlighted: isHighlightedNode }}
     >
       {@html node.rendered_html}
     </div>
@@ -91,8 +119,8 @@
     <svelte:element
       this={node.tag}
       {...node.attrs}
-      data-selected={$selectedAstElement === node}
-      data-highlighted={$highlightedAstElement === node}
+      data-selected={isSelectedNode}
+      data-highlighted={isHighlightedNode}
       data-slot-target={isDragTarget && !$slotTargetElement.attrs.selfClose}
       on:dragenter|stopPropagation={handleDragEnter}
       on:dragleave|stopPropagation={handleDragLeave}
@@ -104,9 +132,11 @@
     <svelte:element
       this={node.tag}
       {...node.attrs}
-      data-selected={$selectedAstElement === node}
-      data-highlighted={$highlightedAstElement === node}
+      data-selected={isSelectedNode}
+      data-highlighted={isHighlightedNode}
       data-slot-target={isDragTarget}
+      contenteditable={isEditable}
+      on:blur={handleContentEdited}
       on:dragenter|stopPropagation={handleDragEnter}
       on:dragleave|stopPropagation={handleDragLeave}
       on:mouseover|stopPropagation={handleMouseOver}

@@ -5,8 +5,8 @@
   import { currentComponentCategory } from "$lib/stores/currentComponentCategory"
   import { page, slotTargetElement } from "$lib/stores/page"
   import { draggedObject } from "$lib/stores/dragAndDrop"
+  import { live } from "$lib/stores/live"
 
-  export let live
   let isDraggingOver = false
 
   async function handleDragDrop(e: DragEvent) {
@@ -20,12 +20,12 @@
       if ($slotTargetElement.attrs.selfClose) return
       addBasicComponentToTarget($slotTargetElement)
     } else {
-      live.pushEvent(
+      $live.pushEvent(
         "render_component_in_page",
         { component_id: $draggedObject.id, page_id: $page.id },
         ({ ast }: { ast: AstNode[] }) => {
           // This appends at the end. We might want at the beginning, or in a specific position
-          live.pushEvent("update_page_ast", { id: $page.id, ast: [...$page.ast, ...ast] })
+          $live.pushEvent("update_page_ast", { id: $page.id, ast: [...$page.ast, ...ast] })
         },
       )
     }
@@ -37,13 +37,13 @@
     let componentDefinition = $draggedObject
     $draggedObject = null
     let targetNode = astElement
-    live.pushEvent(
+    $live.pushEvent(
       "render_component_in_page",
       { component_id: componentDefinition.id, page_id: $page.id },
       ({ ast }: { ast: AstNode[] }) => {
         targetNode?.content.push(...ast)
         $slotTargetElement = undefined
-        live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast })
+        $live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast })
       },
     )
   }

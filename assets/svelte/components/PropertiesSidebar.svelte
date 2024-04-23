@@ -3,9 +3,10 @@
   import SidebarSection from "$lib/components/SidebarSection.svelte"
   import { createEventDispatcher } from "svelte"
   import { draggedObject } from "$lib/stores/dragAndDrop"
+  import { live } from "$lib/stores/live"
+  import { updateNodeContent } from "$lib/utils/ast-manipulation"
   import { page, selectedAstElement, selectedAstElementId, findAstElement, isAstElement } from "$lib/stores/page"
   import type { AstNode } from "$lib/types"
-  export let live
 
   const dispatch = createEventDispatcher()
 
@@ -25,9 +26,9 @@
     let node = $selectedAstElement
     if (node) {
       let classes = newClasses.split(" ").map((c) => c.trim())
-      // live.pushEvent("classes_added", { id: $page.id, classes })
+      // $live.pushEvent("classes_added", { id: $page.id, classes })
       node.attrs.class = node.attrs.class ? `${node.attrs.class} ${classes.join(" ")}` : classes.join(" ")
-      live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast })
+      $live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast })
     }
   }
 
@@ -53,23 +54,19 @@
         .filter((c) => c !== className)
         .join(" ")
       node.attrs.class = newClass
-      live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast })
+      $live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast })
     }
   }
 
   async function updateText(e: CustomEvent<string>) {
-    let node = $selectedAstElement
-    if (node && isAstElement(node)) {
-      node.content = [e.detail]
-      live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast })
-    }
+    updateNodeContent($selectedAstElement, e.detail);
   }
 
   async function updateArg(e: CustomEvent<string>) {
     let node = $selectedAstElement
     if (node && isAstElement(node)) {
       node.arg = e.detail
-      live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast })
+      $live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast })
     }
   }
 
@@ -77,7 +74,7 @@
     let node = $selectedAstElement
     if (node && isAstElement(node)) {
       node.attrs[attrName] = e.detail
-      live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast })
+      $live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast })
     }
   }
 
@@ -91,7 +88,7 @@
         let targetIndex = (content as unknown[]).indexOf(node)
         content.splice(targetIndex, 1)
         $selectedAstElementId = undefined
-        live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast })
+        $live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast })
       }
     }
   }
@@ -118,7 +115,7 @@
       if (!selectedElement) return
       selectedElement.content = nodes
     }
-    live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast })
+    $live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast })
   }
 </script>
 

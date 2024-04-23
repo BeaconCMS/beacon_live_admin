@@ -6,7 +6,9 @@ export interface AstElement {
   rendered_html?: string
   arg?: string
 }
-
+export function isAstElement(node: AstNode): node is AstElement {
+  return typeof node !== "string";
+}
 export enum ComponentCategoryId {
   navigations = "nav",
   headers = "header",
