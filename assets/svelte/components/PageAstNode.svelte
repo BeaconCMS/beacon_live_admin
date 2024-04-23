@@ -68,6 +68,7 @@
     }
   }
 </script>
+
 {#if isAstElement(node)}
   {@const isDragTarget = $slotTargetElement === node}
   {#if node.tag === "html_comment"}
@@ -129,4 +130,3 @@
     outline: 2px dashed red;
   }
 </style>
-
