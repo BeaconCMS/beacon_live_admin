@@ -59,7 +59,7 @@
   }
 
   async function updateText(e: CustomEvent<string>) {
-    updateNodeContent($selectedAstElement, e.detail);
+    updateNodeContent($selectedAstElement, e.detail)
   }
 
   async function updateArg(e: CustomEvent<string>) {

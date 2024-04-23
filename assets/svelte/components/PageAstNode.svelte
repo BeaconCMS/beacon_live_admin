@@ -11,11 +11,11 @@
   import type { AstNode } from "$lib/types"
   export let node: AstNode
   export let nodeId: string
-  export let live;
-  $: isDragTarget = $slotTargetElement === node;
-  $: isSelectedNode = $selectedAstElement === node;
-  $: isHighlightedNode = $highlightedAstElement === node;
-  $: isEditable = isSelectedNode && isAstElement(node) && node.content.filter(e => typeof e === "string").length === 1;
+  export let live
+  $: isDragTarget = $slotTargetElement === node
+  $: isSelectedNode = $selectedAstElement === node
+  $: isHighlightedNode = $highlightedAstElement === node
+  $: isEditable = isSelectedNode && isAstElement(node) && node.content.filter((e) => typeof e === "string").length === 1
 
   function handleDragEnter() {
     if (isAstElement(node) && $draggedObject?.category === "basic") {
@@ -41,22 +41,22 @@
   }
 
   function handleContentEdited({ target }: Event) {
-    let children = target.children;
+    let children = target.children
     if (!isAstElement(node)) {
-      return;
+      return
     }
     if (children.length === 0) {
       if (target.innerText !== node.content) {
         updateNodeContent(node, target.innerText)
       }
     } else {
-      let tmpClone = target.cloneNode(true);
-      Array.from(tmpClone.children).forEach(c => tmpClone.removeChild(c));
-      let stringChildIndex = node.content.findIndex(e => typeof e === 'string')
-      let newText = tmpClone.textContent.trim();
+      let tmpClone = target.cloneNode(true)
+      Array.from(tmpClone.children).forEach((c) => tmpClone.removeChild(c))
+      let stringChildIndex = node.content.findIndex((e) => typeof e === "string")
+      let newText = tmpClone.textContent.trim()
       if (node.content[stringChildIndex] !== newText) {
-        node.content[stringChildIndex] = newText;
-        updateAst();
+        node.content[stringChildIndex] = newText
+        updateAst()
       }
     }
     // There isn't a way (for now) of editing an element that has more than one text node

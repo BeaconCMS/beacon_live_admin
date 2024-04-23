@@ -61,8 +61,8 @@
   }
 
   function updateNodeContents(e: Event, idx: number) {
-    let astNodesCopy = [...astNodes];
-    astNodesCopy[idx] = (e.target as HTMLInputElement).value;
+    let astNodesCopy = [...astNodes]
+    astNodesCopy[idx] = (e.target as HTMLInputElement).value
     dispatch("nodesChange", astNodesCopy)
   }
 </script>
@@ -186,7 +186,7 @@
                   </svg>
                 </button>
               </div>
-            </div>        
+            </div>
           {:else}
             <input
               type="text"
