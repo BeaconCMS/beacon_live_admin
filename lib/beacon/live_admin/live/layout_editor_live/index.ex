@@ -1,7 +1,7 @@
 defmodule Beacon.LiveAdmin.LayoutEditorLive.Index do
   @moduledoc false
 
-  use Beacon.LiveAdmin.PageBuilder
+  use Beacon.LiveAdmin.PageBuilder, table: [sort_by: "title"]
   alias Beacon.LiveAdmin.Content
 
   on_mount {Beacon.LiveAdmin.Hooks.Authorized, {:layout_editor, :index}}
@@ -11,18 +11,28 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, :beacon_layouts, [])}
+    {:ok, stream_configure(socket, :beacon_layouts, dom_id: &"#{Ecto.UUID.generate()}-#{&1.id}")}
   end
 
   @impl true
-  def handle_params(%{"query" => query}, _uri, socket) do
-    layouts = list_layouts(socket.assigns.beacon_page.site, query: query)
-    {:noreply, assign(socket, :beacon_layouts, layouts)}
-  end
+  def handle_params(params, _uri, socket) do
+    socket =
+      Table.handle_params(socket, params, &Content.count_layouts(&1.site, query: params["query"]))
 
-  def handle_params(_params, _uri, socket) do
-    layouts = list_layouts(socket.assigns.beacon_page.site)
-    {:noreply, assign(socket, :beacon_layouts, layouts)}
+    %{site: site} = socket.assigns.beacon_page
+
+    %{per_page: per_page, current_page: page, query: query, sort_by: sort_by} =
+      socket.assigns.beacon_page.table
+
+    layouts =
+      list_layouts(site,
+        per_page: per_page,
+        page: page,
+        query: query,
+        sort: sort_by
+      )
+
+    {:noreply, stream(socket, :beacon_layouts, layouts, reset: true)}
   end
 
   @impl true
@@ -54,10 +64,10 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.Index do
     </.simple_form>
 
     <.main_content>
-      <.table id="layouts" rows={@beacon_layouts} row_click={fn layout -> JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/layouts/#{layout.id}")) end}>
-        <:col :let={layout} label="Title"><%= layout.title %></:col>
-        <:col :let={layout} label="Status"><%= display_status(layout.status) %></:col>
-        <:action :let={layout}>
+      <.table id="layouts" rows={@streams.beacon_layouts} row_click={fn {_dom_id, layout} -> JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/layouts/#{layout.id}")) end}>
+        <:col :let={{_, layout}} label="Title"><%= layout.title %></:col>
+        <:col :let={{_, layout}} label="Status"><%= display_status(layout.status) %></:col>
+        <:action :let={{_, layout}}>
           <div class="sr-only">
             <.link navigate={beacon_live_admin_path(@socket, @beacon_page.site, "/layouts/#{layout.id}")}>Edit</.link>
           </div>
@@ -66,11 +76,13 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.Index do
           </.link>
         </:action>
       </.table>
+
+      <.table_pagination socket={@socket} page={@beacon_page} />
     </.main_content>
     """
   end
 
-  defp list_layouts(site, opts \\ []) do
+  defp list_layouts(site, opts) do
     site
     |> Content.list_layouts(opts)
     |> Enum.map(fn layout ->

@@ -49,6 +49,10 @@ defmodule Beacon.LiveAdmin.Content do
     call(site, Beacon.Content, :list_layouts, [site, opts])
   end
 
+  def count_layouts(site, opts \\ []) do
+    call(site, Beacon.Content, :count_layouts, [site, opts])
+  end
+
   def change_page(site, page, attrs \\ %{}) do
     call(site, Beacon.Content, :change_page, [page, attrs])
   end
