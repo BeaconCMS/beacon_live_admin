@@ -27,19 +27,18 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.AssignsTest do
     |> form("#new-assign-form", %{"key" => "valid?"})
     |> render_submit()
 
-    assert html =~ "@valid?"
+    assert render(view) =~ "@valid?"
   end
 
   test "edit existing assign", %{conn: conn, live_data: live_data} do
     lda = live_data_assign_fixture(node1(), live_data: live_data)
     {:ok, view, _html} = live(conn, "/admin/site_a/live_data/#{live_data.id}/#{lda.id}")
 
-    html =
-      view
-      |> form("#edit-assign-form", %{"live_data_assign" => %{"key" => "new_key"}})
-      |> render_submit()
+    view
+    |> form("#edit-assign-form", %{"live_data_assign" => %{"key" => "new_key"}})
+    |> render_submit()
 
-    assert html =~ "@new_key"
+    assert render(view) =~ "@new_key"
     assert has_element?(view, ~S|input[value="new_key"]|)
   end
 
