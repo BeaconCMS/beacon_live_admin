@@ -8,34 +8,29 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Assigns do
   def menu_link(_, _), do: :skip
 
   def handle_params(params, _url, socket) do
-    path = URI.decode_www_form(params["path"])
+    %{beacon_page: %{site: site}} = socket.assigns
 
     socket =
       socket
-      |> assign(live_data: Content.get_live_data(socket.assigns.beacon_page.site, path))
+      |> assign(live_data: Content.get_live_data(site, params["live_data_id"]))
       |> assign(unsaved_changes: false)
       |> assign(show_nav_modal: false)
       |> assign(show_create_modal: false)
       |> assign(show_delete_modal: false)
       |> assign(new_assign_form: to_form(%{"key" => ""}))
       |> assign(page_title: "Live Data")
-      |> assign_selected(params["key"])
+      |> assign_selected(params["assign_id"])
       |> assign_form()
 
     {:noreply, socket}
   end
 
-  def handle_event("select-" <> key, _, socket) do
-    %{live_data: %{site: site, path: path}} = socket.assigns
+  def handle_event("select-" <> assign_id, _, socket) do
+    %{live_data: %{site: site} = live_data, unsaved_changes: unsaved_changes} = socket.assigns
 
-    path =
-      beacon_live_admin_path(
-        socket,
-        site,
-        "/live_data/#{sanitize(path)}/#{sanitize(key)}"
-      )
+    path = beacon_live_admin_path(socket, site, "/live_data/#{live_data.id}/#{assign_id}")
 
-    if socket.assigns.unsaved_changes do
+    if unsaved_changes do
       {:noreply, assign(socket, show_nav_modal: true, confirm_nav_path: path)}
     else
       {:noreply, push_redirect(socket, to: path)}
@@ -94,7 +89,7 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Assigns do
   end
 
   def handle_event("save_changes", %{"live_data_assign" => params}, socket) do
-    %{selected: selected, live_data: %{site: site, path: live_data_path}} = socket.assigns
+    %{selected: selected, live_data: %{site: site} = live_data} = socket.assigns
 
     attrs = %{key: params["key"], value: params["value"], format: params["format"]}
 
@@ -105,11 +100,11 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Assigns do
             beacon_live_admin_path(
               socket,
               site,
-              "/live_data/#{sanitize(live_data_path)}/#{sanitize(live_data_assign.key)}"
+              "/live_data/#{live_data.id}/#{live_data_assign.id}"
             )
 
           socket
-          |> assign(live_data: Content.get_live_data(site, live_data_path))
+          |> assign(live_data: Content.get_live_data(site, live_data.id))
           |> assign_form()
           |> assign(unsaved_changes: false)
           |> push_patch(to: path)
@@ -128,7 +123,7 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Assigns do
 
   def handle_event("submit_new", params, socket) do
     %{live_data: %{site: site} = live_data, selected: selected} = socket.assigns
-    selected = selected || %{key: nil}
+    selected = selected || %{id: nil}
 
     attrs = %{key: params["key"], value: "Your value here", format: :text}
     # TODO: handle errors
@@ -137,7 +132,7 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Assigns do
     socket =
       socket
       |> assign(live_data: updated_live_data)
-      |> assign_selected(selected.key)
+      |> assign_selected(selected.id)
 
     {:noreply, assign(socket, show_create_modal: false)}
   end
@@ -147,14 +142,12 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Assigns do
   end
 
   def handle_event("delete_confirm", _, socket) do
-    %{selected: selected, live_data: %{site: site, path: path}} = socket.assigns
+    %{selected: selected, live_data: %{site: site} = live_data} = socket.assigns
 
     {:ok, _} = Content.delete_live_data_assign(site, selected)
 
     {:noreply,
-     push_redirect(socket,
-       to: beacon_live_admin_path(socket, site, "/live_data/#{sanitize(path)}")
-     )}
+     push_redirect(socket, to: beacon_live_admin_path(socket, site, "/live_data/#{live_data.id}"))}
   end
 
   def handle_event("create_cancel", _, socket) do
@@ -223,7 +216,7 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Assigns do
               <div>Path:</div>
               <div><%= @live_data.path %></div>
             </div>
-            <.table :if={@selected} id="assigns" rows={@live_data.assigns} row_click={fn assign -> "select-#{assign.key}" end}>
+            <.table :if={@selected} id="assigns" rows={@live_data.assigns} row_click={fn assign -> "select-#{assign.id}" end}>
               <:col :let={assign} label="assign">
                 @<%= assign.key %>
               </:col>
@@ -272,9 +265,8 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Assigns do
     end
   end
 
-  defp assign_selected(socket, key) do
-    key = URI.decode_www_form(key)
-    selected = Enum.find(socket.assigns.live_data.assigns, &(&1.key == key))
+  defp assign_selected(socket, id) do
+    selected = Enum.find(socket.assigns.live_data.assigns, &(&1.id == id))
 
     if selected do
       assign(socket, selected: selected, changed_value: selected.value)
@@ -305,8 +297,6 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Assigns do
   defp assign_form(socket, changeset) do
     assign(socket, :form, to_form(changeset))
   end
-
-  defp sanitize(path_or_key), do: URI.encode_www_form(path_or_key)
 
   defp variables_available(path) do
     path

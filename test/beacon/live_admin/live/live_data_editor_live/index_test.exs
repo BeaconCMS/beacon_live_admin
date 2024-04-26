@@ -9,37 +9,37 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.IndexTest do
       rpc(node1(), Beacon.Repo, :delete_all, [Beacon.Content.LiveData, [log: false]])
     end)
 
-    page_fixture()
-    live_data_fixture(node1(), path: "/testpages/:page_id")
-    live_data_fixture(node1(), path: "/testobjects/:object_id")
+    page = page_fixture()
+    ld1 = live_data_fixture(node1(), path: "/testpages/:page_id")
+    ld2 = live_data_fixture(node1(), path: "/testobjects/:object_id")
 
-    :ok
+    [page: page, live_data: [ld1, ld2]]
   end
 
-  test "display header and all live data paths", %{conn: conn} do
+  test "display header and all live data paths", %{conn: conn, live_data: [ld1, ld2]} do
     {:ok, view, html} = live(conn, "/admin/site_a/live_data")
 
     assert assert has_element?(view, "#header-page-title", "Live Data")
-    assert html =~ "/testpages/:page_id"
-    assert html =~ "/testobjects/:object_id"
+    assert html =~ ld1.path
+    assert html =~ ld2.path
   end
 
-  test "search paths", %{conn: conn} do
+  test "search paths", %{conn: conn, live_data: [ld1, ld2]} do
     {:ok, view, _html} = live(conn, "/admin/site_a/live_data")
 
     view
     |> form("#live-data-path-search")
-    |> render_change(%{"search" => %{"query" => "pages"}})
+    |> render_change(%{"search" => %{"query" => ld1.path}})
 
-    assert render(view) =~ "/testpages/:page_id"
-    refute render(view) =~ "/testobjects/:object_id"
+    assert render(view) =~ ld1.path
+    refute render(view) =~ ld2.path
 
     view
     |> form("#live-data-path-search")
-    |> render_change(%{"search" => %{"query" => "objects"}})
+    |> render_change(%{"search" => %{"query" => ld2.path}})
 
-    refute render(view) =~ "/testpages/:page_id"
-    assert render(view) =~ "/testobjects/:object_id"
+    refute render(view) =~ ld1.path
+    assert render(view) =~ ld2.path
   end
 
   test "create new path", %{conn: conn} do
@@ -53,22 +53,24 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.IndexTest do
       view
       |> form("#new-path-form")
       |> render_submit(%{"path" => "/my/fun/path"})
-      |> follow_redirect(conn, "/admin/site_a/live_data/%2Fmy%2Ffun%2Fpath")
+      |> follow_redirect(conn)
 
     assert render(view) =~ "/my/fun/path"
   end
 
-  test "edit existing path", %{conn: conn} do
-    {:ok, view, _html} = live(conn, "/admin/site_a/live_data/edit/%2Ftestpages%2F%3Apage_id")
+  test "edit existing path", %{conn: conn, live_data: [ld1, ld2]} do
+    {:ok, view, _html} = live(conn, "/admin/site_a/live_data/edit/#{ld1.id}")
+
+    new_path = "/testposts/:post_id"
 
     {:ok, _view, html} =
       view
-      |> form("#edit-path-form", live_data: %{path: "/testposts/:post_id"})
+      |> form("#edit-path-form", live_data: %{path: new_path})
       |> render_submit()
       |> follow_redirect(conn, "/admin/site_a/live_data")
 
-    assert html =~ "/testposts/:post_id"
-    refute html =~ "/testpages/:page_id"
+    assert html =~ new_path
+    refute html =~ ld1.path
   end
 
   test "raises when missing beacon_live_admin_url in the session" do

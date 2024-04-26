@@ -16,9 +16,9 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Index do
 
   def handle_params(%{"query" => query}, _uri, socket) do
     %{beacon_page: %{site: site}} = socket.assigns
-    live_data_paths = Content.live_data_paths_for_site(site, query: query)
+    live_data_paths = Content.live_data_for_site(site, query: query)
 
-    {:noreply, assign(socket, live_data_paths: live_data_paths)}
+    {:noreply, assign(socket, live_data_list: live_data_paths)}
   end
 
   def handle_params(params, _uri, socket) do
@@ -26,7 +26,7 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Index do
 
     socket =
       socket
-      |> assign(live_data_paths: Content.live_data_paths_for_site(site))
+      |> assign(live_data_list: Content.live_data_for_site(site))
       |> assign(show_new_path_modal: live_action == :new)
       |> assign(show_edit_path_modal: live_action == :edit)
       |> assign(show_delete_path_modal: live_action == :delete)
@@ -50,11 +50,8 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Index do
       case Content.create_live_data(site, %{path: path, site: site}) do
         {:ok, live_data} ->
           socket
-          |> assign(live_data_paths: Content.live_data_paths_for_site(site))
-          |> push_navigate(
-            to:
-              beacon_live_admin_path(socket, site, "/live_data/#{sanitize_path(live_data.path)}")
-          )
+          |> assign(live_data_list: Content.live_data_for_site(site))
+          |> push_navigate(to: beacon_live_admin_path(socket, site, "/live_data/#{live_data.id}"))
 
         {:error, _changeset} ->
           socket
@@ -126,16 +123,16 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Index do
     </.simple_form>
 
     <.main_content>
-      <.table id="live_data" rows={@live_data_paths} row_click={fn live_data_path -> JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/live_data/#{sanitize_path(live_data_path)}")) end}>
-        <:col :let={live_data_path} label="Path"><%= live_data_path %></:col>
-        <:action :let={live_data_path}>
+      <.table id="live_data" rows={@live_data_list} row_click={fn live_data -> JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/live_data/#{live_data.id}")) end}>
+        <:col :let={live_data} label="Path"><%= live_data.path %></:col>
+        <:action :let={live_data}>
           <div class="sr-only">
-            <.link id={"edit-live-data-" <> live_data_path} navigate={beacon_live_admin_path(@socket, @beacon_page.site, "/live_data/edit/#{sanitize_path(live_data_path)}")} title="Edit live data">
+            <.link id={"edit-live-data-" <> live_data.id} navigate={beacon_live_admin_path(@socket, @beacon_page.site, "/live_data/edit/#{live_data.id}")} title="Edit live data">
               Edit
             </.link>
           </div>
           <.link
-            patch={beacon_live_admin_path(@socket, @beacon_page.site, "/live_data/edit/#{sanitize_path(live_data_path)}")}
+            patch={beacon_live_admin_path(@socket, @beacon_page.site, "/live_data/edit/#{live_data.id}")}
             title="Edit live data"
             aria-label="Edit live data"
             class="flex items-center justify-center w-10 h-10 group"
@@ -169,9 +166,5 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Index do
       </.form>
     </.modal>
     """
-  end
-
-  defp sanitize_path(path) do
-    URI.encode_www_form(path)
   end
 end

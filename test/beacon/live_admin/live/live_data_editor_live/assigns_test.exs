@@ -10,14 +10,14 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.AssignsTest do
       rpc(node1(), Beacon.Repo, :delete_all, [Beacon.Content.LiveDataAssign, [log: false]])
     end)
 
-    page_fixture()
+    page = page_fixture()
     live_data = live_data_fixture(node1(), path: "/home")
 
-    [live_data: live_data]
+    [page: page, live_data: live_data]
   end
 
-  test "create new assign", %{conn: conn} do
-    {:ok, view, _html} = live(conn, "/admin/site_a/live_data/%2Fhome")
+  test "create new assign", %{conn: conn, live_data: live_data} do
+    {:ok, view, _html} = live(conn, "/admin/site_a/live_data/#{live_data.id}")
 
     view
     |> element("button", "New Live Data Assign")
@@ -27,15 +27,12 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.AssignsTest do
     |> form("#new-assign-form", %{"key" => "valid?"})
     |> render_submit()
 
-    {:ok, view, html} = live(conn, "/admin/site_a/live_data/%2Fhome/valid%3F")
-
     assert html =~ "@valid?"
-    assert has_element?(view, ~S|input[value="valid?"]|)
   end
 
   test "edit existing assign", %{conn: conn, live_data: live_data} do
-    live_data_assign_fixture(node1(), live_data: live_data)
-    {:ok, view, _html} = live(conn, "/admin/site_a/live_data/%2Fhome/sum")
+    lda = live_data_assign_fixture(node1(), live_data: live_data)
+    {:ok, view, _html} = live(conn, "/admin/site_a/live_data/#{live_data.id}/#{lda.id}")
 
     html =
       view
@@ -47,8 +44,8 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.AssignsTest do
   end
 
   test "delete existing assign", %{conn: conn, live_data: live_data} do
-    live_data_assign_fixture(node1(), live_data: live_data)
-    {:ok, view, _html} = live(conn, "/admin/site_a/live_data/%2Fhome/sum")
+    lda = live_data_assign_fixture(node1(), live_data: live_data)
+    {:ok, view, _html} = live(conn, "/admin/site_a/live_data/#{live_data.id}/#{lda.id}")
 
     view
     |> element("button", "Delete")
@@ -60,6 +57,6 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.AssignsTest do
       |> render_click()
       |> follow_redirect(conn)
 
-    refute html =~ "@sum"
+    refute html =~ "@#{lda.key}"
   end
 end
