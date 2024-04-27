@@ -123,7 +123,7 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Index do
     </.simple_form>
 
     <.main_content>
-      <.table id="live_data" rows={@live_data_list} row_click={fn live_data -> JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/live_data/#{live_data.id}")) end}>
+      <.table id="live_data" rows={@live_data_list} row_click={&JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/live_data/#{&1.id}"))} row_id={&"live-data-table-row-#{&1.id}"}>
         <:col :let={live_data} label="Path"><%= live_data.path %></:col>
         <:action :let={live_data}>
           <div class="sr-only">

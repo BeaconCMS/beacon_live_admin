@@ -108,6 +108,8 @@ defmodule Beacon.LiveAdmin.Fixtures do
         value: "1 + 1"
       })
 
-    rpc(node, Beacon.Content, :create_assign_for_live_data, [live_data, attrs])
+    {:ok, result} = rpc(node, Beacon.Content, :create_assign_for_live_data, [live_data, attrs])
+
+    result
   end
 end

@@ -31,15 +31,15 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.IndexTest do
     |> form("#live-data-path-search")
     |> render_change(%{"search" => %{"query" => ld1.path}})
 
-    assert render(view) =~ ld1.path
-    refute render(view) =~ ld2.path
+    assert has_element?(view, "live-data-table-row-#{ld1.id}")
+    refute has_element?(view, "live-data-table-row-#{ld2.id}")
 
     view
     |> form("#live-data-path-search")
     |> render_change(%{"search" => %{"query" => ld2.path}})
 
-    refute render(view) =~ ld1.path
-    assert render(view) =~ ld2.path
+    refute has_element?(view, "live-data-table-row-#{ld1.id}")
+    assert has_element?(view, "live-data-table-row-#{ld2.id}")
   end
 
   test "create new path", %{conn: conn} do
@@ -65,7 +65,7 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.IndexTest do
 
     {:ok, _view, html} =
       view
-      |> form("#edit-path-form", live_data: %{path: new_path})
+      |> form("#edit-path-form", path: new_path)
       |> render_submit()
       |> follow_redirect(conn, "/admin/site_a/live_data")
 
