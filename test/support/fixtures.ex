@@ -90,9 +90,7 @@ defmodule Beacon.LiveAdmin.Fixtures do
       Enum.into(attrs, %{
         site: "site_a",
         path: "/foo/:id",
-        assign: "bar",
-        format: :elixir,
-        code: "id"
+        format: :elixir
       })
 
     rpc(node, Beacon.Content, :create_live_data!, [attrs])
