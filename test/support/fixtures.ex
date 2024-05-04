@@ -106,8 +106,8 @@ defmodule Beacon.LiveAdmin.Fixtures do
         value: "1 + 1"
       })
 
-    {:ok, result} = rpc(node, Beacon.Content, :create_assign_for_live_data, [live_data, attrs])
+    {:ok, live_data} = rpc(node, Beacon.Content, :create_assign_for_live_data, [live_data, attrs])
 
-    result
+    Enum.find(live_data.assigns, &(&1.key == attrs.key))
   end
 end

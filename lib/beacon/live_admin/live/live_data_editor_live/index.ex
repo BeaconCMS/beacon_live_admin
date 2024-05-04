@@ -30,8 +30,8 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Index do
       |> assign(show_new_path_modal: live_action == :new)
       |> assign(show_edit_path_modal: live_action == :edit)
       |> assign(show_delete_path_modal: live_action == :delete)
-      |> assign_edit_path_form(params["path"])
-      |> assign_selected(params["path"])
+      |> assign_edit_path_form(params["live_data_id"])
+      |> assign_selected(params["live_data_id"])
 
     {:noreply, socket}
   end
@@ -62,7 +62,7 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Index do
 
   def handle_event("edit_path", params, socket) do
     %{beacon_page: %{site: site}, selected: selected} = socket.assigns
-    %{"live_data" => %{"path" => path}} = params
+    %{"path" => path} = params
 
     {:ok, _live_data} = Content.update_live_data_path(site, selected, path)
 
@@ -84,17 +84,7 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Index do
     {:noreply, push_navigate(socket, to: path, replace: true)}
   end
 
-  defp assign_edit_path_form(socket, nil), do: assign(socket, edit_path_form: to_form(%{}))
-
-  defp assign_edit_path_form(socket, path) do
-    form =
-      {%{}, %{path: :string}}
-      |> Ecto.Changeset.cast(%{path: path}, [:path])
-      |> Ecto.Changeset.validate_required([:path])
-      |> to_form(as: :live_data)
-
-    assign(socket, edit_path_form: form)
-  end
+  defp assign_edit_path_form(socket, _id), do: assign(socket, edit_path_form: to_form(%{}))
 
   defp assign_selected(socket, nil), do: assign(socket, selected: nil)
 

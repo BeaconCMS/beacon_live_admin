@@ -30,6 +30,11 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.AssignsTest do
     assert render(view) =~ "@valid?"
   end
 
+  test "nonexistent assign redirects to root LD page", %{conn: conn, live_data: live_data} do
+    assert {:error, {:live_redirect, %{to: "/admin/site_a/live_data/#{live_data.id}"}}} ==
+             live(conn, "/admin/site_a/live_data/#{live_data.id}/invalid-id")
+  end
+
   test "edit existing assign", %{conn: conn, live_data: live_data} do
     lda = live_data_assign_fixture(node1(), live_data: live_data)
     {:ok, view, _html} = live(conn, "/admin/site_a/live_data/#{live_data.id}/#{lda.id}")

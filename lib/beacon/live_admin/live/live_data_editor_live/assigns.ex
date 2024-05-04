@@ -266,12 +266,18 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Assigns do
   end
 
   defp assign_selected(socket, id) do
-    selected = Enum.find(socket.assigns.live_data.assigns, &(&1.id == id))
+    %{live_data: live_data} = socket.assigns
+    selected = Enum.find(live_data.assigns, &(&1.id == id))
 
     if selected do
       assign(socket, selected: selected, changed_value: selected.value)
     else
-      path = beacon_live_admin_path(socket, socket.assigns.beacon_page.site, "/live_data")
+      path =
+        beacon_live_admin_path(
+          socket,
+          socket.assigns.beacon_page.site,
+          "/live_data/#{live_data.id}"
+        )
 
       socket
       |> assign(selected: nil)
