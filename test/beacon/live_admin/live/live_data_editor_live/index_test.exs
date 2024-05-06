@@ -59,7 +59,7 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.IndexTest do
   end
 
   test "edit existing path", %{conn: conn, live_data: [ld1, _ld2]} do
-    {:ok, view, _html} = live(conn, "/admin/site_a/live_data/edit/#{ld1.id}")
+    {:ok, view, _html} = live(conn, "/admin/site_a/live_data/#{ld1.id}")
 
     new_path = "/testposts/:post_id"
 

@@ -17,7 +17,7 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.AssignsTest do
   end
 
   test "create new assign", %{conn: conn, live_data: live_data} do
-    {:ok, view, _html} = live(conn, "/admin/site_a/live_data/#{live_data.id}")
+    {:ok, view, _html} = live(conn, "/admin/site_a/live_data/#{live_data.id}/assigns")
 
     view
     |> element("button", "New Live Data Assign")
@@ -30,14 +30,14 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.AssignsTest do
     assert render(view) =~ "@valid?"
   end
 
-  test "nonexistent assign redirects to root LD page", %{conn: conn, live_data: live_data} do
-    assert {:error, {:live_redirect, %{to: "/admin/site_a/live_data/#{live_data.id}"}}} ==
-             live(conn, "/admin/site_a/live_data/#{live_data.id}/invalid-id")
+  test "nonexistent assign redirects to root live data page", %{conn: conn, live_data: live_data} do
+    assert {:error, {:live_redirect, %{to: "/admin/site_a/live_data/#{live_data.id}/assigns"}}} ==
+             live(conn, "/admin/site_a/live_data/#{live_data.id}/assigns/invalid-id")
   end
 
   test "edit existing assign", %{conn: conn, live_data: live_data} do
     lda = live_data_assign_fixture(node1(), live_data: live_data)
-    {:ok, view, _html} = live(conn, "/admin/site_a/live_data/#{live_data.id}/#{lda.id}")
+    {:ok, view, _html} = live(conn, "/admin/site_a/live_data/#{live_data.id}/assigns/#{lda.id}")
 
     view
     |> form("#edit-assign-form", %{"live_data_assign" => %{"key" => "new_key"}})
@@ -49,7 +49,7 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.AssignsTest do
 
   test "delete existing assign", %{conn: conn, live_data: live_data} do
     lda = live_data_assign_fixture(node1(), live_data: live_data)
-    {:ok, view, _html} = live(conn, "/admin/site_a/live_data/#{live_data.id}/#{lda.id}")
+    {:ok, view, _html} = live(conn, "/admin/site_a/live_data/#{live_data.id}/assigns/#{lda.id}")
 
     view
     |> element("button", "Delete")

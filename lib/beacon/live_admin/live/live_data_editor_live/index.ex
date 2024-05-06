@@ -51,7 +51,9 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Index do
         {:ok, live_data} ->
           socket
           |> assign(live_data_list: Content.live_data_for_site(site))
-          |> push_navigate(to: beacon_live_admin_path(socket, site, "/live_data/#{live_data.id}"))
+          |> push_navigate(
+            to: beacon_live_admin_path(socket, site, "/live_data/#{live_data.id}/assigns")
+          )
 
         {:error, _changeset} ->
           socket
@@ -113,16 +115,16 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Index do
     </.simple_form>
 
     <.main_content>
-      <.table id="live_data" rows={@live_data_list} row_click={&JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/live_data/#{&1.id}"))} row_id={&"live-data-table-row-#{&1.id}"}>
+      <.table id="live_data" rows={@live_data_list} row_click={&JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/live_data/#{&1.id}/assigns"))} row_id={&"live-data-table-row-#{&1.id}"}>
         <:col :let={live_data} label="Path"><%= live_data.path %></:col>
         <:action :let={live_data}>
           <div class="sr-only">
-            <.link id={"edit-live-data-" <> live_data.id} navigate={beacon_live_admin_path(@socket, @beacon_page.site, "/live_data/edit/#{live_data.id}")} title="Edit live data">
+            <.link id={"edit-live-data-" <> live_data.id} navigate={beacon_live_admin_path(@socket, @beacon_page.site, "/live_data/#{live_data.id}")} title="Edit live data">
               Edit
             </.link>
           </div>
           <.link
-            patch={beacon_live_admin_path(@socket, @beacon_page.site, "/live_data/edit/#{live_data.id}")}
+            patch={beacon_live_admin_path(@socket, @beacon_page.site, "/live_data/#{live_data.id}")}
             title="Edit live data"
             aria-label="Edit live data"
             class="flex items-center justify-center w-10 h-10 group"

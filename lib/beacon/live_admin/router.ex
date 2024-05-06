@@ -153,9 +153,10 @@ defmodule Beacon.LiveAdmin.Router do
       # live data
       {"/live_data", Beacon.LiveAdmin.LiveDataEditorLive.Index, :index, %{}},
       {"/live_data/new", Beacon.LiveAdmin.LiveDataEditorLive.Index, :new, %{}},
-      {"/live_data/edit/:live_data_id", Beacon.LiveAdmin.LiveDataEditorLive.Index, :edit, %{}},
-      {"/live_data/:live_data_id", Beacon.LiveAdmin.LiveDataEditorLive.Assigns, :assigns, %{}},
-      {"/live_data/:live_data_id/:assign_id", Beacon.LiveAdmin.LiveDataEditorLive.Assigns,
+      {"/live_data/:live_data_id", Beacon.LiveAdmin.LiveDataEditorLive.Index, :edit, %{}},
+      {"/live_data/:live_data_id/assigns", Beacon.LiveAdmin.LiveDataEditorLive.Assigns, :assigns,
+       %{}},
+      {"/live_data/:live_data_id/assigns/:assign_id", Beacon.LiveAdmin.LiveDataEditorLive.Assigns,
        :assigns, %{}},
       # media library
       {"/media_library", Beacon.LiveAdmin.MediaLibraryLive.Index, :index, %{}},
