@@ -1,7 +1,7 @@
 defmodule Beacon.LiveAdmin.ComponentEditorLive.Index do
   @moduledoc false
 
-  use Beacon.LiveAdmin.PageBuilder
+  use Beacon.LiveAdmin.PageBuilder, table: [sort_by: "name"]
   alias Beacon.LiveAdmin.Content
 
   on_mount {Beacon.LiveAdmin.Hooks.Authorized, {:components, :index}}
@@ -11,18 +11,32 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, :components, [])}
+    {:ok, stream_configure(socket, :components, dom_id: &"#{Ecto.UUID.generate()}-#{&1.id}")}
   end
 
   @impl true
-  def handle_params(%{"query" => query}, _uri, socket) do
-    components = Content.list_components(socket.assigns.beacon_page.site, query: query)
-    {:noreply, assign(socket, :components, components)}
-  end
+  def handle_params(params, _uri, socket) do
+    socket =
+      Table.handle_params(
+        socket,
+        params,
+        &Content.count_components(&1.site, query: params["query"])
+      )
 
-  def handle_params(_params, _uri, socket) do
-    components = Content.list_components(socket.assigns.beacon_page.site)
-    {:noreply, assign(socket, :components, components)}
+    %{site: site} = socket.assigns.beacon_page
+
+    %{per_page: per_page, current_page: page, query: query, sort_by: sort_by} =
+      socket.assigns.beacon_page.table
+
+    components =
+      Content.list_components(site,
+        per_page: per_page,
+        page: page,
+        query: query,
+        sort: sort_by
+      )
+
+    {:noreply, stream(socket, :components, components, reset: true)}
   end
 
   @impl true
@@ -50,16 +64,15 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.Index do
     </.header>
 
     <.simple_form :let={f} id="search-form" for={%{}} as={:search} phx-change="search">
-      <.input field={f[:query]} type="search" autofocus={true} placeholder="Search by name (showing up to 20 results)" />
+      <.input field={f[:query]} type="search" autofocus={true} placeholder="Search by name (showing up to 15 results)" />
     </.simple_form>
 
     <.main_content>
-      <.table id="components" rows={@components} row_click={fn component -> JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/components/#{component.id}")) end}>
-        <:col :let={component} label="Name"><%= component.name %></:col>
-        <:col :let={component} label="Category"><%= component.category %></:col>
-        <:col :let={component} label="Body"><%= excerpt(component.body) %></:col>
-        <:col :let={component} label="Template"><%= excerpt(component.template) %></:col>
-        <:action :let={component}>
+      <.table id="components" rows={@streams.components} row_click={fn {_dom_id, component} -> JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/components/#{component.id}")) end}>
+        <:col :let={{_, component}} label="Name"><%= component.name %></:col>
+        <:col :let={{_, component}} label="Category"><%= component.category %></:col>
+        <:col :let={{_, component}} label="Body"><%= excerpt(component.body) %></:col>
+        <:action :let={{_, component}}>
           <div class="sr-only">
             <.link navigate={beacon_live_admin_path(@socket, @beacon_page.site, "/components/#{component.id}")}>Show</.link>
           </div>
@@ -73,6 +86,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.Index do
           </.link>
         </:action>
       </.table>
+      <.table_pagination socket={@socket} page={@beacon_page} />
     </.main_content>
     """
   end

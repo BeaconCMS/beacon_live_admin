@@ -146,12 +146,11 @@ defmodule Beacon.LiveAdmin.Content do
   end
 
   def list_components(site, opts \\ []) do
-    opts =
-      opts
-      |> Keyword.put_new(:query, nil)
-      |> Keyword.put_new(:per_page, 20)
-
     call(site, Beacon.Content, :list_components, [site, opts])
+  end
+
+  def count_components(site, opts \\ []) do
+    call(site, Beacon.Content, :count_components, [site, opts])
   end
 
   def get_component(site, id) do
