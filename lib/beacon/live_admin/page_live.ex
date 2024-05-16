@@ -8,9 +8,9 @@ defmodule Beacon.LiveAdmin.PageLive do
 
   use Beacon.LiveAdmin.Web, :live_view
   require Logger
-  alias Beacon.LiveAdmin.Cluster
   alias Beacon.LiveAdmin.PageBuilder.Menu
   alias Beacon.LiveAdmin.PageBuilder.Page
+  alias Beacon.LiveAdmin.PageBuilder.Table
   alias Beacon.LiveAdmin.Private
   alias Phoenix.LiveView.Socket
 
@@ -23,10 +23,18 @@ defmodule Beacon.LiveAdmin.PageLive do
       # TODO: nodedow -> notify/alert user
     end
 
-    Cluster.maybe_discover_sites()
-
     sites = Beacon.LiveAdmin.Cluster.running_sites()
-    %{"pages" => pages, "beacon_live_admin_page_url" => current_url} = session
+
+    %{"pages" => pages} = session
+
+    current_url =
+      Map.get(session, "beacon_live_admin_page_url") ||
+        raise """
+        failed to resolve Beacon.LiveAdmin page URL
+
+        You must add Beacon.LiveAdmin.Plug to the :browser pipeline that beacon_live_admin is piped through.
+        """
+
     page = lookup_page!(socket, current_url)
 
     socket =
@@ -40,7 +48,13 @@ defmodule Beacon.LiveAdmin.PageLive do
       |> Private.build_on_mount_lifecycle(page.module)
 
     update_page = fn socket, site, page, params ->
-      update_page(socket, site: site, path: page.path, module: page.module, params: params)
+      update_page(socket,
+        site: site,
+        path: page.path,
+        module: page.module,
+        params: params,
+        table: page.module.__beacon_page_table__()
+      )
     end
 
     with {:cont, socket} <- Private.mount(params, session, socket),
@@ -72,6 +86,30 @@ defmodule Beacon.LiveAdmin.PageLive do
   end
 
   @impl true
+  def handle_event("beacon:table-search", %{"search" => %{"query" => query}}, socket) do
+    to =
+      beacon_live_admin_path(
+        socket,
+        socket.assigns.beacon_page.site,
+        socket.assigns.beacon_page.path,
+        Table.query_params(socket.assigns.beacon_page.table, page: 1, query: query)
+      )
+
+    {:noreply, push_patch(socket, to: to)}
+  end
+
+  def handle_event("beacon:table-sort", %{"sort" => %{"sort_by" => sort_by}}, socket) do
+    to =
+      beacon_live_admin_path(
+        socket,
+        socket.assigns.beacon_page.site,
+        socket.assigns.beacon_page.path,
+        Table.query_params(socket.assigns.beacon_page.table, sort_by: sort_by)
+      )
+
+    {:noreply, push_patch(socket, to: to)}
+  end
+
   def handle_event(event, params, socket) do
     maybe_apply_module(socket, :handle_event, [event, params], &{:noreply, &1})
   end
@@ -79,6 +117,11 @@ defmodule Beacon.LiveAdmin.PageLive do
   @impl true
   def handle_info(msg, socket) do
     maybe_apply_module(socket, :handle_info, [msg], &{:noreply, &1})
+  end
+
+  @impl true
+  def handle_call(msg, from, socket) do
+    maybe_apply_module(socket, :handle_call, [msg, from], &{:noreply, &1})
   end
 
   defp lookup_page!(socket, url) do
@@ -138,10 +181,14 @@ defmodule Beacon.LiveAdmin.PageLive do
         case {a, b} do
           {"/layouts", _} -> true
           {_, "/layouts"} -> false
-          {"/pages", _} -> true
-          {_, "/pages"} -> false
           {"/components", _} -> true
           {_, "/components"} -> false
+          {"/pages", _} -> true
+          {_, "/pages"} -> false
+          {"/live_data", _} -> true
+          {_, "/live_data"} -> false
+          {"/error_pages", _} -> true
+          {_, "/error_pages"} -> false
           {"/media_library", _} -> true
           {_, "/media_library"} -> false
           {a, b} -> a <= b
@@ -154,20 +201,13 @@ defmodule Beacon.LiveAdmin.PageLive do
 
   defp maybe_apply_module(socket, fun, params, default) do
     mod = socket.assigns.beacon_page.module
+    params = params ++ [socket]
 
-    if exported?(mod, fun, length(params) + 1) do
-      Logger.debug("""
-      Applying #{fun} in #{mod}
-      Parameters: #{inspect(params)}
-      """)
-
-      apply(mod, fun, params ++ [socket])
+    if exported?(mod, fun, length(params)) do
+      Logger.debug("calling #{Exception.format_mfa(mod, fun, params)}")
+      apply(mod, fun, params)
     else
-      Logger.debug("""
-      Module/Function not exported: #{inspect(mod)}/#{inspect(fun)}
-      Parameters: #{inspect(params)}
-      """)
-
+      Logger.debug("not exported #{Exception.format_mfa(mod, fun, params)}")
       default.(socket)
     end
   end
@@ -203,14 +243,15 @@ defmodule Beacon.LiveAdmin.PageLive do
     path = Beacon.LiveAdmin.Router.beacon_live_admin_path(socket, page.site, path)
     assigns = %{text: text, icon: icon, path: path}
 
-    # force redirect to re-execute plug to fecth current url
+    # use href to force redirecting to re-execute plug to fecth current url
+    # more info at https://github.com/phoenixframework/phoenix_live_view/pull/2654
     ~H"""
     <.link
       href={@path}
-      class="w-full transition-colors outline-none active:text-blue-700 focus-visible:[&:not(:active)]:ring-2 @[350px]:focus-visible:[&:not(:active)]:ring-4 focus-visible:ring-purple-500 hover:bg-slate-100 flex rounded items-center justify-center @[180px]:justify-start gap-0 @[180px]:gap-1.5 @[240px]:gap-2  @[300px]:gap-2.5 px-[22px] py-3.5 @[180px]:p-3 @[240px]:py-3.5 @[240px]:px-3 @[350px]:py-4 antialiased font-semibold text-base @[240px]:text-lg  @[300px]:text-xl @[350px]:text-2xl text-slate-800"
+      class="w-full transition-colors outline-none active:text-blue-700 focus-visible:[&:not(:active)]:ring-2 @[350px]:focus-visible:[&:not(:active)]:ring-4 focus-visible:ring-purple-500 hover:bg-slate-100 flex rounded items-center justify-center @[180px]:justify-start gap-0 @[180px]:gap-2 @[240px]:gap-3  @[300px]:gap-4 px-[18px] py-3.5 @[180px]:p-2 @[240px]:py-3.5 @[240px]:px-2 @[350px]:py-4 antialiased font-semibold text-base @[240px]:text-lg  @[300px]:text-xl @[350px]:text-2xl text-slate-800"
     >
       <span :if={@icon} aria-hidden="true" class={@icon <> " aspect-square h-7 @[180px]:h-4.5 w-7 @[180px]:w-4.5 @[350px]:h-7 @[350px]:w-7"}></span>
-      <div class="hidden font-semibold @[180px]:block line-clamp-1"><%= @text %></div>
+      <div class="hidden font-semibold @[180px]:block line-clamp-1 text-blue-700"><%= @text %></div>
     </.link>
     """
   end
@@ -223,7 +264,7 @@ defmodule Beacon.LiveAdmin.PageLive do
     ~H"""
     <.link
       href={@path}
-      class="w-full transition-colors outline-none active:text-blue-700 focus-visible:[&:not(:active)]:ring-2 @[350px]:focus-visible:[&:not(:active)]:ring-4 focus-visible:ring-purple-500 hover:bg-slate-100 flex rounded items-center justify-center @[180px]:justify-start gap-0 @[180px]:gap-1.5 @[240px]:gap-2  @[300px]:gap-2.5 px-[22px] py-3.5 @[180px]:p-3 @[240px]:py-3.5 @[240px]:px-3 @[350px]:py-4 antialiased font-semibold text-base @[240px]:text-lg  @[300px]:text-xl @[350px]:text-2xl text-slate-800"
+      class="w-full transition-colors outline-none active:text-blue-700 focus-visible:[&:not(:active)]:ring-2 @[350px]:focus-visible:[&:not(:active)]:ring-4 focus-visible:ring-purple-500 hover:bg-slate-100 flex rounded items-center justify-center @[180px]:justify-start gap-0 @[180px]:gap-2 @[240px]:gap-3  @[300px]:gap-4 px-[18px] py-3.5 @[180px]:p-2 @[240px]:py-3.5 @[240px]:px-2 @[350px]:py-4 antialiased font-semibold text-base @[240px]:text-lg  @[300px]:text-xl @[350px]:text-2xl text-slate-800"
     >
       <span :if={@icon} aria-hidden="true" class={@icon <> " aspect-square h-7 @[180px]:h-4.5 w-7 @[180px]:w-4.5 @[350px]:h-7 @[350px]:w-7"}></span>
       <div class="hidden font-semibold @[180px]:block line-clamp-1"><%= @text %></div>

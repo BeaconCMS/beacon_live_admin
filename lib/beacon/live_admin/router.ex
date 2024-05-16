@@ -122,6 +122,7 @@ defmodule Beacon.LiveAdmin.Router do
       end)
 
     [
+      # layouts
       {"/layouts", Beacon.LiveAdmin.LayoutEditorLive.Index, :index, %{}},
       {"/layouts/new", Beacon.LiveAdmin.LayoutEditorLive.New, :new, %{}},
       {"/layouts/:id", Beacon.LiveAdmin.LayoutEditorLive.Edit, :edit, %{}},
@@ -129,6 +130,11 @@ defmodule Beacon.LiveAdmin.Router do
       {"/layouts/:id/revisions", Beacon.LiveAdmin.LayoutEditorLive.Revisions, :revisions, %{}},
       {"/layouts/:id/resource_links", Beacon.LiveAdmin.LayoutEditorLive.ResourceLinks,
        :resource_links, %{}},
+      # components
+      {"/components", Beacon.LiveAdmin.ComponentEditorLive.Index, :index, %{}},
+      {"/components/new", Beacon.LiveAdmin.ComponentEditorLive.New, :new, %{}},
+      {"/components/:id", Beacon.LiveAdmin.ComponentEditorLive.Edit, :edit, %{}},
+      # pages
       {"/pages", Beacon.LiveAdmin.PageEditorLive.Index, :index, %{}},
       {"/pages/new", Beacon.LiveAdmin.PageEditorLive.New, :new, %{}},
       {"/pages/:id", Beacon.LiveAdmin.PageEditorLive.Edit, :edit, %{}},
@@ -141,9 +147,18 @@ defmodule Beacon.LiveAdmin.Router do
       {"/pages/:page_id/variants", Beacon.LiveAdmin.PageEditorLive.Variants, :variants, %{}},
       {"/pages/:page_id/variants/:variant_id", Beacon.LiveAdmin.PageEditorLive.Variants,
        :variants, %{}},
-      {"/components", Beacon.LiveAdmin.ComponentEditorLive.Index, :index, %{}},
-      {"/components/new", Beacon.LiveAdmin.ComponentEditorLive.New, :new, %{}},
-      {"/components/:id", Beacon.LiveAdmin.ComponentEditorLive.Edit, :edit, %{}},
+      # error pages
+      {"/error_pages", Beacon.LiveAdmin.ErrorPageEditorLive.Index, :index, %{}},
+      {"/error_pages/:status", Beacon.LiveAdmin.ErrorPageEditorLive.Index, :index, %{}},
+      # live data
+      {"/live_data", Beacon.LiveAdmin.LiveDataEditorLive.Index, :index, %{}},
+      {"/live_data/new", Beacon.LiveAdmin.LiveDataEditorLive.Index, :new, %{}},
+      {"/live_data/:live_data_id", Beacon.LiveAdmin.LiveDataEditorLive.Index, :edit, %{}},
+      {"/live_data/:live_data_id/assigns", Beacon.LiveAdmin.LiveDataEditorLive.Assigns, :assigns,
+       %{}},
+      {"/live_data/:live_data_id/assigns/:assign_id", Beacon.LiveAdmin.LiveDataEditorLive.Assigns,
+       :assigns, %{}},
+      # media library
       {"/media_library", Beacon.LiveAdmin.MediaLibraryLive.Index, :index, %{}},
       {"/media_library/upload", Beacon.LiveAdmin.MediaLibraryLive.Index, :upload, %{}},
       {"/media_library/:id", Beacon.LiveAdmin.MediaLibraryLive.Index, :show, %{}}

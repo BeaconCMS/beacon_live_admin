@@ -8,6 +8,10 @@ defmodule Beacon.LiveAdmin.Content do
 
   import Beacon.LiveAdmin.Cluster, only: [call: 4]
 
+  def list_stylesheets(site) do
+    call(site, Beacon.Content, :list_stylesheets, [site])
+  end
+
   def change_layout(site, layout, attrs \\ %{}) do
     call(site, Beacon.Content, :change_layout, [layout, attrs])
   end
@@ -45,8 +49,8 @@ defmodule Beacon.LiveAdmin.Content do
     call(site, Beacon.Content, :list_layouts, [site, opts])
   end
 
-  def change_page(site, page) do
-    call(site, Beacon.Content, :change_page, [page])
+  def change_page(site, page, attrs \\ %{}) do
+    call(site, Beacon.Content, :change_page, [page, attrs])
   end
 
   def page_extra_fields(site, form, attrs, errors) do
@@ -94,12 +98,11 @@ defmodule Beacon.LiveAdmin.Content do
   end
 
   def list_pages(site, opts \\ []) do
-    opts =
-      opts
-      |> Keyword.put_new(:query, nil)
-      |> Keyword.put_new(:per_page, 20)
-
     call(site, Beacon.Content, :list_pages, [site, opts])
+  end
+
+  def count_pages(site, opts \\ []) do
+    call(site, Beacon.Content, :count_pages, [site, opts])
   end
 
   def change_page_variant(site, variant, attrs \\ %{}) do
@@ -161,5 +164,73 @@ defmodule Beacon.LiveAdmin.Content do
 
   def update_component(site, component, attrs) do
     call(site, Beacon.Content, :update_component, [component, attrs])
+  end
+
+  def change_error_page(site, error_page, attrs \\ %{}) do
+    call(site, Beacon.Content, :change_error_page, [error_page, attrs])
+  end
+
+  def create_error_page(site, attrs) do
+    call(site, Beacon.Content, :create_error_page, [attrs])
+  end
+
+  def list_error_pages(site) do
+    call(site, Beacon.Content, :list_error_pages, [site])
+  end
+
+  def update_error_page(site, error_page, attrs) do
+    call(site, Beacon.Content, :update_error_page, [error_page, attrs])
+  end
+
+  def delete_error_page(site, error_page) do
+    call(site, Beacon.Content, :delete_error_page, [error_page])
+  end
+
+  def valid_error_statuses(site) do
+    call(site, Beacon.Content.ErrorPage, :valid_statuses, [])
+  end
+
+  def live_data_assign_formats(site) do
+    call(site, Beacon.Content, :live_data_assign_formats, [])
+  end
+
+  def change_live_data_path(site, live_data, attrs \\ %{}) do
+    call(site, Beacon.Content, :change_live_data_path, [live_data, attrs])
+  end
+
+  def change_live_data_assign(site, live_data_assign, attrs \\ %{}) do
+    call(site, Beacon.Content, :change_live_data_assign, [live_data_assign, attrs])
+  end
+
+  def create_live_data(site, attrs) do
+    call(site, Beacon.Content, :create_live_data, [attrs])
+  end
+
+  def create_assign_for_live_data(site, live_data, attrs) do
+    call(site, Beacon.Content, :create_assign_for_live_data, [live_data, attrs])
+  end
+
+  def get_live_data(site, id) do
+    call(site, Beacon.Content, :get_live_data, [id])
+  end
+
+  def live_data_for_site(site, opts \\ []) do
+    call(site, Beacon.Content, :live_data_for_site, [site, opts])
+  end
+
+  def update_live_data_path(site, live_data, attrs) do
+    call(site, Beacon.Content, :update_live_data_path, [live_data, attrs])
+  end
+
+  def update_live_data_assign(site, live_data_assign, attrs) do
+    call(site, Beacon.Content, :update_live_data_assign, [live_data_assign, attrs])
+  end
+
+  def delete_live_data(site, live_data) do
+    call(site, Beacon.Content, :delete_live_data, [live_data])
+  end
+
+  def delete_live_data_assign(site, live_data_assign) do
+    call(site, Beacon.Content, :delete_live_data_assign, [live_data_assign])
   end
 end

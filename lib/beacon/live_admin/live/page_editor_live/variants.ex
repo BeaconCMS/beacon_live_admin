@@ -42,22 +42,15 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
     end
   end
 
-  def handle_event("variant_editor_lost_focus", %{"value" => template}, socket) do
+  def handle_event("set_template", %{"value" => template}, socket) do
     %{selected: selected, beacon_page: %{site: site}, form: form} = socket.assigns
 
-    changeset =
-      site
-      |> Content.change_page_variant(selected, %{
-        "template" => template,
-        "name" => form.params["name"] || Map.fetch!(form.data, :name),
-        "weight" => form.params["weight"] || Map.fetch!(form.data, :weight)
-      })
-      |> Map.put(:action, :validate)
+    params = Map.merge(form.params, %{"template" => template})
+    changeset = Content.change_page_variant(site, selected, params)
 
     socket =
       socket
-      |> assign(form: to_form(changeset))
-      |> assign(changed_template: template)
+      |> assign_form(changeset)
       |> assign(unsaved_changes: !(changeset.changes == %{}))
 
     {:noreply, socket}
@@ -73,7 +66,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
 
     socket =
       socket
-      |> assign(form: to_form(changeset))
+      |> assign_form(changeset)
       |> assign(unsaved_changes: !(changeset.changes == %{}))
 
     {:noreply, socket}
@@ -95,7 +88,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
 
         {:error, changeset} ->
           changeset = Map.put(changeset, :action, :update)
-          assign(socket, form: to_form(changeset))
+          assign_form(changeset)
       end
 
     {:noreply, socket}
@@ -144,78 +137,72 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
   def render(assigns) do
     ~H"""
     <div>
-      <Beacon.LiveAdmin.AdminComponents.page_menu socket={@socket} site={@beacon_page.site} current_action={@live_action} page_id={@page.id} />
+      <Beacon.LiveAdmin.AdminComponents.page_header socket={@socket} flash={@flash} page={@page} live_action={@live_action} />
 
       <.header>
         <%= @page_title %>
+        <:actions>
+          <.button type="button" phx-click="create_new">New Variant</.button>
+        </:actions>
       </.header>
-
-      <.modal :if={@show_nav_modal} id="confirm-nav" on_cancel={JS.push("stay_here")} show>
-        <p>You've made unsaved changes to this variant!</p>
-        <p>Navigating to another variant without saving will cause these changes to be lost.</p>
-        <.button type="button" phx-click="stay_here">
-          Stay here
-        </.button>
-        <.button type="button" phx-click="discard_changes">
-          Discard changes
-        </.button>
-      </.modal>
-
-      <.modal :if={@show_delete_modal} id="confirm-delete" on_cancel={JS.push("delete_cancel")} show>
-        <p>Are you sure you want to delete this variant?</p>
-        <p>Note: deleted variants will still be active until the page is re-published!</p>
-        <.button type="button" phx-click="delete_confirm">
-          Delete
-        </.button>
-        <.button type="button" phx-click="delete_cancel">
-          Cancel
-        </.button>
-      </.modal>
-
-      <div class="grid items-start grid-cols-1 grid-rows-1 mx-auto gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
-        <div>
-          <.button type="button" phx-click="create_new">
-            New Variant
+      <.main_content>
+        <.modal :if={@show_nav_modal} id="confirm-nav" on_cancel={JS.push("stay_here")} show>
+          <p>You've made unsaved changes to this variant!</p>
+          <p>Navigating to another variant without saving will cause these changes to be lost.</p>
+          <.button type="button" phx-click="stay_here">
+            Stay here
           </.button>
-          <.table :if={@selected} id="variants" rows={@page.variants} row_click={fn row -> "select-#{row.id}" end}>
-            <:col :let={variant} :for={{attr, suffix} <- [{:name, ""}, {:weight, " (%)"}]} label={"#{attr}#{suffix}"}>
-              <%= Map.fetch!(variant, attr) %>
-            </:col>
-          </.table>
-        </div>
+          <.button type="button" phx-click="discard_changes">
+            Discard changes
+          </.button>
+        </.modal>
 
-        <div :if={@form} class="w-full col-span-2">
-          <.form :let={f} for={@form} class="flex items-center" phx-change="validate" phx-submit="save_changes">
-            <div class="mr-4 text-4xl w-max">
-              Name
-            </div>
-            <div class="w-5/12">
-              <.input field={f[:name]} type="text" />
-            </div>
-            <div class="mx-4 text-4xl w-max">
-              Weight
-            </div>
-            <div class="w-1/12">
-              <.input field={f[:weight]} type="number" min="0" max="100" />
-            </div>
-            <input type="hidden" name="page_variant[template]" id="page_variant-form_template" value={@changed_template} />
+        <.modal :if={@show_delete_modal} id="confirm-delete" on_cancel={JS.push("delete_cancel")} show>
+          <p class="mb-2">Are you sure you want to delete this variant?</p>
+          <p class="mb-2"><b>Note:</b> deleted variants will still be active until the page is re-published!</p>
+          <div class="flex justify-end w-full gap-4 mt-10">
+            <.button type="button" phx-click="delete_confirm">
+              Delete
+            </.button>
+            <.button type="button" phx-click="delete_cancel">
+              Cancel
+            </.button>
+          </div>
+        </.modal>
 
-            <.button phx-disable-with="Saving..." class="w-1/6 mx-4 uppercase">Save Changes</.button>
-            <.button type="button" phx-click="delete" class="w-1/12 uppercase">Delete</.button>
-          </.form>
-          <%= template_error(@form[:template]) %>
-          <div class="w-full mt-10 space-y-8">
-            <div class="py-6 rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
-              <LiveMonacoEditor.code_editor
-                path="variant"
-                class="h-full col-span-full lg:col-span-2"
-                value={@selected.template}
-                opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => @language})}
-              />
+        <div class="grid items-start grid-cols-1 grid-rows-1 mx-auto gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
+          <div class="h-full lg:overflow-y-auto pb-4 lg:h-[calc(100vh_-_239px)]">
+            <.table :if={@selected} id="variants" rows={@page.variants} row_click={fn row -> "select-#{row.id}" end}>
+              <:col :let={variant} :for={{attr, suffix} <- [{:name, ""}, {:weight, " (%)"}]} label={"#{attr}#{suffix}"}>
+                <%= Map.fetch!(variant, attr) %>
+              </:col>
+            </.table>
+          </div>
+
+          <div :if={@form} class="w-full col-span-2">
+            <.form :let={f} for={@form} class="flex items-end gap-4" phx-change="validate" phx-submit="save_changes">
+              <.input label="Name" field={f[:name]} type="text" />
+              <.input label="weight" field={f[:weight]} type="number" min="0" max="100" />
+              <input type="hidden" name="page_variant[template]" id="page_variant-form_template" value={Phoenix.HTML.Form.input_value(f, :template)} />
+
+              <.button phx-disable-with="Saving..." class="ml-auto">Save Changes</.button>
+              <.button type="button" phx-click="delete" class="">Delete</.button>
+            </.form>
+            <%= template_error(@form[:template]) %>
+            <div class="w-full mt-10 space-y-8">
+              <div class="py-6 rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
+                <LiveMonacoEditor.code_editor
+                  path="variant"
+                  class="col-span-full lg:col-span-2"
+                  value={@selected.template}
+                  change="set_template"
+                  opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => @language})}
+                />
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </.main_content>
     </div>
     """
   end
@@ -245,6 +232,10 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
       end
 
     assign(socket, form: form)
+  end
+
+  defp assign_form(socket, changeset) do
+    assign(socket, :form, to_form(changeset))
   end
 
   defp language("heex" = _format), do: "html"

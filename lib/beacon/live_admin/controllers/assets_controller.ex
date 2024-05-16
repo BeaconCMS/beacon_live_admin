@@ -13,7 +13,13 @@ defmodule Beacon.LiveAdmin.AssetsController do
   @external_resource css_path
   @css File.read!(css_path)
 
-  js_path = Path.join(__DIR__, "../../../../priv/static/beacon_live_admin.min.js")
+  js_path =
+    if Code.ensure_loaded?(Mix.Project) and Mix.env() == :dev do
+      Path.join(__DIR__, "../../../../priv/static/beacon_live_admin.js")
+    else
+      Path.join(__DIR__, "../../../../priv/static/beacon_live_admin.min.js")
+    end
+
   @external_resource js_path
 
   @js """
@@ -33,13 +39,14 @@ defmodule Beacon.LiveAdmin.AssetsController do
 
     conn
     |> put_resp_header("content-type", content_type)
-    |> put_resp_header("cache-control", "public, max-age=31536000")
+    |> put_resp_header("cache-control", "public, max-age=31536000, immutable")
     |> put_private(:plug_skip_csrf_protection, true)
     |> send_resp(200, contents)
     |> halt()
   end
 
   defp contents_and_type(:css), do: {@css, "text/css"}
+
   defp contents_and_type(:js), do: {@js, "text/javascript"}
 
   @doc """

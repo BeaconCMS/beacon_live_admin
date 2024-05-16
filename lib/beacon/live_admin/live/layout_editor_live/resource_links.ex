@@ -21,6 +21,7 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.ResourceLinks do
       |> assign(extra_attributes: [])
       |> assign(beacon_layout: beacon_layout)
       |> assign(show_modal: false)
+      |> assign(page_title: "Resource Links")
       |> assign_field(changeset)
       |> assign_attributes()
 
@@ -85,6 +86,7 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.ResourceLinks do
           |> assign(:beacon_layout, layout)
           |> assign_field(changeset)
           |> assign_attributes()
+          |> put_flash(:info, "Layout updated successfully")
 
         {:error, changeset} ->
           assign_field(socket, changeset)
@@ -101,24 +103,25 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.ResourceLinks do
   def render(assigns) do
     ~H"""
     <div>
-      <Beacon.LiveAdmin.AdminComponents.layout_menu socket={@socket} site={@beacon_layout.site} current_action={@live_action} layout_id={@beacon_layout.id} />
+      <Beacon.LiveAdmin.AdminComponents.layout_header socket={@socket} flash={@flash} beacon_layout={@beacon_layout} live_action={@live_action} />
 
-      <div>
-        <.header>
-          <:actions>
-            <.button phx-disable-with="Saving..." form="resource-links-form" class="uppercase">Save Changes</.button>
-          </:actions>
-        </.header>
+      <.header>
+        <%= @page_title %>
+        <:actions>
+          <.button phx-disable-with="Saving..." form="resource-links-form" class="uppercase">Save Changes</.button>
+        </:actions>
+      </.header>
 
-        <div>
+      <.main_content>
+        <div class="flex gap-4">
           <.button type="button" phx-click="add">New Resource Link</.button>
           <.button type="button" phx-click="show-new-attribute-modal">New Attribute</.button>
         </div>
 
-        <div class="overflow-x-auto mt-8">
-          <.form for={%{}} as={:resource_links} id="resource-links-form" class="space-y-2" phx-submit="save">
+        <div class="mt-8 overflow-x-auto">
+          <.form for={%{}} as={:resource_links} id="resource-links-form" class="divide-y divide-gray-100" phx-submit="save">
             <%= for {resource_link, i} <- Enum.with_index(@resource_links) do %>
-              <div class="flex items-end gap-2 my-2">
+              <div class="grid items-end grid-flow-col gap-2 py-5 ">
                 <%= for attribute <- @attributes do %>
                   <div class="min-w-[150px] shrink-0">
                     <.input
@@ -132,8 +135,11 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.ResourceLinks do
                     />
                   </div>
                 <% end %>
-
-                <.button type="button" phx-click="delete" phx-value-index={i} data-confirm="Are you sure?">Delete</.button>
+                <div class="justify-self-end">
+                  <button type="button" class="flex items-center justify-center w-10 h-10" phx-click="delete" phx-value-index={i} aria-label="Delete" title="delete" data-confirm="Are you sure?">
+                    <span aria-hidden="true" class="text-red-500 hover:text-red-700 hero-trash"></span>
+                  </button>
+                </div>
               </div>
             <% end %>
           </.form>
@@ -155,7 +161,7 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.ResourceLinks do
             </div>
           </.simple_form>
         </.modal>
-      </div>
+      </.main_content>
     </div>
     """
   end
@@ -181,12 +187,20 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.ResourceLinks do
 
     case Map.fetch(params, field) do
       {:ok, map} ->
-        list = Enum.sort_by(map, fn {key, _value} -> String.to_integer(key) end)
-        Map.put(params, field, Keyword.values(list))
+        list =
+          map
+          |> Enum.sort_by(&String.to_integer(elem(&1, 0)))
+          |> Enum.map(fn {_position, map} -> strip_empty_values(map) end)
+
+        Map.put(params, field, list)
 
       :error ->
         params
     end
+  end
+
+  defp strip_empty_values(map) do
+    Map.reject(map, fn {_key, value} -> value in [nil, ""] end)
   end
 
   defp input_name(form_field, index, attribute) do

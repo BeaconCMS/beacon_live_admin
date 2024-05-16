@@ -1,0 +1,128 @@
+name: CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: "test: OTP ${{matrix.otp}} | Elixir ${{matrix.elixir}} | Phoenix ${{matrix.phoenix-version}} | LiveView ${{matrix.phoenix-live-view-version}}"
+
+    strategy:
+      matrix:
+        include:
+          # minimum required versions
+          - otp: "25.1"
+            elixir: "1.13.4"
+            phoenix-version: "1.7.0"
+            phoenix-live-view-version: "0.20.2"
+
+          # latest
+          - otp: "26"
+            elixir: "1.16"
+            phoenix-version: "~> 1.7"
+            phoenix-live-view-version: "~> 0.20"
+
+    env:
+      MIX_ENV: test
+      PHOENIX_VERSION: ${{matrix.phoenix-version}}
+      PHOENIX_LIVE_VIEW_VERSION: ${{matrix.phoenix-live-view-version}}
+
+    runs-on: ubuntu-20.04
+
+    services:
+      postgres:
+        image: postgres:13.1
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          otp-version: ${{ matrix.otp }}
+          elixir-version: ${{ matrix.elixir }}
+
+      - name: Cache mix deps
+        uses: actions/cache@v4
+        id: cache-deps
+        with:
+          path: |
+            deps
+            _build
+          key: mix-${{ env.MIX_ENV }}-${{ runner.os }}-${{ matrix.otp }}-${{ matrix.elixir }}-${{ matrix.phoenix-version }}-${{ matrix.phoenix-live-view-version }}-${{ hashFiles('**/mix.lock') }}
+          restore-keys: |
+            mix-${{ env.MIX_ENV }}-${{ runner.os }}-${{ matrix.otp }}-${{ matrix.elixir }}-${{ matrix.phoenix-version }}-${{ matrix.phoenix-live-view-version }}-${{ hashFiles('**/mix.lock') }}
+
+      - run: mix deps.get
+
+      - run: mix tailwind.install --no-assets
+
+      - name: Run tests
+        run: |
+          epmd -daemon
+          mix test
+
+  quality:
+    name: "quality: OTP ${{matrix.otp}} | Elixir ${{matrix.elixir}} | Phoenix ${{matrix.phoenix-version}} | LiveView ${{matrix.phoenix-live-view-version}}"
+
+    strategy:
+      matrix:
+        include:
+          # latest
+          - otp: "26"
+            elixir: "1.16"
+            phoenix-version: "~> 1.7"
+            phoenix-live-view-version: "~> 0.20"
+
+    env:
+      MIX_ENV: dev
+
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          elixir-version: ${{ matrix.elixir }}
+          otp-version: ${{ matrix.otp }}
+
+      - name: Cache mix deps
+        uses: actions/cache@v4
+        id: cache-deps
+        with:
+          path: |
+            deps
+            _build
+          key: mix-${{ env.MIX_ENV }}-${{ runner.os }}-${{ matrix.otp }}-${{ matrix.elixir }}-${{ matrix.phoenix-version }}-${{ matrix.phoenix-live-view-version }}-${{ hashFiles('**/mix.lock') }}
+          restore-keys: |
+            mix-${{ env.MIX_ENV }}-${{ runner.os }}-${{ matrix.otp }}-${{ matrix.elixir }}-${{ matrix.phoenix-version }}-${{ matrix.phoenix-live-view-version }}-${{ hashFiles('**/mix.lock') }}
+
+      - run: mix deps.get
+
+      - run: mix compile --warnings-as-errors
+
+      - run: mix assets.setup
+
+      - run: mix format.all.check
+
+      - run: mix deps.unlock --check-unused

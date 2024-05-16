@@ -8,6 +8,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
 
   alias Phoenix.LiveView.JS
   alias Beacon.LiveAdmin.CoreComponents
+  alias Beacon.LiveAdmin.PageBuilder.Table
 
   import Beacon.LiveAdmin.Gettext
   import Beacon.LiveAdmin.Router, only: [beacon_live_admin_path: 3]
@@ -27,6 +28,18 @@ defmodule Beacon.LiveAdmin.AdminComponents do
   @menu_link_regular_class "inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300"
 
   attr :socket, :map
+  attr :flash, :map
+  attr :beacon_layout, :map
+  attr :live_action, :atom
+
+  def layout_header(assigns) do
+    ~H"""
+    <.flash_group flash={@flash} />
+    <Beacon.LiveAdmin.AdminComponents.layout_menu socket={@socket} site={@beacon_layout.site} current_action={@live_action} layout_id={@beacon_layout.id} />
+    """
+  end
+
+  attr :socket, :map
   attr :site, :atom
   attr :current_action, :atom
   attr :layout_id, :string
@@ -39,7 +52,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
       )
 
     ~H"""
-    <div class="text-sm font-medium text-center text-gray-500 border-b border-gray-200 mb-10">
+    <div class="mb-10 text-sm font-medium text-center text-gray-500 border-b border-gray-200">
       <ul class="flex flex-wrap -mb-px">
         <%= layout_menu_items(assigns) %>
       </ul>
@@ -73,6 +86,18 @@ defmodule Beacon.LiveAdmin.AdminComponents do
   end
 
   attr :socket, :map
+  attr :flash, :map
+  attr :page, :any
+  attr :live_action, :atom
+
+  def page_header(assigns) do
+    ~H"""
+    <.flash_group flash={@flash} />
+    <Beacon.LiveAdmin.AdminComponents.page_menu socket={@socket} site={@page.site} current_action={@live_action} page_id={@page.id} />
+    """
+  end
+
+  attr :socket, :map
   attr :site, :atom
   attr :current_action, :atom
   attr :page_id, :string
@@ -85,7 +110,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
       )
 
     ~H"""
-    <div class="text-sm font-medium text-center text-gray-500 border-b border-gray-200 mb-10">
+    <div class="mb-10 text-sm font-medium text-center text-gray-500 border-b border-gray-200">
       <ul class="flex flex-wrap -mb-px">
         <%= page_menu_items(assigns) %>
       </ul>
@@ -299,8 +324,8 @@ defmodule Beacon.LiveAdmin.AdminComponents do
     <button
       type={@type}
       class={[
-        "phx-submit-loading:opacity-75 rounded-xl bg-blue-600 hover:bg-blue-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 active:bg-blue-800 py-3.5 px-6",
-        "text-sm/5 font-semibold tracking-wide text-white active:text-white/80",
+        "phx-submit-loading:opacity-75 rounded-xl whitespace-nowrap bg-blue-600 hover:bg-blue-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 active:bg-blue-800 py-3.5 px-6",
+        "text-sm/5 font-semibold tracking-[1.68px] text-white active:text-white/80 flex items-center gap-2",
         @class
       ]}
       {@rest}
@@ -375,8 +400,16 @@ defmodule Beacon.LiveAdmin.AdminComponents do
   def input(%{type: "select"} = assigns) do
     ~H"""
     <div phx-feedback-for={@name}>
-      <.label for={@id}><%= @label %></.label>
-      <select id={@id} name={@name} class="mt-1 block w-full rounded-md border border-gray-300 bg-white shadow-sm focus:border-zinc-400 focus:ring-0 sm:text-sm" multiple={@multiple} {@rest}>
+      <%= if @label do %>
+        <.label for={@id}><%= @label %></.label>
+      <% end %>
+      <select
+        id={@id}
+        name={@name}
+        class="block w-full mt-1 bg-white border border-gray-300 rounded-md shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-200 sm:text-sm"
+        multiple={@multiple}
+        {@rest}
+      >
         <option :if={@prompt} value=""><%= @prompt %></option>
         <%= Phoenix.HTML.Form.options_for_select(@options, @value) %>
       </select>
@@ -388,14 +421,16 @@ defmodule Beacon.LiveAdmin.AdminComponents do
   def input(%{type: "textarea"} = assigns) do
     ~H"""
     <div phx-feedback-for={@name}>
-      <.label for={@id}><%= @label %></.label>
+      <%= if @label do %>
+        <.label for={@id}><%= @label %></.label>
+      <% end %>
       <textarea
         id={@id}
         name={@name}
         class={[
-          "mt-2 block w-full rounded-lg text-zinc-900 focus:ring-0 sm:text-sm sm:leading-6",
-          "phx-no-feedback:border-zinc-300 phx-no-feedback:focus:border-zinc-400",
-          "min-h-[6rem] border-zinc-300 focus:border-zinc-400",
+          "block w-full rounded-lg text-zinc-900 focus:ring-2 focus:ring-blue-200 sm:text-sm sm:leading-6",
+          "phx-no-feedback:border-zinc-300 phx-no-feedback:focus:border-blue-600",
+          "min-h-[6rem] border-zinc-300 focus:border-blue-600",
           @errors != [] && "border-rose-400 focus:border-rose-400"
         ]}
         {@rest}
@@ -409,16 +444,18 @@ defmodule Beacon.LiveAdmin.AdminComponents do
   def input(assigns) do
     ~H"""
     <div phx-feedback-for={@name}>
-      <.label for={@id}><%= @label %></.label>
+      <%= if @label do %>
+        <.label for={@id}><%= @label %></.label>
+      <% end %>
       <input
         type={@type}
         name={@name}
         id={@id}
         value={Phoenix.HTML.Form.normalize_value(@type, @value)}
         class={[
-          "mt-2 block w-full rounded-lg text-zinc-900 focus:ring-0 sm:text-sm sm:leading-6",
-          "phx-no-feedback:border-zinc-300 phx-no-feedback:focus:border-zinc-400",
-          "border-zinc-300 focus:border-zinc-400",
+          "block w-full rounded-lg text-zinc-900 focus:ring-2 focus:ring-blue-200 sm:text-sm sm:leading-6",
+          "phx-no-feedback:border-zinc-300 phx-no-feedback:focus:border-blue-600",
+          "border-zinc-300 focus:border-blue-600",
           @errors != [] && "border-rose-400 focus:border-rose-400"
         ]}
         {@rest}
@@ -436,7 +473,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
 
   def label(assigns) do
     ~H"""
-    <label for={@for} class="block font-semibold lg:text-md/5 lg:text-base/5 text-[#2D394B]">
+    <label for={@for} class="mb-2 block font-medium capitalize text-sm/5 text-[#304254]">
       <%= render_slot(@inner_block) %>
     </label>
     """
@@ -489,29 +526,31 @@ defmodule Beacon.LiveAdmin.AdminComponents do
 
     ~H"""
     <div class="px-4 overflow-y-auto sm:overflow-visible sm:px-0">
-      <table class="w-[40rem] mt-11 sm:w-full">
+      <table class="w-[40rem] mt-6 sm:w-full">
         <thead class="text-sm leading-6 text-left text-zinc-500">
           <tr>
-            <th :for={col <- @col} class="p-0 pb-4 pr-6 font-normal"><%= col[:label] %></th>
+            <th :for={col <- @col} class="pt-0 pb-4 pl-0 pr-6 font-sans font-semibold uppercase text-sm tracking-[1.68px]"><%= col[:label] %></th>
             <th class="relative p-0 pb-4"><span class="sr-only"><%= gettext("Actions") %></span></th>
           </tr>
         </thead>
-        <tbody id={@id} phx-update={match?(%Phoenix.LiveView.LiveStream{}, @rows) && "stream"} class="relative text-sm leading-6 border-t divide-y divide-zinc-100 border-zinc-200 text-zinc-700">
-          <tr :for={row <- @rows} id={@row_id && @row_id.(row)} class="group hover:bg-zinc-50">
+        <tbody id={@id} phx-update={match?(%Phoenix.LiveView.LiveStream{}, @rows) && "stream"} class="relative text-sm leading-6 divide-y border-grey-100 divide-grey-100 text-[#111625] font-medium">
+          <tr :for={row <- @rows} id={@row_id && @row_id.(row)} class="group hover:bg-[#F0F5F9]">
             <td :for={{col, i} <- Enum.with_index(@col)} phx-click={@row_click && @row_click.(row)} class={["relative p-0", @row_click && "hover:cursor-pointer"]}>
               <div class="block py-4 pr-6">
-                <span class="absolute right-0 -inset-y-px -left-4 group-hover:bg-zinc-50 sm:rounded-l-xl" />
+                <span class="absolute right-0 -inset-y-px -left-3 group-hover:bg-[#F0F5F9] sm:rounded-l-xl" />
                 <span class={["relative", i == 0 && "font-semibold text-zinc-900"]}>
                   <%= render_slot(col, @row_item.(row)) %>
                 </span>
               </div>
             </td>
             <td :if={@action != []} class="relative p-0 w-14">
-              <div class="relative py-4 text-sm font-medium text-right whitespace-nowrap">
-                <span class="absolute left-0 -inset-y-px -right-4 group-hover:bg-zinc-50 sm:rounded-r-xl" />
-                <span :for={action <- @action} class="relative ml-4 font-semibold leading-6 text-zinc-900 hover:text-zinc-700">
-                  <%= render_slot(action, @row_item.(row)) %>
-                </span>
+              <div class="block py-4 pl-6">
+                <div class="flex justify-end">
+                  <span class="absolute left-0 -inset-y-px -right-3 group-hover:bg-[#F0F5F9] sm:rounded-r-xl" />
+                  <span :for={action <- @action} class="relative text-sm font-medium font-semibold text-right text-zinc-900 hover:text-zinc-700 whitespace-nowrap">
+                    <%= render_slot(action, @row_item.(row)) %>
+                  </span>
+                </div>
               </div>
             </td>
           </tr>
@@ -565,6 +604,129 @@ defmodule Beacon.LiveAdmin.AdminComponents do
         <.icon name="hero-arrow-left-solid" class="w-3 h-3" />
         <%= render_slot(@inner_block) %>
       </.link>
+    </div>
+    """
+  end
+
+  @doc """
+  Renders a rounded white panel that is pinned to the bottom of the screen and scrolls.
+
+  """
+  slot :inner_block, required: true
+  attr :class, :string, default: ""
+
+  def main_content(assigns) do
+    ~H"""
+    <div class={"#{@class} px-4 py-2 mt-6 bg-white col-span-full rounded-[1.1rem]"}>
+      <%= render_slot(@inner_block) %>
+    </div>
+    """
+  end
+
+  @doc """
+  Renders a search input text to filter table results.
+  """
+  attr :table, Beacon.LiveAdmin.PageBuilder.Table, required: true
+  attr :placeholder, :string
+
+  def table_search(assigns) do
+    ~H"""
+    <.simple_form :let={f} for={%{}} as={:search} phx-change="beacon:table-search">
+      <.input type="search" field={f[:query]} value={@table.query} autofocus={true} placeholder={@placeholder || "Search"} phx-debounce={200} />
+    </.simple_form>
+    """
+  end
+
+  @doc """
+  Renders a select input to sort table results.
+  """
+  attr :table, Beacon.LiveAdmin.PageBuilder.Table, required: true
+  attr :options, :list, required: true
+
+  def table_sort(assigns) do
+    ~H"""
+    <.simple_form :let={f} for={%{}} as={:sort} phx-change="beacon:table-sort">
+      <div class="flex items-center gap-2 justify-end">
+        <label for="sort_sort_by" class="text-sm font-medium text-gray-900">Sort by</label>
+        <.input type="select" field={f[:sort_by]} value={@table.sort_by} options={@options} />
+      </div>
+    </.simple_form>
+    """
+  end
+
+  @doc """
+  Renders pagination to nagivate table results.
+  """
+  attr :socket, Phoenix.LiveView.Socket, required: true
+  attr :page, Beacon.LiveAdmin.PageBuilder.Page, required: true
+  attr :limit, :integer, default: 11
+
+  def table_pagination(assigns) do
+    assigns = assign(assigns, :table, assigns.page.table)
+
+    ~H"""
+    <div :if={@table.page_count > 1} class="flex flex-row justify-center space-x-6 pt-8 text-xl font-semibold pt-10 pb-10">
+      <.link
+        :if={@table.current_page > 1}
+        patch={Table.prev_path(@socket, @page)}
+        class="border-b-4 border-transparent hover:text-blue-600 hover:border-blue-600 active:text-blue-700 focus:outline-none focus:duration-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300 focus-visible:rounded focus-visible:duration-300 transition-link duration-300 only-large"
+      >
+        <.icon name="hero-arrow-long-left-solid" class="mr-2" /> prev
+      </.link>
+      <span :if={@table.current_page == 1} class="font-heading font-semibold text-gray-400 cursor-default">
+        <.icon name="hero-arrow-long-left-solid" class="mr-2" /> prev
+      </span>
+
+      <%= for page <- Beacon.LiveAdmin.PageBuilder.Table.nav_pages(@table.current_page, @table.page_count, @limit) do %>
+        <span :if={is_integer(page)}>
+          <.link
+            patch={Table.goto_path(@socket, @page, page)}
+            class={
+              if @table.current_page == page,
+                do:
+                  "px-3 pb-0.5 pt-1.5 border-b-4 border-transparent hover:text-blue-600 hover:border-blue-600 active:text-blue-700 focus:outline-none focus:duration-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300 focus-visible:rounded focus-visible:duration-300 transition-link duration-300 only-large text-blue-700 border-blue-700",
+                else:
+                  "px-3 pb-0.5 pt-1.5 border-b-4 border-transparent hover:text-blue-600 hover:border-blue-600 active:text-blue-700 focus:outline-none focus:duration-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300 focus-visible:rounded focus-visible:duration-300 transition-link duration-300 only-large"
+            }
+          >
+            <%= page %>
+          </.link>
+        </span>
+        <span :if={page == :sep}>
+          ...
+        </span>
+      <% end %>
+
+      <.link
+        :if={@table.current_page < @table.page_count}
+        patch={Table.next_path(@socket, @page)}
+        class="border-b-4 border-transparent hover:text-blue-600 hover:border-blue-600 active:text-blue-800 focus:outline-none focus:duration-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300 focus-visible:rounded focus-visible:duration-300 transition-link duration-300 only-large"
+      >
+        next <.icon name="hero-arrow-long-right-solid" class="mr-2" />
+      </.link>
+      <span :if={@table.current_page == @table.page_count} class="font-heading font-semibold text-gray-400 cursor-default">
+        next <.icon name="hero-arrow-long-right-solid" class="mr-2" />
+      </span>
+    </div>
+    """
+  end
+
+  @doc """
+  Renders a select input with the available sites to select.
+
+  ## Examples
+
+      <.site_selector selected_site="dev" options={[:dev, :dy]} />
+  """
+  attr :selected_site, :string, default: ""
+  attr :options, :list, default: []
+
+  def site_selector(assigns) do
+    ~H"""
+    <div class="pr-2">
+      <.form id="site-selector-form" for={%{}} phx-change="change-site">
+        <.input type="select" name="site" options={@options} value={@selected_site} />
+      </.form>
     </div>
     """
   end

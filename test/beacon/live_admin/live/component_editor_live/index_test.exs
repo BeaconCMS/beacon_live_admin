@@ -30,16 +30,26 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.IndexTest do
 
     html =
       live
-      |> element("form")
+      |> element("#search-form")
       |> render_change(%{search: %{query: "nope"}})
 
     refute html =~ "Site A - Header"
 
     html =
       live
-      |> element("form")
+      |> element("#search-form")
       |> render_change(%{search: %{query: "header"}})
 
     assert html =~ "Site A - Header"
+  end
+
+  test "display a site selector", %{conn: conn} do
+    {:ok, live, _html} = live(conn, "/admin/site_a/components")
+
+    live
+    |> element("#site-selector-form")
+    |> render_change(%{site: "site_c"})
+
+    assert_redirected(live, "/admin/site_c/components")
   end
 end

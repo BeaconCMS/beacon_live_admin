@@ -7,7 +7,21 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.EditTest do
       rpc(node1(), Beacon.Repo, :delete_all, [Beacon.Content.Layout, [log: false]])
     end)
 
-    [layout: layout_fixture()]
+    [
+      layout: layout_fixture(),
+      resource_links_layout:
+        layout_fixture(node1(), %{
+          resource_links: [
+            %{
+              "crossorigin" => "",
+              "href" => "https://example.com",
+              "rel" => "preload",
+              "type" => "",
+              "as" => ""
+            }
+          ]
+        })
+    ]
   end
 
   test "save changes", %{conn: conn, layout: layout} do
@@ -35,5 +49,30 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.EditTest do
     {:ok, _live, html} = live(conn, "/admin/site_a/layouts")
 
     assert html =~ "Published"
+  end
+
+  test "simple remove nils from resource_links" do
+    map =
+      Beacon.LiveAdmin.LayoutEditorLive.ResourceLinks.coerce_resource_link_params(%{
+        "resource_links" => %{
+          "0" => %{
+            "crossorigin" => nil,
+            "href" => "https://example.com",
+            "rel" => "preload",
+            "type" => "foo",
+            "as" => ""
+          }
+        }
+      })
+
+    assert map == %{
+             "resource_links" => [
+               %{
+                 "href" => "https://example.com",
+                 "rel" => "preload",
+                 "type" => "foo"
+               }
+             ]
+           }
   end
 end

@@ -5,7 +5,7 @@ end
 
 defmodule Beacon.LiveAdmin.PageBuilder.Page do
   @moduledoc false
-  defstruct site: nil, path: nil, module: nil, params: %{}, session: %{}
+  defstruct site: nil, path: nil, module: nil, params: %{}, session: %{}, table: nil
 end
 
 # https://github.com/phoenixframework/phoenix_live_dashboard/blob/32fef8da6a7df97f92f05bd6e7aab33be4036490/lib/phoenix/live_dashboard/page_builder.ex
@@ -19,6 +19,7 @@ defmodule Beacon.LiveAdmin.PageBuilder do
   """
 
   use Phoenix.Component
+  alias Beacon.LiveAdmin.PageBuilder.Table
   alias Phoenix.LiveView.Socket
 
   @type session :: map()
@@ -58,8 +59,6 @@ defmodule Beacon.LiveAdmin.PageBuilder do
   defmacro __using__(opts) do
     quote location: :keep, bind_quoted: [opts: opts] do
       use Phoenix.Component
-      import Beacon.LiveAdmin.AdminComponents
-      import Beacon.LiveAdmin.Components, only: [template_error: 1]
 
       import Beacon.LiveAdmin.Router,
         only: [
@@ -70,15 +69,40 @@ defmodule Beacon.LiveAdmin.PageBuilder do
         ]
 
       import Phoenix.LiveView
+      import Beacon.LiveAdmin.AdminComponents
+      import Beacon.LiveAdmin.Components, only: [template_error: 1]
+      import LiveSvelte
+
       alias Phoenix.LiveView.JS
+      alias Beacon.LiveAdmin.PageBuilder.Table
 
       @behaviour Beacon.LiveAdmin.PageBuilder
 
       Beacon.LiveAdmin.Private.register_on_mount_lifecycle_attribute(__MODULE__)
       @before_compile Beacon.LiveAdmin.PageBuilder
 
+      @impl true
       def init(opts), do: {:ok, opts}
       defoverridable init: 1
+
+      @impl true
+      def handle_event("change-site", %{"site" => site}, socket) do
+        site = String.to_existing_atom(site)
+
+        path =
+          case String.split(socket.assigns.beacon_page.path, "/") do
+            ["", path | _] -> beacon_live_admin_path(socket, site, path)
+            _ -> beacon_live_admin_path(socket)
+          end
+
+        {:noreply, push_navigate(socket, to: path)}
+      end
+
+      def __beacon_page_table__ do
+        unquote(opts)
+        |> Keyword.get(:table)
+        |> Table.build()
+      end
     end
   end
 

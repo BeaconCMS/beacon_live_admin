@@ -6,6 +6,11 @@ Admin UI to manage content for sites built by [Beacon](https://github.com/Beacon
 
 Pre-release version. You can expect incomplete features and breaking changes before a stable v0.1.0 is released.
 
+## Minimum Requirements
+
+- Erlang/OTP v25.1
+- Elixir v1.13.4
+
 ## Local Development
 
 LiveAdmin requires at least one site running to manage, so let's start LiveAdmin first and then start a sample site.
@@ -26,7 +31,7 @@ Keep this instance running.
 
 3. Open another terminal or tab, clone [Beacon](https://github.com/BeaconCMS/beacon) into another directory and follow the [Local Development instructions](https://github.com/BeaconCMS/beacon#local-development) to get a site up and running.
 
-4. Open http://localhost:4002/admin 
+4. Open http://localhost:4002/admin
 
 You'll notice that no site is displayed, that's because Beacon LiveAdmin looks for sites running in the cluster and the two nodes aren't connected yet.
 
@@ -39,3 +44,42 @@ Node.connect(node)
 ```
 
 Now you should see a site listed in the admin home page.
+
+6. (Optional) Automically connect the nodes by creating a `.iex.exs` file in the root of each repository:
+
+In the beacon repo:
+
+```elixir
+{:ok, hostname} = :inet.gethostname()
+node = :"admin@#{List.to_string(hostname)}"
+Node.connect(node)
+```
+
+In the beacon_live_admin repo:
+
+```elixir
+{:ok, hostname} = :inet.gethostname()
+node = :"core@#{List.to_string(hostname)}"
+Node.connect(node)
+```
+
+This way you don't need to manually connect the nodes as shown on step 5.
+
+## Troubleshooting
+
+Running tests requires booting a VM to run Beacon sites, which may be blocked by the firewall in your environment.
+
+Make sure both `epmd` and `beam.smp` processes are allowed and try running the application before running tests:
+
+```shell
+iex --sname admin -S mix dev
+```
+
+## Looking for help with your Elixir project?
+
+<img src="assets/images/dockyard_logo.png" width="256" alt="DockYard logo">
+
+At DockYard we are [ready to help you build your next Elixir project](https://dockyard.com/phoenix-consulting).
+We have a unique expertise in Elixir and Phoenix development that is unmatched and we love to [write about Elixir](https://dockyard.com/blog/categories/elixir).
+
+Have a project in mind? [Get in touch](https://dockyard.com/contact/hire-us)!

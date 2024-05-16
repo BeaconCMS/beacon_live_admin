@@ -17,4 +17,29 @@ defmodule Beacon.LiveAdmin.PageEditorLive.IndexTest do
     {:ok, _live, html} = live(conn, "/admin/site_a/pages")
     assert html =~ "site_a_home_page"
   end
+
+  test "display a site selector", %{conn: conn} do
+    {:ok, live, _html} = live(conn, "/admin/site_a/pages")
+
+    live
+    |> element("#site-selector-form")
+    |> render_change(%{site: "site_c"})
+
+    assert_redirected(live, "/admin/site_c/pages")
+  end
+
+  test "raises when missing beacon_live_admin_url in the session" do
+    assert_raise RuntimeError, fn ->
+      conn =
+        Phoenix.ConnTest.dispatch(
+          build_conn(:get, "/admin/site_a/pages"),
+          Beacon.LiveAdminTest.PluglessEndpoint,
+          :get,
+          "/admin/site_a/pages",
+          nil
+        )
+
+      {:ok, _live, _html} = live(conn, "/admin/site_a/pages")
+    end
+  end
 end

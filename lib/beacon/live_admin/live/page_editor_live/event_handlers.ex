@@ -45,21 +45,15 @@ defmodule Beacon.LiveAdmin.PageEditorLive.EventHandlers do
     end
   end
 
-  def handle_event("event_handler_code_editor_lost_focus", %{"value" => code}, socket) do
+  def handle_event("set_code", %{"value" => code}, socket) do
     %{selected: selected, beacon_page: %{site: site}, form: form} = socket.assigns
 
-    changeset =
-      site
-      |> Content.change_page_event_handler(selected, %{
-        "code" => code,
-        "name" => form.params["name"] || Map.fetch!(form.data, :name)
-      })
-      |> Map.put(:action, :validate)
+    params = Map.merge(form.params, %{"code" => code})
+    changeset = Content.change_page_event_handler(site, selected, params)
 
     socket =
       socket
-      |> assign(form: to_form(changeset))
-      |> assign(changed_code: code)
+      |> assign_form(changeset)
       |> assign(unsaved_changes: !(changeset.changes == %{}))
 
     {:noreply, socket}
@@ -75,7 +69,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.EventHandlers do
 
     socket =
       socket
-      |> assign(form: to_form(changeset))
+      |> assign_form(changeset)
       |> assign(unsaved_changes: !(changeset.changes == %{}))
 
     {:noreply, socket}
@@ -94,10 +88,11 @@ defmodule Beacon.LiveAdmin.PageEditorLive.EventHandlers do
           |> assign_selected(selected.id)
           |> assign_form()
           |> assign(unsaved_changes: false)
+          |> put_flash(:info, "Page updated successfully")
 
         {:error, changeset} ->
           changeset = Map.put(changeset, :action, :update)
-          assign(socket, form: to_form(changeset))
+          assign_form(changeset)
       end
 
     {:noreply, socket}
@@ -146,72 +141,69 @@ defmodule Beacon.LiveAdmin.PageEditorLive.EventHandlers do
   def render(assigns) do
     ~H"""
     <div>
-      <Beacon.LiveAdmin.AdminComponents.page_menu socket={@socket} site={@beacon_page.site} current_action={@live_action} page_id={@page.id} />
+      <Beacon.LiveAdmin.AdminComponents.page_header socket={@socket} flash={@flash} page={@page} live_action={@live_action} />
 
       <.header>
         <%= @page_title %>
+        <:actions>
+          <.button type="button" phx-click="create_new">New Event Handler</.button>
+        </:actions>
       </.header>
-
-      <.modal :if={@show_nav_modal} id="confirm-nav" on_cancel={JS.push("stay_here")} show>
-        <p>You've made unsaved changes to this event handler!</p>
-        <p>Navigating to another event handler without saving will cause these changes to be lost.</p>
-        <.button type="button" phx-click="stay_here">
-          Stay here
-        </.button>
-        <.button type="button" phx-click="discard_changes">
-          Discard changes
-        </.button>
-      </.modal>
-
-      <.modal :if={@show_delete_modal} id="confirm-delete" on_cancel={JS.push("delete_cancel")} show>
-        <p>Are you sure you want to delete this event handler?</p>
-        <p>Note: deleted event handlers will still be active until the page is re-published!</p>
-        <.button type="button" phx-click="delete_confirm">
-          Delete
-        </.button>
-        <.button type="button" phx-click="delete_cancel">
-          Cancel
-        </.button>
-      </.modal>
-
-      <div class="grid items-start grid-cols-1 grid-rows-1 mx-auto gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
-        <div>
-          <.button type="button" phx-click="create_new">
-            New Event Handler
+      <.main_content>
+        <.modal :if={@show_nav_modal} id="confirm-nav" on_cancel={JS.push("stay_here")} show>
+          <p>You've made unsaved changes to this event handler!</p>
+          <p>Navigating to another event handler without saving will cause these changes to be lost.</p>
+          <.button type="button" phx-click="stay_here">
+            Stay here
           </.button>
-          <.table :if={@selected} id="event-handlers" rows={@page.event_handlers} row_click={fn row -> "select-#{row.id}" end}>
-            <:col :let={event_handler} label="name">
-              <%= Map.fetch!(event_handler, :name) %>
-            </:col>
-          </.table>
-        </div>
+          <.button type="button" phx-click="discard_changes">
+            Discard changes
+          </.button>
+        </.modal>
 
-        <div :if={@form} class="w-full col-span-2">
-          <.form :let={f} for={@form} class="flex items-center" phx-change="validate" phx-submit="save_changes">
-            <div class="mr-4 text-4xl w-max">
-              Name
-            </div>
-            <div class="w-5/12">
-              <.input field={f[:name]} type="text" />
-            </div>
-            <input type="hidden" name="page_event_handler[code]" id="page_event_handler-form_code" value={@changed_code} />
+        <.modal :if={@show_delete_modal} id="confirm-delete" on_cancel={JS.push("delete_cancel")} show>
+          <p>Are you sure you want to delete this event handler?</p>
+          <p>Note: deleted event handlers will still be active until the page is re-published!</p>
+          <.button type="button" phx-click="delete_confirm">
+            Delete
+          </.button>
+          <.button type="button" phx-click="delete_cancel">
+            Cancel
+          </.button>
+        </.modal>
 
-            <.button phx-disable-with="Saving..." class="w-1/6 mx-4 uppercase">Save Changes</.button>
-            <.button type="button" phx-click="delete" class="w-1/12 uppercase">Delete</.button>
-          </.form>
+        <div class="grid items-start grid-cols-1 grid-rows-1 mx-auto gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
+          <div class="h-full lg:overflow-y-auto pb-4 lg:h-[calc(100vh_-_239px)]">
+            <.table :if={@selected} id="event-handlers" rows={@page.event_handlers} row_click={fn row -> "select-#{row.id}" end}>
+              <:col :let={event_handler} label="name">
+                <%= Map.fetch!(event_handler, :name) %>
+              </:col>
+            </.table>
+          </div>
 
-          <div class="w-full mt-10 space-y-8">
-            <div class="py-6 rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
-              <LiveMonacoEditor.code_editor
-                path="event_handler_code"
-                class="h-full col-span-full lg:col-span-2"
-                value={@selected.code}
-                opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => "elixir"})}
-              />
+          <div :if={@form} class="w-full col-span-2">
+            <.form :let={f} for={@form} class="flex items-end gap-4" phx-change="validate" phx-submit="save_changes">
+              <.input field={f[:name]} label="name" type="text" />
+              <input type="hidden" name="page_event_handler[code]" id="page_event_handler-form_code" value={Phoenix.HTML.Form.input_value(f, :code)} />
+
+              <.button phx-disable-with="Saving..." class="ml-auto">Save Changes</.button>
+              <.button type="button" phx-click="delete">Delete</.button>
+            </.form>
+
+            <div class="w-full mt-10 space-y-8">
+              <div class="py-6 rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
+                <LiveMonacoEditor.code_editor
+                  path="event_handler_code"
+                  class="col-span-full lg:col-span-2"
+                  value={@selected.code}
+                  change="set_code"
+                  opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => "elixir"})}
+                />
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </.main_content>
     </div>
     """
   end
@@ -244,5 +236,9 @@ defmodule Beacon.LiveAdmin.PageEditorLive.EventHandlers do
       end
 
     assign(socket, form: form)
+  end
+
+  defp assign_form(socket, changeset) do
+    assign(socket, :form, to_form(changeset))
   end
 end

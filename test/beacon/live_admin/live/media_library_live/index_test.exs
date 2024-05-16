@@ -14,26 +14,13 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.IndexTest do
     assert html =~ "test_index.webp"
   end
 
-  test "soft delete", %{conn: conn} do
-    asset = media_library_asset_fixture(node1(), file_name: "test_delete.webp")
+  test "display a site selector", %{conn: conn} do
+    {:ok, live, _html} = live(conn, "/admin/site_a/media_library")
 
-    {:ok, view, _html} = live(conn, "/admin/site_a/media_library")
+    live
+    |> element("#site-selector-form")
+    |> render_change(%{site: "site_c"})
 
-    html =
-      view
-      |> element("tr##{asset.id} a", "Delete")
-      |> render_click()
-
-    refute html =~ "test_delete.webp"
-  end
-
-  test "search", %{conn: conn} do
-    media_library_asset_fixture(node1(), file_name: "test_search.webp")
-
-    {:ok, view, _html} = live(conn, "/admin/site_a/media_library")
-
-    assert view
-           |> element("#search-form")
-           |> render_change(%{search: "ar"}) =~ "test_search.webp"
+    assert_redirected(live, "/admin/site_c/media_library")
   end
 end

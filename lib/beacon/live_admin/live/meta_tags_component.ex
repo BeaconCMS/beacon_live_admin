@@ -102,56 +102,70 @@ defmodule Beacon.LiveAdmin.MetaTagsComponent do
     ~H"""
     <div>
       <.header>
+        <%= @page_title %>
         <:actions>
           <.button phx-disable-with="Saving..." form="meta-tags-form" class="uppercase">Save Changes</.button>
         </:actions>
       </.header>
+      <.main_content>
+        <div class="flex gap-4">
+          <.button type="button" phx-click="add" phx-target={@myself}>New Meta Tag</.button>
+          <.button type="button" phx-click="show-new-attribute-modal" phx-target={@myself}>New Meta Attribute</.button>
+        </div>
 
-      <div>
-        <.button type="button" phx-click="add" phx-target={@myself}>New Meta Tag</.button>
-        <.button type="button" phx-click="show-new-attribute-modal" phx-target={@myself}>New Meta Attribute</.button>
-      </div>
-
-      <div class="overflow-x-auto mt-8">
-        <.form for={%{}} as={:meta_tags} id="meta-tags-form" class="space-y-2" phx-target={@myself} phx-submit="save">
-          <%= for {meta_tag, i} <- Enum.with_index(@meta_tags) do %>
-            <div class="flex items-end gap-2 my-2">
-              <%= for attribute <- @attributes do %>
-                <div class="min-w-[150px] shrink-0">
-                  <.input
-                    type="text"
-                    label={if(i == 0, do: attribute, else: nil)}
-                    name={input_name(@field, i, attribute)}
-                    id={input_id(@field, i, attribute)}
-                    value={meta_tag[attribute]}
-                    errors={[]}
-                    phx-debounce="500"
-                  />
+        <div class="mt-8 overflow-x-auto">
+          <.form for={%{}} as={:meta_tags} id="meta-tags-form" class="divide-y divide-gray-100" phx-target={@myself} phx-submit="save">
+            <%= for {meta_tag, i} <- Enum.with_index(@meta_tags) do %>
+              <div class="grid items-end grid-flow-col gap-2 py-5 ">
+                <%= for attribute <- @attributes do %>
+                  <div class="min-w-[150px] shrink-0">
+                    <.input
+                      type="text"
+                      label={if(i == 0, do: attribute, else: nil)}
+                      name={input_name(@field, i, attribute)}
+                      id={input_id(@field, i, attribute)}
+                      value={meta_tag[attribute]}
+                      errors={[]}
+                      phx-debounce="500"
+                    />
+                  </div>
+                <% end %>
+                <div class="justify-self-end">
+                  <button
+                    type="button"
+                    class="flex items-center justify-center w-10 h-10"
+                    phx-target={@myself}
+                    phx-click="delete"
+                    phx-value-index={i}
+                    aria-label="Delete"
+                    title="delete"
+                    data-confirm="Are you sure?"
+                  >
+                    <span aria-hidden="true" class="text-red-500 hover:text-red-700 hero-trash"></span>
+                  </button>
                 </div>
-              <% end %>
-
-              <.button type="button" phx-target={@myself} phx-click="delete" phx-value-index={i} data-confirm="Are you sure?">Delete</.button>
-            </div>
-          <% end %>
-        </.form>
-      </div>
-
-      <.modal :if={@new_attribute_modal_visible?} id="new-attribute-modal" show={true} on_cancel={JS.push("hide-new-attribute-modal")}>
-        <.header>New meta tag attribute</.header>
-
-        <.simple_form :let={f} for={%{}} as={:attribute} phx-target={@myself} phx-submit="save-new-attribute">
-          <div class="flex items-center gap-2">
-            <%= for preset <- ~w(http-equiv charset itemprop) do %>
-              <.button phx-click={JS.set_attribute({"value", preset}, to: "#attribute_name")}><%= preset %></.button>
+              </div>
             <% end %>
-          </div>
+          </.form>
+        </div>
 
-          <div>
-            <.input type="text" field={f[:name]} placeholder="Custom" label="Custom attribute" />
-            <.button class="mt-2">Add custom attribute</.button>
-          </div>
-        </.simple_form>
-      </.modal>
+        <.modal :if={@new_attribute_modal_visible?} id="new-attribute-modal" show={true} on_cancel={JS.push("hide-new-attribute-modal")}>
+          <.header>New meta tag attribute</.header>
+
+          <.simple_form :let={f} for={%{}} as={:attribute} phx-target={@myself} phx-submit="save-new-attribute">
+            <div class="flex items-center gap-2">
+              <%= for preset <- ~w(http-equiv charset itemprop) do %>
+                <.button phx-click={JS.set_attribute({"value", preset}, to: "#attribute_name")}><%= preset %></.button>
+              <% end %>
+            </div>
+
+            <div>
+              <.input type="text" field={f[:name]} placeholder="Custom" label="Custom attribute" />
+              <.button class="mt-2">Add custom attribute</.button>
+            </div>
+          </.simple_form>
+        </.modal>
+      </.main_content>
     </div>
     """
   end

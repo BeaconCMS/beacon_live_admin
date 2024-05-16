@@ -41,7 +41,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.Index do
   def render(assigns) do
     ~H"""
     <.header>
-      Listing Components
+      Components
       <:actions>
         <.link patch={beacon_live_admin_path(@socket, @beacon_page.site, "/components/new")} phx-click={JS.push_focus()}>
           <.button class="uppercase">Create New Component</.button>
@@ -49,29 +49,30 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.Index do
       </:actions>
     </.header>
 
-    <div class="my-4">
-      <.simple_form :let={f} for={%{}} as={:search} phx-change="search">
-        <div class="flex gap-4 items-center">
-          <div class="flex-grow">
-            <.input field={f[:query]} type="search" autofocus={true} placeholder="Search by name (showing up to 20 results)" />
-          </div>
-        </div>
-      </.simple_form>
-    </div>
+    <.simple_form :let={f} id="search-form" for={%{}} as={:search} phx-change="search">
+      <.input field={f[:query]} type="search" autofocus={true} placeholder="Search by name (showing up to 20 results)" />
+    </.simple_form>
 
-    <.table id="components" rows={@components} row_click={fn component -> JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/components/#{component.id}")) end}>
-      <:col :let={component} label="Name"><%= component.name %></:col>
-      <:col :let={component} label="Category"><%= component.category %></:col>
-      <:col :let={component} label="Body"><%= body_excerpt(component.body) %></:col>
-      <:action :let={component}>
-        <div class="sr-only">
-          <.link navigate={beacon_live_admin_path(@socket, @beacon_page.site, "/components/#{component.id}")}>Show</.link>
-        </div>
-        <.link patch={beacon_live_admin_path(@socket, @beacon_page.site, "/components/#{component.id}")}>
-          <.icon name="hero-pencil-square" />
-        </.link>
-      </:action>
-    </.table>
+    <.main_content>
+      <.table id="components" rows={@components} row_click={fn component -> JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/components/#{component.id}")) end}>
+        <:col :let={component} label="Name"><%= component.name %></:col>
+        <:col :let={component} label="Category"><%= component.category %></:col>
+        <:col :let={component} label="Body"><%= body_excerpt(component.body) %></:col>
+        <:action :let={component}>
+          <div class="sr-only">
+            <.link navigate={beacon_live_admin_path(@socket, @beacon_page.site, "/components/#{component.id}")}>Show</.link>
+          </div>
+          <.link
+            patch={beacon_live_admin_path(@socket, @beacon_page.site, "/components/#{component.id}")}
+            title="Edit component"
+            aria-label="Edit component"
+            class="flex items-center justify-center w-10 h-10"
+          >
+            <.icon name="hero-pencil-square text-[#61758A] hover:text-[#304254]" />
+          </.link>
+        </:action>
+      </.table>
+    </.main_content>
     """
   end
 

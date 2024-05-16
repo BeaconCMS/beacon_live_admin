@@ -11,8 +11,6 @@ defmodule Beacon.LiveAdmin.HomeLive do
       PubSub.subscribe()
     end
 
-    Cluster.maybe_discover_sites()
-
     {:ok, assign(socket, :running_sites, Cluster.running_sites())}
   end
 
@@ -42,6 +40,13 @@ defmodule Beacon.LiveAdmin.HomeLive do
                   </.link>
 
                   <.link
+                    href={Beacon.LiveAdmin.Router.beacon_live_admin_path(@socket, site, "/components")}
+                    class="whitespace-nowrap text-sm leading-5 py-3.5  font-bold tracking-widest text-center uppercase bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 active:bg-blue-800 px-6 text-gray-50"
+                  >
+                    Components
+                  </.link>
+
+                  <.link
                     href={Beacon.LiveAdmin.Router.beacon_live_admin_path(@socket, site, "/pages")}
                     class="whitespace-nowrap text-sm leading-5 py-3.5  font-bold tracking-widest text-center uppercase bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 active:bg-blue-800 px-6 text-gray-50"
                   >
@@ -49,11 +54,19 @@ defmodule Beacon.LiveAdmin.HomeLive do
                   </.link>
 
                   <.link
-                    href={Beacon.LiveAdmin.Router.beacon_live_admin_path(@socket, site, "/components")}
+                    href={Beacon.LiveAdmin.Router.beacon_live_admin_path(@socket, site, "/live_data")}
                     class="whitespace-nowrap text-sm leading-5 py-3.5  font-bold tracking-widest text-center uppercase bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 active:bg-blue-800 px-6 text-gray-50"
                   >
-                    Components
+                    Live Data
                   </.link>
+
+                  <.link
+                    href={Beacon.LiveAdmin.Router.beacon_live_admin_path(@socket, site, "/error_pages")}
+                    class="whitespace-nowrap text-sm leading-5 py-3.5 font-bold tracking-widest text-center uppercase bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 active:bg-blue-800 px-6 text-gray-50"
+                  >
+                    Error Pages
+                  </.link>
+
                   <.link
                     href={Beacon.LiveAdmin.Router.beacon_live_admin_path(@socket, site, "/media_library")}
                     class="whitespace-nowrap text-sm leading-5 py-3.5  font-bold tracking-widest text-center uppercase bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 active:bg-blue-800 px-6 text-gray-50"
