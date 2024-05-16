@@ -1,12 +1,13 @@
 # Installation
 
-Beacon LiveAdmin is a Phoenix LiveView application to manage running sites, allowing you to build your site by creating resources like layouts, pages, components, and others. It runs as a library in your Phoenix LiveView application, in this guide we'll start from zero initilizating a new Phoenix LiveView application and installing Beacon LiveAdmin.
+Beacon LiveAdmin is a Phoenix LiveView application to manage running sites, allowing you to build your site by creating resources like layouts, pages, components, and more.
 
-Beacon LiveAdmin can be [installed along with Beacon](https://github.com/BeaconCMS/beacon/blob/main/guides/introduction/installation.md) in the same application/node or in a separated application/node if you need to isolate it for performance or security reasons. It will find all running sites in the cluster as long as the nodes are connected to each other, which can be achived with libs like [libcluster](https://hex.pm/packages/libcluster) or [dns_cluster](https://hex.pm/packages/dns_cluster).
+It runs as a library in your Phoenix LiveView application, either in a new or an existing application.
 
-This guide will show the steps of generating a separated application, but if have followed the [Beacon installation guide](https://github.com/BeaconCMS/beacon/blob/main/guides/introduction/installation.md) you already have an application working which can be used for this guide too, just skip directly to step 4 - adding the `:beacon_live_admin` dependency.
+Beacon LiveAdmin can be [installed along with Beacon](https://github.com/BeaconCMS/beacon/blob/main/guides/installation.md) in the same application/node or in a separated application/node if you need to isolate it for performance or security reasons.
+It will find all running sites in the cluster as long as the nodes are connected to each other, which can be achived with libs like [libcluster](https://hex.pm/packages/libcluster) or [dns_cluster](https://hex.pm/packages/dns_cluster).
 
-After the installation is done, you can follow the guide [Your First Site](https://github.com/BeaconCMS/beacon/blob/main/guides/introduction/your_first_site.md) to get started into creating the first layout, pages, and components for your site.
+If you already have a Phoenix LiveView application up and running that meet the minimum requirements for Beacon and Beacon LiveAdmin, you can directly to step 4 - adding the `:beacon_live_admin` dependency.
 
 ## TLDR
 
@@ -31,7 +32,7 @@ We recommend following the guide thoroughly, but if you want a short version or 
   ```elixir
   {:beacon_live_admin, github: "BeaconCMS/beacon_live_admin"}
   ```
-  
+
 5. Add `:beacon_live_admin` into `:import_deps` in file `.formatter.exs`
 
 6. Run `mix setup`
@@ -40,21 +41,24 @@ We recommend following the guide thoroughly, but if you want a short version or 
 
   ```elixir
   use Beacon.LiveAdmin.Router # <- add this line
-  
+
   pipeline :browser do
     # ...
     # ommited for brevity
     plug Beacon.LiveAdmin.Plug # <- add this line
   end
 
-  # add the following scope
+  # add the following scope before any beacon_site
   scope "/admin" do
     pipe_through :browser
-    beacon_live_admin "/" 
+    beacon_live_admin "/"
   end
   ```
 
-Now you can follow the guide [your first site](https://github.com/BeaconCMS/beacon/blob/main/guides/introduction/your_first_site.md) to setup your first layout, pages, and components.
+Note that route precedence is important, make sure the there are no conflicts with other routes otherwise Beacon LiveAdmin will not work properly.
+
+For example, if a site is mounted at `/` then you should add the admin scope before so `/admin` is handled by Beacon LiveAdmin,
+otherwise Beacon will try to find a page for `/admin` defined in the site. The same may happen with other routes on your application.
 
 ## Detailed Instructions
 
@@ -116,8 +120,8 @@ Or add to `admin_web` if running in an Umbrella app.
 
 ```elixir
 [
- import_deps: [:ecto, :ecto_sql, :phoenix, :beacon_live_admin],
- # rest of file ommited
+  import_deps: [:ecto, :ecto_sql, :phoenix, :beacon_live_admin],
+  # rest of file ommited
 ]
 ```
 
@@ -129,22 +133,19 @@ Beacon LiveAdmin requires calling a plug in the pipeline and calling the `beacon
 
   ```elixir
   use Beacon.LiveAdmin.Router # <- add this line
-  
+
   pipeline :browser do
     # ...
     # ommited for brevity
     plug Beacon.LiveAdmin.Plug # <- add this line
   end
 
-  # add the following scope
+  # add the following scope before any beacon_site
   scope "/admin" do
     pipe_through :browser
-    beacon_live_admin "/" 
+    beacon_live_admin "/"
   end
   ```
-  
-You're free to adapt the pipeline and change the path as you wish.
 
---
-
-Now you can follow the guide [your first site](https://github.com/BeaconCMS/beacon/blob/main/guides/introduction/your_first_site.md) to setup your first layout, pages, and components.
+You're free to adapt the pipeline and change the path as you wish, as long as you make sure there are no conflicts with other routes
+as explained in the TLDR section.
