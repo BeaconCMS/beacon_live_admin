@@ -35,9 +35,7 @@ We recommend following the guide thoroughly, but if you want a short version or 
 
 5. Add `:beacon_live_admin` into `:import_deps` in file `.formatter.exs`
 
-6. Run `mix setup`
-
-7. Add `beacon_live_admin` to your application `router.ex` file:
+6. Add `beacon_live_admin` to your application `router.ex` file:
 
   ```elixir
   use Beacon.LiveAdmin.Router # <- add this line
@@ -54,6 +52,8 @@ We recommend following the guide thoroughly, but if you want a short version or 
     beacon_live_admin "/"
   end
   ```
+
+7. Run `mix deps.get`
 
 Note that route precedence is important, make sure the there are no conflicts with other routes otherwise Beacon LiveAdmin will not work properly.
 
@@ -125,7 +125,7 @@ Or add to `admin_web` if running in an Umbrella app.
 ]
 ```
 
-3. Run `mix setup`
+3. Run `mix deps.get`
 
 ### Mount admin in the router
 
