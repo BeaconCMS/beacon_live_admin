@@ -25,12 +25,15 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.Index do
       socket.assigns.beacon_page.table
 
     layouts =
-      list_layouts(site,
-        per_page: per_page,
-        page: page,
-        query: query,
-        sort: sort_by
-      )
+      if connected?(socket),
+        do:
+          list_layouts(site,
+            per_page: per_page,
+            page: page,
+            query: query,
+            sort: sort_by
+          ),
+        else: []
 
     {:noreply, stream(socket, :beacon_layouts, layouts, reset: true)}
   end
