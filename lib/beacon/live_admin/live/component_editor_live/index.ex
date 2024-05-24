@@ -29,12 +29,15 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.Index do
       socket.assigns.beacon_page.table
 
     components =
-      Content.list_components(site,
-        per_page: per_page,
-        page: page,
-        query: query,
-        sort: sort_by
-      )
+      if connected?(socket),
+        do:
+          Content.list_components(site,
+            per_page: per_page,
+            page: page,
+            query: query,
+            sort: sort_by
+          ),
+        else: []
 
     {:noreply, stream(socket, :components, components, reset: true)}
   end
