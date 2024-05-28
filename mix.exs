@@ -34,7 +34,7 @@ defmodule Beacon.LiveAdmin.MixProject do
       {:phoenix_html, "~> 4.0"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       phoenix_live_view_dep(),
-      {:floki, ">= 0.30.0", only: :test},
+      {:floki, ">= 0.30.0"},
       {:tailwind, "~> 0.2"},
       {:gettext, "~> 0.20"},
       {:jason, "~> 1.0"},
