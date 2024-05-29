@@ -13,7 +13,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.NewTest do
 
     live
     |> form("#component-form", component: %{name: "Site A - Header"})
-    |> render_submit(%{component: %{"body" => "<header>header_site_a</header>"}})
+    |> render_submit(%{component: %{"template" => "<header>header_site_a</header>"}})
 
     assert has_element?(live, "h1", "Edit Component")
     assert has_element?(live, "input[value='Site A - Header']")
