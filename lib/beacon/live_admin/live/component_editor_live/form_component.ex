@@ -1,5 +1,6 @@
 defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
   use Beacon.LiveAdmin.Web, :live_component
+  alias Beacon.LiveAdmin.ComponentEditorLive.AttrListComponent
   alias Beacon.LiveAdmin.Content
 
   @impl true
@@ -18,6 +19,10 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
     {:ok, assign_form(socket, changeset)}
   end
 
+  def update(%{attr_forms: attr_forms}, socket) do
+    {:ok, assign(socket, :attrs, attr_forms)}
+  end
+
   @impl true
   def handle_event("validate", %{"component" => component_params}, socket) do
     changeset =
@@ -30,6 +35,18 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
 
   def handle_event("save", %{"component" => component_params}, socket) do
     component_params = Map.put(component_params, "site", socket.assigns.site)
+
+    component_attrs =
+      Enum.reduce(socket.assigns.attrs, [], fn form_attr, acc ->
+        case Ecto.Changeset.apply_action(form_attr.source, :update) do
+          {:ok, component_attr} -> [Map.from_struct(component_attr) | acc]
+          _ -> acc
+        end
+      end)
+      |> Enum.reverse()
+
+    component_params = Map.put(component_params, "attrs", component_attrs)
+
     save_component(socket, socket.assigns.live_action, component_params)
   end
 
@@ -91,6 +108,10 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
             <.input field={f[:category]} type="select" options={categories_to_options(@site)} label="Category" />
             <input type="hidden" name="component[body]" id="component-form_body" value={Phoenix.HTML.Form.input_value(f, :body)} />
           </.form>
+
+          <div id="attrs">
+            <.live_component module={AttrListComponent} id={@component.id} component={@component} />
+          </div>
         </div>
         <div class="col-span-full lg:col-span-2">
           <%= template_error(@form[:body]) %>
