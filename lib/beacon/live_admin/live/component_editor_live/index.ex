@@ -16,12 +16,12 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.Index do
 
   @impl true
   def handle_params(%{"query" => query}, _uri, socket) do
-    components = list_components(socket.assigns.beacon_page.site, query: query)
+    components = Content.list_components(socket.assigns.beacon_page.site, query: query)
     {:noreply, assign(socket, :components, components)}
   end
 
   def handle_params(_params, _uri, socket) do
-    components = list_components(socket.assigns.beacon_page.site)
+    components = Content.list_components(socket.assigns.beacon_page.site)
     {:noreply, assign(socket, :components, components)}
   end
 
@@ -57,7 +57,8 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.Index do
       <.table id="components" rows={@components} row_click={fn component -> JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/components/#{component.id}")) end}>
         <:col :let={component} label="Name"><%= component.name %></:col>
         <:col :let={component} label="Category"><%= component.category %></:col>
-        <:col :let={component} label="Body"><%= body_excerpt(component.body) %></:col>
+        <:col :let={component} label="Body"><%= excerpt(component.body) %></:col>
+        <:col :let={component} label="Template"><%= excerpt(component.template) %></:col>
         <:action :let={component}>
           <div class="sr-only">
             <.link navigate={beacon_live_admin_path(@socket, @beacon_page.site, "/components/#{component.id}")}>Show</.link>
@@ -76,15 +77,12 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.Index do
     """
   end
 
-  defp body_excerpt(body) do
-    case String.split_at(body, 100) do
+  defp excerpt(content) when is_binary(content) do
+    case String.split_at(content, 100) do
       {excerpt, ""} -> excerpt
       {excerpt, _} -> [excerpt, " ..."]
     end
   end
 
-  defp list_components(site, opts \\ []) do
-    site
-    |> Content.list_components(opts)
-  end
+  defp excerpt(_content), do: ""
 end
