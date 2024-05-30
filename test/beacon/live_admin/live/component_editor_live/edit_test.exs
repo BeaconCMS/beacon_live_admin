@@ -10,7 +10,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.EditTest do
         %{
           site: "site_a",
           name: "Site A - Header",
-          body: """
+          template: """
           <header>site_a_header</header>
           """
         }

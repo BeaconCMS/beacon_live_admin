@@ -9,7 +9,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.IndexTest do
       %{
         site: "site_a",
         name: "Site A - Header",
-        body: """
+        template: """
         <header>Site A Header</header>
         """
       }
