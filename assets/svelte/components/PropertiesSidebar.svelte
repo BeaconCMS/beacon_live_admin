@@ -215,7 +215,7 @@
         {#if $selectedAstElement.content?.length > 0}
           <SidebarSection
             astNodes={$selectedAstElement.content}
-            large={$selectedAstElement.tag === "eex"}
+            large={true}
             on:textChange={(e) => updateText(e)}
             on:nodesChange={changeNodes}
           >
