@@ -75,9 +75,11 @@
     </div>
     <ul class="py-4 h-[calc(100vh_-_61px)] overflow-y-auto" data-test-id="component-tree">
       {#each menuCategories as category}
-        <li class="mb-1 px-4" data-test-id="nav-item">
-          <h3 class="text-xs font-bold uppercase">{category.name}</h3>
-        </li>
+        {#if menuCategories.length > 1}
+          <li class="mb-1 px-4" data-test-id="nav-item">
+            <h3 class="text-xs font-bold uppercase">{category.name}</h3>
+          </li>
+        {/if}
         {#each category.items as item}
           <li
             class="p-2 pl-6 hover:bg-slate-50 hover:cursor-pointer"
