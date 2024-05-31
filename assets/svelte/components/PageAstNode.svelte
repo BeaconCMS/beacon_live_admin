@@ -11,7 +11,7 @@
   import type { AstNode } from "$lib/types"
   export let node: AstNode
   export let nodeId: string
-  export let live
+
   $: isDragTarget = $slotTargetElement === node
   $: isSelectedNode = $selectedAstElement === node
   $: isHighlightedNode = $highlightedAstElement === node
