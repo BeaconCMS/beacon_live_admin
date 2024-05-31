@@ -60,7 +60,7 @@ export interface ComponentDefinition {
   category: ComponentCategoryId
   name: string
   thumbnail: string
-  body: string
+  template: string
 }
 
 export interface Component {
