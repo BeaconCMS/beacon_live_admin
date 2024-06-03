@@ -57,10 +57,11 @@ export interface MenuCategory {
 
 export interface ComponentDefinition {
   id: ComponentDefinitionId
-  category: ComponentCategoryId
   name: string
+  category: ComponentCategoryId
   thumbnail: string
   template: string
+  example: string
 }
 
 export interface Component {

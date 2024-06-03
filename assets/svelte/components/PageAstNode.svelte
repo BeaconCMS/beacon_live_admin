@@ -147,7 +147,7 @@
         <svelte:self node={subnode} nodeId="{nodeId}.{index}" />
       {/each}
       {#if isDragTarget && $draggedObject}
-        <div class="dragged-element-placeholder">{@html $draggedObject.template}</div>
+        <div class="dragged-element-placeholder">{@html $draggedObject.example}</div>
       {/if}
     </svelte:element>
   {/if}
