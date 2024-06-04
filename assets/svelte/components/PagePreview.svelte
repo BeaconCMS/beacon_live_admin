@@ -12,9 +12,9 @@
   async function handleDragDrop(e: DragEvent) {
     let { target } = e
     $currentComponentCategory = null
-    if (!$draggedObject) return;
-    let draggedObj = $draggedObject;
-    $draggedObject = null;
+    if (!$draggedObject) return
+    let draggedObj = $draggedObject
+    $draggedObject = null
     if (draggedObj.category === "basic") {
       if (!(target instanceof HTMLElement)) return
       if (target.id === "fake-browser-content") return
