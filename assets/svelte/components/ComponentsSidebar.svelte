@@ -26,7 +26,8 @@
   $: currentDefinitions = $currentComponentCategory ? componentDefinitionsByCategory[$currentComponentCategory.id] : []
 
   const sectionTitles: Record<string, string> = {
-    basic: "HTML Tags",
+    basic: "Basic",
+    html_tag: "HTML Tags",
     data: "Data",
     element: "Elements",
     media: "Media",
@@ -101,7 +102,7 @@
       on:mouseleave={collapseCategoryMenu}
     >
       <h4 class="mb-4 font-bold text-2xl">{sectionTitles[$currentComponentCategory?.name]}</h4>
-      <p class="font-medium">Select a component 👇 and drag it to the canvas 👉</p>
+      <p class="font-medium">Drag and drop an element into the page</p>
       {#if currentDefinitions}
         {#each currentDefinitions as example}
           <!-- svelte-ignore a11y-no-static-element-interactions -->
