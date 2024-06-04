@@ -12,8 +12,10 @@
   async function handleDragDrop(e: DragEvent) {
     let { target } = e
     $currentComponentCategory = null
-    if (!$draggedObject) return
-    if ($draggedObject.category === "basic") {
+    if (!$draggedObject) return;
+    let draggedObj = $draggedObject;
+    $draggedObject = null;
+    if (draggedObj.category === "basic") {
       if (!(target instanceof HTMLElement)) return
       if (target.id === "fake-browser-content") return
       if (!$slotTargetElement) return
@@ -22,7 +24,7 @@
     } else {
       $live.pushEvent(
         "render_component_in_page",
-        { component_id: $draggedObject.id, page_id: $page.id },
+        { component_id: draggedObj.id, page_id: $page.id },
         ({ ast }: { ast: AstNode[] }) => {
           // This appends at the end. We might want at the beginning, or in a specific position
           $live.pushEvent("update_page_ast", { id: $page.id, ast: [...$page.ast, ...ast] })

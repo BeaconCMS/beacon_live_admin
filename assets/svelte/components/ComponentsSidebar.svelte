@@ -71,6 +71,11 @@
     </div>
     <ul class="py-4 h-[calc(100vh_-_61px)] overflow-y-auto" data-test-id="component-tree">
       {#each menuCategories as category}
+        {#if menuCategories.length > 1}
+          <li class="mb-1 px-4" data-test-id="nav-item">
+            <h3 class="text-xs font-bold uppercase">{category.name}</h3>
+          </li>
+        {/if}
         {#each category.items as item}
           <li
             class="p-2 pl-6 hover:bg-slate-50 hover:cursor-pointer"
@@ -96,7 +101,7 @@
       on:mouseleave={collapseCategoryMenu}
     >
       <h4 class="mb-4 font-bold text-2xl">{sectionTitles[$currentComponentCategory?.name]}</h4>
-      <p class="font-medium">Drag a component and drop into the page</p>
+      <p class="font-medium">Select a component 👇 and drag it to the canvas 👉</p>
       {#if currentDefinitions}
         {#each currentDefinitions as example}
           <!-- svelte-ignore a11y-no-static-element-interactions -->

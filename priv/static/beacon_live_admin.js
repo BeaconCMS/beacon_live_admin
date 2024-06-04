@@ -1042,6 +1042,7 @@ var BeaconLiveAdmin = (() => {
         }
       },
       destroyed() {
+        this._instance.$destroy();
       }
     };
     return {
@@ -4080,7 +4081,7 @@ var BeaconLiveAdmin = (() => {
   // svelte/components/ComponentsSidebar.svelte
   var file4 = "svelte/components/ComponentsSidebar.svelte";
   function add_css(target) {
-    append_styles(target, "svelte-uvq63b", "#left-sidebar.svelte-uvq63b{z-index:1000}#backdrop.svelte-uvq63b{z-index:999}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiQ29tcG9uZW50c1NpZGViYXIuc3ZlbHRlIiwibWFwcGluZ3MiOiJBQTRJRSwyQkFBYyxDQUNaLE9BQU8sQ0FBRSxJQUNYLENBQ0EsdUJBQVUsQ0FDUixPQUFPLENBQUUsR0FDWCIsIm5hbWVzIjpbXSwic291cmNlcyI6WyJDb21wb25lbnRzU2lkZWJhci5zdmVsdGUiXX0= */");
+    append_styles(target, "svelte-uvq63b", "#left-sidebar.svelte-uvq63b{z-index:1000}#backdrop.svelte-uvq63b{z-index:999}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiQ29tcG9uZW50c1NpZGViYXIuc3ZlbHRlIiwibWFwcGluZ3MiOiJBQThJRSwyQkFBYyxDQUNaLE9BQU8sQ0FBRSxJQUNYLENBQ0EsdUJBQVUsQ0FDUixPQUFPLENBQUUsR0FDWCIsIm5hbWVzIjpbXSwic291cmNlcyI6WyJDb21wb25lbnRzU2lkZWJhci5zdmVsdGUiXX0= */");
   }
   function get_each_context(ctx, list, i) {
     const child_ctx = ctx.slice();
@@ -4096,6 +4097,64 @@ var BeaconLiveAdmin = (() => {
     const child_ctx = ctx.slice();
     child_ctx[23] = list[i];
     return child_ctx;
+  }
+  function create_if_block_2(ctx) {
+    let li;
+    let h3;
+    let t_value = (
+      /*category*/
+      ctx[20].name + ""
+    );
+    let t;
+    const block = {
+      c: function create3() {
+        li = element("li");
+        h3 = element("h3");
+        t = text(t_value);
+        this.h();
+      },
+      l: function claim(nodes) {
+        li = claim_element(nodes, "LI", { class: true, "data-test-id": true });
+        var li_nodes = children(li);
+        h3 = claim_element(li_nodes, "H3", { class: true });
+        var h3_nodes = children(h3);
+        t = claim_text(h3_nodes, t_value);
+        h3_nodes.forEach(detach_dev);
+        li_nodes.forEach(detach_dev);
+        this.h();
+      },
+      h: function hydrate() {
+        attr_dev(h3, "class", "text-xs font-bold uppercase");
+        add_location(h3, file4, 79, 12, 2267);
+        attr_dev(li, "class", "mb-1 px-4");
+        attr_dev(li, "data-test-id", "nav-item");
+        add_location(li, file4, 78, 10, 2208);
+      },
+      m: function mount(target, anchor) {
+        insert_hydration_dev(target, li, anchor);
+        append_hydration_dev(li, h3);
+        append_hydration_dev(h3, t);
+      },
+      p: function update2(ctx2, dirty) {
+        if (dirty & /*menuCategories*/
+        2 && t_value !== (t_value = /*category*/
+        ctx2[20].name + ""))
+          set_data_dev(t, t_value);
+      },
+      d: function destroy(detaching) {
+        if (detaching) {
+          detach_dev(li);
+        }
+      }
+    };
+    dispatch_dev("SvelteRegisterBlock", {
+      block,
+      id: create_if_block_2.name,
+      type: "if",
+      source: "(67:8) {#if menuCategories.length > 1}",
+      ctx
+    });
+    return block;
   }
   function create_each_block_2(ctx) {
     let li;
@@ -4140,10 +4199,10 @@ var BeaconLiveAdmin = (() => {
         this.h();
       },
       h: function hydrate() {
-        add_location(div, file4, 87, 12, 2587);
+        add_location(div, file4, 89, 12, 2647);
         attr_dev(li, "class", "p-2 pl-6 hover:bg-slate-50 hover:cursor-pointer");
         attr_dev(li, "data-test-id", "nav-item");
-        add_location(li, file4, 81, 10, 2347);
+        add_location(li, file4, 83, 10, 2407);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, li, anchor);
@@ -4189,21 +4248,18 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_each_block_2.name,
       type: "each",
-      source: "(70:8) {#each category.items as item}",
+      source: "(72:8) {#each category.items as item}",
       ctx
     });
     return block;
   }
   function create_each_block_1(ctx) {
-    let li;
-    let h3;
-    let t0_value = (
-      /*category*/
-      ctx[20].name + ""
-    );
-    let t0;
-    let t1;
+    let t;
     let each_1_anchor;
+    let if_block = (
+      /*menuCategories*/
+      ctx[1].length > 1 && create_if_block_2(ctx)
+    );
     let each_value_2 = ensure_array_like_dev(
       /*category*/
       ctx[20].items
@@ -4214,43 +4270,27 @@ var BeaconLiveAdmin = (() => {
     }
     const block = {
       c: function create3() {
-        li = element("li");
-        h3 = element("h3");
-        t0 = text(t0_value);
-        t1 = space();
+        if (if_block)
+          if_block.c();
+        t = space();
         for (let i = 0; i < each_blocks.length; i += 1) {
           each_blocks[i].c();
         }
         each_1_anchor = empty();
-        this.h();
       },
       l: function claim(nodes) {
-        li = claim_element(nodes, "LI", { class: true, "data-test-id": true });
-        var li_nodes = children(li);
-        h3 = claim_element(li_nodes, "H3", { class: true });
-        var h3_nodes = children(h3);
-        t0 = claim_text(h3_nodes, t0_value);
-        h3_nodes.forEach(detach_dev);
-        li_nodes.forEach(detach_dev);
-        t1 = claim_space(nodes);
+        if (if_block)
+          if_block.l(nodes);
+        t = claim_space(nodes);
         for (let i = 0; i < each_blocks.length; i += 1) {
           each_blocks[i].l(nodes);
         }
         each_1_anchor = empty();
-        this.h();
-      },
-      h: function hydrate() {
-        attr_dev(h3, "class", "text-xs font-bold uppercase");
-        add_location(h3, file4, 78, 10, 2223);
-        attr_dev(li, "class", "mb-1 px-4");
-        attr_dev(li, "data-test-id", "nav-item");
-        add_location(li, file4, 77, 8, 2166);
       },
       m: function mount(target, anchor) {
-        insert_hydration_dev(target, li, anchor);
-        append_hydration_dev(li, h3);
-        append_hydration_dev(h3, t0);
-        insert_hydration_dev(target, t1, anchor);
+        if (if_block)
+          if_block.m(target, anchor);
+        insert_hydration_dev(target, t, anchor);
         for (let i = 0; i < each_blocks.length; i += 1) {
           if (each_blocks[i]) {
             each_blocks[i].m(target, anchor);
@@ -4259,10 +4299,21 @@ var BeaconLiveAdmin = (() => {
         insert_hydration_dev(target, each_1_anchor, anchor);
       },
       p: function update2(ctx2, dirty) {
-        if (dirty & /*menuCategories*/
-        2 && t0_value !== (t0_value = /*category*/
-        ctx2[20].name + ""))
-          set_data_dev(t0, t0_value);
+        if (
+          /*menuCategories*/
+          ctx2[1].length > 1
+        ) {
+          if (if_block) {
+            if_block.p(ctx2, dirty);
+          } else {
+            if_block = create_if_block_2(ctx2);
+            if_block.c();
+            if_block.m(t.parentNode, t);
+          }
+        } else if (if_block) {
+          if_block.d(1);
+          if_block = null;
+        }
         if (dirty & /*expandCategoryMenu, menuCategories, collapseCategoryMenu, sectionTitles*/
         178) {
           each_value_2 = ensure_array_like_dev(
@@ -4288,10 +4339,11 @@ var BeaconLiveAdmin = (() => {
       },
       d: function destroy(detaching) {
         if (detaching) {
-          detach_dev(li);
-          detach_dev(t1);
+          detach_dev(t);
           detach_dev(each_1_anchor);
         }
+        if (if_block)
+          if_block.d(detaching);
         destroy_each(each_blocks, detaching);
       }
     };
@@ -4370,7 +4422,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_if_block_1.name,
       type: "if",
-      source: "(96:6) {#if currentDefinitions}",
+      source: "(98:6) {#if currentDefinitions}",
       ctx
     });
     return block;
@@ -4429,7 +4481,7 @@ var BeaconLiveAdmin = (() => {
       },
       h: function hydrate() {
         attr_dev(p, "class", "mb-1 text-xs font-bold uppercase tracking-wider");
-        add_location(p, file4, 116, 12, 3811);
+        add_location(p, file4, 118, 12, 3871);
         attr_dev(img, "class", "w-full h-auto rounded ring-offset-2 ring-blue-500 transition hover:cursor-grab hover:ring-2");
         if (!src_url_equal(img.src, img_src_value = /*example*/
         ctx[17].thumbnail ? (
@@ -4440,11 +4492,11 @@ var BeaconLiveAdmin = (() => {
           attr_dev(img, "src", img_src_value);
         attr_dev(img, "alt", img_alt_value = /*example*/
         ctx[17].name);
-        add_location(img, file4, 118, 12, 3974);
+        add_location(img, file4, 120, 12, 4034);
         attr_dev(div, "draggable", "true");
         attr_dev(div, "class", "pt-6");
         attr_dev(div, "data-test-id", "component-preview-card");
-        add_location(div, file4, 109, 10, 3589);
+        add_location(div, file4, 111, 10, 3649);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, div, anchor);
@@ -4503,7 +4555,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_each_block.name,
       type: "each",
-      source: "(97:8) {#each currentDefinitions as example}",
+      source: "(99:8) {#each currentDefinitions as example}",
       ctx
     });
     return block;
@@ -4530,7 +4582,7 @@ var BeaconLiveAdmin = (() => {
         attr_dev(div, "class", "bg-black/50 absolute inset-0 z-50 svelte-uvq63b");
         attr_dev(div, "id", "backdrop");
         attr_dev(div, "data-test-id", "backdrop");
-        add_location(div, file4, 131, 2, 4346);
+        add_location(div, file4, 133, 2, 4406);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, div, anchor);
@@ -4570,7 +4622,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_if_block2.name,
       type: "if",
-      source: "(120:0) {#if showExamples}",
+      source: "(122:0) {#if showExamples}",
       ctx
     });
     return block;
@@ -4707,9 +4759,9 @@ var BeaconLiveAdmin = (() => {
         attr_dev(ul, "data-test-id", "component-tree");
         add_location(ul, file4, 75, 4, 2030);
         attr_dev(h4, "class", "mb-4 font-bold text-2xl");
-        add_location(h4, file4, 104, 6, 3259);
+        add_location(h4, file4, 106, 6, 3319);
         attr_dev(p, "class", "font-medium");
-        add_location(p, file4, 105, 6, 3355);
+        add_location(p, file4, 107, 6, 3415);
         attr_dev(div1, "class", "absolute w-96 left-0 bg-slate-50 inset-y-0 shadow-sm z-50 pt-3 pb-4 px-5 transition-transform duration-500 opacity-0 invisible overflow-y-auto min-h-screen");
         attr_dev(div1, "id", "component-previews");
         attr_dev(div1, "data-test-id", "component-previews");
@@ -4731,7 +4783,7 @@ var BeaconLiveAdmin = (() => {
           /*showExamples*/
           ctx[2]
         );
-        add_location(div1, file4, 93, 4, 2748);
+        add_location(div1, file4, 95, 4, 2808);
         attr_dev(div2, "class", "sticky top-0");
         add_location(div2, file4, 71, 2, 1849);
         attr_dev(div3, "class", "w-64 bg-white border-slate-100 border-solid border-r svelte-uvq63b");
@@ -5170,7 +5222,7 @@ var BeaconLiveAdmin = (() => {
       if (currentNode === astNode) {
         return id + i;
       } else if (isAstElement(currentNode)) {
-        let result = _findAstElementId(currentNode.content, astNode, id + i + ".");
+        let result = currentNode.content && _findAstElementId(currentNode.content, astNode, id + i + ".");
         if (result) {
           return result;
         }
@@ -5238,7 +5290,7 @@ var BeaconLiveAdmin = (() => {
     let current;
     const if_block_creators = [
       create_if_block_12,
-      create_if_block_2,
+      create_if_block_22,
       create_if_block_3,
       create_if_block_4,
       create_if_block_5,
@@ -5646,7 +5698,7 @@ var BeaconLiveAdmin = (() => {
     });
     return block;
   }
-  function create_if_block_2(ctx) {
+  function create_if_block_22(ctx) {
     let html_tag;
     let raw_value = "<!--" + /*node*/
     ctx[0].content + "-->";
@@ -5686,7 +5738,7 @@ var BeaconLiveAdmin = (() => {
     };
     dispatch_dev("SvelteRegisterBlock", {
       block,
-      id: create_if_block_2.name,
+      id: create_if_block_22.name,
       type: "if",
       source: "(8:39) ",
       ctx
@@ -6198,11 +6250,32 @@ var BeaconLiveAdmin = (() => {
   __export(PageAstNode_exports, {
     default: () => PageAstNode_default
   });
+
+  // svelte/stores/live.ts
+  var live = writable();
+
+  // svelte/utils/ast-manipulation.ts
+  function updateNodeContent(node, text2) {
+    if (node && isAstElement(node)) {
+      node.content = [text2];
+      updateAst();
+    }
+  }
+  function updateAst() {
+    let currentPage = get_store_value(page);
+    let live2 = get_store_value(live);
+    live2.pushEvent("update_page_ast", { id: currentPage.id, ast: currentPage.ast });
+  }
+
+  // svelte/components/PageAstNode.svelte
   var file6 = "svelte/components/PageAstNode.svelte";
+  function add_css2(target) {
+    append_styles(target, "svelte-1srofm5", ".dragged-element-placeholder.svelte-1srofm5{outline:2px dashed red}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiUGFnZUFzdE5vZGUuc3ZlbHRlIiwibWFwcGluZ3MiOiJBQThKRSwyQ0FBNkIsQ0FDM0IsT0FBTyxDQUFFLEdBQUcsQ0FBQyxNQUFNLENBQUMsR0FDdEIiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiUGFnZUFzdE5vZGUuc3ZlbHRlIl19 */");
+  }
   function get_each_context3(ctx, list, i) {
     const child_ctx = ctx.slice();
-    child_ctx[16] = list[i];
-    child_ctx[18] = i;
+    child_ctx[21] = list[i];
+    child_ctx[23] = i;
     return child_ctx;
   }
   function create_else_block_12(ctx) {
@@ -6245,7 +6318,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_else_block_12.name,
       type: "else",
-      source: "(106:0) {:else}",
+      source: "(139:0) {:else}",
       ctx
     });
     return block;
@@ -6257,7 +6330,7 @@ var BeaconLiveAdmin = (() => {
     let current;
     const if_block_creators = [
       create_if_block_13,
-      create_if_block_22,
+      create_if_block_23,
       create_if_block_32,
       create_if_block_42,
       create_if_block_52,
@@ -6352,7 +6425,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_if_block4.name,
       type: "if",
-      source: "(58:0) {#if isAstElement(node)}",
+      source: "(86:0) {#if isAstElement(node)}",
       ctx
     });
     return block;
@@ -6449,7 +6522,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_else_block2.name,
       type: "else",
-      source: "(88:2) {:else}",
+      source: "(116:2) {:else}",
       ctx
     });
     return block;
@@ -6534,7 +6607,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_if_block_52.name,
       type: "if",
-      source: "(75:34) ",
+      source: "(103:34) ",
       ctx
     });
     return block;
@@ -6565,7 +6638,7 @@ var BeaconLiveAdmin = (() => {
       h: function hydrate() {
         html_tag.a = null;
         attr_dev(div, "class", "contents");
-        add_location(div, file6, 79, 4, 2659);
+        add_location(div, file6, 108, 4, 3879);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, div, anchor);
@@ -6574,26 +6647,24 @@ var BeaconLiveAdmin = (() => {
           dispose = [
             listen_dev(div, "mouseover", stop_propagation(
               /*handleMouseOver*/
-              ctx[8]
+              ctx[11]
             ), false, false, true, false),
             listen_dev(div, "mouseout", stop_propagation(
               /*handleMouseOut*/
-              ctx[9]
+              ctx[12]
             ), false, false, true, false),
             listen_dev(div, "click", stop_propagation(prevent_default(
               /*click_handler*/
-              ctx[13]
+              ctx[19]
             )), false, true, true, false),
             action_destroyer(highlightContent_action = highlightContent.call(null, div, {
               selected: (
-                /*$selectedAstElement*/
-                ctx[5] === /*node*/
-                ctx[0]
+                /*isSelectedNode*/
+                ctx[2]
               ),
               highlighted: (
-                /*$highlightedAstElement*/
-                ctx[3] === /*node*/
-                ctx[0]
+                /*isHighlightedNode*/
+                ctx[5]
               )
             }))
           ];
@@ -6605,18 +6676,16 @@ var BeaconLiveAdmin = (() => {
         1 && raw_value !== (raw_value = /*node*/
         ctx2[0].rendered_html + ""))
           html_tag.p(raw_value);
-        if (highlightContent_action && is_function(highlightContent_action.update) && dirty & /*$selectedAstElement, node, $highlightedAstElement*/
-        41)
+        if (highlightContent_action && is_function(highlightContent_action.update) && dirty & /*isSelectedNode, isHighlightedNode*/
+        36)
           highlightContent_action.update.call(null, {
             selected: (
-              /*$selectedAstElement*/
-              ctx2[5] === /*node*/
-              ctx2[0]
+              /*isSelectedNode*/
+              ctx2[2]
             ),
             highlighted: (
-              /*$highlightedAstElement*/
-              ctx2[3] === /*node*/
-              ctx2[0]
+              /*isHighlightedNode*/
+              ctx2[5]
             )
           });
       },
@@ -6634,7 +6703,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_if_block_42.name,
       type: "if",
-      source: "(65:31) ",
+      source: "(93:31) ",
       ctx
     });
     return block;
@@ -6643,13 +6712,13 @@ var BeaconLiveAdmin = (() => {
     let current;
     const default_slot_template = (
       /*#slots*/
-      ctx[12].default
+      ctx[18].default
     );
     const default_slot = create_slot(
       default_slot_template,
       ctx,
       /*$$scope*/
-      ctx[11],
+      ctx[17],
       null
     );
     const block = {
@@ -6670,20 +6739,20 @@ var BeaconLiveAdmin = (() => {
       p: function update2(ctx2, dirty) {
         if (default_slot) {
           if (default_slot.p && (!current || dirty & /*$$scope*/
-          2048)) {
+          131072)) {
             update_slot_base(
               default_slot,
               default_slot_template,
               ctx2,
               /*$$scope*/
-              ctx2[11],
+              ctx2[17],
               !current ? get_all_dirty_from_scope(
                 /*$$scope*/
-                ctx2[11]
+                ctx2[17]
               ) : get_slot_changes(
                 default_slot_template,
                 /*$$scope*/
-                ctx2[11],
+                ctx2[17],
                 dirty,
                 null
               ),
@@ -6711,12 +6780,12 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_if_block_32.name,
       type: "if",
-      source: "(63:71) ",
+      source: "(91:71) ",
       ctx
     });
     return block;
   }
-  function create_if_block_22(ctx) {
+  function create_if_block_23(ctx) {
     let html_tag;
     let raw_value = "<!--" + /*node*/
     ctx[0].content + "-->";
@@ -6756,9 +6825,9 @@ var BeaconLiveAdmin = (() => {
     };
     dispatch_dev("SvelteRegisterBlock", {
       block,
-      id: create_if_block_22.name,
+      id: create_if_block_23.name,
       type: "if",
-      source: "(61:39) ",
+      source: "(89:39) ",
       ctx
     });
     return block;
@@ -6805,7 +6874,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_if_block_13.name,
       type: "if",
-      source: '(59:2) {#if node.tag === \\"html_comment\\"}',
+      source: '(87:2) {#if node.tag === \\"html_comment\\"}',
       ctx
     });
     return block;
@@ -6817,12 +6886,12 @@ var BeaconLiveAdmin = (() => {
       props: {
         node: (
           /*subnode*/
-          ctx[16]
+          ctx[21]
         ),
         nodeId: (
           /*nodeId*/
           ctx[1] + "." + /*index*/
-          ctx[18]
+          ctx[23]
         )
       },
       $$inline: true
@@ -6843,12 +6912,12 @@ var BeaconLiveAdmin = (() => {
         if (dirty & /*node*/
         1)
           pageastnode_changes.node = /*subnode*/
-          ctx2[16];
+          ctx2[21];
         if (dirty & /*nodeId*/
         2)
           pageastnode_changes.nodeId = /*nodeId*/
           ctx2[1] + "." + /*index*/
-          ctx2[18];
+          ctx2[23];
         pageastnode.$set(pageastnode_changes);
       },
       i: function intro(local) {
@@ -6869,16 +6938,64 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_each_block3.name,
       type: "each",
-      source: "(101:6) {#each node.content as subnode, index}",
+      source: "(131:6) {#each node.content as subnode, index}",
+      ctx
+    });
+    return block;
+  }
+  function create_if_block_62(ctx) {
+    let div;
+    let html_tag;
+    let raw_value = (
+      /*$draggedObject*/
+      ctx[8].template + ""
+    );
+    const block = {
+      c: function create3() {
+        div = element("div");
+        html_tag = new HtmlTagHydration(false);
+        this.h();
+      },
+      l: function claim(nodes) {
+        div = claim_element(nodes, "DIV", { class: true });
+        var div_nodes = children(div);
+        html_tag = claim_html_tag(div_nodes, false);
+        div_nodes.forEach(detach_dev);
+        this.h();
+      },
+      h: function hydrate() {
+        html_tag.a = null;
+        attr_dev(div, "class", "dragged-element-placeholder svelte-1srofm5");
+        add_location(div, file6, 149, 8, 5512);
+      },
+      m: function mount(target, anchor) {
+        insert_hydration_dev(target, div, anchor);
+        html_tag.m(raw_value, div);
+      },
+      p: function update2(ctx2, dirty) {
+        if (dirty & /*$draggedObject*/
+        256 && raw_value !== (raw_value = /*$draggedObject*/
+        ctx2[8].template + ""))
+          html_tag.p(raw_value);
+      },
+      d: function destroy(detaching) {
+        if (detaching) {
+          detach_dev(div);
+        }
+      }
+    };
+    dispatch_dev("SvelteRegisterBlock", {
+      block,
+      id: create_if_block_62.name,
+      type: "if",
+      source: "(134:6) {#if isDragTarget && $draggedObject}",
       ctx
     });
     return block;
   }
   function create_dynamic_element_12(ctx) {
     let svelte_element;
-    let svelte_element_data_selected_value;
-    let svelte_element_data_highlighted_value;
-    let svelte_element_data_slot_target_value;
+    let t;
     let current;
     let mounted;
     let dispose;
@@ -6893,24 +7010,36 @@ var BeaconLiveAdmin = (() => {
     const out = (i) => transition_out(each_blocks[i], 1, 1, () => {
       each_blocks[i] = null;
     });
+    let if_block = (
+      /*isDragTarget*/
+      ctx[6] && /*$draggedObject*/
+      ctx[8] && create_if_block_62(ctx)
+    );
     let svelte_element_levels = [
       /*node*/
       ctx[0].attrs,
       {
-        "data-selected": svelte_element_data_selected_value = /*$selectedAstElement*/
-        ctx[5] === /*node*/
-        ctx[0]
+        "data-selected": (
+          /*isSelectedNode*/
+          ctx[2]
+        )
       },
       {
-        "data-highlighted": svelte_element_data_highlighted_value = /*$highlightedAstElement*/
-        ctx[3] === /*node*/
-        ctx[0]
+        "data-highlighted": (
+          /*isHighlightedNode*/
+          ctx[5]
+        )
       },
       {
-        "data-slot-target": svelte_element_data_slot_target_value = /*$slotTargetElement*/
-        ctx[4] === /*node*/
-        ctx[0]
-      }
+        "data-slot-target": (
+          /*isDragTarget*/
+          ctx[6]
+        )
+      },
+      { contenteditable: (
+        /*isEditable*/
+        ctx[4]
+      ) }
     ];
     let svelte_element_data = {};
     for (let i = 0; i < svelte_element_levels.length; i += 1) {
@@ -6925,6 +7054,9 @@ var BeaconLiveAdmin = (() => {
         for (let i = 0; i < each_blocks.length; i += 1) {
           each_blocks[i].c();
         }
+        t = space();
+        if (if_block)
+          if_block.c();
         this.h();
       },
       l: function claim(nodes) {
@@ -6935,13 +7067,17 @@ var BeaconLiveAdmin = (() => {
           {
             "data-selected": true,
             "data-highlighted": true,
-            "data-slot-target": true
+            "data-slot-target": true,
+            contenteditable: true
           }
         );
         var svelte_element_nodes = children(svelte_element);
         for (let i = 0; i < each_blocks.length; i += 1) {
           each_blocks[i].l(svelte_element_nodes);
         }
+        t = claim_space(svelte_element_nodes);
+        if (if_block)
+          if_block.l(svelte_element_nodes);
         svelte_element_nodes.forEach(detach_dev);
         this.h();
       },
@@ -6950,7 +7086,8 @@ var BeaconLiveAdmin = (() => {
           /*node*/
           ctx[0].tag
         )(svelte_element, svelte_element_data);
-        add_location(svelte_element, file6, 102, 4, 3636);
+        toggle_class(svelte_element, "svelte-1srofm5", true);
+        add_location(svelte_element, file6, 131, 4, 4785);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, svelte_element, anchor);
@@ -6959,28 +7096,41 @@ var BeaconLiveAdmin = (() => {
             each_blocks[i].m(svelte_element, null);
           }
         }
+        append_hydration_dev(svelte_element, t);
+        if (if_block)
+          if_block.m(svelte_element, null);
         current = true;
         if (!mounted) {
           dispose = [
+            listen_dev(
+              svelte_element,
+              "blur",
+              /*handleContentEdited*/
+              ctx[14],
+              false,
+              false,
+              false,
+              false
+            ),
             listen_dev(svelte_element, "dragenter", stop_propagation(
               /*handleDragEnter*/
-              ctx[6]
+              ctx[9]
             ), false, false, true, false),
             listen_dev(svelte_element, "dragleave", stop_propagation(
               /*handleDragLeave*/
-              ctx[7]
+              ctx[10]
             ), false, false, true, false),
             listen_dev(svelte_element, "mouseover", stop_propagation(
               /*handleMouseOver*/
-              ctx[8]
+              ctx[11]
             ), false, false, true, false),
             listen_dev(svelte_element, "mouseout", stop_propagation(
               /*handleMouseOut*/
-              ctx[9]
+              ctx[12]
             ), false, false, true, false),
             listen_dev(svelte_element, "click", stop_propagation(prevent_default(
               /*click_handler_1*/
-              ctx[14]
+              ctx[20]
             )), false, true, true, false)
           ];
           mounted = true;
@@ -7003,7 +7153,7 @@ var BeaconLiveAdmin = (() => {
               each_blocks[i] = create_each_block3(child_ctx);
               each_blocks[i].c();
               transition_in(each_blocks[i], 1);
-              each_blocks[i].m(svelte_element, null);
+              each_blocks[i].m(svelte_element, t);
             }
           }
           group_outros();
@@ -7012,6 +7162,22 @@ var BeaconLiveAdmin = (() => {
           }
           check_outros();
         }
+        if (
+          /*isDragTarget*/
+          ctx2[6] && /*$draggedObject*/
+          ctx2[8]
+        ) {
+          if (if_block) {
+            if_block.p(ctx2, dirty);
+          } else {
+            if_block = create_if_block_62(ctx2);
+            if_block.c();
+            if_block.m(svelte_element, null);
+          }
+        } else if (if_block) {
+          if_block.d(1);
+          if_block = null;
+        }
         set_dynamic_element_data(
           /*node*/
           ctx2[0].tag
@@ -7019,25 +7185,34 @@ var BeaconLiveAdmin = (() => {
           dirty & /*node*/
           1 && /*node*/
           ctx2[0].attrs,
-          (!current || dirty & /*$selectedAstElement, node*/
-          33 && svelte_element_data_selected_value !== (svelte_element_data_selected_value = /*$selectedAstElement*/
-          ctx2[5] === /*node*/
-          ctx2[0])) && {
-            "data-selected": svelte_element_data_selected_value
+          (!current || dirty & /*isSelectedNode*/
+          4) && {
+            "data-selected": (
+              /*isSelectedNode*/
+              ctx2[2]
+            )
           },
-          (!current || dirty & /*$highlightedAstElement, node*/
-          9 && svelte_element_data_highlighted_value !== (svelte_element_data_highlighted_value = /*$highlightedAstElement*/
-          ctx2[3] === /*node*/
-          ctx2[0])) && {
-            "data-highlighted": svelte_element_data_highlighted_value
+          (!current || dirty & /*isHighlightedNode*/
+          32) && {
+            "data-highlighted": (
+              /*isHighlightedNode*/
+              ctx2[5]
+            )
           },
-          (!current || dirty & /*$slotTargetElement, node*/
-          17 && svelte_element_data_slot_target_value !== (svelte_element_data_slot_target_value = /*$slotTargetElement*/
-          ctx2[4] === /*node*/
-          ctx2[0])) && {
-            "data-slot-target": svelte_element_data_slot_target_value
-          }
+          (!current || dirty & /*isDragTarget*/
+          64) && {
+            "data-slot-target": (
+              /*isDragTarget*/
+              ctx2[6]
+            )
+          },
+          (!current || dirty & /*isEditable*/
+          16) && { contenteditable: (
+            /*isEditable*/
+            ctx2[4]
+          ) }
         ]));
+        toggle_class(svelte_element, "svelte-1srofm5", true);
       },
       i: function intro(local) {
         if (current)
@@ -7059,6 +7234,8 @@ var BeaconLiveAdmin = (() => {
           detach_dev(svelte_element);
         }
         destroy_each(each_blocks, detaching);
+        if (if_block)
+          if_block.d();
         mounted = false;
         run_all(dispose);
       }
@@ -7067,15 +7244,13 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_dynamic_element_12.name,
       type: "child_dynamic_element",
-      source: "(89:4) <svelte:element       this={node.tag}       {...node.attrs}       data-selected={$selectedAstElement === node}       data-highlighted={$highlightedAstElement === node}       data-slot-target={$slotTargetElement === node}       on:dragenter|stopPropagation={handleDragEnter}       on:dragleave|stopPropagation={handleDragLeave}       on:mouseover|stopPropagation={handleMouseOver}       on:mouseout|stopPropagation={handleMouseOut}       on:click|preventDefault|stopPropagation={() => ($selectedAstElementId = nodeId)}     >",
+      source: "(117:4) <svelte:element       this={node.tag}       {...node.attrs}       data-selected={isSelectedNode}       data-highlighted={isHighlightedNode}       data-slot-target={isDragTarget}       contenteditable={isEditable}       on:blur={handleContentEdited}       on:dragenter|stopPropagation={handleDragEnter}       on:dragleave|stopPropagation={handleDragLeave}       on:mouseover|stopPropagation={handleMouseOver}       on:mouseout|stopPropagation={handleMouseOut}       on:click|preventDefault|stopPropagation={() => ($selectedAstElementId = nodeId)}     >",
       ctx
     });
     return block;
   }
   function create_dynamic_element2(ctx) {
     let svelte_element;
-    let svelte_element_data_selected_value;
-    let svelte_element_data_highlighted_value;
     let svelte_element_data_slot_target_value;
     let mounted;
     let dispose;
@@ -7083,20 +7258,21 @@ var BeaconLiveAdmin = (() => {
       /*node*/
       ctx[0].attrs,
       {
-        "data-selected": svelte_element_data_selected_value = /*$selectedAstElement*/
-        ctx[5] === /*node*/
-        ctx[0]
+        "data-selected": (
+          /*isSelectedNode*/
+          ctx[2]
+        )
       },
       {
-        "data-highlighted": svelte_element_data_highlighted_value = /*$highlightedAstElement*/
-        ctx[3] === /*node*/
-        ctx[0]
+        "data-highlighted": (
+          /*isHighlightedNode*/
+          ctx[5]
+        )
       },
       {
-        "data-slot-target": svelte_element_data_slot_target_value = /*$slotTargetElement*/
-        ctx[4] === /*node*/
-        ctx[0] && !/*$slotTargetElement*/
-        ctx[4].attrs.selfClose
+        "data-slot-target": svelte_element_data_slot_target_value = /*isDragTarget*/
+        ctx[6] && !/*$slotTargetElement*/
+        ctx[3].attrs.selfClose
       }
     ];
     let svelte_element_data = {};
@@ -7130,7 +7306,8 @@ var BeaconLiveAdmin = (() => {
           /*node*/
           ctx[0].tag
         )(svelte_element, svelte_element_data);
-        add_location(svelte_element, file6, 89, 4, 3085);
+        toggle_class(svelte_element, "svelte-1srofm5", true);
+        add_location(svelte_element, file6, 118, 4, 4277);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, svelte_element, anchor);
@@ -7138,23 +7315,23 @@ var BeaconLiveAdmin = (() => {
           dispose = [
             listen_dev(svelte_element, "dragenter", stop_propagation(
               /*handleDragEnter*/
-              ctx[6]
+              ctx[9]
             ), false, false, true, false),
             listen_dev(svelte_element, "dragleave", stop_propagation(
               /*handleDragLeave*/
-              ctx[7]
+              ctx[10]
             ), false, false, true, false),
             listen_dev(svelte_element, "mouseover", stop_propagation(
               /*handleMouseOver*/
-              ctx[8]
+              ctx[11]
             ), false, false, true, false),
             listen_dev(svelte_element, "mouseout", stop_propagation(
               /*handleMouseOut*/
-              ctx[9]
+              ctx[12]
             ), false, false, true, false),
             listen_dev(svelte_element, "click", stop_propagation(prevent_default(
               /*handleClick*/
-              ctx[10]
+              ctx[13]
             )), false, true, true, false)
           ];
           mounted = true;
@@ -7168,26 +7345,28 @@ var BeaconLiveAdmin = (() => {
           dirty & /*node*/
           1 && /*node*/
           ctx2[0].attrs,
-          dirty & /*$selectedAstElement, node*/
-          33 && svelte_element_data_selected_value !== (svelte_element_data_selected_value = /*$selectedAstElement*/
-          ctx2[5] === /*node*/
-          ctx2[0]) && {
-            "data-selected": svelte_element_data_selected_value
+          dirty & /*isSelectedNode*/
+          4 && {
+            "data-selected": (
+              /*isSelectedNode*/
+              ctx2[2]
+            )
           },
-          dirty & /*$highlightedAstElement, node*/
-          9 && svelte_element_data_highlighted_value !== (svelte_element_data_highlighted_value = /*$highlightedAstElement*/
-          ctx2[3] === /*node*/
-          ctx2[0]) && {
-            "data-highlighted": svelte_element_data_highlighted_value
+          dirty & /*isHighlightedNode*/
+          32 && {
+            "data-highlighted": (
+              /*isHighlightedNode*/
+              ctx2[5]
+            )
           },
-          dirty & /*$slotTargetElement, node*/
-          17 && svelte_element_data_slot_target_value !== (svelte_element_data_slot_target_value = /*$slotTargetElement*/
-          ctx2[4] === /*node*/
-          ctx2[0] && !/*$slotTargetElement*/
-          ctx2[4].attrs.selfClose) && {
+          dirty & /*isDragTarget, $slotTargetElement*/
+          72 && svelte_element_data_slot_target_value !== (svelte_element_data_slot_target_value = /*isDragTarget*/
+          ctx2[6] && !/*$slotTargetElement*/
+          ctx2[3].attrs.selfClose) && {
             "data-slot-target": svelte_element_data_slot_target_value
           }
         ]));
+        toggle_class(svelte_element, "svelte-1srofm5", true);
       },
       d: function destroy(detaching) {
         if (detaching) {
@@ -7201,7 +7380,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_dynamic_element2.name,
       type: "child_dynamic_element",
-      source: "(76:4) <svelte:element       this={node.tag}       {...node.attrs}       data-selected={$selectedAstElement === node}       data-highlighted={$highlightedAstElement === node}       data-slot-target={$slotTargetElement === node && !$slotTargetElement.attrs.selfClose}       on:dragenter|stopPropagation={handleDragEnter}       on:dragleave|stopPropagation={handleDragLeave}       on:mouseover|stopPropagation={handleMouseOver}       on:mouseout|stopPropagation={handleMouseOut}       on:click|preventDefault|stopPropagation={handleClick}     />",
+      source: "(104:4) <svelte:element       this={node.tag}       {...node.attrs}       data-selected={isSelectedNode}       data-highlighted={isHighlightedNode}       data-slot-target={isDragTarget && !$slotTargetElement.attrs.selfClose}       on:dragenter|stopPropagation={handleDragEnter}       on:dragleave|stopPropagation={handleDragLeave}       on:mouseover|stopPropagation={handleMouseOver}       on:mouseout|stopPropagation={handleMouseOut}       on:click|preventDefault|stopPropagation={handleClick}     />",
       ctx
     });
     return block;
@@ -7322,21 +7501,25 @@ var BeaconLiveAdmin = (() => {
     };
   }
   function instance6($$self, $$props, $$invalidate) {
+    let isDragTarget;
+    let isSelectedNode;
+    let isHighlightedNode;
+    let isEditable;
     let $selectedAstElementId;
     let $highlightedAstElement;
     let $slotTargetElement;
     let $draggedObject;
     let $selectedAstElement;
     validate_store(selectedAstElementId, "selectedAstElementId");
-    component_subscribe($$self, selectedAstElementId, ($$value) => $$invalidate(2, $selectedAstElementId = $$value));
+    component_subscribe($$self, selectedAstElementId, ($$value) => $$invalidate(7, $selectedAstElementId = $$value));
     validate_store(highlightedAstElement, "highlightedAstElement");
-    component_subscribe($$self, highlightedAstElement, ($$value) => $$invalidate(3, $highlightedAstElement = $$value));
+    component_subscribe($$self, highlightedAstElement, ($$value) => $$invalidate(15, $highlightedAstElement = $$value));
     validate_store(slotTargetElement, "slotTargetElement");
-    component_subscribe($$self, slotTargetElement, ($$value) => $$invalidate(4, $slotTargetElement = $$value));
+    component_subscribe($$self, slotTargetElement, ($$value) => $$invalidate(3, $slotTargetElement = $$value));
     validate_store(draggedObject, "draggedObject");
-    component_subscribe($$self, draggedObject, ($$value) => $$invalidate(15, $draggedObject = $$value));
+    component_subscribe($$self, draggedObject, ($$value) => $$invalidate(8, $draggedObject = $$value));
     validate_store(selectedAstElement, "selectedAstElement");
-    component_subscribe($$self, selectedAstElement, ($$value) => $$invalidate(5, $selectedAstElement = $$value));
+    component_subscribe($$self, selectedAstElement, ($$value) => $$invalidate(16, $selectedAstElement = $$value));
     let { $$slots: slots = {}, $$scope } = $$props;
     validate_slots("PageAstNode", slots, ["default"]);
     let { node } = $$props;
@@ -7360,6 +7543,26 @@ var BeaconLiveAdmin = (() => {
     function handleClick() {
       set_store_value(selectedAstElementId, $selectedAstElementId = nodeId, $selectedAstElementId);
     }
+    function handleContentEdited({ target }) {
+      let children2 = target.children;
+      if (!isAstElement(node)) {
+        return;
+      }
+      if (children2.length === 0) {
+        if (target.innerText !== node.content) {
+          updateNodeContent(node, target.innerText);
+        }
+      } else {
+        let tmpClone = target.cloneNode(true);
+        Array.from(tmpClone.children).forEach((c) => tmpClone.removeChild(c));
+        let stringChildIndex = node.content.findIndex((e) => typeof e === "string");
+        let newText = tmpClone.textContent.trim();
+        if (node.content[stringChildIndex] !== newText) {
+          $$invalidate(0, node.content[stringChildIndex] = newText, node);
+          updateAst();
+        }
+      }
+    }
     $$self.$$.on_mount.push(function() {
       if (node === void 0 && !("node" in $$props || $$self.$$.bound[$$self.$$.props["node"]])) {
         console.warn("<PageAstNode> was created without expected prop 'node'");
@@ -7381,7 +7584,7 @@ var BeaconLiveAdmin = (() => {
       if ("nodeId" in $$props2)
         $$invalidate(1, nodeId = $$props2.nodeId);
       if ("$$scope" in $$props2)
-        $$invalidate(11, $$scope = $$props2.$$scope);
+        $$invalidate(17, $$scope = $$props2.$$scope);
     };
     $$self.$capture_state = () => ({
       selectedAstElement,
@@ -7389,15 +7592,22 @@ var BeaconLiveAdmin = (() => {
       selectedAstElementId,
       highlightedAstElement,
       isAstElement,
+      draggedObject,
+      updateNodeContent,
+      updateAst,
       node,
       nodeId,
-      draggedObject,
       handleDragEnter,
       handleDragLeave,
       handleMouseOver,
       handleMouseOut,
       handleClick,
+      handleContentEdited,
       highlightContent,
+      isSelectedNode,
+      isEditable,
+      isHighlightedNode,
+      isDragTarget,
       $selectedAstElementId,
       $highlightedAstElement,
       $slotTargetElement,
@@ -7409,22 +7619,58 @@ var BeaconLiveAdmin = (() => {
         $$invalidate(0, node = $$props2.node);
       if ("nodeId" in $$props2)
         $$invalidate(1, nodeId = $$props2.nodeId);
+      if ("isSelectedNode" in $$props2)
+        $$invalidate(2, isSelectedNode = $$props2.isSelectedNode);
+      if ("isEditable" in $$props2)
+        $$invalidate(4, isEditable = $$props2.isEditable);
+      if ("isHighlightedNode" in $$props2)
+        $$invalidate(5, isHighlightedNode = $$props2.isHighlightedNode);
+      if ("isDragTarget" in $$props2)
+        $$invalidate(6, isDragTarget = $$props2.isDragTarget);
     };
     if ($$props && "$$inject" in $$props) {
       $$self.$inject_state($$props.$$inject);
     }
+    $$self.$$.update = () => {
+      if ($$self.$$.dirty & /*$slotTargetElement, node*/
+      9) {
+        $:
+          $$invalidate(6, isDragTarget = $slotTargetElement === node);
+      }
+      if ($$self.$$.dirty & /*$selectedAstElement, node*/
+      65537) {
+        $:
+          $$invalidate(2, isSelectedNode = $selectedAstElement === node);
+      }
+      if ($$self.$$.dirty & /*$highlightedAstElement, node*/
+      32769) {
+        $:
+          $$invalidate(5, isHighlightedNode = $highlightedAstElement === node);
+      }
+      if ($$self.$$.dirty & /*isSelectedNode, node*/
+      5) {
+        $:
+          $$invalidate(4, isEditable = isSelectedNode && isAstElement(node) && node.content.filter((e) => typeof e === "string").length === 1);
+      }
+    };
     return [
       node,
       nodeId,
-      $selectedAstElementId,
-      $highlightedAstElement,
+      isSelectedNode,
       $slotTargetElement,
-      $selectedAstElement,
+      isEditable,
+      isHighlightedNode,
+      isDragTarget,
+      $selectedAstElementId,
+      $draggedObject,
       handleDragEnter,
       handleDragLeave,
       handleMouseOver,
       handleMouseOut,
       handleClick,
+      handleContentEdited,
+      $highlightedAstElement,
+      $selectedAstElement,
       $$scope,
       slots,
       click_handler,
@@ -7434,7 +7680,7 @@ var BeaconLiveAdmin = (() => {
   var PageAstNode = class extends SvelteComponentDev {
     constructor(options) {
       super(options);
-      init2(this, options, instance6, create_fragment6, safe_not_equal, { node: 0, nodeId: 1 });
+      init2(this, options, instance6, create_fragment6, safe_not_equal, { node: 0, nodeId: 1 }, add_css2);
       dispatch_dev("SvelteRegisterComponent", {
         component: this,
         tagName: "PageAstNode",
@@ -7466,8 +7712,8 @@ var BeaconLiveAdmin = (() => {
     default: () => PagePreview_default
   });
   var file7 = "svelte/components/PagePreview.svelte";
-  function add_css2(target) {
-    append_styles(target, "svelte-1fsqk14", '.contents[data-nochildren="true"], .contents[data-nochildren="true"]{display:inline}[data-slot-target="true"]{outline-color:red;outline-width:2px;outline-style:dashed}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiUGFnZVByZXZpZXcuc3ZlbHRlIiwibWFwcGluZ3MiOiJBQWtGVSxvRUFBc0UsQ0FJNUUsT0FBTyxDQUFFLE1BQ1gsQ0FDUSx5QkFBMkIsQ0FDakMsYUFBYSxDQUFFLEdBQUcsQ0FDbEIsYUFBYSxDQUFFLEdBQUcsQ0FDbEIsYUFBYSxDQUFFLE1BQ2pCIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIlBhZ2VQcmV2aWV3LnN2ZWx0ZSJdfQ== */');
+  function add_css3(target) {
+    append_styles(target, "svelte-1fsqk14", '.contents[data-nochildren="true"], .contents[data-nochildren="true"]{display:inline}[data-slot-target="true"]{outline-color:red;outline-width:2px;outline-style:dashed}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiUGFnZVByZXZpZXcuc3ZlbHRlIiwibWFwcGluZ3MiOiJBQW9GVSxvRUFBc0UsQ0FJNUUsT0FBTyxDQUFFLE1BQ1gsQ0FDUSx5QkFBMkIsQ0FDakMsYUFBYSxDQUFFLEdBQUcsQ0FDbEIsYUFBYSxDQUFFLEdBQUcsQ0FDbEIsYUFBYSxDQUFFLE1BQ2pCIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIlBhZ2VQcmV2aWV3LnN2ZWx0ZSJdfQ== */');
   }
   function create_if_block5(ctx) {
     let browserframe;
@@ -7524,7 +7770,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_if_block5.name,
       type: "if",
-      source: "(63:2) {#if $page}",
+      source: "(65:2) {#if $page}",
       ctx
     });
     return block;
@@ -7566,19 +7812,19 @@ var BeaconLiveAdmin = (() => {
         this.h();
       },
       h: function hydrate() {
-        add_location(page_wrapper, file7, 69, 10, 3394);
+        add_location(page_wrapper, file7, 71, 10, 3486);
         attr_dev(div0, "id", "page-wrapper");
         attr_dev(div0, "class", "p-1 m-1");
         attr_dev(div0, "data-selected", div0_data_selected_value = /*$selectedAstElementId*/
         ctx[2] === "root");
-        add_location(div0, file7, 68, 8, 3295);
+        add_location(div0, file7, 70, 8, 3387);
         attr_dev(div1, "role", "document");
         set_style(div1, "--outlined-id", "title-1");
         attr_dev(div1, "id", "fake-browser-content");
         attr_dev(div1, "class", div1_class_value = "bg-white rounded-b-xl relative overflow-hidden flex-1 " + /*isDraggingOver*/
         (ctx[0] && "border-dashed border-blue-500 border-2"));
         attr_dev(div1, "data-test-id", "browser-content");
-        add_location(div1, file7, 58, 6, 2903);
+        add_location(div1, file7, 60, 6, 2995);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, div1, anchor);
@@ -7622,7 +7868,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_default_slot.name,
       type: "slot",
-      source: "(64:4) <BrowserFrame page={$page}>",
+      source: "(66:4) <BrowserFrame page={$page}>",
       ctx
     });
     return block;
@@ -7652,7 +7898,7 @@ var BeaconLiveAdmin = (() => {
       h: function hydrate() {
         attr_dev(div, "class", "flex-1 px-8 pb-4 flex max-h-full");
         attr_dev(div, "data-test-id", "main");
-        add_location(div, file7, 55, 0, 2784);
+        add_location(div, file7, 57, 0, 2876);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, div, anchor);
@@ -7714,12 +7960,15 @@ var BeaconLiveAdmin = (() => {
   }
   function instance7($$self, $$props, $$invalidate) {
     let $page;
+    let $live;
     let $slotTargetElement;
     let $draggedObject;
     let $currentComponentCategory;
     let $selectedAstElementId;
     validate_store(page, "page");
     component_subscribe($$self, page, ($$value) => $$invalidate(1, $page = $$value));
+    validate_store(live, "live");
+    component_subscribe($$self, live, ($$value) => $$invalidate(5, $live = $$value));
     validate_store(slotTargetElement, "slotTargetElement");
     component_subscribe($$self, slotTargetElement, ($$value) => $$invalidate(6, $slotTargetElement = $$value));
     validate_store(draggedObject, "draggedObject");
@@ -7757,7 +8006,6 @@ var BeaconLiveAdmin = (() => {
         step((generator = generator.apply(thisArg, _arguments || [])).next());
       });
     };
-    let { live } = $$props;
     let isDraggingOver = false;
     function handleDragDrop(e) {
       return __awaiter(this, void 0, void 0, function* () {
@@ -7765,7 +8013,9 @@ var BeaconLiveAdmin = (() => {
         set_store_value(currentComponentCategory, $currentComponentCategory = null, $currentComponentCategory);
         if (!$draggedObject)
           return;
-        if ($draggedObject.category === "basic") {
+        let draggedObj = $draggedObject;
+        set_store_value(draggedObject, $draggedObject = null, $draggedObject);
+        if (draggedObj.category === "basic") {
           if (!(target instanceof HTMLElement))
             return;
           if (target.id === "fake-browser-content")
@@ -7776,14 +8026,14 @@ var BeaconLiveAdmin = (() => {
             return;
           addBasicComponentToTarget2($slotTargetElement);
         } else {
-          live.pushEvent(
+          $live.pushEvent(
             "render_component_in_page",
             {
-              component_id: $draggedObject.id,
+              component_id: draggedObj.id,
               page_id: $page.id
             },
             ({ ast }) => {
-              live.pushEvent("update_page_ast", {
+              $live.pushEvent("update_page_ast", {
                 id: $page.id,
                 ast: [...$page.ast, ...ast]
               });
@@ -7800,7 +8050,7 @@ var BeaconLiveAdmin = (() => {
         let componentDefinition = $draggedObject;
         set_store_value(draggedObject, $draggedObject = null, $draggedObject);
         let targetNode = astElement;
-        live.pushEvent(
+        $live.pushEvent(
           "render_component_in_page",
           {
             component_id: componentDefinition.id,
@@ -7809,7 +8059,7 @@ var BeaconLiveAdmin = (() => {
           ({ ast }) => {
             targetNode === null || targetNode === void 0 ? void 0 : targetNode.content.push(...ast);
             set_store_value(slotTargetElement, $slotTargetElement = void 0, $slotTargetElement);
-            live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast });
+            $live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast });
           }
         );
       });
@@ -7817,20 +8067,11 @@ var BeaconLiveAdmin = (() => {
     function dragOver() {
       $$invalidate(0, isDraggingOver = true);
     }
-    $$self.$$.on_mount.push(function() {
-      if (live === void 0 && !("live" in $$props || $$self.$$.bound[$$self.$$.props["live"]])) {
-        console.warn("<PagePreview> was created without expected prop 'live'");
-      }
-    });
-    const writable_props = ["live"];
+    const writable_props = [];
     Object.keys($$props).forEach((key) => {
       if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$" && key !== "slot")
         console.warn(`<PagePreview> was created with unknown prop '${key}'`);
     });
-    $$self.$$set = ($$props2) => {
-      if ("live" in $$props2)
-        $$invalidate(5, live = $$props2.live);
-    };
     $$self.$capture_state = () => ({
       __awaiter,
       BrowserFrame: BrowserFrame_default,
@@ -7845,6 +8086,7 @@ var BeaconLiveAdmin = (() => {
       addBasicComponentToTarget: addBasicComponentToTarget2,
       dragOver,
       $page,
+      $live,
       $slotTargetElement,
       $draggedObject,
       $currentComponentCategory,
@@ -7853,20 +8095,18 @@ var BeaconLiveAdmin = (() => {
     $$self.$inject_state = ($$props2) => {
       if ("__awaiter" in $$props2)
         __awaiter = $$props2.__awaiter;
-      if ("live" in $$props2)
-        $$invalidate(5, live = $$props2.live);
       if ("isDraggingOver" in $$props2)
         $$invalidate(0, isDraggingOver = $$props2.isDraggingOver);
     };
     if ($$props && "$$inject" in $$props) {
       $$self.$inject_state($$props.$$inject);
     }
-    return [isDraggingOver, $page, $selectedAstElementId, handleDragDrop, dragOver, live];
+    return [isDraggingOver, $page, $selectedAstElementId, handleDragDrop, dragOver];
   }
   var PagePreview = class extends SvelteComponentDev {
     constructor(options) {
       super(options);
-      init2(this, options, instance7, create_fragment7, safe_not_equal, { live: 5 }, add_css2);
+      init2(this, options, instance7, create_fragment7, safe_not_equal, {}, add_css3);
       dispatch_dev("SvelteRegisterComponent", {
         component: this,
         tagName: "PagePreview",
@@ -7874,15 +8114,8 @@ var BeaconLiveAdmin = (() => {
         id: create_fragment7.name
       });
     }
-    get live() {
-      return this.$$.ctx[5];
-    }
-    set live(live) {
-      this.$$set({ live });
-      flush();
-    }
   };
-  create_custom_element(PagePreview, { "live": {} }, [], [], true);
+  create_custom_element(PagePreview, {}, [], [], true);
   var PagePreview_default = PagePreview;
 
   // svelte/components/PageWrapper.svelte
@@ -7899,8 +8132,8 @@ var BeaconLiveAdmin = (() => {
 
   // svelte/components/PageWrapper.svelte
   var file8 = "svelte/components/PageWrapper.svelte";
-  function add_css3(target) {
-    append_styles(target, "svelte-xbvayw", '[data-selected="true"], [data-highlighted="true"]{outline-color:#06b6d4;outline-width:2px;outline-style:dashed}:before, :after{pointer-events:none}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiUGFnZVdyYXBwZXIuc3ZlbHRlIiwibWFwcGluZ3MiOiJBQW1EVSxpREFBbUQsQ0FDekQsYUFBYSxDQUFFLE9BQU8sQ0FDdEIsYUFBYSxDQUFFLEdBQUcsQ0FDbEIsYUFBYSxDQUFFLE1BQ2pCLENBRVEsZUFBaUIsQ0FDdkIsY0FBYyxDQUFFLElBQ2xCIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIlBhZ2VXcmFwcGVyLnN2ZWx0ZSJdfQ== */');
+  function add_css4(target) {
+    append_styles(target, "svelte-xbvayw", '[data-selected="true"], [data-highlighted="true"]{outline-color:#06b6d4;outline-width:2px;outline-style:dashed}:before, :after{pointer-events:none}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiUGFnZVdyYXBwZXIuc3ZlbHRlIiwibWFwcGluZ3MiOiJBQTBEVSxpREFBbUQsQ0FDekQsYUFBYSxDQUFFLE9BQU8sQ0FDdEIsYUFBYSxDQUFFLEdBQUcsQ0FDbEIsYUFBYSxDQUFFLE1BQ2pCLENBRVEsZUFBaUIsQ0FDdkIsY0FBYyxDQUFFLElBQ2xCIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIlBhZ2VXcmFwcGVyLnN2ZWx0ZSJdfQ== */');
   }
   function get_each_context4(ctx, list, i) {
     const child_ctx = ctx.slice();
@@ -7966,7 +8199,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_each_block_12.name,
       type: "each",
-      source: "(47:6) {#each $page.ast as astNode, index}",
+      source: "(54:6) {#each $page.ast as astNode, index}",
       ctx
     });
     return block;
@@ -8060,7 +8293,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_default_slot2.name,
       type: "slot",
-      source: "(46:4) <LayoutAstNode node={layoutAstNode}>",
+      source: "(53:4) <LayoutAstNode node={layoutAstNode}>",
       ctx
     });
     return block;
@@ -8120,7 +8353,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_each_block4.name,
       type: "each",
-      source: "(45:2) {#each $page.layout.ast as layoutAstNode}",
+      source: "(52:2) {#each $page.layout.ast as layoutAstNode}",
       ctx
     });
     return block;
@@ -8130,6 +8363,8 @@ var BeaconLiveAdmin = (() => {
     let t;
     let div;
     let current;
+    let mounted;
+    let dispose;
     let each_value = ensure_array_like_dev(
       /*$page*/
       ctx[2].layout.ast
@@ -8164,8 +8399,8 @@ var BeaconLiveAdmin = (() => {
         this.h();
       },
       h: function hydrate() {
-        add_location(span, file8, 39, 0, 2267);
-        add_location(div, file8, 40, 0, 2306);
+        add_location(span, file8, 46, 0, 2442);
+        add_location(div, file8, 47, 0, 2481);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, span, anchor);
@@ -8179,6 +8414,10 @@ var BeaconLiveAdmin = (() => {
         }
         ctx[4](div);
         current = true;
+        if (!mounted) {
+          dispose = listen_dev(div, "click", preventLinkNavigation, false, false, false, false);
+          mounted = true;
+        }
       },
       p: function update2(ctx2, [dirty]) {
         if (dirty & /*$page, String*/
@@ -8231,6 +8470,8 @@ var BeaconLiveAdmin = (() => {
         ctx[3](null);
         destroy_each(each_blocks, detaching);
         ctx[4](null);
+        mounted = false;
+        dispose();
       }
     };
     dispatch_dev("SvelteRegisterBlock", {
@@ -8241,6 +8482,11 @@ var BeaconLiveAdmin = (() => {
       ctx
     });
     return block;
+  }
+  function preventLinkNavigation(event) {
+    if (event.target instanceof HTMLAnchorElement) {
+      event.preventDefault();
+    }
   }
   function instance8($$self, $$props, $$invalidate) {
     let $tailwindInput;
@@ -8291,6 +8537,8 @@ var BeaconLiveAdmin = (() => {
       const [_, { default: tailwindConfig2 }] = yield Promise.all([tailwindJitPromise, configPromise]);
       const tailwind = window.createTailwindcss({ tailwindConfig: tailwindConfig2 });
       const reloadStylesheet = () => __awaiter(void 0, void 0, void 0, function* () {
+        if (!wrapper)
+          return;
         const content = wrapper.outerHTML;
         const css = yield tailwind.generateStylesFromContent($tailwindInput, [content]);
         let styleEl = document.createElement("style");
@@ -8336,6 +8584,7 @@ var BeaconLiveAdmin = (() => {
       twConfig,
       b64moduleData,
       configPromise,
+      preventLinkNavigation,
       $tailwindInput,
       $tailwindConfig,
       $page
@@ -8362,7 +8611,7 @@ var BeaconLiveAdmin = (() => {
   var PageWrapper = class extends SvelteComponentDev {
     constructor(options) {
       super(options);
-      init2(this, options, instance8, create_fragment8, safe_not_equal, {}, add_css3);
+      init2(this, options, instance8, create_fragment8, safe_not_equal, {}, add_css4);
       dispatch_dev("SvelteRegisterComponent", {
         component: this,
         tagName: "PageWrapper",
@@ -8632,8 +8881,8 @@ var BeaconLiveAdmin = (() => {
   var file10 = "svelte/components/SidebarSection.svelte";
   function get_each_context5(ctx, list, i) {
     const child_ctx = ctx.slice();
-    child_ctx[26] = list[i];
-    child_ctx[28] = i;
+    child_ctx[29] = list[i];
+    child_ctx[31] = i;
     return child_ctx;
   }
   var get_value_slot_changes_1 = (dirty) => ({});
@@ -8677,7 +8926,7 @@ var BeaconLiveAdmin = (() => {
       },
       p: function update2(ctx2, dirty) {
         if (input_slot) {
-          if (input_slot.p && (!current || dirty & /*$$scope*/
+          if (input_slot.p && (!current || dirty[0] & /*$$scope*/
           32768)) {
             update_slot_base(
               input_slot,
@@ -8699,9 +8948,9 @@ var BeaconLiveAdmin = (() => {
             );
           }
         } else {
-          if (input_slot_or_fallback && input_slot_or_fallback.p && (!current || dirty & /*$$scope, $$slots, placeholder, internalValue, large, astElements*/
-          34846)) {
-            input_slot_or_fallback.p(ctx2, !current ? -1 : dirty);
+          if (input_slot_or_fallback && input_slot_or_fallback.p && (!current || dirty[0] & /*$$scope, $$slots, placeholder, internalValue, large, astNodes*/
+          36894)) {
+            input_slot_or_fallback.p(ctx2, !current ? [-1, -1] : dirty);
           }
         }
       },
@@ -8724,7 +8973,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_if_block_14.name,
       type: "if",
-      source: "(99:21) ",
+      source: "(104:21) ",
       ctx
     });
     return block;
@@ -8779,7 +9028,7 @@ var BeaconLiveAdmin = (() => {
       },
       h: function hydrate() {
         attr_dev(div, "class", "pt-3");
-        add_location(div, file10, 100, 4, 3239);
+        add_location(div, file10, 106, 4, 3400);
       },
       m: function mount(target, anchor) {
         if (input_slot_or_fallback) {
@@ -8794,7 +9043,7 @@ var BeaconLiveAdmin = (() => {
       },
       p: function update2(ctx2, dirty) {
         if (input_slot) {
-          if (input_slot.p && (!current || dirty & /*$$scope*/
+          if (input_slot.p && (!current || dirty[0] & /*$$scope*/
           32768)) {
             update_slot_base(
               input_slot,
@@ -8816,13 +9065,13 @@ var BeaconLiveAdmin = (() => {
             );
           }
         } else {
-          if (input_slot_or_fallback && input_slot_or_fallback.p && (!current || dirty & /*placeholder, internalValue*/
-          10)) {
-            input_slot_or_fallback.p(ctx2, !current ? -1 : dirty);
+          if (input_slot_or_fallback && input_slot_or_fallback.p && (!current || dirty[0] & /*placeholder, internalValue*/
+          20)) {
+            input_slot_or_fallback.p(ctx2, !current ? [-1, -1] : dirty);
           }
         }
         if (value_slot) {
-          if (value_slot.p && (!current || dirty & /*$$scope*/
+          if (value_slot.p && (!current || dirty[0] & /*$$scope*/
           32768)) {
             update_slot_base(
               value_slot,
@@ -8872,7 +9121,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_if_block6.name,
       type: "if",
-      source: '(87:2) {#if $$slots[\\"value\\"]}',
+      source: '(92:2) {#if $$slots[\\"value\\"]}',
       ctx
     });
     return block;
@@ -8880,8 +9129,8 @@ var BeaconLiveAdmin = (() => {
   function create_if_block_53(ctx) {
     let each_1_anchor;
     let each_value = ensure_array_like_dev(
-      /*astElements*/
-      ctx[4]
+      /*astNodes*/
+      ctx[1]
     );
     let each_blocks = [];
     for (let i = 0; i < each_value.length; i += 1) {
@@ -8909,11 +9158,11 @@ var BeaconLiveAdmin = (() => {
         insert_hydration_dev(target, each_1_anchor, anchor);
       },
       p: function update2(ctx2, dirty) {
-        if (dirty & /*highlightAstElement, astElements, unhighlightAstElement, moveAstElement, select*/
-        1648) {
+        if (dirty[0] & /*highlightAstElement, astNodes, unhighlightAstElement, moveAstElement, select, placeholder, handleKeydown, updateNodeContents, large*/
+        3822) {
           each_value = ensure_array_like_dev(
-            /*astElements*/
-            ctx2[4]
+            /*astNodes*/
+            ctx2[1]
           );
           let i;
           for (i = 0; i < each_value.length; i += 1) {
@@ -8945,28 +9194,28 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_if_block_53.name,
       type: "if",
-      source: "(124:28) ",
+      source: "(129:25) ",
       ctx
     });
     return block;
   }
-  function create_if_block_23(ctx) {
+  function create_if_block_24(ctx) {
     let t;
     let if_block1_anchor;
     let current;
     function select_block_type_2(ctx2, dirty) {
       if (
         /*large*/
-        ctx2[2]
+        ctx2[3]
       )
         return create_if_block_43;
       return create_else_block3;
     }
-    let current_block_type = select_block_type_2(ctx, -1);
+    let current_block_type = select_block_type_2(ctx, [-1, -1]);
     let if_block0 = current_block_type(ctx);
     let if_block1 = (
       /*$$slots*/
-      ctx[11]["value"] && create_if_block_33(ctx)
+      ctx[12]["value"] && create_if_block_33(ctx)
     );
     const block = {
       c: function create3() {
@@ -9004,12 +9253,12 @@ var BeaconLiveAdmin = (() => {
         }
         if (
           /*$$slots*/
-          ctx2[11]["value"]
+          ctx2[12]["value"]
         ) {
           if (if_block1) {
             if_block1.p(ctx2, dirty);
-            if (dirty & /*$$slots*/
-            2048) {
+            if (dirty[0] & /*$$slots*/
+            4096) {
               transition_in(if_block1, 1);
             }
           } else {
@@ -9048,22 +9297,206 @@ var BeaconLiveAdmin = (() => {
     };
     dispatch_dev("SvelteRegisterBlock", {
       block,
-      id: create_if_block_23.name,
+      id: create_if_block_24.name,
       type: "if",
-      source: "(101:6) {#if internalValue}",
+      source: "(106:6) {#if internalValue}",
       ctx
     });
     return block;
   }
-  function create_each_block5(ctx) {
+  function create_else_block_13(ctx) {
+    let input;
+    let input_value_value;
+    let mounted;
+    let dispose;
+    function change_handler_1(...args) {
+      return (
+        /*change_handler_1*/
+        ctx[24](
+          /*idx*/
+          ctx[31],
+          ...args
+        )
+      );
+    }
+    const block = {
+      c: function create3() {
+        input = element("input");
+        this.h();
+      },
+      l: function claim(nodes) {
+        input = claim_element(nodes, "INPUT", {
+          type: true,
+          class: true,
+          placeholder: true
+        });
+        this.h();
+      },
+      h: function hydrate() {
+        attr_dev(input, "type", "text");
+        attr_dev(input, "class", "w-full py-1 px-2 mt-5 bg-slate-100 border-slate-100 rounded-md leading-6 text-sm");
+        attr_dev(
+          input,
+          "placeholder",
+          /*placeholder*/
+          ctx[2]
+        );
+        input.value = input_value_value = /*astNode*/
+        ctx[29];
+        add_location(input, file10, 199, 14, 8410);
+      },
+      m: function mount(target, anchor) {
+        insert_hydration_dev(target, input, anchor);
+        if (!mounted) {
+          dispose = [
+            listen_dev(
+              input,
+              "keydown",
+              /*handleKeydown*/
+              ctx[7],
+              false,
+              false,
+              false,
+              false
+            ),
+            listen_dev(input, "change", change_handler_1, false, false, false, false)
+          ];
+          mounted = true;
+        }
+      },
+      p: function update2(new_ctx, dirty) {
+        ctx = new_ctx;
+        if (dirty[0] & /*placeholder*/
+        4) {
+          attr_dev(
+            input,
+            "placeholder",
+            /*placeholder*/
+            ctx[2]
+          );
+        }
+        if (dirty[0] & /*astNodes*/
+        2 && input_value_value !== (input_value_value = /*astNode*/
+        ctx[29]) && input.value !== input_value_value) {
+          prop_dev(input, "value", input_value_value);
+        }
+      },
+      d: function destroy(detaching) {
+        if (detaching) {
+          detach_dev(input);
+        }
+        mounted = false;
+        run_all(dispose);
+      }
+    };
+    dispatch_dev("SvelteRegisterBlock", {
+      block,
+      id: create_else_block_13.name,
+      type: "else",
+      source: "(195:12) {:else}",
+      ctx
+    });
+    return block;
+  }
+  function create_if_block_7(ctx) {
+    let textarea;
+    let textarea_value_value;
+    let mounted;
+    let dispose;
+    function change_handler(...args) {
+      return (
+        /*change_handler*/
+        ctx[23](
+          /*idx*/
+          ctx[31],
+          ...args
+        )
+      );
+    }
+    const block = {
+      c: function create3() {
+        textarea = element("textarea");
+        this.h();
+      },
+      l: function claim(nodes) {
+        textarea = claim_element(nodes, "TEXTAREA", { class: true, placeholder: true });
+        children(textarea).forEach(detach_dev);
+        this.h();
+      },
+      h: function hydrate() {
+        attr_dev(textarea, "class", "w-full py-1 px-2 bg-slate-100 border-slate-100 rounded-md leading-6 text-sm");
+        attr_dev(
+          textarea,
+          "placeholder",
+          /*placeholder*/
+          ctx[2]
+        );
+        textarea.value = textarea_value_value = /*astNode*/
+        ctx[29];
+        add_location(textarea, file10, 191, 14, 8065);
+      },
+      m: function mount(target, anchor) {
+        insert_hydration_dev(target, textarea, anchor);
+        if (!mounted) {
+          dispose = [
+            listen_dev(
+              textarea,
+              "keydown",
+              /*handleKeydown*/
+              ctx[7],
+              false,
+              false,
+              false,
+              false
+            ),
+            listen_dev(textarea, "change", change_handler, false, false, false, false)
+          ];
+          mounted = true;
+        }
+      },
+      p: function update2(new_ctx, dirty) {
+        ctx = new_ctx;
+        if (dirty[0] & /*placeholder*/
+        4) {
+          attr_dev(
+            textarea,
+            "placeholder",
+            /*placeholder*/
+            ctx[2]
+          );
+        }
+        if (dirty[0] & /*astNodes*/
+        2 && textarea_value_value !== (textarea_value_value = /*astNode*/
+        ctx[29])) {
+          prop_dev(textarea, "value", textarea_value_value);
+        }
+      },
+      d: function destroy(detaching) {
+        if (detaching) {
+          detach_dev(textarea);
+        }
+        mounted = false;
+        run_all(dispose);
+      }
+    };
+    dispatch_dev("SvelteRegisterBlock", {
+      block,
+      id: create_if_block_7.name,
+      type: "if",
+      source: "(187:12) {#if large}",
+      ctx
+    });
+    return block;
+  }
+  function create_if_block_63(ctx) {
     let div2;
     let div0;
     let span0;
     let code;
     let t0;
     let t1_value = (
-      /*astElement*/
-      ctx[26].tag + ""
+      /*astNode*/
+      ctx[29].tag + ""
     );
     let t1;
     let t2;
@@ -9072,8 +9505,8 @@ var BeaconLiveAdmin = (() => {
     let t4;
     let span1;
     let t5_value = (
-      /*astElement*/
-      ctx[26].tag + ""
+      /*astNode*/
+      ctx[29].tag + ""
     );
     let t5;
     let t6;
@@ -9088,8 +9521,8 @@ var BeaconLiveAdmin = (() => {
     let t9;
     let span2;
     let t10_value = (
-      /*astElement*/
-      ctx[26].tag + ""
+      /*astNode*/
+      ctx[29].tag + ""
     );
     let t10;
     let t11;
@@ -9104,8 +9537,8 @@ var BeaconLiveAdmin = (() => {
     let t15;
     let span4;
     let t16_value = (
-      /*astElement*/
-      ctx[26].tag + ""
+      /*astNode*/
+      ctx[29].tag + ""
     );
     let t16;
     let t17;
@@ -9121,8 +9554,8 @@ var BeaconLiveAdmin = (() => {
       return (
         /*click_handler_1*/
         ctx[18](
-          /*astElement*/
-          ctx[26]
+          /*astNode*/
+          ctx[29]
         )
       );
     }
@@ -9130,8 +9563,8 @@ var BeaconLiveAdmin = (() => {
       return (
         /*click_handler_2*/
         ctx[19](
-          /*astElement*/
-          ctx[26]
+          /*astNode*/
+          ctx[29]
         )
       );
     }
@@ -9139,8 +9572,8 @@ var BeaconLiveAdmin = (() => {
       return (
         /*click_handler_3*/
         ctx[20](
-          /*astElement*/
-          ctx[26]
+          /*astNode*/
+          ctx[29]
         )
       );
     }
@@ -9148,8 +9581,8 @@ var BeaconLiveAdmin = (() => {
       return (
         /*mouseenter_handler*/
         ctx[21](
-          /*astElement*/
-          ctx[26]
+          /*astNode*/
+          ctx[29]
         )
       );
     }
@@ -9302,60 +9735,60 @@ var BeaconLiveAdmin = (() => {
         this.h();
       },
       h: function hydrate() {
-        add_location(code, file10, 135, 20, 4585);
-        add_location(span0, file10, 135, 14, 4579);
+        add_location(code, file10, 142, 22, 4788);
+        add_location(span0, file10, 142, 16, 4782);
         attr_dev(span1, "class", "sr-only");
-        add_location(span1, file10, 140, 21, 4952);
+        add_location(span1, file10, 147, 23, 5159);
         attr_dev(path0, "d", "M21.731 2.269a2.625 2.625 0 0 0-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 0 0 0-3.712ZM19.513 8.199l-3.712-3.712-8.4 8.4a5.25 5.25 0 0 0-1.32 2.214l-.8 2.685a.75.75 0 0 0 .933.933l2.685-.8a5.25 5.25 0 0 0 2.214-1.32l8.4-8.4Z");
-        add_location(path0, file10, 142, 18, 5137);
+        add_location(path0, file10, 149, 20, 5345);
         attr_dev(path1, "d", "M5.25 5.25a3 3 0 0 0-3 3v10.5a3 3 0 0 0 3 3h10.5a3 3 0 0 0 3-3V13.5a.75.75 0 0 0-1.5 0v5.25a1.5 1.5 0 0 1-1.5 1.5H5.25a1.5 1.5 0 0 1-1.5-1.5V8.25a1.5 1.5 0 0 1 1.5-1.5h5.25a.75.75 0 0 0 0-1.5H5.25Z");
-        add_location(path1, file10, 145, 18, 5448);
+        add_location(path1, file10, 152, 20, 5662);
         attr_dev(svg0, "xmlns", "http://www.w3.org/2000/svg");
         attr_dev(svg0, "viewBox", "0 0 24 24");
         attr_dev(svg0, "fill", "currentColor");
         attr_dev(svg0, "class", "w-3 h-3");
-        add_location(svg0, file10, 141, 16, 5022);
+        add_location(svg0, file10, 148, 18, 5228);
         attr_dev(button0, "class", "flex items-center justify-center gap-x-0.5 px-2 py-1 bg-cyan-300 font-bold text-xs uppercase tracking-wide rounded transition-colors hover:bg-cyan-900 active:bg-cyan-700 hover:text-white");
-        add_location(button0, file10, 136, 14, 4644);
+        add_location(button0, file10, 143, 16, 4846);
         attr_dev(div0, "class", "flex items-center justify-between");
-        add_location(div0, file10, 134, 12, 4517);
+        add_location(div0, file10, 141, 14, 4718);
         attr_dev(span2, "class", "sr-only");
-        add_location(span2, file10, 157, 27, 6223);
-        add_location(span3, file10, 157, 16, 6212);
+        add_location(span2, file10, 164, 29, 6458);
+        add_location(span3, file10, 164, 18, 6447);
         attr_dev(path2, "fill-rule", "evenodd");
         attr_dev(path2, "d", "M11.47 2.47a.75.75 0 0 1 1.06 0l7.5 7.5a.75.75 0 1 1-1.06 1.06l-6.22-6.22V21a.75.75 0 0 1-1.5 0V4.81l-6.22 6.22a.75.75 0 1 1-1.06-1.06l7.5-7.5Z");
         attr_dev(path2, "clip-rule", "evenodd");
-        add_location(path2, file10, 159, 18, 6418);
+        add_location(path2, file10, 166, 20, 6654);
         attr_dev(svg1, "xmlns", "http://www.w3.org/2000/svg");
         attr_dev(svg1, "viewBox", "0 0 24 24");
         attr_dev(svg1, "fill", "currentColor");
         attr_dev(svg1, "class", "w-3 h-3");
-        add_location(svg1, file10, 158, 16, 6303);
+        add_location(svg1, file10, 165, 18, 6537);
         attr_dev(button1, "class", "flex items-center justify-center gap-x-0.5 px-1.5 py-1 bg-cyan-800 font-bold text-xs uppercase tracking-wide rounded hover:bg-cyan-950 active:bg-cyan-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white");
         button1.disabled = button1_disabled_value = /*idx*/
-        ctx[28] === 0;
-        add_location(button1, file10, 152, 14, 5833);
+        ctx[31] === 0;
+        add_location(button1, file10, 159, 16, 6061);
         attr_dev(span4, "class", "sr-only");
-        add_location(span4, file10, 171, 27, 7164);
-        add_location(span5, file10, 171, 16, 7153);
+        add_location(span4, file10, 178, 29, 7418);
+        add_location(span5, file10, 178, 18, 7407);
         attr_dev(path3, "fill-rule", "evenodd");
         attr_dev(path3, "d", "M12 2.25a.75.75 0 0 1 .75.75v16.19l6.22-6.22a.75.75 0 1 1 1.06 1.06l-7.5 7.5a.75.75 0 0 1-1.06 0l-7.5-7.5a.75.75 0 1 1 1.06-1.06l6.22 6.22V3a.75.75 0 0 1 .75-.75Z");
         attr_dev(path3, "clip-rule", "evenodd");
-        add_location(path3, file10, 173, 18, 7361);
+        add_location(path3, file10, 180, 20, 7616);
         attr_dev(svg2, "xmlns", "http://www.w3.org/2000/svg");
         attr_dev(svg2, "viewBox", "0 0 24 24");
         attr_dev(svg2, "fill", "currentColor");
         attr_dev(svg2, "class", "w-3 h-3");
-        add_location(svg2, file10, 172, 16, 7246);
+        add_location(svg2, file10, 179, 18, 7499);
         attr_dev(button2, "class", "flex items-center justify-center gap-x-0.5 px-1.5 py-1 bg-cyan-800 font-bold text-xs uppercase tracking-wide rounded hover:bg-cyan-950 active:bg-cyan-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white");
         button2.disabled = button2_disabled_value = /*idx*/
-        ctx[28] === /*astElements*/
-        ctx[4].length - 1;
-        add_location(button2, file10, 166, 14, 6754);
+        ctx[31] === /*astNodes*/
+        ctx[1].length - 1;
+        add_location(button2, file10, 173, 16, 7004);
         attr_dev(div1, "class", "mt-2 grid grid-cols-2 gap-x-1");
-        add_location(div1, file10, 151, 12, 5775);
+        add_location(div1, file10, 158, 14, 6001);
         attr_dev(div2, "class", "mt-5");
-        add_location(div2, file10, 129, 10, 4339);
+        add_location(div2, file10, 136, 12, 4533);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, div2, anchor);
@@ -9421,26 +9854,26 @@ var BeaconLiveAdmin = (() => {
       },
       p: function update2(new_ctx, dirty) {
         ctx = new_ctx;
-        if (dirty & /*astElements*/
-        16 && t1_value !== (t1_value = /*astElement*/
-        ctx[26].tag + ""))
+        if (dirty[0] & /*astNodes*/
+        2 && t1_value !== (t1_value = /*astNode*/
+        ctx[29].tag + ""))
           set_data_dev(t1, t1_value);
-        if (dirty & /*astElements*/
-        16 && t5_value !== (t5_value = /*astElement*/
-        ctx[26].tag + ""))
+        if (dirty[0] & /*astNodes*/
+        2 && t5_value !== (t5_value = /*astNode*/
+        ctx[29].tag + ""))
           set_data_dev(t5, t5_value);
-        if (dirty & /*astElements*/
-        16 && t10_value !== (t10_value = /*astElement*/
-        ctx[26].tag + ""))
+        if (dirty[0] & /*astNodes*/
+        2 && t10_value !== (t10_value = /*astNode*/
+        ctx[29].tag + ""))
           set_data_dev(t10, t10_value);
-        if (dirty & /*astElements*/
-        16 && t16_value !== (t16_value = /*astElement*/
-        ctx[26].tag + ""))
+        if (dirty[0] & /*astNodes*/
+        2 && t16_value !== (t16_value = /*astNode*/
+        ctx[29].tag + ""))
           set_data_dev(t16, t16_value);
-        if (dirty & /*astElements*/
-        16 && button2_disabled_value !== (button2_disabled_value = /*idx*/
-        ctx[28] === /*astElements*/
-        ctx[4].length - 1)) {
+        if (dirty[0] & /*astNodes*/
+        2 && button2_disabled_value !== (button2_disabled_value = /*idx*/
+        ctx[31] === /*astNodes*/
+        ctx[1].length - 1)) {
           prop_dev(button2, "disabled", button2_disabled_value);
         }
       },
@@ -9454,9 +9887,73 @@ var BeaconLiveAdmin = (() => {
     };
     dispatch_dev("SvelteRegisterBlock", {
       block,
+      id: create_if_block_63.name,
+      type: "if",
+      source: "(131:10) {#if isAstElement(astNode)}",
+      ctx
+    });
+    return block;
+  }
+  function create_each_block5(ctx) {
+    let show_if;
+    let if_block_anchor;
+    function select_block_type_3(ctx2, dirty) {
+      if (dirty[0] & /*astNodes*/
+      2)
+        show_if = null;
+      if (show_if == null)
+        show_if = !!isAstElement(
+          /*astNode*/
+          ctx2[29]
+        );
+      if (show_if)
+        return create_if_block_63;
+      if (
+        /*large*/
+        ctx2[3]
+      )
+        return create_if_block_7;
+      return create_else_block_13;
+    }
+    let current_block_type = select_block_type_3(ctx, [-1, -1]);
+    let if_block = current_block_type(ctx);
+    const block = {
+      c: function create3() {
+        if_block.c();
+        if_block_anchor = empty();
+      },
+      l: function claim(nodes) {
+        if_block.l(nodes);
+        if_block_anchor = empty();
+      },
+      m: function mount(target, anchor) {
+        if_block.m(target, anchor);
+        insert_hydration_dev(target, if_block_anchor, anchor);
+      },
+      p: function update2(ctx2, dirty) {
+        if (current_block_type === (current_block_type = select_block_type_3(ctx2, dirty)) && if_block) {
+          if_block.p(ctx2, dirty);
+        } else {
+          if_block.d(1);
+          if_block = current_block_type(ctx2);
+          if (if_block) {
+            if_block.c();
+            if_block.m(if_block_anchor.parentNode, if_block_anchor);
+          }
+        }
+      },
+      d: function destroy(detaching) {
+        if (detaching) {
+          detach_dev(if_block_anchor);
+        }
+        if_block.d(detaching);
+      }
+    };
+    dispatch_dev("SvelteRegisterBlock", {
+      block,
       id: create_each_block5.name,
       type: "each",
-      source: "(125:8) {#each astElements as astElement, idx}",
+      source: "(130:8) {#each astNodes as astNode, idx}",
       ctx
     });
     return block;
@@ -9485,11 +9982,11 @@ var BeaconLiveAdmin = (() => {
           input,
           "placeholder",
           /*placeholder*/
-          ctx[1]
+          ctx[2]
         );
         input.value = /*internalValue*/
-        ctx[3];
-        add_location(input, file10, 114, 10, 3789);
+        ctx[4];
+        add_location(input, file10, 120, 10, 3950);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, input, anchor);
@@ -9520,23 +10017,23 @@ var BeaconLiveAdmin = (() => {
         }
       },
       p: function update2(ctx2, dirty) {
-        if (dirty & /*placeholder*/
-        2) {
+        if (dirty[0] & /*placeholder*/
+        4) {
           attr_dev(
             input,
             "placeholder",
             /*placeholder*/
-            ctx2[1]
+            ctx2[2]
           );
         }
-        if (dirty & /*internalValue*/
-        8 && input.value !== /*internalValue*/
-        ctx2[3]) {
+        if (dirty[0] & /*internalValue*/
+        16 && input.value !== /*internalValue*/
+        ctx2[4]) {
           prop_dev(
             input,
             "value",
             /*internalValue*/
-            ctx2[3]
+            ctx2[4]
           );
         }
       },
@@ -9552,7 +10049,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_else_block3.name,
       type: "else",
-      source: "(111:8) {:else}",
+      source: "(116:8) {:else}",
       ctx
     });
     return block;
@@ -9577,11 +10074,11 @@ var BeaconLiveAdmin = (() => {
           textarea,
           "placeholder",
           /*placeholder*/
-          ctx[1]
+          ctx[2]
         );
         textarea.value = /*internalValue*/
-        ctx[3];
-        add_location(textarea, file10, 106, 10, 3494);
+        ctx[4];
+        add_location(textarea, file10, 112, 10, 3655);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, textarea, anchor);
@@ -9612,22 +10109,22 @@ var BeaconLiveAdmin = (() => {
         }
       },
       p: function update2(ctx2, dirty) {
-        if (dirty & /*placeholder*/
-        2) {
+        if (dirty[0] & /*placeholder*/
+        4) {
           attr_dev(
             textarea,
             "placeholder",
             /*placeholder*/
-            ctx2[1]
+            ctx2[2]
           );
         }
-        if (dirty & /*internalValue*/
-        8) {
+        if (dirty[0] & /*internalValue*/
+        16) {
           prop_dev(
             textarea,
             "value",
             /*internalValue*/
-            ctx2[3]
+            ctx2[4]
           );
         }
       },
@@ -9643,7 +10140,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_if_block_43.name,
       type: "if",
-      source: "(102:8) {#if large}",
+      source: "(107:8) {#if large}",
       ctx
     });
     return block;
@@ -9679,7 +10176,7 @@ var BeaconLiveAdmin = (() => {
       },
       h: function hydrate() {
         attr_dev(div, "class", "pt-3");
-        add_location(div, file10, 124, 10, 4124);
+        add_location(div, file10, 130, 10, 4285);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, div, anchor);
@@ -9690,7 +10187,7 @@ var BeaconLiveAdmin = (() => {
       },
       p: function update2(ctx2, dirty) {
         if (value_slot) {
-          if (value_slot.p && (!current || dirty & /*$$scope*/
+          if (value_slot.p && (!current || dirty[0] & /*$$scope*/
           32768)) {
             update_slot_base(
               value_slot,
@@ -9735,7 +10232,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_if_block_33.name,
       type: "if",
-      source: '(121:8) {#if $$slots[\\"value\\"]}',
+      source: '(126:8) {#if $$slots[\\"value\\"]}',
       ctx
     });
     return block;
@@ -9745,22 +10242,22 @@ var BeaconLiveAdmin = (() => {
     let if_block;
     let if_block_anchor;
     let current;
-    const if_block_creators = [create_if_block_23, create_if_block_53];
+    const if_block_creators = [create_if_block_24, create_if_block_53];
     const if_blocks = [];
     function select_block_type_1(ctx2, dirty) {
       if (
         /*internalValue*/
-        ctx2[3]
+        ctx2[4]
       )
         return 0;
       if (
-        /*astElements*/
-        ctx2[4]
+        /*astNodes*/
+        ctx2[1]
       )
         return 1;
       return -1;
     }
-    if (~(current_block_type_index = select_block_type_1(ctx, -1))) {
+    if (~(current_block_type_index = select_block_type_1(ctx, [-1, -1]))) {
       if_block = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
     }
     const block = {
@@ -9834,7 +10331,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: fallback_block_1.name,
       type: "fallback",
-      source: "(100:23)        ",
+      source: "(105:23)        ",
       ctx
     });
     return block;
@@ -9863,11 +10360,11 @@ var BeaconLiveAdmin = (() => {
           input,
           "placeholder",
           /*placeholder*/
-          ctx[1]
+          ctx[2]
         );
         input.value = /*internalValue*/
-        ctx[3];
-        add_location(input, file10, 91, 6, 2973);
+        ctx[4];
+        add_location(input, file10, 97, 6, 3134);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, input, anchor);
@@ -9898,23 +10395,23 @@ var BeaconLiveAdmin = (() => {
         }
       },
       p: function update2(ctx2, dirty) {
-        if (dirty & /*placeholder*/
-        2) {
+        if (dirty[0] & /*placeholder*/
+        4) {
           attr_dev(
             input,
             "placeholder",
             /*placeholder*/
-            ctx2[1]
+            ctx2[2]
           );
         }
-        if (dirty & /*internalValue*/
-        8 && input.value !== /*internalValue*/
-        ctx2[3]) {
+        if (dirty[0] & /*internalValue*/
+        16 && input.value !== /*internalValue*/
+        ctx2[4]) {
           prop_dev(
             input,
             "value",
             /*internalValue*/
-            ctx2[3]
+            ctx2[4]
           );
         }
       },
@@ -9930,7 +10427,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: fallback_block.name,
       type: "fallback",
-      source: "(88:23)        ",
+      source: "(93:23)        ",
       ctx
     });
     return block;
@@ -9967,7 +10464,7 @@ var BeaconLiveAdmin = (() => {
     function select_block_type(ctx2, dirty) {
       if (
         /*$$slots*/
-        ctx2[11]["value"]
+        ctx2[12]["value"]
       )
         return 0;
       if (
@@ -9977,7 +10474,7 @@ var BeaconLiveAdmin = (() => {
         return 1;
       return -1;
     }
-    if (~(current_block_type_index = select_block_type(ctx, -1))) {
+    if (~(current_block_type_index = select_block_type(ctx, [-1, -1]))) {
       if_block = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
     }
     const block = {
@@ -10040,19 +10537,19 @@ var BeaconLiveAdmin = (() => {
         this.h();
       },
       h: function hydrate() {
-        add_location(span0, file10, 71, 6, 2261);
+        add_location(span0, file10, 77, 6, 2422);
         attr_dev(path, "fill-rule", "evenodd");
         attr_dev(path, "d", "M11.47 7.72a.75.75 0 0 1 1.06 0l7.5 7.5a.75.75 0 1 1-1.06 1.06L12 9.31l-6.97 6.97a.75.75 0 0 1-1.06-1.06l7.5-7.5Z");
         attr_dev(path, "clip-rule", "evenodd");
-        add_location(path, file10, 79, 10, 2629);
+        add_location(path, file10, 85, 10, 2790);
         attr_dev(svg, "xmlns", "http://www.w3.org/2000/svg");
         attr_dev(svg, "viewBox", "0 0 24 24");
         attr_dev(svg, "fill", "currentColor");
         attr_dev(svg, "class", "w-5 h-5 stroke-slate-500 fill-slate-500 group-hover:stroke-current group-hover:fill-current");
-        add_location(svg, file10, 73, 8, 2389);
+        add_location(svg, file10, 79, 8, 2550);
         attr_dev(span1, "class", span1_class_value = /*expanded*/
         ctx[0] ? "" : " [&_path]:origin-center [&_path]:rotate-180");
-        add_location(span1, file10, 72, 6, 2304);
+        add_location(span1, file10, 78, 6, 2465);
         attr_dev(button, "type", "button");
         attr_dev(button, "class", "w-full flex items-center justify-between gap-x-1 p-1 font-semibold hover:text-blue-700 active:text-blue-900 group");
         attr_dev(
@@ -10061,11 +10558,11 @@ var BeaconLiveAdmin = (() => {
           /*expanded*/
           ctx[0]
         );
-        add_location(button, file10, 65, 4, 2016);
+        add_location(button, file10, 71, 4, 2177);
         attr_dev(header, "class", "flex items-center text-sm mb-2 font-medium");
-        add_location(header, file10, 64, 2, 1952);
+        add_location(header, file10, 70, 2, 2113);
         attr_dev(section, "class", "p-4 border-b border-b-gray-100 border-solid");
-        add_location(section, file10, 63, 0, 1888);
+        add_location(section, file10, 69, 0, 2049);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, section, anchor);
@@ -10098,9 +10595,9 @@ var BeaconLiveAdmin = (() => {
           mounted = true;
         }
       },
-      p: function update2(ctx2, [dirty]) {
+      p: function update2(ctx2, dirty) {
         if (heading_slot) {
-          if (heading_slot.p && (!current || dirty & /*$$scope*/
+          if (heading_slot.p && (!current || dirty[0] & /*$$scope*/
           32768)) {
             update_slot_base(
               heading_slot,
@@ -10122,12 +10619,12 @@ var BeaconLiveAdmin = (() => {
             );
           }
         }
-        if (!current || dirty & /*expanded*/
+        if (!current || dirty[0] & /*expanded*/
         1 && span1_class_value !== (span1_class_value = /*expanded*/
         ctx2[0] ? "" : " [&_path]:origin-center [&_path]:rotate-180")) {
           attr_dev(span1, "class", span1_class_value);
         }
-        if (!current || dirty & /*expanded*/
+        if (!current || dirty[0] & /*expanded*/
         1) {
           attr_dev(
             button,
@@ -10204,9 +10701,9 @@ var BeaconLiveAdmin = (() => {
     let $selectedAstElementId;
     let $highlightedAstElement;
     validate_store(selectedAstElementId, "selectedAstElementId");
-    component_subscribe($$self, selectedAstElementId, ($$value) => $$invalidate(23, $selectedAstElementId = $$value));
+    component_subscribe($$self, selectedAstElementId, ($$value) => $$invalidate(26, $selectedAstElementId = $$value));
     validate_store(highlightedAstElement, "highlightedAstElement");
-    component_subscribe($$self, highlightedAstElement, ($$value) => $$invalidate(24, $highlightedAstElement = $$value));
+    component_subscribe($$self, highlightedAstElement, ($$value) => $$invalidate(27, $highlightedAstElement = $$value));
     let { $$slots: slots = {}, $$scope } = $$props;
     validate_slots("SidebarSection", slots, ["heading", "input", "value"]);
     const $$slots = compute_slots(slots);
@@ -10231,7 +10728,7 @@ var BeaconLiveAdmin = (() => {
       if (e.key === "Enter" && text2 && text2.length > 0 && text2 !== value) {
         dispatch2("update", text2);
         if (clearOnUpdate) {
-          $$invalidate(3, internalValue = null);
+          $$invalidate(4, internalValue = null);
           e.target.value = "";
         }
       }
@@ -10254,30 +10751,37 @@ var BeaconLiveAdmin = (() => {
       astNodesCopy.splice(index3 + movement, 0, astElement);
       dispatch2("nodesChange", astNodesCopy);
     }
+    function updateNodeContents(e, idx) {
+      let astNodesCopy = [...astNodes];
+      astNodesCopy[idx] = e.target.value;
+      dispatch2("nodesChange", astNodesCopy);
+    }
     const writable_props = ["value", "astNodes", "clearOnUpdate", "expanded", "placeholder", "large"];
     Object.keys($$props).forEach((key) => {
       if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$" && key !== "slot")
         console.warn(`<SidebarSection> was created with unknown prop '${key}'`);
     });
     const click_handler = () => $$invalidate(0, expanded = !expanded);
-    const click_handler_1 = (astElement) => select(astElement);
-    const click_handler_2 = (astElement) => moveAstElement(-1, astElement);
-    const click_handler_3 = (astElement) => moveAstElement(1, astElement);
-    const mouseenter_handler = (astElement) => highlightAstElement(astElement);
+    const click_handler_1 = (astNode) => select(astNode);
+    const click_handler_2 = (astNode) => moveAstElement(-1, astNode);
+    const click_handler_3 = (astNode) => moveAstElement(1, astNode);
+    const mouseenter_handler = (astNode) => highlightAstElement(astNode);
     const mouseleave_handler = () => unhighlightAstElement();
+    const change_handler = (idx, e) => updateNodeContents(e, idx);
+    const change_handler_1 = (idx, e) => updateNodeContents(e, idx);
     $$self.$$set = ($$props2) => {
       if ("value" in $$props2)
-        $$invalidate(12, value = $$props2.value);
+        $$invalidate(13, value = $$props2.value);
       if ("astNodes" in $$props2)
-        $$invalidate(13, astNodes = $$props2.astNodes);
+        $$invalidate(1, astNodes = $$props2.astNodes);
       if ("clearOnUpdate" in $$props2)
         $$invalidate(14, clearOnUpdate = $$props2.clearOnUpdate);
       if ("expanded" in $$props2)
         $$invalidate(0, expanded = $$props2.expanded);
       if ("placeholder" in $$props2)
-        $$invalidate(1, placeholder = $$props2.placeholder);
+        $$invalidate(2, placeholder = $$props2.placeholder);
       if ("large" in $$props2)
-        $$invalidate(2, large = $$props2.large);
+        $$invalidate(3, large = $$props2.large);
       if ("$$scope" in $$props2)
         $$invalidate(15, $$scope = $$props2.$$scope);
     };
@@ -10301,66 +10805,67 @@ var BeaconLiveAdmin = (() => {
       handleTextChange,
       select,
       moveAstElement,
+      updateNodeContents,
       astElements,
       $selectedAstElementId,
       $highlightedAstElement
     });
     $$self.$inject_state = ($$props2) => {
       if ("value" in $$props2)
-        $$invalidate(12, value = $$props2.value);
+        $$invalidate(13, value = $$props2.value);
       if ("astNodes" in $$props2)
-        $$invalidate(13, astNodes = $$props2.astNodes);
+        $$invalidate(1, astNodes = $$props2.astNodes);
       if ("clearOnUpdate" in $$props2)
         $$invalidate(14, clearOnUpdate = $$props2.clearOnUpdate);
       if ("expanded" in $$props2)
         $$invalidate(0, expanded = $$props2.expanded);
       if ("placeholder" in $$props2)
-        $$invalidate(1, placeholder = $$props2.placeholder);
+        $$invalidate(2, placeholder = $$props2.placeholder);
       if ("large" in $$props2)
-        $$invalidate(2, large = $$props2.large);
+        $$invalidate(3, large = $$props2.large);
       if ("internalValue" in $$props2)
-        $$invalidate(3, internalValue = $$props2.internalValue);
+        $$invalidate(4, internalValue = $$props2.internalValue);
       if ("astElements" in $$props2)
-        $$invalidate(4, astElements = $$props2.astElements);
+        astElements = $$props2.astElements;
     };
     if ($$props && "$$inject" in $$props) {
       $$self.$inject_state($$props.$$inject);
     }
     $$self.$$.update = () => {
-      if ($$self.$$.dirty & /*astNodes*/
-      8192) {
+      if ($$self.$$.dirty[0] & /*astNodes*/
+      2) {
         $:
-          $$invalidate(4, astElements = (astNodes || []).filter(isAstElement));
+          astElements = (astNodes || []).filter(isAstElement);
       }
-      if ($$self.$$.dirty & /*astNodes*/
-      8192) {
+      if ($$self.$$.dirty[0] & /*astNodes*/
+      2) {
         $: {
           if ((astNodes === null || astNodes === void 0 ? void 0 : astNodes.length) === 1) {
             let first = astNodes[0];
             if (!isAstElement(first)) {
-              $$invalidate(3, internalValue = first);
+              $$invalidate(4, internalValue = first);
             }
           } else if (astNodes) {
-            $$invalidate(3, internalValue = null);
+            $$invalidate(4, internalValue = null);
           }
         }
       }
     };
     return [
       expanded,
+      astNodes,
       placeholder,
       large,
       internalValue,
-      astElements,
       highlightAstElement,
       unhighlightAstElement,
       handleKeydown,
       handleTextChange,
       select,
       moveAstElement,
+      updateNodeContents,
       $$slots,
       value,
-      astNodes,
       clearOnUpdate,
       $$scope,
       slots,
@@ -10369,20 +10874,31 @@ var BeaconLiveAdmin = (() => {
       click_handler_2,
       click_handler_3,
       mouseenter_handler,
-      mouseleave_handler
+      mouseleave_handler,
+      change_handler,
+      change_handler_1
     ];
   }
   var SidebarSection = class extends SvelteComponentDev {
     constructor(options) {
       super(options);
-      init2(this, options, instance10, create_fragment10, safe_not_equal, {
-        value: 12,
-        astNodes: 13,
-        clearOnUpdate: 14,
-        expanded: 0,
-        placeholder: 1,
-        large: 2
-      });
+      init2(
+        this,
+        options,
+        instance10,
+        create_fragment10,
+        safe_not_equal,
+        {
+          value: 13,
+          astNodes: 1,
+          clearOnUpdate: 14,
+          expanded: 0,
+          placeholder: 2,
+          large: 3
+        },
+        null,
+        [-1, -1]
+      );
       dispatch_dev("SvelteRegisterComponent", {
         component: this,
         tagName: "SidebarSection",
@@ -10391,14 +10907,14 @@ var BeaconLiveAdmin = (() => {
       });
     }
     get value() {
-      return this.$$.ctx[12];
+      return this.$$.ctx[13];
     }
     set value(value) {
       this.$$set({ value });
       flush();
     }
     get astNodes() {
-      return this.$$.ctx[13];
+      return this.$$.ctx[1];
     }
     set astNodes(astNodes) {
       this.$$set({ astNodes });
@@ -10419,14 +10935,14 @@ var BeaconLiveAdmin = (() => {
       flush();
     }
     get placeholder() {
-      return this.$$.ctx[1];
+      return this.$$.ctx[2];
     }
     set placeholder(placeholder) {
       this.$$set({ placeholder });
       flush();
     }
     get large() {
-      return this.$$.ctx[2];
+      return this.$$.ctx[3];
     }
     set large(large) {
       this.$$set({ large });
@@ -10472,7 +10988,7 @@ var BeaconLiveAdmin = (() => {
       },
       h: function hydrate() {
         attr_dev(div, "class", "p-4 pt-8 font-medium text-lg text-center");
-        add_location(div, file11, 240, 6, 10850);
+        add_location(div, file11, 239, 6, 10713);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, div, anchor);
@@ -10490,7 +11006,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_else_block4.name,
       type: "else",
-      source: "(253:4) {:else}",
+      source: "(252:4) {:else}",
       ctx
     });
     return block;
@@ -10529,7 +11045,7 @@ var BeaconLiveAdmin = (() => {
     let if_block3 = (
       /*$draggedObject*/
       ctx[8] && /*$draggedObject*/
-      ctx[8].category === "basic" && create_if_block_24(ctx)
+      ctx[8].category === "basic" && create_if_block_25(ctx)
     );
     let if_block4 = (
       /*$selectedAstElement*/
@@ -10635,23 +11151,23 @@ var BeaconLiveAdmin = (() => {
       },
       h: function hydrate() {
         attr_dev(span, "class", "sr-only");
-        add_location(span, file11, 151, 10, 7149);
+        add_location(span, file11, 150, 10, 7041);
         attr_dev(path, "fill-rule", "evenodd");
         attr_dev(path, "d", "M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25Zm-1.72 6.97a.75.75 0 1 0-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 1 0 1.06 1.06L12 13.06l1.72 1.72a.75.75 0 1 0 1.06-1.06L13.06 12l1.72-1.72a.75.75 0 1 0-1.06-1.06L12 10.94l-1.72-1.72Z");
         attr_dev(path, "clip-rule", "evenodd");
-        add_location(path, file11, 158, 12, 7403);
+        add_location(path, file11, 157, 12, 7295);
         attr_dev(svg, "xmlns", "http://www.w3.org/2000/svg");
         attr_dev(svg, "viewBox", "0 0 24 24");
         attr_dev(svg, "fill", "currentColor");
         attr_dev(svg, "class", "w-6 h-6 hover:text-blue-700 active:text-blue-900");
-        add_location(svg, file11, 152, 10, 7194);
+        add_location(svg, file11, 151, 10, 7086);
         attr_dev(button, "type", "button");
         attr_dev(button, "class", "absolute p-2 top-2 right-1");
-        add_location(button, file11, 150, 8, 7028);
+        add_location(button, file11, 149, 8, 6920);
         attr_dev(div0, "class", "border-b text-lg font-medium leading-5 p-4 relative");
-        add_location(div0, file11, 127, 6, 5899);
+        add_location(div0, file11, 124, 6, 5842);
         attr_dev(div1, "class", "relative");
-        add_location(div1, file11, 200, 6, 9313);
+        add_location(div1, file11, 199, 6, 9205);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, div0, anchor);
@@ -10686,7 +11202,7 @@ var BeaconLiveAdmin = (() => {
             button,
             "click",
             /*click_handler*/
-            ctx[21],
+            ctx[20],
             false,
             false,
             false,
@@ -10770,7 +11286,7 @@ var BeaconLiveAdmin = (() => {
           if (if_block3) {
             if_block3.p(ctx2, dirty);
           } else {
-            if_block3 = create_if_block_24(ctx2);
+            if_block3 = create_if_block_25(ctx2);
             if_block3.c();
             if_block3.m(div1, t8);
           }
@@ -10853,7 +11369,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_if_block7.name,
       type: "if",
-      source: "(140:4) {#if $selectedAstElement}",
+      source: "(137:4) {#if $selectedAstElement}",
       ctx
     });
     return block;
@@ -10896,15 +11412,17 @@ var BeaconLiveAdmin = (() => {
         t3 = claim_space(button_nodes);
         svg = claim_svg_element(button_nodes, "svg", {
           xmlns: true,
-          viewBox: true,
           fill: true,
+          viewBox: true,
+          "stroke-width": true,
+          stroke: true,
           class: true
         });
         var svg_nodes = children(svg);
         path = claim_svg_element(svg_nodes, "path", {
-          "fill-rule": true,
-          d: true,
-          "clip-rule": true
+          "stroke-linecap": true,
+          "stroke-linejoin": true,
+          d: true
         });
         children(path).forEach(detach_dev);
         svg_nodes.forEach(detach_dev);
@@ -10913,21 +11431,23 @@ var BeaconLiveAdmin = (() => {
       },
       h: function hydrate() {
         attr_dev(span0, "class", "sr-only");
-        add_location(span0, file11, 131, 12, 6128);
+        add_location(span0, file11, 128, 12, 6071);
         attr_dev(span1, "class", "absolute opacity-0 invisible right-9 min-w-[100px] bg-amber-100 py-1 px-1.5 rounded text-xs text-medium transition group-hover:opacity-100 group-hover:visible");
-        add_location(span1, file11, 132, 12, 6182);
-        attr_dev(path, "fill-rule", "evenodd");
-        attr_dev(path, "d", "M9.53 2.47a.75.75 0 0 1 0 1.06L4.81 8.25H15a6.75 6.75 0 0 1 0 13.5h-3a.75.75 0 0 1 0-1.5h3a5.25 5.25 0 1 0 0-10.5H4.81l4.72 4.72a.75.75 0 1 1-1.06 1.06l-6-6a.75.75 0 0 1 0-1.06l6-6a.75.75 0 0 1 1.06 0Z");
-        attr_dev(path, "clip-rule", "evenodd");
-        add_location(path, file11, 142, 14, 6650);
+        add_location(span1, file11, 129, 12, 6125);
+        attr_dev(path, "stroke-linecap", "round");
+        attr_dev(path, "stroke-linejoin", "round");
+        attr_dev(path, "d", "M3 4.5h14.25M3 9h9.75M3 13.5h5.25m5.25-.75L17.25 9m0 0L21 12.75M17.25 9v12");
+        add_location(path, file11, 141, 14, 6662);
         attr_dev(svg, "xmlns", "http://www.w3.org/2000/svg");
-        attr_dev(svg, "viewBox", "0 0 24 24");
         attr_dev(svg, "fill", "currentColor");
+        attr_dev(svg, "viewBox", "0 0 24 24");
+        attr_dev(svg, "stroke-width", "1.5");
+        attr_dev(svg, "stroke", "currentColor");
         attr_dev(svg, "class", "w-6 h-6 hover:text-blue-700 active:text-blue-900");
-        add_location(svg, file11, 136, 12, 6429);
+        add_location(svg, file11, 133, 12, 6372);
         attr_dev(button, "type", "button");
         attr_dev(button, "class", "absolute p-2 top-2 right-9 group");
-        add_location(button, file11, 130, 10, 6024);
+        add_location(button, file11, 127, 10, 5967);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, button, anchor);
@@ -10964,7 +11484,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_if_block_54.name,
       type: "if",
-      source: "(143:8) {#if !isRootNode}",
+      source: "(140:8) {#if !isRootNode}",
       ctx
     });
     return block;
@@ -11086,7 +11606,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_if_block_44.name,
       type: "if",
-      source: "(180:6) {#if attributesEditable}",
+      source: "(179:6) {#if attributesEditable}",
       ctx
     });
     return block;
@@ -11113,7 +11633,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_heading_slot_5.name,
       type: "slot",
-      source: '(182:10) <svelte:fragment slot=\\"heading\\">',
+      source: '(181:10) <svelte:fragment slot=\\"heading\\">',
       ctx
     });
     return block;
@@ -11150,7 +11670,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_default_slot3.name,
       type: "slot",
-      source: "(185:14) <Pill on:delete={() => deleteClass(className)}>",
+      source: "(184:14) <Pill on:delete={() => deleteClass(className)}>",
       ctx
     });
     return block;
@@ -11161,7 +11681,7 @@ var BeaconLiveAdmin = (() => {
     function delete_handler() {
       return (
         /*delete_handler*/
-        ctx[22](
+        ctx[21](
           /*className*/
           ctx[35]
         )
@@ -11214,7 +11734,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_each_block_13.name,
       type: "each",
-      source: "(184:12) {#each classList as className}",
+      source: "(183:12) {#each classList as className}",
       ctx
     });
     return block;
@@ -11308,7 +11828,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_value_slot.name,
       type: "slot",
-      source: '(183:10) <svelte:fragment slot=\\"value\\">',
+      source: '(182:10) <svelte:fragment slot=\\"value\\">',
       ctx
     });
     return block;
@@ -11345,7 +11865,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_heading_slot_4.name,
       type: "slot",
-      source: '(197:12) <svelte:fragment slot=\\"heading\\">',
+      source: '(196:12) <svelte:fragment slot=\\"heading\\">',
       ctx
     });
     return block;
@@ -11357,7 +11877,7 @@ var BeaconLiveAdmin = (() => {
     function textChange_handler(...args) {
       return (
         /*textChange_handler*/
-        ctx[23](
+        ctx[22](
           /*name*/
           ctx[31],
           ...args
@@ -11439,7 +11959,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_each_block6.name,
       type: "each",
-      source: "(189:8) {#each editableAttrs as entry (entry)}",
+      source: "(188:8) {#each editableAttrs as entry (entry)}",
       ctx
     });
     return block;
@@ -11535,7 +12055,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_if_block_34.name,
       type: "if",
-      source: '(201:6) {#if $selectedAstElement.tag === \\"eex_block\\"}',
+      source: '(200:6) {#if $selectedAstElement.tag === \\"eex_block\\"}',
       ctx
     });
     return block;
@@ -11562,7 +12082,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_heading_slot_3.name,
       type: "slot",
-      source: '(203:10) <svelte:fragment slot=\\"heading\\">',
+      source: '(202:10) <svelte:fragment slot=\\"heading\\">',
       ctx
     });
     return block;
@@ -11589,7 +12109,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_heading_slot_2.name,
       type: "slot",
-      source: '(207:10) <svelte:fragment slot=\\"heading\\">',
+      source: '(206:10) <svelte:fragment slot=\\"heading\\">',
       ctx
     });
     return block;
@@ -11610,7 +12130,7 @@ var BeaconLiveAdmin = (() => {
         this.h();
       },
       h: function hydrate() {
-        add_location(p, file11, 195, 12, 9134);
+        add_location(p, file11, 194, 12, 9026);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, p, anchor);
@@ -11626,12 +12146,12 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_input_slot_1.name,
       type: "slot",
-      source: '(208:10) <svelte:fragment slot=\\"input\\">',
+      source: '(207:10) <svelte:fragment slot=\\"input\\">',
       ctx
     });
     return block;
   }
-  function create_if_block_24(ctx) {
+  function create_if_block_25(ctx) {
     let div1;
     let div0;
     let textContent = "Drop components here";
@@ -11655,7 +12175,7 @@ var BeaconLiveAdmin = (() => {
       },
       h: function hydrate() {
         attr_dev(div0, "class", "flex rounded-lg outline-dashed outline-2 h-full text-center justify-center items-center");
-        add_location(div0, file11, 210, 12, 9721);
+        add_location(div0, file11, 209, 12, 9613);
         attr_dev(div1, "class", "absolute bg-white opacity-70 w-full h-full p-4");
         attr_dev(div1, "role", "list");
         toggle_class(
@@ -11664,7 +12184,7 @@ var BeaconLiveAdmin = (() => {
           /*isDraggingOver*/
           ctx[3]
         );
-        add_location(div1, file11, 202, 10, 9414);
+        add_location(div1, file11, 201, 10, 9306);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, div1, anchor);
@@ -11689,7 +12209,7 @@ var BeaconLiveAdmin = (() => {
               div1,
               "dragleave",
               /*dragleave_handler*/
-              ctx[24],
+              ctx[23],
               false,
               false,
               false,
@@ -11720,9 +12240,9 @@ var BeaconLiveAdmin = (() => {
     };
     dispatch_dev("SvelteRegisterBlock", {
       block,
-      id: create_if_block_24.name,
+      id: create_if_block_25.name,
       type: "if",
-      source: '(215:8) {#if $draggedObject && $draggedObject.category === \\"basic\\"}',
+      source: '(214:8) {#if $draggedObject && $draggedObject.category === \\"basic\\"}',
       ctx
     });
     return block;
@@ -11736,10 +12256,7 @@ var BeaconLiveAdmin = (() => {
           /*$selectedAstElement*/
           ctx[0].content
         ),
-        large: (
-          /*$selectedAstElement*/
-          ctx[0].tag === "eex"
-        ),
+        large: true,
         $$slots: { heading: [create_heading_slot_1] },
         $$scope: { ctx }
       },
@@ -11748,7 +12265,7 @@ var BeaconLiveAdmin = (() => {
     sidebarsection.$on(
       "textChange",
       /*textChange_handler_1*/
-      ctx[25]
+      ctx[24]
     );
     sidebarsection.$on(
       "nodesChange",
@@ -11772,10 +12289,6 @@ var BeaconLiveAdmin = (() => {
         1)
           sidebarsection_changes.astNodes = /*$selectedAstElement*/
           ctx2[0].content;
-        if (dirty[0] & /*$selectedAstElement*/
-        1)
-          sidebarsection_changes.large = /*$selectedAstElement*/
-          ctx2[0].tag === "eex";
         if (dirty[1] & /*$$scope*/
         128) {
           sidebarsection_changes.$$scope = { dirty, ctx: ctx2 };
@@ -11800,7 +12313,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_if_block_15.name,
       type: "if",
-      source: "(229:8) {#if $selectedAstElement.content?.length > 0}",
+      source: "(228:8) {#if $selectedAstElement.content?.length > 0}",
       ctx
     });
     return block;
@@ -11827,7 +12340,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_heading_slot_1.name,
       type: "slot",
-      source: '(236:12) <svelte:fragment slot=\\"heading\\">',
+      source: '(235:12) <svelte:fragment slot=\\"heading\\">',
       ctx
     });
     return block;
@@ -11854,7 +12367,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_heading_slot.name,
       type: "slot",
-      source: '(242:8) <svelte:fragment slot=\\"heading\\">',
+      source: '(241:8) <svelte:fragment slot=\\"heading\\">',
       ctx
     });
     return block;
@@ -11900,10 +12413,10 @@ var BeaconLiveAdmin = (() => {
       },
       h: function hydrate() {
         attr_dev(span, "class", "sr-only");
-        add_location(span, file11, 235, 19, 10701);
+        add_location(span, file11, 234, 19, 10564);
         attr_dev(button, "type", "button");
         attr_dev(button, "class", "bg-red-500 hover:bg-red-700 active:bg-red-800 text-white font-bold py-2 px-4 rounded outline-2 w-full");
-        add_location(button, file11, 230, 10, 10475);
+        add_location(button, file11, 229, 10, 10338);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, button, anchor);
@@ -11947,7 +12460,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_input_slot.name,
       type: "slot",
-      source: '(243:8) <svelte:fragment slot=\\"input\\">',
+      source: '(242:8) <svelte:fragment slot=\\"input\\">',
       ctx
     });
     return block;
@@ -11989,10 +12502,10 @@ var BeaconLiveAdmin = (() => {
       },
       h: function hydrate() {
         attr_dev(div0, "class", "sticky top-0 overflow-y-auto h-screen");
-        add_location(div0, file11, 125, 2, 5811);
+        add_location(div0, file11, 122, 2, 5754);
         attr_dev(div1, "class", "w-64 bg-white");
         attr_dev(div1, "data-test-id", "right-sidebar");
-        add_location(div1, file11, 124, 0, 5752);
+        add_location(div1, file11, 121, 0, 5695);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, div1, anchor);
@@ -12054,11 +12567,14 @@ var BeaconLiveAdmin = (() => {
     let isRootNode;
     let attributesEditable;
     let $page;
+    let $live;
     let $selectedAstElement;
     let $selectedAstElementId;
     let $draggedObject;
     validate_store(page, "page");
-    component_subscribe($$self, page, ($$value) => $$invalidate(26, $page = $$value));
+    component_subscribe($$self, page, ($$value) => $$invalidate(25, $page = $$value));
+    validate_store(live, "live");
+    component_subscribe($$self, live, ($$value) => $$invalidate(26, $live = $$value));
     validate_store(selectedAstElement, "selectedAstElement");
     component_subscribe($$self, selectedAstElement, ($$value) => $$invalidate(0, $selectedAstElement = $$value));
     validate_store(selectedAstElementId, "selectedAstElementId");
@@ -12095,7 +12611,6 @@ var BeaconLiveAdmin = (() => {
       });
     };
     var _a;
-    let { live } = $$props;
     const dispatch2 = createEventDispatcher();
     let classList;
     function addClasses({ detail: newClasses }) {
@@ -12104,7 +12619,7 @@ var BeaconLiveAdmin = (() => {
         if (node) {
           let classes = newClasses.split(" ").map((c) => c.trim());
           node.attrs.class = node.attrs.class ? `${node.attrs.class} ${classes.join(" ")}` : classes.join(" ");
-          live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast });
+          $live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast });
         }
       });
     }
@@ -12128,17 +12643,13 @@ var BeaconLiveAdmin = (() => {
         if (node) {
           let newClass = node.attrs.class.split(" ").filter((c) => c !== className).join(" ");
           node.attrs.class = newClass;
-          live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast });
+          $live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast });
         }
       });
     }
     function updateText(e) {
       return __awaiter(this, void 0, void 0, function* () {
-        let node = $selectedAstElement;
-        if (node && isAstElement(node)) {
-          node.content = [e.detail];
-          live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast });
-        }
+        updateNodeContent($selectedAstElement, e.detail);
       });
     }
     function updateArg(e) {
@@ -12146,7 +12657,7 @@ var BeaconLiveAdmin = (() => {
         let node = $selectedAstElement;
         if (node && isAstElement(node)) {
           node.arg = e.detail;
-          live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast });
+          $live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast });
         }
       });
     }
@@ -12155,7 +12666,7 @@ var BeaconLiveAdmin = (() => {
         let node = $selectedAstElement;
         if (node && isAstElement(node)) {
           node.attrs[attrName] = e.detail;
-          live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast });
+          $live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast });
         }
       });
     }
@@ -12172,7 +12683,7 @@ var BeaconLiveAdmin = (() => {
             let targetIndex = content.indexOf(node);
             content.splice(targetIndex, 1);
             set_store_value(selectedAstElementId, $selectedAstElementId = void 0, $selectedAstElementId);
-            live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast });
+            $live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast });
           }
         }
       });
@@ -12199,15 +12710,10 @@ var BeaconLiveAdmin = (() => {
             return;
           selectedElement.content = nodes;
         }
-        live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast });
+        $live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast });
       });
     }
-    $$self.$$.on_mount.push(function() {
-      if (live === void 0 && !("live" in $$props || $$self.$$.bound[$$self.$$.props["live"]])) {
-        console.warn("<PropertiesSidebar> was created without expected prop 'live'");
-      }
-    });
-    const writable_props = ["live"];
+    const writable_props = [];
     Object_1.keys($$props).forEach((key) => {
       if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$" && key !== "slot")
         console.warn(`<PropertiesSidebar> was created with unknown prop '${key}'`);
@@ -12217,10 +12723,6 @@ var BeaconLiveAdmin = (() => {
     const textChange_handler = (name, e) => updateAttribute(name, e);
     const dragleave_handler = () => $$invalidate(3, isDraggingOver = false);
     const textChange_handler_1 = (e) => updateText(e);
-    $$self.$$set = ($$props2) => {
-      if ("live" in $$props2)
-        $$invalidate(19, live = $$props2.live);
-    };
     $$self.$capture_state = () => ({
       __awaiter,
       _a,
@@ -12228,12 +12730,13 @@ var BeaconLiveAdmin = (() => {
       SidebarSection: SidebarSection_default,
       createEventDispatcher,
       draggedObject,
+      live,
+      updateNodeContent,
       page,
       selectedAstElement,
       selectedAstElementId,
       findAstElement,
       isAstElement,
-      live,
       dispatch: dispatch2,
       classList,
       addClasses,
@@ -12253,6 +12756,7 @@ var BeaconLiveAdmin = (() => {
       sidebarTitle,
       editableAttrs,
       $page,
+      $live,
       $selectedAstElement,
       $selectedAstElementId,
       $draggedObject
@@ -12261,9 +12765,7 @@ var BeaconLiveAdmin = (() => {
       if ("__awaiter" in $$props2)
         __awaiter = $$props2.__awaiter;
       if ("_a" in $$props2)
-        $$invalidate(20, _a = $$props2._a);
-      if ("live" in $$props2)
-        $$invalidate(19, live = $$props2.live);
+        $$invalidate(19, _a = $$props2._a);
       if ("classList" in $$props2)
         $$invalidate(2, classList = $$props2.classList);
       if ("isDraggingOver" in $$props2)
@@ -12282,16 +12784,16 @@ var BeaconLiveAdmin = (() => {
     }
     $$self.$$.update = () => {
       if ($$self.$$.dirty[0] & /*$selectedAstElement, _a*/
-      1048577) {
+      524289) {
         $: {
-          let classAttr = $$invalidate(20, _a = $selectedAstElement === null || $selectedAstElement === void 0 ? void 0 : $selectedAstElement.attrs) === null || _a === void 0 ? void 0 : _a.class;
+          let classAttr = $$invalidate(19, _a = $selectedAstElement === null || $selectedAstElement === void 0 ? void 0 : $selectedAstElement.attrs) === null || _a === void 0 ? void 0 : _a.class;
           $$invalidate(2, classList = classAttr ? classAttr.split(" ").filter((e) => e.trim().length > 0) : []);
         }
       }
       if ($$self.$$.dirty[0] & /*$selectedAstElement*/
       1) {
         $:
-          $$invalidate(7, editableAttrs = Object.entries(($selectedAstElement === null || $selectedAstElement === void 0 ? void 0 : $selectedAstElement.attrs) || {}).filter(([k, _]) => k !== "class" && k !== "selfClose" && !/data-/.test(k)));
+          $$invalidate(7, editableAttrs = Object.entries(($selectedAstElement === null || $selectedAstElement === void 0 ? void 0 : $selectedAstElement.attrs) || {}).filter(([k, _]) => k !== "class" && k !== "self_close" && !/data-/.test(k)));
       }
       if ($$self.$$.dirty[0] & /*$selectedAstElement*/
       1) {
@@ -12329,7 +12831,6 @@ var BeaconLiveAdmin = (() => {
       dropInside,
       dragOver,
       changeNodes,
-      live,
       _a,
       click_handler,
       delete_handler,
@@ -12341,7 +12842,7 @@ var BeaconLiveAdmin = (() => {
   var PropertiesSidebar = class extends SvelteComponentDev {
     constructor(options) {
       super(options);
-      init2(this, options, instance11, create_fragment11, safe_not_equal, { live: 19 }, null, [-1, -1]);
+      init2(this, options, instance11, create_fragment11, safe_not_equal, {}, null, [-1, -1]);
       dispatch_dev("SvelteRegisterComponent", {
         component: this,
         tagName: "PropertiesSidebar",
@@ -12349,15 +12850,8 @@ var BeaconLiveAdmin = (() => {
         id: create_fragment11.name
       });
     }
-    get live() {
-      return this.$$.ctx[19];
-    }
-    set live(live) {
-      this.$$set({ live });
-      flush();
-    }
   };
-  create_custom_element(PropertiesSidebar, { "live": {} }, [], [], true);
+  create_custom_element(PropertiesSidebar, {}, [], [], true);
   var PropertiesSidebar_default = PropertiesSidebar;
 
   // svelte/components/UiBuilder.svelte
@@ -12384,20 +12878,8 @@ var BeaconLiveAdmin = (() => {
       ) },
       $$inline: true
     });
-    pagepreview = new PagePreview_default({
-      props: { live: (
-        /*live*/
-        ctx[1]
-      ) },
-      $$inline: true
-    });
-    propertiessidebar = new PropertiesSidebar_default({
-      props: { live: (
-        /*live*/
-        ctx[1]
-      ) },
-      $$inline: true
-    });
+    pagepreview = new PagePreview_default({ $$inline: true });
+    propertiessidebar = new PropertiesSidebar_default({ $$inline: true });
     propertiessidebar.$on(
       "droppedIntoTarget",
       /*droppedIntoTarget_handler*/
@@ -12431,7 +12913,7 @@ var BeaconLiveAdmin = (() => {
       h: function hydrate() {
         attr_dev(div, "class", "flex min-h-screen bg-gray-100");
         attr_dev(div, "data-test-id", "app-container");
-        add_location(div, file12, 25, 0, 765);
+        add_location(div, file12, 27, 0, 841);
       },
       m: function mount(target, anchor) {
         mount_component(backdrop, target, anchor);
@@ -12451,18 +12933,6 @@ var BeaconLiveAdmin = (() => {
           componentssidebar_changes.components = /*components*/
           ctx2[0];
         componentssidebar.$set(componentssidebar_changes);
-        const pagepreview_changes = {};
-        if (dirty & /*live*/
-        2)
-          pagepreview_changes.live = /*live*/
-          ctx2[1];
-        pagepreview.$set(pagepreview_changes);
-        const propertiessidebar_changes = {};
-        if (dirty & /*live*/
-        2)
-          propertiessidebar_changes.live = /*live*/
-          ctx2[1];
-        propertiessidebar.$set(propertiessidebar_changes);
       },
       i: function intro(local) {
         if (current)
@@ -12503,22 +12973,25 @@ var BeaconLiveAdmin = (() => {
   function addBasicComponentToTarget(e) {
   }
   function instance12($$self, $$props, $$invalidate) {
+    let $liveStore;
     let $tailwindInputStore;
     let $tailwindConfigStore;
     let $pageStore;
+    validate_store(live, "liveStore");
+    component_subscribe($$self, live, ($$value) => $$invalidate(6, $liveStore = $$value));
     validate_store(tailwindInput, "tailwindInputStore");
-    component_subscribe($$self, tailwindInput, ($$value) => $$invalidate(6, $tailwindInputStore = $$value));
+    component_subscribe($$self, tailwindInput, ($$value) => $$invalidate(7, $tailwindInputStore = $$value));
     validate_store(tailwindConfig, "tailwindConfigStore");
-    component_subscribe($$self, tailwindConfig, ($$value) => $$invalidate(7, $tailwindConfigStore = $$value));
+    component_subscribe($$self, tailwindConfig, ($$value) => $$invalidate(8, $tailwindConfigStore = $$value));
     validate_store(page, "pageStore");
-    component_subscribe($$self, page, ($$value) => $$invalidate(8, $pageStore = $$value));
+    component_subscribe($$self, page, ($$value) => $$invalidate(9, $pageStore = $$value));
     let { $$slots: slots = {}, $$scope } = $$props;
     validate_slots("UiBuilder", slots, []);
     let { components } = $$props;
     let { page: page2 } = $$props;
     let { tailwindConfig: tailwindConfig2 } = $$props;
     let { tailwindInput: tailwindInput2 } = $$props;
-    let { live } = $$props;
+    let { live: live2 } = $$props;
     $$self.$$.on_mount.push(function() {
       if (components === void 0 && !("components" in $$props || $$self.$$.bound[$$self.$$.props["components"]])) {
         console.warn("<UiBuilder> was created without expected prop 'components'");
@@ -12532,7 +13005,7 @@ var BeaconLiveAdmin = (() => {
       if (tailwindInput2 === void 0 && !("tailwindInput" in $$props || $$self.$$.bound[$$self.$$.props["tailwindInput"]])) {
         console.warn("<UiBuilder> was created without expected prop 'tailwindInput'");
       }
-      if (live === void 0 && !("live" in $$props || $$self.$$.bound[$$self.$$.props["live"]])) {
+      if (live2 === void 0 && !("live" in $$props || $$self.$$.bound[$$self.$$.props["live"]])) {
         console.warn("<UiBuilder> was created without expected prop 'live'");
       }
     });
@@ -12546,13 +13019,13 @@ var BeaconLiveAdmin = (() => {
       if ("components" in $$props2)
         $$invalidate(0, components = $$props2.components);
       if ("page" in $$props2)
-        $$invalidate(2, page2 = $$props2.page);
+        $$invalidate(1, page2 = $$props2.page);
       if ("tailwindConfig" in $$props2)
-        $$invalidate(3, tailwindConfig2 = $$props2.tailwindConfig);
+        $$invalidate(2, tailwindConfig2 = $$props2.tailwindConfig);
       if ("tailwindInput" in $$props2)
-        $$invalidate(4, tailwindInput2 = $$props2.tailwindInput);
+        $$invalidate(3, tailwindInput2 = $$props2.tailwindInput);
       if ("live" in $$props2)
-        $$invalidate(1, live = $$props2.live);
+        $$invalidate(4, live2 = $$props2.live);
     };
     $$self.$capture_state = () => ({
       ComponentsSidebar: ComponentsSidebar_default,
@@ -12560,14 +13033,16 @@ var BeaconLiveAdmin = (() => {
       PagePreview: PagePreview_default,
       PropertiesSidebar: PropertiesSidebar_default,
       pageStore: page,
+      liveStore: live,
       tailwindConfigStore: tailwindConfig,
       tailwindInputStore: tailwindInput,
       components,
       page: page2,
       tailwindConfig: tailwindConfig2,
       tailwindInput: tailwindInput2,
-      live,
+      live: live2,
       addBasicComponentToTarget,
+      $liveStore,
       $tailwindInputStore,
       $tailwindConfigStore,
       $pageStore
@@ -12576,40 +13051,45 @@ var BeaconLiveAdmin = (() => {
       if ("components" in $$props2)
         $$invalidate(0, components = $$props2.components);
       if ("page" in $$props2)
-        $$invalidate(2, page2 = $$props2.page);
+        $$invalidate(1, page2 = $$props2.page);
       if ("tailwindConfig" in $$props2)
-        $$invalidate(3, tailwindConfig2 = $$props2.tailwindConfig);
+        $$invalidate(2, tailwindConfig2 = $$props2.tailwindConfig);
       if ("tailwindInput" in $$props2)
-        $$invalidate(4, tailwindInput2 = $$props2.tailwindInput);
+        $$invalidate(3, tailwindInput2 = $$props2.tailwindInput);
       if ("live" in $$props2)
-        $$invalidate(1, live = $$props2.live);
+        $$invalidate(4, live2 = $$props2.live);
     };
     if ($$props && "$$inject" in $$props) {
       $$self.$inject_state($$props.$$inject);
     }
     $$self.$$.update = () => {
       if ($$self.$$.dirty & /*page*/
-      4) {
+      2) {
         $:
           set_store_value(page, $pageStore = page2, $pageStore);
       }
       if ($$self.$$.dirty & /*tailwindConfig*/
-      8) {
+      4) {
         $:
           set_store_value(tailwindConfig, $tailwindConfigStore = tailwindConfig2, $tailwindConfigStore);
       }
       if ($$self.$$.dirty & /*tailwindInput*/
-      16) {
+      8) {
         $:
           set_store_value(tailwindInput, $tailwindInputStore = tailwindInput2, $tailwindInputStore);
+      }
+      if ($$self.$$.dirty & /*live*/
+      16) {
+        $:
+          set_store_value(live, $liveStore = live2, $liveStore);
       }
     };
     return [
       components,
-      live,
       page2,
       tailwindConfig2,
       tailwindInput2,
+      live2,
       droppedIntoTarget_handler
     ];
   }
@@ -12618,10 +13098,10 @@ var BeaconLiveAdmin = (() => {
       super(options);
       init2(this, options, instance12, create_fragment12, safe_not_equal, {
         components: 0,
-        page: 2,
-        tailwindConfig: 3,
-        tailwindInput: 4,
-        live: 1
+        page: 1,
+        tailwindConfig: 2,
+        tailwindInput: 3,
+        live: 4
       });
       dispatch_dev("SvelteRegisterComponent", {
         component: this,
@@ -12638,31 +13118,31 @@ var BeaconLiveAdmin = (() => {
       flush();
     }
     get page() {
-      return this.$$.ctx[2];
+      return this.$$.ctx[1];
     }
     set page(page2) {
       this.$$set({ page: page2 });
       flush();
     }
     get tailwindConfig() {
-      return this.$$.ctx[3];
+      return this.$$.ctx[2];
     }
     set tailwindConfig(tailwindConfig2) {
       this.$$set({ tailwindConfig: tailwindConfig2 });
       flush();
     }
     get tailwindInput() {
-      return this.$$.ctx[4];
+      return this.$$.ctx[3];
     }
     set tailwindInput(tailwindInput2) {
       this.$$set({ tailwindInput: tailwindInput2 });
       flush();
     }
     get live() {
-      return this.$$.ctx[1];
+      return this.$$.ctx[4];
     }
-    set live(live) {
-      this.$$set({ live });
+    set live(live2) {
+      this.$$set({ live: live2 });
       flush();
     }
   };
