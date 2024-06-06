@@ -6,15 +6,15 @@
   import { page, slotTargetElement } from "$lib/stores/page"
   import { draggedObject } from "$lib/stores/dragAndDrop"
   import { live } from "$lib/stores/live"
-  import { elementCanBeDroppedInTarget } from "$lib/utils/drag-helpers";
+  import { elementCanBeDroppedInTarget } from "$lib/utils/drag-helpers"
 
   let isDraggingOver = false
 
   async function handleDragDrop(e: DragEvent) {
     let { target } = e
     $currentComponentCategory = null
-    if (!$draggedObject) return;
-    let draggedObj = $draggedObject;
+    if (!$draggedObject) return
+    let draggedObj = $draggedObject
     if (elementCanBeDroppedInTarget(draggedObj)) {
       if (!(target instanceof HTMLElement)) return
       if (target.id === "fake-browser-content") return
@@ -31,7 +31,7 @@
         },
       )
     }
-    $draggedObject = null;
+    $draggedObject = null
     isDraggingOver = false
   }
 

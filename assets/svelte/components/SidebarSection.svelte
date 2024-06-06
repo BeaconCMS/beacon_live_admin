@@ -187,25 +187,23 @@
                 </button>
               </div>
             </div>
+          {:else if large}
+            <textarea
+              class="w-full py-1 px-2 bg-slate-100 border-slate-100 rounded-md leading-6 text-sm"
+              {placeholder}
+              value={astNode}
+              on:keydown={handleKeydown}
+              on:change={(e) => updateNodeContents(e, idx)}
+            ></textarea>
           {:else}
-            {#if large}
-              <textarea
-                class="w-full py-1 px-2 bg-slate-100 border-slate-100 rounded-md leading-6 text-sm"
-                {placeholder}
-                value={astNode}
-                on:keydown={handleKeydown}
-                on:change={(e) => updateNodeContents(e, idx)}
-              ></textarea>       
-            {:else}
-              <input
-                type="text"
-                class="w-full py-1 px-2 mt-5 bg-slate-100 border-slate-100 rounded-md leading-6 text-sm"
-                {placeholder}
-                value={astNode}
-                on:keydown={handleKeydown}
-                on:change={(e) => updateNodeContents(e, idx)}
-              />
-            {/if}
+            <input
+              type="text"
+              class="w-full py-1 px-2 mt-5 bg-slate-100 border-slate-100 rounded-md leading-6 text-sm"
+              {placeholder}
+              value={astNode}
+              on:keydown={handleKeydown}
+              on:change={(e) => updateNodeContents(e, idx)}
+            />
           {/if}
         {/each}
       {/if}
