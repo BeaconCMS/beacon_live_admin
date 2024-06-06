@@ -57,7 +57,7 @@
       changeCategoryTimer = setTimeout(() => {
         $currentComponentCategory = componentCategory
         showExamples = true
-      }, 70);
+      }, 100);
     } else {
       $currentComponentCategory = componentCategory
       showExamples = true
