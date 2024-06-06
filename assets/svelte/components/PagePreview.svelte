@@ -6,6 +6,7 @@
   import { page, slotTargetElement } from "$lib/stores/page"
   import { draggedObject } from "$lib/stores/dragAndDrop"
   import { live } from "$lib/stores/live"
+  import { elementCanBeDroppedInTarget } from "$lib/utils/drag-helpers";
 
   let isDraggingOver = false
 
@@ -14,8 +15,7 @@
     $currentComponentCategory = null
     if (!$draggedObject) return;
     let draggedObj = $draggedObject;
-    $draggedObject = null;
-    if (draggedObj.category === "basic") {
+    if (elementCanBeDroppedInTarget(draggedObj)) {
       if (!(target instanceof HTMLElement)) return
       if (target.id === "fake-browser-content") return
       if (!$slotTargetElement) return
@@ -31,6 +31,7 @@
         },
       )
     }
+    $draggedObject = null;
     isDraggingOver = false
   }
 
