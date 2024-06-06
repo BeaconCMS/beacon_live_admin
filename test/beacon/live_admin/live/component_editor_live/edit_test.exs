@@ -9,10 +9,10 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.EditTest do
       rpc(node, Beacon.Content, :create_component!, [
         %{
           site: "site_a",
-          name: "Site A - Header",
-          template: """
-          <header>site_a_header</header>
-          """
+          name: "site_a_header",
+          description: "Site A - Header",
+          template: "<h1>header</h1>",
+          example: "<.header />"
         }
       ])
 
@@ -27,11 +27,11 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.EditTest do
     {:ok, live, _html} = live(conn, "/admin/site_a/components/#{component.id}")
 
     live
-    |> form("#component-form", component: %{name: "Site A - Other"})
+    |> form("#component-form", component: %{name: "site_a_other_header"})
     |> render_submit()
 
     {:ok, _live, html} = live(conn, "/admin/site_a/components")
 
-    assert html =~ "Site A - Other"
+    assert html =~ "site_a_other_header"
   end
 end
