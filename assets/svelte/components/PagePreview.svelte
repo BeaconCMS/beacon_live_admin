@@ -6,16 +6,16 @@
   import { page, slotTargetElement } from "$lib/stores/page"
   import { draggedObject } from "$lib/stores/dragAndDrop"
   import { live } from "$lib/stores/live"
+  import { elementCanBeDroppedInTarget } from "$lib/utils/drag-helpers";
 
   let isDraggingOver = false
 
   async function handleDragDrop(e: DragEvent) {
     let { target } = e
     $currentComponentCategory = null
-    if (!$draggedObject) return
-    let draggedObj = $draggedObject
-    $draggedObject = null
-    if (draggedObj.category === "basic") {
+    if (!$draggedObject) return;
+    let draggedObj = $draggedObject;
+    if (elementCanBeDroppedInTarget(draggedObj)) {
       if (!(target instanceof HTMLElement)) return
       if (target.id === "fake-browser-content") return
       if (!$slotTargetElement) return
@@ -31,6 +31,7 @@
         },
       )
     }
+    $draggedObject = null;
     isDraggingOver = false
   }
 
@@ -78,9 +79,9 @@
 
 <style>
   /* :global([data-selected="true"], [data-highlighted="true"]) {
-    outline-color: #06b6d4; 
+    outline-color: #06b6d4;
     outline-width: 2px;
-    outline-style: dashed;    
+    outline-style: dashed;
   } */
   :global(.contents[data-nochildren="true"], .contents[data-nochildren="true"]) {
     /* In the specific case of an element containing only an EEX expression that generates no children (only a text node),

@@ -8,6 +8,7 @@
   } from "$lib/stores/page"
   import { draggedObject } from "$lib/stores/dragAndDrop"
   import { updateNodeContent, updateAst } from "$lib/utils/ast-manipulation"
+  import { elementCanBeDroppedInTarget } from "$lib/utils/drag-helpers";
   import type { AstNode } from "$lib/types"
   export let node: AstNode
   export let nodeId: string
@@ -18,13 +19,13 @@
   $: isEditable = isSelectedNode && isAstElement(node) && node.content.filter((e) => typeof e === "string").length === 1
 
   function handleDragEnter() {
-    if (isAstElement(node) && $draggedObject?.category === "basic") {
+    if (isAstElement(node) && elementCanBeDroppedInTarget($draggedObject)) {
       $slotTargetElement = node
     }
   }
 
   function handleDragLeave() {
-    if (isAstElement(node) && $draggedObject?.category === "basic" && $slotTargetElement === node) {
+    if (isAstElement(node) && elementCanBeDroppedInTarget($draggedObject) && $slotTargetElement === node) {
       $slotTargetElement = undefined
     }
   }
