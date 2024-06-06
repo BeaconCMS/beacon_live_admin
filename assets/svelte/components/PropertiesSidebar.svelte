@@ -7,7 +7,7 @@
   import { updateNodeContent } from "$lib/utils/ast-manipulation"
   import { page, selectedAstElement, selectedAstElementId, findAstElement, isAstElement } from "$lib/stores/page"
   import type { AstNode } from "$lib/types"
-  import { elementCanBeDroppedInTarget } from "$lib/utils/drag-helpers";
+  import { elementCanBeDroppedInTarget } from "$lib/utils/drag-helpers"
 
   const dispatch = createEventDispatcher()
 
