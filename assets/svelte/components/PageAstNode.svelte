@@ -8,7 +8,7 @@
   } from "$lib/stores/page"
   import { draggedObject } from "$lib/stores/dragAndDrop"
   import { updateNodeContent, updateAst } from "$lib/utils/ast-manipulation"
-  import { elementCanBeDroppedInTarget } from "$lib/utils/drag-helpers";
+  import { elementCanBeDroppedInTarget } from "$lib/utils/drag-helpers"
   import type { AstNode } from "$lib/types"
   export let node: AstNode
   export let nodeId: string
@@ -148,7 +148,7 @@
         <svelte:self node={subnode} nodeId="{nodeId}.{index}" />
       {/each}
       {#if isDragTarget && $draggedObject}
-        <div class="dragged-element-placeholder">{@html $draggedObject.template}</div>
+        <div class="dragged-element-placeholder">{@html $draggedObject.example}</div>
       {/if}
     </svelte:element>
   {/if}

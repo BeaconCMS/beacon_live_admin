@@ -10,13 +10,11 @@ export function isAstElement(node: AstNode): node is AstElement {
   return typeof node !== "string"
 }
 export enum ComponentCategoryId {
-  navigations = "nav",
-  headers = "header",
-  signup = "sign_up",
-  stats = "stats",
-  footers = "footer",
-  signin = "sign_in",
-  basics = "basic",
+  html_tags = "html_tag",
+  basic = "basics",
+  data = "data",
+  elements = "elements",
+  media = "media",
 }
 
 export enum ComponentDefinitionId {
@@ -57,10 +55,11 @@ export interface MenuCategory {
 
 export interface ComponentDefinition {
   id: ComponentDefinitionId
-  category: ComponentCategoryId
   name: string
+  category: ComponentCategoryId
   thumbnail: string
   template: string
+  example: string
 }
 
 export interface Component {
