@@ -26,7 +26,7 @@
   $: currentDefinitions = $currentComponentCategory ? componentDefinitionsByCategory[$currentComponentCategory.id] : []
 
   const sectionTitles: Record<string, string> = {
-    basic: "Basic",
+    basic: "Basics",
     html_tag: "HTML Tags",
     data: "Data",
     element: "Elements",
