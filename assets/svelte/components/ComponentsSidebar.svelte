@@ -35,8 +35,10 @@
 
   let showExamples = false
   let hideComponentTimer
+  let changeCategoryTimer;
 
   function collapseCategoryMenu() {
+    clearTimeout(changeCategoryTimer);
     hideComponentTimer = setTimeout(() => {
       showExamples = false
     }, 400)
@@ -48,8 +50,15 @@
   function expandCategoryMenu(componentCategory: ComponentCategory) {
     if ($draggedObject) return
     clearTimeout(hideComponentTimer)
-    $currentComponentCategory = componentCategory
-    showExamples = true
+    if (showExamples) {
+      changeCategoryTimer = setTimeout(() => {
+        $currentComponentCategory = componentCategory
+        showExamples = true
+      }, 100);
+    } else {
+      $currentComponentCategory = componentCategory
+      showExamples = true
+    }
   }
 
   function dragStart(componentDefinition: ComponentDefinition, e: DragEvent) {
