@@ -41,12 +41,11 @@ defmodule Beacon.LiveAdmin.Content do
   end
 
   def list_layouts(site, opts \\ []) do
-    opts =
-      opts
-      |> Keyword.put_new(:query, nil)
-      |> Keyword.put_new(:per_page, 20)
-
     call(site, Beacon.Content, :list_layouts, [site, opts])
+  end
+
+  def count_layouts(site, opts \\ []) do
+    call(site, Beacon.Content, :count_layouts, [site, opts])
   end
 
   def change_page(site, page, attrs \\ %{}) do
