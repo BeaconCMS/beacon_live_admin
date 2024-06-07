@@ -46,7 +46,7 @@ defmodule Beacon.LiveAdmin.Cluster do
         :ok
 
   """
-  @spec call(atom(), module(), fun :: (-> any()), [any()]) :: any()
+  @spec call(atom(), module(), fun :: (() -> any()), [any()]) :: any()
   def call(site, mod, fun, args) when is_binary(site) do
     site
     |> String.to_existing_atom()
