@@ -35,10 +35,10 @@
 
   let showExamples = false
   let hideComponentTimer
-  let changeCategoryTimer;
+  let changeCategoryTimer
 
   function collapseCategoryMenu() {
-    clearTimeout(changeCategoryTimer);
+    clearTimeout(changeCategoryTimer)
     hideComponentTimer = setTimeout(() => {
       showExamples = false
     }, 400)
@@ -54,7 +54,7 @@
       changeCategoryTimer = setTimeout(() => {
         $currentComponentCategory = componentCategory
         showExamples = true
-      }, 100);
+      }, 100)
     } else {
       $currentComponentCategory = componentCategory
       showExamples = true
