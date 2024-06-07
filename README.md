@@ -24,7 +24,7 @@ mix setup
 2. Run LiveAdemin
 
 ```shell
-iex --sname admin -S mix dev
+iex --sname admin@localhost -S mix dev
 ```
 
 Keep this instance running.
@@ -38,9 +38,7 @@ You'll notice that no site is displayed, that's because Beacon LiveAdmin looks f
 5. In the beacon iex terminal (the last one you started) execute the following:
 
 ```elixir
-{:ok, hostname} = :inet.gethostname()
-node = :"admin@#{List.to_string(hostname)}"
-Node.connect(node)
+Node.connect(:admin@localhost)
 ```
 
 Now you should see a site listed in the admin home page.
@@ -50,17 +48,13 @@ Now you should see a site listed in the admin home page.
 In the beacon repo:
 
 ```elixir
-{:ok, hostname} = :inet.gethostname()
-node = :"admin@#{List.to_string(hostname)}"
-Node.connect(node)
+Node.connect(:admin@localhost)
 ```
 
 In the beacon_live_admin repo:
 
 ```elixir
-{:ok, hostname} = :inet.gethostname()
-node = :"core@#{List.to_string(hostname)}"
-Node.connect(node)
+Node.connect(:core@localhost)
 ```
 
 This way you don't need to manually connect the nodes as shown on step 5.
@@ -72,7 +66,7 @@ Running tests requires booting a VM to run Beacon sites, which may be blocked by
 Make sure both `epmd` and `beam.smp` processes are allowed and try running the application before running tests:
 
 ```shell
-iex --sname admin -S mix dev
+iex --sname admin@localhost -S mix dev
 ```
 
 ## Looking for help with your Elixir project?
