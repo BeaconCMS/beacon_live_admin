@@ -1,33 +1,32 @@
-<%!-- TODO ENG: If sidebar expanded, add classes: `sm:max-w-[180px]` --%>
-<%!-- TODO UXD: Is there a reason this is 180px wide? Should probably be flexible with a in width to allow for different length names --%>
-<aside id="sidebar" class="@container w-full max-w-[76px] sm:max-w-[180px]">
+<%!-- TODO ENG: If sidebar expanded, add classes: `max-w-[180px]`, remove "max-w-[60px]" --%>
+<aside id="sidebar" class="@container w-full max-w-[60px]">
   <div class="flex flex-col h-full min-h-screen px-1 py-2 bg-white shadow-xl @[180px]:pr-0 @[180px]:pl-2 @[240px]:pl-3 @[350px]:pl-6">
     <header class="p-2 @[240px]:py-2.5 @[300px]:py-3.5 @[350px]:py-4.5">
       <div class="flex items-center justify-center @[180px]:justify-start gap-0 @[180px]:gap-1.5 @[240px]:gap-2.5 @[300px]:gap-3.5 @[350px]:gap-4">
         <% # @Hanna, ask about image paths %>
-        <img
+        <%!-- <img
           src={beacon_live_admin_static_path("/images/narwin_logo.svg")}
           alt="Narwin"
           class="block bg-gray-400 rounded-full w-9 @[180px]:w-11 @[240px]:w-[54px] @[300px]:w-[62px] @[350px]:w-[72px] aspect-square "
           loading="lazy"
-        />
+        /> --%>
         <%!-- If sidebar collapsed hide logo text --%>
-        <span class="antialiased font-light @[180px]:block @[180px]:text-lg/7 @[240px]:text-xl/[30px] @[300px]:text-3xl/[45px] @[350px]:text-4xl/[56px]">
+        <%!-- <span class="antialiased font-light @[180px]:block @[180px]:text-lg/7 @[240px]:text-xl/[30px] @[300px]:text-3xl/[45px] @[350px]:text-4xl/[56px]">
           Dockyard
-        </span>
+        </span> --%>
 
-        <%!-- TODO ENG: If sidebar collapsed show button--%>
+        <%!-- TODO ENG: If sidebar collapsed show button, if sidebar expanded hide button by adding class 'hidden'--%>
           <button
-            class="hidden phx-submit-loading:opacity-75 rounded-xl whitespace-nowrap bg-blue-600 hover:bg-blue-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 active:bg-blue-800 py-2.5 px-2.5
+            class="phx-submit-loading:opacity-75 rounded-xl whitespace-nowrap bg-blue-600 hover:bg-blue-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 active:bg-blue-800 py-2.5 px-2.5
               text-sm/5 font-semibold tracking-[1.68px] text-white active:text-white/80 flex items-center gap-2"
           >
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 rotate-180">
               <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l-3 3m0 0 3 3m-3-3h12.75" />
             </svg>
           </button>
-      <%!-- TODO ENG: If sidebar expanded show button--%>
+      <%!-- TODO ENG: If sidebar expanded show button, if sidebar collapsed hide button by adding class 'hidden' --%>
           <button
-            class="phx-submit-loading:opacity-75 rounded-xl whitespace-nowrap bg-blue-600 hover:bg-blue-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 active:bg-blue-800 py-2.5 px-2.5
+            class="hidden phx-submit-loading:opacity-75 rounded-xl whitespace-nowrap bg-blue-600 hover:bg-blue-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 active:bg-blue-800 py-2.5 px-2.5
               text-sm/5 font-semibold tracking-[1.68px] text-white active:text-white/80 flex items-center gap-2"
           >
            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
@@ -39,10 +38,119 @@
     <nav aria-label="Primary navigation" class="flex flex-col flex-1 px-2">
       <ul role="list" class="flex flex-1 flex-col gap-0.5 mt-2">
         <%= for link <- @__beacon_menu__.links, link != :skip do %>
-          <li>
+        <%!-- TODO ENG: If sidebar is collapsed, add class "hidden" to <li>, if sidebar expanded remove class "hidden" --%>
+          <li class="hidden">
             <%= maybe_link(@socket, @beacon_page, link) %>
           </li>
         <% end %>
+
+        <%!-- Collapsed Sidebar --%>
+        <%!-- TODO ENG: If sidebar is expanded, add class "hidden" to <li>, if sidebar collapsed remove class "hidden" --%>
+        <li class="relative">
+          <button class="w-full rounded py-3.5 flex justify-center hover:bg-slate-100 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 ">
+            <%!-- TOD UXD: AX - VO annouces "view compact alt" material design icon title --%>
+            <span aria-hidden="true" class="material-symbols-outlined transition-colors outline-none active:text-blue-700 focus-visible:[&:not(:active)]:ring-2 focus-visible:ring-purple-500 antialiased font-semibold text-base text-slate-800">
+              view_compact_alt
+            </span>
+            <span class="sr-only">Layouts</span>
+          </button>
+          <%!-- TODO ENG + UXD: If the <Li> above is hovered, can we toggle the class hidden on the following <div>? --%>
+          <div aria-hidden="true" class="hidden w-[100vw] rounded absolute top-[20%] left-[122%]">
+            <p class="inline-block rounded shadow-sm p-1 font-semibold bg-gray-300 text-zinc-900 text-sm">Layouts</p>
+            <span class="absolute top-[30%] right-[100%] border-t-[6px] border-b-[6px] border-l-[6px] border-r-[6px] border-l-transparent border-t-transparent border-b-transparent border-r-gray-300"></span>
+          </div>
+        </li>
+
+        <li class="relative">
+          <button class="w-full rounded py-3.5 flex justify-center hover:bg-slate-100 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 ">
+            <%!-- TOD UXD: AX - VO annouces "view compact alt" material design icon title --%>
+            <span aria-hidden="true" class="material-symbols-outlined transition-colors outline-none active:text-blue-700 focus-visible:[&:not(:active)]:ring-2 focus-visible:ring-purple-500 antialiased font-semibold text-base text-slate-800">
+              grid_view
+            </span>
+            <span class="sr-only">Components</span>
+          </button>
+          <%!-- TODO ENG + UXD: If the <Li> above is hovered, can we toggle the class hidden on the following <div>? --%>
+          <div aria-hidden="true" class="hidden w-[100vw] rounded absolute top-[20%] left-[122%]">
+            <p class="inline-block rounded shadow-sm p-1 font-semibold bg-gray-300 text-zinc-900 text-sm">Components</p>
+            <span class="absolute top-[30%] right-[100%] border-t-[6px] border-b-[6px] border-l-[6px] border-r-[6px] border-l-transparent border-t-transparent border-b-transparent border-r-gray-300"></span>
+          </div>
+        </li>
+
+        <li class="relative">
+          <button class="w-full rounded py-3.5 flex justify-center hover:bg-slate-100 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 ">
+            <%!-- TOD UXD: AX - VO annouces "view compact alt" material design icon title --%>
+            <span aria-hidden="true" class="material-symbols-outlined transition-colors outline-none active:text-blue-700 focus-visible:[&:not(:active)]:ring-2 focus-visible:ring-purple-500 antialiased font-semibold text-base text-slate-800">
+              pages
+            </span>
+            <span class="sr-only">Pages</span>
+          </button>
+          <%!-- TODO ENG + UXD: If the <Li> above is hovered, can we toggle the class hidden on the following <div>? --%>
+          <div aria-hidden="true" class="hidden w-[100vw] rounded absolute top-[20%] left-[122%]">
+            <p class="inline-block rounded shadow-sm p-1 font-semibold bg-gray-300 text-zinc-900 text-sm">Pages</p>
+            <span class="absolute top-[30%] right-[100%] border-t-[6px] border-b-[6px] border-l-[6px] border-r-[6px] border-l-transparent border-t-transparent border-b-transparent border-r-gray-300"></span>
+          </div>
+        </li>
+
+        <li class="relative">
+          <button class="w-full rounded py-3.5 flex justify-center hover:bg-slate-100 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 ">
+            <%!-- TOD UXD: AX - VO annouces "view compact alt" material design icon title --%>
+            <span aria-hidden="true" class="material-symbols-outlined transition-colors outline-none active:text-blue-700 focus-visible:[&:not(:active)]:ring-2 focus-visible:ring-purple-500 antialiased font-semibold text-base text-slate-800">
+              database
+            </span>
+            <span class="sr-only">Live Data</span>
+          </button>
+          <%!-- TODO ENG + UXD: If the <Li> above is hovered, can we toggle the class hidden on the following <div>? --%>
+          <div aria-hidden="true" class="w-[100vw] rounded absolute top-[20%] left-[122%]">
+            <p class="inline-block rounded shadow-sm p-1 font-semibold bg-gray-300 text-zinc-900 text-sm">Live Data</p>
+            <span class="absolute top-[30%] right-[100%] border-t-[6px] border-b-[6px] border-l-[6px] border-r-[6px] border-l-transparent border-t-transparent border-b-transparent border-r-gray-300"></span>
+          </div>
+        </li>
+
+
+        <li class="relative">
+          <button class="w-full rounded py-3.5 flex justify-center hover:bg-slate-100 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 ">
+            <%!-- TOD UXD: AX - VO annouces "view compact alt" material design icon title --%>
+            <span aria-hidden="true" class="material-symbols-outlined transition-colors outline-none active:text-blue-700 focus-visible:[&:not(:active)]:ring-2 focus-visible:ring-purple-500 antialiased font-semibold text-base text-slate-800">
+              sd_card_alert
+            </span>
+            <span class="sr-only">Error Pages</span>
+          </button>
+          <%!-- TODO ENG + UXD: If the <Li> above is hovered, can we toggle the class hidden on the following <div>? --%>
+          <div aria-hidden="true" class="hidden w-[100vw] rounded absolute top-[20%] left-[122%]">
+            <p class="inline-block rounded shadow-sm p-1 font-semibold bg-gray-300 text-zinc-900 text-sm">Error Pages</p>
+            <span class="absolute top-[30%] right-[100%] border-t-[6px] border-b-[6px] border-l-[6px] border-r-[6px] border-l-transparent border-t-transparent border-b-transparent border-r-gray-300"></span>
+          </div>
+        </li>
+
+       <li class="relative">
+          <button class="w-full rounded py-3.5 flex justify-center hover:bg-slate-100 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 ">
+            <%!-- TOD UXD: AX - VO annouces "view compact alt" material design icon title --%>
+            <span aria-hidden="true" class="material-symbols-outlined transition-colors outline-none active:text-blue-700 focus-visible:[&:not(:active)]:ring-2 focus-visible:ring-purple-500 antialiased font-semibold text-base text-slate-800">
+              photo_library
+            </span>
+            <span class="sr-only">Media Libray</span>
+          </button>
+          <%!-- TODO ENG + UXD: If the <Li> above is hovered, can we toggle the class hidden on the following <div>? --%>
+          <div aria-hidden="true" class="hidden w-[100vw] rounded absolute top-[20%] left-[122%]">
+            <p class="inline-block rounded shadow-sm p-1 font-semibold bg-gray-300 text-zinc-900 text-sm">Media Library</p>
+            <span class="absolute top-[30%] right-[100%] border-t-[6px] border-b-[6px] border-l-[6px] border-r-[6px] border-l-transparent border-t-transparent border-b-transparent border-r-gray-300"></span>
+          </div>
+        </li>
+
+        <li class="relative">
+          <button class="w-full rounded py-3.5 flex justify-center hover:bg-slate-100 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 ">
+            <%!-- TOD UXD: AX - VO annouces "view compact alt" material design icon title --%>
+            <span aria-hidden="true" class="material-symbols-outlined transition-colors outline-none active:text-blue-700 focus-visible:[&:not(:active)]:ring-2 focus-visible:ring-purple-500 antialiased font-semibold text-base text-slate-800">
+              star
+            </span>
+            <span class="sr-only">Custom</span>
+          </button>
+          <%!-- TODO ENG + UXD: If the <Li> above is hovered, can we toggle the class hidden on the following <div>? --%>
+          <div aria-hidden="true" class="hidden w-[100vw] rounded absolute top-[20%] left-[122%]">
+            <p class="inline-block rounded shadow-sm p-1 font-semibold bg-gray-300 text-zinc-900 text-sm">Custom</p>
+            <span class="absolute top-[30%] right-[100%] border-t-[6px] border-b-[6px] border-l-[6px] border-r-[6px] border-l-transparent border-t-transparent border-b-transparent border-r-gray-300"></span>
+          </div>
+        </li>
       </ul>
     </nav>
     <.site_selector selected_site={@beacon_page.site} options={@__beacon_sites__} />
