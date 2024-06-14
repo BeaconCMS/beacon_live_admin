@@ -16,7 +16,7 @@
   $: isDragTarget = $slotTargetElement === node
   $: isSelectedNode = $selectedAstElement === node
   $: isHighlightedNode = $highlightedAstElement === node
-  $: isEditable = isSelectedNode && isAstElement(node) && node.content.filter((e) => typeof e === "string").length === 1
+  $: isEditable = isSelectedNode && isAstElement(node) && node.content.filter((e) => typeof e === "string").length === 1 && !node.attrs?.selfClose;
 
   function handleDragEnter() {
     if (isAstElement(node) && elementCanBeDroppedInTarget($draggedObject)) {
@@ -116,21 +116,9 @@
     >
       {@html node.rendered_html}
     </div>
-  {:else if node.attrs?.selfClose}
-    <svelte:element
-      this={node.tag}
-      {...node.attrs}
-      data-selected={isSelectedNode}
-      data-highlighted={isHighlightedNode}
-      data-slot-target={isDragTarget && !$slotTargetElement.attrs.selfClose}
-      on:dragenter|stopPropagation={handleDragEnter}
-      on:dragleave|stopPropagation={handleDragLeave}
-      on:mouseover|stopPropagation={handleMouseOver}
-      on:mouseout|stopPropagation={handleMouseOut}
-      on:click|preventDefault|stopPropagation={handleClick}
-    />
   {:else}
     <svelte:element
+      class="relative"
       this={node.tag}
       {...node.attrs}
       data-selected={isSelectedNode}
@@ -142,13 +130,20 @@
       on:dragleave|stopPropagation={handleDragLeave}
       on:mouseover|stopPropagation={handleMouseOver}
       on:mouseout|stopPropagation={handleMouseOut}
-      on:click|preventDefault|stopPropagation={() => ($selectedAstElementId = nodeId)}
+      on:click|preventDefault|stopPropagation={handleClick}
     >
-      {#each node.content as subnode, index}
-        <svelte:self node={subnode} nodeId="{nodeId}.{index}" />
-      {/each}
-      {#if isDragTarget && $draggedObject}
-        <div class="dragged-element-placeholder">{@html $draggedObject.example}</div>
+      {#if !node.attrs?.selfClose}
+        {#each node.content as subnode, index}
+          <svelte:self node={subnode} nodeId="{nodeId}.{index}" />
+        {/each}
+        {#if isDragTarget && $draggedObject}
+          <div class="dragged-element-placeholder">{@html $draggedObject.example}</div>
+        {/if}
+      {/if}
+      {#if isSelectedNode}
+        <span class="rounded w-1 h-1 absolute mt-2">
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" style="transform: rotate(90deg);"><path d="M 1 2.5 C 1 1.948 1.448 1.5 2 1.5 L 10 1.5 C 10.552 1.5 11 1.948 11 2.5 L 11 2.5 C 11 3.052 10.552 3.5 10 3.5 L 2 3.5 C 1.448 3.5 1 3.052 1 2.5 Z" fill="currentColor"></path><path d="M 1 6 C 1 5.448 1.448 5 2 5 L 10 5 C 10.552 5 11 5.448 11 6 L 11 6 C 11 6.552 10.552 7 10 7 L 2 7 C 1.448 7 1 6.552 1 6 Z" fill="currentColor"></path><path d="M 1 9.5 C 1 8.948 1.448 8.5 2 8.5 L 10 8.5 C 10.552 8.5 11 8.948 11 9.5 L 11 9.5 C 11 10.052 10.552 10.5 10 10.5 L 2 10.5 C 1.448 10.5 1 10.052 1 9.5 Z" fill="currentColor"></path></svg>        
+        </span>
       {/if}
     </svelte:element>
   {/if}
