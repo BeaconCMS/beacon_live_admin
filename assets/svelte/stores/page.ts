@@ -22,6 +22,8 @@ export const selectedAstElement: Readable<AstElement | undefined> = derived(
   },
 )
 
+export const selectedDomElement: Writable<Element | null> = writable(null)
+
 export function isAstElement(maybeNode: AstNode): maybeNode is AstElement {
   return typeof maybeNode !== "string"
 }
