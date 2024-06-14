@@ -34,11 +34,15 @@ defmodule Beacon.LiveAdmin.PageEditorLive.New do
   end
 
   defp build_new_page(site, [layout | _] = _layouts) do
+    id = Ecto.UUID.generate()
+
     %Beacon.Content.Page{
-      path: "",
+      path: "/page-#{id}",
       site: site,
       layout_id: layout.id,
-      layout: layout
+      layout: layout,
+      title: "/page-#{id}",
+      template: "<div>Welcome to BeaconCMS!</div>"
     }
   end
 
