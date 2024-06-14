@@ -21,7 +21,7 @@ LiveAdmin requires at least one site running to manage, so let's start LiveAdmin
 mix setup
 ```
 
-2. Run LiveAdemin
+2. Run LiveAdmin
 
 ```shell
 iex --sname admin@localhost -S mix dev
@@ -29,13 +29,17 @@ iex --sname admin@localhost -S mix dev
 
 Keep this instance running.
 
-3. Open another terminal or tab, clone [Beacon](https://github.com/BeaconCMS/beacon) into another directory and follow the [Local Development instructions](https://github.com/BeaconCMS/beacon#local-development) to get a site up and running.
+3. Run a Beacon site
+
+Open another terminal or tab, clone [Beacon](https://github.com/BeaconCMS/beacon) into another directory and follow the [Local Development instructions](https://github.com/BeaconCMS/beacon#local-development) to get a site up and running.
 
 4. Open http://localhost:4002/admin
 
 You'll notice that no site is displayed, that's because Beacon LiveAdmin looks for sites running in the cluster and the two nodes aren't connected yet.
 
-5. In the beacon iex terminal (the last one you started) execute the following:
+5. Connect the nodes
+
+In the beacon iex terminal (the last one you started) execute the following:
 
 ```elixir
 Node.connect(:admin@localhost)
@@ -43,7 +47,9 @@ Node.connect(:admin@localhost)
 
 Now you should see a site listed in the admin home page.
 
-6. (Optional) Automically connect the nodes by creating a `.iex.exs` file in the root of each repository:
+6. (Optional) Automatically connect the nodes
+
+Create a `.iex.exs` file in the root of each repository:
 
 In the beacon repo:
 
@@ -57,7 +63,7 @@ In the beacon_live_admin repo:
 Node.connect(:core@localhost)
 ```
 
-This way you don't need to manually connect the nodes as shown on step 5.
+Next time you can skip step 5.
 
 ## Troubleshooting
 
