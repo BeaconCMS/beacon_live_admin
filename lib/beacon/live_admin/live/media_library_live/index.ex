@@ -1,7 +1,8 @@
 defmodule Beacon.LiveAdmin.MediaLibraryLive.Index do
   @moduledoc false
 
-  use Beacon.LiveAdmin.PageBuilder
+  use Beacon.LiveAdmin.PageBuilder, table: [sort_by: "file_name"]
+
   alias Beacon.LiveAdmin.MediaLibrary
   alias Beacon.LiveAdmin.Authorization
   alias Beacon.MediaLibrary.Asset
@@ -13,12 +14,10 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    socket =
-      socket
-      |> assign(:authn_context, %{mod: :media_library})
-      |> assign(assets: list_assets(socket.assigns.beacon_page.site), search: "")
-
-    {:ok, socket}
+    {:ok,
+     socket
+     |> assign(:authn_context, %{mod: :media_library})
+     |> stream_configure(:assets, dom_id: &"#{Ecto.UUID.generate()}-#{&1.id}")}
   end
 
   @impl true
@@ -29,14 +28,28 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.Index do
          assigns.live_action,
          assigns.authn_context
        ) do
-      search = Map.get(params, "search", "")
-
       socket =
-        socket
-        |> assign(:search, search)
-        |> apply_action(assigns.live_action, params)
+        Table.handle_params(
+          socket,
+          params,
+          &MediaLibrary.count_assets(&1.site, query: params["query"])
+        )
 
-      {:noreply, socket}
+      %{per_page: per_page, current_page: page, query: query, sort_by: sort_by} =
+        socket.assigns.beacon_page.table
+
+      assets =
+        MediaLibrary.list_assets(assigns.beacon_page.site,
+          per_page: per_page,
+          page: page,
+          query: query,
+          sort: sort_by
+        )
+
+      {:noreply,
+       socket
+       |> stream(:assets, assets, reset: true)
+       |> apply_action(assigns.live_action, params)}
     else
       {:noreply, socket}
     end
@@ -52,7 +65,7 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.Index do
 
   defp apply_action(socket, :index, _params) do
     socket
-    |> assign(:assets, list_assets(socket.assigns.beacon_page.site))
+    |> assign(:assets, MediaLibrary.list_assets(socket.assigns.beacon_page.site))
     |> assign(:page_title, "Media Library")
     |> assign(:asset, nil)
   end
@@ -110,14 +123,6 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.Index do
     end
   end
 
-  defp list_assets(site) do
-    MediaLibrary.list_assets(site)
-  end
-
-  defp source_for(site, asset) do
-    MediaLibrary.url_for(site, asset)
-  end
-
   @impl true
   def render(assigns) do
     ~H"""
@@ -130,22 +135,21 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.Index do
       </:actions>
     </.header>
 
-    <form id="search-form" phx-change="search" class="mt-10">
-      <input
-        type="search"
-        name="search"
-        value={@search}
-        placeholder="Search assets"
-        class="block w-full rounded-lg text-zinc-900 focus:ring-2 focus:ring-blue-200 sm:text-sm sm:leading-6 phx-no-feedback:border-zinc-300 phx-no-feedback:focus:border-blue-600 border-zinc-300 focus:border-blue-600"
-      />
-    </form>
+    <div class="flex justify-between">
+      <div class="basis-8/12">
+        <.table_search table={@beacon_page.table} placeholder="Search by file name (showing up to 15 results)" />
+      </div>
+      <div class="basis-2/12">
+        <.table_sort table={@beacon_page.table} options={[{"File Name", "file_name"}, {"Type", "media_type"}]} />
+      </div>
+    </div>
 
-    <.main_content class="h-[calc(100vh_-_170px)]">
-      <.table id="assets" rows={@assets} row_id={fn asset -> asset.id end}>
-        <:col :let={asset} label=""><Beacon.LiveAdmin.AdminComponents.thumbnail source={source_for(asset.site, asset.thumbnail)} /></:col>
-        <:col :let={asset} label="Name"><%= asset.file_name %></:col>
-        <:col :let={asset} label="Type"><%= asset.media_type %></:col>
-        <:action :let={asset}>
+    <.main_content>
+      <.table id="assets" rows={@streams.assets} row_click={fn {_dom_id, asset} -> JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/media_library/#{asset.id}")) end}>
+        <:col :let={{_, asset}} label=""><Beacon.LiveAdmin.AdminComponents.thumbnail source={MediaLibrary.url_for(asset.site, asset.thumbnail)} /></:col>
+        <:col :let={{_, asset}} label="File Name"><%= asset.file_name %></:col>
+        <:col :let={{_, asset}} label="type"><%= asset.media_type %></:col>
+        <:action :let={{_, asset}}>
           <.link
             :if={Authorization.authorized?(@beacon_page.site, @agent, :upload, @authn_context)}
             aria-label="View asset"
@@ -156,7 +160,19 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.Index do
             <.icon name="hero-eye text-[#61758A] hover:text-[#304254]" />
           </.link>
         </:action>
-        <:action :let={asset}>
+
+        <:action :let={{_, asset}}>
+          <.link
+            patch={beacon_live_admin_path(@socket, @beacon_page.site, "/media_library/#{asset.id}")}
+            title="Edit asset"
+            aria-label="Edit asset"
+            class="flex items-center justify-center w-10 h-10 group"
+          >
+            <.icon name="hero-pencil-square text-[#61758A] hover:text-[#304254]" />
+          </.link>
+        </:action>
+
+        <:action :let={{_, asset}}>
           <.link
             :if={Authorization.authorized?(@beacon_page.site, @agent, :delete, Map.put(@authn_context, :resource, asset))}
             phx-click={JS.push("delete", value: %{id: asset.id})}
@@ -169,7 +185,6 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.Index do
           </.link>
         </:action>
       </.table>
-
       <.modal :if={@live_action in [:upload]} id="asset-modal" show on_cancel={JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/media_library"))}>
         <.live_component
           module={Beacon.LiveAdmin.MediaLibraryLive.UploadFormComponent}
@@ -194,6 +209,7 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.Index do
           agent={@agent}
         />
       </.modal>
+      <.table_pagination socket={@socket} page={@beacon_page} />
     </.main_content>
     """
   end

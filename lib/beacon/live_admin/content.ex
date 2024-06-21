@@ -8,6 +8,10 @@ defmodule Beacon.LiveAdmin.Content do
 
   import Beacon.LiveAdmin.Cluster, only: [call: 4]
 
+  def list_stylesheets(site) do
+    call(site, Beacon.Content, :list_stylesheets, [site])
+  end
+
   def change_layout(site, layout, attrs \\ %{}) do
     call(site, Beacon.Content, :change_layout, [layout, attrs])
   end
@@ -37,12 +41,11 @@ defmodule Beacon.LiveAdmin.Content do
   end
 
   def list_layouts(site, opts \\ []) do
-    opts =
-      opts
-      |> Keyword.put_new(:query, nil)
-      |> Keyword.put_new(:per_page, 20)
-
     call(site, Beacon.Content, :list_layouts, [site, opts])
+  end
+
+  def count_layouts(site, opts \\ []) do
+    call(site, Beacon.Content, :count_layouts, [site, opts])
   end
 
   def change_page(site, page, attrs \\ %{}) do
@@ -142,12 +145,11 @@ defmodule Beacon.LiveAdmin.Content do
   end
 
   def list_components(site, opts \\ []) do
-    opts =
-      opts
-      |> Keyword.put_new(:query, nil)
-      |> Keyword.put_new(:per_page, 20)
-
     call(site, Beacon.Content, :list_components, [site, opts])
+  end
+
+  def count_components(site, opts \\ []) do
+    call(site, Beacon.Content, :count_components, [site, opts])
   end
 
   def get_component(site, id) do
@@ -206,20 +208,12 @@ defmodule Beacon.LiveAdmin.Content do
     call(site, Beacon.Content, :create_assign_for_live_data, [live_data, attrs])
   end
 
-  def get_live_data(site, path) do
-    call(site, Beacon.Content, :get_live_data, [site, path])
+  def get_live_data(site, id) do
+    call(site, Beacon.Content, :get_live_data, [id])
   end
 
-  def live_data_for_site(site) do
-    call(site, Beacon.Content, :live_data_for_site, [site])
-  end
-
-  def live_data_paths_for_site(site) do
-    call(site, Beacon.Content, :live_data_paths_for_site, [site])
-  end
-
-  def live_data_paths_for_site(site, opts) do
-    call(site, Beacon.Content, :live_data_paths_for_site, [site, opts])
+  def live_data_for_site(site, opts \\ []) do
+    call(site, Beacon.Content, :live_data_for_site, [site, opts])
   end
 
   def update_live_data_path(site, live_data, attrs) do

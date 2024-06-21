@@ -90,9 +90,7 @@ defmodule Beacon.LiveAdmin.Fixtures do
       Enum.into(attrs, %{
         site: "site_a",
         path: "/foo/:id",
-        assign: "bar",
-        format: :elixir,
-        code: "id"
+        format: :elixir
       })
 
     rpc(node, Beacon.Content, :create_live_data!, [attrs])
@@ -108,6 +106,8 @@ defmodule Beacon.LiveAdmin.Fixtures do
         value: "1 + 1"
       })
 
-    rpc(node, Beacon.Content, :create_assign_for_live_data, [live_data, attrs])
+    {:ok, live_data} = rpc(node, Beacon.Content, :create_assign_for_live_data, [live_data, attrs])
+
+    Enum.find(live_data.assigns, &(&1.key == attrs.key))
   end
 end

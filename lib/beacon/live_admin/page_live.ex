@@ -8,7 +8,6 @@ defmodule Beacon.LiveAdmin.PageLive do
 
   use Beacon.LiveAdmin.Web, :live_view
   require Logger
-  alias Beacon.LiveAdmin.Cluster
   alias Beacon.LiveAdmin.PageBuilder.Menu
   alias Beacon.LiveAdmin.PageBuilder.Page
   alias Beacon.LiveAdmin.PageBuilder.Table
@@ -23,8 +22,6 @@ defmodule Beacon.LiveAdmin.PageLive do
       # TODO: pubsub cluster
       # TODO: nodedow -> notify/alert user
     end
-
-    Cluster.maybe_discover_sites()
 
     sites = Beacon.LiveAdmin.Cluster.running_sites()
 
@@ -122,6 +119,11 @@ defmodule Beacon.LiveAdmin.PageLive do
     maybe_apply_module(socket, :handle_info, [msg], &{:noreply, &1})
   end
 
+  @impl true
+  def handle_call(msg, from, socket) do
+    maybe_apply_module(socket, :handle_call, [msg, from], &{:noreply, &1})
+  end
+
   defp lookup_page!(socket, url) do
     %URI{host: host, path: path} = URI.parse(url)
 
@@ -199,20 +201,13 @@ defmodule Beacon.LiveAdmin.PageLive do
 
   defp maybe_apply_module(socket, fun, params, default) do
     mod = socket.assigns.beacon_page.module
+    params = params ++ [socket]
 
-    if exported?(mod, fun, length(params) + 1) do
-      Logger.debug("""
-      Applying #{fun} in #{mod}
-      Parameters: #{inspect(params)}
-      """)
-
-      apply(mod, fun, params ++ [socket])
+    if exported?(mod, fun, length(params)) do
+      Logger.debug("calling #{Exception.format_mfa(mod, fun, params)}")
+      apply(mod, fun, params)
     else
-      Logger.debug("""
-      Module/Function not exported: #{inspect(mod)}/#{inspect(fun)}
-      Parameters: #{inspect(params)}
-      """)
-
+      Logger.debug("not exported #{Exception.format_mfa(mod, fun, params)}")
       default.(socket)
     end
   end
@@ -248,7 +243,8 @@ defmodule Beacon.LiveAdmin.PageLive do
     path = Beacon.LiveAdmin.Router.beacon_live_admin_path(socket, page.site, path)
     assigns = %{text: text, icon: icon, path: path}
 
-    # force redirect to re-execute plug to fecth current url
+    # use href to force redirecting to re-execute plug to fecth current url
+    # more info at https://github.com/phoenixframework/phoenix_live_view/pull/2654
     ~H"""
     <.link
       href={@path}

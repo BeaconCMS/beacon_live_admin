@@ -62,6 +62,7 @@ defmodule Beacon.LiveAdmin.Web do
       import Beacon.LiveAdmin.AdminComponents
       import Beacon.LiveAdmin.Components, only: [template_error: 1]
       import Beacon.LiveAdmin.Gettext
+      import LiveSvelte
 
       import Beacon.LiveAdmin.Router,
         only: [

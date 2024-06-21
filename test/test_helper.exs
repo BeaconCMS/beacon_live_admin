@@ -86,17 +86,32 @@ Beacon.LiveAdminTest.Cluster.start_beacon(:"node1@127.0.0.1",
   sites: [
     [
       site: :site_a,
+      skip_boot?: true,
       endpoint: MyApp.Endpoint,
-      authorization_source: MyApp.AuthorizationSource
-    ],
-    [site: :site_b, endpoint: MyApp.Endpoint]
+      router: MyApp.Router,
+      authorization_source: MyApp.AuthorizationSource,
+      extra_page_fields: [
+        MyApp.PageField.Type
+      ]
+    ]
   ]
 )
 
 Beacon.LiveAdminTest.Cluster.start_beacon(:"node2@127.0.0.1",
   sites: [
-    [site: :site_a, endpoint: MyApp.Endpoint, authorization_source: MyApp.AuthorizationSource],
-    [site: :site_c, endpoint: MyApp.Endpoint]
+    [
+      site: :site_b,
+      skip_boot?: true,
+      endpoint: MyApp.Endpoint,
+      router: MyApp.Router,
+      authorization_source: MyApp.AuthorizationSource
+    ],
+    [
+      site: :site_c,
+      skip_boot?: true,
+      endpoint: MyApp.Endpoint,
+      router: MyApp.Router
+    ]
   ]
 )
 
