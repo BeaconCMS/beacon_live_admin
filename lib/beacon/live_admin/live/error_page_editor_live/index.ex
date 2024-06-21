@@ -39,7 +39,7 @@ defmodule Beacon.LiveAdmin.ErrorPageEditorLive.Index do
     if socket.assigns.unsaved_changes do
       {:noreply, assign(socket, show_nav_modal: true, confirm_nav_path: path)}
     else
-      {:noreply, push_redirect(socket, to: path)}
+      {:noreply, push_navigate(socket, to: path)}
     end
   end
 
@@ -82,7 +82,7 @@ defmodule Beacon.LiveAdmin.ErrorPageEditorLive.Index do
           |> assign(error_pages: Content.list_error_pages(site))
           |> assign_selected(status)
           |> assign(show_create_modal: false)
-          |> push_redirect(to: beacon_live_admin_path(socket, site, "/error_pages/#{status}"))
+          |> push_navigate(to: beacon_live_admin_path(socket, site, "/error_pages/#{status}"))
 
         {:error, changeset} ->
           assign(socket, create_form: to_form(changeset))
@@ -140,7 +140,7 @@ defmodule Beacon.LiveAdmin.ErrorPageEditorLive.Index do
   end
 
   def handle_event("discard_changes", _params, socket) do
-    {:noreply, push_redirect(socket, to: socket.assigns.confirm_nav_path)}
+    {:noreply, push_navigate(socket, to: socket.assigns.confirm_nav_path)}
   end
 
   def handle_event("cancel_create", _params, socket) do

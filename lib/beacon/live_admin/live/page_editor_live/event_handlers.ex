@@ -41,7 +41,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.EventHandlers do
     if socket.assigns.unsaved_changes do
       {:noreply, assign(socket, show_nav_modal: true, confirm_nav_path: path)}
     else
-      {:noreply, push_redirect(socket, to: path)}
+      {:noreply, push_navigate(socket, to: path)}
     end
   end
 
@@ -123,7 +123,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.EventHandlers do
 
     {:ok, _} = Content.delete_event_handler_from_page(site, page, event_handler)
 
-    {:noreply, push_redirect(socket, to: path)}
+    {:noreply, push_navigate(socket, to: path)}
   end
 
   def handle_event("delete_cancel", _, socket) do
@@ -135,7 +135,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.EventHandlers do
   end
 
   def handle_event("discard_changes", _params, socket) do
-    {:noreply, push_redirect(socket, to: socket.assigns.confirm_nav_path)}
+    {:noreply, push_navigate(socket, to: socket.assigns.confirm_nav_path)}
   end
 
   def render(assigns) do
