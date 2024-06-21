@@ -129,7 +129,10 @@ defmodule Beacon.LiveAdminTest.Cluster do
       MyApp.Endpoint
     ]
 
-    rpc(node, Supervisor, :start_link, [children, [strategy: :one_for_one]])
+    case rpc(node, Supervisor, :start_link, [children, [strategy: :one_for_one]]) do
+      {:ok, _} -> :ok
+      _ -> raise "failed to start Beacon on node #{inspect(node)}"
+    end
 
     # rpc(node, Ecto.Migrator, :run, [Beacon.Repo, :down, [all: true]])
     rpc(node, Ecto.Migrator, :run, [Beacon.Repo, :up, [all: true]])
