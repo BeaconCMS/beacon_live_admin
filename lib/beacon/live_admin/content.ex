@@ -164,6 +164,26 @@ defmodule Beacon.LiveAdmin.Content do
     call(site, Beacon.Content, :update_component, [component, attrs])
   end
 
+  def change_component_attr(site, component_attr, attrs \\ %{}) do
+    call(site, Beacon.Content, :change_component_attr, [component_attr, attrs])
+  end
+
+  def create_component_attr(site, attrs) do
+    call(site, Beacon.Content, :create_component_attr, [attrs])
+  end
+
+  def update_component_attr(site, component_attr, attrs) do
+    call(site, Beacon.Content, :update_component_attr, [component_attr, attrs])
+  end
+
+  def delete_component_attr(site, component_attr) do
+    call(site, Beacon.Content, :delete_component_attr, [component_attr])
+  end
+
+  def list_component_attrs(component_id, site, opts \\ []) do
+    call(site, Beacon.Content, :list_component_attrs, [component_id, opts])
+  end
+
   def change_error_page(site, error_page, attrs \\ %{}) do
     call(site, Beacon.Content, :change_error_page, [error_page, attrs])
   end

@@ -134,6 +134,10 @@ defmodule Beacon.LiveAdmin.Router do
       {"/components", Beacon.LiveAdmin.ComponentEditorLive.Index, :index, %{}},
       {"/components/new", Beacon.LiveAdmin.ComponentEditorLive.New, :new, %{}},
       {"/components/:id", Beacon.LiveAdmin.ComponentEditorLive.Edit, :edit, %{}},
+      {"/components/:id/attrs/new", Beacon.LiveAdmin.ComponentEditorLive.ComponentAttr, :new,
+       %{}},
+      {"/components/:id/attrs/:attr_id", Beacon.LiveAdmin.ComponentEditorLive.ComponentAttr,
+       :edit, %{}},
       # pages
       {"/pages", Beacon.LiveAdmin.PageEditorLive.Index, :index, %{}},
       {"/pages/new", Beacon.LiveAdmin.PageEditorLive.New, :new, %{}},

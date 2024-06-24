@@ -4,23 +4,37 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
   alias Beacon.LiveAdmin.Content
 
   @impl true
-  def update(%{site: site, component: component} = assigns, socket) do
+  def mount(socket) do
+    {:ok, stream_configure(socket, :component_attrs, dom_id: &"#{Ecto.UUID.generate()}-#{&1.id}")}
+  end
+
+  @impl true
+  def update(%{site: site, component: component, live_action: :new} = assigns, socket) do
     changeset = Content.change_component(site, component)
+    component_attrs = []
 
     {:ok,
      socket
      |> assign(assigns)
-     |> assign_form(changeset)}
+     |> assign_form(changeset)
+     |> stream(:component_attrs, component_attrs, reset: true)}
+  end
+
+  def update(%{site: site, component: component, live_action: :edit} = assigns, socket) do
+    changeset = Content.change_component(site, component)
+    component_attrs = Content.list_component_attrs(component.id, site)
+
+    {:ok,
+     socket
+     |> assign(assigns)
+     |> assign_form(changeset)
+     |> stream(:component_attrs, component_attrs, reset: true)}
   end
 
   def update(%{template: value}, socket) do
     params = Map.merge(socket.assigns.form.params, %{"template" => value})
     changeset = Content.change_component(socket.assigns.site, socket.assigns.component, params)
     {:ok, assign_form(socket, changeset)}
-  end
-
-  def update(%{attr_forms: attr_forms}, socket) do
-    {:ok, assign(socket, :attrs, attr_forms)}
   end
 
   @impl true
@@ -36,18 +50,19 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
   def handle_event("save", %{"component" => component_params}, socket) do
     component_params = Map.put(component_params, "site", socket.assigns.site)
 
-    component_attrs =
-      Enum.reduce(socket.assigns.attrs, [], fn form_attr, acc ->
-        case Ecto.Changeset.apply_action(form_attr.source, :update) do
-          {:ok, component_attr} -> [Map.from_struct(component_attr) | acc]
-          _ -> acc
-        end
-      end)
-      |> Enum.reverse()
-
-    component_params = Map.put(component_params, "attrs", component_attrs)
-
     save_component(socket, socket.assigns.live_action, component_params)
+  end
+
+  def handle_event("delete", %{"attr_id" => component_attr_id}, socket) do
+    %{site: site, component: component} = socket.assigns
+    component_attr = Enum.find(component.attrs, &(&1.id == component_attr_id))
+
+    {:ok, component_attr} = Content.delete_component_attr(site, component_attr)
+
+    path = beacon_live_admin_path(socket, site, "/components/#{component.id}")
+    socket = push_patch(socket, to: path)
+
+    {:noreply, socket}
   end
 
   defp save_component(socket, :new, component_params) do
@@ -105,12 +120,40 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
           <.form :let={f} for={@form} id="component-form" class="space-y-8" phx-target={@myself} phx-change="validate" phx-submit="save">
             <legend class="text-sm font-bold tracking-widest text-[#445668] uppercase">Component settings</legend>
             <.input field={f[:name]} type="text" label="Name" />
+            <.input field={f[:example]} type="text" label="Example" />
             <.input field={f[:category]} type="select" options={categories_to_options(@site)} label="Category" />
             <input type="hidden" name="component[template]" id="component-form_template" value={Phoenix.HTML.Form.input_value(f, :template)} />
           </.form>
 
-          <div id="attrs">
-            <.live_component module={AttrListComponent} id={@component.id} component={@component} />
+          <div :if={@live_action == :edit}>
+            <.table id="assets" rows={@streams.component_attrs} row_click={fn {_dom_id, attr} -> JS.navigate(beacon_live_admin_path(@socket, @site, "/components/#{@component.id}/attrs/#{attr.id}")) end}>
+              <:col :let={{_, attr}} label="Component Attributes"><%= attr.name %></:col>
+              <:action :let={{_, attr}}>
+                <.link
+                  patch={beacon_live_admin_path(@socket, @site, "/components/#{@component.id}/attrs/#{attr.id}")}
+                  title="Edit attribute"
+                  aria-label="Edit attribute"
+                  class="flex items-center justify-center w-10 h-10 group"
+                >
+                  <.icon name="hero-pencil-square text-[#61758A] hover:text-[#304254]" />
+                </.link>
+              </:action>
+
+              <:action :let={{_, attr}}>
+                <.link
+                  phx-click={JS.push("delete", value: %{attr_id: attr.id})}
+                  phx-target={@myself}
+                  aria-label="Delete attribute"
+                  title="Delete attribute"
+                  class="flex items-center justify-center w-10 h-10"
+                  data-confirm="The Component attribute will be deleted. Are you sure?"
+                >
+                  <.icon name="hero-trash text-[#F23630] hover:text-[#AE182D]" />
+                </.link>
+              </:action>
+            </.table>
+
+            <.button class="mt-4" phx-click={JS.navigate(beacon_live_admin_path(@socket, @site, "/components/#{@component.id}/attrs/new"))}>Add new Attribute</.button>
           </div>
         </div>
         <div class="col-span-full lg:col-span-2">
