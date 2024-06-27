@@ -56,7 +56,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
     %{site: site, component: component} = socket.assigns
     component_attr = Enum.find(component.attrs, &(&1.id == component_attr_id))
 
-    {:ok, component_attr} = Content.delete_component_attr(site, component_attr)
+    {:ok, _component_attr} = Content.delete_component_attr(site, component_attr)
 
     path = beacon_live_admin_path(socket, site, "/components/#{component.id}")
     socket = push_patch(socket, to: path)
