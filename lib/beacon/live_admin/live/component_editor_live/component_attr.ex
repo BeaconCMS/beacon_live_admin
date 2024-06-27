@@ -5,7 +5,8 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.ComponentAttr do
   alias Beacon.LiveAdmin.Content
 
   @impl true
-  def menu_link("/components", :edit), do: {:submenu, "Components"}
+  # TODO: check the correct menu link for thsi modal
+  def menu_link("/components", :attrs), do: {:submenu, "Components"}
   def menu_link(_, _), do: :skip
 
   @impl true
@@ -45,6 +46,10 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.ComponentAttr do
 
   @impl true
   def handle_event("validate", %{"component_attr" => component_attr_params}, socket) do
+    component_attr_params = format_struct_name_input(component_attr_params)
+
+    component_attr_params = format_options_input(component_attr_params)
+
     changeset =
       socket.assigns.beacon_page.site
       |> Content.change_component_attr(socket.assigns.component_attr, component_attr_params)
@@ -54,7 +59,53 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.ComponentAttr do
   end
 
   def handle_event("save", %{"component_attr" => component_attr_params}, socket) do
+    component_attr_params = format_struct_name_input(component_attr_params)
+
+    component_attr_params = format_options_input(component_attr_params)
+
     save_component(socket, socket.assigns.live_action, component_attr_params)
+  end
+
+  defp format_struct_name_input(component_attr_params) do
+    case component_attr_params["struct_name"] do
+      nil ->  Map.put(component_attr_params, "struct_name", nil)
+      _ -> component_attr_params
+    end
+  end
+
+  def format_options_input(component_attr_params) do
+    attr_opts = []
+
+    attr_opts =
+      attr_opts
+      |> option_required(component_attr_params["opts_required"])
+      |> option_default(component_attr_params["opts_default"])
+      |> option_values(component_attr_params["opts_values"])
+      |> option_doc(component_attr_params["opts_doc"])
+
+    Map.put(component_attr_params, "opts", attr_opts)
+  end
+
+  defp option_required(attr_opts, "false"), do: attr_opts
+  defp option_required(attr_opts, "true") do
+    attr_opts |> Keyword.merge([required: true])
+  end
+
+  defp option_default(attr_opts, ""), do: attr_opts
+  defp option_default(attr_opts, opts_default) do
+    attr_opts |> Keyword.merge([default: opts_default])
+  end
+
+  defp option_values(attr_opts, ""), do: attr_opts
+  defp option_values(attr_opts, opts_values) do
+    values = split_string_into_list(opts_values)
+
+    attr_opts |> Keyword.merge([values: values])
+  end
+
+  defp option_doc(attr_opts, ""), do: attr_opts
+  defp option_doc(attr_opts, opts_doc) do
+    attr_opts |> Keyword.merge([doc: opts_doc])
   end
 
   defp save_component(socket, :new, component_attr_params) do
@@ -108,6 +159,13 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.ComponentAttr do
         <.input field={f[:name]} type="text" phx-debounce="100" label="Attr Name" />
         <.input field={f[:type]} type="select" options={types_to_options()} label="Type" />
         <.input :if={f[:type].value == "struct"} field={f[:struct_name]} type="text" phx-debounce="100" label="Struct Name" />
+
+        <legend class="text-sm font-bold tracking-widest text-[#445668] uppercase">Options</legend>
+        <.input field={f[:opts_required]} type="checkbox" value={opts_required_value(f)} label="Required attribute" />
+        <.input field={f[:opts_default]} type="text" phx-debounce="100" value={opts_default_value(f)} label="Default Attribute" />
+        <.input field={f[:opts_values]} type="text" phx-debounce="100" value={opts_values_value(f)} label="Accepted values" placeholder="value1, value2, ..." />
+        <.input field={f[:opts_doc]} type="text" phx-debounce="100" value={opts_doc_value(f)} label="Attribute doc" />
+
         <div class="flex mt-8 gap-x-[20px]">
           <.button type="submit">Save</.button>
           <.button type="button" phx-click={JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/components/#{@component_id}"))}>Cancel</.button>
@@ -120,5 +178,45 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.ComponentAttr do
   defp types_to_options do
     ~w(any string atom boolean integer float list map global struct)a
     |> Enum.map(&{Phoenix.Naming.humanize(&1), &1})
+  end
+
+  def opts_required_value(form) do
+    form
+    |> get_field_opts()
+    |> Keyword.get(:required, false)
+  end
+
+  def opts_default_value(form) do
+    form
+    |> get_field_opts()
+    |> Keyword.get(:default, "")
+  end
+
+  def opts_values_value(form) do
+    form
+    |> get_field_opts()
+    |> Keyword.get(:values, [])
+    |> Enum.join(", ")
+  end
+
+  def opts_doc_value(form) do
+    form
+    |> get_field_opts()
+    |> Keyword.get(:doc, "")
+  end
+
+  def get_field_opts(form) do
+    form
+    |> Phoenix.HTML.Form.input_value(:opts)
+    |> maybe_binary_to_term()
+  end
+
+  defp maybe_binary_to_term(opts) when is_binary(opts), do: :erlang.binary_to_term(opts)
+  defp maybe_binary_to_term(opts), do: opts
+
+  defp split_string_into_list(string) do
+    ~r/[\s,]+/
+    |> Regex.split(string)
+    |> Enum.reject(&(&1 == ""))
   end
 end

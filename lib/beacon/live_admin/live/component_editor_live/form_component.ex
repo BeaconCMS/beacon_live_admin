@@ -120,8 +120,8 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
           <.form :let={f} for={@form} id="component-form" class="space-y-8" phx-target={@myself} phx-change="validate" phx-submit="save">
             <legend class="text-sm font-bold tracking-widest text-[#445668] uppercase">Component settings</legend>
             <.input field={f[:name]} type="text" label="Name" />
-            <.input field={f[:example]} type="text" label="Example" />
             <.input field={f[:category]} type="select" options={categories_to_options(@site)} label="Category" />
+            <.input field={f[:example]} type="text" label="Example" />
             <input type="hidden" name="component[template]" id="component-form_template" value={Phoenix.HTML.Form.input_value(f, :template)} />
           </.form>
 
