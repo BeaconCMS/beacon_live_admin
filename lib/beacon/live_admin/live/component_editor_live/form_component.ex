@@ -1,6 +1,5 @@
 defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
   use Beacon.LiveAdmin.Web, :live_component
-  alias Beacon.LiveAdmin.ComponentEditorLive.AttrListComponent
   alias Beacon.LiveAdmin.Content
 
   @impl true
