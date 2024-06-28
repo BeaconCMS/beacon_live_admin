@@ -105,7 +105,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
   def render(assigns) do
     ~H"""
     <div>
-      <.flash_group flash={@flash} />
+      <Beacon.LiveAdmin.AdminComponents.component_header socket={@socket} flash={@flash} component={@component} live_action={@live_action} />
 
       <.header>
         <%= @page_title %>
@@ -125,7 +125,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
           </.form>
 
           <div :if={@live_action == :edit}>
-            <.table id="assets" rows={@streams.component_attrs} row_click={fn {_dom_id, attr} -> JS.navigate(beacon_live_admin_path(@socket, @site, "/components/#{@component.id}/attrs/#{attr.id}")) end}>
+            <.table id="attrs" rows={@streams.component_attrs} row_click={fn {_dom_id, attr} -> JS.navigate(beacon_live_admin_path(@socket, @site, "/components/#{@component.id}/attrs/#{attr.id}")) end}>
               <:col :let={{_, attr}} label="Component Attributes"><%= attr.name %></:col>
               <:action :let={{_, attr}}>
                 <.link

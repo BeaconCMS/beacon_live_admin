@@ -156,6 +156,10 @@ defmodule Beacon.LiveAdmin.Content do
     call(site, Beacon.Content, :get_component_by, [site, [id: id]])
   end
 
+  def get_component(site, id, opts) do
+    call(site, Beacon.Content, :get_component_by, [site, [id: id], opts])
+  end
+
   def create_component(site, attrs) do
     call(site, Beacon.Content, :create_component, [attrs])
   end
@@ -182,6 +186,38 @@ defmodule Beacon.LiveAdmin.Content do
 
   def list_component_attrs(component_id, site, opts \\ []) do
     call(site, Beacon.Content, :list_component_attrs, [component_id, opts])
+  end
+
+  def change_component_slot(site, slot, attrs \\ %{}) do
+    call(site, Beacon.Content, :change_component_slot, [slot, attrs])
+  end
+
+  def create_slot_for_component(site, component, attrs) do
+    call(site, Beacon.Content, :create_slot_for_component, [component, attrs])
+  end
+
+  def update_slot_for_component(site, component, slot, attrs) do
+    call(site, Beacon.Content, :update_slot_for_component, [component, slot, attrs])
+  end
+
+  def delete_slot_from_component(site, component, slot) do
+    call(site, Beacon.Content, :delete_slot_from_component, [component, slot])
+  end
+
+  def change_slot_attr(site, slot_attr, attrs \\ %{}) do
+    call(site, Beacon.Content, :change_slot_attr, [slot_attr, attrs])
+  end
+
+  def create_slot_attr(site, attrs) do
+    call(site, Beacon.Content, :create_slot_attr, [attrs])
+  end
+
+  def update_slot_attr(site, slot_attr, attrs) do
+    call(site, Beacon.Content, :update_slot_attr, [slot_attr, attrs])
+  end
+
+  def delete_slot_attr(site, slot_attr) do
+    call(site, Beacon.Content, :delete_slot_attr, [slot_attr])
   end
 
   def change_error_page(site, error_page, attrs \\ %{}) do

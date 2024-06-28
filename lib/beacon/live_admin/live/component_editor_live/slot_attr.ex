@@ -1,91 +1,102 @@
-defmodule Beacon.LiveAdmin.ComponentEditorLive.ComponentAttr do
+defmodule Beacon.LiveAdmin.ComponentEditorLive.SlotAttr do
   @moduledoc false
 
   use Beacon.LiveAdmin.PageBuilder
   alias Beacon.LiveAdmin.Content
 
   @impl true
-  # TODO: check the correct menu link for thsi modal
   def menu_link("/components", :attrs), do: {:submenu, "Components"}
   def menu_link(_, _), do: :skip
 
   @impl true
-  def handle_params(%{"id" => component_id, "attr_id" => attr_id}, _url, socket) do
+  def handle_params(
+        %{"id" => component_id, "slot_id" => slot_id, "attr_id" => attr_id},
+        _url,
+        socket
+      ) do
     component =
-      Content.get_component(socket.assigns.beacon_page.site, component_id, preloads: [:attrs])
+      Content.get_component(socket.assigns.beacon_page.site, component_id,
+        preloads: [slots: :attrs]
+      )
 
-    component_attr = Enum.find(component.attrs, &(&1.id == attr_id))
+    component_slot = Enum.find(component.slots, &(&1.id == slot_id))
+    slot_attr = Enum.find(component_slot.attrs, &(&1.id == attr_id))
 
-    changeset =
-      Content.change_component_attr(socket.assigns.beacon_page.site, component_attr, %{})
+    changeset = Content.change_slot_attr(socket.assigns.beacon_page.site, slot_attr, %{})
 
     {:noreply,
      socket
      |> assign_form(changeset)
      |> assign(
        component_id: component.id,
-       component_attr: component_attr,
+       slot_id: component_slot.id,
+       slot_attr: slot_attr,
        page_title: "Edit Attribute"
      )}
   end
 
-  def handle_params(%{"id" => component_id}, _url, socket) do
-    component = Content.get_component(socket.assigns.beacon_page.site, component_id)
-    component_attr = %Beacon.Content.ComponentAttr{component_id: component.id}
+  def handle_params(%{"id" => component_id, "slot_id" => slot_id}, _url, socket) do
+    component =
+      Content.get_component(socket.assigns.beacon_page.site, component_id,
+        preloads: [slots: :attrs]
+      )
 
-    changeset =
-      Content.change_component_attr(socket.assigns.beacon_page.site, component_attr, %{})
+    component_slot = Enum.find(component.slots, &(&1.id == slot_id))
+    slot_attr = %Beacon.Content.ComponentSlotAttr{slot_id: component_slot.id}
+
+    changeset = Content.change_slot_attr(socket.assigns.beacon_page.site, slot_attr, %{})
 
     {:noreply,
      socket
      |> assign_form(changeset)
      |> assign(
        component_id: component.id,
-       component_attr: component_attr,
+       slot_id: component_slot.id,
+       slot_attr: slot_attr,
        page_title: "Create Attribute"
      )}
   end
 
   @impl true
-  def handle_event("validate", %{"component_attr" => component_attr_params}, socket) do
-    component_attr_params = format_struct_name_input(component_attr_params)
+  def handle_event("validate", %{"component_slot_attr" => slot_attr_params}, socket) do
+    slot_attr_params = format_struct_name_input(slot_attr_params)
 
-    component_attr_params = format_options_input(component_attr_params)
+    slot_attr_params = format_options_input(slot_attr_params)
 
     changeset =
       socket.assigns.beacon_page.site
-      |> Content.change_component_attr(socket.assigns.component_attr, component_attr_params)
+      |> Content.change_slot_attr(socket.assigns.slot_attr, slot_attr_params)
       |> Map.put(:action, :validate)
 
     {:noreply, assign_form(socket, changeset)}
   end
 
-  def handle_event("save", %{"component_attr" => component_attr_params}, socket) do
-    component_attr_params = format_struct_name_input(component_attr_params)
+  def handle_event("save", %{"component_slot_attr" => slot_attr_params}, socket) do
+    slot_attr_params = format_struct_name_input(slot_attr_params)
 
-    component_attr_params = format_options_input(component_attr_params)
+    slot_attr_params = format_options_input(slot_attr_params)
 
-    save_component(socket, socket.assigns.live_action, component_attr_params)
+    save_component(socket, socket.assigns.live_action, slot_attr_params)
   end
 
-  defp format_struct_name_input(component_attr_params) do
-    case component_attr_params["struct_name"] do
-      nil -> Map.put(component_attr_params, "struct_name", nil)
-      _ -> component_attr_params
+  defp format_struct_name_input(slot_attr_params) do
+    case slot_attr_params["struct_name"] do
+      nil -> Map.put(slot_attr_params, "struct_name", nil)
+      _ -> slot_attr_params
     end
   end
 
-  def format_options_input(component_attr_params) do
+  def format_options_input(slot_attr_params) do
     attr_opts = []
 
     attr_opts =
       attr_opts
-      |> option_required(component_attr_params["opts_required"])
-      |> option_default(component_attr_params["opts_default"])
-      |> option_values(component_attr_params["opts_values"])
-      |> option_doc(component_attr_params["opts_doc"])
+      |> option_required(slot_attr_params["opts_required"])
+      |> option_default(slot_attr_params["opts_default"])
+      |> option_values(slot_attr_params["opts_values"])
+      |> option_doc(slot_attr_params["opts_doc"])
 
-    Map.put(component_attr_params, "opts", attr_opts)
+    Map.put(slot_attr_params, "opts", attr_opts)
   end
 
   defp option_required(attr_opts, "false"), do: attr_opts
@@ -114,16 +125,16 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.ComponentAttr do
     attr_opts |> Keyword.merge(doc: opts_doc)
   end
 
-  defp save_component(socket, :new, component_attr_params) do
-    %{beacon_page: %{site: site}, component_id: component_id} = socket.assigns
+  defp save_component(socket, :new, slot_attr_params) do
+    %{beacon_page: %{site: site}, component_id: component_id, slot_id: slot_id} = socket.assigns
 
-    case Content.create_component_attr(site, component_attr_params) do
-      {:ok, _component_attr} ->
-        to = beacon_live_admin_path(socket, site, "/components/#{component_id}")
+    case Content.create_slot_attr(site, slot_attr_params) do
+      {:ok, _slot_attr} ->
+        to = beacon_live_admin_path(socket, site, "/components/#{component_id}/slots/#{slot_id}")
 
         {:noreply,
          socket
-         |> put_flash(:info, "Component Attribute created successfully")
+         |> put_flash(:info, "Slot Attribute created successfully")
          |> push_patch(to: to)}
 
       {:error, changeset} ->
@@ -132,17 +143,21 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.ComponentAttr do
     end
   end
 
-  defp save_component(socket, :edit, component_attr_params) do
-    %{beacon_page: %{site: site}, component_id: component_id, component_attr: component_attr} =
-      socket.assigns
+  defp save_component(socket, :edit, slot_attr_params) do
+    %{
+      beacon_page: %{site: site},
+      component_id: component_id,
+      slot_id: slot_id,
+      slot_attr: slot_attr
+    } = socket.assigns
 
-    case Content.update_component_attr(site, component_attr, component_attr_params) do
-      {:ok, _component_attr} ->
-        to = beacon_live_admin_path(socket, site, "/components/#{component_id}")
+    case Content.update_slot_attr(site, slot_attr, slot_attr_params) do
+      {:ok, _slot_attr} ->
+        to = beacon_live_admin_path(socket, site, "/components/#{component_id}/slots/#{slot_id}")
 
         {:noreply,
          socket
-         |> put_flash(:info, "Component Attribute updated successfully")
+         |> put_flash(:info, "Slot Attribute updated successfully")
          |> push_patch(to: to)}
 
       {:error, changeset} ->
@@ -158,10 +173,10 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.ComponentAttr do
   @impl true
   def render(assigns) do
     ~H"""
-    <.modal id="edit-attr-modal" on_cancel={JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/components/#{@component_id}"))} show>
+    <.modal id="edit-attr-modal" on_cancel={JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/components/#{@component_id}/slots/#{@slot_id}"))} show>
       <p class="text-2xl font-bold mb-12"><%= @page_title %></p>
       <.form :let={f} id="new-path-form" for={@form} phx-change="validate" phx-submit="save" class="space-y-8">
-        <.input type="hidden" name={f[:component_id].name} value={f[:component_id].value} />
+        <.input type="hidden" name={f[:slot_id].name} value={f[:slot_id].value} />
         <.input field={f[:name]} type="text" phx-debounce="100" label="Attr Name" />
         <.input field={f[:type]} type="select" options={types_to_options()} label="Type" />
         <.input :if={f[:type].value == "struct"} field={f[:struct_name]} type="text" phx-debounce="100" placeholder="MyApp.Users.User" label="Struct Name" />
@@ -174,7 +189,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.ComponentAttr do
 
         <div class="flex mt-8 gap-x-[20px]">
           <.button type="submit">Save</.button>
-          <.button type="button" phx-click={JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/components/#{@component_id}"))}>Cancel</.button>
+          <.button type="button" phx-click={JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/components/#{@component_id}/slots/#{@slot_id}"))}>Cancel</.button>
         </div>
       </.form>
     </.modal>
