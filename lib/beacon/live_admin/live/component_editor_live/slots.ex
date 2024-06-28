@@ -49,7 +49,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.Slots do
     if socket.assigns.unsaved_changes do
       {:noreply, assign(socket, show_nav_modal: true, confirm_nav_path: path)}
     else
-      {:noreply, push_redirect(socket, to: path)}
+      {:noreply, push_navigate(socket, to: path)}
     end
   end
 
@@ -113,7 +113,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.Slots do
     {:ok, _slot_attr} = Content.delete_slot_attr(site, slot_attr)
 
     path = beacon_live_admin_path(socket, site, "/components/#{component.id}/slots/#{slot.id}")
-    socket = push_redirect(socket, to: path)
+    socket = push_navigate(socket, to: path)
 
     {:noreply, socket}
   end
@@ -128,7 +128,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.Slots do
 
     {:ok, _} = Content.delete_slot_from_component(site, component, slot)
 
-    {:noreply, push_redirect(socket, to: path)}
+    {:noreply, push_navigate(socket, to: path)}
   end
 
   def handle_event("delete_cancel", _, socket) do
@@ -140,7 +140,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.Slots do
   end
 
   def handle_event("discard_changes", _params, socket) do
-    {:noreply, push_redirect(socket, to: socket.assigns.confirm_nav_path)}
+    {:noreply, push_navigate(socket, to: socket.assigns.confirm_nav_path)}
   end
 
   def render(assigns) do
