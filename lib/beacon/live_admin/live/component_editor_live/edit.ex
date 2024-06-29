@@ -15,7 +15,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.Edit do
 
   @impl true
   def handle_params(%{"id" => id}, _url, socket) do
-    component = Content.get_component(socket.assigns.beacon_page.site, id)
+    component = Content.get_component(socket.assigns.beacon_page.site, id, preloads: [:attrs])
     {:noreply, assign(socket, page_title: "Edit Component", component: component)}
   end
 
