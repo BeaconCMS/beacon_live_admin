@@ -1,6 +1,7 @@
 <script lang="ts">
   import {
     selectedAstElement,
+    selectedDomElement,
     slotTargetElement,
     selectedAstElementId,
     highlightedAstElement,
@@ -16,7 +17,7 @@
   $: isDragTarget = $slotTargetElement === node
   $: isSelectedNode = $selectedAstElement === node
   $: isHighlightedNode = $highlightedAstElement === node
-  $: isEditable = isSelectedNode && isAstElement(node) && node.content.filter((e) => typeof e === "string").length === 1
+  $: isEditable = isSelectedNode && isAstElement(node) && node.content.filter((e) => typeof e === "string").length === 1 && !node.attrs?.selfClose;
 
   function handleDragEnter() {
     if (isAstElement(node) && elementCanBeDroppedInTarget($draggedObject)) {
@@ -97,6 +98,25 @@
       },
     }
   }
+
+  function bindIfSelected(el: HTMLElement, isSelected: boolean) {
+    if (isSelected) {
+      $selectedDomElement = el;
+    }
+
+    return {
+      update(isSelected) {
+        if (isSelected) {
+          $selectedDomElement = el;
+        }
+      },
+      destroy() {
+        if (isSelected) {
+          $selectedDomElement = null;
+        }
+      }
+    }
+  }
 </script>
 
 {#if isAstElement(node)}
@@ -116,21 +136,9 @@
     >
       {@html node.rendered_html}
     </div>
-  {:else if node.attrs?.selfClose}
-    <svelte:element
-      this={node.tag}
-      {...node.attrs}
-      data-selected={isSelectedNode}
-      data-highlighted={isHighlightedNode}
-      data-slot-target={isDragTarget && !$slotTargetElement.attrs.selfClose}
-      on:dragenter|stopPropagation={handleDragEnter}
-      on:dragleave|stopPropagation={handleDragLeave}
-      on:mouseover|stopPropagation={handleMouseOver}
-      on:mouseout|stopPropagation={handleMouseOut}
-      on:click|preventDefault|stopPropagation={handleClick}
-    />
   {:else}
     <svelte:element
+      class="relative"
       this={node.tag}
       {...node.attrs}
       data-selected={isSelectedNode}
@@ -142,13 +150,16 @@
       on:dragleave|stopPropagation={handleDragLeave}
       on:mouseover|stopPropagation={handleMouseOver}
       on:mouseout|stopPropagation={handleMouseOut}
-      on:click|preventDefault|stopPropagation={() => ($selectedAstElementId = nodeId)}
+      on:click|preventDefault|stopPropagation={handleClick}
+      use:bindIfSelected={isSelectedNode}
     >
-      {#each node.content as subnode, index}
-        <svelte:self node={subnode} nodeId="{nodeId}.{index}" />
-      {/each}
-      {#if isDragTarget && $draggedObject}
-        <div class="dragged-element-placeholder">{@html $draggedObject.example}</div>
+      {#if !node.attrs?.selfClose}
+        {#each node.content as subnode, index}
+          <svelte:self node={subnode} nodeId="{nodeId}.{index}" />
+        {/each}
+        {#if isDragTarget && $draggedObject}
+          <div class="dragged-element-placeholder">{@html $draggedObject.example}</div>
+        {/if}
       {/if}
     </svelte:element>
   {/if}

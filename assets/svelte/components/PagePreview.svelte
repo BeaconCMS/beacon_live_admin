@@ -70,7 +70,7 @@
         data-test-id="browser-content"
       >
         <div id="page-wrapper" class="p-1 m-1" data-selected={$selectedAstElementId === "root"}>
-          <page-wrapper></page-wrapper>
+          <page-wrapper class="relative"></page-wrapper>
         </div>
       </div>
     </BrowserFrame>
