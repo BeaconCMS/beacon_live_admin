@@ -85,8 +85,6 @@ defmodule Beacon.LiveAdminTest.Cluster do
   end
 
   def start_beacon(node, beacon_config) do
-    # node_name = node |> to_string() |> String.split("@") |> List.first()
-
     rpc(node, Application, :put_env, [:my_app, :ecto_repos, [MyApp.Repo]])
 
     rpc(node, Application, :put_env, [
@@ -115,11 +113,11 @@ defmodule Beacon.LiveAdminTest.Cluster do
     {:ok, _} = rpc(node, MyApp.Repo, :start_link, [])
 
     path = Path.join(Path.dirname(__ENV__.file), "migrations")
-    rpc(node, Ecto.Migrator, :run, [MyApp.Repo, path, :up, [all: true]]) |> dbg
+    rpc(node, Ecto.Migrator, :run, [MyApp.Repo, path, :down, [all: true]])
+    rpc(node, Ecto.Migrator, :run, [MyApp.Repo, path, :up, [all: true]])
 
-    rpc(node, MyApp.Repo, :stop, []) |> dbg
+    rpc(node, MyApp.Repo, :stop, [])
 
-    # rpc(node, ecto_adapter, :storage_down, [repo_config])
     rpc(node, Application, :put_env, [
       :my_app,
       MyAppWeb.Endpoint,

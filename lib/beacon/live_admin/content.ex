@@ -208,8 +208,8 @@ defmodule Beacon.LiveAdmin.Content do
     call(site, Beacon.Content, :create_assign_for_live_data, [live_data, attrs])
   end
 
-  def get_live_data(site, id) do
-    call(site, Beacon.Content, :get_live_data, [id])
+  def get_live_data_by(site, clauses) do
+    call(site, Beacon.Content, :get_live_data_by, [site, clauses])
   end
 
   def live_data_for_site(site, opts \\ []) do

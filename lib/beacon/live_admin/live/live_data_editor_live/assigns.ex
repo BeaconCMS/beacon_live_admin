@@ -12,7 +12,7 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Assigns do
 
     socket =
       socket
-      |> assign(live_data: Content.get_live_data(site, params["live_data_id"]))
+      |> assign(live_data: Content.get_live_data_by(site, id: params["live_data_id"]))
       |> assign(unsaved_changes: false)
       |> assign(show_nav_modal: false)
       |> assign(show_create_modal: false)
@@ -104,7 +104,7 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Assigns do
             )
 
           socket
-          |> assign(live_data: Content.get_live_data(site, live_data.id))
+          |> assign(live_data: Content.get_live_data_by(site, id: live_data.id))
           |> assign_form()
           |> assign(unsaved_changes: false)
           |> push_patch(to: path)

@@ -4,7 +4,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.NewTest do
 
   setup do
     on_exit(fn ->
-      rpc(node1(), Beacon.Repo, :delete_all, [Beacon.Content.Component, [log: false]])
+      rpc(node1(), MyApp.Repo, :delete_all, [Beacon.Content.Component, [log: false]])
     end)
   end
 

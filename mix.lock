@@ -1,6 +1,6 @@
 %{
   "accent": {:hex, :accent, "1.1.1", "20257356446d45078b19b91608f74669b407b39af891ee3db9ee6824d1cae19d", [:mix], [{:jason, "~> 1.0", [hex: :jason, repo: "hexpm", optional: true]}, {:plug, "~> 1.3", [hex: :plug, repo: "hexpm", optional: false]}], "hexpm", "6d5afa50d4886e3370e04fa501468cbaa6c4b5fe926f72ccfa844ad9e259adae"},
-  "beacon": {:git, "https://github.com/beaconCMS/beacon.git", "be76170829d51071bf98a7dac059b1494f0cbf3a", []},
+  "beacon": {:git, "https://github.com/beaconCMS/beacon.git", "dd4842aa44a2bd5eba43372531ae8a803f469c02", []},
   "castore": {:hex, :castore, "1.0.7", "b651241514e5f6956028147fe6637f7ac13802537e895a724f90bf3e36ddd1dd", [:mix], [], "hexpm", "da7785a4b0d2a021cd1292a60875a784b6caef71e76bf4917bdee1f390455cf5"},
   "cc_precompiler": {:hex, :cc_precompiler, "0.1.10", "47c9c08d8869cf09b41da36538f62bc1abd3e19e41701c2cea2675b53c704258", [:mix], [{:elixir_make, "~> 0.7", [hex: :elixir_make, repo: "hexpm", optional: false]}], "hexpm", "f6e046254e53cd6b41c6bacd70ae728011aa82b2742a80d6e2214855c6e06b22"},
   "certifi": {:hex, :certifi, "2.12.0", "2d1cca2ec95f59643862af91f001478c9863c2ac9cb6e2f89780bfd8de987329", [:rebar3], [], "hexpm", "ee68d85df22e554040cdb4be100f33873ac6051387baf6a8f6ce82272340ff1c"},
