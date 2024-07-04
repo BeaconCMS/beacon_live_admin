@@ -15,7 +15,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.IndexTest do
     ])
 
     on_exit(fn ->
-      rpc(node, Beacon.Repo, :delete_all, [Beacon.Content.Component, [log: false]])
+      rpc(node, MyApp.Repo, :delete_all, [Beacon.Content.Component, [log: false]])
     end)
   end
 

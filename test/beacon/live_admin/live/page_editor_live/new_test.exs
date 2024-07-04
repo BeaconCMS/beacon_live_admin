@@ -4,8 +4,8 @@ defmodule Beacon.LiveAdmin.PageEditorLive.NewTest do
 
   setup do
     on_exit(fn ->
-      rpc(node1(), Beacon.Repo, :delete_all, [Beacon.Content.Page, [log: false]])
-      rpc(node1(), Beacon.Repo, :delete_all, [Beacon.Content.Layout, [log: false]])
+      rpc(node1(), MyApp.Repo, :delete_all, [Beacon.Content.Page, [log: false]])
+      rpc(node1(), MyApp.Repo, :delete_all, [Beacon.Content.Layout, [log: false]])
     end)
 
     layout_fixture()

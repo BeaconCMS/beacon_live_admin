@@ -4,6 +4,10 @@ defmodule MyApp.ErrorView do
   end
 end
 
+defmodule MyApp.Repo do
+  use Ecto.Repo, otp_app: :my_app, adapter: Ecto.Adapters.Postgres
+end
+
 defmodule MyApp.Router do
   use Phoenix.Router
   use Beacon.Router
@@ -18,7 +22,7 @@ defmodule MyApp.Router do
   end
 end
 
-defmodule MyApp.Endpoint do
+defmodule MyAppWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :my_app
 
   plug Plug.Session,
