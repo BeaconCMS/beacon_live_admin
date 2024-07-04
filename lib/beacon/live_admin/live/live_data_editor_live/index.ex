@@ -51,9 +51,7 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Index do
         {:ok, live_data} ->
           socket
           |> assign(live_data_list: Content.live_data_for_site(site))
-          |> push_navigate(
-            to: beacon_live_admin_path(socket, site, "/live_data/#{live_data.id}/assigns")
-          )
+          |> push_navigate(to: beacon_live_admin_path(socket, site, "/live_data/#{live_data.id}/assigns"))
 
         {:error, _changeset} ->
           socket

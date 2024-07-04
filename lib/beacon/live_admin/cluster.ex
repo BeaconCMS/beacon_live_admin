@@ -77,9 +77,7 @@ defmodule Beacon.LiveAdmin.Cluster do
     end
   rescue
     exception ->
-      Logger.debug(
-        "failed to call #{Exception.format_mfa(mod, fun, args)} for site #{inspect(site)} on node #{inspect(node)}"
-      )
+      Logger.debug("failed to call #{Exception.format_mfa(mod, fun, args)} for site #{inspect(site)} on node #{inspect(node)}")
 
       message = """
       failed to call #{Exception.format_mfa(mod, fun, args)} for site #{inspect(site)} on node #{inspect(node)}

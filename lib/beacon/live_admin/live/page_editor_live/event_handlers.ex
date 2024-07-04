@@ -15,9 +15,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.EventHandlers do
   # For the first page load
   def handle_params(params, _url, socket) do
     page =
-      Content.get_page(socket.assigns.beacon_page.site, params["page_id"],
-        preloads: [:event_handlers]
-      )
+      Content.get_page(socket.assigns.beacon_page.site, params["page_id"], preloads: [:event_handlers])
 
     socket =
       socket
