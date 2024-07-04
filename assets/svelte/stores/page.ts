@@ -23,6 +23,12 @@ export const selectedAstElement: Readable<AstElement | undefined> = derived(
 )
 
 export const selectedDomElement: Writable<Element | null> = writable(null)
+export interface SelectedElementMenu {
+  top: number,
+  left: number,
+  dragging: boolean
+}
+export const selectedElementMenu: Writable<SelectedElementMenu | null> = writable(null)
 
 export function isAstElement(maybeNode: AstNode): maybeNode is AstElement {
   return typeof maybeNode !== "string"

@@ -6,6 +6,7 @@
     selectedAstElementId,
     highlightedAstElement,
     isAstElement,
+    selectedElementMenu
   } from "$lib/stores/page"
   import { draggedObject } from "$lib/stores/dragAndDrop"
   import { updateNodeContent, updateAst } from "$lib/utils/ast-manipulation"
@@ -14,15 +15,35 @@
   export let node: AstNode
   export let nodeId: string
 
+  let domElement: Element;
+  let previewDropInside: boolean;
   $: isDragTarget = $slotTargetElement === node
   $: isSelectedNode = $selectedAstElement === node
   $: isHighlightedNode = $highlightedAstElement === node
   $: isEditable = isSelectedNode && isAstElement(node) && node.content.filter((e) => typeof e === "string").length === 1 && !node.attrs?.selfClose;
 
   function handleDragEnter() {
-    if (isAstElement(node) && elementCanBeDroppedInTarget($draggedObject)) {
-      $slotTargetElement = node
+    if ($draggedObject) {
+      if (isAstElement(node) && elementCanBeDroppedInTarget($draggedObject)) {
+        $slotTargetElement = node
+      }
     }
+  }
+
+  function handlePointerOver(e: PointerEvent) {
+    if ($selectedElementMenu?.dragging) {
+      e.stopPropagation();
+      console.log("pointerover");
+    }
+  }
+
+  function handlePointerEnter() {
+     console.log("handlePointerEnter");
+
+  }
+  function handlePointerLeave() {
+     console.log("handlePointerLeave");
+
   }
 
   function handleDragLeave() {
@@ -32,7 +53,9 @@
   }
 
   function handleMouseOver() {
-    isAstElement(node) && ($highlightedAstElement = node)
+    if (!$selectedElementMenu?.dragging) {
+      isAstElement(node) && ($highlightedAstElement = node)
+    }
   }
   function handleMouseOut() {
     $highlightedAstElement = undefined
@@ -140,6 +163,7 @@
     <svelte:element
       class="relative"
       this={node.tag}
+      bind:this={domElement}
       {...node.attrs}
       data-selected={isSelectedNode}
       data-highlighted={isHighlightedNode}
@@ -148,8 +172,11 @@
       on:blur={handleContentEdited}
       on:dragenter|stopPropagation={handleDragEnter}
       on:dragleave|stopPropagation={handleDragLeave}
-      on:mouseover|stopPropagation={handleMouseOver}
-      on:mouseout|stopPropagation={handleMouseOut}
+      on:pointerenter={handlePointerEnter}
+      on:pointerleave={handlePointerLeave}
+      on:pointerover={handlePointerOver}
+      on:mouseover={handleMouseOver}
+      on:mouseout={handleMouseOut}
       on:click|preventDefault|stopPropagation={handleClick}
       use:bindIfSelected={isSelectedNode}
     >
@@ -159,6 +186,9 @@
         {/each}
         {#if isDragTarget && $draggedObject}
           <div class="dragged-element-placeholder">{@html $draggedObject.example}</div>
+        {:else if previewDropInside}
+          {@debug previewDropInside}
+          <div class="dragged-element-placeholder">Preview!!!</div>
         {/if}
       {/if}
     </svelte:element>
