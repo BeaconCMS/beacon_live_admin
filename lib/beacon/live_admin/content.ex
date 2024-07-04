@@ -25,11 +25,11 @@ defmodule Beacon.LiveAdmin.Content do
   end
 
   def publish_layout(site, id) do
-    call(site, Beacon.Content, :publish_layout, [id])
+    call(site, Beacon.Content, :publish_layout, [site, id])
   end
 
   def get_layout(site, id) do
-    call(site, Beacon.Content, :get_layout, [id])
+    call(site, Beacon.Content, :get_layout, [site, id])
   end
 
   def list_layout_events(site, id) do
@@ -77,15 +77,15 @@ defmodule Beacon.LiveAdmin.Content do
   end
 
   def publish_page(site, id) do
-    call(site, Beacon.Content, :publish_page, [id])
+    call(site, Beacon.Content, :publish_page, [site, id])
   end
 
   def get_page(site, id) do
-    call(site, Beacon.Content, :get_page, [id])
+    call(site, Beacon.Content, :get_page, [site, id])
   end
 
   def get_page(site, id, opts) do
-    call(site, Beacon.Content, :get_page, [id, opts])
+    call(site, Beacon.Content, :get_page, [site, id, opts])
   end
 
   def get_latest_page_event(site, id) do
@@ -221,14 +221,14 @@ defmodule Beacon.LiveAdmin.Content do
   end
 
   def update_live_data_assign(site, live_data_assign, attrs) do
-    call(site, Beacon.Content, :update_live_data_assign, [live_data_assign, attrs])
+    call(site, Beacon.Content, :update_live_data_assign, [live_data_assign, site, attrs])
   end
 
   def delete_live_data(site, live_data) do
-    call(site, Beacon.Content, :delete_live_data, [live_data])
+    call(site, Beacon.Content, :delete_live_data, [live_data, site])
   end
 
   def delete_live_data_assign(site, live_data_assign) do
-    call(site, Beacon.Content, :delete_live_data_assign, [live_data_assign])
+    call(site, Beacon.Content, :delete_live_data_assign, [live_data_assign, site])
   end
 end

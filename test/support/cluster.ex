@@ -85,11 +85,44 @@ defmodule Beacon.LiveAdminTest.Cluster do
   end
 
   def start_beacon(node, beacon_config) do
-    node_name = node |> to_string() |> String.split("@") |> List.first()
+    # node_name = node |> to_string() |> String.split("@") |> List.first()
+
+    rpc(node, Application, :put_env, [:my_app, :ecto_repos, [MyApp.Repo]])
 
     rpc(node, Application, :put_env, [
       :my_app,
-      MyApp.Endpoint,
+      MyApp.Repo,
+      [
+        url: System.get_env("DATABASE_URL") || "postgres://localhost:5432/beacon_live_admin_my_app_test",
+        pool: Ecto.Adapters.SQL.Sandbox,
+        pool_size: System.schedulers_online() * 2,
+        stacktrace: true,
+        show_sensitive_data_on_connection_error: true
+      ]
+    ])
+
+    {:ok, _} = rpc(node, Application, :ensure_all_started, [:postgrex])
+
+    ecto_adapter = rpc(node, MyApp.Repo, :__adapter__, [])
+    repo_config = rpc(node, MyApp.Repo, :config, [])
+
+    case rpc(node, ecto_adapter, :storage_up, [repo_config]) do
+      :ok -> :ok
+      {:error, :already_up} -> :ok
+      error -> raise inspect(error)
+    end
+
+    {:ok, _} = rpc(node, MyApp.Repo, :start_link, [])
+
+    path = Path.join(Path.dirname(__ENV__.file), "migrations")
+    rpc(node, Ecto.Migrator, :run, [MyApp.Repo, path, :up, [all: true]]) |> dbg
+
+    rpc(node, MyApp.Repo, :stop, []) |> dbg
+
+    # rpc(node, ecto_adapter, :storage_down, [repo_config])
+    rpc(node, Application, :put_env, [
+      :my_app,
+      MyAppWeb.Endpoint,
       url: [host: "localhost", port: Enum.random(4010..4099)],
       secret_key_base: "TrXbWpjZWxk0GXclXOHFCoufQh1oRK0N5rev5GcpbPCsuf2C/kbYlMgeEEAXPayF",
       live_view: [signing_salt: "nXvN+c8y"],
@@ -98,43 +131,29 @@ defmodule Beacon.LiveAdminTest.Cluster do
       check_origin: false
     ])
 
-    rpc(node, Application, :put_env, [
-      :beacon,
-      Beacon.Repo,
-      [
-        database: "beacon_#{node_name}_test",
-        password: "postgres",
-        pool: Ecto.Adapters.SQL.Sandbox,
-        username: "postgres",
-        ownership_timeout: 1_000_000_000,
-        stacktrace: true,
-        show_sensitive_data_on_connection_error: true
-      ]
-    ])
-
-    ecto_adapter = rpc(node, Beacon.Repo, :__adapter__, [])
-    repo_config = rpc(node, Beacon.Repo, :config, [])
-
-    # rpc(node, ecto_adapter, :storage_down, [repo_config])
-    case rpc(node, ecto_adapter, :storage_up, [repo_config]) do
-      :ok -> :ok
-      {:error, :already_up} -> :ok
-      error -> raise inspect(error)
-    end
-
     {:ok, _} = rpc(node, Application, :ensure_all_started, [:beacon])
 
     children = [
-      {Beacon, beacon_config},
-      MyApp.Endpoint
+      MyApp.Repo,
+      MyAppWeb.Endpoint,
+      {Beacon, beacon_config}
     ]
 
     case rpc(node, Supervisor, :start_link, [children, [strategy: :one_for_one]]) do
-      {:ok, _} -> :ok
-      _ -> raise "failed to start Beacon on node #{inspect(node)}"
+      {:ok, _} ->
+        :ok
+
+      {:error, error} ->
+        raise """
+        failed to start Beacon on node #{inspect(node)}
+
+        Got:
+
+          #{inspect(error)}
+
+        """
     end
 
-    # rpc(node, Ecto.Migrator, :run, [Beacon.Repo, :down, [all: true]])
-    rpc(node, Ecto.Migrator, :run, [Beacon.Repo, :up, [all: true]])
+    :ok
   end
 end
