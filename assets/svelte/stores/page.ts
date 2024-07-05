@@ -27,6 +27,7 @@ export interface SelectedElementMenu {
   top: number,
   left: number,
   dragging: boolean
+  dragDirection: 'horizontal' | 'vertical'
 }
 export const selectedElementMenu: Writable<SelectedElementMenu | null> = writable(null)
 

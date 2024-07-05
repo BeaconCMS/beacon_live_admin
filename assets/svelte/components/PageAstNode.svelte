@@ -30,22 +30,6 @@
     }
   }
 
-  function handlePointerOver(e: PointerEvent) {
-    if ($selectedElementMenu?.dragging) {
-      e.stopPropagation();
-      console.log("pointerover");
-    }
-  }
-
-  function handlePointerEnter() {
-     console.log("handlePointerEnter");
-
-  }
-  function handlePointerLeave() {
-     console.log("handlePointerLeave");
-
-  }
-
   function handleDragLeave() {
     if (isAstElement(node) && elementCanBeDroppedInTarget($draggedObject) && $slotTargetElement === node) {
       $slotTargetElement = undefined
@@ -172,9 +156,6 @@
       on:blur={handleContentEdited}
       on:dragenter|stopPropagation={handleDragEnter}
       on:dragleave|stopPropagation={handleDragLeave}
-      on:pointerenter={handlePointerEnter}
-      on:pointerleave={handlePointerLeave}
-      on:pointerover={handlePointerOver}
       on:mouseover={handleMouseOver}
       on:mouseout={handleMouseOut}
       on:click|preventDefault|stopPropagation={handleClick}
@@ -187,8 +168,7 @@
         {#if isDragTarget && $draggedObject}
           <div class="dragged-element-placeholder">{@html $draggedObject.example}</div>
         {:else if previewDropInside}
-          {@debug previewDropInside}
-          <div class="dragged-element-placeholder">Preview!!!</div>
+          <div class="dragged-element-placeholder">Preview</div>
         {/if}
       {/if}
     </svelte:element>
