@@ -18,6 +18,7 @@
     "typescript": "^5.3"
   },
   "dependencies": {
+    "@mhsdesign/jit-browser-tailwindcss": "^0.4.1",
     "@monaco-editor/loader": "^1.4",
     "live_svelte": "file:../deps/live_svelte",
     "phoenix": "file:../deps/phoenix",

@@ -6,19 +6,19 @@
   import { page } from "$lib/stores/page"
   import { tailwindConfig } from "$lib/stores/tailwindConfig"
   import { tailwindInput } from "$lib/stores/tailwindInput"
+  import { createTailwindcss } from '@mhsdesign/jit-browser-tailwindcss';
   import { onMount, tick } from "svelte"
 
-  const tailwindJitPromise = import("https://unpkg.com/@mhsdesign/jit-browser-tailwindcss@0.4.0/dist/cdn.min.js")
 
   let wrapper: HTMLElement
   let styleWrapper: HTMLElement
   let twConfig = $tailwindConfig
-  let b64moduleData = "data:text/javascript;base64," + btoa(twConfig.replace("module.exports = ", "export default "))
+  let b64moduleData = "data:text/javascript;base64," + btoa(twConfig)
   let configPromise = import(b64moduleData)
   onMount(async () => {
-    const [_, { default: tailwindConfig }] = await Promise.all([tailwindJitPromise, configPromise])
+    const { default: tailwindConfig } = await configPromise;
 
-    const tailwind = window.createTailwindcss({ tailwindConfig })
+    const tailwind = createTailwindcss({ tailwindConfig })
 
     const reloadStylesheet = async () => {
       if (!wrapper) return
