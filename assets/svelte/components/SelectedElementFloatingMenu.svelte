@@ -1,7 +1,11 @@
 <script lang="ts">
   import { selectedDomElement, selectedElementMenu } from "$lib/stores/page"
+  import type { MouseMovement } from "$lib/utils/drag-helpers"
 
-  let relativeWrapperRect; 
+  let mouseMovement: MouseMovement = null;
+  let relativeWrapperRect: DOMRect; 
+  let siblings: Element[] = [];
+  let siblingsRectangles: DOMRect[] = [];
   $: {
     if ($selectedDomElement) {
       if (!relativeWrapperRect) {
@@ -9,25 +13,26 @@
       }
       let dragDirection = getDragDirection($selectedDomElement);
       let selectedElRect = $selectedDomElement.getBoundingClientRect();
-      let defaultTop = selectedElRect.y - relativeWrapperRect.y + selectedElRect.height + 5;
-      let defaultLeft = selectedElRect.x - relativeWrapperRect.x + (selectedElRect.width / 2) - 12;
-      if (mousePosition) {    
-        let top = mousePosition.clientY - relativeWrapperRect.y - 12;
-        let left = mousePosition.clientX - relativeWrapperRect.x - 12;
-        $selectedElementMenu = {
-          top: dragDirection === 'horizontal' ? defaultTop : top,
-          left: dragDirection === 'vertical' ?  defaultLeft : left,
-          dragDirection,
-          dragging: true
+      let top = selectedElRect.y - relativeWrapperRect.y + selectedElRect.height + 5;
+      let left = selectedElRect.x - relativeWrapperRect.x + (selectedElRect.width / 2) - 12;
+      if (mouseMovement) {   
+        top = dragDirection === 'horizontal' ? top : mouseMovement.current.y - relativeWrapperRect.y - 12; 
+        left = dragDirection === 'vertical' ?  left :  mouseMovement.current.x - relativeWrapperRect.x - 12;
+      }
+      $selectedElementMenu = { top, left, dragDirection, dragging: !!mouseMovement, mouseMovement }
+    }
+  }
+
+  $: {
+    if ($selectedElementMenu && mouseMovement && siblings.length > 0) {
+      if ($selectedElementMenu.dragDirection === 'vertical') {
+        let firstElementBeforeCursorIndex = siblingsRectangles.findIndex(({top, height}) => (top + height / 2) >= $selectedElementMenu.mouseMovement.y);
+        let firstElementBeforeCursor = siblings[firstElementBeforeCursorIndex];
+        if (firstElementBeforeCursor && firstElementBeforeCursor !== $selectedDomElement) {
+          debugger;
         }
       } else {
-        let selectedElRect = $selectedDomElement.getBoundingClientRect();
-        $selectedElementMenu = {
-          top: defaultTop,
-          left: defaultLeft,
-          dragDirection,
-          dragging: false
-        }
+        debugger;
       }
     }
   }
@@ -50,44 +55,31 @@
     return ['row', 'row-reverse'].includes(flexDirection) ? 'horizontal' : 'vertical';
   }
 
-  // let ghostImage;
-  // function startDraggingElementHandle(e: DragEvent) {
-  //   let draggedEl = e.target as HTMLElement;
-  //   ghostImage = draggedEl.cloneNode(true) as HTMLElement;
-  //   ghostImage.style.opacity = '0';
-  //   ghostImage.style.position = 'absolute';
-  //   ghostImage.style.top = '-9999px';
-  //   document.body.appendChild(ghostImage);    
-  //   e.dataTransfer.effectAllowed = 'move';
-  //   e.dataTransfer.setDragImage(ghostImage, draggedEl.offsetHeight, draggedEl.offsetWidth);
-  // }
-  // function finishDraggingElementHandle(e: DragEvent) {
-  //   ghostImage.remove();
-  //   currentDragCoordinates = null
-  // }
-
   function handleMousedown(e: MouseEvent) {
     document.addEventListener('mousemove', handleMousemove)
     document.addEventListener('mouseup', handleMouseup)
+    siblings = Array.from($selectedDomElement.parentElement.children);
+    siblingsRectangles = Array.from(siblings).map(el => el.getBoundingClientRect());
+    mouseMovement = { start: { x: e.clientX, y: e.clientY }, current: { x: e.clientX, y: e.clientY } };
+    console.log('siblingsRectangles', siblings, siblingsRectangles);
     console.log('mousedown', e);
   }
-  let mousePosition: { clientX: number, clientY: number } = null;
+
   function handleMouseup(e: MouseEvent) {
     document.removeEventListener('mousemove', handleMousemove);
-    mousePosition = null;
+    mouseMovement = null;
+    siblings = [];
+    siblingsRectangles = [];
+    mouseMovement = null;
     console.log('mouseup', e);
   }
+
   function handleMousemove(e: MouseEvent) {
-    mousePosition = { clientX: e.clientX, clientY: e.clientY };
-    // console.log('mousemove', e);
+    mouseMovement = { start: mouseMovement.start, current: { x: e.clientX, y: e.clientY } };
   }
 </script>
 
 {#if $selectedElementMenu}
-<!-- on:dragstart={startDraggingElementHandle}
-on:dragend={finishDraggingElementHandle}
-on:drag={(e) => currentDragCoordinates = { x: e.clientX, y: e.clientY }} -->
-<!-- draggable="true" -->
   <button 
     on:mousedown={handleMousedown}
     class="rounded-full w-[24px] h-[24px] flex justify-center items-center absolute bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 active:bg-blue-800"

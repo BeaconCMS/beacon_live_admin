@@ -1,6 +1,7 @@
 import { writable, derived, get } from "svelte/store"
 import type { Writable, Readable } from "svelte/store"
 import type { AstElement, AstNode, Page } from "$lib/types"
+import type { MouseMovement } from "$lib/utils/drag-helpers"
 
 export const page: Writable<Page> = writable()
 export const selectedAstElementId: Writable<string | undefined> = writable()
@@ -27,7 +28,8 @@ export interface SelectedElementMenu {
   top: number,
   left: number,
   dragging: boolean
-  dragDirection: 'horizontal' | 'vertical'
+  dragDirection: 'horizontal' | 'vertical',
+  mouseMovement: MouseMovement
 }
 export const selectedElementMenu: Writable<SelectedElementMenu | null> = writable(null)
 

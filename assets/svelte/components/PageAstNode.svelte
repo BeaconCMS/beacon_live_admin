@@ -10,7 +10,7 @@
   } from "$lib/stores/page"
   import { draggedObject } from "$lib/stores/dragAndDrop"
   import { updateNodeContent, updateAst } from "$lib/utils/ast-manipulation"
-  import { elementCanBeDroppedInTarget } from "$lib/utils/drag-helpers"
+  import { elementCanBeDroppedInTarget, mouseDiff } from "$lib/utils/drag-helpers"
   import type { AstNode } from "$lib/types"
   export let node: AstNode
   export let nodeId: string
@@ -124,6 +124,21 @@
       }
     }
   }
+
+  let selectedElementStyle = '';
+  $: {
+    if (isSelectedNode && $selectedElementMenu && $selectedElementMenu.mouseMovement) {
+      let {x, y} = mouseDiff($selectedElementMenu.mouseMovement)
+      if ($selectedElementMenu.dragDirection === 'vertical') {
+        selectedElementStyle = `transform: translateY(${y}px);`;
+      } else {
+        selectedElementStyle = `transform: translateX(${x}px);`;
+        debugger;
+      }
+    } else {
+      selectedElementStyle = '';
+    }
+  }
 </script>
 
 {#if isAstElement(node)}
@@ -160,6 +175,7 @@
       on:mouseout={handleMouseOut}
       on:click|preventDefault|stopPropagation={handleClick}
       use:bindIfSelected={isSelectedNode}
+      style={selectedElementStyle}
     >
       {#if !node.attrs?.selfClose}
         {#each node.content as subnode, index}
