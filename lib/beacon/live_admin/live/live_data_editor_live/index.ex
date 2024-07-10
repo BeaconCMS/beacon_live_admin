@@ -51,9 +51,7 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Index do
         {:ok, live_data} ->
           socket
           |> assign(live_data_list: Content.live_data_for_site(site))
-          |> push_navigate(
-            to: beacon_live_admin_path(socket, site, "/live_data/#{live_data.id}/assigns")
-          )
+          |> push_navigate(to: beacon_live_admin_path(socket, site, "/live_data/#{live_data.id}/assigns"))
 
         {:error, _changeset} ->
           socket
@@ -88,15 +86,15 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Index do
 
   defp assign_edit_path_form(socket, _id), do: assign(socket, edit_path_form: to_form(%{}))
 
-  defp assign_selected(socket, nil), do: assign(socket, selected: nil)
+  defp assign_selected(socket, nil = _id), do: assign(socket, selected: nil)
 
-  defp assign_selected(%{assigns: %{live_action: action}} = socket, _)
+  defp assign_selected(%{assigns: %{live_action: action}} = socket, _id)
        when action in [:index, :new],
        do: assign(socket, selected: nil)
 
-  defp assign_selected(socket, path) do
+  defp assign_selected(socket, id) do
     %{beacon_page: %{site: site}} = socket.assigns
-    assign(socket, selected: Content.get_live_data(site, path))
+    assign(socket, selected: Content.get_live_data_by(site, id: id))
   end
 
   def render(assigns) do

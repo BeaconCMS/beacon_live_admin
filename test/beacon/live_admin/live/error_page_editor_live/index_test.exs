@@ -12,8 +12,8 @@ defmodule Beacon.LiveAdmin.ErrorPageEditorLive.IndexTest do
     error_page_fixture(node1(), attrs)
 
     on_exit(fn ->
-      rpc(node1(), Beacon.Repo, :delete_all, [Beacon.Content.ErrorPage, [log: false]])
-      rpc(node1(), Beacon.Repo, :delete_all, [Beacon.Content.Layout, [log: false]])
+      rpc(node1(), MyApp.Repo, :delete_all, [Beacon.Content.ErrorPage, [log: false]])
+      rpc(node1(), MyApp.Repo, :delete_all, [Beacon.Content.Layout, [log: false]])
     end)
 
     [another_layout: another_layout]

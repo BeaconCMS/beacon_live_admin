@@ -12,7 +12,7 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Assigns do
 
     socket =
       socket
-      |> assign(live_data: Content.get_live_data(site, params["live_data_id"]))
+      |> assign(live_data: Content.get_live_data_by(site, id: params["live_data_id"]))
       |> assign(unsaved_changes: false)
       |> assign(show_nav_modal: false)
       |> assign(show_create_modal: false)
@@ -33,7 +33,7 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Assigns do
     if unsaved_changes do
       {:noreply, assign(socket, show_nav_modal: true, confirm_nav_path: path)}
     else
-      {:noreply, push_redirect(socket, to: path)}
+      {:noreply, push_navigate(socket, to: path)}
     end
   end
 
@@ -104,7 +104,7 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Assigns do
             )
 
           socket
-          |> assign(live_data: Content.get_live_data(site, live_data.id))
+          |> assign(live_data: Content.get_live_data_by(site, id: live_data.id))
           |> assign_form()
           |> assign(unsaved_changes: false)
           |> push_patch(to: path)
@@ -147,7 +147,7 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Assigns do
     {:ok, _} = Content.delete_live_data_assign(site, selected)
 
     {:noreply,
-     push_redirect(socket,
+     push_navigate(socket,
        to: beacon_live_admin_path(socket, site, "/live_data/#{live_data.id}/assigns")
      )}
   end
@@ -165,7 +165,7 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Assigns do
   end
 
   def handle_event("discard_changes", _params, socket) do
-    {:noreply, push_redirect(socket, to: socket.assigns.confirm_nav_path)}
+    {:noreply, push_navigate(socket, to: socket.assigns.confirm_nav_path)}
   end
 
   def render(assigns) do
