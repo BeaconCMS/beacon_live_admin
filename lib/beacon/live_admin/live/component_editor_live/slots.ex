@@ -56,6 +56,8 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.Slots do
   def handle_event("validate", %{"component_slot" => params}, socket) do
     %{selected: selected, beacon_page: %{site: site}} = socket.assigns
 
+    params = format_options_input(params)
+
     changeset =
       site
       |> Content.change_component_slot(selected, params)
@@ -72,10 +74,10 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.Slots do
   def handle_event("save_changes", %{"component_slot" => params}, socket) do
     %{component: component, selected: selected, beacon_page: %{site: site}} = socket.assigns
 
-    attrs = %{name: params["name"]}
+    params = format_options_input(params)
 
     socket =
-      case Content.update_slot_for_component(site, component, selected, attrs) do
+      case Content.update_slot_for_component(site, component, selected, params) do
         {:ok, updated_component} ->
           socket
           |> assign(component: updated_component)
@@ -190,6 +192,9 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.Slots do
           <div :if={@form} class="w-full col-span-2">
             <.form :let={f} for={@form} class="flex items-end gap-4" phx-change="validate" phx-submit="save_changes">
               <.input label="Name" field={f[:name]} type="text" />
+              <.input label="Required" field={f[:opts_required]} type="select" options={["false", "true"]} value={opts_required_value(f)} />
+              <.input label="Validate Attrs" field={f[:opts_validate]} type="select" options={["true", "false"]} value={opts_validate_value(f)} />
+              <.input label="Doc" field={f[:opts_doc]} type="text" phx-debounce="100" value={opts_doc_value(f)} />
 
               <.button phx-disable-with="Saving..." class="ml-auto">Save Changes</.button>
               <.button type="button" phx-click="delete" class="">Delete</.button>
@@ -273,4 +278,63 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.Slots do
   defp assign_form(socket, changeset) do
     assign(socket, :form, to_form(changeset))
   end
+
+  defp format_options_input(slot_params) do
+    slot_opts = []
+
+    slot_opts =
+      slot_opts
+      |> option_required(slot_params["opts_required"])
+      |> option_validate(slot_params["opts_validate"])
+      |> option_doc(slot_params["opts_doc"])
+
+    Map.put(slot_params, "opts", slot_opts)
+  end
+
+  defp option_required(attr_opts, "false"), do: attr_opts
+
+  defp option_required(attr_opts, "true") do
+    Keyword.merge(attr_opts, required: true)
+  end
+
+  defp option_validate(attr_opts, "true"), do: attr_opts
+
+  defp option_validate(attr_opts, "false") do
+    Keyword.merge(attr_opts, validate_attrs: false)
+  end
+
+  defp option_doc(slot_opts, ""), do: slot_opts
+
+  defp option_doc(slot_opts, opts_doc) do
+    Keyword.merge(slot_opts, doc: opts_doc)
+  end
+
+  defp opts_doc_value(form) do
+    form
+    |> get_field_opts()
+    |> Keyword.get(:doc, "")
+  end
+
+  def opts_required_value(form) do
+    form
+    |> get_field_opts()
+    |> Keyword.get(:required, false)
+    |> to_string()
+  end
+
+  def opts_validate_value(form) do
+    form
+    |> get_field_opts()
+    |> Keyword.get(:validate_attrs, true)
+    |> to_string()
+  end
+
+  defp get_field_opts(form) do
+    form
+    |> Phoenix.HTML.Form.input_value(:opts)
+    |> maybe_binary_to_term()
+  end
+
+  defp maybe_binary_to_term(opts) when is_binary(opts), do: :erlang.binary_to_term(opts)
+  defp maybe_binary_to_term(opts), do: opts
 end

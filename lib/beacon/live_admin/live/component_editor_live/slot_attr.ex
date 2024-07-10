@@ -95,6 +95,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.SlotAttr do
       |> option_default(slot_attr_params["opts_default"])
       |> option_values(slot_attr_params["opts_values"])
       |> option_doc(slot_attr_params["opts_doc"])
+      |> option_examples(slot_attr_params["opts_examples"])
 
     Map.put(slot_attr_params, "opts", attr_opts)
   end
@@ -102,27 +103,41 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.SlotAttr do
   defp option_required(attr_opts, "false"), do: attr_opts
 
   defp option_required(attr_opts, "true") do
-    attr_opts |> Keyword.merge(required: true)
+    Keyword.merge(attr_opts, required: true)
   end
 
   defp option_default(attr_opts, ""), do: attr_opts
 
   defp option_default(attr_opts, opts_default) do
-    attr_opts |> Keyword.merge(default: opts_default)
+    opts_default = eval_string_value(opts_default)
+    Keyword.merge(attr_opts, default: opts_default)
+  end
+
+  defp option_examples(attr_opts, ""), do: attr_opts
+
+  defp option_examples(attr_opts, opts_examples) do
+    opts_examples = eval_string_value(opts_examples)
+    Keyword.merge(attr_opts, examples: opts_examples)
   end
 
   defp option_values(attr_opts, ""), do: attr_opts
 
   defp option_values(attr_opts, opts_values) do
-    values = split_string_into_list(opts_values)
-
-    attr_opts |> Keyword.merge(values: values)
+    opts_values = eval_string_value(opts_values)
+    Keyword.merge(attr_opts, values: opts_values)
   end
 
   defp option_doc(attr_opts, ""), do: attr_opts
 
   defp option_doc(attr_opts, opts_doc) do
-    attr_opts |> Keyword.merge(doc: opts_doc)
+    Keyword.merge(attr_opts, doc: opts_doc)
+  end
+
+  defp eval_string_value(opts_default) do
+    {term, _} = Code.eval_string(opts_default)
+    term
+  rescue
+    _exception -> "#{opts_default}"
   end
 
   defp save_component(socket, :new, slot_attr_params) do
@@ -182,10 +197,11 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.SlotAttr do
         <.input :if={f[:type].value == "struct"} field={f[:struct_name]} type="text" phx-debounce="100" placeholder="MyApp.Users.User" label="Struct Name" />
 
         <legend class="text-sm font-bold tracking-widest text-[#445668] uppercase">Options</legend>
-        <.input field={f[:opts_required]} type="checkbox" value={opts_required_value(f)} label="Required attribute" />
-        <.input field={f[:opts_default]} type="text" phx-debounce="100" value={opts_default_value(f)} label="Default Attribute" />
-        <.input field={f[:opts_values]} type="text" phx-debounce="100" value={opts_values_value(f)} label="Accepted values" placeholder="value1, value2, ..." />
+        <.input field={f[:opts_required]} type="select" options={["false", "true"]} value={opts_required_value(f)} label="Required" />
+        <.input field={f[:opts_default]} type="text" phx-debounce="100" value={opts_default_value(f)} label="Default" />
+        <.input field={f[:opts_values]} type="text" phx-debounce="100" value={opts_values_value(f)} label="Accepted values" placeholder='["string 1", :atom_2, 123, %{}, [], ...]' />
         <.input field={f[:opts_doc]} type="text" phx-debounce="100" value={opts_doc_value(f)} label="Attribute doc" />
+        <.input field={f[:opts_examples]} type="text" phx-debounce="500" value={opts_examples_value(f)} label="Examples" />
 
         <div class="flex mt-8 gap-x-[20px]">
           <.button type="submit">Save</.button>
@@ -205,19 +221,46 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.SlotAttr do
     form
     |> get_field_opts()
     |> Keyword.get(:required, false)
+    |> to_string()
   end
 
   def opts_default_value(form) do
-    form
-    |> get_field_opts()
-    |> Keyword.get(:default, "")
+    default_value =
+      form
+      |> get_field_opts()
+      |> Keyword.get(:default, "")
+
+    if is_binary(default_value) do
+      default_value
+    else
+      inspect(default_value)
+    end
+  end
+
+  def opts_examples_value(form) do
+    examples_value =
+      form
+      |> get_field_opts()
+      |> Keyword.get(:examples, "")
+
+    if is_binary(examples_value) do
+      examples_value
+    else
+      inspect(examples_value)
+    end
   end
 
   def opts_values_value(form) do
-    form
-    |> get_field_opts()
-    |> Keyword.get(:values, [])
-    |> Enum.join(", ")
+    values =
+      form
+      |> get_field_opts()
+      |> Keyword.get(:values, "")
+
+    if is_binary(values) do
+      values
+    else
+      inspect(values)
+    end
   end
 
   def opts_doc_value(form) do
@@ -234,10 +277,4 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.SlotAttr do
 
   defp maybe_binary_to_term(opts) when is_binary(opts), do: :erlang.binary_to_term(opts)
   defp maybe_binary_to_term(opts), do: opts
-
-  defp split_string_into_list(string) do
-    ~r/[\s,]+/
-    |> Regex.split(string)
-    |> Enum.reject(&(&1 == ""))
-  end
 end

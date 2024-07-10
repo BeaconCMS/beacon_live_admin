@@ -1,7 +1,8 @@
 defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
   use Beacon.LiveAdmin.Web, :live_component
-  alias Beacon.LiveAdmin.Content
+  import Ecto.Changeset, only: [get_field: 2]
 
+  alias Beacon.LiveAdmin.Content
   alias Beacon.Content.ComponentAttr
 
   @impl true
@@ -11,136 +12,19 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
 
   @impl true
   def update(%{site: site, component: component} = assigns, socket) do
-    attrs_forms =
-      case assigns.live_action do
-        :new ->
-          []
-
-        :edit ->
-          Enum.map(component.attrs, &build_attr_form(site, &1, %{component_id: component.id}))
-      end
-
     changeset = Content.change_component(site, component)
 
     {:ok,
      socket
      |> assign(assigns)
-     |> assign_form(changeset)
-     |> assign(:attrs_forms, attrs_forms)}
+     |> assign_form(changeset)}
   end
 
   def update(%{template: value}, socket) do
     params = Map.merge(socket.assigns.form.params, %{"template" => value})
     changeset = Content.change_component(socket.assigns.site, socket.assigns.component, params)
+
     {:ok, assign_form(socket, changeset)}
-  end
-
-  @impl true
-  def handle_event("validate", %{"component" => component_params}, socket) do
-    changeset =
-      socket.assigns.site
-      |> Content.change_component(socket.assigns.component, component_params)
-      |> Map.put(:action, :validate)
-
-    {:noreply, assign_form(socket, changeset)}
-  end
-
-  def handle_event("save", %{"component" => component_params}, socket) do
-    component_params = Map.put(component_params, "site", socket.assigns.site)
-
-    attrs = Enum.map(socket.assigns.attrs_forms, & Ecto.Changeset.apply_changes(&1.source) |> Map.from_struct())
-
-    component_params = Map.put(component_params, "attrs", attrs)
-
-    save_component(socket, socket.assigns.live_action, component_params)
-  end
-
-  def handle_event("delete", %{"attr_id" => attr_id}, socket) do
-    %{attrs_forms: attrs_forms} = socket.assigns
-
-    attrs_forms = Enum.reject(attrs_forms, &(&1.data.id == attr_id))
-
-    {:noreply, assign(socket, :attrs_forms, attrs_forms)}
-  end
-
-  def handle_event("show_attr_modal", %{"attr_id" => attr_id}, socket) do
-    %{attrs_forms: attrs_forms} = socket.assigns
-
-    attr_form = Enum.find(attrs_forms, &(&1.data.id == attr_id))
-
-    {:noreply,
-     socket
-     |> assign(
-       show_attr_modal: true,
-       attr_form: attr_form,
-       modal_title: "Edit Attribute",
-       modal_action: :edit_attr
-     )}
-  end
-
-  def handle_event("show_attr_modal", _, socket) do
-    %{component: component, site: site} = socket.assigns
-
-    component_attr = %ComponentAttr{id: Ecto.UUID.generate(), component_id: component.id}
-
-    attr_form = build_attr_form(site, component_attr, %{})
-
-    {:noreply,
-     socket
-     |> assign(
-       show_attr_modal: true,
-       attr_form: attr_form,
-       modal_title: "Add Attribute",
-       modal_action: :new_attr
-     )}
-  end
-
-  def handle_event("close_modal", _, socket) do
-    {:noreply, close_attr_modal(socket)}
-  end
-
-  def handle_event("validate_attr", %{"component_attr" => component_attr_params}, socket) do
-    %{attr_form: attr_form, site: site} = socket.assigns
-
-    component_attr_params = format_struct_name_input(component_attr_params)
-    component_attr_params = format_options_input(component_attr_params)
-
-    attr_form = build_attr_form(site, attr_form.data, component_attr_params, :validate)
-
-    {:noreply, assign(socket, :attr_form, attr_form)}
-  end
-
-  def handle_event("add_attr", %{"component_attr" => component_attr_params}, socket) do
-    %{
-      site: site,
-      attr_form: attr_form,
-      attrs_forms: attrs_forms,
-      modal_action: modal_action
-    } = socket.assigns
-
-    component_attr_params = format_struct_name_input(component_attr_params)
-    component_attr_params = format_options_input(component_attr_params)
-
-    changeset =
-      site
-      |> Content.change_component_attr(attr_form.data, component_attr_params)
-      |> Map.put(:action, :validate)
-
-    if changeset.valid? do
-      form_id = "form-#{changeset.data.component_id}-#{changeset.data.id}"
-      updated_component_attr_form = to_form(changeset, id: form_id)
-
-      attrs_forms = update_attrs_forms(attrs_forms, modal_action, updated_component_attr_form, form_id)
-
-      {:noreply,
-       socket
-       |> assign(:attrs_forms, attrs_forms)
-       |> close_attr_modal()}
-    else
-      attr_form = build_attr_form(site, attr_form.data, component_attr_params, :validate)
-
-      {:noreply, assign(socket, :attr_form, attr_form)}
-    end
   end
 
   defp save_component(socket, :new, component_params) do
@@ -176,15 +60,175 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
     end
   end
 
+  @impl true
+  def handle_event("validate", %{"component" => %{"attrs" => attrs} = component_params}, socket) do
+    updated_attr_params =
+      Enum.map(attrs, fn {index, attr} ->
+        component_attr_params = format_struct_name_input(attr)
+        component_attr_params = format_options_input(component_attr_params)
+        {index, component_attr_params}
+      end)
+      |> Enum.into(%{})
+
+    component_params = Map.put(component_params, "attrs", updated_attr_params)
+
+    changeset =
+      socket.assigns.site
+      |> Content.change_component(socket.assigns.component, component_params)
+      |> Map.put(:action, :validate)
+
+    {:noreply, assign_form(socket, changeset)}
+  end
+
+  def handle_event("validate", %{"component" => component_params}, socket) do
+    component_params = Map.put(component_params, "attrs", [])
+
+    changeset =
+      socket.assigns.site
+      |> Content.change_component(socket.assigns.component, component_params)
+      |> Map.put(:action, :validate)
+
+    {:noreply, assign_form(socket, changeset)}
+  end
+
+  def handle_event("save", %{"component" => %{"attrs" => attrs} = component_params}, socket) do
+    component_params = Map.put(component_params, "site", socket.assigns.site)
+
+    updated_attr_params =
+      Enum.map(attrs, fn {index, attr} ->
+        component_attr_params = format_struct_name_input(attr)
+        component_attr_params = format_options_input(component_attr_params)
+        {index, component_attr_params}
+      end)
+      |> Enum.into(%{})
+
+    component_params = Map.put(component_params, "attrs", updated_attr_params)
+
+    save_component(socket, socket.assigns.live_action, component_params)
+  end
+
+  def handle_event("save", %{"component" => component_params}, socket) do
+    component_params = Map.put(component_params, "site", socket.assigns.site)
+
+    component_params = Map.put(component_params, "attrs", [])
+
+    save_component(socket, socket.assigns.live_action, component_params)
+  end
+
+  def handle_event("delete_attr", %{"attr_id" => attr_id}, socket) do
+    %{form: component_form, site: site, component: component} = socket.assigns
+
+    updated_attr_params =
+      component_form
+      |> get_component_attrs_from_form()
+      |> Enum.reject(&(&1.id == attr_id))
+      |> Enum.map(&Map.from_struct/1)
+
+    changeset =
+      Content.change_component(site, component, %{
+        "name" => get_field(component_form.source, :name),
+        "category" => get_field(component_form.source, :category),
+        "example" => get_field(component_form.source, :example),
+        "template" => get_field(component_form.source, :template),
+        "attrs" => updated_attr_params
+      })
+
+    {:noreply, assign_form(socket, changeset)}
+  end
+
+  def handle_event("show_attr_modal", %{"attr_id" => attr_id}, socket) do
+    component_attr =
+      socket.assigns.form
+      |> get_component_attrs_from_form()
+      |> Enum.find(&(&1.id == attr_id))
+
+    attr_form = build_attr_form(socket.assigns.site, component_attr, %{})
+
+    {:noreply,
+     socket
+     |> assign(
+       show_attr_modal: true,
+       attr_form: attr_form,
+       modal_title: "Edit Attribute",
+       modal_action: :edit_attr
+     )}
+  end
+
+  def handle_event("show_attr_modal", _, socket) do
+    component_attr = %ComponentAttr{
+      id: Ecto.UUID.generate(),
+      component_id: socket.assigns.component.id
+    }
+
+    attr_form = build_attr_form(socket.assigns.site, component_attr, %{})
+
+    {:noreply,
+     socket
+     |> assign(
+       show_attr_modal: true,
+       attr_form: attr_form,
+       modal_title: "Add Attribute",
+       modal_action: :new_attr
+     )}
+  end
+
+  def handle_event("validate_attr", %{"component_attr" => component_attr_params}, socket) do
+    component_attr_params = format_struct_name_input(component_attr_params)
+    component_attr_params = format_options_input(component_attr_params)
+
+    attr_form =
+      build_attr_form(
+        socket.assigns.site,
+        socket.assigns.attr_form.data,
+        component_attr_params,
+        :validate
+      )
+
+    {:noreply, assign(socket, :attr_form, attr_form)}
+  end
+
+  def handle_event("add_attr", %{"component_attr" => component_attr_params}, socket) do
+    %{site: site, attr_form: attr_form, modal_action: modal_action} = socket.assigns
+
+    component_attr_params = format_struct_name_input(component_attr_params)
+    component_attr_params = format_options_input(component_attr_params)
+
+    changeset =
+      site
+      |> Content.change_component_attr(attr_form.data, component_attr_params)
+      |> Map.put(:action, :validate)
+
+    if changeset.valid? do
+      updated_component_attr_form = to_form(changeset)
+
+      changeset = update_component_form(socket, modal_action, updated_component_attr_form)
+
+      {:noreply,
+       socket
+       |> assign_form(changeset)
+       |> close_attr_modal()}
+    else
+      attr_form = build_attr_form(site, attr_form.data, component_attr_params, :validate)
+
+      {:noreply, assign(socket, :attr_form, attr_form)}
+    end
+  end
+
+  def handle_event("close_modal", _, socket) do
+    {:noreply, close_attr_modal(socket)}
+  end
+
   defp assign_form(socket, changeset) do
     assign(socket, :form, to_form(changeset))
   end
 
   defp build_attr_form(site, attr_or_changeset, params, action \\ nil) do
     changeset =
-      Content.change_component_attr(site, attr_or_changeset, params) |> Map.put(:action, action)
+      site
+      |> Content.change_component_attr(attr_or_changeset, params)
+      |> Map.put(:action, action)
 
-    to_form(changeset, id: "form-#{changeset.data.component_id}-#{changeset.data.id}")
+    to_form(changeset)
   end
 
   defp close_attr_modal(socket) do
@@ -196,15 +240,48 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
     )
   end
 
-  def update_attrs_forms(attrs_forms, :new_attr, updated_attr_form, _form_id) do
-    attrs_forms ++ [updated_attr_form]
+  def update_component_form(socket, :new_attr, updated_attr_form) do
+    %{site: site, form: form, component: component} = socket.assigns
+
+    updated_attr_params =
+      form
+      |> get_component_attrs_from_form()
+      |> Enum.map(&Map.from_struct/1)
+
+    attr_params = Ecto.Changeset.apply_changes(updated_attr_form.source) |> Map.from_struct()
+
+    updated_attr_params = updated_attr_params ++ [attr_params]
+
+    Content.change_component(site, component, %{
+      "name" => get_field(form.source, :name),
+      "category" => get_field(form.source, :category),
+      "example" => get_field(form.source, :example),
+      "template" => get_field(form.source, :template),
+      "attrs" => updated_attr_params
+    })
   end
 
-  def update_attrs_forms(attrs_forms, :edit_attr, updated_attr_form, form_id) do
-    Enum.map(attrs_forms, fn
-      %{id: ^form_id} -> updated_attr_form
-      component_attr_form -> component_attr_form
-    end)
+  def update_component_form(socket, :edit_attr, updated_attr_form) do
+    %{site: site, form: form, component: component} = socket.assigns
+
+    attr_params = Ecto.Changeset.apply_changes(updated_attr_form.source) |> Map.from_struct()
+
+    updated_attr_params =
+      form
+      |> get_component_attrs_from_form()
+      |> Enum.map(fn component_attr ->
+        if component_attr.id == attr_params.id,
+          do: attr_params,
+          else: Map.from_struct(component_attr)
+      end)
+
+    Content.change_component(site, component, %{
+      "name" => get_field(form.source, :name),
+      "category" => get_field(form.source, :category),
+      "example" => get_field(form.source, :example),
+      "template" => get_field(form.source, :template),
+      "attrs" => updated_attr_params
+    })
   end
 
   defp format_struct_name_input(component_attr_params) do
@@ -223,6 +300,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
       |> option_default(component_attr_params["opts_default"])
       |> option_values(component_attr_params["opts_values"])
       |> option_doc(component_attr_params["opts_doc"])
+      |> option_examples(component_attr_params["opts_examples"])
 
     Map.put(component_attr_params, "opts", attr_opts)
   end
@@ -236,27 +314,35 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
   defp option_default(attr_opts, ""), do: attr_opts
 
   defp option_default(attr_opts, opts_default) do
+    opts_default = eval_string_value(opts_default)
     Keyword.merge(attr_opts, default: opts_default)
+  end
+
+  defp option_examples(attr_opts, ""), do: attr_opts
+
+  defp option_examples(attr_opts, opts_examples) do
+    opts_examples = eval_string_value(opts_examples)
+    Keyword.merge(attr_opts, examples: opts_examples)
   end
 
   defp option_values(attr_opts, ""), do: attr_opts
 
   defp option_values(attr_opts, opts_values) do
-    values = split_string_into_list(opts_values)
-
-    Keyword.merge(attr_opts, values: values)
-  end
-
-  defp split_string_into_list(string) do
-    ~r/[\s,]+/
-    |> Regex.split(string)
-    |> Enum.reject(&(&1 == ""))
+    opts_values = eval_string_value(opts_values)
+    Keyword.merge(attr_opts, values: opts_values)
   end
 
   defp option_doc(attr_opts, ""), do: attr_opts
 
   defp option_doc(attr_opts, opts_doc) do
     Keyword.merge(attr_opts, doc: opts_doc)
+  end
+
+  defp eval_string_value(opts_default) do
+    {term, _} = Code.eval_string(opts_default)
+    term
+  rescue
+    _exception -> "#{opts_default}"
   end
 
   @impl true
@@ -280,14 +366,26 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
             <.input field={f[:category]} type="select" options={categories_to_options(@site)} label="Category" />
             <.input field={f[:example]} type="text" label="Example" />
             <input type="hidden" name="component[template]" id="component-form_template" value={Phoenix.HTML.Form.input_value(f, :template)} />
+
+            <.inputs_for :let={f_attr} field={f[:attrs]}>
+              <.input type="hidden" field={f_attr[:id]} />
+              <.input type="hidden" field={f_attr[:name]} />
+              <.input type="hidden" field={f_attr[:type]} options={types_to_options()} />
+              <.input :if={f_attr[:type].value == "struct"} type="hidden" field={f_attr[:struct_name]} />
+              <.input type="hidden" field={f_attr[:opts_required]} value={opts_required_value(f_attr)} />
+              <.input type="hidden" field={f_attr[:opts_default]} value={opts_default_value(f_attr)} />
+              <.input type="hidden" field={f_attr[:opts_values]} value={opts_values_value(f_attr)} />
+              <.input type="hidden" field={f_attr[:opts_doc]} value={opts_doc_value(f_attr)} />
+              <.input type="hidden" field={f_attr[:opts_examples]} value={opts_examples_value(f_attr)} />
+            </.inputs_for>
           </.form>
 
-          <.table id="attrs" rows={@attrs_forms} row_click={fn attr_form -> JS.push("show_attr_modal", value: %{attr_id: attr_data(attr_form.source, :id)}, target: @myself) end}>
-            <:col :let={attr_form} label="Component Attributes"><%= attr_data(attr_form.source, :name) %></:col>
-            <:action :let={attr_form}>
+          <.table id="attrs" rows={get_component_attrs_from_form(@form)} row_click={fn attr -> JS.push("show_attr_modal", value: %{attr_id: attr.id}, target: @myself) end}>
+            <:col :let={attr} label="Component Attributes"><%= attr.name %></:col>
+            <:action :let={attr}>
               <.link
                 phx-click="show_attr_modal"
-                phx-value-attr_id={attr_data(attr_form.source, :id)}
+                phx-value-attr_id={attr.id}
                 phx-target={@myself}
                 title="Edit attribute"
                 aria-label="Edit attribute"
@@ -297,9 +395,9 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
               </.link>
             </:action>
 
-            <:action :let={attr_form}>
+            <:action :let={attr}>
               <.link
-                phx-click={JS.push("delete", value: %{attr_id: attr_data(attr_form.source, :id)})}
+                phx-click={JS.push("delete_attr", value: %{attr_id: attr.id})}
                 phx-target={@myself}
                 aria-label="Delete attribute"
                 title="Delete attribute"
@@ -336,10 +434,11 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
           <.input :if={f[:type].value == "struct"} field={f[:struct_name]} type="text" phx-debounce="100" placeholder="MyApp.Users.User" label="Struct Name" />
 
           <legend class="text-sm font-bold tracking-widest text-[#445668] uppercase">Options</legend>
-          <.input field={f[:opts_required]} type="checkbox" value={opts_required_value(f)} label="Required attribute" />
-          <.input field={f[:opts_default]} type="text" phx-debounce="100" value={opts_default_value(f)} label="Default Attribute" />
-          <.input field={f[:opts_values]} type="text" phx-debounce="100" value={opts_values_value(f)} label="Accepted values" placeholder="value1, value2, ..." />
+          <.input field={f[:opts_required]} type="select" options={["false", "true"]} value={opts_required_value(f)} label="Required" />
+          <.input field={f[:opts_default]} type="text" phx-debounce="100" value={opts_default_value(f)} label="Default" />
+          <.input field={f[:opts_values]} type="text" phx-debounce="100" value={opts_values_value(f)} label="Accepted values" placeholder='["string 1", :atom_2, 123, %{}, [], ...]' />
           <.input field={f[:opts_doc]} type="text" phx-debounce="100" value={opts_doc_value(f)} label="Attribute doc" />
+          <.input field={f[:opts_examples]} type="text" phx-debounce="500" value={opts_examples_value(f)} label="Examples" />
 
           <div class="flex mt-8 gap-x-[20px]">
             <.button type="submit">Ok</.button>
@@ -350,8 +449,6 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
     </div>
     """
   end
-
-  defp attr_data(source, field), do: Ecto.Changeset.get_field(source, field)
 
   defp categories_to_options(site) do
     Enum.map(Content.component_categories(site), &{Phoenix.Naming.humanize(&1), &1})
@@ -366,21 +463,46 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
     form
     |> get_field_opts()
     |> Keyword.get(:required, false)
+    |> to_string()
   end
 
   def opts_default_value(form) do
-    form
-    |> get_field_opts()
-    |> Keyword.get(:default, "")
+    default_value =
+      form
+      |> get_field_opts()
+      |> Keyword.get(:default, "")
 
-    #   |> inspect()
+    if is_binary(default_value) do
+      default_value
+    else
+      inspect(default_value)
+    end
+  end
+
+  def opts_examples_value(form) do
+    examples_value =
+      form
+      |> get_field_opts()
+      |> Keyword.get(:examples, "")
+
+    if is_binary(examples_value) do
+      examples_value
+    else
+      inspect(examples_value)
+    end
   end
 
   def opts_values_value(form) do
-    form
-    |> get_field_opts()
-    |> Keyword.get(:values, [])
-    |> Enum.join(", ")
+    values =
+      form
+      |> get_field_opts()
+      |> Keyword.get(:values, "")
+
+    if is_binary(values) do
+      values
+    else
+      inspect(values)
+    end
   end
 
   def opts_doc_value(form) do
@@ -397,4 +519,6 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
 
   defp maybe_binary_to_term(opts) when is_binary(opts), do: :erlang.binary_to_term(opts)
   defp maybe_binary_to_term(opts), do: opts
+
+  defp get_component_attrs_from_form(form), do: get_field(form.source, :attrs)
 end
