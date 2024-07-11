@@ -193,15 +193,15 @@ defmodule Beacon.LiveAdmin.Content do
   end
 
   def create_slot_attr(site, attrs) do
-    call(site, Beacon.Content, :create_slot_attr, [attrs])
+    call(site, Beacon.Content, :create_slot_attr, [site, attrs])
   end
 
   def update_slot_attr(site, slot_attr, attrs) do
-    call(site, Beacon.Content, :update_slot_attr, [slot_attr, attrs])
+    call(site, Beacon.Content, :update_slot_attr, [site, slot_attr, attrs])
   end
 
   def delete_slot_attr(site, slot_attr) do
-    call(site, Beacon.Content, :delete_slot_attr, [slot_attr])
+    call(site, Beacon.Content, :delete_slot_attr, [site, slot_attr])
   end
 
   def change_error_page(site, error_page, attrs \\ %{}) do
