@@ -467,15 +467,18 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
   end
 
   def opts_default_value(form) do
-    default_value =
-      form
-      |> get_field_opts()
-      |> Keyword.get(:default, "")
+    opts = get_field_opts(form)
 
-    if is_binary(default_value) do
-      default_value
+    if :default in Keyword.keys(opts) do
+      default_opts = Keyword.get(opts, :default)
+
+      cond do
+        default_opts == "" -> "\"\""
+        is_binary(default_opts) -> default_opts
+        true -> inspect(default_opts)
+      end
     else
-      inspect(default_value)
+      ""
     end
   end
 

@@ -15,9 +15,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.SlotAttr do
         socket
       ) do
     component =
-      Content.get_component(socket.assigns.beacon_page.site, component_id,
-        preloads: [slots: :attrs]
-      )
+      Content.get_component(socket.assigns.beacon_page.site, component_id, preloads: [slots: :attrs])
 
     component_slot = Enum.find(component.slots, &(&1.id == slot_id))
     slot_attr = Enum.find(component_slot.attrs, &(&1.id == attr_id))
@@ -37,9 +35,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.SlotAttr do
 
   def handle_params(%{"id" => component_id, "slot_id" => slot_id}, _url, socket) do
     component =
-      Content.get_component(socket.assigns.beacon_page.site, component_id,
-        preloads: [slots: :attrs]
-      )
+      Content.get_component(socket.assigns.beacon_page.site, component_id, preloads: [slots: :attrs])
 
     component_slot = Enum.find(component.slots, &(&1.id == slot_id))
     slot_attr = %Beacon.Content.ComponentSlotAttr{slot_id: component_slot.id}
@@ -225,15 +221,18 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.SlotAttr do
   end
 
   def opts_default_value(form) do
-    default_value =
-      form
-      |> get_field_opts()
-      |> Keyword.get(:default, "")
+    opts = get_field_opts(form)
 
-    if is_binary(default_value) do
-      default_value
+    if :default in Keyword.keys(opts) do
+      default_opts = Keyword.get(opts, :default)
+
+      cond do
+        default_opts == "" -> "\"\""
+        is_binary(default_opts) -> default_opts
+        true -> inspect(default_opts)
+      end
     else
-      inspect(default_value)
+      ""
     end
   end
 

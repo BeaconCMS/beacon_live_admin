@@ -19,9 +19,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.Slots do
   # For the first component load
   def handle_params(params, _url, socket) do
     component =
-      Content.get_component(socket.assigns.beacon_page.site, params["id"],
-        preloads: [slots: :attrs]
-      )
+      Content.get_component(socket.assigns.beacon_page.site, params["id"], preloads: [slots: :attrs])
 
     socket =
       socket
