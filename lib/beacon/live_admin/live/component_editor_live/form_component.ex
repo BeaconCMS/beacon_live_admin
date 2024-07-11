@@ -340,7 +340,14 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
 
   defp eval_string_value(opts_default) do
     {term, _} = Code.eval_string(opts_default)
-    term
+
+    if is_struct(term) do
+      %struct_name{} = term
+
+      term |> Map.from_struct() |> Map.merge(%{__struct__: struct_name})
+    else
+      term
+    end
   rescue
     _exception -> "#{opts_default}"
   end
@@ -473,9 +480,18 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
       default_opts = Keyword.get(opts, :default)
 
       cond do
-        default_opts == "" -> "\"\""
-        is_binary(default_opts) -> default_opts
-        true -> inspect(default_opts)
+        default_opts == "" ->
+          "\"\""
+
+        is_binary(default_opts) ->
+          default_opts
+
+        is_struct(default_opts) ->
+          %struct_name{} = default_opts
+          "%#{struct_name}{}"
+
+        true ->
+          inspect(default_opts)
       end
     else
       ""
@@ -488,10 +504,20 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
       |> get_field_opts()
       |> Keyword.get(:examples, "")
 
-    if is_binary(examples_value) do
-      examples_value
-    else
-      inspect(examples_value)
+    cond do
+      is_binary(examples_value) ->
+        examples_value
+
+      is_list(examples_value) ->
+        Enum.reduce(examples_value, [], fn
+          %{__struct__: struct_name}, acc -> ["%#{struct_name}{}" | acc]
+          value, acc -> [value | acc]
+        end)
+        |> Enum.reverse()
+        |> inspect()
+
+      true ->
+        inspect(examples_value)
     end
   end
 
@@ -501,10 +527,20 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
       |> get_field_opts()
       |> Keyword.get(:values, "")
 
-    if is_binary(values) do
-      values
-    else
-      inspect(values)
+    cond do
+      is_binary(values) ->
+        values
+
+      is_list(values) ->
+        Enum.reduce(values, [], fn
+          %{__struct__: struct_name}, acc -> ["%#{struct_name}{}" | acc]
+          value, acc -> [value | acc]
+        end)
+        |> Enum.reverse()
+        |> inspect()
+
+      true ->
+        inspect(values)
     end
   end
 
