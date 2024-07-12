@@ -8,7 +8,9 @@
     isAstElement,
     selectedElementMenu
   } from "$lib/stores/page"
+  import { tick } from "svelte"
   import { draggedObject } from "$lib/stores/dragAndDrop"
+  import { updateSelectedElementMenu } from "$lib/utils/drag-helpers"
   import { updateNodeContent, updateAst } from "$lib/utils/ast-manipulation"
   import { elementCanBeDroppedInTarget, mouseDiff } from "$lib/utils/drag-helpers"
   import type { AstNode } from "$lib/types"
@@ -21,6 +23,7 @@
   $: isSelectedNode = $selectedAstElement === node
   $: isHighlightedNode = $highlightedAstElement === node
   $: isEditable = isSelectedNode && isAstElement(node) && node.content.filter((e) => typeof e === "string").length === 1 && !node.attrs?.selfClose;
+  $: children = isAstElement(node) ? node.content : [];
 
   function handleDragEnter() {
     if ($draggedObject) {
@@ -46,7 +49,8 @@
   }
 
   function handleClick() {
-    $selectedAstElementId = nodeId
+    $selectedAstElementId = nodeId;
+    tick().then(() => updateSelectedElementMenu());
   }
 
   function handleContentEdited({ target }: Event) {
@@ -133,7 +137,6 @@
         selectedElementStyle = `transform: translateY(${y}px);`;
       } else {
         selectedElementStyle = `transform: translateX(${x}px);`;
-        debugger;
       }
     } else {
       selectedElementStyle = '';
@@ -178,8 +181,8 @@
       style={selectedElementStyle}
     >
       {#if !node.attrs?.selfClose}
-        {#each node.content as subnode, index}
-          <svelte:self node={subnode} nodeId="{nodeId}.{index}" />
+        {#each children as child, childIndex}
+          <svelte:self node={child} nodeId="{nodeId}.{childIndex}" />
         {/each}
         {#if isDragTarget && $draggedObject}
           <div class="dragged-element-placeholder">{@html $draggedObject.example}</div>

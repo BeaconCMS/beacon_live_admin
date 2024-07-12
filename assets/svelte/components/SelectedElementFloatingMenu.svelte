@@ -1,34 +1,20 @@
 <script lang="ts">
   import { selectedDomElement, selectedElementMenu } from "$lib/stores/page"
-  import type { MouseMovement } from "$lib/utils/drag-helpers"
+  import { updateSelectedElementMenu } from "$lib/utils/drag-helpers"
+    import { tick } from "svelte"
 
-  let mouseMovement: MouseMovement = null;
-  let relativeWrapperRect: DOMRect; 
   let siblings: Element[] = [];
   let siblingsRectangles: DOMRect[] = [];
+  $: selectedDomElementRect = $selectedDomElement?.getBoundingClientRect();
   $: {
-    if ($selectedDomElement) {
-      if (!relativeWrapperRect) {
-        relativeWrapperRect = document.getElementById('ui-builder-app-container').closest('.relative').getBoundingClientRect();
-      }
-      let dragDirection = getDragDirection($selectedDomElement);
-      let selectedElRect = $selectedDomElement.getBoundingClientRect();
-      let top = selectedElRect.y - relativeWrapperRect.y + selectedElRect.height + 5;
-      let left = selectedElRect.x - relativeWrapperRect.x + (selectedElRect.width / 2) - 12;
-      if (mouseMovement) {   
-        top = dragDirection === 'horizontal' ? top : mouseMovement.current.y - relativeWrapperRect.y - 12; 
-        left = dragDirection === 'vertical' ?  left :  mouseMovement.current.x - relativeWrapperRect.x - 12;
-      }
-      $selectedElementMenu = { top, left, dragDirection, dragging: !!mouseMovement, mouseMovement }
-    }
-  }
-
-  $: {
-    if ($selectedElementMenu && mouseMovement && siblings.length > 0) {
+    if ($selectedElementMenu?.mouseMovement && siblings.length > 0) {
       if ($selectedElementMenu.dragDirection === 'vertical') {
-        let firstElementBeforeCursorIndex = siblingsRectangles.findIndex(({top, height}) => (top + height / 2) >= $selectedElementMenu.mouseMovement.y);
+        let firstElementBeforeCursorIndex = siblingsRectangles.findIndex(({top, height}) => {
+          return (top + height / 2) >= $selectedElementMenu.mouseMovement.current.y;
+        });
         let firstElementBeforeCursor = siblings[firstElementBeforeCursorIndex];
         if (firstElementBeforeCursor && firstElementBeforeCursor !== $selectedDomElement) {
+          
           debugger;
         }
       } else {
@@ -49,37 +35,34 @@
     dragHandleStyle = styles.join(';');
   }
 
-  function getDragDirection(element: Element): 'horizontal' | 'vertical' {
-    let parentEl = element.parentElement;
-    let flexDirection = window.getComputedStyle(parentEl).flexDirection;
-    return ['row', 'row-reverse'].includes(flexDirection) ? 'horizontal' : 'vertical';
-  }
-
   function handleMousedown(e: MouseEvent) {
     document.addEventListener('mousemove', handleMousemove)
     document.addEventListener('mouseup', handleMouseup)
     siblings = Array.from($selectedDomElement.parentElement.children);
     siblingsRectangles = Array.from(siblings).map(el => el.getBoundingClientRect());
-    mouseMovement = { start: { x: e.clientX, y: e.clientY }, current: { x: e.clientX, y: e.clientY } };
+    updateSelectedElementMenu({ start: { x: e.clientX, y: e.clientY }, current: { x: e.clientX, y: e.clientY } });
     console.log('siblingsRectangles', siblings, siblingsRectangles);
     console.log('mousedown', e);
   }
 
   function handleMouseup(e: MouseEvent) {
     document.removeEventListener('mousemove', handleMousemove);
-    mouseMovement = null;
+    $selectedElementMenu = null;
+    tick().then(() => updateSelectedElementMenu());
     siblings = [];
     siblingsRectangles = [];
-    mouseMovement = null;
-    console.log('mouseup', e);
+    console.log('mouseup. Should commit changes', e);
   }
 
   function handleMousemove(e: MouseEvent) {
-    mouseMovement = { start: mouseMovement.start, current: { x: e.clientX, y: e.clientY } };
+    updateSelectedElementMenu({ ...$selectedElementMenu.mouseMovement, current: { x: e.clientX, y: e.clientY } });
   }
 </script>
 
 {#if $selectedElementMenu}
+  {#if selectedDomElementRect && $selectedElementMenu.dragging}
+    <div class="absolute" style="background-color:aqua; opacity: 0.5; top: {$selectedElementMenu.elementCoords.y}px; left: {$selectedElementMenu.elementCoords.x}px; height: {selectedDomElementRect.height}px; width: {selectedDomElementRect.width}px;"></div>
+  {/if}
   <button 
     on:mousedown={handleMousedown}
     class="rounded-full w-[24px] h-[24px] flex justify-center items-center absolute bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 active:bg-blue-800"
