@@ -23,8 +23,8 @@ jobs:
             phoenix-live-view-version: "0.20.2"
 
           # latest
-          - otp: "26"
-            elixir: "1.16"
+          - otp: "27"
+            elixir: "1.17"
             phoenix-version: "~> 1.7"
             phoenix-live-view-version: "~> 0.20"
 
@@ -39,6 +39,7 @@ jobs:
       postgres:
         image: postgres:13.1
         env:
+          POSTGRES_DB: beacon_live_admin_test
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
         options: >-
@@ -75,6 +76,8 @@ jobs:
       - run: mix tailwind.install --no-assets
 
       - name: Run tests
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:${{job.services.postgres.ports[5432]}}/beacon_live_admin_test
         run: |
           epmd -daemon
           mix test
@@ -86,8 +89,8 @@ jobs:
       matrix:
         include:
           # latest
-          - otp: "26"
-            elixir: "1.16"
+          - otp: "27"
+            elixir: "1.17"
             phoenix-version: "~> 1.7"
             phoenix-live-view-version: "~> 0.20"
 

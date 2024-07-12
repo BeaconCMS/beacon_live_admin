@@ -32,7 +32,7 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.Revisions do
       <.header>
         <%= @page_title %>
       </.header>
-      <.main_content class="h-[calc(100vh_-_206px)]">
+      <.main_content class="h-auto">
         <ol class="relative mt-4 ml-4 border-l border-gray-200">
           <%= for event <- @events do %>
             <.revision event={event} />

@@ -6,6 +6,7 @@
   import { page, slotTargetElement } from "$lib/stores/page"
   import { draggedObject } from "$lib/stores/dragAndDrop"
   import { live } from "$lib/stores/live"
+  import { elementCanBeDroppedInTarget } from "$lib/utils/drag-helpers"
 
   let isDraggingOver = false
 
@@ -13,7 +14,8 @@
     let { target } = e
     $currentComponentCategory = null
     if (!$draggedObject) return
-    if ($draggedObject.category === "basic") {
+    let draggedObj = $draggedObject
+    if (elementCanBeDroppedInTarget(draggedObj)) {
       if (!(target instanceof HTMLElement)) return
       if (target.id === "fake-browser-content") return
       if (!$slotTargetElement) return
@@ -22,13 +24,14 @@
     } else {
       $live.pushEvent(
         "render_component_in_page",
-        { component_id: $draggedObject.id, page_id: $page.id },
+        { component_id: draggedObj.id, page_id: $page.id },
         ({ ast }: { ast: AstNode[] }) => {
           // This appends at the end. We might want at the beginning, or in a specific position
           $live.pushEvent("update_page_ast", { id: $page.id, ast: [...$page.ast, ...ast] })
         },
       )
     }
+    $draggedObject = null
     isDraggingOver = false
   }
 
@@ -76,9 +79,9 @@
 
 <style>
   /* :global([data-selected="true"], [data-highlighted="true"]) {
-    outline-color: #06b6d4; 
+    outline-color: #06b6d4;
     outline-width: 2px;
-    outline-style: dashed;    
+    outline-style: dashed;
   } */
   :global(.contents[data-nochildren="true"], .contents[data-nochildren="true"]) {
     /* In the specific case of an element containing only an EEX expression that generates no children (only a text node),

@@ -8,23 +8,24 @@
   } from "$lib/stores/page"
   import { draggedObject } from "$lib/stores/dragAndDrop"
   import { updateNodeContent, updateAst } from "$lib/utils/ast-manipulation"
+  import { elementCanBeDroppedInTarget } from "$lib/utils/drag-helpers"
   import type { AstNode } from "$lib/types"
   export let node: AstNode
   export let nodeId: string
-  export let live
+
   $: isDragTarget = $slotTargetElement === node
   $: isSelectedNode = $selectedAstElement === node
   $: isHighlightedNode = $highlightedAstElement === node
   $: isEditable = isSelectedNode && isAstElement(node) && node.content.filter((e) => typeof e === "string").length === 1
 
   function handleDragEnter() {
-    if (isAstElement(node) && $draggedObject?.category === "basic") {
+    if (isAstElement(node) && elementCanBeDroppedInTarget($draggedObject)) {
       $slotTargetElement = node
     }
   }
 
   function handleDragLeave() {
-    if (isAstElement(node) && $draggedObject?.category === "basic" && $slotTargetElement === node) {
+    if (isAstElement(node) && elementCanBeDroppedInTarget($draggedObject) && $slotTargetElement === node) {
       $slotTargetElement = undefined
     }
   }
@@ -147,7 +148,7 @@
         <svelte:self node={subnode} nodeId="{nodeId}.{index}" />
       {/each}
       {#if isDragTarget && $draggedObject}
-        <div class="dragged-element-placeholder">{@html $draggedObject.body}</div>
+        <div class="dragged-element-placeholder">{@html $draggedObject.example}</div>
       {/if}
     </svelte:element>
   {/if}

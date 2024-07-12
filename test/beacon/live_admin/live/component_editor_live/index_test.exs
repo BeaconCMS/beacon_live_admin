@@ -8,21 +8,20 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.IndexTest do
     rpc(node, Beacon.Content, :create_component, [
       %{
         site: "site_a",
-        name: "Site A - Header",
-        body: """
-        <header>Site A Header</header>
-        """
+        name: "site_a_header",
+        template: "<h1>header</h1>",
+        example: "<.header />"
       }
     ])
 
     on_exit(fn ->
-      rpc(node, Beacon.Repo, :delete_all, [Beacon.Content.Component, [log: false]])
+      rpc(node, MyApp.Repo, :delete_all, [Beacon.Content.Component, [log: false]])
     end)
   end
 
   test "display all components", %{conn: conn} do
     {:ok, _live, html} = live(conn, "/admin/site_a/components")
-    assert html =~ "Site A - Header"
+    assert html =~ "site_a_header"
   end
 
   test "search components by name", %{conn: conn} do
@@ -33,14 +32,14 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.IndexTest do
       |> element("#search-form")
       |> render_change(%{search: %{query: "nope"}})
 
-    refute html =~ "Site A - Header"
+    refute html =~ "site_a_header"
 
     html =
       live
       |> element("#search-form")
       |> render_change(%{search: %{query: "header"}})
 
-    assert html =~ "Site A - Header"
+    assert html =~ "site_a_header"
   end
 
   test "display a site selector", %{conn: conn} do

@@ -4,7 +4,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.NewTest do
 
   setup do
     on_exit(fn ->
-      rpc(node1(), Beacon.Repo, :delete_all, [Beacon.Content.Component, [log: false]])
+      rpc(node1(), MyApp.Repo, :delete_all, [Beacon.Content.Component, [log: false]])
     end)
   end
 
@@ -12,10 +12,12 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.NewTest do
     {:ok, live, _html} = live(conn, "/admin/site_a/components/new")
 
     live
-    |> form("#component-form", component: %{name: "Site A - Header"})
-    |> render_submit(%{component: %{"body" => "<header>header_site_a</header>"}})
+    |> form("#component-form", component: %{name: "site_a_header"})
+    |> render_submit(%{
+      component: %{"template" => "<h1>header</h1>", "example" => "<.header />"}
+    })
 
     assert has_element?(live, "h1", "Edit Component")
-    assert has_element?(live, "input[value='Site A - Header']")
+    assert has_element?(live, "input[value='site_a_header']")
   end
 end

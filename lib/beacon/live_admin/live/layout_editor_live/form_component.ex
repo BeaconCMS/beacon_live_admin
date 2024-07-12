@@ -36,7 +36,7 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.FormComponent do
         {:noreply,
          socket
          |> put_flash(:info, "Layout published successfully")
-         |> push_redirect(to: to, replace: true)}
+         |> push_navigate(to: to, replace: true)}
 
       {:error, _} ->
         {:noreply,

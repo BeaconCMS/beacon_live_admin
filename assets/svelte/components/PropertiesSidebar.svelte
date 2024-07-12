@@ -7,6 +7,7 @@
   import { updateNodeContent } from "$lib/utils/ast-manipulation"
   import { page, selectedAstElement, selectedAstElementId, findAstElement, isAstElement } from "$lib/stores/page"
   import type { AstNode } from "$lib/types"
+  import { elementCanBeDroppedInTarget } from "$lib/utils/drag-helpers"
 
   const dispatch = createEventDispatcher()
 
@@ -198,7 +199,7 @@
       {/if}
 
       <div class="relative">
-        {#if $draggedObject && $draggedObject.category === "basic"}
+        {#if $draggedObject && elementCanBeDroppedInTarget($draggedObject)}
           <div
             class="absolute bg-white opacity-70 w-full h-full p-4"
             class:opacity-90={isDraggingOver}
@@ -215,7 +216,7 @@
         {#if $selectedAstElement.content?.length > 0}
           <SidebarSection
             astNodes={$selectedAstElement.content}
-            large={$selectedAstElement.tag === "eex"}
+            large={true}
             on:textChange={(e) => updateText(e)}
             on:nodesChange={changeNodes}
           >
