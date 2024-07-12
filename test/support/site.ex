@@ -18,7 +18,7 @@ defmodule MyApp.Router do
 
   scope "/" do
     pipe_through :browser
-    beacon_site "/my_site", site: :my_site
+    beacon_site "/site_a", site: :site_a
   end
 end
 
