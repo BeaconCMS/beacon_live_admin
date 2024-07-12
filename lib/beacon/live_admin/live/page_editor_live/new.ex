@@ -37,11 +37,11 @@ defmodule Beacon.LiveAdmin.PageEditorLive.New do
     id = Ecto.UUID.generate()
 
     %Beacon.Content.Page{
-      path: "/page-#{id}",
+      path: "/New Page #{NaiveDateTime.utc_now()}",
       site: site,
       layout_id: layout.id,
       layout: layout,
-      title: "/page-#{id}",
+      title: "New Page",
       template: "<div>Welcome to BeaconCMS!</div>"
     }
   end
