@@ -34,8 +34,6 @@ defmodule Beacon.LiveAdmin.PageEditorLive.New do
   end
 
   defp build_new_page(site, [layout | _] = _layouts) do
-    id = Ecto.UUID.generate()
-
     %Beacon.Content.Page{
       path: "/New Page #{NaiveDateTime.utc_now()}",
       site: site,
