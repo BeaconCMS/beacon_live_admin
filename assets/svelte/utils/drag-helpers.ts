@@ -39,12 +39,13 @@ export function updateSelectedElementMenu(mouseMovement = null) {
   let selectedEl = get(selectedDomElement);
   let dragDirection = getDragDirection(selectedEl);
   let selectedElRect = selectedEl.getBoundingClientRect();
-  let elementCoords = {
+  let currentElementCoords = {
     x: selectedElRect.x - relativeWrapperRect.x,
     y: selectedElRect.y - relativeWrapperRect.y
   }
-  let top = elementCoords.y + selectedElRect.height + 5;
-  let left = elementCoords.x + (selectedElRect.width / 2) - 12;
+  let elementCoords = mouseMovement ? get(selectedElementMenu)?.elementCoords : currentElementCoords;
+  let top = currentElementCoords.y + selectedElRect.height + 5;
+  let left = currentElementCoords.x + (selectedElRect.width / 2) - 12;
   if (mouseMovement) {   
     top = dragDirection === 'horizontal' ? top : mouseMovement.current.y - relativeWrapperRect.y - 12; 
     left = dragDirection === 'vertical' ?  left :  mouseMovement.current.x - relativeWrapperRect.x - 12;
