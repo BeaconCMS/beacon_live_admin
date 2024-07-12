@@ -25,7 +25,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
      |> maybe_assign_builder_page(changeset)
      |> assign(:language, language(page.format))
      |> assign_extra_fields(changeset)
-     |> assign_new(:tailwind_config, fn -> RuntimeCSS.config(site) end)
+     |> assign_new(:tailwind_config, fn -> RuntimeCSS.asset_url(site) end)
      |> assign_new(:tailwind_input, fn ->
        tailwind = [
          "@tailwind base;",
