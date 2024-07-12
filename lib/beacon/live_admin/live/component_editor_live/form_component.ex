@@ -27,6 +27,20 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
     {:ok, assign_form(socket, changeset)}
   end
 
+  def update(%{body: value}, socket) do
+    params = Map.merge(socket.assigns.form.params, %{"body" => value})
+    changeset = Content.change_component(socket.assigns.site, socket.assigns.component, params)
+
+    {:ok, assign_form(socket, changeset)}
+  end
+
+  def update(%{example: value}, socket) do
+    params = Map.merge(socket.assigns.form.params, %{"example" => value})
+    changeset = Content.change_component(socket.assigns.site, socket.assigns.component, params)
+
+    {:ok, assign_form(socket, changeset)}
+  end
+
   defp save_component(socket, :new, component_params) do
     case Content.create_component(socket.assigns.site, component_params) do
       {:ok, component} ->
@@ -128,6 +142,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
       Content.change_component(site, component, %{
         "name" => get_field(component_form.source, :name),
         "category" => get_field(component_form.source, :category),
+        "body" => get_field(component_form.source, :body),
         "example" => get_field(component_form.source, :example),
         "template" => get_field(component_form.source, :template),
         "attrs" => updated_attr_params
@@ -255,6 +270,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
     Content.change_component(site, component, %{
       "name" => get_field(form.source, :name),
       "category" => get_field(form.source, :category),
+      "body" => get_field(form.source, :body),
       "example" => get_field(form.source, :example),
       "template" => get_field(form.source, :template),
       "attrs" => updated_attr_params
@@ -278,6 +294,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
     Content.change_component(site, component, %{
       "name" => get_field(form.source, :name),
       "category" => get_field(form.source, :category),
+      "body" => get_field(form.source, :body),
       "example" => get_field(form.source, :example),
       "template" => get_field(form.source, :template),
       "attrs" => updated_attr_params
@@ -371,8 +388,9 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
             <legend class="text-sm font-bold tracking-widest text-[#445668] uppercase">Component settings</legend>
             <.input field={f[:name]} type="text" label="Name" />
             <.input field={f[:category]} type="select" options={categories_to_options(@site)} label="Category" />
-            <.input field={f[:example]} type="text" label="Example" />
+            <input type="hidden" name="component[body]" id="component-form_body" value={Phoenix.HTML.Form.input_value(f, :body)} />
             <input type="hidden" name="component[template]" id="component-form_template" value={Phoenix.HTML.Form.input_value(f, :template)} />
+            <input type="hidden" name="component[example]" id="component-form_example" value={Phoenix.HTML.Form.input_value(f, :example)} />
 
             <.inputs_for :let={f_attr} field={f[:attrs]}>
               <.input type="hidden" field={f_attr[:id]} />
@@ -418,16 +436,47 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
 
           <.button class="mt-4" phx-click={JS.push("show_attr_modal", target: @myself)}>Add new Attribute</.button>
         </div>
-        <div class="col-span-full lg:col-span-2">
-          <%= template_error(@form[:template]) %>
-          <div class="py-6 w-full rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
-            <LiveMonacoEditor.code_editor
-              path="template"
-              class="col-span-full lg:col-span-2"
-              value={Phoenix.HTML.Form.input_value(@form, :template)}
-              change="set_template"
-              opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => "html"})}
-            />
+        <div class="col-span-full lg:col-span-2 space-y-6">
+          <div>
+            <.label for={@form[:body].id}>Body</.label>
+            <%= template_error(@form[:body]) %>
+            <div class="py-6 w-full rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
+              <LiveMonacoEditor.code_editor
+                path="body"
+                class="col-span-full lg:col-span-2"
+                value={Phoenix.HTML.Form.input_value(@form, :body)}
+                change="set_body"
+                opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => "html"})}
+              />
+            </div>
+          </div>
+
+          <div>
+            <.label for={@form[:template].id}>Template</.label>
+            <%= template_error(@form[:template]) %>
+            <div class="py-6 w-full rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
+              <LiveMonacoEditor.code_editor
+                path="template"
+                class="col-span-full lg:col-span-2"
+                value={Phoenix.HTML.Form.input_value(@form, :template)}
+                change="set_template"
+                opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => "html"})}
+              />
+            </div>
+          </div>
+
+          <div>
+            <.label for={@form[:example].id}>Example</.label>
+            <%= template_error(@form[:example]) %>
+            <div class="py-6 w-full rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
+              <LiveMonacoEditor.code_editor
+                path="example"
+                class="col-span-full lg:col-span-2"
+                value={Phoenix.HTML.Form.input_value(@form, :example)}
+                change="set_example"
+                opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => "html"})}
+              />
+            </div>
           </div>
         </div>
       </div>
