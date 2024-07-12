@@ -12,11 +12,9 @@
   let wrapper: HTMLElement
   let styleWrapper: HTMLElement
   let twConfig = $tailwindConfig
-  let b64moduleData = "data:text/javascript;base64," + btoa(twConfig.replace("module.exports = ", "export default "))
-  let configPromise = import(b64moduleData)
+  let configPromise = import(twConfig)
   onMount(async () => {
     const { default: tailwindConfig } = await configPromise
-
     const tailwind = createTailwindcss({ tailwindConfig })
 
     const reloadStylesheet = async () => {
