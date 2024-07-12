@@ -446,7 +446,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
                 class="col-span-full lg:col-span-2"
                 value={Phoenix.HTML.Form.input_value(@form, :body)}
                 change="set_body"
-                opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => "html"})}
+                opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => "elixir"})}
               />
             </div>
           </div>
