@@ -95,7 +95,8 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.Slots do
     %{component: component, beacon_page: %{site: site}} = socket.assigns
     selected = socket.assigns.selected || %{id: nil}
 
-    attrs = %{name: "New Slot"}
+    random_string = Ecto.UUID.generate() |> String.slice(0..5)
+    attrs = %{name: "new_slot_#{random_string}"}
     {:ok, updated_component} = Content.create_slot_for_component(site, component, attrs)
 
     socket =
