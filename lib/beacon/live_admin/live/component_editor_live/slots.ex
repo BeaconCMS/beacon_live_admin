@@ -54,7 +54,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.Slots do
   def handle_event("validate", %{"component_slot" => params}, socket) do
     %{selected: selected, beacon_page: %{site: site}, component: component} = socket.assigns
 
-    component_slots_names = component.slots |> Enum.reject(& &1.id == selected.id) |> Enum.map(& &1.name)
+    component_slots_names = component.slots |> Enum.reject(&(&1.id == selected.id)) |> Enum.map(& &1.name)
     params = format_options_input(params)
 
     changeset =
@@ -73,7 +73,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.Slots do
   def handle_event("save_changes", %{"component_slot" => params}, socket) do
     %{component: component, selected: selected, beacon_page: %{site: site}} = socket.assigns
 
-    component_slots_names = component.slots |> Enum.reject(& &1.id == selected.id) |> Enum.map(& &1.name)
+    component_slots_names = component.slots |> Enum.reject(&(&1.id == selected.id)) |> Enum.map(& &1.name)
     params = format_options_input(params)
 
     socket =

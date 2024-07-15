@@ -208,7 +208,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
     component_attr_params = format_struct_name_input(component_attr_params)
     component_attr_params = format_options_input(component_attr_params)
 
-    component_attr_names = get_field(form.source, :attrs ) |> Enum.reject(& &1.id == attr_form.data.id) |> Enum.map(& &1.name)
+    component_attr_names = get_field(form.source, :attrs) |> Enum.reject(&(&1.id == attr_form.data.id)) |> Enum.map(& &1.name)
 
     changeset =
       site
@@ -240,7 +240,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
   end
 
   defp build_attr_form(site, attr_or_changeset, params, component_form, action \\ nil) do
-    component_attr_names = get_field(component_form.source, :attrs ) |> Enum.reject(& &1.id == attr_or_changeset.id) |> Enum.map(& &1.name)
+    component_attr_names = get_field(component_form.source, :attrs) |> Enum.reject(&(&1.id == attr_or_changeset.id)) |> Enum.map(& &1.name)
 
     changeset =
       site
