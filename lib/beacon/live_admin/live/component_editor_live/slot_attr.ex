@@ -20,13 +20,13 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.SlotAttr do
     component_slot = Enum.find(component.slots, &(&1.id == slot_id))
     slot_attr = Enum.find(component_slot.attrs, &(&1.id == attr_id))
 
-    changeset = Content.change_slot_attr(socket.assigns.beacon_page.site, slot_attr, %{})
+    changeset = Content.change_slot_attr(socket.assigns.beacon_page.site, slot_attr, %{}, [])
 
     {:noreply,
      socket
      |> assign_form(changeset)
      |> assign(
-       component_id: component.id,
+       component: component,
        slot_id: component_slot.id,
        slot_attr: slot_attr,
        page_title: "Edit Attribute"
@@ -40,13 +40,13 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.SlotAttr do
     component_slot = Enum.find(component.slots, &(&1.id == slot_id))
     slot_attr = %Beacon.Content.ComponentSlotAttr{slot_id: component_slot.id}
 
-    changeset = Content.change_slot_attr(socket.assigns.beacon_page.site, slot_attr, %{})
+    changeset = Content.change_slot_attr(socket.assigns.beacon_page.site, slot_attr, %{}, [])
 
     {:noreply,
      socket
      |> assign_form(changeset)
      |> assign(
-       component_id: component.id,
+       component: component,
        slot_id: component_slot.id,
        slot_attr: slot_attr,
        page_title: "Create Attribute"
@@ -55,13 +55,17 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.SlotAttr do
 
   @impl true
   def handle_event("validate", %{"component_slot_attr" => slot_attr_params}, socket) do
-    slot_attr_params = format_struct_name_input(slot_attr_params)
+    %{component: component, slot_id: slot_id, slot_attr: slot_attr} = socket.assigns
 
+    component_slot = Enum.find(component.slots, &(&1.id == slot_id))
+    slot_attr_names = Enum.reject(component_slot.attrs, &(&1.id == slot_attr.id)) |> Enum.map(& &1.name)
+
+    slot_attr_params = format_struct_name_input(slot_attr_params)
     slot_attr_params = format_options_input(slot_attr_params)
 
     changeset =
       socket.assigns.beacon_page.site
-      |> Content.change_slot_attr(socket.assigns.slot_attr, slot_attr_params)
+      |> Content.change_slot_attr(slot_attr, slot_attr_params, slot_attr_names)
       |> Map.put(:action, :validate)
 
     {:noreply, assign_form(socket, changeset)}
@@ -144,16 +148,19 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.SlotAttr do
   end
 
   defp save_component(socket, :new, slot_attr_params) do
-    %{beacon_page: %{site: site}, component_id: component_id, slot_id: slot_id} = socket.assigns
+    %{beacon_page: %{site: site}, component: component, slot_id: slot_id} = socket.assigns
 
-    case Content.create_slot_attr(site, slot_attr_params) do
+    component_slot = Enum.find(component.slots, &(&1.id == slot_id))
+    slot_attr_names = Enum.map(component_slot.attrs, & &1.name)
+
+    case Content.create_slot_attr(site, slot_attr_params, slot_attr_names) do
       {:ok, _slot_attr} ->
-        to = beacon_live_admin_path(socket, site, "/components/#{component_id}/slots/#{slot_id}")
+        to = beacon_live_admin_path(socket, site, "/components/#{component.id}/slots/#{slot_id}")
 
         {:noreply,
          socket
          |> put_flash(:info, "Slot Attribute created successfully")
-         |> push_patch(to: to)}
+         |> push_navigate(to: to)}
 
       {:error, changeset} ->
         changeset = Map.put(changeset, :action, :insert)
@@ -164,19 +171,22 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.SlotAttr do
   defp save_component(socket, :edit, slot_attr_params) do
     %{
       beacon_page: %{site: site},
-      component_id: component_id,
+      component: component,
       slot_id: slot_id,
       slot_attr: slot_attr
     } = socket.assigns
 
-    case Content.update_slot_attr(site, slot_attr, slot_attr_params) do
+    component_slot = Enum.find(component.slots, &(&1.id == slot_id))
+    slot_attr_names = Enum.reject(component_slot.attrs, &(&1.id == slot_attr.id)) |> Enum.map(& &1.name)
+
+    case Content.update_slot_attr(site, slot_attr, slot_attr_params, slot_attr_names) do
       {:ok, _slot_attr} ->
-        to = beacon_live_admin_path(socket, site, "/components/#{component_id}/slots/#{slot_id}")
+        to = beacon_live_admin_path(socket, site, "/components/#{component.id}/slots/#{slot_id}")
 
         {:noreply,
          socket
          |> put_flash(:info, "Slot Attribute updated successfully")
-         |> push_patch(to: to)}
+         |> push_navigate(to: to)}
 
       {:error, changeset} ->
         changeset = Map.put(changeset, :action, :update)
@@ -191,7 +201,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.SlotAttr do
   @impl true
   def render(assigns) do
     ~H"""
-    <.modal id="edit-attr-modal" on_cancel={JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/components/#{@component_id}/slots/#{@slot_id}"))} show>
+    <.modal id="edit-attr-modal" on_cancel={JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/components/#{@component.id}/slots/#{@slot_id}"))} show>
       <p class="text-2xl font-bold mb-12"><%= @page_title %></p>
       <.form :let={f} id="new-path-form" for={@form} phx-change="validate" phx-submit="save" class="space-y-8">
         <.input type="hidden" name={f[:slot_id].name} value={f[:slot_id].value} />
@@ -208,7 +218,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.SlotAttr do
 
         <div class="flex mt-8 gap-x-[20px]">
           <.button type="submit">Save</.button>
-          <.button type="button" phx-click={JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/components/#{@component_id}/slots/#{@slot_id}"))}>Cancel</.button>
+          <.button type="button" phx-click={JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/components/#{@component.id}/slots/#{@slot_id}"))}>Cancel</.button>
         </div>
       </.form>
     </.modal>

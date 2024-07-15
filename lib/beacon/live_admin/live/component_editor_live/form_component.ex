@@ -60,13 +60,12 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
   defp save_component(socket, :edit, component_params) do
     case Content.update_component(socket.assigns.site, socket.assigns.component, component_params) do
       {:ok, component} ->
-        changeset = Content.change_component(socket.assigns.site, component)
+        to = beacon_live_admin_path(socket, socket.assigns.site, "/components/#{component.id}")
 
         {:noreply,
          socket
-         |> assign(:component, component)
-         |> assign_form(changeset)
-         |> put_flash(:info, "Component updated successfully")}
+         |> put_flash(:info, "Component updated successfully")
+         |> push_patch(to: to)}
 
       {:error, changeset} ->
         changeset = Map.put(changeset, :action, :update)
@@ -157,7 +156,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
       |> get_component_attrs_from_form()
       |> Enum.find(&(&1.id == attr_id))
 
-    attr_form = build_attr_form(socket.assigns.site, component_attr, %{})
+    attr_form = build_attr_form(socket.assigns.site, component_attr, %{}, socket.assigns.form)
 
     {:noreply,
      socket
@@ -175,7 +174,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
       component_id: socket.assigns.component.id
     }
 
-    attr_form = build_attr_form(socket.assigns.site, component_attr, %{})
+    attr_form = build_attr_form(socket.assigns.site, component_attr, %{}, socket.assigns.form)
 
     {:noreply,
      socket
@@ -196,6 +195,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
         socket.assigns.site,
         socket.assigns.attr_form.data,
         component_attr_params,
+        socket.assigns.form,
         :validate
       )
 
@@ -203,14 +203,16 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
   end
 
   def handle_event("add_attr", %{"component_attr" => component_attr_params}, socket) do
-    %{site: site, attr_form: attr_form, modal_action: modal_action} = socket.assigns
+    %{site: site, attr_form: attr_form, modal_action: modal_action, form: form} = socket.assigns
 
     component_attr_params = format_struct_name_input(component_attr_params)
     component_attr_params = format_options_input(component_attr_params)
 
+    component_attr_names = get_field(form.source, :attrs ) |> Enum.reject(& &1.id == attr_form.data.id) |> Enum.map(& &1.name)
+
     changeset =
       site
-      |> Content.change_component_attr(attr_form.data, component_attr_params)
+      |> Content.change_component_attr(attr_form.data, component_attr_params, component_attr_names)
       |> Map.put(:action, :validate)
 
     if changeset.valid? do
@@ -223,7 +225,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
        |> assign_form(changeset)
        |> close_attr_modal()}
     else
-      attr_form = build_attr_form(site, attr_form.data, component_attr_params, :validate)
+      attr_form = build_attr_form(site, attr_form.data, component_attr_params, form, :validate)
 
       {:noreply, assign(socket, :attr_form, attr_form)}
     end
@@ -237,10 +239,12 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
     assign(socket, :form, to_form(changeset))
   end
 
-  defp build_attr_form(site, attr_or_changeset, params, action \\ nil) do
+  defp build_attr_form(site, attr_or_changeset, params, component_form, action \\ nil) do
+    component_attr_names = get_field(component_form.source, :attrs ) |> Enum.reject(& &1.id == attr_or_changeset.id) |> Enum.map(& &1.name)
+
     changeset =
       site
-      |> Content.change_component_attr(attr_or_changeset, params)
+      |> Content.change_component_attr(attr_or_changeset, params, component_attr_names)
       |> Map.put(:action, action)
 
     to_form(changeset)
@@ -386,8 +390,9 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
         <div class="p-4 bg-white col-span-full lg:col-span-1 rounded-[1.25rem] lg:rounded-t-[1.25rem] lg:rounded-b-none lg:h-full">
           <.form :let={f} for={@form} id="component-form" class="space-y-8" phx-target={@myself} phx-change="validate" phx-submit="save">
             <legend class="text-sm font-bold tracking-widest text-[#445668] uppercase">Component settings</legend>
-            <.input field={f[:name]} type="text" label="Name" />
+            <.input field={f[:name]} phx-debounce="100" type="text" label="Name" />
             <.input field={f[:category]} type="select" options={categories_to_options(@site)} label="Category" />
+            <.error :for={msg <- Enum.map(f[:attrs].errors, &translate_error(&1))}><%= msg %></.error>
             <input type="hidden" name="component[body]" id="component-form_body" value={Phoenix.HTML.Form.input_value(f, :body)} />
             <input type="hidden" name="component[template]" id="component-form_template" value={Phoenix.HTML.Form.input_value(f, :template)} />
             <input type="hidden" name="component[example]" id="component-form_example" value={Phoenix.HTML.Form.input_value(f, :example)} />

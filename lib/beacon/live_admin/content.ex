@@ -152,11 +152,7 @@ defmodule Beacon.LiveAdmin.Content do
     call(site, Beacon.Content, :count_components, [site, opts])
   end
 
-  def get_component(site, id) do
-    call(site, Beacon.Content, :get_component_by, [site, [id: id]])
-  end
-
-  def get_component(site, id, opts) do
+  def get_component(site, id, opts \\ []) do
     call(site, Beacon.Content, :get_component_by, [site, [id: id], opts])
   end
 
@@ -168,36 +164,36 @@ defmodule Beacon.LiveAdmin.Content do
     call(site, Beacon.Content, :update_component, [component, attrs])
   end
 
-  def change_component_attr(site, component_attr, attrs \\ %{}) do
-    call(site, Beacon.Content, :change_component_attr, [component_attr, attrs])
+  def change_component_attr(site, component_attr, attrs, component_attr_names) do
+    call(site, Beacon.Content, :change_component_attr, [component_attr, attrs, component_attr_names])
   end
 
-  def change_component_slot(site, slot, attrs \\ %{}) do
-    call(site, Beacon.Content, :change_component_slot, [slot, attrs])
+  def change_component_slot(site, slot, attrs, component_slots_names) do
+    call(site, Beacon.Content, :change_component_slot, [slot, attrs, component_slots_names])
   end
 
   def create_slot_for_component(site, component, attrs) do
     call(site, Beacon.Content, :create_slot_for_component, [component, attrs])
   end
 
-  def update_slot_for_component(site, component, slot, attrs) do
-    call(site, Beacon.Content, :update_slot_for_component, [component, slot, attrs])
+  def update_slot_for_component(site, component, slot, attrs, component_slots_names) do
+    call(site, Beacon.Content, :update_slot_for_component, [component, slot, attrs, component_slots_names])
   end
 
   def delete_slot_from_component(site, component, slot) do
     call(site, Beacon.Content, :delete_slot_from_component, [component, slot])
   end
 
-  def change_slot_attr(site, slot_attr, attrs \\ %{}) do
-    call(site, Beacon.Content, :change_slot_attr, [slot_attr, attrs])
+  def change_slot_attr(site, slot_attr, attrs, slot_attr_names) do
+    call(site, Beacon.Content, :change_slot_attr, [slot_attr, attrs, slot_attr_names])
   end
 
-  def create_slot_attr(site, attrs) do
-    call(site, Beacon.Content, :create_slot_attr, [site, attrs])
+  def create_slot_attr(site, attrs, slot_attr_names) do
+    call(site, Beacon.Content, :create_slot_attr, [site, attrs, slot_attr_names])
   end
 
-  def update_slot_attr(site, slot_attr, attrs) do
-    call(site, Beacon.Content, :update_slot_attr, [site, slot_attr, attrs])
+  def update_slot_attr(site, slot_attr, attrs, slot_attr_names) do
+    call(site, Beacon.Content, :update_slot_attr, [site, slot_attr, attrs, slot_attr_names])
   end
 
   def delete_slot_attr(site, slot_attr) do
