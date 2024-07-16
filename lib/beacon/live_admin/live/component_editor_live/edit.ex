@@ -29,6 +29,24 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.Edit do
     {:noreply, socket}
   end
 
+  def handle_event("set_body", %{"value" => value}, socket) do
+    send_update(Beacon.LiveAdmin.ComponentEditorLive.FormComponent,
+      id: "components-form-edit",
+      body: value
+    )
+
+    {:noreply, socket}
+  end
+
+  def handle_event("set_example", %{"value" => value}, socket) do
+    send_update(Beacon.LiveAdmin.ComponentEditorLive.FormComponent,
+      id: "components-form-edit",
+      example: value
+    )
+
+    {:noreply, socket}
+  end
+
   @impl true
   def render(assigns) do
     ~H"""

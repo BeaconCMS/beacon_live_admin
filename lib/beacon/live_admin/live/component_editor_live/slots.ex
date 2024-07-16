@@ -52,13 +52,14 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.Slots do
   end
 
   def handle_event("validate", %{"component_slot" => params}, socket) do
-    %{selected: selected, beacon_page: %{site: site}} = socket.assigns
+    %{selected: selected, beacon_page: %{site: site}, component: component} = socket.assigns
 
+    component_slots_names = component.slots |> Enum.reject(&(&1.id == selected.id)) |> Enum.map(& &1.name)
     params = format_options_input(params)
 
     changeset =
       site
-      |> Content.change_component_slot(selected, params)
+      |> Content.change_component_slot(selected, params, component_slots_names)
       |> Map.put(:action, :validate)
 
     socket =
@@ -72,20 +73,18 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.Slots do
   def handle_event("save_changes", %{"component_slot" => params}, socket) do
     %{component: component, selected: selected, beacon_page: %{site: site}} = socket.assigns
 
+    component_slots_names = component.slots |> Enum.reject(&(&1.id == selected.id)) |> Enum.map(& &1.name)
     params = format_options_input(params)
 
     socket =
-      case Content.update_slot_for_component(site, component, selected, params) do
+      case Content.update_slot_for_component(site, component, selected, params, component_slots_names) do
         {:ok, updated_component} ->
-          socket
-          |> assign(component: updated_component)
-          |> assign_selected(selected.id)
-          |> assign_form()
-          |> assign(unsaved_changes: false)
+          path = beacon_live_admin_path(socket, site, "/components/#{updated_component.id}/slots/#{selected.id}")
+          push_navigate(socket, to: path)
 
         {:error, changeset} ->
           changeset = Map.put(changeset, :action, :update)
-          assign_form(changeset)
+          assign_form(socket, changeset)
       end
 
     {:noreply, socket}
@@ -95,13 +94,12 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.Slots do
     %{component: component, beacon_page: %{site: site}} = socket.assigns
     selected = socket.assigns.selected || %{id: nil}
 
-    attrs = %{name: "New Slot"}
+    random_string = Ecto.UUID.generate() |> String.slice(0..5)
+    attrs = %{name: "new_slot_#{random_string}"}
     {:ok, updated_component} = Content.create_slot_for_component(site, component, attrs)
 
-    socket =
-      socket
-      |> assign(component: updated_component)
-      |> assign_selected(selected.id)
+    path = beacon_live_admin_path(socket, site, "/components/#{updated_component.id}/slots/#{selected.id}")
+    socket = push_navigate(socket, to: path)
 
     {:noreply, assign(socket, component: updated_component)}
   end
@@ -266,7 +264,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.Slots do
 
         %{selected: selected, beacon_page: %{site: site}} ->
           site
-          |> Content.change_component_slot(selected)
+          |> Content.change_component_slot(selected, %{}, [])
           |> to_form()
       end
 

@@ -27,6 +27,20 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
     {:ok, assign_form(socket, changeset)}
   end
 
+  def update(%{body: value}, socket) do
+    params = Map.merge(socket.assigns.form.params, %{"body" => value})
+    changeset = Content.change_component(socket.assigns.site, socket.assigns.component, params)
+
+    {:ok, assign_form(socket, changeset)}
+  end
+
+  def update(%{example: value}, socket) do
+    params = Map.merge(socket.assigns.form.params, %{"example" => value})
+    changeset = Content.change_component(socket.assigns.site, socket.assigns.component, params)
+
+    {:ok, assign_form(socket, changeset)}
+  end
+
   defp save_component(socket, :new, component_params) do
     case Content.create_component(socket.assigns.site, component_params) do
       {:ok, component} ->
@@ -46,13 +60,12 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
   defp save_component(socket, :edit, component_params) do
     case Content.update_component(socket.assigns.site, socket.assigns.component, component_params) do
       {:ok, component} ->
-        changeset = Content.change_component(socket.assigns.site, component)
+        to = beacon_live_admin_path(socket, socket.assigns.site, "/components/#{component.id}")
 
         {:noreply,
          socket
-         |> assign(:component, component)
-         |> assign_form(changeset)
-         |> put_flash(:info, "Component updated successfully")}
+         |> put_flash(:info, "Component updated successfully")
+         |> push_patch(to: to)}
 
       {:error, changeset} ->
         changeset = Map.put(changeset, :action, :update)
@@ -128,6 +141,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
       Content.change_component(site, component, %{
         "name" => get_field(component_form.source, :name),
         "category" => get_field(component_form.source, :category),
+        "body" => get_field(component_form.source, :body),
         "example" => get_field(component_form.source, :example),
         "template" => get_field(component_form.source, :template),
         "attrs" => updated_attr_params
@@ -142,7 +156,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
       |> get_component_attrs_from_form()
       |> Enum.find(&(&1.id == attr_id))
 
-    attr_form = build_attr_form(socket.assigns.site, component_attr, %{})
+    attr_form = build_attr_form(socket.assigns.site, component_attr, %{}, socket.assigns.form)
 
     {:noreply,
      socket
@@ -160,7 +174,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
       component_id: socket.assigns.component.id
     }
 
-    attr_form = build_attr_form(socket.assigns.site, component_attr, %{})
+    attr_form = build_attr_form(socket.assigns.site, component_attr, %{}, socket.assigns.form)
 
     {:noreply,
      socket
@@ -181,6 +195,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
         socket.assigns.site,
         socket.assigns.attr_form.data,
         component_attr_params,
+        socket.assigns.form,
         :validate
       )
 
@@ -188,14 +203,16 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
   end
 
   def handle_event("add_attr", %{"component_attr" => component_attr_params}, socket) do
-    %{site: site, attr_form: attr_form, modal_action: modal_action} = socket.assigns
+    %{site: site, attr_form: attr_form, modal_action: modal_action, form: form} = socket.assigns
 
     component_attr_params = format_struct_name_input(component_attr_params)
     component_attr_params = format_options_input(component_attr_params)
 
+    component_attr_names = get_field(form.source, :attrs) |> Enum.reject(&(&1.id == attr_form.data.id)) |> Enum.map(& &1.name)
+
     changeset =
       site
-      |> Content.change_component_attr(attr_form.data, component_attr_params)
+      |> Content.change_component_attr(attr_form.data, component_attr_params, component_attr_names)
       |> Map.put(:action, :validate)
 
     if changeset.valid? do
@@ -208,7 +225,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
        |> assign_form(changeset)
        |> close_attr_modal()}
     else
-      attr_form = build_attr_form(site, attr_form.data, component_attr_params, :validate)
+      attr_form = build_attr_form(site, attr_form.data, component_attr_params, form, :validate)
 
       {:noreply, assign(socket, :attr_form, attr_form)}
     end
@@ -222,10 +239,12 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
     assign(socket, :form, to_form(changeset))
   end
 
-  defp build_attr_form(site, attr_or_changeset, params, action \\ nil) do
+  defp build_attr_form(site, attr_or_changeset, params, component_form, action \\ nil) do
+    component_attr_names = get_field(component_form.source, :attrs) |> Enum.reject(&(&1.id == attr_or_changeset.id)) |> Enum.map(& &1.name)
+
     changeset =
       site
-      |> Content.change_component_attr(attr_or_changeset, params)
+      |> Content.change_component_attr(attr_or_changeset, params, component_attr_names)
       |> Map.put(:action, action)
 
     to_form(changeset)
@@ -255,6 +274,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
     Content.change_component(site, component, %{
       "name" => get_field(form.source, :name),
       "category" => get_field(form.source, :category),
+      "body" => get_field(form.source, :body),
       "example" => get_field(form.source, :example),
       "template" => get_field(form.source, :template),
       "attrs" => updated_attr_params
@@ -278,6 +298,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
     Content.change_component(site, component, %{
       "name" => get_field(form.source, :name),
       "category" => get_field(form.source, :category),
+      "body" => get_field(form.source, :body),
       "example" => get_field(form.source, :example),
       "template" => get_field(form.source, :template),
       "attrs" => updated_attr_params
@@ -369,10 +390,12 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
         <div class="p-4 bg-white col-span-full lg:col-span-1 rounded-[1.25rem] lg:rounded-t-[1.25rem] lg:rounded-b-none lg:h-full">
           <.form :let={f} for={@form} id="component-form" class="space-y-8" phx-target={@myself} phx-change="validate" phx-submit="save">
             <legend class="text-sm font-bold tracking-widest text-[#445668] uppercase">Component settings</legend>
-            <.input field={f[:name]} type="text" label="Name" />
+            <.input field={f[:name]} phx-debounce="100" type="text" label="Name" />
             <.input field={f[:category]} type="select" options={categories_to_options(@site)} label="Category" />
-            <.input field={f[:example]} type="text" label="Example" />
+            <.error :for={msg <- Enum.map(f[:attrs].errors, &translate_error(&1))}><%= msg %></.error>
+            <input type="hidden" name="component[body]" id="component-form_body" value={Phoenix.HTML.Form.input_value(f, :body)} />
             <input type="hidden" name="component[template]" id="component-form_template" value={Phoenix.HTML.Form.input_value(f, :template)} />
+            <input type="hidden" name="component[example]" id="component-form_example" value={Phoenix.HTML.Form.input_value(f, :example)} />
 
             <.inputs_for :let={f_attr} field={f[:attrs]}>
               <.input type="hidden" field={f_attr[:id]} />
@@ -418,16 +441,47 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
 
           <.button class="mt-4" phx-click={JS.push("show_attr_modal", target: @myself)}>Add new Attribute</.button>
         </div>
-        <div class="col-span-full lg:col-span-2">
-          <%= template_error(@form[:template]) %>
-          <div class="py-6 w-full rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
-            <LiveMonacoEditor.code_editor
-              path="template"
-              class="col-span-full lg:col-span-2"
-              value={Phoenix.HTML.Form.input_value(@form, :template)}
-              change="set_template"
-              opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => "html"})}
-            />
+        <div class="col-span-full lg:col-span-2 space-y-6">
+          <div>
+            <.label for={@form[:body].id}>Body</.label>
+            <%= template_error(@form[:body]) %>
+            <div class="py-6 w-full rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
+              <LiveMonacoEditor.code_editor
+                path="body"
+                class="col-span-full lg:col-span-2"
+                value={Phoenix.HTML.Form.input_value(@form, :body)}
+                change="set_body"
+                opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => "elixir"})}
+              />
+            </div>
+          </div>
+
+          <div>
+            <.label for={@form[:template].id}>Template</.label>
+            <%= template_error(@form[:template]) %>
+            <div class="py-6 w-full rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
+              <LiveMonacoEditor.code_editor
+                path="template"
+                class="col-span-full lg:col-span-2"
+                value={Phoenix.HTML.Form.input_value(@form, :template)}
+                change="set_template"
+                opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => "html"})}
+              />
+            </div>
+          </div>
+
+          <div>
+            <.label for={@form[:example].id}>Example</.label>
+            <%= template_error(@form[:example]) %>
+            <div class="py-6 w-full rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
+              <LiveMonacoEditor.code_editor
+                path="example"
+                class="col-span-full lg:col-span-2"
+                value={Phoenix.HTML.Form.input_value(@form, :example)}
+                change="set_example"
+                opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => "html"})}
+              />
+            </div>
           </div>
         </div>
       </div>
