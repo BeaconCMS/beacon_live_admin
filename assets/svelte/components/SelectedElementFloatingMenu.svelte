@@ -1,6 +1,7 @@
 <script lang="ts">
   import { selectedDomElement, selectedElementMenu } from "$lib/stores/page"
-  import { updateSelectedElementMenu } from "$lib/utils/drag-helpers"
+  import { dragElementInfo } from "$lib/stores/dragAndDrop";
+  import { updateSelectedElementMenu, getElementCoords, getDragDirection, type Coords, CoordsDiff } from "$lib/utils/drag-helpers"
     import { tick } from "svelte"
 
   let siblings: Element[] = [];
@@ -14,8 +15,18 @@
         });
         let firstElementBeforeCursor = siblings[firstElementBeforeCursorIndex];
         if (firstElementBeforeCursor && firstElementBeforeCursor !== $selectedDomElement) {
-          
-          debugger;
+          let newCoords = getElementCoords(firstElementBeforeCursor);
+          $selectedElementMenu = { 
+            ...$selectedElementMenu, 
+            insertBefore: firstElementBeforeCursorIndex,
+            elementCoords: { ...$selectedElementMenu.elementCoords, current: newCoords } 
+          }
+        } else {
+          $selectedElementMenu = { 
+            ...$selectedElementMenu, 
+            insertBefore: null,
+            elementCoords: { ...$selectedElementMenu.elementCoords, current: $selectedElementMenu.elementCoords.start } 
+          }           
         }
       } else {
         debugger;
@@ -23,45 +34,127 @@
     }
   }
 
+  // let dragHandleStyle: string = '';
+  // $: {
+  //   let styles = [];
+  //   if ($selectedElementMenu?.top) {
+  //     styles.push(`top: ${$selectedElementMenu.top}px`);
+  //   }
+  //   if ($selectedElementMenu?.left) {
+  //     styles.push(`left: ${$selectedElementMenu.left}px`);
+  //   }
+  //   dragHandleStyle = styles.join(';');
+  // }
+
   let dragHandleStyle: string = '';
+  let currentHandleCoords: Coords;
   $: {
-    let styles = [];
-    if ($selectedElementMenu?.top) {
-      styles.push(`top: ${$selectedElementMenu.top}px`);
+    if ($selectedDomElement) {
+      let selectedEl;
+      if ($dragElementInfo) {
+        selectedEl = $dragElementInfo.parentElementClone.children.item($dragElementInfo.selectedIndex);
+      }
+      updateHandleCoords(selectedEl || $selectedDomElement)
+      let styles = [];
+      if (currentHandleCoords?.y) {
+        if (currentHandleCoords.y === 701) debugger;
+        styles.push(`top: ${currentHandleCoords.y}px`);
+      }
+      if (currentHandleCoords?.x) {
+        styles.push(`left: ${currentHandleCoords.x}px`);
+      }
+      dragHandleStyle = styles.join(';');
     }
-    if ($selectedElementMenu?.left) {
-      styles.push(`left: ${$selectedElementMenu.left}px`);
-    }
-    dragHandleStyle = styles.join(';');
   }
 
-  function handleMousedown(e: MouseEvent) {
-    document.addEventListener('mousemove', handleMousemove)
-    document.addEventListener('mouseup', handleMouseup)
-    siblings = Array.from($selectedDomElement.parentElement.children);
-    siblingsRectangles = Array.from(siblings).map(el => el.getBoundingClientRect());
-    updateSelectedElementMenu({ start: { x: e.clientX, y: e.clientY }, current: { x: e.clientX, y: e.clientY } });
-    console.log('siblingsRectangles', siblings, siblingsRectangles);
-    console.log('mousedown', e);
+  function snapshotSelectedElementSiblings() {
+    let siblings = Array.from($selectedDomElement.parentElement.children);
+    let selectedIndex = siblings.indexOf($selectedDomElement);
+    let el = $selectedDomElement.parentElement.cloneNode(true) as Element;
+    el.style['background-color'] = 'red';
+    $dragElementInfo = {
+      parentElementClone: el,
+      selectedIndex,
+      siblingRects: siblings.map(el => el.getBoundingClientRect())
+    }
+    $selectedDomElement.parentElement.parentElement.insertBefore(el, $selectedDomElement.parentElement);
   }
 
-  function handleMouseup(e: MouseEvent) {
+  let relativeWrapperRect: DOMRect; 
+
+  function updateHandleCoords(selectedEl: Element, movement: Coords = { x: 0, y: 0 }) {
+    if (!relativeWrapperRect) {
+      relativeWrapperRect = document.getElementById('ui-builder-app-container').closest('.relative').getBoundingClientRect();
+    }      
+    let currentRect = selectedEl.getBoundingClientRect();
+    // let top = elementCoords.current.y + currentRect.height + 5;
+    // let left = elementCoords.current.x + (currentRect.width / 2) - 12;
+    currentHandleCoords = {
+      x: currentRect.x - relativeWrapperRect.x + movement.x + (currentRect.width / 2) - 5,
+      y: currentRect.y - relativeWrapperRect.y + movement.y + currentRect.height + 5,
+    };
+    console.log('currentHandleCoords ', currentHandleCoords);    
+  }
+
+  let mouseDownEvent: MouseEvent;
+  async function handleMousedown(e: MouseEvent) {
+    mouseDownEvent = e;
+    document.addEventListener('mousemove', handleMousemove);
+    document.addEventListener('mouseup', handleMouseup);
+    snapshotSelectedElementSiblings();
+    await tick();
+    let selectedEl = $dragElementInfo.parentElementClone.children.item($dragElementInfo.selectedIndex);
+    updateHandleCoords(selectedEl)
+    // siblings = Array.from($selectedDomElement.parentElement.children);
+    // siblingsRectangles = Array.from(siblings).map(el => el.getBoundingClientRect());
+    // updateSelectedElementMenu({ start: { x: e.clientX, y: e.clientY }, current: { x: e.clientX, y: e.clientY } });
+    // console.log('siblingsRectangles', siblings, siblingsRectangles);
+    // console.log('mousedown', e);
+  }
+
+  async function handleMouseup(e: MouseEvent) {
     document.removeEventListener('mousemove', handleMousemove);
-    $selectedElementMenu = null;
-    tick().then(() => updateSelectedElementMenu());
-    siblings = [];
-    siblingsRectangles = [];
-    console.log('mouseup. Should commit changes', e);
+    if ($dragElementInfo) {
+      $dragElementInfo.parentElementClone.remove();
+      $dragElementInfo = null;
+    }
+    mouseDownEvent = null;
+    await tick();
+    updateHandleCoords($selectedDomElement);
+    // $selectedElementMenu = null;
+    // tick().then(() => updateSelectedElementMenu());
+    // siblings = [];
+    // siblingsRectangles = [];
+    // console.log('mouseup. Should commit changes', e);
   }
 
   function handleMousemove(e: MouseEvent) {
-    updateSelectedElementMenu({ ...$selectedElementMenu.mouseMovement, current: { x: e.clientX, y: e.clientY } });
+    // updateSelectedElementMenu({ ...$selectedElementMenu.mouseMovement, current: { x: e.clientX, y: e.clientY } });
+
+    if (!relativeWrapperRect) {
+      relativeWrapperRect = document.getElementById('ui-builder-app-container').closest('.relative').getBoundingClientRect();
+    }  
+    let selectedEl = $dragElementInfo.parentElementClone.children.item($dragElementInfo.selectedIndex);
+    let initialRect = $dragElementInfo.siblingRects[$dragElementInfo.selectedIndex];
+    let currentRect = selectedEl.getBoundingClientRect();
+    let dragDirection = getDragDirection(selectedEl);
+    let mouseDiff: Coords = {
+      x: e.x - mouseDownEvent.x,
+      y: e.y - mouseDownEvent.y,
+    }
+    // console.log('Drag direction ', dragDirection);
+    // console.log('initial rect ', initialRect);
+    // console.log('current rect ', currentRect);
+    // console.log('mouseDiff ', mouseDiff);
+    updateHandleCoords(selectedEl, mouseDiff);
+    // console.log('currentCoords ', currentHandleCoords);  
+    // let currentCoords = getElementCoords(selectedEl);;
   }
 </script>
 
 {#if $selectedElementMenu}
   {#if selectedDomElementRect && $selectedElementMenu.dragging}
-    <div class="absolute" style="background-color:aqua; opacity: 0.5; top: {$selectedElementMenu.elementCoords.y}px; left: {$selectedElementMenu.elementCoords.x}px; height: {selectedDomElementRect.height}px; width: {selectedDomElementRect.width}px;"></div>
+    <div class="absolute" style="background-color:aqua; opacity: 0.5; top: {$selectedElementMenu.elementCoords.current.y}px; left: {$selectedElementMenu.elementCoords.current.x}px; height: {selectedDomElementRect.height}px; width: {selectedDomElementRect.width}px;"></div>
   {/if}
   <button 
     on:mousedown={handleMousedown}

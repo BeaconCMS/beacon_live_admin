@@ -9,7 +9,7 @@
     selectedElementMenu
   } from "$lib/stores/page"
   import { tick } from "svelte"
-  import { draggedObject } from "$lib/stores/dragAndDrop"
+  import { draggedObject, dragElementInfo } from "$lib/stores/dragAndDrop"
   import { updateSelectedElementMenu } from "$lib/utils/drag-helpers"
   import { updateNodeContent, updateAst } from "$lib/utils/ast-manipulation"
   import { elementCanBeDroppedInTarget, mouseDiff } from "$lib/utils/drag-helpers"
@@ -23,7 +23,22 @@
   $: isSelectedNode = $selectedAstElement === node
   $: isHighlightedNode = $highlightedAstElement === node
   $: isEditable = isSelectedNode && isAstElement(node) && node.content.filter((e) => typeof e === "string").length === 1 && !node.attrs?.selfClose;
-  $: children = isAstElement(node) ? node.content : [];
+  $: isParentOfSelectedNode = isAstElement(node) ? node.content.includes($selectedAstElement) : false;
+  let children;
+  $: {
+    if (isAstElement(node)) {
+      // if (isParentOfSelectedNode) {
+      //   if ($selectedElementMenu && $selectedElementMenu.insertBefore !== null) {
+      //     children = [...node.content];
+      //     let index = children.indexOf($selectedAstElement);
+      //     children.splice(index, 1);
+      //     children.splice($selectedElementMenu.insertBefore, 0, $selectedAstElement);
+      //   }
+      // } else {
+        children = node.content;
+      // }     
+    }
+  }
 
   function handleDragEnter() {
     if ($draggedObject) {
@@ -162,8 +177,12 @@
       {@html node.rendered_html}
     </div>
   {:else}
+    <!-- {#if isParentOfSelectedNode && $dragElementInfo}
+      {@html $dragElementInfo.parentElementClone}
+    {/if} -->
     <svelte:element
       class="relative"
+      class:hidden={isParentOfSelectedNode && $dragElementInfo}
       this={node.tag}
       bind:this={domElement}
       {...node.attrs}
