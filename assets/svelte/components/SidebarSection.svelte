@@ -20,6 +20,13 @@
   function unhighlightAstElement() {
     $highlightedAstElement = undefined
   }
+
+  function deleteAttribute() {
+    if (confirm("Are you sure you want to delete this attribute?")) {
+      dispatch("delete")
+    }
+  }
+
   let internalValue: string | null = astElements ? null : value
   $: {
     if (astNodes?.length === 1) {
@@ -72,19 +79,19 @@
   <header class="flex items-center text-sm mb-2 font-medium">
     <button
       type="button"
-      class="w-full flex items-center justify-between gap-x-1 p-1 font-semibold hover:text-blue-700 active:text-blue-900 group"
+      class="w-full flex items-center justify-between gap-x-1 p-1 font-semibold group"
       on:click={() => (expanded = !expanded)}
       aria-expanded={expanded}
     >
       <span>
-        <slot name="heading" />
+        <span class="hover:text-blue-700 active:text-blue-900"><slot name="heading" /></span>
         {#if !disableDelete}
           <button 
             type="button" 
             class="ml-4" 
             title="Delete attribute"
-            on:click={() => dispatch('delete')}
-          >❌</button>
+            on:click|stopPropagation={deleteAttribute}
+          ><span class="hero-trash text-red hover:text-red"></span></button>
         {/if}
       </span>
       <span class={expanded ? "" : " [&_path]:origin-center [&_path]:rotate-180"}>
