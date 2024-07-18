@@ -11,6 +11,7 @@
   export let expanded = true
   export let placeholder: string = ""
   export let large: boolean = false
+  export let disableDelete: boolean = false;
   $: astElements = (astNodes || []).filter(isAstElement)
 
   function highlightAstElement(astElement: AstElement) {
@@ -75,7 +76,17 @@
       on:click={() => (expanded = !expanded)}
       aria-expanded={expanded}
     >
-      <span><slot name="heading" /></span>
+      <span>
+        <slot name="heading" />
+        {#if !disableDelete}
+          <button 
+            type="button" 
+            class="ml-4" 
+            title="Delete attribute"
+            on:click={() => dispatch('delete')}
+          >❌</button>
+        {/if}
+      </span>
       <span class={expanded ? "" : " [&_path]:origin-center [&_path]:rotate-180"}>
         <svg
           xmlns="http://www.w3.org/2000/svg"

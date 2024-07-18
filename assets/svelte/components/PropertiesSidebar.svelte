@@ -41,6 +41,14 @@
     }
   }
 
+  function deleteAttribute(name: string) {
+    let node = $selectedAstElement
+    if (node && isAstElement(node)) {
+      delete node.attrs[name]
+      $live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast })
+    }
+  }
+
   async function addClasses({ detail: newClasses }: CustomEvent<string>) {
     let node = $selectedAstElement
     if (node) {
@@ -196,6 +204,7 @@
           <SidebarSection
             clearOnUpdate={true}
             {value}
+            on:delete={() => deleteAttribute(name)}
             on:textChange={(e) => updateAttribute(name, e)}
             placeholder="Set {name}"
           >
@@ -256,6 +265,7 @@
           <SidebarSection
             astNodes={$selectedAstElement.content}
             large={true}
+            disableDelete={true}
             on:textChange={(e) => updateText(e)}
             on:nodesChange={changeNodes}
           >
@@ -264,7 +274,7 @@
         {/if}
       </div>
 
-      <SidebarSection expanded={false}>
+      <SidebarSection expanded={false} disableDelete={true}>
         <svelte:fragment slot="heading">Delete</svelte:fragment>
         <svelte:fragment slot="input">
           <button
