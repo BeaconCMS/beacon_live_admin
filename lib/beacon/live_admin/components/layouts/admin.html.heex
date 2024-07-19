@@ -6,6 +6,7 @@
     <meta name="csrf-token" content={get_csrf_token()} />
     <title><%= assigns[:page_title] || "Beacon LiveAdmin" %></title>
     <link rel="stylesheet" href={asset_path(@conn, :css)} />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <script defer src={asset_path(@conn, :js)}>
     </script>
   </head>
