@@ -31,6 +31,7 @@
     data: "Data",
     element: "Elements",
     media: "Media",
+    section: "Section",
   }
 
   let showExamples = false
