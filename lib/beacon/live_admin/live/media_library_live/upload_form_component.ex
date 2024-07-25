@@ -2,7 +2,6 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.UploadFormComponent do
   @moduledoc false
 
   use Beacon.LiveAdmin.Web, :live_component
-  alias Beacon.LiveAdmin.Authorization
   alias Beacon.LiveAdmin.Config
   alias Beacon.LiveAdmin.MediaLibrary
 
@@ -66,7 +65,6 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.UploadFormComponent do
       </section>
 
       <.form
-        :if={Authorization.authorized?(@site, @agent, :upload, %{mod: :media_library})}
         for={%{"site" => @site}}
         as={:assets}
         id="asset-form"

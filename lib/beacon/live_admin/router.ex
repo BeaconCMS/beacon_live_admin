@@ -227,18 +227,22 @@ defmodule Beacon.LiveAdmin.Router do
   end
 
   defp get_on_mount_list(on_mounts) when is_list(on_mounts) do
-    if Enum.member?(on_mounts, Beacon.LiveAdmin.Hooks.AssignAgent) do
-      on_mounts
-    else
-      on_mounts ++ [Beacon.LiveAdmin.Hooks.AssignAgent]
-    end
+    # TODO: review authz
+    # if Enum.member?(on_mounts, Beacon.LiveAdmin.Hooks.AssignAgent) do
+    #   on_mounts
+    # else
+    #   on_mounts ++ [Beacon.LiveAdmin.Hooks.AssignAgent]
+    # end
+    on_mounts
   end
 
   defp get_on_mount_list(on_mounts) do
     raise ArgumentError, """
-    expected `on_mount` option to be a list.
+    expected `on_mount` option to be a list
 
-    Got: #{inspect(on_mounts)}
+    Got:
+
+      #{inspect(on_mounts)}
     """
   end
 

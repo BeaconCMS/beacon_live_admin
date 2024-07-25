@@ -1,10 +1,5 @@
 defmodule Beacon.LiveAdmin.Authorization do
-  @moduledoc """
-  Calls Beacon Authorization API through the cluster.
-
-  The function call is made on the first available node for a site,
-  which may be running in multiple nodes.
-  """
+  @moduledoc false
 
   import Beacon.LiveAdmin.Cluster, only: [call: 4]
 

@@ -4,7 +4,6 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.Index do
   use Beacon.LiveAdmin.PageBuilder, table: [sort_by: "title"]
   alias Beacon.LiveAdmin.Content
 
-  on_mount {Beacon.LiveAdmin.Hooks.Authorized, {:layout_editor, :index}}
 
   @impl true
   def menu_link(_, :index), do: {:root, "Layouts"}
