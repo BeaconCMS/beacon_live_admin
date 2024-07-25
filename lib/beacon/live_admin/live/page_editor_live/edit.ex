@@ -19,7 +19,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
       |> assign_new(:layouts, fn -> Content.list_layouts(site) end)
       |> assign_new(:components, fn ->
         components = Content.list_components(site, per_page: :infinity)
-        %{data: components} = BeaconWeb.API.ComponentJSON.index(%{components: components})
+        %{data: components} = Beacon.Web.API.ComponentJSON.index(%{components: components})
         components
       end)
       |> assign_new(:page, fn -> Content.get_page(site, params["id"], preloads: [:layout]) end)

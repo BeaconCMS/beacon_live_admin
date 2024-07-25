@@ -8,7 +8,7 @@ defmodule Beacon.LiveAdmin.Components do
     {site, assigns} = Map.pop(assigns, :site)
     {env, assigns} = Map.pop(assigns, :env)
     env = {env.module, env.function, env.file, env.line}
-    call(site, BeaconWeb.Components, :render, [fun, assigns, env])
+    call(site, Beacon.Web.Components, :render, [fun, assigns, env])
   end
 
   attr :site, :atom, required: true
@@ -20,7 +20,7 @@ defmodule Beacon.LiveAdmin.Components do
   attr :asset, :map, required: true, doc: "a MediaLibrary.Asset struct"
 
   def image_set(assigns) do
-    assigns = %{raw: render(assigns, &BeaconWeb.Components.image_set/1)}
+    assigns = %{raw: render(assigns, &Beacon.Web.Components.image_set/1)}
 
     ~H"""
     <%= {:safe, @raw} %>

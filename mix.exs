@@ -10,15 +10,17 @@ defmodule Beacon.LiveAdmin.MixProject do
       elixir: "~> 1.13",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
+      name: "Beacon LiveAdmin",
+      deps: deps(),
       aliases: aliases(),
-      deps: deps()
+      docs: docs()
     ]
   end
 
   def application do
     [
       mod: {Beacon.LiveAdmin.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger]
     ]
   end
 
@@ -27,49 +29,32 @@ defmodule Beacon.LiveAdmin.MixProject do
 
   defp deps do
     [
-      beacon_dep(),
-      live_monaco_editor_dep(),
+      # Overridable
+      override_dep(:phoenix, "~> 1.7", "PHOENIX_VERSION", "PHOENIX_PATH"),
+      override_dep(:phoenix_live_view, "~> 0.19", "PHOENIX_LIVE_VIEW_VERSION", "PHOENIX_LIVE_VIEW_PATH"),
+      override_dep(:beacon, [github: "BeaconCMS/beacon", runtime: false], "BEACON_VERSION", "BEACON_PATH"),
+      override_dep(:live_monaco_editor, "~> 0.1", "LIVE_MONACO_EDITOR_VERSION", "LIVE_MONACO_EDITOR_PATH"),
+
+      # Runtime
       {:ecto, "~> 3.6"},
-      phoenix_dep(),
+      {:plug_cowboy, "~> 2.5"},
       {:phoenix_html, "~> 4.0"},
-      {:phoenix_live_reload, "~> 1.2", only: :dev},
-      phoenix_live_view_dep(),
+      {:live_svelte, "~> 0.12"},
       {:floki, ">= 0.30.0"},
       {:tailwind, "~> 0.2"},
       {:gettext, "~> 0.20"},
       {:jason, "~> 1.0"},
-      {:plug_cowboy, "~> 2.5"},
-      {:live_svelte, "~> 0.12"}
+
+      # Dev, Test, Docs
+      {:phoenix_live_reload, "~> 1.2", only: :dev}
     ]
   end
 
-  defp phoenix_dep do
+  defp override_dep(dep, version, env_version, env_path) do
     cond do
-      env = System.get_env("PHOENIX_VERSION") -> {:phoenix, env}
-      path = System.get_env("PHOENIX_PATH") -> {:phoenix, path}
-      :default -> {:phoenix, "~> 1.7"}
-    end
-  end
-
-  defp phoenix_live_view_dep do
-    cond do
-      env = System.get_env("PHOENIX_LIVE_VIEW_VERSION") -> {:phoenix_live_view, env}
-      path = System.get_env("PHOENIX_LIVE_VIEW_PATH") -> {:phoenix_live_view, path}
-      :default -> {:phoenix_live_view, "~> 0.19"}
-    end
-  end
-
-  defp beacon_dep do
-    cond do
-      path = System.get_env("BEACON_PATH") -> {:beacon, path: path, runtime: false}
-      :default -> {:beacon, github: "beaconCMS/beacon", runtime: false}
-    end
-  end
-
-  defp live_monaco_editor_dep do
-    cond do
-      path = System.get_env("LIVE_MONACO_EDITOR_PATH") -> {:live_monaco_editor, path: path}
-      :default -> {:live_monaco_editor, "~> 0.1.7"}
+      env = System.get_env(env_version) -> {dep, env}
+      path = System.get_env(env_path) -> {dep, path}
+      :default -> {dep, version}
     end
   end
 
@@ -81,19 +66,37 @@ defmodule Beacon.LiveAdmin.MixProject do
         "format --check-formatted",
         "cmd npm run format-check --prefix ./assets"
       ],
-      dev: "run --no-halt dev.exs",
       "assets.setup": [
-        "cmd npm install --prefix assets",
-        "tailwind.install --if-missing --no-assets"
+        "tailwind.install --if-missing --no-assets",
+        "cmd npm install --prefix assets"
       ],
       "assets.build": [
-        "tailwind default",
-        "cmd --cd assets node build.js"
-      ],
-      "assets.deploy": [
-        "tailwind default --minify",
+        "tailwind beacon_live_admin --minify",
         "cmd --cd assets node build.js --deploy"
       ]
+    ]
+  end
+
+  defp docs do
+    [
+      main: "Beacon.LiveAdmin",
+      source_ref: "v#{@version}",
+      source_url: "https://github.com/BeaconCMS/beacon_live_admin",
+      extra_section: "GUIDES",
+      extras: extras(),
+      groups_for_extras: groups_for_extras(),
+      skip_undefined_reference_warnings_on: ["CHANGELOG.md"]
+    ]
+  end
+
+  defp extras do
+    ["CHANGELOG.md"] ++ Path.wildcard("guides/*/*.md")
+  end
+
+  defp groups_for_extras do
+    [
+      Introduction: ~r"guides/introduction/",
+      Recipes: ~r"guides/recipes/"
     ]
   end
 end
