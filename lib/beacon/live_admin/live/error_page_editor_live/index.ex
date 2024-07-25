@@ -1,5 +1,6 @@
 defmodule Beacon.LiveAdmin.ErrorPageEditorLive.Index do
   @moduledoc false
+
   use Beacon.LiveAdmin.PageBuilder
 
   alias Beacon.LiveAdmin.Content

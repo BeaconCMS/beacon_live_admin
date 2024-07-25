@@ -4,7 +4,9 @@ defmodule Beacon.LiveAdmin.PageBuilder.Menu do
 end
 
 defmodule Beacon.LiveAdmin.PageBuilder.Page do
-  @moduledoc false
+  @moduledoc """
+  Admin Page
+  """
   defstruct site: nil, path: nil, module: nil, params: %{}, session: %{}, table: nil
 end
 

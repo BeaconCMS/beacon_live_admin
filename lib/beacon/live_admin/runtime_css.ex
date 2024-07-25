@@ -1,4 +1,6 @@
 defmodule Beacon.LiveAdmin.RuntimeCSS do
+  @moduledoc false
+
   import Beacon.LiveAdmin.Cluster, only: [call: 4]
 
   def asset_url(site) when is_atom(site) do

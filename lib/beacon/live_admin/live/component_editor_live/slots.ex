@@ -1,5 +1,6 @@
 defmodule Beacon.LiveAdmin.ComponentEditorLive.Slots do
   @moduledoc false
+
   use Beacon.LiveAdmin.PageBuilder
 
   alias Beacon.LiveAdmin.Content

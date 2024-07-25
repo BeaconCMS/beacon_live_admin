@@ -2,7 +2,9 @@
 # See Beacon.LiveAdmin.AdminComponents
 
 defmodule Beacon.LiveAdmin.CoreComponents do
-  @moduledoc false
+  @moduledoc """
+  Core Components
+  """
 
   # Provides core UI components.
   #

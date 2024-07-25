@@ -1,7 +1,5 @@
 defmodule Beacon.LiveAdmin.WebAPI.Component do
-  @moduledoc """
-  Calls Beacon Web API through the cluster.
-  """
+  @moduledoc false
 
   import Beacon.LiveAdmin.Cluster, only: [call: 4]
 

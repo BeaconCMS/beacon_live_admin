@@ -1,4 +1,6 @@
 defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
+  @moduledoc false
+
   use Beacon.LiveAdmin.Web, :live_component
   import Ecto.Changeset, only: [get_field: 2]
 

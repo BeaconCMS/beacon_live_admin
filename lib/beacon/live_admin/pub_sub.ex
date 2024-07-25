@@ -1,4 +1,6 @@
 defmodule Beacon.LiveAdmin.PubSub do
+  @moduledoc false
+
   @pubsub __MODULE__
 
   defp topic, do: "beacon:live_admin:cluster"

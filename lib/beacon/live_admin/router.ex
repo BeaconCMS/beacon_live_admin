@@ -273,7 +273,7 @@ defmodule Beacon.LiveAdmin.Router do
   """
   @spec beacon_live_admin_path(
           conn_or_socket,
-          Beacon.LiveAdmin.Types.Site.t(),
+          Beacon.Types.Site.t(),
           String.t() | atom(),
           map() | keyword()
         ) :: String.t()

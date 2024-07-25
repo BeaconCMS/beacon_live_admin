@@ -1,5 +1,6 @@
 defmodule Beacon.LiveAdmin.AssetsController do
   @moduledoc false
+
   import Plug.Conn
 
   phoenix_js_paths =

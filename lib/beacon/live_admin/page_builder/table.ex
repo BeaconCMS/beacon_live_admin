@@ -1,5 +1,7 @@
 defmodule Beacon.LiveAdmin.PageBuilder.Table do
-  @moduledoc false
+  @moduledoc """
+  Admin Table
+  """
 
   defstruct [:per_page, :current_page, :page_count, :sort_by, :query]
 

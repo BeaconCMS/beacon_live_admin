@@ -1,4 +1,6 @@
 defmodule Beacon.LiveAdmin.Components do
+  @moduledoc false
+
   use Phoenix.Component
   import Beacon.LiveAdmin.CoreComponents, only: [error: 1]
   import Beacon.LiveAdmin.Cluster, only: [call: 4]

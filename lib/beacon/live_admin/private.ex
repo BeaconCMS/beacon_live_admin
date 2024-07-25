@@ -1,5 +1,5 @@
 defmodule Beacon.LiveAdmin.Private do
-  @doc false
+  @moduledoc false
 
   # Concentrate calls to private APIs so it's easier to track breaking changes.
   # Should be avoided as much as possible.

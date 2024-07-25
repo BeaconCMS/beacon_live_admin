@@ -46,7 +46,8 @@ defmodule Beacon.LiveAdmin.MixProject do
       {:jason, "~> 1.0"},
 
       # Dev, Test, Docs
-      {:phoenix_live_reload, "~> 1.2", only: :dev}
+      {:phoenix_live_reload, "~> 1.2", only: :dev},
+      {:ex_doc, "~> 0.29", only: :docs}
     ]
   end
 
@@ -85,6 +86,7 @@ defmodule Beacon.LiveAdmin.MixProject do
       extra_section: "GUIDES",
       extras: extras(),
       groups_for_extras: groups_for_extras(),
+      groups_for_modules: groups_for_modules(),
       skip_undefined_reference_warnings_on: ["CHANGELOG.md"]
     ]
   end
@@ -97,6 +99,30 @@ defmodule Beacon.LiveAdmin.MixProject do
     [
       Introduction: ~r"guides/introduction/",
       Recipes: ~r"guides/recipes/"
+    ]
+  end
+
+  defp groups_for_modules do
+    [
+      Execution: [
+        Beacon.LiveAdmin.Router,
+        Beacon.LiveAdmin.Plug,
+        Beacon.LiveAdmin.Cluster
+      ],
+      "Authn and Authz": [
+        Beacon.LiveAdmin.Authorization,
+        Beacon.LiveAdmin.Hooks.AssignAgent
+      ],
+      Extensibility: [
+        Beacon.LiveAdmin.PageBuilder,
+        Beacon.LiveAdmin.PageBuilder.Page,
+        Beacon.LiveAdmin.PageBuilder.Table,
+        Beacon.LiveAdmin.AdminComponents,
+        Beacon.LiveAdmin.CoreComponents
+      ],
+      Exceptions: [
+        Beacon.LiveAdmin.ClusterError
+      ]
     ]
   end
 end

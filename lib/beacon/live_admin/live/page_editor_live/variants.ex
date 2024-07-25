@@ -1,5 +1,6 @@
 defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
   @moduledoc false
+
   use Beacon.LiveAdmin.PageBuilder
 
   alias Beacon.LiveAdmin.Content

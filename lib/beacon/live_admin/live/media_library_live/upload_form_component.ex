@@ -1,4 +1,6 @@
 defmodule Beacon.LiveAdmin.MediaLibraryLive.UploadFormComponent do
+  @moduledoc false
+
   use Beacon.LiveAdmin.Web, :live_component
   alias Beacon.LiveAdmin.Authorization
   alias Beacon.LiveAdmin.Config

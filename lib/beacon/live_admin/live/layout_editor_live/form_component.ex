@@ -1,4 +1,6 @@
 defmodule Beacon.LiveAdmin.LayoutEditorLive.FormComponent do
+  @moduledoc false
+
   use Beacon.LiveAdmin.Web, :live_component
   alias Beacon.LiveAdmin.Content
 

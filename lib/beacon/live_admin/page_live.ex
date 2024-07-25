@@ -1,8 +1,3 @@
-defmodule Beacon.LiveAdmin.PageNotFound do
-  @moduledoc false
-  defexception [:message, plug_status: 404]
-end
-
 defmodule Beacon.LiveAdmin.PageLive do
   @moduledoc false
 
