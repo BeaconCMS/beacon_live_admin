@@ -11,7 +11,7 @@ works well and is safe when using SSL.
 
 Protect the admin interface with basic auth using credentials from environment variables.
 
-## Requirements
+## Prerequisites
 
 Beacon LiveAdmin is already installed and configured.
 
