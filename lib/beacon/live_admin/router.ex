@@ -227,12 +227,6 @@ defmodule Beacon.LiveAdmin.Router do
   end
 
   defp get_on_mount_list(on_mounts) when is_list(on_mounts) do
-    # TODO: review authz
-    # if Enum.member?(on_mounts, Beacon.LiveAdmin.Hooks.AssignAgent) do
-    #   on_mounts
-    # else
-    #   on_mounts ++ [Beacon.LiveAdmin.Hooks.AssignAgent]
-    # end
     on_mounts
   end
 

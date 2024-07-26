@@ -5,7 +5,6 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Index do
 
   alias Beacon.LiveAdmin.Content
 
-
   def menu_link(_, :index), do: {:root, "Live Data"}
   def menu_link(_, :new), do: {:root, "Live Data"}
   def menu_link(_, :edit), do: {:root, "Live Data"}

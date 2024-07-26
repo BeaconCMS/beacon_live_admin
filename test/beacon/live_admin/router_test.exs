@@ -63,17 +63,6 @@ defmodule Beacon.LiveAdmin.RouterTest do
       assert {:beacon_live_admin_prefix, _} = Router.__session_options__("prefix", [], [])
     end
 
-    # TODO: review authz
-    @tag :skip
-    test "options are optional but always assign Hooks.AssignAgent" do
-      assert {:beacon_live_admin_prefix,
-              [
-                {:root_layout, {Beacon.LiveAdmin.Layouts, :admin}},
-                {:session, {Beacon.LiveAdmin.Router, :__session__, [[]]}},
-                {:on_mount, [Beacon.LiveAdmin.Hooks.AssignAgent]}
-              ]} = Router.__session_options__("prefix", [], [])
-    end
-
     test "allow adding custom mount hooks" do
       assert {:beacon_live_admin_prefix,
               [

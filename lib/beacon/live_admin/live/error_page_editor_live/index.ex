@@ -5,7 +5,6 @@ defmodule Beacon.LiveAdmin.ErrorPageEditorLive.Index do
 
   alias Beacon.LiveAdmin.Content
 
-
   @impl true
   def menu_link(_, :index), do: {:root, "Error Pages"}
 

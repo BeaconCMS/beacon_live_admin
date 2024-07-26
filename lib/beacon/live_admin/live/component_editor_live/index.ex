@@ -4,7 +4,6 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.Index do
   use Beacon.LiveAdmin.PageBuilder, table: [sort_by: "name"]
   alias Beacon.LiveAdmin.Content
 
-
   @impl true
   def menu_link(_, :index), do: {:root, "Components"}
 

@@ -104,7 +104,7 @@ Beacon.LiveAdminTest.Cluster.start_beacon(:"node2@127.0.0.1",
       skip_boot?: true,
       repo: MyApp.Repo,
       endpoint: MyAppWeb.Endpoint,
-      router: MyApp.Router,
+      router: MyApp.Router
     ],
     [
       site: :site_c,

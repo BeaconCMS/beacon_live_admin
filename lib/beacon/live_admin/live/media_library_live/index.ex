@@ -6,7 +6,6 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.Index do
   alias Beacon.LiveAdmin.MediaLibrary
   alias Beacon.MediaLibrary.Asset
 
-
   @impl true
   def menu_link(_, action) when action in [:index, :upload, :show], do: {:root, "Media Library"}
 
@@ -20,28 +19,28 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.Index do
 
   @impl true
   def handle_params(params, _url, %{assigns: assigns} = socket) do
-      socket =
-        Table.handle_params(
-          socket,
-          params,
-          &MediaLibrary.count_assets(&1.site, query: params["query"])
-        )
+    socket =
+      Table.handle_params(
+        socket,
+        params,
+        &MediaLibrary.count_assets(&1.site, query: params["query"])
+      )
 
-      %{per_page: per_page, current_page: page, query: query, sort_by: sort_by} =
-        socket.assigns.beacon_page.table
+    %{per_page: per_page, current_page: page, query: query, sort_by: sort_by} =
+      socket.assigns.beacon_page.table
 
-      assets =
-        MediaLibrary.list_assets(assigns.beacon_page.site,
-          per_page: per_page,
-          page: page,
-          query: query,
-          sort: sort_by
-        )
+    assets =
+      MediaLibrary.list_assets(assigns.beacon_page.site,
+        per_page: per_page,
+        page: page,
+        query: query,
+        sort: sort_by
+      )
 
-      {:noreply,
-       socket
-       |> stream(:assets, assets, reset: true)
-       |> apply_action(assigns.live_action, params)}
+    {:noreply,
+     socket
+     |> stream(:assets, assets, reset: true)
+     |> apply_action(assigns.live_action, params)}
   end
 
   defp apply_action(socket, :index, %{"search" => search}) when search not in ["", nil] do
@@ -77,21 +76,21 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.Index do
   def handle_event("delete", %{"id" => id}, socket) do
     site = socket.assigns.beacon_page.site
 
-      asset = MediaLibrary.get_asset_by(site, id: id)
-      {:ok, _} = MediaLibrary.soft_delete(site, asset)
+    asset = MediaLibrary.get_asset_by(site, id: id)
+    {:ok, _} = MediaLibrary.soft_delete(site, asset)
 
-      path = beacon_live_admin_path(socket, site, "/media_library", search: socket.assigns.search)
-      socket = push_patch(socket, to: path)
+    path = beacon_live_admin_path(socket, site, "/media_library", search: socket.assigns.search)
+    socket = push_patch(socket, to: path)
 
-      {:noreply, socket}
+    {:noreply, socket}
   end
 
   def handle_event("search", %{"search" => search}, %{assigns: assigns} = socket) do
-      path =
-        beacon_live_admin_path(socket, assigns.beacon_page.site, "/media_library", search: search)
+    path =
+      beacon_live_admin_path(socket, assigns.beacon_page.site, "/media_library", search: search)
 
-      socket = push_patch(socket, to: path)
-      {:noreply, socket}
+    socket = push_patch(socket, to: path)
+    {:noreply, socket}
   end
 
   @impl true
@@ -121,12 +120,7 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.Index do
         <:col :let={{_, asset}} label="File Name"><%= asset.file_name %></:col>
         <:col :let={{_, asset}} label="type"><%= asset.media_type %></:col>
         <:action :let={{_, asset}}>
-          <.link
-            aria-label="View asset"
-            title="View asset"
-            class="flex items-center justify-center w-10 h-10"
-            patch={beacon_live_admin_path(@socket, @beacon_page.site, "/media_library/#{asset.id}")}
-          >
+          <.link aria-label="View asset" title="View asset" class="flex items-center justify-center w-10 h-10" patch={beacon_live_admin_path(@socket, @beacon_page.site, "/media_library/#{asset.id}")}>
             <.icon name="hero-eye text-[#61758A] hover:text-[#304254]" />
           </.link>
         </:action>
