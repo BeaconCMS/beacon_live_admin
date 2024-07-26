@@ -24,7 +24,7 @@ defmodule Beacon.LiveAdmin.Plug do
   # and also loading assets and workers for the code editor
   def secure_headers(conn, _opts) do
     Phoenix.Controller.put_secure_browser_headers(conn, %{
-      "content-security-policy" => "default-src 'self' 'unsafe-inline' data: blob: *",
+      "content-security-policy" => "default-src 'self' 'unsafe-inline' data: blob: *"
     })
   end
 
