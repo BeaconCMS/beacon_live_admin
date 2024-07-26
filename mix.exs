@@ -120,10 +120,6 @@ defmodule Beacon.LiveAdmin.MixProject do
         Beacon.LiveAdmin.Plug,
         Beacon.LiveAdmin.Cluster
       ],
-      "Authn and Authz": [
-        Beacon.LiveAdmin.Authorization,
-        Beacon.LiveAdmin.Hooks.AssignAgent
-      ],
       Extensibility: [
         Beacon.LiveAdmin.PageBuilder,
         Beacon.LiveAdmin.PageBuilder.Page,

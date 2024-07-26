@@ -90,7 +90,6 @@ Beacon.LiveAdminTest.Cluster.start_beacon(:"node1@127.0.0.1",
       repo: MyApp.Repo,
       endpoint: MyAppWeb.Endpoint,
       router: MyApp.Router,
-      authorization_source: MyApp.AuthorizationSource,
       extra_page_fields: [
         MyApp.PageField.Type
       ]
@@ -106,7 +105,6 @@ Beacon.LiveAdminTest.Cluster.start_beacon(:"node2@127.0.0.1",
       repo: MyApp.Repo,
       endpoint: MyAppWeb.Endpoint,
       router: MyApp.Router,
-      authorization_source: MyApp.AuthorizationSource
     ],
     [
       site: :site_c,
