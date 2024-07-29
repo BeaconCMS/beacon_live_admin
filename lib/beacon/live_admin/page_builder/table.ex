@@ -1,9 +1,17 @@
 defmodule Beacon.LiveAdmin.PageBuilder.Table do
   @moduledoc """
-  Admin Table
+  Represents a Table in the LiveAdmin UI, with pagination, filtering, and sorting.
   """
 
   defstruct [:per_page, :current_page, :page_count, :sort_by, :query]
+
+  @type t :: %__MODULE__{
+          per_page: integer(),
+          current_page: integer(),
+          page_count: integer(),
+          sort_by: atom(),
+          query: String.t()
+        }
 
   import Beacon.LiveAdmin.Router, only: [beacon_live_admin_path: 4]
   alias Beacon.LiveAdmin.PageBuilder.Page
