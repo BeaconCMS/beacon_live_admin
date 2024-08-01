@@ -14,7 +14,7 @@ defmodule Beacon.LiveAdmin.Router do
   defp prelude do
     assets =
       quote do
-        scope "/__beacon_live_admin/assets", alias: false, as: false do
+        scope "/__beacon_live_admin__/assets", alias: false, as: false do
           get "/css-:md5", Beacon.LiveAdmin.AssetsController, :css, as: :beacon_live_admin_asset
           get "/js-:md5", Beacon.LiveAdmin.AssetsController, :js, as: :beacon_live_admin_asset
         end
@@ -39,7 +39,7 @@ defmodule Beacon.LiveAdmin.Router do
 
       @doc false
       def __beacon_live_admin_assets_prefix__ do
-        "/__beacon_live_admin/assets"
+        "/__beacon_live_admin__/assets"
       end
     end
   end
@@ -322,11 +322,11 @@ defmodule Beacon.LiveAdmin.Router do
   ## Example
 
       iex> Beacon.LiveAdmin.Router.beacon_live_admin_static_path("/images/logo.webp")
-      "__beacon_live_admin_static/images/logo.webp"
+      "__beacon_live_admin_static__/images/logo.webp"
 
   """
   def beacon_live_admin_static_path(file) do
-    sanitize_path("/__beacon_live_admin_static/" <> file)
+    sanitize_path("/__beacon_live_admin_static__/" <> file)
   end
 
   defp router(%Plug.Conn{private: %{phoenix_router: router}}), do: router

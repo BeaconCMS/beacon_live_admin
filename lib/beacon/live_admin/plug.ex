@@ -12,7 +12,7 @@ defmodule Beacon.LiveAdmin.Plug do
   def call(conn, opts), do: super(conn, opts)
 
   plug Plug.Static,
-    at: "__beacon_live_admin_static/",
+    at: "__beacon_live_admin_static__/",
     from: :beacon_live_admin,
     only: ["images"]
 
@@ -20,7 +20,7 @@ defmodule Beacon.LiveAdmin.Plug do
   plug :page_url
 
   @doc false
-  def page_url(%{path_info: ["__beacon_live_admin", "assets" | _]} = conn, _opts), do: conn
+  def page_url(%{path_info: ["__beacon_live_admin__", "assets" | _]} = conn, _opts), do: conn
 
   def page_url(conn, _opts) do
     Plug.Conn.put_session(
