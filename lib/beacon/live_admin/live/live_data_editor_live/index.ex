@@ -1,10 +1,9 @@
 defmodule Beacon.LiveAdmin.LiveDataEditorLive.Index do
   @moduledoc false
+
   use Beacon.LiveAdmin.PageBuilder
 
   alias Beacon.LiveAdmin.Content
-
-  on_mount {Beacon.LiveAdmin.Hooks.Authorized, {:live_data, :index}}
 
   def menu_link(_, :index), do: {:root, "Live Data"}
   def menu_link(_, :new), do: {:root, "Live Data"}

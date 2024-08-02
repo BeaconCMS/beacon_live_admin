@@ -3,7 +3,9 @@ defmodule Beacon.LiveAdmin.Cluster do
   Cluster management. Discover all sites running in the cluster and executes functions globally.
   """
 
+  @doc false
   use GenServer
+
   require Logger
 
   @scope :beacon_cluster
@@ -40,10 +42,10 @@ defmodule Beacon.LiveAdmin.Cluster do
 
   It will call the function in only one of the available nodes to avoid double execution of `fun`.
 
-    ## Examples
+  ## Examples
 
-        iex> Beacon.LiveAdmin.Cluster.call(:my_site, Beacon, :boot, [:my_site])
-        :ok
+      iex> Beacon.LiveAdmin.Cluster.call(:my_site, Beacon, :boot, [:my_site])
+      :ok
 
   """
   @spec call(atom(), module(), fun :: (-> any()), [any()]) :: any()

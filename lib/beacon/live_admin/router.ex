@@ -14,7 +14,7 @@ defmodule Beacon.LiveAdmin.Router do
   defp prelude do
     assets =
       quote do
-        scope "/__beacon_live_admin/assets", alias: false, as: false do
+        scope "/__beacon_live_admin__/assets", alias: false, as: false do
           get "/css-:md5", Beacon.LiveAdmin.AssetsController, :css, as: :beacon_live_admin_asset
           get "/js-:md5", Beacon.LiveAdmin.AssetsController, :js, as: :beacon_live_admin_asset
         end
@@ -39,7 +39,7 @@ defmodule Beacon.LiveAdmin.Router do
 
       @doc false
       def __beacon_live_admin_assets_prefix__ do
-        "/__beacon_live_admin/assets"
+        "/__beacon_live_admin__/assets"
       end
     end
   end
@@ -133,6 +133,10 @@ defmodule Beacon.LiveAdmin.Router do
       {"/components", Beacon.LiveAdmin.ComponentEditorLive.Index, :index, %{}},
       {"/components/new", Beacon.LiveAdmin.ComponentEditorLive.New, :new, %{}},
       {"/components/:id", Beacon.LiveAdmin.ComponentEditorLive.Edit, :edit, %{}},
+      {"/components/:id/slots", Beacon.LiveAdmin.ComponentEditorLive.Slots, :slots, %{}},
+      {"/components/:id/slots/:slot_id", Beacon.LiveAdmin.ComponentEditorLive.Slots, :slots, %{}},
+      {"/components/:id/slots/:slot_id/attrs/new", Beacon.LiveAdmin.ComponentEditorLive.SlotAttr, :new, %{}},
+      {"/components/:id/slots/:slot_id/attrs/:attr_id", Beacon.LiveAdmin.ComponentEditorLive.SlotAttr, :edit, %{}},
       # pages
       {"/pages", Beacon.LiveAdmin.PageEditorLive.Index, :index, %{}},
       {"/pages/new", Beacon.LiveAdmin.PageEditorLive.New, :new, %{}},
@@ -223,18 +227,16 @@ defmodule Beacon.LiveAdmin.Router do
   end
 
   defp get_on_mount_list(on_mounts) when is_list(on_mounts) do
-    if Enum.member?(on_mounts, Beacon.LiveAdmin.Hooks.AssignAgent) do
-      on_mounts
-    else
-      on_mounts ++ [Beacon.LiveAdmin.Hooks.AssignAgent]
-    end
+    on_mounts
   end
 
   defp get_on_mount_list(on_mounts) do
     raise ArgumentError, """
-    expected `on_mount` option to be a list.
+    expected `on_mount` option to be a list
 
-    Got: #{inspect(on_mounts)}
+    Got:
+
+      #{inspect(on_mounts)}
     """
   end
 
@@ -269,7 +271,7 @@ defmodule Beacon.LiveAdmin.Router do
   """
   @spec beacon_live_admin_path(
           conn_or_socket,
-          Beacon.LiveAdmin.Types.Site.t(),
+          Beacon.Types.Site.t(),
           String.t() | atom(),
           map() | keyword()
         ) :: String.t()
@@ -320,11 +322,11 @@ defmodule Beacon.LiveAdmin.Router do
   ## Example
 
       iex> Beacon.LiveAdmin.Router.beacon_live_admin_static_path("/images/logo.webp")
-      "__beacon_live_admin_static/images/logo.webp"
+      "__beacon_live_admin_static__/images/logo.webp"
 
   """
   def beacon_live_admin_static_path(file) do
-    sanitize_path("/__beacon_live_admin_static/" <> file)
+    sanitize_path("/__beacon_live_admin_static__/" <> file)
   end
 
   defp router(%Plug.Conn{private: %{phoenix_router: router}}), do: router

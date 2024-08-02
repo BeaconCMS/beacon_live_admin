@@ -1,11 +1,9 @@
 defmodule Beacon.LiveAdmin.WebAPI.Page do
-  @moduledoc """
-  Calls Beacon Web API through the cluster.
-  """
+  @moduledoc false
 
   import Beacon.LiveAdmin.Cluster, only: [call: 4]
 
   def show(site, page) do
-    call(site, BeaconWeb.API.PageJSON, :show, [%{page: page}])
+    call(site, Beacon.Web.API.PageJSON, :show, [%{page: page}])
   end
 end

@@ -1,10 +1,9 @@
 defmodule Beacon.LiveAdmin.ErrorPageEditorLive.Index do
   @moduledoc false
+
   use Beacon.LiveAdmin.PageBuilder
 
   alias Beacon.LiveAdmin.Content
-
-  on_mount {Beacon.LiveAdmin.Hooks.Authorized, {:error_pages, :index}}
 
   @impl true
   def menu_link(_, :index), do: {:root, "Error Pages"}

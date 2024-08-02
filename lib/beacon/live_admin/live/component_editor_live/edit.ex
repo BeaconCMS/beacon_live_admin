@@ -15,7 +15,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.Edit do
 
   @impl true
   def handle_params(%{"id" => id}, _url, socket) do
-    component = Content.get_component(socket.assigns.beacon_page.site, id)
+    component = Content.get_component(socket.assigns.beacon_page.site, id, preloads: [:attrs])
     {:noreply, assign(socket, page_title: "Edit Component", component: component)}
   end
 
@@ -24,6 +24,24 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.Edit do
     send_update(Beacon.LiveAdmin.ComponentEditorLive.FormComponent,
       id: "components-form-edit",
       template: value
+    )
+
+    {:noreply, socket}
+  end
+
+  def handle_event("set_body", %{"value" => value}, socket) do
+    send_update(Beacon.LiveAdmin.ComponentEditorLive.FormComponent,
+      id: "components-form-edit",
+      body: value
+    )
+
+    {:noreply, socket}
+  end
+
+  def handle_event("set_example", %{"value" => value}, socket) do
+    send_update(Beacon.LiveAdmin.ComponentEditorLive.FormComponent,
+      id: "components-form-edit",
+      example: value
     )
 
     {:noreply, socket}

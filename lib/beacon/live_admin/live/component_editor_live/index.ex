@@ -4,8 +4,6 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.Index do
   use Beacon.LiveAdmin.PageBuilder, table: [sort_by: "name"]
   alias Beacon.LiveAdmin.Content
 
-  on_mount {Beacon.LiveAdmin.Hooks.Authorized, {:components, :index}}
-
   @impl true
   def menu_link(_, :index), do: {:root, "Components"}
 

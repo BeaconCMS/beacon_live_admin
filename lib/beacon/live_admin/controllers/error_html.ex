@@ -1,4 +1,6 @@
 defmodule Beacon.LiveAdmin.ErrorHTML do
+  @moduledoc false
+
   use Beacon.LiveAdmin.Web, :html
 
   # If you want to customize your error pages,

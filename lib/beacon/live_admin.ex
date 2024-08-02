@@ -1,5 +1,5 @@
 defmodule Beacon.LiveAdmin do
   @moduledoc """
-  Beacon Live Admin
+  Phoenix LiveView Admin for Beacon
   """
 end

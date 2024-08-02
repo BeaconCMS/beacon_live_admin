@@ -1,4 +1,6 @@
 defmodule Beacon.LiveAdmin.MediaLibraryLive.ShowComponent do
+  @moduledoc false
+
   use Beacon.LiveAdmin.Web, :live_component
   alias Beacon.LiveAdmin.MediaLibrary
 

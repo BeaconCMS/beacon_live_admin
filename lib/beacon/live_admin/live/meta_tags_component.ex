@@ -1,4 +1,6 @@
 defmodule Beacon.LiveAdmin.MetaTagsComponent do
+  @moduledoc false
+
   use Beacon.LiveAdmin.Web, :live_component
 
   alias Phoenix.HTML.Form

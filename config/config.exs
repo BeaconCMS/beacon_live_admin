@@ -9,7 +9,7 @@ config :phoenix, :json_library, Jason
 if Mix.env() == :dev do
   config :tailwind,
     version: "3.4.1",
-    default: [
+    beacon_live_admin: [
       args: ~w(
       --minify
       --config=tailwind.config.js
@@ -20,4 +20,4 @@ if Mix.env() == :dev do
     ]
 end
 
-import_config "#{config_env()}.exs"
+if config_env() == :test, do: import_config("test.exs")

@@ -5,8 +5,6 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
 
   alias Beacon.LiveAdmin.Content
 
-  on_mount {Beacon.LiveAdmin.Hooks.Authorized, {:page_editor, :index}}
-
   @impl true
   def menu_link(_, :index), do: {:root, "Pages"}
 

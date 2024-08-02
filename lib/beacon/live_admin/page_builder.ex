@@ -4,8 +4,19 @@ defmodule Beacon.LiveAdmin.PageBuilder.Menu do
 end
 
 defmodule Beacon.LiveAdmin.PageBuilder.Page do
-  @moduledoc false
+  @moduledoc """
+  Represents a Page in the LiveAdmin UI.
+  """
   defstruct site: nil, path: nil, module: nil, params: %{}, session: %{}, table: nil
+
+  @type t :: %__MODULE__{
+          site: Beacon.Types.Site.t(),
+          path: String.t(),
+          module: module(),
+          params: map(),
+          session: map(),
+          table: Beacon.LiveAdmin.PageBuilder.Table.t()
+        }
 end
 
 # https://github.com/phoenixframework/phoenix_live_dashboard/blob/32fef8da6a7df97f92f05bd6e7aab33be4036490/lib/phoenix/live_dashboard/page_builder.ex
@@ -17,8 +28,8 @@ defmodule Beacon.LiveAdmin.PageBuilder do
   to properly mount the menu and the private assigns used by LiveAdmin.
 
   """
-
   use Phoenix.Component
+
   alias Beacon.LiveAdmin.PageBuilder.Table
   alias Phoenix.LiveView.Socket
 
@@ -27,12 +38,12 @@ defmodule Beacon.LiveAdmin.PageBuilder do
 
   @callback init(term()) :: {:ok, session()}
 
-  @callback menu_link(prefix :: String.t(), live_actionn :: atom) ::
+  @callback menu_link(prefix :: String.t(), live_action :: atom) ::
               {:root, String.t()}
               | {:submenu, String.t()}
               | :skip
 
-  @callback menu_link(prefix :: String.t(), live_actionn :: atom, icon :: String.t()) ::
+  @callback menu_link(prefix :: String.t(), live_action :: atom, icon :: String.t()) ::
               {:root, String.t()}
               | {:submenu, String.t()}
               | :skip

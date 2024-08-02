@@ -19,7 +19,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.New do
       |> assign_new(:layouts, fn -> Content.list_layouts(site) end)
       |> assign_new(:components, fn ->
         components = Content.list_components(site, per_page: :infinity)
-        %{data: components} = BeaconWeb.API.ComponentJSON.index(%{components: components})
+        %{data: components} = Beacon.Web.API.ComponentJSON.index(%{components: components})
         components
       end)
 
@@ -35,10 +35,12 @@ defmodule Beacon.LiveAdmin.PageEditorLive.New do
 
   defp build_new_page(site, [layout | _] = _layouts) do
     %Beacon.Content.Page{
-      path: "",
+      path: "/New Page #{NaiveDateTime.utc_now()}",
       site: site,
       layout_id: layout.id,
-      layout: layout
+      layout: layout,
+      title: "New Page",
+      template: "<div>Welcome to BeaconCMS!</div>"
     }
   end
 
