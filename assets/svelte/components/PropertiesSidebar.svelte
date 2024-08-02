@@ -23,6 +23,32 @@
   $: isRootNode = !!$selectedAstElementId && $selectedAstElementId === "root"
   $: attributesEditable = !["eex", "eex_block"].includes($selectedAstElement?.tag)
 
+  let arbitraryAttributes = [];
+
+  function addArbitraryAttribute() {
+    arbitraryAttributes = [...arbitraryAttributes, { name: "", value: "" }];
+  }
+
+  function saveArbitraryAttribute(index: number) {
+    let attribute = arbitraryAttributes[index];
+    if (attribute.name && attribute.value) {
+      let node = $selectedAstElement;
+      if (node && isAstElement(node)) {
+        node.attrs[attribute.name] = attribute.value;
+        $live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast });
+        arbitraryAttributes = arbitraryAttributes.filter((_, i) => i !== index);
+      }
+    }
+  }
+
+  function deleteAttribute(name: string) {
+    let node = $selectedAstElement
+    if (node && isAstElement(node)) {
+      delete node.attrs[name]
+      $live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast })
+    }
+  }
+
   async function addClasses({ detail: newClasses }: CustomEvent<string>) {
     let node = $selectedAstElement
     if (node) {
@@ -165,7 +191,7 @@
         </button>
       </div>
       {#if attributesEditable}
-        <SidebarSection clearOnUpdate={true} on:update={addClasses} placeholder="Add new class">
+        <SidebarSection clearOnUpdate={true} on:update={addClasses} disableDelete={true} placeholder="Add new class">
           <svelte:fragment slot="heading">Classes</svelte:fragment>
           <svelte:fragment slot="value">
             {#each classList as className}
@@ -178,12 +204,34 @@
           <SidebarSection
             clearOnUpdate={true}
             {value}
+            on:delete={() => deleteAttribute(name)}
             on:textChange={(e) => updateAttribute(name, e)}
             placeholder="Set {name}"
           >
             <svelte:fragment slot="heading">{name}</svelte:fragment>
           </SidebarSection>
         {/each}
+        {#each arbitraryAttributes as attribute, index (attribute)}
+          <div class="p-4 border-b border-b-gray-100 border-solid">
+            <input
+              type="text"
+              class="w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm"
+              placeholder="Attribute name"
+              bind:value={attribute.name}
+              on:blur={() => saveArbitraryAttribute(index)}
+            />
+            <input
+              type="text"
+              class="w-full mt-2 py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm"
+              placeholder="Attribute value"
+              bind:value={attribute.value}
+              on:blur={() => saveArbitraryAttribute(index)}
+            />            
+          </div>
+        {/each}        
+        <div class="p-4">
+          <button type="button" class="bg-blue-500 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-2 px-4 rounded outline-2 w-full" on:click={addArbitraryAttribute}>+ Add attribute</button>
+        </div>
       {/if}
       {#if $selectedAstElement.tag === "eex_block"}
         <SidebarSection on:update={updateArg} value={$selectedAstElement.arg} large={true}>
@@ -217,6 +265,7 @@
           <SidebarSection
             astNodes={$selectedAstElement.content}
             large={true}
+            disableDelete={true}
             on:textChange={(e) => updateText(e)}
             on:nodesChange={changeNodes}
           >
@@ -225,7 +274,7 @@
         {/if}
       </div>
 
-      <SidebarSection expanded={false}>
+      <SidebarSection expanded={false} disableDelete={true}>
         <svelte:fragment slot="heading">Delete</svelte:fragment>
         <svelte:fragment slot="input">
           <button
