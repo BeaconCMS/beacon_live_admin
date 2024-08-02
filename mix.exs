@@ -2,6 +2,8 @@ defmodule Beacon.LiveAdmin.MixProject do
   use Mix.Project
 
   @version "0.1.0-dev"
+  @source_url "https://github.com/BeaconCMS/beacon_live_admin"
+  @homepage_url "https://beaconcms.org"
 
   def project do
     [
@@ -11,6 +13,12 @@ defmodule Beacon.LiveAdmin.MixProject do
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       name: "Beacon LiveAdmin",
+      homepage_url: @homepage_url,
+      source_url: @source_url,
+      description: """
+      Phoenix LiveView Admin Panel to manage Beacon CMS sites.
+      """,
+      package: package(),
       deps: deps(),
       aliases: aliases(),
       docs: docs()
@@ -26,6 +34,20 @@ defmodule Beacon.LiveAdmin.MixProject do
 
   defp elixirc_paths(:test), do: ["lib", "test/support"]
   defp elixirc_paths(_), do: ["lib"]
+
+  defp package do
+    [
+      maintainers: ["Leandro Pereira", "Andrew Berrien"],
+      licenses: ["MIT"],
+      links: %{
+        Changelog: "https://hexdocs.pm/beacon_live_admin/#{@version}/changelog.html",
+        GitHub: @source_url,
+        Website: @homepage_url,
+        DockYard: "https://dockyard.com"
+      },
+      files: ~w(lib priv .formatter.exs mix.exs CHANGELOG.md LICENSE.md)
+    ]
+  end
 
   defp deps do
     [
@@ -47,7 +69,7 @@ defmodule Beacon.LiveAdmin.MixProject do
 
       # Dev, Test, Docs
       {:phoenix_live_reload, "~> 1.2", only: :dev},
-      {:ex_doc, "~> 0.29", only: :docs}
+      {:ex_doc, "~> 0.29", only: :dev, runtime: false}
     ]
   end
 
@@ -71,7 +93,6 @@ defmodule Beacon.LiveAdmin.MixProject do
       {:beacon, "~> 0.1.0-rc.0", override: true}
     end
   end
-
 
   defp aliases do
     [
