@@ -191,7 +191,7 @@
         </button>
       </div>
       {#if attributesEditable}
-        <SidebarSection clearOnUpdate={true} on:update={addClasses} placeholder="Add new class">
+        <SidebarSection clearOnUpdate={true} on:update={addClasses} disableDelete={true} placeholder="Add new class">
           <svelte:fragment slot="heading">Classes</svelte:fragment>
           <svelte:fragment slot="value">
             {#each classList as className}
