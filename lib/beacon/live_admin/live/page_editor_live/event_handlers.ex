@@ -48,7 +48,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.EventHandlers do
     %{selected: selected, beacon_page: %{site: site}, form: form} = socket.assigns
 
     params = Map.merge(form.params, %{"code" => code})
-    changeset = Content.change_page_event_handler(site, selected, params)
+    changeset = Content.change_event_handler(site, selected, params)
 
     socket =
       socket
@@ -58,12 +58,12 @@ defmodule Beacon.LiveAdmin.PageEditorLive.EventHandlers do
     {:noreply, socket}
   end
 
-  def handle_event("validate", %{"page_event_handler" => params}, socket) do
+  def handle_event("validate", %{"event_handler" => params}, socket) do
     %{selected: selected, beacon_page: %{site: site}} = socket.assigns
 
     changeset =
       site
-      |> Content.change_page_event_handler(selected, params)
+      |> Content.change_event_handler(selected, params)
       |> Map.put(:action, :validate)
 
     socket =
@@ -74,13 +74,13 @@ defmodule Beacon.LiveAdmin.PageEditorLive.EventHandlers do
     {:noreply, socket}
   end
 
-  def handle_event("save_changes", %{"page_event_handler" => params}, socket) do
+  def handle_event("save_changes", %{"event_handler" => params}, socket) do
     %{page: page, selected: selected, beacon_page: %{site: site}} = socket.assigns
 
     attrs = %{name: params["name"], code: params["code"]}
 
     socket =
-      case Content.update_event_handler_for_page(site, page, selected, attrs) do
+      case Content.update_event_handler(site, selected, attrs) do
         {:ok, updated_page} ->
           socket
           |> assign(page: updated_page)
@@ -183,7 +183,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.EventHandlers do
           <div :if={@form} class="w-full col-span-2">
             <.form :let={f} for={@form} class="flex items-end gap-4" phx-change="validate" phx-submit="save_changes">
               <.input field={f[:name]} label="name" type="text" />
-              <input type="hidden" name="page_event_handler[code]" id="page_event_handler-form_code" value={Phoenix.HTML.Form.input_value(f, :code)} />
+              <input type="hidden" name="event_handler[code]" id="event_handler-form_code" value={Phoenix.HTML.Form.input_value(f, :code)} />
 
               <.button phx-disable-with="Saving..." class="ml-auto">Save Changes</.button>
               <.button type="button" phx-click="delete">Delete</.button>
@@ -230,7 +230,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.EventHandlers do
 
         %{selected: selected, beacon_page: %{site: site}} ->
           site
-          |> Content.change_page_event_handler(selected)
+          |> Content.change_event_handler(selected)
           |> to_form()
       end
 
