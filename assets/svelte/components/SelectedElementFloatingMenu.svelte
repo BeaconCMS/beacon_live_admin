@@ -91,6 +91,16 @@
     return $dragElementInfo.parentElementClone.children.item($dragElementInfo.selectedIndex);
   }
 
+  function getVerticalMargin(el: Element) {
+    let computedStyles = window.getComputedStyle(el);
+    return parseFloat(computedStyles.marginTop) + parseFloat(computedStyles.marginBottom);
+  }
+
+  function getHorizontalMargin(el: Element) {
+    let computedStyles = window.getComputedStyle(el);
+    return parseFloat(computedStyles.marginLeft) + parseFloat(computedStyles.marginRight);
+  }
+
   let placeholderStyle: string = null;
   let newIndex: number = null;
   function updatePlaceholder(dragDirection, mouseDiff, e) {
@@ -109,10 +119,8 @@
           let accumulatedMargins = 0;
           Array.from($dragElementInfo.parentElementClone.children).forEach((el, i) => {
             if (i >= index && i < $dragElementInfo.selectedIndex) {
-              let computedStyles = window.getComputedStyle(el);
               // When displacing, take into account also vertical margins instead of just height.
-              accumulatedMargins += parseFloat(computedStyles.marginTop)
-              accumulatedMargins += parseFloat(computedStyles.marginBottom)
+              accumulatedMargins += getVerticalMargin(el);
               el.style.transform = `translateY(${initialRect.height + accumulatedMargins}px)`;
             }
           });
@@ -127,7 +135,31 @@
         }
       }      
     } else {
-      alert('not implemented');
+      if (mouseDiff.x !== 0) {
+        let index = $dragElementInfo.siblingRects.findIndex(rect => rect.bottom > e.y);
+        if (index > -1 && index !== $dragElementInfo.selectedIndex) {
+          // Moving all elements between the new index and the selected index down
+          // and the selected element up (in the form a placeholder)
+          newIndex = index;
+          let newRect = $dragElementInfo.siblingRects[index];
+          let accumulatedMargins = 0;
+          Array.from($dragElementInfo.parentElementClone.children).forEach((el, i) => {
+            if (i >= index && i < $dragElementInfo.selectedIndex) {
+              // When displacing, take into account also horizontal margins instead of just width.
+              accumulatedMargins += getHorizontalMargin(el);
+              el.style.transform = `translateX(${initialRect.width + accumulatedMargins}px)`;
+            }
+          });
+          placeholderStyle = `top: ${newRect.top - relativeWrapperRect.top}px; left: ${newRect.left - relativeWrapperRect.left}px; height: ${initialRect.height}px; width: ${initialRect.width}px;`;
+        } else {
+          if (newIndex !== null) {
+            // Going back to original position, we must reset transforms on all elements but the selected one.
+            Array.from($dragElementInfo.parentElementClone.children).forEach((el, i) => i !== index && (el.style.transform = null));    
+          }
+          newIndex = null;
+          placeholderStyle = `top: ${initialRect.top - relativeWrapperRect.top}px; left: ${initialRect.left - relativeWrapperRect.left}px; height: ${initialRect.height}px; width: ${initialRect.width}px;`;
+        }
+      }    
     }
   }
 
