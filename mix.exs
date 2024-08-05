@@ -90,7 +90,7 @@ defmodule Beacon.LiveAdmin.MixProject do
     if path = System.get_env("BEACON_PATH") do
       {:beacon, path: path, runtime: false}
     else
-      {:beacon, "~> 0.1.0-rc.0", runtime: false}
+      {:beacon, "~> 1.1.0", runtime: false}
     end
   end
 
