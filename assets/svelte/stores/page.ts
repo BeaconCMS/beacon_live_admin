@@ -23,6 +23,19 @@ export const selectedAstElement: Readable<AstElement | undefined> = derived(
   },
 )
 
+export const parentOfSelectedAstElement: Readable<AstElement | undefined> = derived(
+  [page, selectedAstElementId],
+  ([$page, $selectedAstElementId]) => {
+    if ($selectedAstElementId) {
+      if ($selectedAstElementId === "root") return null;
+      let levels = $selectedAstElementId.split('.');
+      if (levels.length === 1) return get(rootAstElement);
+      levels.pop();
+      return findAstElement($page.ast, levels.join('.'))
+    }
+  },
+)
+
 export const selectedDomElement: Writable<Element | null> = writable(null)
 export interface SelectedElementMenu {
   top: number,
