@@ -31,22 +31,13 @@
       relativeWrapperRect = document.getElementById('ui-builder-app-container').closest('.relative').getBoundingClientRect();
     }      
     let currentRect = selectedEl.getBoundingClientRect();
-    // let top = elementCoords.current.y + currentRect.height + 5;
-    // let left = elementCoords.current.x + (currentRect.width / 2) - 12;]
     let menu = get(selectedElementMenu);
-    // console.log('currentRect.y', currentRect.y);
-    // console.log('relativeWrapperRect.y', relativeWrapperRect.y);
-    // console.log('movement.y', movement.y);
-    // console.log('$selectedElementMenu', get(selectedElementMenu));
-    // console.log('currentRect.height', currentRect.height);
     let movX = menu?.dragDirection === 'vertical' ? 0 : movement.x;
     let movY = menu?.dragDirection === 'vertical' ? movement.y : 0;
     currentHandleCoords = {
       x: currentRect.x - relativeWrapperRect.x + movX + (currentRect.width / 2) - 5,
       y: currentRect.y - relativeWrapperRect.y + movY + currentRect.height + 5,
     };
-    // console.log('currentHandleCoords ', currentHandleCoords);  
-    // console.log('---------------------------------------------------');  
   }  
 </script>
 <script lang="ts">
@@ -96,7 +87,6 @@
     placeholderStyle = null;
   }
 
-
   function getGhostElement() {
     return $dragElementInfo.parentElementClone.children.item($dragElementInfo.selectedIndex);
   }
@@ -110,16 +100,28 @@
     let initialRect = $dragElementInfo.siblingRects[$dragElementInfo.selectedIndex];
     if (dragDirection === 'vertical') {
       if (mouseDiff.y !== 0) {
-        let index = $dragElementInfo.siblingRects.findIndex(rect => {
-          return rect.bottom > e.y;
-        });
+        let index = $dragElementInfo.siblingRects.findIndex(rect => rect.bottom > e.y);
         if (index > -1 && index !== $dragElementInfo.selectedIndex) {
+          // Moving all elements between the new index and the selected index down
+          // and the selected element up (in the form a placeholder)
           newIndex = index;
-          let subsequentSiblings = Array.from($dragElementInfo.parentElementClone.children).filter((_, i) => i >= index && i < $dragElementInfo.selectedIndex);
           let newRect = $dragElementInfo.siblingRects[index];
-          subsequentSiblings.forEach(el => el.style.transform = `translateY(${initialRect.height}px)`);
+          let accumulatedMargins = 0;
+          Array.from($dragElementInfo.parentElementClone.children).forEach((el, i) => {
+            if (i >= index && i < $dragElementInfo.selectedIndex) {
+              let computedStyles = window.getComputedStyle(el);
+              // When displacing, take into account also vertical margins instead of just height.
+              accumulatedMargins += parseFloat(computedStyles.marginTop)
+              accumulatedMargins += parseFloat(computedStyles.marginBottom)
+              el.style.transform = `translateY(${initialRect.height + accumulatedMargins}px)`;
+            }
+          });
           placeholderStyle = `top: ${newRect.top - relativeWrapperRect.top}px; left: ${newRect.left - relativeWrapperRect.left}px; height: ${initialRect.height}px; width: ${initialRect.width}px;`;
         } else {
+          if (newIndex !== null) {
+            // Going back to original position, we must reset transforms on all elements but the selected one.
+            Array.from($dragElementInfo.parentElementClone.children).forEach((el, i) => i !== index && (el.style.transform = null));    
+          }
           newIndex = null;
           placeholderStyle = `top: ${initialRect.top - relativeWrapperRect.top}px; left: ${initialRect.left - relativeWrapperRect.left}px; height: ${initialRect.height}px; width: ${initialRect.width}px;`;
         }
