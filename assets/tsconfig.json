@@ -2,6 +2,7 @@
   "compilerOptions": {
     "types": ["node"],
     "baseUrl": ".",
+    "target": "ES2020",
     "paths": {
       "$lib": ["svelte"],
       "$lib/*": ["svelte/*"]
