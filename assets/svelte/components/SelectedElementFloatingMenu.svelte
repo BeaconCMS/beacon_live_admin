@@ -53,6 +53,7 @@
       selectedIndex,
       siblingRects: siblings.map(el => el.getBoundingClientRect())
     }
+    $selectedDomElement.parentElement.style.display = 'none';
     $selectedDomElement.parentElement.parentElement.insertBefore(el, $selectedDomElement.parentElement);
   }
 
@@ -78,6 +79,7 @@
     document.removeEventListener('mousemove', handleMousemove); 
     applyNewOrder();
     if ($dragElementInfo) {
+      $selectedDomElement.parentElement.style.display = null;
       $dragElementInfo.parentElementClone.remove();
       $dragElementInfo = null;
     }
