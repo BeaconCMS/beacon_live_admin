@@ -109,6 +109,7 @@
   {:else if node.rendered_html}
     <div
       class="contents"
+      data-embedded={node.tag === ".embedded"}
       on:mouseover|stopPropagation={handleMouseOver}
       on:mouseout|stopPropagation={handleMouseOut}
       on:click|preventDefault|stopPropagation={() => ($selectedAstElementId = nodeId)}
@@ -159,5 +160,13 @@
 <style>
   .dragged-element-placeholder {
     outline: 2px dashed red;
+  }
+
+  :global(.contents[data-embedded="true"]) {
+    display: inline-block;
+  }
+
+  :global(.contents[data-embedded="true"]>iframe) {
+    pointer-events: none;
   }
 </style>
