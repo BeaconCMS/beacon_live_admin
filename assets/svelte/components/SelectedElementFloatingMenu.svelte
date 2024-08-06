@@ -103,6 +103,16 @@
     return parseFloat(computedStyles.marginLeft) + parseFloat(computedStyles.marginRight);
   }
 
+  function findHoveredSiblingIndex(dragDirection, e: MouseEvent) {
+    if (dragDirection === 'vertical') {
+      return $dragElementInfo.siblingRects.findIndex(rect => rect.top < e.y && rect.bottom > e.y);
+    } else {
+      return $dragElementInfo.siblingRects.findIndex(rect => {
+        return rect.left < e.x && rect.right > e.x
+      });
+    }
+  }
+
   let placeholderStyle: string = null;
   let newIndex: number = null;
   function updatePlaceholder(dragDirection, mouseDiff, e) {
@@ -112,7 +122,7 @@
     let initialRect = $dragElementInfo.siblingRects[$dragElementInfo.selectedIndex];
     if (dragDirection === 'vertical') {
       if (mouseDiff.y !== 0) {
-        let index = $dragElementInfo.siblingRects.findIndex(rect => rect.bottom > e.y);
+        let index = findHoveredSiblingIndex(dragDirection, e);
         if (index > -1 && index !== $dragElementInfo.selectedIndex) {
           // Moving all elements between the new index and the selected index down
           // and the selected element up (in the form a placeholder)
@@ -138,7 +148,7 @@
       }      
     } else {
       if (mouseDiff.x !== 0) {
-        let index = $dragElementInfo.siblingRects.findIndex(rect => rect.bottom > e.y);
+        let index = findHoveredSiblingIndex(dragDirection, e);
         if (index > -1 && index !== $dragElementInfo.selectedIndex) {
           // Moving all elements between the new index and the selected index down
           // and the selected element up (in the form a placeholder)
