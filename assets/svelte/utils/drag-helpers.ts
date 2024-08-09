@@ -11,6 +11,8 @@ export interface CoordsDiff {
   current: Coords
 }
 
+export type DragDirection = 'horizontal' | 'vertical';
+
 export function elementCanBeDroppedInTarget(draggedObject) {
   // return draggedObject?.category === "basic";
   return true
@@ -23,7 +25,7 @@ export function mouseDiff(mouseMovement: CoordsDiff): Coords {
   }
 }
 
-export function getDragDirection(element: Element): 'horizontal' | 'vertical' {
+export function getDragDirection(element: Element): DragDirection {
   let parentEl = element.parentElement;
   let flexDirection = window.getComputedStyle(parentEl).flexDirection;
   return ['row', 'row-reverse'].includes(flexDirection) ? 'horizontal' : 'vertical';
