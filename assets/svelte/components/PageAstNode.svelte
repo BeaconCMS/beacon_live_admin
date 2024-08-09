@@ -13,10 +13,19 @@
   export let node: AstNode
   export let nodeId: string
 
+  let htmlWrapper: HTMLElement;
+
   $: isDragTarget = $slotTargetElement === node
   $: isSelectedNode = $selectedAstElement === node
   $: isHighlightedNode = $highlightedAstElement === node
   $: isEditable = isSelectedNode && isAstElement(node) && node.content.filter((e) => typeof e === "string").length === 1
+  $: htmlWrapper
+  $: htmlWrapperHasMultipleElements = ((): Boolean => {
+    return !!htmlWrapper && htmlWrapper.childElementCount > 1;
+  })()
+  $: htmlWrapperHasIframe = ((): Boolean => {
+    return !!htmlWrapper && htmlWrapper.getElementsByTagName('iframe').length > 0;
+  })()
 
   function handleDragEnter() {
     if (isAstElement(node) && elementCanBeDroppedInTarget($draggedObject)) {
@@ -108,8 +117,9 @@
     <slot />
   {:else if node.rendered_html}
     <div
-      class="contents"
-      data-embedded={node.tag === ".embedded"}
+      bind:this={htmlWrapper}
+      class:contents={htmlWrapperHasMultipleElements}
+      class:embedded-iframe={htmlWrapperHasIframe}
       on:mouseover|stopPropagation={handleMouseOver}
       on:mouseout|stopPropagation={handleMouseOut}
       on:click|preventDefault|stopPropagation={() => ($selectedAstElementId = nodeId)}
@@ -162,11 +172,11 @@
     outline: 2px dashed red;
   }
 
-  :global(.contents[data-embedded="true"]) {
-    display: inline-block;
+  :global(.embedded-iframe) {
+    display: inline;
   }
 
-  :global(.contents[data-embedded="true"]>iframe) {
+  :global(.embedded-iframe>iframe) {
     pointer-events: none;
   }
 </style>
