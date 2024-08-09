@@ -119,59 +119,118 @@
     if (!relativeWrapperRect) {
       relativeWrapperRect = document.getElementById('ui-builder-app-container').closest('.relative').getBoundingClientRect();
     }     
-    let initialRect = $dragElementInfo.siblingRects[$dragElementInfo.selectedIndex];
+    let selectedElementRect = $dragElementInfo.siblingRects[$dragElementInfo.selectedIndex];
     if (dragDirection === 'vertical') {
       if (mouseDiff.y !== 0) {
-        let index = findHoveredSiblingIndex(dragDirection, e);
-        if (index > -1 && index !== $dragElementInfo.selectedIndex) {
-          // Moving all elements between the new index and the selected index down
-          // and the selected element up (in the form a placeholder)
-          newIndex = index;
-          let newRect = $dragElementInfo.siblingRects[index];
+        let hoveredElementIndex = findHoveredSiblingIndex(dragDirection, e);
+        if (hoveredElementIndex === -1) return;
+        if (hoveredElementIndex !== $dragElementInfo.selectedIndex) {
+          // An actual drag is happening
+          let hoveredElementRect = $dragElementInfo.siblingRects[hoveredElementIndex];
           let accumulatedMargins = 0;
+          let draggingUp = hoveredElementIndex < $dragElementInfo.selectedIndex;
+          console.log('$dragElementInfo.selectedIndex', $dragElementInfo.selectedIndex);
+          console.log('hoveredElementIndex', hoveredElementIndex);
+          if (hoveredElementIndex < $dragElementInfo.selectedIndex) {
+            console.log('You are dragging up!');
+          } else {
+            console.log('You are dragging down!');
+          }
+          newIndex = hoveredElementIndex;
           Array.from($dragElementInfo.parentElementClone.children).forEach((el, i) => {
-            if (i >= index && i < $dragElementInfo.selectedIndex) {
-              // When displacing, take into account also vertical margins instead of just height.
+            if (i < hoveredElementIndex && i < $dragElementInfo.selectedIndex || i > hoveredElementIndex && i > $dragElementInfo.selectedIndex) {
+              // Element is unnafected by this drag
+            } else if (i === $dragElementInfo.selectedIndex) {   
+              // Element is the one being dragged, it already has a transform applied to it. Skip it.        
+            } else if (draggingUp && i >= hoveredElementIndex && i < $dragElementInfo.selectedIndex) {
               accumulatedMargins += getVerticalMargin(el);
-              el.style.transform = `translateY(${initialRect.height + accumulatedMargins}px)`;
+              el.style.transform = `translateY(${selectedElementRect.height + accumulatedMargins}px)`;
+            } else if (!draggingUp && i <= hoveredElementIndex && i > $dragElementInfo.selectedIndex) {
+              console.log('################ dragging down')
+              accumulatedMargins += getVerticalMargin(el);
+              el.style.transform = `translateY(-${selectedElementRect.height + accumulatedMargins}px)`;
+            } else {
+              alert('I think this should not happen!');
             }
           });
-          placeholderStyle = `top: ${newRect.top - relativeWrapperRect.top}px; left: ${newRect.left - relativeWrapperRect.left}px; height: ${initialRect.height}px; width: ${initialRect.width}px;`;
+          placeholderStyle = `top: ${hoveredElementRect.top - relativeWrapperRect.top}px; left: ${hoveredElementRect.left - relativeWrapperRect.left}px; height: ${selectedElementRect.height}px; width: ${selectedElementRect.width}px;`;
         } else {
+          // No drag, reset effect.
           if (newIndex !== null) {
-            // Going back to original position, we must reset transforms on all elements but the selected one.
-            Array.from($dragElementInfo.parentElementClone.children).forEach((el, i) => i !== index && (el.style.transform = null));    
+            console.log('################# No drag, reset effect: ', mouseDiff.y)
+            // Reset the transforms on all elements but the one being dragged, which must keep following the cursor.
+            Array.from($dragElementInfo.parentElementClone.children).forEach((el, i) => i !== hoveredElementIndex && (el.style.transform = null));    
           }
           newIndex = null;
-          placeholderStyle = `top: ${initialRect.top - relativeWrapperRect.top}px; left: ${initialRect.left - relativeWrapperRect.left}px; height: ${initialRect.height}px; width: ${initialRect.width}px;`;
+          placeholderStyle = `top: ${selectedElementRect.top - relativeWrapperRect.top}px; left: ${selectedElementRect.left - relativeWrapperRect.left}px; height: ${selectedElementRect.height}px; width: ${selectedElementRect.width}px;`;
         }
+
+
+        // let hoveredElementIndex = findHoveredSiblingIndex(dragDirection, e);
+        // if (hoveredElementIndex > -1 && hoveredElementIndex !== $dragElementInfo.selectedIndex) {
+        //   // Moving all elements between the new index and the selected index down
+        //   // and the selected element up (in the form a placeholder)
+        //   newIndex = hoveredElementIndex;
+        //   let newRect = $dragElementInfo.siblingRects[hoveredElementIndex];
+        //   let accumulatedMargins = 0;
+        //   console.log('$dragElementInfo.selectedIndex', $dragElementInfo.selectedIndex);
+        //   console.log('hoveredElementIndex', hoveredElementIndex);
+        //   if (hoveredElementIndex < $dragElementInfo.selectedIndex) {
+        //     console.log('You are dragging up!');
+        //   } else {
+        //     console.log('You are dragging down!');
+        //   }
+        //   // debugger;
+        //   Array.from($dragElementInfo.parentElementClone.children).forEach((el, i) => {
+        //     if (i < hoveredElementIndex) {
+        //       // Element is above the selected one
+        //       accumulatedMargins += getVerticalMargin(el);
+        //       el.style.transform = `translateY(${initialRect.height + accumulatedMargins}px)`;              
+        //     } else if (i > hoveredElementIndex) {
+        //       // Element i]s below the selected one
+        //       accumulatedMargins += getVerticalMargin(el);
+        //       el.style.transform = `translateY(${initialRect.height + accumulatedMargins}px)`;              
+        //     }
+        //   });
+        //   placeholderStyle = `top: ${newRect.top - relativeWrapperRect.top}px; left: ${newRect.left - relativeWrapperRect.left}px; height: ${initialRect.height}px; width: ${initialRect.width}px;`;
+        // } else {
+        //   if (newIndex !== null) {
+        //     // Going back to original position, we must reset transforms on all elements but the selected one.
+        //     Array.from($dragElementInfo.parentElementClone.children).forEach((el, i) => i !== hoveredElementIndex && (el.style.transform = null));    
+        //   }
+        //   newIndex = null;
+        //   placeholderStyle = `top: ${initialRect.top - relativeWrapperRect.top}px; left: ${initialRect.left - relativeWrapperRect.left}px; height: ${initialRect.height}px; width: ${initialRect.width}px;`;
+        // }
       }      
     } else {
-      if (mouseDiff.x !== 0) {
-        let index = findHoveredSiblingIndex(dragDirection, e);
-        if (index > -1 && index !== $dragElementInfo.selectedIndex) {
-          // Moving all elements between the new index and the selected index down
-          // and the selected element up (in the form a placeholder)
-          newIndex = index;
-          let newRect = $dragElementInfo.siblingRects[index];
-          let accumulatedMargins = 0;
-          Array.from($dragElementInfo.parentElementClone.children).forEach((el, i) => {
-            if (i >= index && i < $dragElementInfo.selectedIndex) {
-              // When displacing, take into account also horizontal margins instead of just width.
-              accumulatedMargins += getHorizontalMargin(el);
-              el.style.transform = `translateX(${initialRect.width + accumulatedMargins}px)`;
-            }
-          });
-          placeholderStyle = `top: ${newRect.top - relativeWrapperRect.top}px; left: ${newRect.left - relativeWrapperRect.left}px; height: ${initialRect.height}px; width: ${initialRect.width}px;`;
-        } else {
-          if (newIndex !== null) {
-            // Going back to original position, we must reset transforms on all elements but the selected one.
-            Array.from($dragElementInfo.parentElementClone.children).forEach((el, i) => i !== index && (el.style.transform = null));    
-          }
-          newIndex = null;
-          placeholderStyle = `top: ${initialRect.top - relativeWrapperRect.top}px; left: ${initialRect.left - relativeWrapperRect.left}px; height: ${initialRect.height}px; width: ${initialRect.width}px;`;
-        }
-      }    
+      alert('Not implemented!!');
+      // if (mouseDiff.x !== 0) {
+      //   let hoveredElementIndex = findHoveredSiblingIndex(dragDirection, e);
+      //   if (hoveredElementIndex > -1 && hoveredElementIndex !== $dragElementInfo.selectedIndex) {
+      //     // Moving all elements between the new index and the selected index down
+      //     // and the selected element up (in the form a placeholder)
+      //     newIndex = hoveredElementIndex;
+      //     let newRect = $dragElementInfo.siblingRects[hoveredElementIndex];
+      //     let accumulatedMargins = 0;
+      //     Array.from($dragElementInfo.parentElementClone.children).forEach((el, i) => {
+      //       if (i >= hoveredElementIndex && i < $dragElementInfo.selectedIndex) {
+      //         // When displacing, take into account also horizontal margins instead of just width.
+      //         accumulatedMargins += getHorizontalMargin(el);
+      //         el.style.transform = `translateX(${initialRect.width + accumulatedMargins}px)`;
+      //       }
+      //     });
+      //     placeholderStyle = `top: ${newRect.top - relativeWrapperRect.top}px; left: ${newRect.left - relativeWrapperRect.left}px; height: ${initialRect.height}px; width: ${initialRect.width}px;`;
+      //     console.log('newRect', newRect)
+      //     console.log('placeholderStyle', placeholderStyle)
+      //   } else {
+      //     if (newIndex !== null) {
+      //       // Going back to original position, we must reset transforms on all elements but the selected one.
+      //       Array.from($dragElementInfo.parentElementClone.children).forEach((el, i) => i !== index && (el.style.transform = null));    
+      //     }
+      //     newIndex = null;
+      //     placeholderStyle = `top: ${initialRect.top - relativeWrapperRect.top}px; left: ${initialRect.left - relativeWrapperRect.left}px; height: ${initialRect.height}px; width: ${initialRect.width}px;`;
+      //   }
+      // }    
     }
   }
 
@@ -190,6 +249,7 @@
       dragHandleElement.style.transform = `translateX(${mouseDiff.x}px)`;
       ghostElement.style.transform = `translateX(${mouseDiff.x}px)`;      
     }
+    
     updatePlaceholder(dragDirection, mouseDiff, e);
   }
 </script>
