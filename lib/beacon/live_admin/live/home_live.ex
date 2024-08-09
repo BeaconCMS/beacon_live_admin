@@ -1,9 +1,10 @@
 defmodule Beacon.LiveAdmin.HomeLive do
   @moduledoc false
-
   use Beacon.LiveAdmin.Web, :live_view
+
   alias Beacon.LiveAdmin.Cluster
   alias Beacon.LiveAdmin.PubSub
+  alias Beacon.LiveAdmin.Router
 
   @impl true
   def mount(_params, _session, socket) do
@@ -32,46 +33,26 @@ defmodule Beacon.LiveAdmin.HomeLive do
               <div class="p-6 rounded-[20px] bg-white border border-gray-200 hover:border-white hover:ring-2 hover:ring-gray-200 hover:ring-offset-8 hover:ring-offset-white transition">
                 <h3 class="mb-2 text-sm font-semibold leading-8 tracking-wider text-gray-600 uppercase"><%= site %></h3>
                 <div class="flex flex-col flex-wrap gap-2 mt-10 md:flex-row">
-                  <.link
-                    href={Beacon.LiveAdmin.Router.beacon_live_admin_path(@socket, site, "/layouts")}
-                    class="whitespace-nowrap text-sm leading-5 py-3.5  font-bold tracking-widest text-center uppercase bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 active:bg-blue-800 px-6 text-gray-50"
-                  >
+                  <.link href={Router.beacon_live_admin_path(@socket, site, "/layouts")} class={nav_class()}>
                     Layouts
                   </.link>
-
-                  <.link
-                    href={Beacon.LiveAdmin.Router.beacon_live_admin_path(@socket, site, "/components")}
-                    class="whitespace-nowrap text-sm leading-5 py-3.5  font-bold tracking-widest text-center uppercase bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 active:bg-blue-800 px-6 text-gray-50"
-                  >
+                  <.link href={Router.beacon_live_admin_path(@socket, site, "/components")} class={nav_class()}>
                     Components
                   </.link>
-
-                  <.link
-                    href={Beacon.LiveAdmin.Router.beacon_live_admin_path(@socket, site, "/pages")}
-                    class="whitespace-nowrap text-sm leading-5 py-3.5  font-bold tracking-widest text-center uppercase bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 active:bg-blue-800 px-6 text-gray-50"
-                  >
+                  <.link href={Router.beacon_live_admin_path(@socket, site, "/pages")} class={nav_class()}>
                     Pages
                   </.link>
-
-                  <.link
-                    href={Beacon.LiveAdmin.Router.beacon_live_admin_path(@socket, site, "/live_data")}
-                    class="whitespace-nowrap text-sm leading-5 py-3.5  font-bold tracking-widest text-center uppercase bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 active:bg-blue-800 px-6 text-gray-50"
-                  >
+                  <.link href={Router.beacon_live_admin_path(@socket, site, "/live_data")} class={nav_class()}>
                     Live Data
                   </.link>
-
-                  <.link
-                    href={Beacon.LiveAdmin.Router.beacon_live_admin_path(@socket, site, "/error_pages")}
-                    class="whitespace-nowrap text-sm leading-5 py-3.5 font-bold tracking-widest text-center uppercase bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 active:bg-blue-800 px-6 text-gray-50"
-                  >
+                  <.link href={Router.beacon_live_admin_path(@socket, site, "/error_pages")} class={nav_class()}>
                     Error Pages
                   </.link>
-
-                  <.link
-                    href={Beacon.LiveAdmin.Router.beacon_live_admin_path(@socket, site, "/media_library")}
-                    class="whitespace-nowrap text-sm leading-5 py-3.5  font-bold tracking-widest text-center uppercase bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 active:bg-blue-800 px-6 text-gray-50"
-                  >
+                  <.link href={Router.beacon_live_admin_path(@socket, site, "/media_library")} class={nav_class()}>
                     Media Library
+                  </.link>
+                  <.link href={Router.beacon_live_admin_path(@socket, site, "/events")} class={nav_class()}>
+                    Events
                   </.link>
                 </div>
               </div>
@@ -81,6 +62,10 @@ defmodule Beacon.LiveAdmin.HomeLive do
       </main>
     </div>
     """
+  end
+
+  defp nav_class do
+    "whitespace-nowrap text-sm leading-5 py-3.5  font-bold tracking-widest text-center uppercase bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 active:bg-blue-800 px-6 text-gray-50"
   end
 
   @impl true

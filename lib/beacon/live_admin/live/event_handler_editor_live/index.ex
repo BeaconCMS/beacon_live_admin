@@ -4,10 +4,8 @@ defmodule Beacon.LiveAdmin.EventHandlerEditorLive.Index do
 
   alias Beacon.LiveAdmin.Content
 
-  @impl true
   def menu_link(_, :index), do: {:root, "Event Handlers"}
 
-  @impl true
   def handle_params(params, _uri, socket) do
     %{beacon_page: %{site: site}} = socket.assigns
 
@@ -26,11 +24,10 @@ defmodule Beacon.LiveAdmin.EventHandlerEditorLive.Index do
     {:noreply, socket}
   end
 
-  @impl true
   def handle_event("select-" <> id, _, socket) do
     %{beacon_page: %{site: site}} = socket.assigns
 
-    path = beacon_live_admin_path(socket, site, "/event_handlers/#{id}")
+    path = beacon_live_admin_path(socket, site, "/events/#{id}")
 
     if socket.assigns.unsaved_changes do
       {:noreply, assign(socket, show_nav_modal: true, confirm_nav_path: path)}
@@ -73,7 +70,7 @@ defmodule Beacon.LiveAdmin.EventHandlerEditorLive.Index do
           |> assign(event_handlers: Content.list_event_handlers(site))
           |> assign_selected(event_handler_id)
           |> assign(show_create_modal: false)
-          |> push_navigate(to: beacon_live_admin_path(socket, site, "/event_handlers/#{event_handler_id}"))
+          |> push_navigate(to: beacon_live_admin_path(socket, site, "/events/#{event_handler_id}"))
 
         {:error, changeset} ->
           assign(socket, create_form: to_form(changeset))
@@ -117,7 +114,7 @@ defmodule Beacon.LiveAdmin.EventHandlerEditorLive.Index do
     socket =
       socket
       |> assign(event_handlers: Content.list_event_handlers(site))
-      |> push_patch(to: beacon_live_admin_path(socket, site, "/event_handlers"))
+      |> push_patch(to: beacon_live_admin_path(socket, site, "/events"))
 
     {:noreply, socket}
   end
@@ -169,10 +166,10 @@ defmodule Beacon.LiveAdmin.EventHandlerEditorLive.Index do
     assign(socket, :form, to_form(changeset))
   end
 
-  defp assign_error_page_update(socket, updated_event_handler) do
+  defp assign_event_handler_update(socket, updated_event_handler) do
     %{id: event_handler_id} = updated_event_handler
 
-    error_pages =
+    event_handlers =
       Enum.map(socket.assigns.event_handlers, fn
         %{id: ^event_handler_id} -> updated_event_handler
         other -> other
@@ -207,7 +204,7 @@ defmodule Beacon.LiveAdmin.EventHandlerEditorLive.Index do
 
         <.modal :if={@show_create_modal} id="create-modal" on_cancel={JS.push("cancel_create")} show>
           <.simple_form :let={f} for={@create_form} id="create-form" phx-submit="save_new">
-            <.input field={f[:name]} type="text" label="Name for new event handler:" />
+            <.input field={f[:name]} type="text" label="Event name:" />
             <:actions>
               <.button>Save</.button>
             </:actions>
@@ -227,14 +224,14 @@ defmodule Beacon.LiveAdmin.EventHandlerEditorLive.Index do
         <div class="grid items-start grid-cols-1 grid-rows-1 mx-auto gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
           <div class="h-full lg:overflow-y-auto pb-4 lg:h-[calc(100vh_-_239px)]">
             <.table id="event-handlers" rows={@event_handlers} row_click={fn row -> "select-#{row.id}" end}>
-              <:col :let={event_handlers} label="name">
+              <:col :let={event_handler} label="name">
                 <%= Map.fetch!(event_handler, :name) %>
               </:col>
             </.table>
           </div>
 
           <div :if={@form} class="w-full col-span-2">
-            <.form :let={f} for={@form} id="error-page-form" class="flex items-end gap-4" phx-submit="save_changes">
+            <.form :let={f} for={@form} id="event-handler-form" class="flex items-end gap-4" phx-submit="save_changes">
               <.input label="Name" field={f[:name]} type="text" />
               <.input type="hidden" field={f[:code]} name="event_handler[code]" id="event_handler-form_code" value={Phoenix.HTML.Form.input_value(f, :code)} />
 
