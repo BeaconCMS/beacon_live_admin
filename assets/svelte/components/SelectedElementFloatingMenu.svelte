@@ -143,17 +143,17 @@
             } else if (i === $dragElementInfo.selectedIndex) {   
               // Element is the one being dragged, it already has a transform applied to it. Skip it.        
             } else if (draggingUp && i >= hoveredElementIndex && i < $dragElementInfo.selectedIndex) {
-              accumulatedMargins += getVerticalMargin(el);
+              accumulatedMargins = getVerticalMargin(el);
               el.style.transform = `translateY(${selectedElementRect.height + accumulatedMargins}px)`;
             } else if (!draggingUp && i <= hoveredElementIndex && i > $dragElementInfo.selectedIndex) {
-              console.log('################ dragging down')
-              accumulatedMargins += getVerticalMargin(el);
+              accumulatedMargins = getVerticalMargin(el);
               el.style.transform = `translateY(-${selectedElementRect.height + accumulatedMargins}px)`;
             } else {
               alert('I think this should not happen!');
             }
           });
-          placeholderStyle = `top: ${hoveredElementRect.top - relativeWrapperRect.top}px; left: ${hoveredElementRect.left - relativeWrapperRect.left}px; height: ${selectedElementRect.height}px; width: ${selectedElementRect.width}px;`;
+          const top = hoveredElementRect.top - relativeWrapperRect.top - (draggingUp ? 0 : selectedElementRect.height - getVerticalMargin($selectedDomElement));
+          placeholderStyle = `top: ${top}px; left: ${hoveredElementRect.left - relativeWrapperRect.left}px; height: ${selectedElementRect.height}px; width: ${selectedElementRect.width}px;`;
         } else {
           // No drag, reset effect.
           if (newIndex !== null) {
