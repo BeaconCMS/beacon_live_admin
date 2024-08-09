@@ -104,7 +104,7 @@
   function findHoveredSiblingIndex(dragDirection: DragDirection, e: MouseEvent) {
     // TODO: This detection is not very intuitive. We should detect some % of element overlap (30% maybe) instead.
     if (dragDirection === 'vertical') {
-      return $dragElementInfo.siblingLocationInfos.findIndex(rect => rect.top < e.y && rect.bottom > e.y);
+      return $dragElementInfo.siblingLocationInfos.findIndex(rect => rect.top < e.y && rect.bottom + rect.marginBottom > e.y);
     } else {
       return $dragElementInfo.siblingLocationInfos.findIndex(rect => {
         return rect.left < e.x && rect.right > e.x
@@ -114,6 +114,7 @@
 
   function findSwappedIndexes(dragDirection: DragDirection, e: MouseEvent): { currentIndex: number, destinationIndex: number } {
     let hoveredElementIndex = findHoveredSiblingIndex(dragDirection, e);
+    console.log('e.y', e.y);
     if (hoveredElementIndex === -1) {
       return {
         currentIndex: $dragElementInfo.selectedIndex,
@@ -135,8 +136,16 @@
   
   function calculateNewTop(index: number, draggedElementIndex: number, destinationIndex: number, newInfos: LocationInfo[]): number | undefined {
     if (index < destinationIndex && index < draggedElementIndex || index > destinationIndex && index > draggedElementIndex) return;
-    let displacement = destinationIndex < draggedElementIndex ? 1 : -1;
-    let newIndex = index === draggedElementIndex ? destinationIndex : (index >= destinationIndex ? index + displacement : index);
+    let newIndex: number;
+    if (index === draggedElementIndex) {
+      newIndex = destinationIndex;
+    } else {
+      if (draggedElementIndex > destinationIndex) {
+        newIndex = index < draggedElementIndex && index >= destinationIndex ? index + 1 : index;
+      } else {
+        newIndex = index > draggedElementIndex && index <= destinationIndex ? index - 1 : index;
+      }
+    }
     let top = 0;
     let i = 0;
     while (i < newInfos.length && i < newIndex) {
