@@ -233,12 +233,16 @@ defmodule Beacon.LiveAdmin.EventHandlerEditorLive.Index do
           <div :if={@form} class="w-full col-span-2">
             <.form :let={f} for={@form} id="event-handler-form" class="flex items-end gap-4" phx-submit="save_changes">
               <.input label="Name" field={f[:name]} type="text" />
-              <.input type="hidden" field={f[:code]} name="event_handler[code]" id="event_handler-form_code" value={Phoenix.HTML.Form.input_value(f, :code)} />
+              <input type="hidden" name="event_handler[code]" id="event_handler-form_code" value={Phoenix.HTML.Form.input_value(f, :code)} />
 
               <.button phx-disable-with="Saving..." class="ml-auto">Save Changes</.button>
               <.button id="delete-event-handler-button" type="button" phx-click="delete" class="">Delete</.button>
             </.form>
-
+            <div class="mt-4 flex gap-x-4">
+              <div>Variables available:</div>
+              <div>params socket</div>
+            </div>
+            <%= template_error(@form[:code]) %>
             <div class="w-full mt-10 space-y-8">
               <div class="py-6 rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
                 <LiveMonacoEditor.code_editor
