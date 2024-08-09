@@ -58,6 +58,8 @@
           x, y, width, height, top, right, bottom, left,
           marginTop: parseFloat(computedStyles.marginTop),
           marginBottom: parseFloat(computedStyles.marginBottom),
+          marginLeft: parseFloat(computedStyles.marginLeft),
+          marginRight: parseFloat(computedStyles.marginRight),
         };        
       })
     }
@@ -106,15 +108,12 @@
     if (dragDirection === 'vertical') {
       return $dragElementInfo.siblingLocationInfos.findIndex(rect => rect.top < e.y && rect.bottom + rect.marginBottom > e.y);
     } else {
-      return $dragElementInfo.siblingLocationInfos.findIndex(rect => {
-        return rect.left < e.x && rect.right > e.x
-      });
+      return $dragElementInfo.siblingLocationInfos.findIndex(rect => rect.left < e.y && rect.right + rect.marginLeft > e.y);
     }
   }
 
   function findSwappedIndexes(dragDirection: DragDirection, e: MouseEvent): { currentIndex: number, destinationIndex: number } {
     let hoveredElementIndex = findHoveredSiblingIndex(dragDirection, e);
-    console.log('e.y', e.y);
     if (hoveredElementIndex === -1) {
       return {
         currentIndex: $dragElementInfo.selectedIndex,
@@ -134,7 +133,7 @@
     return newInfos;
   }
   
-  function calculateNewTop(index: number, draggedElementIndex: number, destinationIndex: number, newInfos: LocationInfo[]): number | undefined {
+  function calculateNewDistance(dragDirection: DragDirection, index: number, draggedElementIndex: number, destinationIndex: number, newInfos: LocationInfo[]): number | undefined {
     if (index < destinationIndex && index < draggedElementIndex || index > destinationIndex && index > draggedElementIndex) return;
     let newIndex: number;
     if (index === draggedElementIndex) {
@@ -152,30 +151,35 @@
       top += newInfos[i].height + newInfos[i].marginTop + newInfos[i].marginBottom;
       i++;
     }
-    console.log('-------------------------------------------------');
-    console.log('originalInfos', $dragElementInfo.siblingLocationInfos);
-    console.log('newInfos', newInfos);
-    console.log(`top for element that was in index ${index} (now in index ${newIndex})`, top);
     top = top + newInfos[newIndex].marginTop + $dragElementInfo.siblingLocationInfos[0].top;
-    console.log(`top for element that was in index ${index} (now in index ${newIndex}) (including margin)`, top);
     return top;
   }
 
-  function repositionGhosts(currentIndex: number, destinationIndex: number, locationInfos: LocationInfo[]) {
+  function repositionGhosts(dragDirection: DragDirection, currentIndex: number, destinationIndex: number, locationInfos: LocationInfo[]) {
     Array.from($dragElementInfo.parentElementClone.children).forEach((el, i) => {
       if (i !== $dragElementInfo.selectedIndex) {
-        const top = calculateNewTop(i, currentIndex, destinationIndex, locationInfos);
-        if (top) {
-          el.style.transform = `translateY(${top - $dragElementInfo.siblingLocationInfos[i].top}px)`;
+        const distance = calculateNewDistance(dragDirection, i, currentIndex, destinationIndex, locationInfos);
+        if (distance) {
+          if (dragDirection === 'vertical') {
+            el.style.transform = `translateY(${distance - $dragElementInfo.siblingLocationInfos[i].top}px)`;
+          } else {
+            el.style.transform = `translateX(${distance - $dragElementInfo.siblingLocationInfos[i].left}px)`;
+          }
+        } else {
+          el.style.transform = null;
         }
       }
     });
   }
 
-  function calculatePlaceholderPosition(currentIndex: number, destinationIndex: number, locationInfos: LocationInfo[]) {
-    let top = calculateNewTop(currentIndex, currentIndex, destinationIndex, locationInfos);
+  function calculatePlaceholderPosition(dragDirection: DragDirection, currentIndex: number, destinationIndex: number, locationInfos: LocationInfo[]) {
+    let distance = calculateNewDistance(dragDirection, currentIndex, currentIndex, destinationIndex, locationInfos);
     let draggedElementInfo = $dragElementInfo.siblingLocationInfos[$dragElementInfo.selectedIndex];
-    placeholderStyle = `top: ${top - relativeWrapperRect.top + draggedElementInfo.marginTop}px; left: ${draggedElementInfo.left - relativeWrapperRect.left}px; height: ${draggedElementInfo.height}px; width: ${draggedElementInfo.width}px;`;
+    if (dragDirection === 'vertical') {
+      placeholderStyle = `top: ${distance - relativeWrapperRect.top + draggedElementInfo.marginTop}px; left: ${draggedElementInfo.left - relativeWrapperRect.left}px; height: ${draggedElementInfo.height}px; width: ${draggedElementInfo.width}px;`;
+    } else {
+      placeholderStyle = `left: ${distance - relativeWrapperRect.left + draggedElementInfo.marginLeft}px; top: ${draggedElementInfo.top - relativeWrapperRect.top}px; height: ${draggedElementInfo.height}px; width: ${draggedElementInfo.width}px;`;
+    }
   }
 
   let placeholderStyle: string = null;
@@ -185,28 +189,23 @@
     if (!relativeWrapperRect) {
       relativeWrapperRect = document.getElementById('ui-builder-app-container').closest('.relative').getBoundingClientRect();
     }     
-    let selectedElementRect = $dragElementInfo.siblingLocationInfos[$dragElementInfo.selectedIndex];
-    if (dragDirection === 'vertical') {
-      if (mouseDiff.y !== 0) {
-        let {currentIndex, destinationIndex} = findSwappedIndexes(dragDirection, e);
-        if (currentIndex === destinationIndex) {
-          // No drag, reset effect.
-          if (newIndex !== null) {
-            // Reset the transforms on all elements but the one being dragged, which must keep following the cursor.
-            Array.from($dragElementInfo.parentElementClone.children).forEach((el, i) => i !== destinationIndex && (el.style.transform = null));    
-          }
-          newIndex = null;
-          placeholderStyle = `top: ${selectedElementRect.top - relativeWrapperRect.top}px; left: ${selectedElementRect.left - relativeWrapperRect.left}px; height: ${selectedElementRect.height}px; width: ${selectedElementRect.width}px;`;
-        } else {
-          let rearrangedInfos = sortedLocationInfos($dragElementInfo.siblingLocationInfos, currentIndex, destinationIndex);
-          newIndex = destinationIndex;
-          repositionGhosts(currentIndex, destinationIndex, rearrangedInfos);
-          calculatePlaceholderPosition(currentIndex, destinationIndex, rearrangedInfos);
+    if (mouseDiff[dragDirection === 'vertical' ? 'y' : 'x'] !== 0) {
+      let {currentIndex, destinationIndex} = findSwappedIndexes(dragDirection, e);
+      if (currentIndex === destinationIndex) {
+        // No drag, reset effect.
+        if (newIndex !== null) {
+          // Reset the transforms on all elements but the one being dragged, which must keep following the cursor.
+          Array.from($dragElementInfo.parentElementClone.children).forEach((el, i) => i !== destinationIndex && (el.style.transform = null));    
         }
-      }      
-    } else {
-      alert('Not implemented!!'); 
-    }
+        newIndex = null;
+        calculatePlaceholderPosition(dragDirection, currentIndex, destinationIndex, $dragElementInfo.siblingLocationInfos);
+      } else {
+        let rearrangedInfos = sortedLocationInfos($dragElementInfo.siblingLocationInfos, currentIndex, destinationIndex);
+        repositionGhosts(dragDirection, currentIndex, destinationIndex, rearrangedInfos);
+        calculatePlaceholderPosition(dragDirection, currentIndex, destinationIndex, rearrangedInfos);
+        newIndex = destinationIndex;
+      }
+    }     
   }
 
   function handleMousemove(e: MouseEvent) {
@@ -218,7 +217,6 @@
     }
     if (dragDirection === 'vertical') {
       dragHandleElement.style.transform = `translateY(${mouseDiff.y}px)`;
-
       ghostElement.style.transform = `translateY(${mouseDiff.y}px)`;
     } else {
       dragHandleElement.style.transform = `translateX(${mouseDiff.x}px)`;
