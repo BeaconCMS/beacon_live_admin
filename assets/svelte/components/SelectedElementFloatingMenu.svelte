@@ -51,7 +51,7 @@
     $dragElementInfo = {
       parentElementClone: el,
       selectedIndex,
-      siblingLocationInfos: siblings.map(el => {
+      siblingLocationInfos: siblings.map((el, i) => {
         let { x, y, width, height, top, right, bottom, left } = el.getBoundingClientRect();
         let computedStyles = window.getComputedStyle(el);
         return {
@@ -108,7 +108,7 @@
     if (dragDirection === 'vertical') {
       return $dragElementInfo.siblingLocationInfos.findIndex(rect => rect.top < e.y && rect.bottom + rect.marginBottom > e.y);
     } else {
-      return $dragElementInfo.siblingLocationInfos.findIndex(rect => rect.left < e.y && rect.right + rect.marginLeft > e.y);
+      return $dragElementInfo.siblingLocationInfos.findIndex(rect => rect.left < e.x && rect.right + rect.marginLeft > e.x);
     }
   }
 
@@ -145,14 +145,23 @@
         newIndex = index > draggedElementIndex && index <= destinationIndex ? index - 1 : index;
       }
     }
-    let top = 0;
+    let distance = 0;
     let i = 0;
-    while (i < newInfos.length && i < newIndex) {
-      top += newInfos[i].height + newInfos[i].marginTop + newInfos[i].marginBottom;
-      i++;
+    if (dragDirection === 'vertical') {
+      while (i < newInfos.length && i < newIndex) {
+        distance += newInfos[i].height + newInfos[i].marginTop + newInfos[i].marginBottom;
+        i++;
+      }
+      distance = distance + newInfos[newIndex].marginTop + $dragElementInfo.siblingLocationInfos[0].top;
+    } else {
+      while (i < newInfos.length && i < newIndex) {
+        distance += newInfos[i].width + newInfos[i].marginLeft + newInfos[i].marginRight;
+        i++;
+      }
+      distance = distance + newInfos[newIndex].marginLeft + $dragElementInfo.siblingLocationInfos[0].left;
+
     }
-    top = top + newInfos[newIndex].marginTop + $dragElementInfo.siblingLocationInfos[0].top;
-    return top;
+    return distance;
   }
 
   function repositionGhosts(dragDirection: DragDirection, currentIndex: number, destinationIndex: number, locationInfos: LocationInfo[]) {
@@ -188,7 +197,7 @@
   function updateSiblingsPositioning(dragDirection: DragDirection, mouseDiff, e) {
     if (!relativeWrapperRect) {
       relativeWrapperRect = document.getElementById('ui-builder-app-container').closest('.relative').getBoundingClientRect();
-    }     
+    }  
     if (mouseDiff[dragDirection === 'vertical' ? 'y' : 'x'] !== 0) {
       let {currentIndex, destinationIndex} = findSwappedIndexes(dragDirection, e);
       if (currentIndex === destinationIndex) {
