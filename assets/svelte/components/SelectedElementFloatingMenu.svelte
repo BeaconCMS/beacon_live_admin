@@ -48,6 +48,12 @@
     let siblings = Array.from($selectedDomElement.parentElement.children);
     let selectedIndex = siblings.indexOf($selectedDomElement);
     let el = $selectedDomElement.parentElement.cloneNode(true) as Element;
+    let elChildren = Array.from(el.children);
+    for(let i = 0; i < elChildren.length; i++) {
+      if (i !== selectedIndex) {
+        elChildren[i].style.transition = 'transform 0.15s';
+      }
+    }
     $dragElementInfo = {
       parentElementClone: el,
       selectedIndex,
@@ -239,7 +245,7 @@
 {#if $selectedElementMenu}
   {#if placeholderStyle}
     <div 
-      class="absolute" 
+      class="absolute transition-all" 
       style="background-color:aqua; opacity: 0.5; {placeholderStyle}"></div>
   {/if}
   <button 
