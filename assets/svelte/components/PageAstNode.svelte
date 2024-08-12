@@ -19,7 +19,6 @@
   $: isSelectedNode = $selectedAstElement === node
   $: isHighlightedNode = $highlightedAstElement === node
   $: isEditable = isSelectedNode && isAstElement(node) && node.content.filter((e) => typeof e === "string").length === 1
-  $: htmlWrapper
   $: htmlWrapperHasMultipleElements = ((): Boolean => {
     return !!htmlWrapper && htmlWrapper.childElementCount > 1;
   })()
