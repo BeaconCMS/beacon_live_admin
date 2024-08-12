@@ -27,9 +27,7 @@
   }
 
   function updateHandleCoords(selectedEl: Element, movement: Coords = { x: 0, y: 0 }) {
-    if (!relativeWrapperRect) {
-      relativeWrapperRect = document.getElementById('ui-builder-app-container').closest('.relative').getBoundingClientRect();
-    }      
+    relativeWrapperRect = document.getElementById('ui-builder-app-container').closest('.relative').getBoundingClientRect();
     let currentRect = selectedEl.getBoundingClientRect();
     let menu = get(selectedElementMenu);
     let movX = menu?.dragDirection === 'vertical' ? 0 : movement.x;
