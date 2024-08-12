@@ -13,17 +13,17 @@
   export let node: AstNode
   export let nodeId: string
 
-  let htmlWrapper: HTMLElement;
+  let htmlWrapper: HTMLElement
 
   $: isDragTarget = $slotTargetElement === node
   $: isSelectedNode = $selectedAstElement === node
   $: isHighlightedNode = $highlightedAstElement === node
   $: isEditable = isSelectedNode && isAstElement(node) && node.content.filter((e) => typeof e === "string").length === 1
   $: htmlWrapperHasMultipleElements = ((): Boolean => {
-    return !!htmlWrapper && htmlWrapper.childElementCount > 1;
+    return !!htmlWrapper && htmlWrapper.childElementCount > 1
   })()
   $: htmlWrapperHasIframe = ((): Boolean => {
-    return !!htmlWrapper && htmlWrapper.getElementsByTagName('iframe').length > 0;
+    return !!htmlWrapper && htmlWrapper.getElementsByTagName("iframe").length > 0
   })()
 
   function handleDragEnter() {
@@ -175,7 +175,7 @@
     display: inline;
   }
 
-  :global(.embedded-iframe>iframe) {
+  :global(.embedded-iframe > iframe) {
     pointer-events: none;
   }
 </style>
