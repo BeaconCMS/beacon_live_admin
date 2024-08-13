@@ -11,7 +11,7 @@
   export let expanded = true
   export let placeholder: string = ""
   export let large: boolean = false
-  export let disableDelete: boolean = false;
+  export let disableDelete: boolean = false
   $: astElements = (astNodes || []).filter(isAstElement)
 
   function highlightAstElement(astElement: AstElement) {
@@ -86,12 +86,9 @@
       <span>
         <span class="hover:text-blue-700 active:text-blue-900"><slot name="heading" /></span>
         {#if !disableDelete}
-          <button 
-            type="button" 
-            class="ml-4" 
-            title="Delete attribute"
-            on:click|stopPropagation={deleteAttribute}
-          ><span class="hero-trash text-red hover:text-red"></span></button>
+          <button type="button" class="ml-4" title="Delete attribute" on:click|stopPropagation={deleteAttribute}
+            ><span class="hero-trash text-red hover:text-red"></span></button
+          >
         {/if}
       </span>
       <span class={expanded ? "" : " [&_path]:origin-center [&_path]:rotate-180"}>
