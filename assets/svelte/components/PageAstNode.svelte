@@ -13,10 +13,18 @@
   export let node: AstNode
   export let nodeId: string
 
+  let htmlWrapper: HTMLElement
+
   $: isDragTarget = $slotTargetElement === node
   $: isSelectedNode = $selectedAstElement === node
   $: isHighlightedNode = $highlightedAstElement === node
   $: isEditable = isSelectedNode && isAstElement(node) && node.content.filter((e) => typeof e === "string").length === 1
+  $: htmlWrapperHasMultipleElements = ((): Boolean => {
+    return !!htmlWrapper && htmlWrapper.childElementCount > 1
+  })()
+  $: htmlWrapperHasIframe = ((): Boolean => {
+    return !!htmlWrapper && htmlWrapper.getElementsByTagName("iframe").length > 0
+  })()
 
   function handleDragEnter() {
     if (isAstElement(node) && elementCanBeDroppedInTarget($draggedObject)) {
@@ -108,7 +116,9 @@
     <slot />
   {:else if node.rendered_html}
     <div
-      class="contents"
+      bind:this={htmlWrapper}
+      class:contents={htmlWrapperHasMultipleElements}
+      class:embedded-iframe={htmlWrapperHasIframe}
       on:mouseover|stopPropagation={handleMouseOver}
       on:mouseout|stopPropagation={handleMouseOut}
       on:click|preventDefault|stopPropagation={() => ($selectedAstElementId = nodeId)}
@@ -159,5 +169,13 @@
 <style>
   .dragged-element-placeholder {
     outline: 2px dashed red;
+  }
+
+  :global(.embedded-iframe) {
+    display: inline;
+  }
+
+  :global(.embedded-iframe > iframe) {
+    pointer-events: none;
   }
 </style>
