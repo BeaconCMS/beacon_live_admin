@@ -28,16 +28,7 @@
   let children;
   $: {
     if (isAstElement(node)) {
-      // if (isParentOfSelectedNode) {
-      //   if ($selectedElementMenu && $selectedElementMenu.insertBefore !== null) {
-      //     children = [...node.content];
-      //     let index = children.indexOf($selectedAstElement);
-      //     children.splice(index, 1);
-      //     children.splice($selectedElementMenu.insertBefore, 0, $selectedAstElement);
-      //   }
-      // } else {
-        children = node.content;
-      // }     
+      children = node.content;
     }
   }
 
