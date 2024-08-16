@@ -1,7 +1,9 @@
 defmodule Beacon.LiveAdmin.MixProject do
   use Mix.Project
 
-  @version "0.1.0-dev"
+  @version "0.1.0-rc.0"
+  @source_url "https://github.com/BeaconCMS/beacon_live_admin"
+  @homepage_url "https://beaconcms.org"
 
   def project do
     [
@@ -11,6 +13,12 @@ defmodule Beacon.LiveAdmin.MixProject do
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       name: "Beacon LiveAdmin",
+      homepage_url: @homepage_url,
+      source_url: @source_url,
+      description: """
+      Phoenix LiveView Admin Panel to manage Beacon CMS sites.
+      """,
+      package: package(),
       deps: deps(),
       aliases: aliases(),
       docs: docs()
@@ -27,13 +35,26 @@ defmodule Beacon.LiveAdmin.MixProject do
   defp elixirc_paths(:test), do: ["lib", "test/support"]
   defp elixirc_paths(_), do: ["lib"]
 
+  defp package do
+    [
+      maintainers: ["Leandro Pereira", "Andrew Berrien"],
+      licenses: ["MIT"],
+      links: %{
+        Changelog: "https://hexdocs.pm/beacon_live_admin/#{@version}/changelog.html",
+        GitHub: @source_url,
+        Website: @homepage_url,
+        DockYard: "https://dockyard.com"
+      },
+      files: ~w(lib priv .formatter.exs mix.exs CHANGELOG.md LICENSE.md)
+    ]
+  end
+
   defp deps do
     [
       # Overridable
-      override_dep(:phoenix, "~> 1.7", [], "PHOENIX_VERSION", "PHOENIX_PATH"),
-      override_dep(:phoenix_live_view, "~> 0.19", [], "PHOENIX_LIVE_VIEW_VERSION", "PHOENIX_LIVE_VIEW_PATH"),
-      override_dep(:beacon, nil, [github: "BeaconCMS/beacon", runtime: false], "BEACON_VERSION", "BEACON_PATH"),
-      override_dep(:live_monaco_editor, "~> 0.1", [], "LIVE_MONACO_EDITOR_VERSION", "LIVE_MONACO_EDITOR_PATH"),
+      override_dep(:phoenix, "~> 1.7", "PHOENIX_VERSION", "PHOENIX_PATH"),
+      override_dep(:phoenix_live_view, "~> 0.19", "PHOENIX_LIVE_VIEW_VERSION", "PHOENIX_LIVE_VIEW_PATH"),
+      beacon_dep(),
 
       # Runtime
       {:ecto, "~> 3.6"},
@@ -44,28 +65,32 @@ defmodule Beacon.LiveAdmin.MixProject do
       {:tailwind, "~> 0.2"},
       {:gettext, "~> 0.20"},
       {:jason, "~> 1.0"},
+      {:live_monaco_editor, "~> 0.1"},
 
       # Dev, Test, Docs
       {:phoenix_live_reload, "~> 1.2", only: :dev},
-      {:ex_doc, "~> 0.29", only: :docs}
+      {:ex_doc, "~> 0.29", only: :dev, runtime: false}
     ]
   end
 
-  defp override_dep(dep, requirement, opts, env_version, env_path) do
-    runtime = Keyword.get(opts, :runtime, true)
-
+  defp override_dep(dep, requirement, env_version, env_path) do
     cond do
       version = System.get_env(env_version) ->
         {dep, version}
 
       path = System.get_env(env_path) ->
-        {dep, path: path, runtime: runtime}
-
-      opts != [] ->
-        {dep, opts}
+        {dep, path: path}
 
       :default ->
         {dep, requirement}
+    end
+  end
+
+  defp beacon_dep do
+    if path = System.get_env("BEACON_PATH") do
+      {:beacon, path: path, runtime: false}
+    else
+      {:beacon, "~> 0.1.0-rc.0", runtime: false}
     end
   end
 

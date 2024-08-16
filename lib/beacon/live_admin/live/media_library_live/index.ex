@@ -157,7 +157,6 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.Index do
           live_action={@live_action}
           asset={@asset}
           navigate={beacon_live_admin_path(@socket, @beacon_page.site, "/media_library")}
-          agent={@agent}
         />
       </.modal>
 
@@ -169,7 +168,6 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.Index do
           live_action={@live_action}
           asset={@asset}
           navigate={beacon_live_admin_path(@socket, @beacon_page.site, "/media_library")}
-          agent={@agent}
         />
       </.modal>
       <.table_pagination socket={@socket} page={@beacon_page} />

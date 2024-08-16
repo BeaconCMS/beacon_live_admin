@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.0-rc.1
+## 0.1.0-rc.0 (2024-08-02)
 
 ### Enhancements
   * Media Library

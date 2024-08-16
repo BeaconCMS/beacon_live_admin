@@ -18,6 +18,7 @@
   export let node: AstNode
   export let nodeId: string
 
+  let htmlWrapper: HTMLElement
   let domElement: Element;
   let previewDropInside: boolean;
   $: isDragTarget = $slotTargetElement === node
@@ -25,12 +26,20 @@
   $: isHighlightedNode = $highlightedAstElement === node
   $: isEditable = isSelectedNode && isAstElement(node) && node.content.filter((e) => typeof e === "string").length === 1 && !node.attrs?.selfClose;
   $: isParentOfSelectedNode = isAstElement(node) ? node.content.includes($selectedAstElement) : false;
+
   let children;
   $: {
     if (isAstElement(node)) {
       children = node.content;
     }
   }
+
+  $: htmlWrapperHasMultipleElements = ((): Boolean => {
+    return !!htmlWrapper && htmlWrapper.childElementCount > 1
+  })()
+  $: htmlWrapperHasIframe = ((): Boolean => {
+    return !!htmlWrapper && htmlWrapper.getElementsByTagName("iframe").length > 0
+  })()
 
   function handleDragEnter() {
     if ($draggedObject) {
@@ -162,7 +171,9 @@
     <slot />
   {:else if node.rendered_html}
     <div
-      class="contents"
+      bind:this={htmlWrapper}
+      class:contents={htmlWrapperHasMultipleElements}
+      class:embedded-iframe={htmlWrapperHasIframe}
       on:mouseover|stopPropagation={handleMouseOver}
       on:mouseout|stopPropagation={handleMouseOut}
       on:click|preventDefault|stopPropagation={() => ($selectedAstElementId = nodeId)}
@@ -212,5 +223,13 @@
 <style>
   .dragged-element-placeholder {
     outline: 2px dashed red;
+  }
+
+  :global(.embedded-iframe) {
+    display: inline;
+  }
+
+  :global(.embedded-iframe > iframe) {
+    pointer-events: none;
   }
 </style>
