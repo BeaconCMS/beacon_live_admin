@@ -9,7 +9,7 @@
   let relativeWrapperRect: DOMRect
   let dragHandleStyle: Writable<string> = writable("")
 
-  export function initSelectedElementMenuPosition(selectedDomEl, mouseDiff?: Coords) {
+  export function initSelectedElementDragMenuPosition(selectedDomEl, mouseDiff?: Coords) {
     let selectedEl
     let dragInfo = get(dragElementInfo)
     if (dragInfo) {

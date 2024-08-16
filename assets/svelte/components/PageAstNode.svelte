@@ -14,7 +14,7 @@
   import { updateNodeContent, updateAst } from "$lib/utils/ast-manipulation"
   import { elementCanBeDroppedInTarget, mouseDiff } from "$lib/utils/drag-helpers"
   import type { AstNode } from "$lib/types"
-  import { initSelectedElementMenuPosition } from "./SelectedElementFloatingMenu.svelte"
+  import { initSelectedElementDragMenuPosition } from "./SelectedElementFloatingMenu/DragMenuOption.svelte"
   export let node: AstNode
   export let nodeId: string
 
@@ -133,14 +133,14 @@
   function bindIfSelected(el: HTMLElement, isSelected: boolean) {
     if (isSelected) {
       $selectedDomElement = el
-      initSelectedElementMenuPosition(el)
+      initSelectedElementDragMenuPosition(el)
     }
 
     return {
       update(isSelected) {
         if (isSelected) {
           $selectedDomElement = el
-          initSelectedElementMenuPosition(el)
+          initSelectedElementDragMenuPosition(el)
         }
       },
       destroy() {
