@@ -6,7 +6,7 @@
     selectedAstElementId,
     highlightedAstElement,
     isAstElement,
-    selectedElementMenu
+    selectedElementMenu,
   } from "$lib/stores/page"
   import { tick } from "svelte"
   import { draggedObject, dragElementInfo } from "$lib/stores/dragAndDrop"
@@ -14,23 +14,27 @@
   import { updateNodeContent, updateAst } from "$lib/utils/ast-manipulation"
   import { elementCanBeDroppedInTarget, mouseDiff } from "$lib/utils/drag-helpers"
   import type { AstNode } from "$lib/types"
-    import { initSelectedElementMenuPosition } from "./SelectedElementFloatingMenu.svelte"
+  import { initSelectedElementMenuPosition } from "./SelectedElementFloatingMenu.svelte"
   export let node: AstNode
   export let nodeId: string
 
   let htmlWrapper: HTMLElement
-  let domElement: Element;
-  let previewDropInside: boolean;
+  let domElement: Element
+  let previewDropInside: boolean
   $: isDragTarget = $slotTargetElement === node
   $: isSelectedNode = $selectedAstElement === node
   $: isHighlightedNode = $highlightedAstElement === node
-  $: isEditable = isSelectedNode && isAstElement(node) && node.content.filter((e) => typeof e === "string").length === 1 && !node.attrs?.selfClose;
-  $: isParentOfSelectedNode = isAstElement(node) ? node.content.includes($selectedAstElement) : false;
+  $: isEditable =
+    isSelectedNode &&
+    isAstElement(node) &&
+    node.content.filter((e) => typeof e === "string").length === 1 &&
+    !node.attrs?.selfClose
+  $: isParentOfSelectedNode = isAstElement(node) ? node.content.includes($selectedAstElement) : false
 
-  let children;
+  let children
   $: {
     if (isAstElement(node)) {
-      children = node.content;
+      children = node.content
     }
   }
 
@@ -65,8 +69,8 @@
   }
 
   function handleClick() {
-    $selectedAstElementId = nodeId;
-    tick().then(() => updateSelectedElementMenu());
+    $selectedAstElementId = nodeId
+    tick().then(() => updateSelectedElementMenu())
   }
 
   function handleContentEdited({ target }: Event) {
@@ -128,36 +132,36 @@
 
   function bindIfSelected(el: HTMLElement, isSelected: boolean) {
     if (isSelected) {
-      $selectedDomElement = el;
-      initSelectedElementMenuPosition(el);
+      $selectedDomElement = el
+      initSelectedElementMenuPosition(el)
     }
 
     return {
       update(isSelected) {
         if (isSelected) {
-          $selectedDomElement = el;
-          initSelectedElementMenuPosition(el);
+          $selectedDomElement = el
+          initSelectedElementMenuPosition(el)
         }
       },
       destroy() {
         if (isSelected) {
-          $selectedDomElement = null;
+          $selectedDomElement = null
         }
-      }
+      },
     }
   }
 
-  let selectedElementStyle = '';
+  let selectedElementStyle = ""
   $: {
     if (isSelectedNode && $selectedElementMenu && $selectedElementMenu.mouseMovement) {
-      let {x, y} = mouseDiff($selectedElementMenu.mouseMovement)
-      if ($selectedElementMenu.dragDirection === 'vertical') {
-        selectedElementStyle = `transform: translateY(${y}px);`;
+      let { x, y } = mouseDiff($selectedElementMenu.mouseMovement)
+      if ($selectedElementMenu.dragDirection === "vertical") {
+        selectedElementStyle = `transform: translateY(${y}px);`
       } else {
-        selectedElementStyle = `transform: translateX(${x}px);`;
+        selectedElementStyle = `transform: translateX(${x}px);`
       }
     } else {
-      selectedElementStyle = '';
+      selectedElementStyle = ""
     }
   }
 </script>
@@ -186,9 +190,9 @@
       {@html $dragElementInfo.parentElementClone}
     {/if} -->
     <svelte:element
+      this={node.tag}
       class="relative"
       class:hidden={isParentOfSelectedNode && $dragElementInfo}
-      this={node.tag}
       bind:this={domElement}
       {...node.attrs}
       data-selected={isSelectedNode}

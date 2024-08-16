@@ -27,23 +27,23 @@ export const parentOfSelectedAstElement: Readable<AstElement | undefined> = deri
   [page, selectedAstElementId],
   ([$page, $selectedAstElementId]) => {
     if ($selectedAstElementId) {
-      if ($selectedAstElementId === "root") return null;
-      let levels = $selectedAstElementId.split('.');
-      if (levels.length === 1) return get(rootAstElement);
-      levels.pop();
-      return findAstElement($page.ast, levels.join('.'))
+      if ($selectedAstElementId === "root") return null
+      let levels = $selectedAstElementId.split(".")
+      if (levels.length === 1) return get(rootAstElement)
+      levels.pop()
+      return findAstElement($page.ast, levels.join("."))
     }
   },
 )
 
 export const selectedDomElement: Writable<Element | null> = writable(null)
 export interface SelectedElementMenu {
-  top: number,
-  left: number,
+  top: number
+  left: number
   dragging: boolean
-  dragDirection: 'horizontal' | 'vertical',
-  elementCoords: CoordsDiff,
-  insertBefore: number | null,
+  dragDirection: "horizontal" | "vertical"
+  elementCoords: CoordsDiff
+  insertBefore: number | null
   mouseMovement: CoordsDiff
 }
 export const selectedElementMenu: Writable<SelectedElementMenu | null> = writable(null)
