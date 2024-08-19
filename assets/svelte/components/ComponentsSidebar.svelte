@@ -2,7 +2,7 @@
   import { fade } from "svelte/transition"
   import { translate } from "$lib/utils/animations"
   import { currentComponentCategory } from "$lib/stores/currentComponentCategory"
-  import { draggedObject } from "$lib/stores/dragAndDrop"
+  import { draggedObject, resetDrag } from "$lib/stores/dragAndDrop"
   import type { ComponentCategory, ComponentDefinition, MenuCategory } from "$lib/types"
   export let components: ComponentDefinition[]
 
@@ -70,7 +70,7 @@
   }
 
   function dragEnd() {
-    $draggedObject = null
+    resetDrag();
   }
 </script>
 
