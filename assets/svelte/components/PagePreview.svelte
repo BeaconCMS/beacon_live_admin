@@ -4,7 +4,7 @@
   import { selectedAstElementId } from "$lib/stores/page"
   import { currentComponentCategory } from "$lib/stores/currentComponentCategory"
   import { page, slotTargetElement } from "$lib/stores/page"
-  import { draggedObject } from "$lib/stores/dragAndDrop"
+  import { draggedObject, resetDrag } from "$lib/stores/dragAndDrop"
   import { live } from "$lib/stores/live"
   import { elementCanBeDroppedInTarget } from "$lib/utils/drag-helpers"
 
@@ -16,10 +16,16 @@
     if (!$draggedObject) return
     let draggedObj = $draggedObject
     if (elementCanBeDroppedInTarget(draggedObj)) {
-      if (!(target instanceof HTMLElement)) return
-      if (target.id === "fake-browser-content") return
-      if (!$slotTargetElement) return
-      if ($slotTargetElement.attrs.selfClose) return
+      if (
+        !(target instanceof HTMLElement) ||
+        target.id === "fake-browser-content" ||
+        !$slotTargetElement ||
+        $slotTargetElement.attrs.selfClose
+      ) {
+        resetDragDrop()
+        return
+      }
+
       addBasicComponentToTarget($slotTargetElement)
     } else {
       $live.pushEvent(
@@ -31,8 +37,7 @@
         },
       )
     }
-    $draggedObject = null
-    isDraggingOver = false
+    resetDragDrop()
   }
 
   async function addBasicComponentToTarget(astElement: AstElement) {
@@ -53,6 +58,11 @@
 
   function dragOver() {
     isDraggingOver = true
+  }
+
+  function resetDragDrop() {
+    resetDrag()
+    isDraggingOver = false
   }
 </script>
 

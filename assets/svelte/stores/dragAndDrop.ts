@@ -24,3 +24,7 @@ interface DragInfo {
   siblingLocationInfos: LocationInfo[]
 }
 export const dragElementInfo: Writable<DragInfo | null> = writable(null)
+
+export const resetDrag: () => void = () => {
+  draggedObject.update(() => null)
+}
