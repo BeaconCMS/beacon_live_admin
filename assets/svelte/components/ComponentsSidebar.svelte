@@ -70,7 +70,7 @@
   }
 
   function dragEnd() {
-    resetDrag();
+    resetDrag()
   }
 </script>
 

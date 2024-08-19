@@ -16,10 +16,12 @@
     if (!$draggedObject) return
     let draggedObj = $draggedObject
     if (elementCanBeDroppedInTarget(draggedObj)) {
-      if (!(target instanceof HTMLElement) ||
-          target.id === "fake-browser-content" ||
-          !$slotTargetElement ||
-          $slotTargetElement.attrs.selfClose) {
+      if (
+        !(target instanceof HTMLElement) ||
+        target.id === "fake-browser-content" ||
+        !$slotTargetElement ||
+        $slotTargetElement.attrs.selfClose
+      ) {
         resetDragDrop()
         return
       }
@@ -59,7 +61,7 @@
   }
 
   function resetDragDrop() {
-    resetDrag();
+    resetDrag()
     isDraggingOver = false
   }
 </script>
