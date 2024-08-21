@@ -1,6 +1,7 @@
 import { writable, derived, get } from "svelte/store"
 import type { Writable, Readable } from "svelte/store"
 import type { AstElement, AstNode, Page } from "$lib/types"
+import type { CoordsDiff } from "$lib/utils/drag-helpers"
 
 export const page: Writable<Page> = writable()
 export const selectedAstElementId: Writable<string | undefined> = writable()
@@ -21,6 +22,31 @@ export const selectedAstElement: Readable<AstElement | undefined> = derived(
     }
   },
 )
+
+export const parentOfSelectedAstElement: Readable<AstElement | undefined> = derived(
+  [page, selectedAstElementId],
+  ([$page, $selectedAstElementId]) => {
+    if ($selectedAstElementId) {
+      if ($selectedAstElementId === "root") return null
+      let levels = $selectedAstElementId.split(".")
+      if (levels.length === 1) return get(rootAstElement)
+      levels.pop()
+      return findAstElement($page.ast, levels.join("."))
+    }
+  },
+)
+
+export const selectedDomElement: Writable<Element | null> = writable(null)
+export interface SelectedElementMenu {
+  top: number
+  left: number
+  dragging: boolean
+  dragDirection: "horizontal" | "vertical"
+  elementCoords: CoordsDiff
+  insertBefore: number | null
+  mouseMovement: CoordsDiff
+}
+export const selectedElementMenu: Writable<SelectedElementMenu | null> = writable(null)
 
 export function isAstElement(maybeNode: AstNode): maybeNode is AstElement {
   return typeof maybeNode !== "string"

@@ -3,6 +3,7 @@
   import Backdrop from "./Backdrop.svelte"
   import PagePreview from "./PagePreview.svelte"
   import PropertiesSidebar from "./PropertiesSidebar.svelte"
+  import SelectedElementFloatingMenu from "./SelectedElementFloatingMenu.svelte"
   import { page as pageStore } from "$lib/stores/page"
   import { live as liveStore } from "$lib/stores/live"
   import { tailwindConfig as tailwindConfigStore } from "$lib/stores/tailwindConfig"
@@ -25,7 +26,7 @@
 </script>
 
 <Backdrop />
-<div class="flex min-h-screen bg-gray-100" data-test-id="app-container">
+<div class="flex min-h-screen bg-gray-100" id="ui-builder-app-container" data-test-id="app-container">
   <!-- Left sidebar -->
   <ComponentsSidebar {components} />
 
@@ -34,4 +35,6 @@
 
   <!-- Right sidebar -->
   <PropertiesSidebar on:droppedIntoTarget={(e) => addBasicComponentToTarget(e.detail)} />
+
+  <SelectedElementFloatingMenu />
 </div>

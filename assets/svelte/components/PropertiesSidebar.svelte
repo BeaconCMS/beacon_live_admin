@@ -23,20 +23,20 @@
   $: isRootNode = !!$selectedAstElementId && $selectedAstElementId === "root"
   $: attributesEditable = !["eex", "eex_block"].includes($selectedAstElement?.tag)
 
-  let arbitraryAttributes = [];
+  let arbitraryAttributes = []
 
   function addArbitraryAttribute() {
-    arbitraryAttributes = [...arbitraryAttributes, { name: "", value: "" }];
+    arbitraryAttributes = [...arbitraryAttributes, { name: "", value: "" }]
   }
 
   function saveArbitraryAttribute(index: number) {
-    let attribute = arbitraryAttributes[index];
+    let attribute = arbitraryAttributes[index]
     if (attribute.name && attribute.value) {
-      let node = $selectedAstElement;
+      let node = $selectedAstElement
       if (node && isAstElement(node)) {
-        node.attrs[attribute.name] = attribute.value;
-        $live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast });
-        arbitraryAttributes = arbitraryAttributes.filter((_, i) => i !== index);
+        node.attrs[attribute.name] = attribute.value
+        $live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast })
+        arbitraryAttributes = arbitraryAttributes.filter((_, i) => i !== index)
       }
     }
   }
@@ -226,11 +226,15 @@
               placeholder="Attribute value"
               bind:value={attribute.value}
               on:blur={() => saveArbitraryAttribute(index)}
-            />            
+            />
           </div>
-        {/each}        
+        {/each}
         <div class="p-4">
-          <button type="button" class="bg-blue-500 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-2 px-4 rounded outline-2 w-full" on:click={addArbitraryAttribute}>+ Add attribute</button>
+          <button
+            type="button"
+            class="bg-blue-500 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-2 px-4 rounded outline-2 w-full"
+            on:click={addArbitraryAttribute}>+ Add attribute</button
+          >
         </div>
       {/if}
       {#if $selectedAstElement.tag === "eex_block"}
