@@ -110,4 +110,15 @@ defmodule Beacon.LiveAdmin.Fixtures do
 
     Enum.find(live_data.assigns, &(&1.key == attrs.key))
   end
+
+  def info_handler_fixture(node \\ node(), attrs \\ %{}) do
+    attrs =
+      Enum.into(attrs, %{
+        site: "site_a",
+        msg: "{:receive_msg, email_address}",
+        code: "{:noreply, socket}"
+      })
+
+    rpc(node, Beacon.Content, :create_info_handler!, [attrs])
+  end
 end

@@ -73,6 +73,12 @@ defmodule Beacon.LiveAdmin.HomeLive do
                   >
                     Media Library
                   </.link>
+                  <.link
+                    href={Beacon.LiveAdmin.Router.beacon_live_admin_path(@socket, site, "/info_handlers")}
+                    class="whitespace-nowrap text-sm leading-5 py-3.5  font-bold tracking-widest text-center uppercase bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 active:bg-blue-800 px-6 text-gray-50"
+                  >
+                    Info Handlers
+                  </.link>
                 </div>
               </div>
             <% end %>
