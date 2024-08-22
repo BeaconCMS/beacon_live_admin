@@ -1,10 +1,9 @@
 <script lang="ts">
+  import { createEventDispatcher } from "svelte"
   import Pill from "$lib/components/Pill.svelte"
   import SidebarSection from "$lib/components/SidebarSection.svelte"
-  import { createEventDispatcher } from "svelte"
   import { draggedObject } from "$lib/stores/dragAndDrop"
   import { live } from "$lib/stores/live"
-  import { updateNodeContent } from "$lib/utils/ast-manipulation"
   import {
     page,
     selectedAstElement,
@@ -15,6 +14,8 @@
     resetSelection
   } from "$lib/stores/page"
   import type { AstNode } from "$lib/types"
+  import { getParentNodeId } from "$lib/utils/ast-helpers"
+  import { deleteAstNode, updateNodeContent } from "$lib/utils/ast-manipulation"
   import { elementCanBeDroppedInTarget } from "$lib/utils/drag-helpers"
 
   const dispatch = createEventDispatcher()
@@ -67,18 +68,9 @@
     }
   }
 
-  function parentNodeId() {
-    if ($selectedAstElementId) {
-      let parts = $selectedAstElementId.split(".")
-      if (parts.length === 1) return "root"
-      return parts.slice(0, -1).join(".")
-    }
-  }
   function selectParentNode() {
-    let parentId = parentNodeId()
-    if (parentId) {
-      setSelection(parentId)
-    }
+    let parentId = getParentNodeId($selectedAstElementId)
+    setSelection(parentId)
   }
 
   async function deleteClass(className: string) {
@@ -114,17 +106,11 @@
   }
 
   async function deleteComponent() {
-    let node = $selectedAstElement
-    if (!node) return
+    if (!$selectedAstElementId) return
+
     if (confirm("Are you sure you want to delete this component?")) {
-      let parentId = parentNodeId()
-      let content = parentId && parentId !== "root" ? findAstElement($page.ast, parentId)?.content : $page.ast
-      if (content) {
-        let targetIndex = (content as unknown[]).indexOf(node)
-        content.splice(targetIndex, 1)
-        resetSelection()
-        $live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast })
-      }
+      deleteAstNode($selectedAstElementId)
+      resetSelection()
     }
   }
 
