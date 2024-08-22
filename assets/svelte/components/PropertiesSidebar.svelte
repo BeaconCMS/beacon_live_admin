@@ -5,7 +5,15 @@
   import { draggedObject } from "$lib/stores/dragAndDrop"
   import { live } from "$lib/stores/live"
   import { updateNodeContent } from "$lib/utils/ast-manipulation"
-  import { page, selectedAstElement, selectedAstElementId, findAstElement, isAstElement } from "$lib/stores/page"
+  import {
+    page,
+    selectedAstElement,
+    selectedAstElementId,
+    findAstElement,
+    isAstElement,
+    setSelection,
+    resetSelection
+  } from "$lib/stores/page"
   import type { AstNode } from "$lib/types"
   import { elementCanBeDroppedInTarget } from "$lib/utils/drag-helpers"
 
@@ -69,7 +77,7 @@
   function selectParentNode() {
     let parentId = parentNodeId()
     if (parentId) {
-      $selectedAstElementId = parentId
+      setSelection(parentId)
     }
   }
 
@@ -114,7 +122,7 @@
       if (content) {
         let targetIndex = (content as unknown[]).indexOf(node)
         content.splice(targetIndex, 1)
-        $selectedAstElementId = undefined
+        resetSelection()
         $live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast })
       }
     }
@@ -174,7 +182,7 @@
             </svg>
           </button>
         {/if}
-        <button type="button" class="absolute p-2 top-2 right-1" on:click={() => ($selectedAstElementId = undefined)}>
+        <button type="button" class="absolute p-2 top-2 right-1" on:click={resetSelection}>
           <span class="sr-only">Close</span>
           <svg
             xmlns="http://www.w3.org/2000/svg"

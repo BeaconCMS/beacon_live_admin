@@ -1,12 +1,12 @@
 <script lang="ts">
   import {
     selectedAstElement,
-    selectedDomElement,
     slotTargetElement,
-    selectedAstElementId,
     highlightedAstElement,
     isAstElement,
     selectedElementMenu,
+    setSelection,
+    setSelectedDom,
   } from "$lib/stores/page"
   import { tick } from "svelte"
   import { draggedObject, dragElementInfo } from "$lib/stores/dragAndDrop"
@@ -45,6 +45,12 @@
     return !!htmlWrapper && htmlWrapper.getElementsByTagName("iframe").length > 0
   })()
 
+  $: {
+    if (isSelectedNode) {
+      setSelectedDom(domElement || htmlWrapper)
+    }
+  }
+
   function handleDragEnter() {
     if ($draggedObject) {
       if (isAstElement(node) && elementCanBeDroppedInTarget($draggedObject)) {
@@ -68,8 +74,9 @@
     $highlightedAstElement = undefined
   }
 
-  function handleClick() {
-    $selectedAstElementId = nodeId
+  function handleClick({ currentTarget }: Event) {
+    setSelection(nodeId, currentTarget)
+    initSelectedElementDragMenuPosition(currentTarget)
     tick().then(() => updateSelectedElementMenu())
   }
 
@@ -130,27 +137,6 @@
     }
   }
 
-  function bindIfSelected(el: HTMLElement, isSelected: boolean) {
-    if (isSelected) {
-      $selectedDomElement = el
-      initSelectedElementDragMenuPosition(el)
-    }
-
-    return {
-      update(isSelected) {
-        if (isSelected) {
-          $selectedDomElement = el
-          initSelectedElementDragMenuPosition(el)
-        }
-      },
-      destroy() {
-        if (isSelected) {
-          $selectedDomElement = null
-        }
-      },
-    }
-  }
-
   let selectedElementStyle = ""
   $: {
     if (isSelectedNode && $selectedElementMenu && $selectedElementMenu.mouseMovement) {
@@ -180,7 +166,7 @@
       class:embedded-iframe={htmlWrapperHasIframe}
       on:mouseover|stopPropagation={handleMouseOver}
       on:mouseout|stopPropagation={handleMouseOut}
-      on:click|preventDefault|stopPropagation={() => ($selectedAstElementId = nodeId)}
+      on:click|preventDefault|stopPropagation={handleClick}
       use:highlightContent={{ selected: isSelectedNode, highlighted: isHighlightedNode }}
     >
       {@html node.rendered_html}
@@ -205,7 +191,6 @@
       on:mouseover={handleMouseOver}
       on:mouseout={handleMouseOut}
       on:click|preventDefault|stopPropagation={handleClick}
-      use:bindIfSelected={isSelectedNode}
       style={selectedElementStyle}
     >
       {#if !node.attrs?.selfClose}

@@ -298,8 +298,8 @@
   bind:this={dragHandleElement}
   on:mousedown={handleMousedown}
   class="rounded-full w-6 h-6 flex justify-center items-center absolute bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 active:bg-blue-800"
-  class:pointer-events-none={$selectedElementMenu.dragging}
-  class:rotate-90={$selectedElementMenu.dragDirection === "horizontal"}
+  class:pointer-events-none={$selectedElementMenu?.dragging}
+  class:rotate-90={$selectedElementMenu?.dragDirection === "horizontal"}
   style={$dragHandleStyle}
 >
   <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"

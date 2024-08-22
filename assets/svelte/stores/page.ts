@@ -48,6 +48,21 @@ export interface SelectedElementMenu {
 }
 export const selectedElementMenu: Writable<SelectedElementMenu | null> = writable(null)
 
+export function setSelection(selectedId: string, selectedDom: Element = null) {
+  selectedAstElementId.update(() => selectedId)
+  selectedDomElement.update(() => selectedDom)
+}
+
+export function setSelectedDom(selectedDom: Element) {
+  selectedDomElement.update(() => selectedDom)
+}
+
+export function resetSelection() {
+  selectedAstElementId.update(() => null)
+  selectedDomElement.update(() => null)
+  selectedElementMenu.update(() => null)
+}
+
 export function isAstElement(maybeNode: AstNode): maybeNode is AstElement {
   return typeof maybeNode !== "string"
 }

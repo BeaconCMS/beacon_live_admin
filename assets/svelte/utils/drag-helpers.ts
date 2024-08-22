@@ -50,6 +50,12 @@ export function getElementCoords(element: Element): Coords {
 
 export function updateSelectedElementMenu(mouseMovement = null) {
   let selectedEl = get(selectedDomElement)
+
+  if (!selectedEl) {
+    selectedElementMenu.set(null)
+    return
+  }
+
   let dragDirection = getDragDirection(selectedEl)
   let currentCoords = getElementCoords(selectedEl)
   let selectedElRect = selectedEl.getBoundingClientRect()
