@@ -11,7 +11,7 @@
     findAstElement,
     isAstElement,
     setSelection,
-    resetSelection
+    resetSelection,
   } from "$lib/stores/page"
   import type { AstNode } from "$lib/types"
   import { getParentNodeId } from "$lib/utils/ast-helpers"

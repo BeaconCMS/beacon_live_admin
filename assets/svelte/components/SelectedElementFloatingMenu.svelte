@@ -1,15 +1,10 @@
 <script lang="ts">
   import DragMenuOption from "./SelectedElementFloatingMenu/DragMenuOption.svelte"
-  import {
-    selectedAstElementId,
-    selectedDomElement,
-    selectedElementMenu,
-    resetSelection,
-  } from "$lib/stores/page"
-    import { deleteAstNode } from "$lib/utils/ast-manipulation"
+  import { selectedAstElementId, selectedDomElement, selectedElementMenu, resetSelection } from "$lib/stores/page"
+  import { deleteAstNode } from "$lib/utils/ast-manipulation"
 
   let menuDOMElement: HTMLElement
-  let menuPosition: {x: number, y: number, width: number, height: number }
+  let menuPosition: { x: number; y: number; width: number; height: number }
 
   $: menuPosition = (() => {
     if (!(document && menuDOMElement && $selectedDomElement)) {
@@ -24,7 +19,7 @@
       x: currentRect.x - relativeWrapperRect.x,
       y: currentRect.y - relativeWrapperRect.y,
       width: currentRect.width,
-      height: currentRect.height
+      height: currentRect.height,
     }
   })()
 
@@ -38,22 +33,22 @@
   }
 </script>
 
-  <div
-    bind:this={menuDOMElement}
-    class="selected-element-menu absolute"
-    style={`top: ${menuPosition.y}px; left: ${menuPosition.x}px;`}
-  >
-    {#if $selectedElementMenu}
-      <button
-        on:click={deleteComponent}
-        class="absolute top-0 -m-3 w-6 h-6 rounded-full flex justify-center items-center bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 active:bg-blue-800"
-        style={`left: ${menuPosition.width}px;`}
-      >
-        <span class="hero-trash"></span>
-      </button>
-    {/if}
-  </div>
-
+<div
+  bind:this={menuDOMElement}
+  class="selected-element-menu absolute"
+  style={`top: ${menuPosition.y}px; left: ${menuPosition.x}px;`}
+>
   {#if $selectedElementMenu}
-    <DragMenuOption />
+    <button
+      on:click={deleteComponent}
+      class="absolute top-0 -m-3 w-6 h-6 rounded-full flex justify-center items-center bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 active:bg-blue-800"
+      style={`left: ${menuPosition.width}px;`}
+    >
+      <span class="hero-trash"></span>
+    </button>
   {/if}
+</div>
+
+{#if $selectedElementMenu}
+  <DragMenuOption />
+{/if}
