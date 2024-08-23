@@ -43,6 +43,7 @@
       on:click={deleteComponent}
       class="absolute top-0 -m-3 w-6 h-6 rounded-full flex justify-center items-center bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 active:bg-blue-800"
       style={`left: ${menuPosition.width}px;`}
+      aria-label="Delete component"
     >
       <span class="hero-trash"></span>
     </button>
