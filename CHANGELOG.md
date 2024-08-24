@@ -4,6 +4,7 @@
 
 ### Enhancements
 
+- [Event Handler] Added Event Handlers ([#195](https://github.com/BeaconCMS/beacon_live_admin/pull/195))
 - [Visual Editor] Allow to reorder an element among its siblings with drag and drop ([#174](https://github.com/BeaconCMS/beacon_live_admin/pull/174))
 
 ### Fixes

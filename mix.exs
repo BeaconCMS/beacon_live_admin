@@ -1,7 +1,8 @@
 defmodule Beacon.LiveAdmin.MixProject do
   use Mix.Project
 
-  @version "0.1.0-rc.0"
+  @version "0.1.0-rc.1-dev"
+  @dev? String.ends_with?(@version, "-dev")
   @source_url "https://github.com/BeaconCMS/beacon_live_admin"
   @homepage_url "https://beaconcms.org"
 
@@ -87,10 +88,15 @@ defmodule Beacon.LiveAdmin.MixProject do
   end
 
   defp beacon_dep do
-    if path = System.get_env("BEACON_PATH") do
-      {:beacon, path: path, runtime: false}
-    else
-      {:beacon, "~> 0.1.0-rc.0", runtime: false}
+    cond do
+      path = System.get_env("BEACON_PATH") ->
+        {:beacon, path: path, runtime: false}
+
+      @dev? ->
+        {:beacon, github: "BeaconCMS/beacon", runtime: false}
+
+      :else ->
+        {:beacon, "~> 0.1.0-rc.0", runtime: false}
     end
   end
 
