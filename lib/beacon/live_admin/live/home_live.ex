@@ -52,7 +52,7 @@ defmodule Beacon.LiveAdmin.HomeLive do
                     Media Library
                   </.link>
                   <.link href={Router.beacon_live_admin_path(@socket, site, "/events")} class={nav_class()}>
-                    Events
+                    Event Handlers
                   </.link>
                 </div>
               </div>
