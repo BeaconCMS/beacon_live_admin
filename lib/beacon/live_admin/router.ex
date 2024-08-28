@@ -144,10 +144,11 @@ defmodule Beacon.LiveAdmin.Router do
       {"/pages/:id/meta_tags", Beacon.LiveAdmin.PageEditorLive.MetaTags, :meta_tags, %{}},
       {"/pages/:id/schema", Beacon.LiveAdmin.PageEditorLive.Schema, :schema, %{}},
       {"/pages/:id/revisions", Beacon.LiveAdmin.PageEditorLive.Revisions, :revisions, %{}},
-      {"/pages/:page_id/events", Beacon.LiveAdmin.PageEditorLive.EventHandlers, :events, %{}},
-      {"/pages/:page_id/events/:event_handler_id", Beacon.LiveAdmin.PageEditorLive.EventHandlers, :events, %{}},
       {"/pages/:page_id/variants", Beacon.LiveAdmin.PageEditorLive.Variants, :variants, %{}},
       {"/pages/:page_id/variants/:variant_id", Beacon.LiveAdmin.PageEditorLive.Variants, :variants, %{}},
+      # event handlers
+      {"/events", Beacon.LiveAdmin.EventHandlerEditorLive.Index, :index, %{}},
+      {"/events/:id", Beacon.LiveAdmin.EventHandlerEditorLive.Index, :index, %{}},
       # error pages
       {"/error_pages", Beacon.LiveAdmin.ErrorPageEditorLive.Index, :index, %{}},
       {"/error_pages/:status", Beacon.LiveAdmin.ErrorPageEditorLive.Index, :index, %{}},

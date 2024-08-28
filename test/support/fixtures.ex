@@ -56,6 +56,18 @@ defmodule Beacon.LiveAdmin.Fixtures do
     rpc(node, Beacon.Content, :create_error_page!, [attrs])
   end
 
+  def event_handler_fixture(node \\ node1(), attrs \\ %{}) do
+    attrs =
+      Enum.into(attrs, %{
+        site: "site_a",
+        name: "foo",
+        code: "{:noreply, socket}"
+      })
+
+    {:ok, event_handler} = rpc(node, Beacon.Content, :create_event_handler, [attrs])
+    event_handler
+  end
+
   def media_library_asset_fixture(node \\ node1(), attrs \\ %{}) do
     file_metadata = file_metadata_fixture(node, attrs)
     rpc(node, Beacon.MediaLibrary, :upload, [file_metadata])
