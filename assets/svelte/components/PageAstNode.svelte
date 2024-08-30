@@ -75,7 +75,8 @@
   }
 
   function handleClick({ currentTarget }: Event) {
-    setSelection(nodeId, currentTarget)
+    setSelection(nodeId)
+    setSelectedDom(currentTarget)
     initSelectedElementDragMenuPosition(currentTarget)
     tick().then(() => updateSelectedElementMenu())
   }

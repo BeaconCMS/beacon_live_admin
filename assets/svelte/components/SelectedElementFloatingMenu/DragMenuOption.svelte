@@ -1,6 +1,6 @@
 <script lang="ts" context="module">
   import { get, writable, type Writable } from "svelte/store"
-  import { page, selectedDomElement, selectedAstElementId, selectedElementMenu, parentOfSelectedAstElement } from "$lib/stores/page"
+  import { page, selectedDomElement, selectedAstElementId, selectedElementMenu, parentOfSelectedAstElement, setSelectedDom } from "$lib/stores/page"
   import { dragElementInfo, type LocationInfo } from "$lib/stores/dragAndDrop"
   import { getDragDirection, type Coords, type DragDirection } from "$lib/utils/drag-helpers"
   import { live } from "$lib/stores/live"
@@ -47,6 +47,7 @@
   let dragHandleElement: HTMLButtonElement
 
   $: {
+    // Update drag menu position when the $selectedDomElement store changes
     initSelectedElementDragMenuPosition($selectedDomElement)
   }
 
@@ -119,6 +120,8 @@
     }
     mouseDownEvent = null
     await tick()
+    // Re-trigger an update for the selected DOM after it has been hidden
+    setSelectedDom($selectedDomElement)
     dragHandleElement.style.transform = null
     placeholderStyle = null
   }

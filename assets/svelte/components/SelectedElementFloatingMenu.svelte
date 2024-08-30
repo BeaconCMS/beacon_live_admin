@@ -6,8 +6,11 @@
   let menuDOMElement: HTMLElement
   let menuPosition: { x: number; y: number; width: number; height: number }
 
+  // Only show menu when visible (it gets hidden while dragging)
+  $: showMenu = !!$selectedDomElement && $selectedDomElement.checkVisibility()
+
   $: menuPosition = (() => {
-    if (!(document && menuDOMElement && $selectedDomElement)) {
+    if (!(showMenu && document && menuDOMElement && $selectedDomElement)) {
       return { x: 0, y: 0, width: 0, height: 0 }
     }
 
@@ -38,7 +41,7 @@
   class="selected-element-menu absolute"
   style={`top: ${menuPosition.y}px; left: ${menuPosition.x}px;`}
 >
-  {#if $selectedElementMenu}
+  {#if showMenu}
     <button
       on:click={deleteComponent}
       class="absolute top-0 -m-3 w-6 h-6 rounded-full flex justify-center items-center bg-red-500 text-white hover:bg-red-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 active:bg-red-800"

@@ -48,9 +48,8 @@ export interface SelectedElementMenu {
 }
 export const selectedElementMenu: Writable<SelectedElementMenu | null> = writable(null)
 
-export function setSelection(selectedId: string, selectedDom: Element = null) {
+export function setSelection(selectedId: string) {
   selectedAstElementId.update(() => selectedId)
-  selectedDomElement.update(() => selectedDom)
 }
 
 export function setSelectedDom(selectedDom: Element) {
