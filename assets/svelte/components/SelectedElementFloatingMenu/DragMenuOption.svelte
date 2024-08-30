@@ -1,10 +1,10 @@
 <script lang="ts" context="module">
   import { get, writable, type Writable } from "svelte/store"
-  import { page, selectedDomElement, selectedElementMenu, parentOfSelectedAstElement } from "$lib/stores/page"
+  import { page, selectedDomElement, selectedAstElementId, selectedElementMenu, parentOfSelectedAstElement } from "$lib/stores/page"
   import { dragElementInfo, type LocationInfo } from "$lib/stores/dragAndDrop"
   import { getDragDirection, type Coords, type DragDirection } from "$lib/utils/drag-helpers"
   import { live } from "$lib/stores/live"
-
+ 
   let currentHandleCoords: Coords
   let relativeWrapperRect: DOMRect
   let dragHandleStyle: Writable<string> = writable("")
@@ -100,7 +100,12 @@
       let parent = $parentOfSelectedAstElement
       const selectedAstElement = parent.content.splice($dragElementInfo.selectedIndex, 1)[0]
       parent.content.splice(newIndex, 0, selectedAstElement)
+      // Update the selectedAstElementId so the same item remains selected
       $page.ast = [...$page.ast]
+      let parts = $selectedAstElementId.split('.');
+      parts[parts.length - 1] = newIndex.toString();
+      $selectedAstElementId = parts.join('.')
+      // Update in the server
       $live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast })
     }
   }

@@ -212,6 +212,9 @@
 <style>
   .dragged-element-placeholder {
     outline: 2px dashed red;
+
+    /* Disable pointer events to block out any dragOver event triggers on the placeholder while dragging */
+    pointer-events: none;
   }
 
   :global(.embedded-iframe) {
