@@ -25,9 +25,24 @@ export function mouseDiff(mouseMovement: CoordsDiff): Coords {
   }
 }
 
+// Determines if the drag of the current element should vertical or horizontal based on the
+// flow of its siblings
+// If prefers a practical approach, checking if the last element is further down (or right)
+// than the first one.
+// I'm not sure if there's any imaginative layout in which is not good enough, but just in case
+// there's a second logic to check if the parent element uses a horizontal flexbox layout.
 export function getDragDirection(element: Element): DragDirection {
-  let parentEl = element.parentElement
-  let flexDirection = window.getComputedStyle(parentEl).flexDirection
+  let parentEl = element.parentElement;
+  let rects = Array.from(parentEl.children).map(child => child.getBoundingClientRect());
+  if (rects.length > 1) {
+    if (rects[rects.length - 1].y - rects[0].y) {
+      return 'vertical';
+    }
+    if (rects[rects.length - 1].x - rects[0].x) {
+      return 'horizontal';
+    }
+  }
+  let flexDirection = window.getComputedStyle(parentEl).flexDirection;
   return ["row", "row-reverse"].includes(flexDirection) ? "horizontal" : "vertical"
 }
 
