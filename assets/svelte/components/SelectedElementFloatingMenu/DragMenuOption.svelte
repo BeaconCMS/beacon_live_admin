@@ -98,8 +98,8 @@
       parent.content.splice(newIndex, 0, selectedAstElement)
       // Update the selectedAstElementId so the same item remains selected
       $page.ast = [...$page.ast]
-      let parts = $selectedAstElementId.split('.');
-      parts[parts.length - 1] = newIndex.toString();
+      let parts = $selectedAstElementId.split('.')
+      parts[parts.length - 1] = newIndex.toString()
       $selectedAstElementId = parts.join('.')
       // Update in the server
       $live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast })
@@ -125,24 +125,24 @@
 
   // Considers that the dragged element is hovering another one if their overlap is more than 50%.
   function findHoveredSiblingIndex(dragDirection: DragDirection, mouseDiff: Coords, e: MouseEvent) {
-    const draggedElementInfo = $dragElementInfo.siblingLocationInfos[$dragElementInfo.selectedIndex];
+    const draggedElementInfo = $dragElementInfo.siblingLocationInfos[$dragElementInfo.selectedIndex]
     if (dragDirection === "vertical") {
       const { top, y, bottom, ...rest } = draggedElementInfo
-      const draggedRect = { ...rest, y: y + mouseDiff.y, top: top + mouseDiff.y, bottom: bottom + mouseDiff.y };
+      const draggedRect = { ...rest, y: y + mouseDiff.y, top: top + mouseDiff.y, bottom: bottom + mouseDiff.y }
       return $dragElementInfo.siblingLocationInfos.findIndex((rect, index) => {
         if (index !== $dragElementInfo.selectedIndex) {
-          const overlap = Math.max(0, Math.min(draggedRect.bottom, rect.bottom) - Math.max(draggedRect.top, rect.top));
-          const horizontalOverlapRatio = overlap / Math.min(draggedRect.height, rect.height);
+          const overlap = Math.max(0, Math.min(draggedRect.bottom, rect.bottom) - Math.max(draggedRect.top, rect.top))
+          const horizontalOverlapRatio = overlap / Math.min(draggedRect.height, rect.height)
           return horizontalOverlapRatio > 0.5
         }
       })
     } else {
       const { left, x, right, ...rest } = draggedElementInfo
-      const draggedRect = { ...rest, x: x + mouseDiff.x, left: left + mouseDiff.x, right: right + mouseDiff.x };
+      const draggedRect = { ...rest, x: x + mouseDiff.x, left: left + mouseDiff.x, right: right + mouseDiff.x }
       return $dragElementInfo.siblingLocationInfos.findIndex((rect, index) => {
         if (index !== $dragElementInfo.selectedIndex) {
-          const overlap = Math.max(0, Math.min(draggedRect.right, rect.right) - Math.max(draggedRect.left, rect.left));
-          const horizontalOverlapRatio = overlap / Math.min(draggedRect.width, rect.width);
+          const overlap = Math.max(0, Math.min(draggedRect.right, rect.right) - Math.max(draggedRect.left, rect.left))
+          const horizontalOverlapRatio = overlap / Math.min(draggedRect.width, rect.width)
           return horizontalOverlapRatio > 0.5
         }
       })
