@@ -46,6 +46,10 @@
   import { tick } from "svelte"
   let dragHandleElement: HTMLButtonElement
 
+  $: {
+    initSelectedElementDragMenuPosition($selectedDomElement)
+  }
+
   function snapshotSelectedElementSiblings() {
     let siblings = Array.from($selectedDomElement.parentElement.children)
     let selectedIndex = siblings.indexOf($selectedDomElement)
