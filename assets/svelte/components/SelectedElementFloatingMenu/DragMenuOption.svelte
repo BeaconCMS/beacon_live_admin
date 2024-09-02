@@ -16,14 +16,13 @@
       selectedEl = dragInfo.parentElementClone.children.item(dragInfo.selectedIndex)
     }
     updateHandleCoords(selectedEl || selectedDomEl, mouseDiff)
-    let styles = [];
+    let styles = []
     if (currentHandleCoords?.y) {
       styles.push(`top: ${currentHandleCoords.y}px`)
     }
     if (currentHandleCoords?.x) {
       styles.push(`left: ${currentHandleCoords.x}px`)
     }
-
     dragHandleStyle.set(styles.join(";"))
   }
 
@@ -101,8 +100,8 @@
       parent.content.splice(newIndex, 0, selectedAstElement)
       // Update the selectedAstElementId so the same item remains selected
       $page.ast = [...$page.ast]
-      let parts = $selectedAstElementId.split('.');
-      parts[parts.length - 1] = newIndex.toString();
+      let parts = $selectedAstElementId.split('.')
+      parts[parts.length - 1] = newIndex.toString()
       $selectedAstElementId = parts.join('.')
       tick().then(() => initSelectedElementDragMenuPosition($selectedDomElement))
       // Update in the server
@@ -289,10 +288,12 @@
       y: e.y - mouseDownEvent.y,
     }
     if (dragDirection === "vertical") {
-      dragHandleElement.style.transform = `translateY(${mouseDiff.y}px)`
+      // Only the drag handle can use CSS variables because it has the `transform` tailwind class
+      // CSS variables allow to control translate and rotate independently.
+      dragHandleElement.style.setProperty('--tw-translate-y', `${mouseDiff.y}px`)
       ghostElement.style.transform = `translateY(${mouseDiff.y}px)`
     } else {
-      dragHandleElement.style.transform = `translateX(${mouseDiff.x}px) rotate(90deg)`
+      dragHandleElement.style.setProperty('--tw-translate-x', `${mouseDiff.x}px`)
       ghostElement.style.transform = `translateX(${mouseDiff.x}px)`
     }
 
@@ -306,7 +307,7 @@
 <button
   bind:this={dragHandleElement}
   on:mousedown={handleMousedown}
-  class="rounded-full w-6 h-6 flex justify-center items-center absolute bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 active:bg-blue-800"
+  class="rounded-full w-6 h-6 flex justify-center items-center absolute bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 active:bg-blue-800 transform"
   class:pointer-events-none={$selectedElementMenu.dragging}
   style={$dragHandleStyle}
   class:rotate-90={rotated}
