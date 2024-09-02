@@ -9,11 +9,6 @@
   let relativeWrapperRect: DOMRect
   let dragHandleStyle: Writable<string> = writable("")
 
-  function dragButtonRotationTransform(el: Element) {
-    const dragDirection = getDragDirection(el);
-    return `transform: rotate(${dragDirection === 'horizontal' ? '90' : 0}deg)`;
-  }
-
   export function initSelectedElementDragMenuPosition(selectedDomEl, mouseDiff?: Coords) {
     let selectedEl
     let dragInfo = get(dragElementInfo)
@@ -21,7 +16,7 @@
       selectedEl = dragInfo.parentElementClone.children.item(dragInfo.selectedIndex)
     }
     updateHandleCoords(selectedEl || selectedDomEl, mouseDiff)
-    let styles = [dragButtonRotationTransform(selectedEl || selectedDomEl)]
+    let styles = [];
     if (currentHandleCoords?.y) {
       styles.push(`top: ${currentHandleCoords.y}px`)
     }
@@ -50,7 +45,7 @@
 
 <script lang="ts">
   import { tick } from "svelte"
-  $: rotated = getDragDirection($selectedDomElement)
+  $: rotated = getDragDirection($selectedDomElement) === 'horizontal'
   
   let dragHandleElement: HTMLButtonElement
 
@@ -109,6 +104,7 @@
       let parts = $selectedAstElementId.split('.');
       parts[parts.length - 1] = newIndex.toString();
       $selectedAstElementId = parts.join('.')
+      tick().then(() => initSelectedElementDragMenuPosition($selectedDomElement))
       // Update in the server
       $live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast })
     }
@@ -123,7 +119,7 @@
     }
     mouseDownEvent = null
     await tick()
-    dragHandleElement.style.transform = dragButtonRotationTransform($selectedDomElement);
+    dragHandleElement.style.transform = null
     placeholderStyle = null
   }
 
@@ -293,7 +289,7 @@
       y: e.y - mouseDownEvent.y,
     }
     if (dragDirection === "vertical") {
-      dragHandleElement.style.transform = `translateY(${mouseDiff.y}px) rotate(0deg)`
+      dragHandleElement.style.transform = `translateY(${mouseDiff.y}px)`
       ghostElement.style.transform = `translateY(${mouseDiff.y}px)`
     } else {
       dragHandleElement.style.transform = `translateX(${mouseDiff.x}px) rotate(90deg)`
@@ -313,6 +309,7 @@
   class="rounded-full w-6 h-6 flex justify-center items-center absolute bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 active:bg-blue-800"
   class:pointer-events-none={$selectedElementMenu.dragging}
   style={$dragHandleStyle}
+  class:rotate-90={rotated}
 >
   <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
     ><path
