@@ -9,6 +9,11 @@
   let relativeWrapperRect: DOMRect
   let dragHandleStyle: Writable<string> = writable("")
 
+  function dragButtonRotationTransform(el: Element) {
+    const dragDirection = getDragDirection(el);
+    return `transform: rotate(${dragDirection === 'horizontal' ? '90' : 0}deg)`;
+  }
+
   export function initSelectedElementDragMenuPosition(selectedDomEl, mouseDiff?: Coords) {
     let selectedEl
     let dragInfo = get(dragElementInfo)
@@ -16,13 +21,14 @@
       selectedEl = dragInfo.parentElementClone.children.item(dragInfo.selectedIndex)
     }
     updateHandleCoords(selectedEl || selectedDomEl, mouseDiff)
-    let styles = []
+    let styles = [dragButtonRotationTransform(selectedEl || selectedDomEl)]
     if (currentHandleCoords?.y) {
       styles.push(`top: ${currentHandleCoords.y}px`)
     }
     if (currentHandleCoords?.x) {
       styles.push(`left: ${currentHandleCoords.x}px`)
     }
+
     dragHandleStyle.set(styles.join(";"))
   }
 
@@ -44,6 +50,8 @@
 
 <script lang="ts">
   import { tick } from "svelte"
+  $: rotated = getDragDirection($selectedDomElement)
+  
   let dragHandleElement: HTMLButtonElement
 
   function snapshotSelectedElementSiblings() {
@@ -115,7 +123,7 @@
     }
     mouseDownEvent = null
     await tick()
-    dragHandleElement.style.transform = null
+    dragHandleElement.style.transform = dragButtonRotationTransform($selectedDomElement);
     placeholderStyle = null
   }
 
@@ -285,10 +293,10 @@
       y: e.y - mouseDownEvent.y,
     }
     if (dragDirection === "vertical") {
-      dragHandleElement.style.transform = `translateY(${mouseDiff.y}px)`
+      dragHandleElement.style.transform = `translateY(${mouseDiff.y}px) rotate(0deg)`
       ghostElement.style.transform = `translateY(${mouseDiff.y}px)`
     } else {
-      dragHandleElement.style.transform = `translateX(${mouseDiff.x}px)`
+      dragHandleElement.style.transform = `translateX(${mouseDiff.x}px) rotate(90deg)`
       ghostElement.style.transform = `translateX(${mouseDiff.x}px)`
     }
 
@@ -304,7 +312,6 @@
   on:mousedown={handleMousedown}
   class="rounded-full w-6 h-6 flex justify-center items-center absolute bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 active:bg-blue-800"
   class:pointer-events-none={$selectedElementMenu.dragging}
-  class:rotate-90={$selectedElementMenu.dragDirection === "horizontal"}
   style={$dragHandleStyle}
 >
   <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
