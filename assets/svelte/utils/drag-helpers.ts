@@ -32,17 +32,17 @@ export function mouseDiff(mouseMovement: CoordsDiff): Coords {
 // I'm not sure if there's any imaginative layout in which is not good enough, but just in case
 // there's a second logic to check if the parent element uses a horizontal flexbox layout.
 export function getDragDirection(element: Element): DragDirection {
-  let parentEl = element.parentElement;
-  let rects = Array.from(parentEl.children).map(child => child.getBoundingClientRect());
+  let parentEl = element.parentElement
+  let rects = Array.from(parentEl.children).map(child => child.getBoundingClientRect())
   if (rects.length > 1) {
     if (rects[rects.length - 1].y - rects[0].y) {
-      return 'vertical';
+      return 'vertical'
     }
     if (rects[rects.length - 1].x - rects[0].x) {
-      return 'horizontal';
+      return 'horizontal'
     }
   }
-  let flexDirection = window.getComputedStyle(parentEl).flexDirection;
+  let flexDirection = window.getComputedStyle(parentEl).flexDirection
   return ["row", "row-reverse"].includes(flexDirection) ? "horizontal" : "vertical"
 }
 
