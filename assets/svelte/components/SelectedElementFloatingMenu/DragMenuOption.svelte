@@ -110,9 +110,9 @@
       parent.content.splice(newIndex, 0, selectedAstElement)
       // Update the selectedAstElementId so the same item remains selected
       $page.ast = [...$page.ast]
-      let parts = $selectedAstElementId.split('.')
+      let parts = $selectedAstElementId.split(".")
       parts[parts.length - 1] = newIndex.toString()
-      $selectedAstElementId = parts.join('.')
+      $selectedAstElementId = parts.join(".")
       // Update in the server
       $live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast })
     }
