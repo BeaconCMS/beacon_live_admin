@@ -146,8 +146,8 @@
       return $dragElementInfo.siblingLocationInfos.findIndex((rect, index) => {
         if (index !== $dragElementInfo.selectedIndex) {
           const overlap = Math.max(0, Math.min(draggedRect.bottom, rect.bottom) - Math.max(draggedRect.top, rect.top))
-          const horizontalOverlapRatio = overlap / Math.min(draggedRect.height, rect.height)
-          return horizontalOverlapRatio > 0.5
+          const overlapRatio = overlap / Math.min(draggedRect.height, rect.height)
+          return overlapRatio > 0.5
         }
       })
     } else {
@@ -156,8 +156,8 @@
       return $dragElementInfo.siblingLocationInfos.findIndex((rect, index) => {
         if (index !== $dragElementInfo.selectedIndex) {
           const overlap = Math.max(0, Math.min(draggedRect.right, rect.right) - Math.max(draggedRect.left, rect.left))
-          const horizontalOverlapRatio = overlap / Math.min(draggedRect.width, rect.width)
-          return horizontalOverlapRatio > 0.5
+          const overlapRatio = overlap / Math.min(draggedRect.width, rect.width)
+          return overlapRatio > 0.5
         }
       })
     }
