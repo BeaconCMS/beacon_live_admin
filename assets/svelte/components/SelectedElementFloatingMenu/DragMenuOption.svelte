@@ -6,6 +6,7 @@
     selectedAstElementId,
     selectedElementMenu,
     parentOfSelectedAstElement,
+    setSelectedDom,
   } from "$lib/stores/page"
   import { dragElementInfo, type LocationInfo } from "$lib/stores/dragAndDrop"
   import { getDragDirection, updateSelectedElementMenu, type Coords, type DragDirection } from "$lib/utils/drag-helpers"
@@ -54,6 +55,12 @@
   selectedAstElementId.subscribe(() => updateSelectedElementMenu())
 
   let dragHandleElement: HTMLButtonElement
+  $: canBeDragged = $selectedDomElement?.parentElement?.children?.length > 1
+  $: rotated = getDragDirection($selectedDomElement) === "horizontal"
+  $: {
+    // Update drag menu position when the $selectedDomElement store changes
+    initSelectedElementDragMenuPosition($selectedDomElement)
+  }
 
   function snapshotSelectedElementSiblings() {
     let siblings = Array.from($selectedDomElement.parentElement.children)
@@ -125,6 +132,8 @@
     }
     mouseDownEvent = null
     await tick()
+    // Re-trigger an update for the selected DOM after it has been hidden
+    setSelectedDom($selectedDomElement)
     dragHandleElement.style.transform = null
     placeholderStyle = null
   }
@@ -133,24 +142,38 @@
     return $dragElementInfo.parentElementClone.children.item($dragElementInfo.selectedIndex)
   }
 
-  function findHoveredSiblingIndex(dragDirection: DragDirection, e: MouseEvent) {
-    // TODO: This detection is not very intuitive. We should detect some % of element overlap (30% maybe) instead.
+  // Considers that the dragged element is hovering another one if their overlap is more than 50%.
+  function findHoveredSiblingIndex(dragDirection: DragDirection, mouseDiff: Coords, e: MouseEvent) {
+    const draggedElementInfo = $dragElementInfo.siblingLocationInfos[$dragElementInfo.selectedIndex]
     if (dragDirection === "vertical") {
-      return $dragElementInfo.siblingLocationInfos.findIndex(
-        (rect) => rect.top < e.y && rect.bottom + rect.marginBottom > e.y,
-      )
+      const { top, y, bottom, ...rest } = draggedElementInfo
+      const draggedRect = { ...rest, y: y + mouseDiff.y, top: top + mouseDiff.y, bottom: bottom + mouseDiff.y }
+      return $dragElementInfo.siblingLocationInfos.findIndex((rect, index) => {
+        if (index !== $dragElementInfo.selectedIndex) {
+          const overlap = Math.max(0, Math.min(draggedRect.bottom, rect.bottom) - Math.max(draggedRect.top, rect.top))
+          const overlapRatio = overlap / Math.min(draggedRect.height, rect.height)
+          return overlapRatio > 0.5
+        }
+      })
     } else {
-      return $dragElementInfo.siblingLocationInfos.findIndex(
-        (rect) => rect.left < e.x && rect.right + rect.marginLeft > e.x,
-      )
+      const { left, x, right, ...rest } = draggedElementInfo
+      const draggedRect = { ...rest, x: x + mouseDiff.x, left: left + mouseDiff.x, right: right + mouseDiff.x }
+      return $dragElementInfo.siblingLocationInfos.findIndex((rect, index) => {
+        if (index !== $dragElementInfo.selectedIndex) {
+          const overlap = Math.max(0, Math.min(draggedRect.right, rect.right) - Math.max(draggedRect.left, rect.left))
+          const overlapRatio = overlap / Math.min(draggedRect.width, rect.width)
+          return overlapRatio > 0.5
+        }
+      })
     }
   }
 
   function findSwappedIndexes(
     dragDirection: DragDirection,
+    mouseDiff: Coords,
     e: MouseEvent,
   ): { currentIndex: number; destinationIndex: number } {
-    let hoveredElementIndex = findHoveredSiblingIndex(dragDirection, e)
+    let hoveredElementIndex = findHoveredSiblingIndex(dragDirection, mouseDiff, e)
     if (hoveredElementIndex === -1) {
       return {
         currentIndex: $dragElementInfo.selectedIndex,
@@ -262,7 +285,7 @@
         .getBoundingClientRect()
     }
     if (mouseDiff[dragDirection === "vertical" ? "y" : "x"] !== 0) {
-      let { currentIndex, destinationIndex } = findSwappedIndexes(dragDirection, e)
+      let { currentIndex, destinationIndex } = findSwappedIndexes(dragDirection, mouseDiff, e)
       if (currentIndex === destinationIndex) {
         // No drag, reset effect.
         if (newIndex !== null) {
@@ -295,10 +318,12 @@
       y: e.y - mouseDownEvent.y,
     }
     if (dragDirection === "vertical") {
-      dragHandleElement.style.transform = `translateY(${mouseDiff.y}px)`
+      // Only the drag handle can use CSS variables because it has the `transform` tailwind class
+      // CSS variables allow to control translate and rotate independently.
+      dragHandleElement.style.setProperty("--tw-translate-y", `${mouseDiff.y}px`)
       ghostElement.style.transform = `translateY(${mouseDiff.y}px)`
     } else {
-      dragHandleElement.style.transform = `translateX(${mouseDiff.x}px)`
+      dragHandleElement.style.setProperty("--tw-translate-x", `${mouseDiff.x}px`)
       ghostElement.style.transform = `translateX(${mouseDiff.x}px)`
     }
 
@@ -306,27 +331,29 @@
   }
 </script>
 
-{#if placeholderStyle}
-  <div class="absolute transition-all" style="background-color:aqua; opacity: 0.5; {placeholderStyle}"></div>
-{/if}
-<button
-  bind:this={dragHandleElement}
-  on:mousedown={handleMousedown}
-  class="rounded-full w-6 h-6 flex justify-center items-center absolute bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 active:bg-blue-800"
-  class:pointer-events-none={$selectedElementMenu?.dragging}
-  class:rotate-90={$selectedElementMenu?.dragDirection === "horizontal"}
-  style={$dragHandleStyle}
->
-  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
-    ><path
-      d="M 1 2.5 C 1 1.948 1.448 1.5 2 1.5 L 10 1.5 C 10.552 1.5 11 1.948 11 2.5 L 11 2.5 C 11 3.052 10.552 3.5 10 3.5 L 2 3.5 C 1.448 3.5 1 3.052 1 2.5 Z"
-      fill="currentColor"
-    ></path><path
-      d="M 1 6 C 1 5.448 1.448 5 2 5 L 10 5 C 10.552 5 11 5.448 11 6 L 11 6 C 11 6.552 10.552 7 10 7 L 2 7 C 1.448 7 1 6.552 1 6 Z"
-      fill="currentColor"
-    ></path><path
-      d="M 1 9.5 C 1 8.948 1.448 8.5 2 8.5 L 10 8.5 C 10.552 8.5 11 8.948 11 9.5 L 11 9.5 C 11 10.052 10.552 10.5 10 10.5 L 2 10.5 C 1.448 10.5 1 10.052 1 9.5 Z"
-      fill="currentColor"
-    ></path></svg
+{#if canBeDragged}
+  {#if placeholderStyle}
+    <div class="absolute transition-all" style="background-color:aqua; opacity: 0.5; {placeholderStyle}"></div>
+  {/if}
+  <button
+    bind:this={dragHandleElement}
+    on:mousedown={handleMousedown}
+    class="rounded-full w-6 h-6 flex justify-center items-center absolute bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 active:bg-blue-800 transform"
+    class:pointer-events-none={$selectedElementMenu?.dragging}
+    class:rotate-90={rotated}
+    style={$dragHandleStyle}
   >
-</button>
+    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
+      ><path
+        d="M 1 2.5 C 1 1.948 1.448 1.5 2 1.5 L 10 1.5 C 10.552 1.5 11 1.948 11 2.5 L 11 2.5 C 11 3.052 10.552 3.5 10 3.5 L 2 3.5 C 1.448 3.5 1 3.052 1 2.5 Z"
+        fill="currentColor"
+      ></path><path
+        d="M 1 6 C 1 5.448 1.448 5 2 5 L 10 5 C 10.552 5 11 5.448 11 6 L 11 6 C 11 6.552 10.552 7 10 7 L 2 7 C 1.448 7 1 6.552 1 6 Z"
+        fill="currentColor"
+      ></path><path
+        d="M 1 9.5 C 1 8.948 1.448 8.5 2 8.5 L 10 8.5 C 10.552 8.5 11 8.948 11 9.5 L 11 9.5 C 11 10.052 10.552 10.5 10 10.5 L 2 10.5 C 1.448 10.5 1 10.052 1 9.5 Z"
+        fill="currentColor"
+      ></path></svg
+    >
+  </button>
+{/if}
