@@ -53,7 +53,7 @@
   import { tick } from "svelte"
   let dragHandleElement: HTMLButtonElement
 
-  $: canBeDragged = $selectedDomElement.parentElement.children.length > 1
+  $: canBeDragged = $selectedDomElement?.parentElement?.children?.length > 1
 
   $: {
     // Update drag menu position when the $selectedDomElement store changes
