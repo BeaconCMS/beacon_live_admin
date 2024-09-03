@@ -1,10 +1,17 @@
 <script lang="ts" context="module">
   import { get, writable, type Writable } from "svelte/store"
-  import { page, selectedDomElement, selectedAstElementId, selectedElementMenu, parentOfSelectedAstElement } from "$lib/stores/page"
+  import {
+    page,
+    selectedDomElement,
+    selectedAstElementId,
+    selectedElementMenu,
+    parentOfSelectedAstElement,
+    setSelectedDom,
+  } from "$lib/stores/page"
   import { dragElementInfo, type LocationInfo } from "$lib/stores/dragAndDrop"
   import { getDragDirection, type Coords, type DragDirection } from "$lib/utils/drag-helpers"
   import { live } from "$lib/stores/live"
- 
+
   let currentHandleCoords: Coords
   let relativeWrapperRect: DOMRect
   let dragHandleStyle: Writable<string> = writable("")
@@ -46,7 +53,12 @@
   import { tick } from "svelte"
   let dragHandleElement: HTMLButtonElement
 
-  $: canBeDragged = $selectedDomElement.parentElement.children.length > 1;
+  $: canBeDragged = $selectedDomElement.parentElement.children.length > 1
+
+  $: {
+    // Update drag menu position when the $selectedDomElement store changes
+    initSelectedElementDragMenuPosition($selectedDomElement)
+  }
 
   function snapshotSelectedElementSiblings() {
     let siblings = Array.from($selectedDomElement.parentElement.children)
@@ -100,9 +112,9 @@
       parent.content.splice(newIndex, 0, selectedAstElement)
       // Update the selectedAstElementId so the same item remains selected
       $page.ast = [...$page.ast]
-      let parts = $selectedAstElementId.split('.');
-      parts[parts.length - 1] = newIndex.toString();
-      $selectedAstElementId = parts.join('.')
+      let parts = $selectedAstElementId.split(".")
+      parts[parts.length - 1] = newIndex.toString()
+      $selectedAstElementId = parts.join(".")
       // Update in the server
       $live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast })
     }
@@ -117,6 +129,8 @@
     }
     mouseDownEvent = null
     await tick()
+    // Re-trigger an update for the selected DOM after it has been hidden
+    setSelectedDom($selectedDomElement)
     dragHandleElement.style.transform = null
     placeholderStyle = null
   }
@@ -125,24 +139,38 @@
     return $dragElementInfo.parentElementClone.children.item($dragElementInfo.selectedIndex)
   }
 
-  function findHoveredSiblingIndex(dragDirection: DragDirection, e: MouseEvent) {
-    // TODO: This detection is not very intuitive. We should detect some % of element overlap (30% maybe) instead.
+  // Considers that the dragged element is hovering another one if their overlap is more than 50%.
+  function findHoveredSiblingIndex(dragDirection: DragDirection, mouseDiff: Coords, e: MouseEvent) {
+    const draggedElementInfo = $dragElementInfo.siblingLocationInfos[$dragElementInfo.selectedIndex]
     if (dragDirection === "vertical") {
-      return $dragElementInfo.siblingLocationInfos.findIndex(
-        (rect) => rect.top < e.y && rect.bottom + rect.marginBottom > e.y,
-      )
+      const { top, y, bottom, ...rest } = draggedElementInfo
+      const draggedRect = { ...rest, y: y + mouseDiff.y, top: top + mouseDiff.y, bottom: bottom + mouseDiff.y }
+      return $dragElementInfo.siblingLocationInfos.findIndex((rect, index) => {
+        if (index !== $dragElementInfo.selectedIndex) {
+          const overlap = Math.max(0, Math.min(draggedRect.bottom, rect.bottom) - Math.max(draggedRect.top, rect.top))
+          const overlapRatio = overlap / Math.min(draggedRect.height, rect.height)
+          return overlapRatio > 0.5
+        }
+      })
     } else {
-      return $dragElementInfo.siblingLocationInfos.findIndex(
-        (rect) => rect.left < e.x && rect.right + rect.marginLeft > e.x,
-      )
+      const { left, x, right, ...rest } = draggedElementInfo
+      const draggedRect = { ...rest, x: x + mouseDiff.x, left: left + mouseDiff.x, right: right + mouseDiff.x }
+      return $dragElementInfo.siblingLocationInfos.findIndex((rect, index) => {
+        if (index !== $dragElementInfo.selectedIndex) {
+          const overlap = Math.max(0, Math.min(draggedRect.right, rect.right) - Math.max(draggedRect.left, rect.left))
+          const overlapRatio = overlap / Math.min(draggedRect.width, rect.width)
+          return overlapRatio > 0.5
+        }
+      })
     }
   }
 
   function findSwappedIndexes(
     dragDirection: DragDirection,
+    mouseDiff: Coords,
     e: MouseEvent,
   ): { currentIndex: number; destinationIndex: number } {
-    let hoveredElementIndex = findHoveredSiblingIndex(dragDirection, e)
+    let hoveredElementIndex = findHoveredSiblingIndex(dragDirection, mouseDiff, e)
     if (hoveredElementIndex === -1) {
       return {
         currentIndex: $dragElementInfo.selectedIndex,
@@ -254,7 +282,7 @@
         .getBoundingClientRect()
     }
     if (mouseDiff[dragDirection === "vertical" ? "y" : "x"] !== 0) {
-      let { currentIndex, destinationIndex } = findSwappedIndexes(dragDirection, e)
+      let { currentIndex, destinationIndex } = findSwappedIndexes(dragDirection, mouseDiff, e)
       if (currentIndex === destinationIndex) {
         // No drag, reset effect.
         if (newIndex !== null) {
@@ -306,8 +334,8 @@
     bind:this={dragHandleElement}
     on:mousedown={handleMousedown}
     class="rounded-full w-6 h-6 flex justify-center items-center absolute bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 active:bg-blue-800"
-    class:pointer-events-none={$selectedElementMenu.dragging}
-    class:rotate-90={$selectedElementMenu.dragDirection === "horizontal"}
+    class:pointer-events-none={$selectedElementMenu?.dragging}
+    class:rotate-90={$selectedElementMenu?.dragDirection === "horizontal"}
     style={$dragHandleStyle}
   >
     <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
