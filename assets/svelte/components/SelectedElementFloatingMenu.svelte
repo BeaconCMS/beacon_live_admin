@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { selectedAstElement } from "$lib/stores/page"
   import DragMenuOption from "./SelectedElementFloatingMenu/DragMenuOption.svelte"
   import { selectedAstElementId, selectedDomElement, selectedElementMenu, resetSelection } from "$lib/stores/page"
   import { deleteAstNode } from "$lib/utils/ast-manipulation"
@@ -36,23 +37,23 @@
   }
 </script>
 
-<div
-  bind:this={menuDOMElement}
-  class="selected-element-menu absolute"
-  style={`top: ${menuPosition.y}px; left: ${menuPosition.x}px;`}
->
-  {#if showMenu}
-    <button
-      on:click={deleteComponent}
-      class="absolute top-0 -m-3 w-6 h-6 rounded-full flex justify-center items-center bg-red-500 text-white hover:bg-red-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 active:bg-red-800"
-      style={`left: ${menuPosition.width}px;`}
-      aria-label="Delete component"
-    >
-      <span class="hero-trash"></span>
-    </button>
-  {/if}
-</div>
+{#if $selectedAstElement}
+  <div
+    bind:this={menuDOMElement}
+    class="selected-element-menu absolute"
+    style={`top: ${menuPosition.y}px; left: ${menuPosition.x}px;`}
+  >
+    {#if showMenu}
+      <button
+        on:click={deleteComponent}
+        class="absolute top-0 -m-3 w-6 h-6 rounded-full flex justify-center items-center bg-red-500 text-white hover:bg-red-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 active:bg-red-800"
+        style={`left: ${menuPosition.width}px;`}
+        aria-label="Delete component"
+      >
+        <span class="hero-trash"></span>
+      </button>
+    {/if}
+  </div>
 
-{#if $selectedElementMenu}
   <DragMenuOption />
 {/if}

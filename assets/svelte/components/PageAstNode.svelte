@@ -8,11 +8,9 @@
     setSelection,
     setSelectedDom,
   } from "$lib/stores/page"
-  import { tick } from "svelte"
   import { draggedObject, dragElementInfo } from "$lib/stores/dragAndDrop"
-  import { updateSelectedElementMenu } from "$lib/utils/drag-helpers"
   import { updateNodeContent, updateAst } from "$lib/utils/ast-manipulation"
-  import { elementCanBeDroppedInTarget, mouseDiff } from "$lib/utils/drag-helpers"
+  import { elementCanBeDroppedInTarget } from "$lib/utils/drag-helpers"
   import type { AstNode } from "$lib/types"
   import { initSelectedElementDragMenuPosition } from "./SelectedElementFloatingMenu/DragMenuOption.svelte"
   export let node: AstNode
@@ -66,7 +64,7 @@
   }
 
   function handleMouseOver() {
-    if (!$selectedElementMenu?.dragging) {
+    if (!$selectedAstElement) {
       isAstElement(node) && ($highlightedAstElement = node)
     }
   }
@@ -78,7 +76,7 @@
     setSelection(nodeId)
     setSelectedDom(currentTarget)
     initSelectedElementDragMenuPosition(currentTarget)
-    tick().then(() => updateSelectedElementMenu())
+    // tick().then(() => updateSelectedElementMenu())
   }
 
   function handleContentEdited({ target }: Event) {
@@ -173,9 +171,6 @@
       {@html node.rendered_html}
     </div>
   {:else}
-    <!-- {#if isParentOfSelectedNode && $dragElementInfo}
-      {@html $dragElementInfo.parentElementClone}
-    {/if} -->
     <svelte:element
       this={node.tag}
       class="relative"
@@ -183,14 +178,15 @@
       bind:this={domElement}
       {...node.attrs}
       data-selected={isSelectedNode}
+      data-selected-parent={isParentOfSelectedNode}
       data-highlighted={isHighlightedNode}
       data-slot-target={isDragTarget}
       contenteditable={isEditable}
       on:blur={handleContentEdited}
       on:dragenter|stopPropagation={handleDragEnter}
       on:dragleave|stopPropagation={handleDragLeave}
-      on:mouseover={handleMouseOver}
-      on:mouseout={handleMouseOut}
+      on:mouseover|stopPropagation={handleMouseOver}
+      on:mouseout|stopPropagation={handleMouseOut}
       on:click|preventDefault|stopPropagation={handleClick}
       style={selectedElementStyle}
     >

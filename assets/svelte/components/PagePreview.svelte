@@ -88,11 +88,6 @@
 </div>
 
 <style>
-  /* :global([data-selected="true"], [data-highlighted="true"]) {
-    outline-color: #06b6d4;
-    outline-width: 2px;
-    outline-style: dashed;
-  } */
   :global(.contents[data-nochildren="true"], .contents[data-nochildren="true"]) {
     /* In the specific case of an element containing only an EEX expression that generates no children (only a text node),
     there is no child node to which apply the styles, so we have to apply them to the wrapper, so we have to overwrite the

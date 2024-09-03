@@ -9,7 +9,7 @@
     setSelectedDom,
   } from "$lib/stores/page"
   import { dragElementInfo, type LocationInfo } from "$lib/stores/dragAndDrop"
-  import { getDragDirection, type Coords, type DragDirection } from "$lib/utils/drag-helpers"
+  import { getDragDirection, updateSelectedElementMenu, type Coords, type DragDirection } from "$lib/utils/drag-helpers"
   import { live } from "$lib/stores/live"
 
   let currentHandleCoords: Coords
@@ -51,12 +51,12 @@
 
 <script lang="ts">
   import { tick } from "svelte"
-  $: rotated = getDragDirection($selectedDomElement) === "horizontal"
+
+  selectedAstElementId.subscribe(() => updateSelectedElementMenu())
 
   let dragHandleElement: HTMLButtonElement
-
   $: canBeDragged = $selectedDomElement?.parentElement?.children?.length > 1
-
+  $: rotated = getDragDirection($selectedDomElement) === "horizontal"
   $: {
     // Update drag menu position when the $selectedDomElement store changes
     initSelectedElementDragMenuPosition($selectedDomElement)
@@ -117,13 +117,13 @@
       let parts = $selectedAstElementId.split(".")
       parts[parts.length - 1] = newIndex.toString()
       $selectedAstElementId = parts.join(".")
-      tick().then(() => initSelectedElementDragMenuPosition($selectedDomElement))
       // Update in the server
       $live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast })
     }
   }
   async function handleMouseup(e: MouseEvent) {
     document.removeEventListener("mousemove", handleMousemove)
+    document.removeEventListener("mouseup", handleMouseup)
     applyNewOrder()
     if ($dragElementInfo) {
       $selectedDomElement.parentElement.style.display = null
