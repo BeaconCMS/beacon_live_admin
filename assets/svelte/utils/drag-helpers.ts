@@ -33,13 +33,13 @@ export function mouseDiff(mouseMovement: CoordsDiff): Coords {
 // there's a second logic to check if the parent element uses a horizontal flexbox layout.
 export function getDragDirection(element: Element): DragDirection {
   let parentEl = element.parentElement
-  let rects = Array.from(parentEl.children).map(child => child.getBoundingClientRect())
+  let rects = Array.from(parentEl.children).map((child) => child.getBoundingClientRect())
   if (rects.length > 1) {
     if (rects[rects.length - 1].y - rects[0].y) {
-      return 'vertical'
+      return "vertical"
     }
     if (rects[rects.length - 1].x - rects[0].x) {
-      return 'horizontal'
+      return "horizontal"
     }
   }
   let flexDirection = window.getComputedStyle(parentEl).flexDirection
@@ -65,6 +65,12 @@ export function getElementCoords(element: Element): Coords {
 
 export function updateSelectedElementMenu(mouseMovement = null) {
   let selectedEl = get(selectedDomElement)
+
+  if (!selectedEl) {
+    selectedElementMenu.set(null)
+    return
+  }
+
   let dragDirection = getDragDirection(selectedEl)
   let currentCoords = getElementCoords(selectedEl)
   let selectedElRect = selectedEl.getBoundingClientRect()

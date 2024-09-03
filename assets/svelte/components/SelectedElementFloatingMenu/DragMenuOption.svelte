@@ -1,10 +1,17 @@
 <script lang="ts" context="module">
   import { get, writable, type Writable } from "svelte/store"
-  import { page, selectedDomElement, selectedAstElementId, selectedElementMenu, parentOfSelectedAstElement } from "$lib/stores/page"
+  import {
+    page,
+    selectedDomElement,
+    selectedAstElementId,
+    selectedElementMenu,
+    parentOfSelectedAstElement,
+    setSelectedDom,
+  } from "$lib/stores/page"
   import { dragElementInfo, type LocationInfo } from "$lib/stores/dragAndDrop"
   import { getDragDirection, type Coords, type DragDirection } from "$lib/utils/drag-helpers"
   import { live } from "$lib/stores/live"
- 
+
   let currentHandleCoords: Coords
   let relativeWrapperRect: DOMRect
   let dragHandleStyle: Writable<string> = writable("")
@@ -45,6 +52,11 @@
 <script lang="ts">
   import { tick } from "svelte"
   let dragHandleElement: HTMLButtonElement
+
+  $: {
+    // Update drag menu position when the $selectedDomElement store changes
+    initSelectedElementDragMenuPosition($selectedDomElement)
+  }
 
   function snapshotSelectedElementSiblings() {
     let siblings = Array.from($selectedDomElement.parentElement.children)
@@ -98,9 +110,9 @@
       parent.content.splice(newIndex, 0, selectedAstElement)
       // Update the selectedAstElementId so the same item remains selected
       $page.ast = [...$page.ast]
-      let parts = $selectedAstElementId.split('.');
-      parts[parts.length - 1] = newIndex.toString();
-      $selectedAstElementId = parts.join('.')
+      let parts = $selectedAstElementId.split(".")
+      parts[parts.length - 1] = newIndex.toString()
+      $selectedAstElementId = parts.join(".")
       // Update in the server
       $live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast })
     }
@@ -115,6 +127,8 @@
     }
     mouseDownEvent = null
     await tick()
+    // Re-trigger an update for the selected DOM after it has been hidden
+    setSelectedDom($selectedDomElement)
     dragHandleElement.style.transform = null
     placeholderStyle = null
   }
@@ -303,8 +317,8 @@
   bind:this={dragHandleElement}
   on:mousedown={handleMousedown}
   class="rounded-full w-6 h-6 flex justify-center items-center absolute bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 active:bg-blue-800"
-  class:pointer-events-none={$selectedElementMenu.dragging}
-  class:rotate-90={$selectedElementMenu.dragDirection === "horizontal"}
+  class:pointer-events-none={$selectedElementMenu?.dragging}
+  class:rotate-90={$selectedElementMenu?.dragDirection === "horizontal"}
   style={$dragHandleStyle}
 >
   <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
