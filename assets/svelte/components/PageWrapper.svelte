@@ -57,9 +57,9 @@
     outline-color: #06b6d4;
     outline-width: 1px;
     outline-style: solid;
-  }  
+  }
   /* TODO: Apply this styles to [data-selected-parent="true"] once dragging of the parent element is allowed */
-  :global([data-highlighted="true"]) { 
+  :global([data-highlighted="true"]) {
     outline-color: #06b6d4;
     outline-width: 2px;
     outline-style: dashed;

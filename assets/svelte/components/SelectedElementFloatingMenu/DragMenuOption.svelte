@@ -1,6 +1,12 @@
 <script lang="ts" context="module">
   import { get, writable, type Writable } from "svelte/store"
-  import { page, selectedDomElement, selectedAstElementId, selectedElementMenu, parentOfSelectedAstElement } from "$lib/stores/page"
+  import {
+    page,
+    selectedDomElement,
+    selectedAstElementId,
+    selectedElementMenu,
+    parentOfSelectedAstElement,
+  } from "$lib/stores/page"
   import { dragElementInfo, type LocationInfo } from "$lib/stores/dragAndDrop"
   import { getDragDirection, updateSelectedElementMenu, type Coords, type DragDirection } from "$lib/utils/drag-helpers"
   import { live } from "$lib/stores/live"
@@ -45,7 +51,7 @@
 <script lang="ts">
   import { tick } from "svelte"
 
-  selectedAstElementId.subscribe(() => updateSelectedElementMenu());
+  selectedAstElementId.subscribe(() => updateSelectedElementMenu())
 
   let dragHandleElement: HTMLButtonElement
 
@@ -101,9 +107,9 @@
       parent.content.splice(newIndex, 0, selectedAstElement)
       // Update the selectedAstElementId so the same item remains selected
       $page.ast = [...$page.ast]
-      let parts = $selectedAstElementId.split('.');
-      parts[parts.length - 1] = newIndex.toString();
-      $selectedAstElementId = parts.join('.')
+      let parts = $selectedAstElementId.split(".")
+      parts[parts.length - 1] = newIndex.toString()
+      $selectedAstElementId = parts.join(".")
       // Update in the server
       $live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast })
     }

@@ -147,7 +147,6 @@
       },
     }
   }
-
 </script>
 
 {#if isAstElement(node)}
