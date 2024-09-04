@@ -1,11 +1,6 @@
 <script lang="ts" context="module">
   import { get, writable, type Writable } from "svelte/store"
-  import {
-    page,
-    selectedAstElementId,
-    selectedElementMenu,
-    parentOfSelectedAstElement,
-  } from "$lib/stores/page"
+  import { page, selectedAstElementId, selectedElementMenu, parentOfSelectedAstElement } from "$lib/stores/page"
   import { getDragDirection, updateSelectedElementMenu, type Coords, type DragDirection } from "$lib/utils/drag-helpers"
   import { live } from "$lib/stores/live"
 
@@ -65,10 +60,10 @@
 <script lang="ts">
   import { tick } from "svelte"
 
-  export let element: Element;
-  export let isParent = false; // TODO: Not in use yet
+  export let element: Element
+  export let isParent = false // TODO: Not in use yet
 
-  let dragElementInfo: DragInfo;
+  let dragElementInfo: DragInfo
 
   selectedAstElementId.subscribe(() => updateSelectedElementMenu())
 

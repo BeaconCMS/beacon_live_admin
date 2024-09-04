@@ -55,5 +55,5 @@
     {/if}
   </div>
 
-  <DragMenuOption element={$selectedDomElement}/>
+  <DragMenuOption element={$selectedDomElement} />
 {/if}
