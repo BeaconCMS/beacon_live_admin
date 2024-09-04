@@ -4,7 +4,7 @@
   import { selectedAstElementId } from "$lib/stores/page"
   import { currentComponentCategory } from "$lib/stores/currentComponentCategory"
   import { page, slotTargetElement } from "$lib/stores/page"
-  import { draggedObject, resetDrag } from "$lib/stores/dragAndDrop"
+  import { draggedComponentDefinition, resetDrag } from "$lib/stores/dragAndDrop"
   import { live } from "$lib/stores/live"
   import { elementCanBeDroppedInTarget } from "$lib/utils/drag-helpers"
 
@@ -13,8 +13,8 @@
   async function handleDragDrop(e: DragEvent) {
     let { target } = e
     $currentComponentCategory = null
-    if (!$draggedObject) return
-    let draggedObj = $draggedObject
+    if (!$draggedComponentDefinition) return
+    let draggedObj = $draggedComponentDefinition
     if (elementCanBeDroppedInTarget(draggedObj)) {
       if (
         !(target instanceof HTMLElement) ||
@@ -41,9 +41,9 @@
   }
 
   async function addBasicComponentToTarget(astElement: AstElement) {
-    if (!$draggedObject) return
-    let componentDefinition = $draggedObject
-    $draggedObject = null
+    if (!$draggedComponentDefinition) return
+    let componentDefinition = $draggedComponentDefinition
+    $draggedComponentDefinition = null
     let targetNode = astElement
     $live.pushEvent(
       "render_component_in_page",

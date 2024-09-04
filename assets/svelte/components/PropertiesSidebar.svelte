@@ -2,7 +2,7 @@
   import { createEventDispatcher } from "svelte"
   import Pill from "$lib/components/Pill.svelte"
   import SidebarSection from "$lib/components/SidebarSection.svelte"
-  import { draggedObject } from "$lib/stores/dragAndDrop"
+  import { draggedComponentDefinition } from "$lib/stores/dragAndDrop"
   import { live } from "$lib/stores/live"
   import {
     page,
@@ -245,7 +245,7 @@
       {/if}
 
       <div class="relative">
-        {#if $draggedObject && elementCanBeDroppedInTarget($draggedObject)}
+        {#if $draggedComponentDefinition && elementCanBeDroppedInTarget($draggedComponentDefinition)}
           <div
             class="absolute bg-white opacity-70 w-full h-full p-4"
             class:opacity-90={isDraggingOver}

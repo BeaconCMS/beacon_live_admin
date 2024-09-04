@@ -2,29 +2,10 @@ import { writable } from "svelte/store"
 import type { Writable } from "svelte/store"
 import type { ComponentDefinition } from "../types"
 
-export const draggedObject: Writable<ComponentDefinition | null> = writable(null)
-export type LocationInfo = {
-  x: number
-  y: number
-  width: number
-  height: number
-  top: number
-  right: number
-  bottom: number
-  left: number
-  marginTop: number
-  marginBottom: number
-  marginLeft: number
-  marginRight: number
-}
-
-interface DragInfo {
-  parentElementClone: Element
-  selectedIndex: number
-  siblingLocationInfos: LocationInfo[]
-}
-export const dragElementInfo: Writable<DragInfo | null> = writable(null)
+// The component definition (AKA, generic component from the list of available pre-defined component) 
+// being dragged into the page
+export const draggedComponentDefinition: Writable<ComponentDefinition | null> = writable(null)
 
 export const resetDrag: () => void = () => {
-  draggedObject.update(() => null)
+  draggedComponentDefinition.update(() => null)
 }

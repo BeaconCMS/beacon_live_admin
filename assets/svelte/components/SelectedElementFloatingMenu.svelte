@@ -1,7 +1,7 @@
 <script lang="ts">
   import { selectedAstElement } from "$lib/stores/page"
   import DragMenuOption from "./SelectedElementFloatingMenu/DragMenuOption.svelte"
-  import { selectedAstElementId, selectedDomElement, selectedElementMenu, resetSelection } from "$lib/stores/page"
+  import { selectedAstElementId, selectedDomElement, resetSelection } from "$lib/stores/page"
   import { deleteAstNode } from "$lib/utils/ast-manipulation"
 
   let menuDOMElement: HTMLElement
@@ -55,5 +55,5 @@
     {/if}
   </div>
 
-  <DragMenuOption />
+  <DragMenuOption element={$selectedDomElement}/>
 {/if}

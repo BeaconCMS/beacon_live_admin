@@ -2,15 +2,32 @@
   import { get, writable, type Writable } from "svelte/store"
   import {
     page,
-    selectedDomElement,
     selectedAstElementId,
     selectedElementMenu,
     parentOfSelectedAstElement,
-    setSelectedDom,
   } from "$lib/stores/page"
-  import { dragElementInfo, type LocationInfo } from "$lib/stores/dragAndDrop"
   import { getDragDirection, updateSelectedElementMenu, type Coords, type DragDirection } from "$lib/utils/drag-helpers"
   import { live } from "$lib/stores/live"
+
+  export type LocationInfo = {
+    x: number
+    y: number
+    width: number
+    height: number
+    top: number
+    right: number
+    bottom: number
+    left: number
+    marginTop: number
+    marginBottom: number
+    marginLeft: number
+    marginRight: number
+  }
+  interface DragInfo {
+    parentElementClone: Element
+    selectedIndex: number
+    siblingLocationInfos: LocationInfo[]
+  }
 
   let currentHandleCoords: Coords
   let relativeWrapperRect: DOMRect
@@ -18,10 +35,6 @@
 
   export function initSelectedElementDragMenuPosition(selectedDomEl, mouseDiff?: Coords) {
     let selectedEl
-    let dragInfo = get(dragElementInfo)
-    if (dragInfo) {
-      selectedEl = dragInfo.parentElementClone.children.item(dragInfo.selectedIndex)
-    }
     updateHandleCoords(selectedEl || selectedDomEl, mouseDiff)
     let styles = []
     if (currentHandleCoords?.y) {
@@ -52,27 +65,32 @@
 <script lang="ts">
   import { tick } from "svelte"
 
+  export let element: Element;
+  export let isParent = false; // TODO: Not in use yet
+
+  let dragElementInfo: DragInfo;
+
   selectedAstElementId.subscribe(() => updateSelectedElementMenu())
 
   let dragHandleElement: HTMLButtonElement
-  $: canBeDragged = $selectedDomElement?.parentElement?.children?.length > 1
-  $: rotated = getDragDirection($selectedDomElement) === "horizontal"
+  $: canBeDragged = element?.parentElement?.children?.length > 1
+  $: rotated = !!element && getDragDirection(element) === "horizontal"
   $: {
-    // Update drag menu position when the $selectedDomElement store changes
-    initSelectedElementDragMenuPosition($selectedDomElement)
+    // Update drag menu position when the element store changes
+    !!element && initSelectedElementDragMenuPosition(element)
   }
 
   function snapshotSelectedElementSiblings() {
-    let siblings = Array.from($selectedDomElement.parentElement.children)
-    let selectedIndex = siblings.indexOf($selectedDomElement)
-    let el = $selectedDomElement.parentElement.cloneNode(true) as Element
+    let siblings = Array.from(element.parentElement.children)
+    let selectedIndex = siblings.indexOf(element)
+    let el = element.parentElement.cloneNode(true) as Element
     let elChildren = Array.from(el.children)
     for (let i = 0; i < elChildren.length; i++) {
       if (i !== selectedIndex) {
         elChildren[i].style.transition = "transform 0.15s"
       }
     }
-    $dragElementInfo = {
+    dragElementInfo = {
       parentElementClone: el,
       selectedIndex,
       siblingLocationInfos: siblings.map((el, i) => {
@@ -94,8 +112,8 @@
         }
       }),
     }
-    $selectedDomElement.parentElement.style.display = "none"
-    $selectedDomElement.parentElement.parentElement.insertBefore(el, $selectedDomElement.parentElement)
+    element.parentElement.style.display = "none"
+    element.parentElement.parentElement.insertBefore(el, element.parentElement)
   }
 
   let mouseDownEvent: MouseEvent
@@ -110,7 +128,7 @@
     if (newIndex !== null) {
       // Reordering happened, apply new order
       let parent = $parentOfSelectedAstElement
-      const selectedAstElement = parent.content.splice($dragElementInfo.selectedIndex, 1)[0]
+      const selectedAstElement = parent.content.splice(dragElementInfo.selectedIndex, 1)[0]
       parent.content.splice(newIndex, 0, selectedAstElement)
       // Update the selectedAstElementId so the same item remains selected
       $page.ast = [...$page.ast]
@@ -125,31 +143,29 @@
     document.removeEventListener("mousemove", handleMousemove)
     document.removeEventListener("mouseup", handleMouseup)
     applyNewOrder()
-    if ($dragElementInfo) {
-      $selectedDomElement.parentElement.style.display = null
-      $dragElementInfo.parentElementClone.remove()
-      $dragElementInfo = null
+    if (dragElementInfo) {
+      element.parentElement.style.display = null
+      dragElementInfo.parentElementClone.remove()
+      dragElementInfo = null
     }
     mouseDownEvent = null
     await tick()
-    // Re-trigger an update for the selected DOM after it has been hidden
-    setSelectedDom($selectedDomElement)
     dragHandleElement.style.transform = null
     placeholderStyle = null
   }
 
   function getGhostElement() {
-    return $dragElementInfo.parentElementClone.children.item($dragElementInfo.selectedIndex)
+    return dragElementInfo.parentElementClone.children.item(dragElementInfo.selectedIndex)
   }
 
   // Considers that the dragged element is hovering another one if their overlap is more than 50%.
   function findHoveredSiblingIndex(dragDirection: DragDirection, mouseDiff: Coords, e: MouseEvent) {
-    const draggedElementInfo = $dragElementInfo.siblingLocationInfos[$dragElementInfo.selectedIndex]
+    const draggedElementInfo = dragElementInfo.siblingLocationInfos[dragElementInfo.selectedIndex]
     if (dragDirection === "vertical") {
       const { top, y, bottom, ...rest } = draggedElementInfo
       const draggedRect = { ...rest, y: y + mouseDiff.y, top: top + mouseDiff.y, bottom: bottom + mouseDiff.y }
-      return $dragElementInfo.siblingLocationInfos.findIndex((rect, index) => {
-        if (index !== $dragElementInfo.selectedIndex) {
+      return dragElementInfo.siblingLocationInfos.findIndex((rect, index) => {
+        if (index !== dragElementInfo.selectedIndex) {
           const overlap = Math.max(0, Math.min(draggedRect.bottom, rect.bottom) - Math.max(draggedRect.top, rect.top))
           const overlapRatio = overlap / Math.min(draggedRect.height, rect.height)
           return overlapRatio > 0.5
@@ -158,8 +174,8 @@
     } else {
       const { left, x, right, ...rest } = draggedElementInfo
       const draggedRect = { ...rest, x: x + mouseDiff.x, left: left + mouseDiff.x, right: right + mouseDiff.x }
-      return $dragElementInfo.siblingLocationInfos.findIndex((rect, index) => {
-        if (index !== $dragElementInfo.selectedIndex) {
+      return dragElementInfo.siblingLocationInfos.findIndex((rect, index) => {
+        if (index !== dragElementInfo.selectedIndex) {
           const overlap = Math.max(0, Math.min(draggedRect.right, rect.right) - Math.max(draggedRect.left, rect.left))
           const overlapRatio = overlap / Math.min(draggedRect.width, rect.width)
           return overlapRatio > 0.5
@@ -176,12 +192,12 @@
     let hoveredElementIndex = findHoveredSiblingIndex(dragDirection, mouseDiff, e)
     if (hoveredElementIndex === -1) {
       return {
-        currentIndex: $dragElementInfo.selectedIndex,
-        destinationIndex: $dragElementInfo.selectedIndex,
+        currentIndex: dragElementInfo.selectedIndex,
+        destinationIndex: dragElementInfo.selectedIndex,
       }
     }
     return {
-      currentIndex: $dragElementInfo.selectedIndex,
+      currentIndex: dragElementInfo.selectedIndex,
       destinationIndex: hoveredElementIndex,
     }
   }
@@ -191,7 +207,7 @@
     draggedElementIndex: number,
     destinationIndex: number,
   ): LocationInfo[] {
-    let newInfos = [...$dragElementInfo.siblingLocationInfos]
+    let newInfos = [...infos]
     let info = newInfos.splice(draggedElementIndex, 1)[0]
     newInfos.splice(destinationIndex, 0, info)
     return newInfos
@@ -226,13 +242,13 @@
         distance += newInfos[i].height + newInfos[i].marginTop + newInfos[i].marginBottom
         i++
       }
-      distance = distance + newInfos[newIndex].marginTop + $dragElementInfo.siblingLocationInfos[0].top
+      distance = distance + newInfos[newIndex].marginTop + dragElementInfo.siblingLocationInfos[0].top
     } else {
       while (i < newInfos.length && i < newIndex) {
         distance += newInfos[i].width + newInfos[i].marginLeft + newInfos[i].marginRight
         i++
       }
-      distance = distance + newInfos[newIndex].marginLeft + $dragElementInfo.siblingLocationInfos[0].left
+      distance = distance + newInfos[newIndex].marginLeft + dragElementInfo.siblingLocationInfos[0].left
     }
     return distance
   }
@@ -243,14 +259,14 @@
     destinationIndex: number,
     locationInfos: LocationInfo[],
   ) {
-    Array.from($dragElementInfo.parentElementClone.children).forEach((el, i) => {
-      if (i !== $dragElementInfo.selectedIndex) {
+    Array.from(dragElementInfo.parentElementClone.children).forEach((el, i) => {
+      if (i !== dragElementInfo.selectedIndex) {
         const distance = calculateNewDistance(dragDirection, i, currentIndex, destinationIndex, locationInfos)
         if (distance) {
           if (dragDirection === "vertical") {
-            el.style.transform = `translateY(${distance - $dragElementInfo.siblingLocationInfos[i].top}px)`
+            el.style.transform = `translateY(${distance - dragElementInfo.siblingLocationInfos[i].top}px)`
           } else {
-            el.style.transform = `translateX(${distance - $dragElementInfo.siblingLocationInfos[i].left}px)`
+            el.style.transform = `translateX(${distance - dragElementInfo.siblingLocationInfos[i].left}px)`
           }
         } else {
           el.style.transform = null
@@ -266,7 +282,7 @@
     locationInfos: LocationInfo[],
   ) {
     let distance = calculateNewDistance(dragDirection, currentIndex, currentIndex, destinationIndex, locationInfos)
-    let draggedElementInfo = $dragElementInfo.siblingLocationInfos[$dragElementInfo.selectedIndex]
+    let draggedElementInfo = dragElementInfo.siblingLocationInfos[dragElementInfo.selectedIndex]
     if (dragDirection === "vertical") {
       placeholderStyle = `top: ${distance - relativeWrapperRect.top + draggedElementInfo.marginTop}px; left: ${draggedElementInfo.left - relativeWrapperRect.left}px; height: ${draggedElementInfo.height}px; width: ${draggedElementInfo.width}px;`
     } else {
@@ -290,7 +306,7 @@
         // No drag, reset effect.
         if (newIndex !== null) {
           // Reset the transforms on all elements but the one being dragged, which must keep following the cursor.
-          Array.from($dragElementInfo.parentElementClone.children).forEach(
+          Array.from(dragElementInfo.parentElementClone.children).forEach(
             (el, i) => i !== destinationIndex && (el.style.transform = null),
           )
         }
@@ -299,10 +315,10 @@
           dragDirection,
           currentIndex,
           destinationIndex,
-          $dragElementInfo.siblingLocationInfos,
+          dragElementInfo.siblingLocationInfos,
         )
       } else {
-        let rearrangedInfos = sortedLocationInfos($dragElementInfo.siblingLocationInfos, currentIndex, destinationIndex)
+        let rearrangedInfos = sortedLocationInfos(dragElementInfo.siblingLocationInfos, currentIndex, destinationIndex)
         repositionGhosts(dragDirection, currentIndex, destinationIndex, rearrangedInfos)
         calculatePlaceholderPosition(dragDirection, currentIndex, destinationIndex, rearrangedInfos)
         newIndex = destinationIndex
