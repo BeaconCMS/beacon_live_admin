@@ -1,10 +1,11 @@
 <script lang="ts">
+  import { onDestroy } from "svelte"
   import ComponentsSidebar from "./ComponentsSidebar.svelte"
   import Backdrop from "./Backdrop.svelte"
   import PagePreview from "./PagePreview.svelte"
   import PropertiesSidebar from "./PropertiesSidebar.svelte"
   import SelectedElementFloatingMenu from "./SelectedElementFloatingMenu.svelte"
-  import { page as pageStore } from "$lib/stores/page"
+  import { page as pageStore, resetStores } from "$lib/stores/page"
   import { live as liveStore } from "$lib/stores/live"
   import { tailwindConfig as tailwindConfigStore } from "$lib/stores/tailwindConfig"
   import { tailwindInput as tailwindInputStore } from "$lib/stores/tailwindInput"
@@ -19,6 +20,10 @@
   $: $tailwindConfigStore = tailwindConfig
   $: $tailwindInputStore = tailwindInput
   $: $liveStore = live
+
+  onDestroy(() => {
+    resetStores();
+  });
 
   function addBasicComponentToTarget(e: CustomEvent) {
     // This method is in PagePreview.

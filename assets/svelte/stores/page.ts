@@ -5,18 +5,19 @@ import type { CoordsDiff } from "$lib/utils/drag-helpers"
 
 export const page: Writable<Page> = writable()
 export const selectedAstElementId: Writable<string | undefined> = writable()
-// export const highlightedAstElementId: Writable<string | undefined> = writable();
 export const highlightedAstElement: Writable<AstElement | undefined> = writable()
 export const slotTargetElement: Writable<AstElement | undefined> = writable()
 
 export const rootAstElement: Readable<AstElement | undefined> = derived([page], ([$page]) => {
   // This is a virtual AstElement intended to simulate the page itself to reorder the components at the first level.
-  return { tag: "root", attrs: {}, content: $page.ast }
+  if ($page) {
+    return { tag: "root", attrs: {}, content: $page.ast }
+  }
 })
 export const selectedAstElement: Readable<AstElement | undefined> = derived(
   [page, selectedAstElementId],
   ([$page, $selectedAstElementId]) => {
-    if ($selectedAstElementId) {
+    if ($page && $selectedAstElementId) {
       if ($selectedAstElementId === "root") return get(rootAstElement)
       return findAstElement($page.ast, $selectedAstElementId)
     }
@@ -26,7 +27,7 @@ export const selectedAstElement: Readable<AstElement | undefined> = derived(
 export const parentOfSelectedAstElement: Readable<AstElement | undefined> = derived(
   [page, selectedAstElementId],
   ([$page, $selectedAstElementId]) => {
-    if ($selectedAstElementId) {
+    if ($page && $selectedAstElementId) {
       if ($selectedAstElementId === "root") return null
       let levels = $selectedAstElementId.split(".")
       if (levels.length === 1) return get(rootAstElement)
@@ -93,4 +94,13 @@ export function _findAstElementId(ast: AstNode[], astNode: AstNode, id: string):
       }
     }
   }
+}
+
+export function resetStores() {
+  page.set(null)
+  selectedAstElementId.set(null)
+  highlightedAstElement.set(null)
+  slotTargetElement.set(null)
+  selectedDomElement.set(null)
+  selectedElementMenu.set(null)
 }

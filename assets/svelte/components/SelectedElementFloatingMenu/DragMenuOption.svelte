@@ -81,9 +81,7 @@
     let el = element.parentElement.cloneNode(true) as Element
     let elChildren = Array.from(el.children)
     for (let i = 0; i < elChildren.length; i++) {
-      if (i !== selectedIndex) {
-        elChildren[i].style.transition = "transform 0.15s"
-      }
+      elChildren[i].style.transition = i === selectedIndex ? "none" : "transform 0.15s"
     }
     dragElementInfo = {
       parentElementClone: el,
