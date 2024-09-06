@@ -29,7 +29,7 @@
     window.reloadStylesheet = reloadStylesheet
     reloadStylesheet()
   })
-  page.subscribe(async ({ ast }) => {
+  page.subscribe(async () => {
     await tick()
     window.reloadStylesheet && window.reloadStylesheet()
   })
