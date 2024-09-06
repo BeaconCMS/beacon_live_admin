@@ -51,7 +51,6 @@
 
 <script lang="ts">
   import { tick } from "svelte"
-
   selectedAstElementId.subscribe(() => updateSelectedElementMenu())
 
   let dragHandleElement: HTMLButtonElement

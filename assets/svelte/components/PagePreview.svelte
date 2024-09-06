@@ -15,10 +15,9 @@
     $currentComponentCategory = null
     if (!$draggedObject) return
     let draggedObj = $draggedObject
-    if (elementCanBeDroppedInTarget(draggedObj)) {
+    if (target.id !== "fake-browser-content" && elementCanBeDroppedInTarget(draggedObj)) {
       if (
         !(target instanceof HTMLElement) ||
-        target.id === "fake-browser-content" ||
         !$slotTargetElement ||
         $slotTargetElement.attrs.selfClose
       ) {
