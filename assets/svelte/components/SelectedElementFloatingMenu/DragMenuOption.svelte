@@ -27,10 +27,11 @@
   let currentHandleCoords: Coords
   let relativeWrapperRect: DOMRect
   let dragHandleStyle: Writable<string> = writable("")
+  let dragElementInfo: DragInfo
 
   export function initSelectedElementDragMenuPosition(selectedDomEl, mouseDiff?: Coords) {
-    let selectedEl
-    updateHandleCoords(selectedEl || selectedDomEl, mouseDiff)
+    let rect = dragElementInfo ? dragElementInfo.siblingLocationInfos[dragElementInfo.selectedIndex] : selectedDomEl.getBoundingClientRect();
+    updateHandleCoords(rect, mouseDiff)
     let styles = []
     if (currentHandleCoords?.y) {
       styles.push(`top: ${currentHandleCoords.y}px`)
@@ -41,12 +42,11 @@
     dragHandleStyle.set(styles.join(";"))
   }
 
-  function updateHandleCoords(selectedEl: Element, movement: Coords = { x: 0, y: 0 }) {
+  function updateHandleCoords(currentRect: DOMRect, movement: Coords = { x: 0, y: 0 }) {
     relativeWrapperRect = document
       .getElementById("ui-builder-app-container")
       .closest(".relative")
       .getBoundingClientRect()
-    let currentRect = selectedEl.getBoundingClientRect()
     let menu = get(selectedElementMenu)
     let movX = menu?.dragDirection === "vertical" ? 0 : movement.x
     let movY = menu?.dragDirection === "vertical" ? movement.y : 0
@@ -62,8 +62,6 @@
 
   export let element: Element
   export let isParent = false // TODO: Not in use yet
-
-  let dragElementInfo: DragInfo
 
   selectedAstElementId.subscribe(() => updateSelectedElementMenu())
 
@@ -82,6 +80,8 @@
     let elChildren = Array.from(el.children)
     for (let i = 0; i < elChildren.length; i++) {
       elChildren[i].style.transition = i === selectedIndex ? "none" : "transform 0.15s"
+      // Next line is only for debugging purposes. It helps find the cloned nodes
+      elChildren[i].setAttribute('data-is-clone', 'true'); 
     }
     dragElementInfo = {
       parentElementClone: el,
