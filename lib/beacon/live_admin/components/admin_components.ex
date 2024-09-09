@@ -10,7 +10,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
   alias Beacon.LiveAdmin.CoreComponents
   alias Beacon.LiveAdmin.PageBuilder.Table
 
-  import Beacon.LiveAdmin.Gettext
+  use Gettext, backend: Beacon.LiveAdmin.Gettext
   import Beacon.LiveAdmin.Router, only: [beacon_live_admin_path: 3]
 
   defdelegate header(assigns), to: CoreComponents

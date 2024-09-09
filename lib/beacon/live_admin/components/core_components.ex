@@ -23,7 +23,7 @@ defmodule Beacon.LiveAdmin.CoreComponents do
   use Phoenix.Component
 
   alias Phoenix.LiveView.JS
-  import Beacon.LiveAdmin.Gettext
+  use Gettext, backend: Beacon.LiveAdmin.Gettext
 
   @doc """
   Renders a modal.

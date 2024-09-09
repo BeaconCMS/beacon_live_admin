@@ -2,6 +2,9 @@
 
 ## 0.1.0-dev
 
+### Breaking Changes
+  * Require minimum Gettext v0.26 to use the new backend module
+
 ### Enhancements
 - [Visual Editor] Improve DnD highlight states and simplify logic significantly ([#219](https://github.com/BeaconCMS/beacon_live_admin/pull/219))
 - [Visual Editor] Better detect overlapping when dragging elements to reorder ([#216](https://github.com/BeaconCMS/beacon_live_admin/pull/216))

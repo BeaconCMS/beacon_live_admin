@@ -64,7 +64,7 @@ defmodule Beacon.LiveAdmin.MixProject do
       {:live_svelte, "~> 0.12"},
       {:floki, ">= 0.30.0"},
       {:tailwind, "~> 0.2"},
-      {:gettext, "~> 0.20"},
+      {:gettext, "~> 0.26"},
       {:jason, "~> 1.0"},
       {:live_monaco_editor, "~> 0.1"},
 
