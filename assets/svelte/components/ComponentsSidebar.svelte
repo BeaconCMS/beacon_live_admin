@@ -2,7 +2,7 @@
   import { fade } from "svelte/transition"
   import { translate } from "$lib/utils/animations"
   import { currentComponentCategory } from "$lib/stores/currentComponentCategory"
-  import { draggedObject, resetDrag } from "$lib/stores/dragAndDrop"
+  import { draggedComponentDefinition, resetDrag } from "$lib/stores/dragAndDrop"
   import type { ComponentCategory, ComponentDefinition, MenuCategory } from "$lib/types"
   export let components: ComponentDefinition[]
 
@@ -49,7 +49,7 @@
   }
 
   function expandCategoryMenu(componentCategory: ComponentCategory) {
-    if ($draggedObject) return
+    if ($draggedComponentDefinition) return
     clearTimeout(hideComponentTimer)
     if (showExamples) {
       changeCategoryTimer = setTimeout(() => {
@@ -64,7 +64,7 @@
 
   function dragStart(componentDefinition: ComponentDefinition, e: DragEvent) {
     setTimeout(() => {
-      $draggedObject = componentDefinition
+      $draggedComponentDefinition = componentDefinition
       showExamples = false
     }, 100)
   }

@@ -8,7 +8,7 @@
     setSelection,
     setSelectedDom,
   } from "$lib/stores/page"
-  import { draggedObject, dragElementInfo } from "$lib/stores/dragAndDrop"
+  import { draggedComponentDefinition } from "$lib/stores/dragAndDrop"
   import { updateNodeContent, updateAst } from "$lib/utils/ast-manipulation"
   import { elementCanBeDroppedInTarget } from "$lib/utils/drag-helpers"
   import type { AstNode } from "$lib/types"
@@ -50,15 +50,15 @@
   }
 
   function handleDragEnter() {
-    if ($draggedObject) {
-      if (isAstElement(node) && elementCanBeDroppedInTarget($draggedObject)) {
+    if ($draggedComponentDefinition) {
+      if (isAstElement(node) && elementCanBeDroppedInTarget($draggedComponentDefinition)) {
         $slotTargetElement = node
       }
     }
   }
 
   function handleDragLeave() {
-    if (isAstElement(node) && elementCanBeDroppedInTarget($draggedObject) && $slotTargetElement === node) {
+    if (isAstElement(node) && elementCanBeDroppedInTarget($draggedComponentDefinition) && $slotTargetElement === node) {
       $slotTargetElement = undefined
     }
   }
@@ -174,7 +174,6 @@
     <svelte:element
       this={node.tag}
       class="relative"
-      class:hidden={isParentOfSelectedNode && $dragElementInfo}
       bind:this={domElement}
       {...node.attrs}
       data-selected={isSelectedNode}
@@ -194,8 +193,8 @@
         {#each children as child, childIndex}
           <svelte:self node={child} nodeId="{nodeId}.{childIndex}" />
         {/each}
-        {#if isDragTarget && $draggedObject}
-          <div class="dragged-element-placeholder">{@html $draggedObject.example}</div>
+        {#if isDragTarget && $draggedComponentDefinition}
+          <div class="dragged-element-placeholder">{@html $draggedComponentDefinition.example}</div>
         {:else if previewDropInside}
           <div class="dragged-element-placeholder">Preview</div>
         {/if}
