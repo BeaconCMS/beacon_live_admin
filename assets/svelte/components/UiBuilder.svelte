@@ -22,8 +22,8 @@
   $: $liveStore = live
 
   onDestroy(() => {
-    resetStores();
-  });
+    resetStores()
+  })
 
   function addBasicComponentToTarget(e: CustomEvent) {
     // This method is in PagePreview.

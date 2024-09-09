@@ -16,11 +16,7 @@
     if (!$draggedComponentDefinition) return    
     let draggedObj = $draggedComponentDefinition
     if (target.id !== "fake-browser-content" && elementCanBeDroppedInTarget(draggedObj)) {
-      if (
-        !(target instanceof HTMLElement) ||
-        !$slotTargetElement ||
-        $slotTargetElement.attrs.selfClose
-      ) {
+      if (!(target instanceof HTMLElement) || !$slotTargetElement || $slotTargetElement.attrs.selfClose) {
         resetDragDrop()
         return
       }
