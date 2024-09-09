@@ -30,7 +30,9 @@
   let dragElementInfo: DragInfo
 
   export function initSelectedElementDragMenuPosition(selectedDomEl, mouseDiff?: Coords) {
-    let rect = dragElementInfo ? dragElementInfo.siblingLocationInfos[dragElementInfo.selectedIndex] : selectedDomEl.getBoundingClientRect();
+    let rect = dragElementInfo
+      ? dragElementInfo.siblingLocationInfos[dragElementInfo.selectedIndex]
+      : selectedDomEl.getBoundingClientRect()
     updateHandleCoords(rect, mouseDiff)
     let styles = []
     if (currentHandleCoords?.y) {
@@ -81,7 +83,7 @@
     for (let i = 0; i < elChildren.length; i++) {
       elChildren[i].style.transition = i === selectedIndex ? "none" : "transform 0.15s"
       // Next line is only for debugging purposes. It helps find the cloned nodes
-      elChildren[i].setAttribute('data-is-clone', 'true'); 
+      elChildren[i].setAttribute("data-is-clone", "true")
     }
     dragElementInfo = {
       parentElementClone: el,

@@ -13,7 +13,7 @@
   async function handleDragDrop(e: DragEvent) {
     let { target } = e
     $currentComponentCategory = null
-    if (!$draggedComponentDefinition) return    
+    if (!$draggedComponentDefinition) return
     let draggedObj = $draggedComponentDefinition
     if (target.id !== "fake-browser-content" && elementCanBeDroppedInTarget(draggedObj)) {
       if (!(target instanceof HTMLElement) || !$slotTargetElement || $slotTargetElement.attrs.selfClose) {
