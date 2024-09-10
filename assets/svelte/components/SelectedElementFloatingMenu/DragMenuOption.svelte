@@ -264,10 +264,10 @@
         const distance = calculateNewDistance(dragDirection, i, currentIndex, destinationIndex, locationInfos)
         if (distance) {
           if (dragDirection === "vertical") {
-            let gap = parseInt(columnGap) * (i > 0 ? 2 : 1);
+            let gap = (parseInt(columnGap) || 0) * (i > 0 ? 2 : 1);
             el.style.transform = `translateY(${distance - dragElementInfo.siblingLocationInfos[i].top + gap}px)`
           } else {
-            let gap = parseInt(rowGap) * (i > 0 ? 2 : 1);
+            let gap = (parseInt(rowGap) || 0) * (i > 0 ? 2 : 1);
             el.style.transform = `translateX(${distance - dragElementInfo.siblingLocationInfos[i].left + gap}px)`
           }
         } else {
@@ -287,10 +287,10 @@
     let draggedElementInfo = dragElementInfo.siblingLocationInfos[dragElementInfo.selectedIndex]
     const { rowGap, columnGap } = window.getComputedStyle(dragElementInfo.parentElementClone);
     if (dragDirection === "vertical") {
-      let accumulatedGap = parseInt(columnGap) * destinationIndex;
+      let accumulatedGap = (parseInt(columnGap) || 0) * destinationIndex;
       placeholderStyle = `top: ${distance - relativeWrapperRect.top + draggedElementInfo.marginTop + accumulatedGap}px; left: ${draggedElementInfo.left - relativeWrapperRect.left}px; height: ${draggedElementInfo.height}px; width: ${draggedElementInfo.width}px;`
     } else {
-      let accumulatedGap = parseInt(rowGap) * destinationIndex;
+      let accumulatedGap = (parseInt(rowGap) || 0) * destinationIndex;
       placeholderStyle = `left: ${distance - relativeWrapperRect.left + draggedElementInfo.marginLeft + accumulatedGap}px; top: ${draggedElementInfo.top - relativeWrapperRect.top}px; height: ${draggedElementInfo.height}px; width: ${draggedElementInfo.width}px;`
     }
   }
