@@ -125,9 +125,9 @@ defmodule Beacon.LiveAdmin.PageBuilder.Table do
   updating params for a Table.
   """
   @spec handle_params(Socket.t(), map(), (Page.t() -> integer())) :: Socket.t()
-  def handle_params(socket, params, count_fn) do
-    %{per_page: per_page, sort_by: sort_by} = socket.assigns.beacon_page.table
+  def handle_params(socket, params, count_fn)
 
+  def handle_params(%{assigns: %{beacon_page: %{table: %{per_page: per_page, sort_by: sort_by}}}} = socket, params, count_fn) do
     current_page = params |> Map.get("page", "1") |> String.to_integer()
     page_count = ceil(count_fn.(socket.assigns.beacon_page) / per_page)
     sort_by = params |> Map.get("sort_by", sort_by) |> safe_to_atom()
@@ -140,6 +140,8 @@ defmodule Beacon.LiveAdmin.PageBuilder.Table do
       query: query
     )
   end
+
+  def handle_params(socket, _params, _count_fn), do: socket
 
   defp safe_to_atom(value) when is_atom(value), do: value
   defp safe_to_atom(value) when is_binary(value), do: String.to_existing_atom(value)
