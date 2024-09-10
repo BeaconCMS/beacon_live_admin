@@ -5,6 +5,9 @@
 ### Breaking Changes
   * Require minimum Gettext v0.26 to use the new backend module
 
+### Fixes
+  - Close #204 - skip `PageBuilder.Table.handle_params/3` when the requested page has no pagination data
+
 ### Enhancements
 - [Visual Editor] Improve DnD highlight states and simplify logic significantly ([#219](https://github.com/BeaconCMS/beacon_live_admin/pull/219))
 - [Visual Editor] Better detect overlapping when dragging elements to reorder ([#216](https://github.com/BeaconCMS/beacon_live_admin/pull/216))
