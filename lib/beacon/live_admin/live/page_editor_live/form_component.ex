@@ -24,6 +24,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
      socket
      |> assign(assigns)
      |> assign_form(changeset)
+     |> assign_template(Changeset.get_field(changeset, :template))
      |> maybe_assign_builder_page(changeset)
      |> assign(:language, language(page.format))
      |> assign_extra_fields(changeset)
@@ -57,7 +58,10 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
     params = Map.merge(socket.assigns.form.params, %{"template" => template})
     changeset = Content.change_page(socket.assigns.site, socket.assigns.page, params)
 
-    {:ok, assign_form(socket, changeset)}
+    {:ok,
+     socket
+     |> assign_form(changeset)
+     |> assign_template(template)}
   end
 
   def update(%{ast: _ast}, %{assigns: %{editor: "code"}} = socket) do
@@ -69,11 +73,15 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
     params = Map.merge(socket.assigns.form.params, %{"template" => template})
     changeset = Content.change_page(socket.assigns.site, socket.assigns.page, params)
 
-    {:ok,
-     socket
-     |> LiveMonacoEditor.set_value(template, to: "template")
-     |> assign_form(changeset)
-     |> maybe_assign_builder_page(changeset)}
+    socket =
+      socket
+      |> LiveMonacoEditor.set_value(template, to: "template")
+      |> assign_form(changeset)
+      |> assign_template(template)
+      |> maybe_assign_builder_page(changeset)
+      |> assign(:template, template)
+
+    {:ok, socket}
   end
 
   @impl true
@@ -115,7 +123,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
   end
 
   def handle_event("save", %{"page" => page_params}, socket) do
-    page_params = Map.put(page_params, "site", socket.assigns.site)
+    page_params = Map.merge(page_params, %{"site" => socket.assigns.site, "template" => socket.assigns.template})
     save_page(socket, socket.assigns.live_action, page_params)
   end
 
@@ -171,6 +179,10 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
 
   defp assign_form(socket, changeset) do
     assign(socket, :form, to_form(changeset))
+  end
+
+  defp assign_template(socket, template) do
+    assign(socket, :template, template)
   end
 
   defp maybe_assign_builder_page(%{assigns: %{editor: "visual"}} = socket, changeset) do

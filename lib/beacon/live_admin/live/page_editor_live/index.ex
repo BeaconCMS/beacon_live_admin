@@ -14,11 +14,11 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
   end
 
   @impl true
-  def handle_params(params, _uri, %{assigns: %{beacon_page: beacon_page}} = socket) when not is_nil(beacon_page) do
+  def handle_params(params, _uri, %{assigns: %{beacon_page: %{site: site, table: table}}} = socket) when not is_nil(table) do
     socket =
       Table.handle_params(socket, params, &Content.count_pages(&1.site, query: params["query"]))
 
-    %{site: site, table: %{per_page: per_page, current_page: page, query: query, sort_by: sort_by}} = beacon_page
+    %{per_page: per_page, current_page: page, query: query, sort_by: sort_by} = table
 
     pages =
       list_pages(site,
