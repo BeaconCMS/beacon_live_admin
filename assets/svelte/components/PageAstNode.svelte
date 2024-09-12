@@ -152,11 +152,7 @@
 </script>
 
 {#if isAstElement(node)}
-  {#if node.tag === "html_comment"}
-    {@html "<!--" + node.content + "-->"}
-  {:else if node.tag === "eex_comment"}
-    {@html "<!--" + node.content + "-->"}
-  {:else if node.tag === "eex" && node.content[0] === "@inner_content"}
+  {#if node.tag === "eex" && node.content[0] === "@inner_content"}
     <slot />
   {:else if node.rendered_html}
     <div
