@@ -108,7 +108,7 @@
       }),
     }
     element.parentElement.style.display = "none"
-    element.parentElement.parentElement.insertBefore(el, element.parentElement)
+    element.parentElement.parentNode.insertBefore(el, element.parentElement)
   }
 
   let mouseDownEvent: MouseEvent

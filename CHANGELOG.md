@@ -6,6 +6,7 @@
   * Require minimum Gettext v0.26 to use the new backend module
 
 ### Fixes
+  - Close #226 - Fix a race condition between update AST and save change events #240
   - Close #204 - skip `PageBuilder.Table.handle_params/3` when the requested page has no pagination data
 
 ### Enhancements
