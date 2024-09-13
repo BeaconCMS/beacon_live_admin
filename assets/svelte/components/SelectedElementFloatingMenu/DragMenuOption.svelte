@@ -225,8 +225,10 @@
       newIndex = destinationIndex
     } else {
       if (draggedElementIndex > destinationIndex) {
+        // An element is being dragged earlier in the DOM
         newIndex = index < draggedElementIndex && index >= destinationIndex ? index + 1 : index
       } else {
+        // An element is being dragged further down in the DOM
         newIndex = index > draggedElementIndex && index <= destinationIndex ? index - 1 : index
       }
     }
@@ -254,14 +256,19 @@
     destinationIndex: number,
     locationInfos: LocationInfo[],
   ) {
+    // Is this hack made to support css columns enough? Is there any other situation in which there may be a
+    // gap between elements not accounted for by marging?
+    const { rowGap, columnGap } = window.getComputedStyle(dragElementInfo.parentElementClone)
     Array.from(dragElementInfo.parentElementClone.children).forEach((el, i) => {
       if (i !== dragElementInfo.selectedIndex) {
         const distance = calculateNewDistance(dragDirection, i, currentIndex, destinationIndex, locationInfos)
         if (distance) {
           if (dragDirection === "vertical") {
-            el.style.transform = `translateY(${distance - dragElementInfo.siblingLocationInfos[i].top}px)`
+            let gap = (parseInt(columnGap) || 0) * (i > 0 ? 2 : 1)
+            el.style.transform = `translateY(${distance - dragElementInfo.siblingLocationInfos[i].top + gap}px)`
           } else {
-            el.style.transform = `translateX(${distance - dragElementInfo.siblingLocationInfos[i].left}px)`
+            let gap = (parseInt(rowGap) || 0) * (i > 0 ? 2 : 1)
+            el.style.transform = `translateX(${distance - dragElementInfo.siblingLocationInfos[i].left + gap}px)`
           }
         } else {
           el.style.transform = null
@@ -278,10 +285,13 @@
   ) {
     let distance = calculateNewDistance(dragDirection, currentIndex, currentIndex, destinationIndex, locationInfos)
     let draggedElementInfo = dragElementInfo.siblingLocationInfos[dragElementInfo.selectedIndex]
+    const { rowGap, columnGap } = window.getComputedStyle(dragElementInfo.parentElementClone)
     if (dragDirection === "vertical") {
-      placeholderStyle = `top: ${distance - relativeWrapperRect.top + draggedElementInfo.marginTop}px; left: ${draggedElementInfo.left - relativeWrapperRect.left}px; height: ${draggedElementInfo.height}px; width: ${draggedElementInfo.width}px;`
+      let accumulatedGap = (parseInt(columnGap) || 0) * destinationIndex
+      placeholderStyle = `top: ${distance - relativeWrapperRect.top + draggedElementInfo.marginTop + accumulatedGap}px; left: ${draggedElementInfo.left - relativeWrapperRect.left}px; height: ${draggedElementInfo.height}px; width: ${draggedElementInfo.width}px;`
     } else {
-      placeholderStyle = `left: ${distance - relativeWrapperRect.left + draggedElementInfo.marginLeft}px; top: ${draggedElementInfo.top - relativeWrapperRect.top}px; height: ${draggedElementInfo.height}px; width: ${draggedElementInfo.width}px;`
+      let accumulatedGap = (parseInt(rowGap) || 0) * destinationIndex
+      placeholderStyle = `left: ${distance - relativeWrapperRect.left + draggedElementInfo.marginLeft + accumulatedGap}px; top: ${draggedElementInfo.top - relativeWrapperRect.top}px; height: ${draggedElementInfo.height}px; width: ${draggedElementInfo.width}px;`
     }
   }
 
@@ -306,6 +316,7 @@
           )
         }
         newIndex = null
+        // console.log("returning placeholder to its original position")
         calculatePlaceholderPosition(
           dragDirection,
           currentIndex,
@@ -315,6 +326,9 @@
       } else {
         let rearrangedInfos = sortedLocationInfos(dragElementInfo.siblingLocationInfos, currentIndex, destinationIndex)
         repositionGhosts(dragDirection, currentIndex, destinationIndex, rearrangedInfos)
+        // console.log('Assigning placeholder to a new position');
+        // console.log('currentIndex', currentIndex)
+        // console.log('destinationIndex', destinationIndex)
         calculatePlaceholderPosition(dragDirection, currentIndex, destinationIndex, rearrangedInfos)
         newIndex = destinationIndex
       }

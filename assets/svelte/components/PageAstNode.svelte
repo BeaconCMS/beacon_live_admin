@@ -27,7 +27,7 @@
     isAstElement(node) &&
     node.content.filter((e) => typeof e === "string").length === 1 &&
     !node.attrs?.selfClose
-  $: isParentOfSelectedNode = (isAstElement(node) && node.content) ? node.content.includes($selectedAstElement) : false
+  $: isParentOfSelectedNode = isAstElement(node) && node.content ? node.content.includes($selectedAstElement) : false
 
   let children
   $: {
