@@ -134,6 +134,13 @@
       $live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast })
     }
   }
+
+  function resetDragElementHandle() {
+    dragHandleElement.style.transform = null
+    dragHandleElement.style.setProperty('--tw-translate-y', null);
+    dragHandleElement.style.setProperty('--tw-translate-x', null);
+  }
+
   async function handleMouseup(e: MouseEvent) {
     document.removeEventListener("mousemove", handleMousemove)
     document.removeEventListener("mouseup", handleMouseup)
@@ -145,7 +152,7 @@
     }
     mouseDownEvent = null
     await tick()
-    dragHandleElement.style.transform = null
+    resetDragElementHandle();
     placeholderStyle = null
   }
 
