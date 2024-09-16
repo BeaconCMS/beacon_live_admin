@@ -9,10 +9,10 @@
   import { createTailwindcss } from "@mhsdesign/jit-browser-tailwindcss"
   import { onMount, tick } from "svelte"
 
-  let wrapper: HTMLElement;
-  let styleWrapper: HTMLElement;
-  let twConfig = $tailwindConfig;
-  let configPromise = import(twConfig);
+  let wrapper: HTMLElement
+  let styleWrapper: HTMLElement
+  let twConfig = $tailwindConfig
+  let configPromise = import(twConfig)
   onMount(async () => {
     const { default: tailwindConfig } = await configPromise
     const tailwind = createTailwindcss({ tailwindConfig })
