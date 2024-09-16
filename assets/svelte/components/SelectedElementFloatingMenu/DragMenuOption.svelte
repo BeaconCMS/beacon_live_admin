@@ -137,8 +137,8 @@
 
   function resetDragElementHandle() {
     dragHandleElement.style.transform = null
-    dragHandleElement.style.setProperty('--tw-translate-y', null);
-    dragHandleElement.style.setProperty('--tw-translate-x', null);
+    dragHandleElement.style.setProperty("--tw-translate-y", null)
+    dragHandleElement.style.setProperty("--tw-translate-x", null)
   }
 
   async function handleMouseup(e: MouseEvent) {
@@ -152,7 +152,7 @@
     }
     mouseDownEvent = null
     await tick()
-    resetDragElementHandle();
+    resetDragElementHandle()
     placeholderStyle = null
   }
 

@@ -1,13 +1,13 @@
 name: CI
 
 on:
-  push:
-    branches: ["main"]
   pull_request:
-    branches: ["main"]
+  push:
+    branches:
+      - main
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   test:
@@ -100,8 +100,9 @@ jobs:
     runs-on: ubuntu-20.04
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
 
       - name: Set up Elixir
         uses: erlef/setup-beam@v1
@@ -125,6 +126,12 @@ jobs:
       - run: mix compile --warnings-as-errors
 
       - run: mix assets.setup
+
+      - run: mix format.all
+
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: auto format code
 
       - run: mix format.all.check
 
