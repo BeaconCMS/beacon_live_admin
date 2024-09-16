@@ -137,8 +137,8 @@
 
   function resetDragElementHandle() {
     dragHandleElement.style.transform = null
-    dragHandleElement.style.setProperty('--tw-translate-y', null);
-    dragHandleElement.style.setProperty('--tw-translate-x', null);
+    dragHandleElement.style.setProperty("--tw-translate-y", null)
+    dragHandleElement.style.setProperty("--tw-translate-x", null)
   }
 
   async function handleMouseup(e: MouseEvent) {
@@ -152,7 +152,7 @@
     }
     mouseDownEvent = null
     await tick()
-    resetDragElementHandle();
+    resetDragElementHandle()
     placeholderStyle = null
   }
 
@@ -247,28 +247,30 @@
         if (i > 0) {
           gap = dragElementInfo.siblingLocationInfos[i].top - dragElementInfo.siblingLocationInfos[i - 1].bottom
         }
-        distance += newInfos[i].height + gap;
+        distance += newInfos[i].height + gap
         i++
       }
       let gap = 0
       if (newIndex > 0) {
         dragElementInfo.siblingLocationInfos
-        gap = dragElementInfo.siblingLocationInfos[newIndex].top - dragElementInfo.siblingLocationInfos[newIndex - 1].bottom
+        gap =
+          dragElementInfo.siblingLocationInfos[newIndex].top - dragElementInfo.siblingLocationInfos[newIndex - 1].bottom
       }
       distance += gap + dragElementInfo.siblingLocationInfos[0].top
-    } else {   
+    } else {
       while (i < newInfos.length && i < newIndex) {
         let gap = 0
         if (i > 0) {
           gap = dragElementInfo.siblingLocationInfos[i].left - dragElementInfo.siblingLocationInfos[i - 1].right
         }
-        distance += newInfos[i].width + gap;
+        distance += newInfos[i].width + gap
         i++
       }
       let gap = 0
       if (newIndex > 0) {
         dragElementInfo.siblingLocationInfos
-        gap = dragElementInfo.siblingLocationInfos[newIndex].left - dragElementInfo.siblingLocationInfos[newIndex - 1].right
+        gap =
+          dragElementInfo.siblingLocationInfos[newIndex].left - dragElementInfo.siblingLocationInfos[newIndex - 1].right
       }
       distance += gap + dragElementInfo.siblingLocationInfos[0].left
     }
