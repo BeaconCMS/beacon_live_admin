@@ -243,16 +243,36 @@
     let i = 0
     if (dragDirection === "vertical") {
       while (i < newInfos.length && i < newIndex) {
-        distance += newInfos[i].height + newInfos[i].marginTop + newInfos[i].marginBottom
+        let gap = 0
+        if (i > 0) {
+          gap = dragElementInfo.siblingLocationInfos[i].top - dragElementInfo.siblingLocationInfos[i - 1].bottom
+        }
+        distance += newInfos[i].height + gap
         i++
       }
-      distance = distance + newInfos[newIndex].marginTop + dragElementInfo.siblingLocationInfos[0].top
+      let gap = 0
+      if (newIndex > 0) {
+        dragElementInfo.siblingLocationInfos
+        gap =
+          dragElementInfo.siblingLocationInfos[newIndex].top - dragElementInfo.siblingLocationInfos[newIndex - 1].bottom
+      }
+      distance += gap + dragElementInfo.siblingLocationInfos[0].top
     } else {
       while (i < newInfos.length && i < newIndex) {
-        distance += newInfos[i].width + newInfos[i].marginLeft + newInfos[i].marginRight
+        let gap = 0
+        if (i > 0) {
+          gap = dragElementInfo.siblingLocationInfos[i].left - dragElementInfo.siblingLocationInfos[i - 1].right
+        }
+        distance += newInfos[i].width + gap
         i++
       }
-      distance = distance + newInfos[newIndex].marginLeft + dragElementInfo.siblingLocationInfos[0].left
+      let gap = 0
+      if (newIndex > 0) {
+        dragElementInfo.siblingLocationInfos
+        gap =
+          dragElementInfo.siblingLocationInfos[newIndex].left - dragElementInfo.siblingLocationInfos[newIndex - 1].right
+      }
+      distance += gap + dragElementInfo.siblingLocationInfos[0].left
     }
     return distance
   }
@@ -263,19 +283,14 @@
     destinationIndex: number,
     locationInfos: LocationInfo[],
   ) {
-    // Is this hack made to support css columns enough? Is there any other situation in which there may be a
-    // gap between elements not accounted for by marging?
-    const { rowGap, columnGap } = window.getComputedStyle(dragElementInfo.parentElementClone)
     Array.from(dragElementInfo.parentElementClone.children).forEach((el, i) => {
       if (i !== dragElementInfo.selectedIndex) {
         const distance = calculateNewDistance(dragDirection, i, currentIndex, destinationIndex, locationInfos)
         if (distance) {
           if (dragDirection === "vertical") {
-            let gap = (parseInt(columnGap) || 0) * (i > 0 ? 2 : 1)
-            el.style.transform = `translateY(${distance - dragElementInfo.siblingLocationInfos[i].top + gap}px)`
+            el.style.transform = `translateY(${distance - dragElementInfo.siblingLocationInfos[i].top}px)`
           } else {
-            let gap = (parseInt(rowGap) || 0) * (i > 0 ? 2 : 1)
-            el.style.transform = `translateX(${distance - dragElementInfo.siblingLocationInfos[i].left + gap}px)`
+            el.style.transform = `translateX(${distance - dragElementInfo.siblingLocationInfos[i].left}px)`
           }
         } else {
           el.style.transform = null
@@ -292,13 +307,10 @@
   ) {
     let distance = calculateNewDistance(dragDirection, currentIndex, currentIndex, destinationIndex, locationInfos)
     let draggedElementInfo = dragElementInfo.siblingLocationInfos[dragElementInfo.selectedIndex]
-    const { rowGap, columnGap } = window.getComputedStyle(dragElementInfo.parentElementClone)
     if (dragDirection === "vertical") {
-      let accumulatedGap = (parseInt(columnGap) || 0) * destinationIndex
-      placeholderStyle = `top: ${distance - relativeWrapperRect.top + draggedElementInfo.marginTop + accumulatedGap}px; left: ${draggedElementInfo.left - relativeWrapperRect.left}px; height: ${draggedElementInfo.height}px; width: ${draggedElementInfo.width}px;`
+      placeholderStyle = `top: ${distance - relativeWrapperRect.top}px; left: ${draggedElementInfo.left - relativeWrapperRect.left}px; height: ${draggedElementInfo.height}px; width: ${draggedElementInfo.width}px;`
     } else {
-      let accumulatedGap = (parseInt(rowGap) || 0) * destinationIndex
-      placeholderStyle = `left: ${distance - relativeWrapperRect.left + draggedElementInfo.marginLeft + accumulatedGap}px; top: ${draggedElementInfo.top - relativeWrapperRect.top}px; height: ${draggedElementInfo.height}px; width: ${draggedElementInfo.width}px;`
+      placeholderStyle = `left: ${distance - relativeWrapperRect.left}px; top: ${draggedElementInfo.top - relativeWrapperRect.top}px; height: ${draggedElementInfo.height}px; width: ${draggedElementInfo.width}px;`
     }
   }
 
