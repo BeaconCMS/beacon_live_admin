@@ -59,3 +59,7 @@ npm-debug.log
 
 # `direnv` local environment config
 .envrc
+/blob-report/
+/playwright-report/
+/playwright/.cache/
+/test/e2e/test-results/

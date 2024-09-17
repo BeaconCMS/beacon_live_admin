@@ -1,0 +1,30 @@
+{
+  "name": "beacon_live_admin",
+  "version": "1.0.0",
+  "description": "Admin UI to manage content for sites built by [Beacon](https://github.com/BeaconCMS/beacon).",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BeaconCMS/beacon_live_admin.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/BeaconCMS/beacon_live_admin/issues"
+  },
+  "homepage": "https://github.com/BeaconCMS/beacon_live_admin#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.47.1",
+    "@types/node": "^22.5.5"
+  },
+  "scripts": {
+    "e2e:test": "npx playwright install && npx playwright test",
+    "e2e:test:ui": "npx playwright install && npx playwright test --ui",
+    "e2e:test:debug": "npx playwright install && npx playwright test --debug"
+  }
+}
