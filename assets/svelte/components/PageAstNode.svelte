@@ -171,7 +171,7 @@
       on:mouseover|stopPropagation={handleMouseOver}
       on:mouseout|stopPropagation={handleMouseOut}
       on:click|preventDefault|stopPropagation={handleClick}
-      >
+    >
       {#if !node.attrs?.selfClose}
         {#each children as child, childIndex}
           <svelte:self node={child} nodeId="{nodeId}.{childIndex}" />

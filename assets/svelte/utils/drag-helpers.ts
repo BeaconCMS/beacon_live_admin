@@ -22,36 +22,35 @@ export function mouseDiff(mouseMovement: CoordsDiff): Coords {
   }
 }
 
-
 // Detects if elements flow generally in an horizontal direction, a vertical one or
 // both (e.g. they form a grid or overflow to the the next line)
 function detectFlow(rects) {
-  let horizontal = false;
-  let vertical = false;
+  let horizontal = false
+  let vertical = false
 
-  const threshold = 5;
+  const threshold = 5
   for (let i = 1; i < rects.length; i++) {
-      let prevRect = rects[i - 1];
-      let currentRect = rects[i];
+    let prevRect = rects[i - 1]
+    let currentRect = rects[i]
 
-      let xChange = Math.abs(currentRect.x - prevRect.x);
-      let yChange = Math.abs(currentRect.y - prevRect.y);
+    let xChange = Math.abs(currentRect.x - prevRect.x)
+    let yChange = Math.abs(currentRect.y - prevRect.y)
 
-      // Check for horizontal flow: significant x change with minimal y change
-      if (xChange > threshold && yChange < threshold) {
-          horizontal = true;
-      }
-      if (yChange > threshold) {
-          vertical = true;
-      }
+    // Check for horizontal flow: significant x change with minimal y change
+    if (xChange > threshold && yChange < threshold) {
+      horizontal = true
+    }
+    if (yChange > threshold) {
+      vertical = true
+    }
   }
 
   if (horizontal && vertical) {
-    return 'both'
+    return "both"
   } else if (horizontal) {
-    return 'horizontal'
+    return "horizontal"
   } else {
-    return 'vertical';
+    return "vertical"
   }
 }
 
@@ -69,7 +68,7 @@ export function getDragDirection(element: Element): DragDirection {
   }
 
   let rects = Array.from(parentEl.children).map((child) => child.getBoundingClientRect())
-  return detectFlow(rects);
+  return detectFlow(rects)
 }
 
 let relativeWrapperRect: DOMRect
