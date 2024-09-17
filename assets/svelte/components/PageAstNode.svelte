@@ -4,7 +4,6 @@
     slotTargetElement,
     highlightedAstElement,
     isAstElement,
-    selectedElementMenu,
     setSelection,
     setSelectedDom,
   } from "$lib/stores/page"
@@ -76,7 +75,6 @@
     setSelection(nodeId)
     setSelectedDom(currentTarget)
     initSelectedElementDragMenuPosition(currentTarget)
-    // tick().then(() => updateSelectedElementMenu())
   }
 
   function handleContentEdited({ target }: Event) {
@@ -135,20 +133,6 @@
       },
     }
   }
-
-  let selectedElementStyle = ""
-  $: {
-    if (isSelectedNode && $selectedElementMenu && $selectedElementMenu.mouseMovement) {
-      let { x, y } = mouseDiff($selectedElementMenu.mouseMovement)
-      if ($selectedElementMenu.dragDirection === "vertical") {
-        selectedElementStyle = `transform: translateY(${y}px);`
-      } else {
-        selectedElementStyle = `transform: translateX(${x}px);`
-      }
-    } else {
-      selectedElementStyle = ""
-    }
-  }
 </script>
 
 {#if isAstElement(node)}
@@ -187,8 +171,7 @@
       on:mouseover|stopPropagation={handleMouseOver}
       on:mouseout|stopPropagation={handleMouseOut}
       on:click|preventDefault|stopPropagation={handleClick}
-      style={selectedElementStyle}
-    >
+      >
       {#if !node.attrs?.selfClose}
         {#each children as child, childIndex}
           <svelte:self node={child} nodeId="{nodeId}.{childIndex}" />

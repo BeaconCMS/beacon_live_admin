@@ -1,7 +1,7 @@
 <script lang="ts" context="module">
   import { get, writable, type Writable } from "svelte/store"
-  import { page, selectedAstElementId, selectedElementMenu, parentOfSelectedAstElement } from "$lib/stores/page"
-  import { getDragDirection, updateSelectedElementMenu, type Coords, type DragDirection } from "$lib/utils/drag-helpers"
+  import { page, selectedAstElementId, parentOfSelectedAstElement } from "$lib/stores/page"
+  import { getDragDirection, type Coords, type DragDirection } from "$lib/utils/drag-helpers"
   import { live } from "$lib/stores/live"
 
   export type LocationInfo = {
@@ -49,12 +49,9 @@
       .getElementById("ui-builder-app-container")
       .closest(".relative")
       .getBoundingClientRect()
-    let menu = get(selectedElementMenu)
-    let movX = menu?.dragDirection === "vertical" ? 0 : movement.x
-    let movY = menu?.dragDirection === "vertical" ? movement.y : 0
     currentHandleCoords = {
-      x: currentRect.x - relativeWrapperRect.x + movX + currentRect.width / 2 - 5,
-      y: currentRect.y - relativeWrapperRect.y + movY + currentRect.height + 5,
+      x: currentRect.x - relativeWrapperRect.x + movement.x + currentRect.width / 2 - 5,
+      y: currentRect.y - relativeWrapperRect.y + movement.y + currentRect.height + 5,
     }
   }
 </script>
@@ -64,8 +61,6 @@
 
   export let element: Element
   export let isParent = false // TODO: Not in use yet
-
-  selectedAstElementId.subscribe(() => updateSelectedElementMenu())
 
   let dragHandleElement: HTMLButtonElement
   $: canBeDragged = element?.parentElement?.children?.length > 1
@@ -383,7 +378,6 @@
     bind:this={dragHandleElement}
     on:mousedown={handleMousedown}
     class="rounded-full w-6 h-6 flex justify-center items-center absolute bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 active:bg-blue-800 transform"
-    class:pointer-events-none={$selectedElementMenu?.dragging}
     class:rotate-90={rotated}
     style={$dragHandleStyle}
   >
