@@ -1,6 +1,3 @@
-import { get } from "svelte/store"
-import { selectedDomElement, selectedElementMenu } from "$lib/stores/page"
-
 export interface Coords {
   x: number
   y: number
@@ -11,7 +8,7 @@ export interface CoordsDiff {
   current: Coords
 }
 
-export type DragDirection = "horizontal" | "vertical"
+export type DragDirection = "horizontal" | "vertical" | "both"
 
 export function elementCanBeDroppedInTarget(draggedComponentDefinition) {
   // return draggedComponentDefinition?.category === "basic";
@@ -22,6 +19,38 @@ export function mouseDiff(mouseMovement: CoordsDiff): Coords {
   return {
     x: mouseMovement.current.x - mouseMovement.start.x,
     y: mouseMovement.current.y - mouseMovement.start.y,
+  }
+}
+
+// Detects if elements flow generally in an horizontal direction, a vertical one or
+// both (e.g. they form a grid or overflow to the the next line)
+function detectFlow(rects) {
+  let horizontal = false
+  let vertical = false
+
+  const threshold = 5
+  for (let i = 1; i < rects.length; i++) {
+    let prevRect = rects[i - 1]
+    let currentRect = rects[i]
+
+    let xChange = Math.abs(currentRect.x - prevRect.x)
+    let yChange = Math.abs(currentRect.y - prevRect.y)
+
+    // Check for horizontal flow: significant x change with minimal y change
+    if (xChange > threshold && yChange < threshold) {
+      horizontal = true
+    }
+    if (yChange > threshold) {
+      vertical = true
+    }
+  }
+
+  if (horizontal && vertical) {
+    return "both"
+  } else if (horizontal) {
+    return "horizontal"
+  } else {
+    return "vertical"
   }
 }
 
@@ -39,16 +68,7 @@ export function getDragDirection(element: Element): DragDirection {
   }
 
   let rects = Array.from(parentEl.children).map((child) => child.getBoundingClientRect())
-  if (rects.length > 1) {
-    if (rects[rects.length - 1].y - rects[0].y) {
-      return "vertical"
-    }
-    if (rects[rects.length - 1].x - rects[0].x) {
-      return "horizontal"
-    }
-  }
-  let flexDirection = window.getComputedStyle(parentEl).flexDirection
-  return ["row", "row-reverse"].includes(flexDirection) ? "horizontal" : "vertical"
+  return detectFlow(rects)
 }
 
 let relativeWrapperRect: DOMRect
@@ -66,39 +86,4 @@ export function getElementCoords(element: Element): Coords {
     y: elementRect.y - relativeWrapperRect.y,
   }
   return currentCoords
-}
-
-export function updateSelectedElementMenu(mouseMovement = null) {
-  let selectedEl = get(selectedDomElement)
-
-  if (!selectedEl) {
-    selectedElementMenu.set(null)
-    return
-  }
-
-  let dragDirection = getDragDirection(selectedEl)
-  let currentCoords = getElementCoords(selectedEl)
-  let selectedElRect = selectedEl.getBoundingClientRect()
-  let menu = get(selectedElementMenu)
-  let elementCoords: CoordsDiff =
-    menu && mouseMovement ? menu.elementCoords : { start: currentCoords, current: currentCoords }
-  let insertBefore = menu?.insertBefore || null
-  let top = elementCoords.current.y + selectedElRect.height + 5
-  let left = elementCoords.current.x + selectedElRect.width / 2 - 12
-  if (mouseMovement) {
-    top = dragDirection === "horizontal" ? top : mouseMovement.current.y - relativeWrapperRect.y - 12
-    left = dragDirection === "vertical" ? left : mouseMovement.current.x - relativeWrapperRect.x - 12
-  }
-  if (!mouseMovement) {
-    // console.log('setting selectedElementMenu to ', { top, left, elementCoords, dragDirection, dragging: !!mouseMovement, mouseMovement });
-  }
-  selectedElementMenu.set({
-    top,
-    left,
-    elementCoords,
-    dragDirection,
-    dragging: !!mouseMovement,
-    mouseMovement,
-    insertBefore,
-  })
 }
