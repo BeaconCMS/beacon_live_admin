@@ -24,10 +24,11 @@
   $: isEditable =
     isSelectedNode &&
     isAstElement(node) &&
-    Array.isArray(node.content) && 
+    Array.isArray(node.content) &&
     node.content.filter((e) => typeof e === "string").length === 1 &&
     !node.attrs?.selfClose
-  $: isParentOfSelectedNode = (isAstElement(node) && Array.isArray(node.content)) ? node.content.includes($selectedAstElement) : false
+  $: isParentOfSelectedNode =
+    isAstElement(node) && Array.isArray(node.content) ? node.content.includes($selectedAstElement) : false
 
   let children
   $: {
