@@ -2,7 +2,7 @@
   import { createEventDispatcher } from "svelte"
   import type { AstElement, AstNode } from "$lib/types"
   import { highlightedAstElement, findAstElementId, selectedAstElementId, isAstElement } from "$lib/stores/page"
-  import CodeEditor from "./CodeEditor.svelte"
+  // import CodeEditor from "./CodeEditor.svelte"
 
   const dispatch = createEventDispatcher()
   export let value: string | null = ""

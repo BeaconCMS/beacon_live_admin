@@ -232,11 +232,11 @@
         </div>
       {/if}
       {#if $selectedAstElement.tag === "eex_block"}
-        <SidebarSection on:update={updateArg} value={$selectedAstElement.arg} large={true}>
+        <SidebarSection on:update={updateArg} value={$selectedAstElement.arg} large={true} disableDelete={true}>
           <svelte:fragment slot="heading">Block argument</svelte:fragment>
           <svelte:fragment slot="input"></svelte:fragment>
         </SidebarSection>
-        <SidebarSection>
+        <SidebarSection disableDelete={true}>
           <svelte:fragment slot="heading">Block content</svelte:fragment>
           <svelte:fragment slot="input">
             <p>The content of eex blocks can't be edited from the visual editor yet. Please use the code editor.</p>
