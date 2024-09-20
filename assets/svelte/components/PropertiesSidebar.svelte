@@ -196,7 +196,6 @@
         {#each editableAttrs as entry (entry)}
           {@const [name, value] = entry}
           <SidebarSection
-            clearOnUpdate={true}
             {value}
             on:delete={() => deleteAttribute(name)}
             on:textChange={(e) => updateAttribute(name, e)}
