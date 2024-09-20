@@ -91,25 +91,25 @@ export function getElementCoords(element: Element): Coords {
 }
 
 export function getBoundingRect(el: Element): LocationInfo {
-  if (window.getComputedStyle(el).display === 'contents') {
+  if (window.getComputedStyle(el).display === "contents") {
     if (el.children.length === 1) {
-      return el.children[0].getBoundingClientRect();
+      return el.children[0].getBoundingClientRect()
     }
-    const rects = Array.from(el.children).map(e => e.getBoundingClientRect())
-    let top = Math.min(...rects.map(r => r.top));
-    let bottom = Math.max(...rects.map(r => r.bottom));
-    let left = Math.min(...rects.map(r => r.left));
-    let right = Math.max(...rects.map(r => r.right));
+    const rects = Array.from(el.children).map((e) => e.getBoundingClientRect())
+    let top = Math.min(...rects.map((r) => r.top))
+    let bottom = Math.max(...rects.map((r) => r.bottom))
+    let left = Math.min(...rects.map((r) => r.left))
+    let right = Math.max(...rects.map((r) => r.right))
     return {
-      x: Math.min(...rects.map(r => r.x)),
-      y: Math.min(...rects.map(r => r.y)),
+      x: Math.min(...rects.map((r) => r.x)),
+      y: Math.min(...rects.map((r) => r.y)),
       top,
       right,
       bottom,
-      left,     
+      left,
       width: right - left,
-      height: bottom - top
+      height: bottom - top,
     }
   }
-  return el.getBoundingClientRect();  
+  return el.getBoundingClientRect()
 }

@@ -4,7 +4,7 @@
   import { getBoundingRect, getDragDirection, type Coords, type DragDirection } from "$lib/utils/drag-helpers"
   import { live } from "$lib/stores/live"
 
-  export type LocationInfo = Omit<DOMRect, 'toJSON'>
+  export type LocationInfo = Omit<DOMRect, "toJSON">
 
   interface DragInfo {
     parentElementClone: Element
@@ -21,7 +21,7 @@
   export function initSelectedElementDragMenuPosition(selectedDomEl, mouseDiff?: Coords) {
     let rect = dragElementInfo
       ? dragElementInfo.siblingLocationInfos[dragElementInfo.selectedIndex]
-      : getBoundingRect(selectedDomEl);
+      : getBoundingRect(selectedDomEl)
     updateHandleCoords(rect, mouseDiff)
     let styles = []
     if (currentHandleCoords?.y) {
@@ -82,7 +82,7 @@
           top,
           right,
           bottom,
-          left
+          left,
         }
       }),
     }
@@ -92,7 +92,7 @@
 
   let mouseDownEvent: MouseEvent
   async function handleMousedown(e: MouseEvent) {
-    $isDragging = true;
+    $isDragging = true
     mouseDownEvent = e
     document.addEventListener("mousemove", handleMousemove)
     document.addEventListener("mouseup", handleMouseup)
@@ -132,7 +132,7 @@
     }
     mouseDownEvent = null
     await tick()
-    $isDragging = false;
+    $isDragging = false
     resetDragElementHandle()
     placeholderStyle = null
   }
@@ -337,7 +337,9 @@
 
   function applyTranslate(el: Element, direction: "vertical" | "horizontal", amount: number) {
     if (window.getComputedStyle(el).display === "contents") {
-      Array.from(el.children).forEach(child => child.style.transform = `${direction === "vertical" ? "translateY" : "translateX"}(${amount}px)`)
+      Array.from(el.children).forEach(
+        (child) => (child.style.transform = `${direction === "vertical" ? "translateY" : "translateX"}(${amount}px)`),
+      )
     } else {
       el.style.transform = `${direction === "vertical" ? "translateY" : "translateX"}(${amount}px)`
     }
