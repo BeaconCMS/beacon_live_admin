@@ -1,24 +1,23 @@
 <script lang="ts">
   import { selectedAstElement } from "$lib/stores/page"
-  import DragMenuOption from "./SelectedElementFloatingMenu/DragMenuOption.svelte"
+  import DragMenuOption, { isDragging } from "./SelectedElementFloatingMenu/DragMenuOption.svelte"
   import { selectedAstElementId, selectedDomElement, resetSelection } from "$lib/stores/page"
   import { deleteAstNode } from "$lib/utils/ast-manipulation"
+  import { getBoundingRect } from "$lib/utils/drag-helpers"
 
   let menuDOMElement: HTMLElement
   let menuPosition: { x: number; y: number; width: number; height: number }
 
   // Only show menu when visible (it gets hidden while dragging)
-  $: showMenu = !!$selectedDomElement && $selectedDomElement.checkVisibility()
-
+  $: showMenu = !!$selectedDomElement && !$isDragging
   $: menuPosition = (() => {
     if (!(showMenu && document && menuDOMElement && $selectedDomElement)) {
       return { x: 0, y: 0, width: 0, height: 0 }
     }
 
     // Get the closest relative positioned parent to define absolute position
-    let relativeWrapperRect = menuDOMElement.closest(".relative").getBoundingClientRect()
-    let currentRect = $selectedDomElement.getBoundingClientRect()
-
+    let relativeWrapperRect = getBoundingRect(menuDOMElement.closest(".relative"))
+    let currentRect = getBoundingRect($selectedDomElement)
     return {
       x: currentRect.x - relativeWrapperRect.x,
       y: currentRect.y - relativeWrapperRect.y,

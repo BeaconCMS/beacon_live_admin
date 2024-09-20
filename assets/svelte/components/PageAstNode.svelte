@@ -149,6 +149,7 @@
       bind:this={htmlWrapper}
       class:contents={htmlWrapperHasMultipleElements}
       class:embedded-iframe={htmlWrapperHasIframe}
+      data-selected={isSelectedNode}
       on:mouseover|stopPropagation={handleMouseOver}
       on:mouseout|stopPropagation={handleMouseOut}
       on:click|preventDefault|stopPropagation={handleClick}
