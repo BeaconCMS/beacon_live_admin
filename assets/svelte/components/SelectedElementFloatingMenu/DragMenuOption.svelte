@@ -1,38 +1,27 @@
 <script lang="ts" context="module">
-  import { get, writable, type Writable } from "svelte/store"
+  import { writable, type Writable } from "svelte/store"
   import { page, selectedAstElementId, parentOfSelectedAstElement } from "$lib/stores/page"
-  import { getDragDirection, type Coords, type DragDirection } from "$lib/utils/drag-helpers"
+  import { getBoundingRect, getDragDirection, type Coords, type DragDirection } from "$lib/utils/drag-helpers"
   import { live } from "$lib/stores/live"
 
-  export type LocationInfo = {
-    x: number
-    y: number
-    width: number
-    height: number
-    top: number
-    right: number
-    bottom: number
-    left: number
-    marginTop: number
-    marginBottom: number
-    marginLeft: number
-    marginRight: number
-  }
+  export type LocationInfo = Omit<DOMRect, 'toJSON'>
+
   interface DragInfo {
     parentElementClone: Element
     selectedIndex: number
-    siblingLocationInfos: LocationInfo[]
+    siblingLocationInfos: LocationInfo[] // LocationInfo[]
   }
 
   let currentHandleCoords: Coords
   let relativeWrapperRect: DOMRect
-  let dragHandleStyle: Writable<string> = writable("")
+  const dragHandleStyle: Writable<string> = writable("")
+  export const isDragging: Writable<boolean> = writable(false)
   let dragElementInfo: DragInfo
 
   export function initSelectedElementDragMenuPosition(selectedDomEl, mouseDiff?: Coords) {
     let rect = dragElementInfo
       ? dragElementInfo.siblingLocationInfos[dragElementInfo.selectedIndex]
-      : selectedDomEl.getBoundingClientRect()
+      : getBoundingRect(selectedDomEl);
     updateHandleCoords(rect, mouseDiff)
     let styles = []
     if (currentHandleCoords?.y) {
@@ -44,7 +33,7 @@
     dragHandleStyle.set(styles.join(";"))
   }
 
-  function updateHandleCoords(currentRect: DOMRect, movement: Coords = { x: 0, y: 0 }) {
+  function updateHandleCoords(currentRect: LocationInfo, movement: Coords = { x: 0, y: 0 }) {
     relativeWrapperRect = document
       .getElementById("ui-builder-app-container")
       .closest(".relative")
@@ -84,8 +73,7 @@
       parentElementClone: el,
       selectedIndex,
       siblingLocationInfos: siblings.map((el, i) => {
-        let { x, y, width, height, top, right, bottom, left } = el.getBoundingClientRect()
-        let computedStyles = window.getComputedStyle(el)
+        let { x, y, width, height, top, right, bottom, left } = getBoundingRect(el)
         return {
           x,
           y,
@@ -94,11 +82,7 @@
           top,
           right,
           bottom,
-          left,
-          marginTop: parseFloat(computedStyles.marginTop),
-          marginBottom: parseFloat(computedStyles.marginBottom),
-          marginLeft: parseFloat(computedStyles.marginLeft),
-          marginRight: parseFloat(computedStyles.marginRight),
+          left
         }
       }),
     }
@@ -108,6 +92,7 @@
 
   let mouseDownEvent: MouseEvent
   async function handleMousedown(e: MouseEvent) {
+    $isDragging = true;
     mouseDownEvent = e
     document.addEventListener("mousemove", handleMousemove)
     document.addEventListener("mouseup", handleMouseup)
@@ -147,6 +132,7 @@
     }
     mouseDownEvent = null
     await tick()
+    $isDragging = false;
     resetDragElementHandle()
     placeholderStyle = null
   }
@@ -349,6 +335,14 @@
     }
   }
 
+  function applyTranslate(el: Element, direction: "vertical" | "horizontal", amount: number) {
+    if (window.getComputedStyle(el).display === "contents") {
+      Array.from(el.children).forEach(child => child.style.transform = `${direction === "vertical" ? "translateY" : "translateX"}(${amount}px)`)
+    } else {
+      el.style.transform = `${direction === "vertical" ? "translateY" : "translateX"}(${amount}px)`
+    }
+  }
+
   function handleMousemove(e: MouseEvent) {
     let ghostElement = getGhostElement()
     let dragDirection = getDragDirection(ghostElement)
@@ -360,10 +354,10 @@
       // Only the drag handle can use CSS variables because it has the `transform` tailwind class
       // CSS variables allow to control translate and rotate independently.
       dragHandleElement.style.setProperty("--tw-translate-y", `${mouseDiff.y}px`)
-      ghostElement.style.transform = `translateY(${mouseDiff.y}px)`
+      applyTranslate(ghostElement, "vertical", mouseDiff.y)
     } else {
       dragHandleElement.style.setProperty("--tw-translate-x", `${mouseDiff.x}px`)
-      ghostElement.style.transform = `translateX(${mouseDiff.x}px)`
+      applyTranslate(ghostElement, "horizontal", mouseDiff.x)
     }
 
     updateSiblingsPositioning(dragDirection, mouseDiff, e)
