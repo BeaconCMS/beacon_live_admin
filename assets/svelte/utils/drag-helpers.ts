@@ -113,3 +113,79 @@ export function getBoundingRect(el: Element): LocationInfo {
   }
   return el.getBoundingClientRect()
 }
+
+// Finds the hovered element using a very common algorithm for this:
+// First, it checks that element has the most overlap with the element being dragged. That one wins
+// If there is a tie (which can happen when the element being dragged is bigger and completely overlaps
+// more than one element), this picks the one whose center is closest to the center of the dragged element.
+export function findHoveredSiblingIndex(
+  dragDirection: DragDirection,
+  mouseDiff: Coords,
+  siblingRects: LocationInfo[],
+  selectedIndex: number,
+): number {
+  const currentRect = offsetRect(siblingRects[selectedIndex], mouseDiff)
+  let bestMatchIndex = selectedIndex
+  let bestOverlapScore = 0
+  for (let i = 0; i < siblingRects.length; i++) {
+    if (i !== selectedIndex) {
+      const rect = siblingRects[i]
+      const overlap = calculateOverlap(rect, currentRect, dragDirection)
+      if (overlap === 0) {
+        continue
+      }
+      // The item with the biggest overlap wins
+      if (overlap > bestOverlapScore) {
+        bestOverlapScore = overlap
+        bestMatchIndex = i
+        continue
+      }
+      // In case there's a tie, the one whose center is closest to the center of the dragged element
+      if (overlap === bestOverlapScore) {
+        let currentMatch = siblingRects[bestMatchIndex]
+        if (calculateCenterDistance(rect, currentMatch) < calculateCenterDistance(currentRect, currentMatch)) {
+          bestMatchIndex = i
+        }
+      }
+    }
+  }
+  return bestMatchIndex
+}
+
+function calculateOverlap(rect: LocationInfo, draggedRect: LocationInfo, dragDirection: DragDirection): number {
+  if (dragDirection === "horizontal") {
+    const xOverlap = Math.max(0, Math.min(rect.right, draggedRect.right) - Math.max(rect.left, draggedRect.left))
+    return (100 * xOverlap) / Math.min(rect.width, draggedRect.width)
+  } else if (dragDirection === "vertical") {
+    const yOverlap = Math.max(0, Math.min(rect.bottom, draggedRect.bottom) - Math.max(rect.top, draggedRect.top))
+    return (100 * yOverlap) / Math.min(rect.height, draggedRect.height)
+  } else {
+    alert("Bidirational drag not supported yet")
+  }
+}
+
+function calculateCenterDistance(rect1: LocationInfo, rect2: LocationInfo): number {
+  return calculateDistance(calculateCenter(rect1), calculateCenter(rect2))
+}
+
+function calculateCenter(rect: LocationInfo): Coords {
+  return {
+    x: rect.left + rect.width / 2,
+    y: rect.top + rect.height / 2,
+  }
+}
+
+function calculateDistance(point1: Coords, point2: Coords): number {
+  return Math.sqrt(Math.pow(point1.x - point2.x, 2) + Math.pow(point1.y - point2.y, 2))
+}
+
+function offsetRect(rect: LocationInfo, mouseDiff: Coords): LocationInfo {
+  const newRect = { ...rect }
+  newRect.x += mouseDiff.x
+  newRect.left += mouseDiff.x
+  newRect.right += mouseDiff.x
+  newRect.y += mouseDiff.y
+  newRect.top += mouseDiff.y
+  newRect.bottom += mouseDiff.y
+  return newRect
+}

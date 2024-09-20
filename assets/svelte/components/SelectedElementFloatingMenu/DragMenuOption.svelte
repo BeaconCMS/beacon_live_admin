@@ -1,7 +1,13 @@
 <script lang="ts" context="module">
   import { writable, type Writable } from "svelte/store"
   import { page, selectedAstElementId, parentOfSelectedAstElement } from "$lib/stores/page"
-  import { getBoundingRect, getDragDirection, type Coords, type DragDirection } from "$lib/utils/drag-helpers"
+  import {
+    findHoveredSiblingIndex,
+    getBoundingRect,
+    getDragDirection,
+    type Coords,
+    type DragDirection,
+  } from "$lib/utils/drag-helpers"
   import { live } from "$lib/stores/live"
 
   export type LocationInfo = Omit<DOMRect, "toJSON">
@@ -141,38 +147,17 @@
     return dragElementInfo.parentElementClone.children.item(dragElementInfo.selectedIndex)
   }
 
-  // Considers that the dragged element is hovering another one if their overlap is more than 50%.
-  function findHoveredSiblingIndex(dragDirection: DragDirection, mouseDiff: Coords, e: MouseEvent) {
-    const draggedElementInfo = dragElementInfo.siblingLocationInfos[dragElementInfo.selectedIndex]
-    if (dragDirection === "vertical") {
-      const { top, y, bottom, ...rest } = draggedElementInfo
-      const draggedRect = { ...rest, y: y + mouseDiff.y, top: top + mouseDiff.y, bottom: bottom + mouseDiff.y }
-      return dragElementInfo.siblingLocationInfos.findIndex((rect, index) => {
-        if (index !== dragElementInfo.selectedIndex) {
-          const overlap = Math.max(0, Math.min(draggedRect.bottom, rect.bottom) - Math.max(draggedRect.top, rect.top))
-          const overlapRatio = overlap / Math.min(draggedRect.height, rect.height)
-          return overlapRatio > 0.5
-        }
-      })
-    } else {
-      const { left, x, right, ...rest } = draggedElementInfo
-      const draggedRect = { ...rest, x: x + mouseDiff.x, left: left + mouseDiff.x, right: right + mouseDiff.x }
-      return dragElementInfo.siblingLocationInfos.findIndex((rect, index) => {
-        if (index !== dragElementInfo.selectedIndex) {
-          const overlap = Math.max(0, Math.min(draggedRect.right, rect.right) - Math.max(draggedRect.left, rect.left))
-          const overlapRatio = overlap / Math.min(draggedRect.width, rect.width)
-          return overlapRatio > 0.5
-        }
-      })
-    }
-  }
-
   function findSwappedIndexes(
     dragDirection: DragDirection,
     mouseDiff: Coords,
     e: MouseEvent,
   ): { currentIndex: number; destinationIndex: number } {
-    let hoveredElementIndex = findHoveredSiblingIndex(dragDirection, mouseDiff, e)
+    let hoveredElementIndex = findHoveredSiblingIndex(
+      dragDirection,
+      mouseDiff,
+      dragElementInfo.siblingLocationInfos,
+      dragElementInfo.selectedIndex,
+    )
     if (hoveredElementIndex === -1) {
       return {
         currentIndex: dragElementInfo.selectedIndex,
