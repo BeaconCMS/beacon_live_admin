@@ -232,7 +232,7 @@
         </div>
       {/if}
       {#if $selectedAstElement.tag === "eex_block"}
-        <SidebarSection on:update={updateArg} value={$selectedAstElement.arg} large={true} disableDelete={true}>
+        <SidebarSection on:update={updateArg} disabled={true} value={$selectedAstElement.arg} large={true} disableDelete={true}>
           <svelte:fragment slot="heading">Block argument</svelte:fragment>
           <svelte:fragment slot="input"></svelte:fragment>
         </SidebarSection>

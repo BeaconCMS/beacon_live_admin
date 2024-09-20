@@ -12,6 +12,7 @@
   export let placeholder: string = ""
   export let large: boolean = false
   export let disableDelete: boolean = false
+  export let disabled: boolean = false
   $: astElements = (astNodes || []).filter(isAstElement)
 
   function highlightAstElement(astElement: AstElement) {
@@ -129,6 +130,7 @@
             class="w-full py-1 px-2 bg-slate-100 border-slate-100 rounded-md leading-6 text-sm"
             {placeholder}
             value={internalValue}
+            {disabled}
             on:keydown={handleKeydown}
             on:change={handleTextChange}
           ></textarea>
