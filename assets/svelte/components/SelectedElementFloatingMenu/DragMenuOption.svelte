@@ -1,7 +1,13 @@
 <script lang="ts" context="module">
   import { writable, type Writable } from "svelte/store"
   import { page, selectedAstElementId, parentOfSelectedAstElement } from "$lib/stores/page"
-  import { findHoveredSiblingIndex, getBoundingRect, getDragDirection, type Coords, type DragDirection } from "$lib/utils/drag-helpers"
+  import {
+    findHoveredSiblingIndex,
+    getBoundingRect,
+    getDragDirection,
+    type Coords,
+    type DragDirection,
+  } from "$lib/utils/drag-helpers"
   import { live } from "$lib/stores/live"
 
   export type LocationInfo = Omit<DOMRect, "toJSON">
@@ -146,7 +152,12 @@
     mouseDiff: Coords,
     e: MouseEvent,
   ): { currentIndex: number; destinationIndex: number } {
-    let hoveredElementIndex = findHoveredSiblingIndex(dragDirection, mouseDiff, dragElementInfo.siblingLocationInfos, dragElementInfo.selectedIndex)
+    let hoveredElementIndex = findHoveredSiblingIndex(
+      dragDirection,
+      mouseDiff,
+      dragElementInfo.siblingLocationInfos,
+      dragElementInfo.selectedIndex,
+    )
     if (hoveredElementIndex === -1) {
       return {
         currentIndex: dragElementInfo.selectedIndex,
