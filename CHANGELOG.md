@@ -3,6 +3,7 @@
 ## 0.1.0-dev
 
 ### Breaking Changes
+  * Require minimum Elixir v1.14
   * Require minimum Gettext v0.26 to use the new backend module
 
 ### Fixes
