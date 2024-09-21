@@ -96,7 +96,7 @@ defmodule Beacon.LiveAdmin.MixProject do
         {:beacon, github: "BeaconCMS/beacon", runtime: false}
 
       :else ->
-        {:beacon, "~> 0.1.0-rc.1", runtime: false}
+        {:beacon, ">= 0.0.0 and < 1.0.0", runtime: false}
     end
   end
 
