@@ -86,6 +86,7 @@ jobs:
     name: "quality: OTP ${{matrix.otp}} | Elixir ${{matrix.elixir}} | Phoenix ${{matrix.phoenix-version}} | LiveView ${{matrix.phoenix-live-view-version}}"
 
     strategy:
+      fail-fast: false
       matrix:
         include:
           # latest
