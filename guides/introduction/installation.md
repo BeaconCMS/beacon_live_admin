@@ -4,7 +4,7 @@ Beacon LiveAdmin is a Phoenix LiveView application to manage running sites, allo
 
 It runs as a library in your Phoenix LiveView application, either in a new or an existing application.
 
-Beacon LiveAdmin can be [installed along with Beacon](https://github.com/BeaconCMS/beacon/blob/main/guides/installation.md) in the same application/node or in a separated application/node if you need to isolate it for performance or security reasons.
+Beacon LiveAdmin can be [installed along with Beacon](https://github.com/BeaconCMS/beacon/blob/main/guides/introduction/installation.md) in the same application/node or in a separated application/node if you need to isolate it for performance or security reasons.
 
 It will find all running sites in the cluster as long as the nodes are connected to each other, which can be achieved with libs like [libcluster](https://hex.pm/packages/libcluster) or [dns_cluster](https://hex.pm/packages/dns_cluster).
 
