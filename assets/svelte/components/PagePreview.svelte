@@ -4,7 +4,7 @@
   import { selectedAstElementId } from "$lib/stores/page"
   import { currentComponentCategory } from "$lib/stores/currentComponentCategory"
   import { page, slotTargetElement } from "$lib/stores/page"
-  import { draggedObject, resetDrag } from "$lib/stores/dragAndDrop"
+  import { draggedComponentDefinition, resetDrag } from "$lib/stores/dragAndDrop"
   import { live } from "$lib/stores/live"
   import { elementCanBeDroppedInTarget } from "$lib/utils/drag-helpers"
 
@@ -13,15 +13,10 @@
   async function handleDragDrop(e: DragEvent) {
     let { target } = e
     $currentComponentCategory = null
-    if (!$draggedObject) return
-    let draggedObj = $draggedObject
-    if (elementCanBeDroppedInTarget(draggedObj)) {
-      if (
-        !(target instanceof HTMLElement) ||
-        target.id === "fake-browser-content" ||
-        !$slotTargetElement ||
-        $slotTargetElement.attrs.selfClose
-      ) {
+    if (!$draggedComponentDefinition) return
+    let draggedObj = $draggedComponentDefinition
+    if (target.id !== "fake-browser-content" && elementCanBeDroppedInTarget(draggedObj)) {
+      if (!(target instanceof HTMLElement) || !$slotTargetElement || $slotTargetElement.attrs.selfClose) {
         resetDragDrop()
         return
       }
@@ -41,9 +36,9 @@
   }
 
   async function addBasicComponentToTarget(astElement: AstElement) {
-    if (!$draggedObject) return
-    let componentDefinition = $draggedObject
-    $draggedObject = null
+    if (!$draggedComponentDefinition) return
+    let componentDefinition = $draggedComponentDefinition
+    $draggedComponentDefinition = null
     let targetNode = astElement
     $live.pushEvent(
       "render_component_in_page",
@@ -88,11 +83,6 @@
 </div>
 
 <style>
-  /* :global([data-selected="true"], [data-highlighted="true"]) {
-    outline-color: #06b6d4;
-    outline-width: 2px;
-    outline-style: dashed;
-  } */
   :global(.contents[data-nochildren="true"], .contents[data-nochildren="true"]) {
     /* In the specific case of an element containing only an EEX expression that generates no children (only a text node),
     there is no child node to which apply the styles, so we have to apply them to the wrapper, so we have to overwrite the

@@ -18,10 +18,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
     socket =
       Table.handle_params(socket, params, &Content.count_pages(&1.site, query: params["query"]))
 
-    %{site: site} = socket.assigns.beacon_page
-
-    %{per_page: per_page, current_page: page, query: query, sort_by: sort_by} =
-      socket.assigns.beacon_page.table
+    %{site: site, table: %{per_page: per_page, current_page: page, query: query, sort_by: sort_by}} = socket.assigns.beacon_page
 
     pages =
       list_pages(site,

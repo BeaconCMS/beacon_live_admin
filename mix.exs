@@ -1,7 +1,7 @@
 defmodule Beacon.LiveAdmin.MixProject do
   use Mix.Project
 
-  @version "0.1.0-rc.1"
+  @version "0.1.0-dev"
   @dev? String.ends_with?(@version, "-dev")
   @source_url "https://github.com/BeaconCMS/beacon_live_admin"
   @homepage_url "https://beaconcms.org"
@@ -10,7 +10,7 @@ defmodule Beacon.LiveAdmin.MixProject do
     [
       app: :beacon_live_admin,
       version: @version,
-      elixir: "~> 1.13",
+      elixir: "~> 1.14",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       name: "Beacon LiveAdmin",
@@ -64,7 +64,7 @@ defmodule Beacon.LiveAdmin.MixProject do
       {:live_svelte, "~> 0.12"},
       {:floki, ">= 0.30.0"},
       {:tailwind, "~> 0.2"},
-      {:gettext, "~> 0.20"},
+      {:gettext, "~> 0.26"},
       {:jason, "~> 1.0"},
       {:live_monaco_editor, "~> 0.1"},
 
@@ -96,7 +96,7 @@ defmodule Beacon.LiveAdmin.MixProject do
         {:beacon, github: "BeaconCMS/beacon", runtime: false}
 
       :else ->
-        {:beacon, "~> 0.1.0-rc.1", runtime: false}
+        {:beacon, ">= 0.0.0 and < 1.0.0", runtime: false}
     end
   end
 

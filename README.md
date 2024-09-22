@@ -9,7 +9,7 @@ Pre-release version. You can expect incomplete features and breaking changes bef
 ## Minimum Requirements
 
 - Erlang/OTP v25.1
-- Elixir v1.13.4
+- Elixir v1.14
 
 ## Local Development
 

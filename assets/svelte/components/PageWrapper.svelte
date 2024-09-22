@@ -29,7 +29,7 @@
     window.reloadStylesheet = reloadStylesheet
     reloadStylesheet()
   })
-  page.subscribe(async ({ ast }) => {
+  page.subscribe(async () => {
     await tick()
     window.reloadStylesheet && window.reloadStylesheet()
   })
@@ -45,15 +45,29 @@
 <div bind:this={wrapper} on:click={preventLinkNavigation}>
   {#each $page.layout.ast as layoutAstNode}
     <LayoutAstNode node={layoutAstNode}>
-      {#each $page.ast as astNode, index}
-        <PageAstNode node={astNode} nodeId={String(index)} />
-      {/each}
+      <!-- This seemingly useless wrapper is here just so we are sure that the layout and the page don't share the same parent, which screws the position calculations -->
+      <div class="contents">
+        {#each $page.ast as astNode, index}
+          <PageAstNode node={astNode} nodeId={String(index)} />
+        {/each}
+      </div>
     </LayoutAstNode>
   {/each}
 </div>
 
 <style>
-  :global([data-selected="true"], [data-highlighted="true"]) {
+  :global([data-selected="true"]) {
+    outline-color: #06b6d4;
+    outline-width: 1px;
+    outline-style: solid;
+  }
+  :global([data-selected="true"].contents > *) {
+    outline-color: #06b6d4;
+    outline-width: 1px;
+    outline-style: solid;
+  }
+  /* TODO: Apply this styles to [data-selected-parent="true"] once dragging of the parent element is allowed */
+  :global([data-highlighted="true"]) {
     outline-color: #06b6d4;
     outline-width: 2px;
     outline-style: dashed;

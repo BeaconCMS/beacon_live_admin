@@ -19,7 +19,7 @@ Application.put_env(:beacon_live_admin, DemoWeb.Endpoint,
   check_origin: false,
   pubsub_server: Demo.PubSub,
   watchers: [
-    tailwind: {Tailwind, :install_and_run, [:default, ~w(--watch)]},
+    tailwind: {Tailwind, :install_and_run, [:beacon_live_admin, ~w(--watch)]},
     node: ["build.js", "--watch", cd: Path.expand("./assets", __DIR__)]
   ],
   live_reload: [
