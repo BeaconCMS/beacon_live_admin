@@ -153,7 +153,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Revisions do
           <.variants_table variants={variants(@event.snapshot.page)} event_id={@event.id} />
         </li>
         <li>
-          <h4 class="text-gray-600">Event Handlers</h4>
+          <h4 class="text-gray-600">Events</h4>
           <.event_handlers_table event_handlers={event_handlers(@event.snapshot.page)} event_id={@event.id} />
         </li>
       </ol>

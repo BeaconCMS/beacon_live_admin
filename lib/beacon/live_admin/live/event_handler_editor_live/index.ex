@@ -4,14 +4,14 @@ defmodule Beacon.LiveAdmin.EventHandlerEditorLive.Index do
 
   alias Beacon.LiveAdmin.Content
 
-  def menu_link(_, :index), do: {:root, "Event Handlers"}
+  def menu_link(_, :index), do: {:root, "Events"}
 
   def handle_params(params, _uri, socket) do
     %{beacon_page: %{site: site}} = socket.assigns
 
     socket =
       socket
-      |> assign(page_title: "Event Handlers")
+      |> assign(page_title: "Events")
       |> assign(unsaved_changes: false)
       |> assign(show_create_modal: false)
       |> assign(show_nav_modal: false)

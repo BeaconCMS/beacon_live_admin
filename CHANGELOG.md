@@ -25,7 +25,7 @@
 ## 0.1.0-rc.1 (2024-08-27)
 
 ### Enhancements
-- [Event Handler] Added Event Handlers ([#195](https://github.com/BeaconCMS/beacon_live_admin/pull/195))
+- [Event Handler] Added Events (handle_event callbacks) ([#195](https://github.com/BeaconCMS/beacon_live_admin/pull/195))
 - [Visual Editor] Allow to reorder an element among its siblings with drag and drop ([#174](https://github.com/BeaconCMS/beacon_live_admin/pull/174))
 
 ### Fixes
