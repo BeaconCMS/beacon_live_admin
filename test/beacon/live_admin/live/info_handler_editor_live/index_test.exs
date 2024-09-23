@@ -5,6 +5,7 @@ defmodule Beacon.LiveAdmin.InfoHandlerEditorLive.IndexTest do
   setup do
     attrs = %{msg: "{:validate_msg, msg}"}
     info_handler = info_handler_fixture(node1(), attrs)
+
     attrs = %{
       msg: "{:assign_email, email}",
       code: ~S"""
@@ -15,6 +16,7 @@ defmodule Beacon.LiveAdmin.InfoHandlerEditorLive.IndexTest do
       {:noreply, socket}
       """
     }
+
     info_handler_fixture(node1(), attrs)
 
     on_exit(fn ->
@@ -42,7 +44,8 @@ defmodule Beacon.LiveAdmin.InfoHandlerEditorLive.IndexTest do
 
     assert has_element?(view, "#create-modal")
 
-    view = {:error, {:live_redirect, %{to: path}}} =
+    view =
+      {:error, {:live_redirect, %{to: path}}} =
       view
       |> form("#create-form", %{msg: "{:assign_email, email}"})
       |> render_submit()
