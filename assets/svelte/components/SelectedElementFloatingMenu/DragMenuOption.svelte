@@ -344,7 +344,11 @@
 
 {#if canBeDragged}
   {#if placeholderStyle}
-    <div class="absolute transition-all" style="background-color:aqua; opacity: 0.5; {placeholderStyle}"></div>
+    <div
+      class="absolute transition-all"
+      style="background-color:aqua; opacity: 0.5; {placeholderStyle}"
+      data-test-id="drag-placeholder"
+    ></div>
   {/if}
   <button
     bind:this={dragHandleElement}
@@ -353,6 +357,7 @@
     class:pointer-events-none={$selectedElementMenu?.dragging}
     class:rotate-90={rotated}
     style={$dragHandleStyle}
+    data-test-id="drag-button"
   >
     <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
       ><path

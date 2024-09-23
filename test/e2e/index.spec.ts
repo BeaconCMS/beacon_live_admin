@@ -40,6 +40,6 @@ test('shows the list of available sites', async({ page }) => {
 
         await link.click();
 
-        await expect(page.url()).toBe(`${baseURL}/admin/${siteName}/${path}`);
+        await expect(page).toHaveURL(`${baseURL}/admin/${siteName}/${path}`);
     });
 });
