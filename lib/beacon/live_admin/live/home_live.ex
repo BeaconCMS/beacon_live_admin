@@ -49,7 +49,7 @@ defmodule Beacon.LiveAdmin.HomeLive do
                     Live Data
                   </.link>
                   <.link href={Router.beacon_live_admin_path(@socket, site, "/events")} class={nav_class()}>
-                    Events
+                    Event Handlers
                   </.link>
                   <.link href={Router.beacon_live_admin_path(@socket, site, "/info_handlers")} class={nav_class()}>
                     Info Handlers
