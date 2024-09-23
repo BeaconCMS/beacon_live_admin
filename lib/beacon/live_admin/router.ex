@@ -161,7 +161,10 @@ defmodule Beacon.LiveAdmin.Router do
       # media library
       {"/media_library", Beacon.LiveAdmin.MediaLibraryLive.Index, :index, %{}},
       {"/media_library/upload", Beacon.LiveAdmin.MediaLibraryLive.Index, :upload, %{}},
-      {"/media_library/:id", Beacon.LiveAdmin.MediaLibraryLive.Index, :show, %{}}
+      {"/media_library/:id", Beacon.LiveAdmin.MediaLibraryLive.Index, :show, %{}},
+      # info handlers
+      {"/info_handlers", Beacon.LiveAdmin.InfoHandlerEditorLive.Index, :index, %{}},
+      {"/info_handlers/:handler_id", Beacon.LiveAdmin.InfoHandlerEditorLive.Index, :index, %{}}
     ]
     |> Enum.concat(additional_pages)
     |> Enum.map(fn {path, module, live_action, opts} ->
