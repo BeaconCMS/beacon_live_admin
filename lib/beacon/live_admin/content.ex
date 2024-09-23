@@ -266,4 +266,24 @@ defmodule Beacon.LiveAdmin.Content do
   def delete_live_data_assign(site, live_data_assign) do
     call(site, Beacon.Content, :delete_live_data_assign, [live_data_assign, site])
   end
+
+  def create_info_handler(site, attrs) do
+    call(site, Beacon.Content, :create_info_handler, [attrs])
+  end
+
+  def change_info_handler(site, info_handler, attrs \\ %{}) do
+    call(site, Beacon.Content, :change_info_handler, [info_handler, attrs])
+  end
+
+  def list_info_handlers(site) do
+    call(site, Beacon.Content, :list_info_handlers, [site])
+  end
+
+  def update_info_handler(site, info_handler, attrs) do
+    call(site, Beacon.Content, :update_info_handler, [info_handler, attrs])
+  end
+
+  def delete_info_handler(site, info_handler) do
+    call(site, Beacon.Content, :delete_info_handler, [info_handler])
+  end
 end
