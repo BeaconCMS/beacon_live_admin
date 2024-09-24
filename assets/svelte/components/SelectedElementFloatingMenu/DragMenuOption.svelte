@@ -289,14 +289,19 @@
     currentIndex: number,
     destinationIndex: number,
     locationInfos: LocationInfo[],
+    mouseDiff: Coords
   ) {
-    let distance = calculateNewDistance(dragDirection, currentIndex, currentIndex, destinationIndex, locationInfos)
-    let draggedElementInfo = dragElementInfo.siblingLocationInfos[dragElementInfo.selectedIndex]
-    if (dragDirection === "vertical") {
-      placeholderStyle = `top: ${distance - relativeWrapperRect.top}px; left: ${draggedElementInfo.left - relativeWrapperRect.left}px; height: ${draggedElementInfo.height}px; width: ${draggedElementInfo.width}px;`
-    } else {
-      placeholderStyle = `left: ${distance - relativeWrapperRect.left}px; top: ${draggedElementInfo.top - relativeWrapperRect.top}px; height: ${draggedElementInfo.height}px; width: ${draggedElementInfo.width}px;`
-    }
+    // debugger;
+    const currentRect = dragElementInfo.siblingLocationInfos[currentIndex]
+    const destinationRect = dragElementInfo.siblingLocationInfos[destinationIndex]
+    placeholderStyle = `top: ${destinationRect.top - relativeWrapperRect.top}px; left: ${destinationRect.left - relativeWrapperRect.left}px; height: ${currentRect.height}px; width: ${currentRect.width}px;`
+    // let distance = calculateNewDistance(dragDirection, currentIndex, currentIndex, destinationIndex, locationInfos)
+    // let draggedElementInfo = dragElementInfo.siblingLocationInfos[dragElementInfo.selectedIndex]
+    // if (dragDirection === "vertical") {
+    //   placeholderStyle = `top: ${distance - relativeWrapperRect.top}px; left: ${draggedElementInfo.left - relativeWrapperRect.left}px; height: ${draggedElementInfo.height}px; width: ${draggedElementInfo.width}px;`
+    // } else {
+    //   placeholderStyle = `left: ${distance - relativeWrapperRect.left}px; top: ${draggedElementInfo.top - relativeWrapperRect.top}px; height: ${draggedElementInfo.height}px; width: ${draggedElementInfo.width}px;`
+    // }
   }
 
   let placeholderStyle: string = null
@@ -317,6 +322,7 @@
         currentIndex,
         destinationIndex,
         dragElementInfo.siblingLocationInfos,
+        mouseDiff
       )
       newIndex = destinationIndex
     }
