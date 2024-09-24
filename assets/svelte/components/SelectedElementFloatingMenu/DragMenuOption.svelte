@@ -57,6 +57,7 @@
   export let element: Element
   export let isParent = false // TODO: Not in use yet
 
+  let originalSiblings: Element[];
   let dragHandleElement: HTMLButtonElement
   $: canBeDragged = element?.parentElement?.children?.length > 1
   $: rotated = !!element && getDragDirection(element) === "horizontal"
@@ -94,6 +95,7 @@
     }
     element.parentElement.style.display = "none"
     element.parentElement.parentNode.insertBefore(el, element.parentElement)
+    originalSiblings = Array.from(dragElementInfo.parentElementClone.children)
   }
 
   let mouseDownEvent: MouseEvent
@@ -141,6 +143,7 @@
     $isDragging = false
     resetDragElementHandle()
     placeholderStyle = null
+    originalSiblings = null
   }
 
   function getGhostElement() {
@@ -249,20 +252,35 @@
     destinationIndex: number,
     locationInfos: LocationInfo[],
   ) {
-    Array.from(dragElementInfo.parentElementClone.children).forEach((el, i) => {
-      if (i !== dragElementInfo.selectedIndex) {
-        const distance = calculateNewDistance(dragDirection, i, currentIndex, destinationIndex, locationInfos)
-        if (distance) {
-          if (dragDirection === "vertical") {
-            el.style.transform = `translateY(${distance - dragElementInfo.siblingLocationInfos[i].top}px)`
-          } else {
-            el.style.transform = `translateX(${distance - dragElementInfo.siblingLocationInfos[i].left}px)`
-          }
-        } else {
-          el.style.transform = null
-        }
-      }
-    })
+    const newChildren = [...originalSiblings]
+    const element = newChildren.splice(currentIndex, 1)[0]; // Remove the element at fromIndex
+    newChildren.splice(destinationIndex, 0, element); // Insert the element at toIndex
+    dragElementInfo.parentElementClone.replaceChildren(...newChildren);
+
+    // dragElementInfo.parentElementClone.removeChild(elementToMove);
+    // // Insert the element into its new position
+    // if (destinationIndex >= dragElementInfo.parentElementClone.children.length - 1) {
+    //   // If destinationIndex is the last element, append it at the end
+    //   dragElementInfo.parentElementClone.appendChild(elementToMove);
+    // } else {
+    //   // Otherwise, insert it before the sibling at destinationIndex
+    //   const referenceElement = dragElementInfo.parentElementClone.children[destinationIndex];
+    //   dragElementInfo.parentElementClone.insertBefore(elementToMove, referenceElement);
+    // }
+    // Array.from(dragElementInfo.parentElementClone.children).forEach((el, i) => {
+    //   if (i !== dragElementInfo.selectedIndex) {
+    //     const distance = calculateNewDistance(dragDirection, i, currentIndex, destinationIndex, locationInfos)
+    //     if (distance) {
+    //       if (dragDirection === "vertical") {
+    //         el.style.transform = `translateY(${distance - dragElementInfo.siblingLocationInfos[i].top}px)`
+    //       } else {
+    //         el.style.transform = `translateX(${distance - dragElementInfo.siblingLocationInfos[i].left}px)`
+    //       }
+    //     } else {
+    //       el.style.transform = null
+    //     }
+    //   }
+    // })
   }
 
   function calculatePlaceholderPosition(
@@ -302,6 +320,7 @@
         }
         newIndex = null
         // console.log("returning placeholder to its original position")
+        repositionGhosts(dragDirection, currentIndex, destinationIndex, [])
         calculatePlaceholderPosition(
           dragDirection,
           currentIndex,
@@ -311,10 +330,7 @@
       } else {
         let rearrangedInfos = sortedLocationInfos(dragElementInfo.siblingLocationInfos, currentIndex, destinationIndex)
         repositionGhosts(dragDirection, currentIndex, destinationIndex, rearrangedInfos)
-        // console.log('Assigning placeholder to a new position');
-        // console.log('currentIndex', currentIndex)
-        // console.log('destinationIndex', destinationIndex)
-        calculatePlaceholderPosition(dragDirection, currentIndex, destinationIndex, rearrangedInfos)
+        // calculatePlaceholderPosition(dragDirection, currentIndex, destinationIndex, rearrangedInfos)
         newIndex = destinationIndex
       }
     }
@@ -337,14 +353,15 @@
       x: e.x - mouseDownEvent.x,
       y: e.y - mouseDownEvent.y,
     }
+    // arrayToObject(Array.from(dragElementInfo.parentElementClone.children))
     if (dragDirection === "vertical") {
       // Only the drag handle can use CSS variables because it has the `transform` tailwind class
       // CSS variables allow to control translate and rotate independently.
       dragHandleElement.style.setProperty("--tw-translate-y", `${mouseDiff.y}px`)
-      applyTranslate(ghostElement, "vertical", mouseDiff.y)
+      // applyTranslate(ghostElement, "vertical", mouseDiff.y)
     } else {
       dragHandleElement.style.setProperty("--tw-translate-x", `${mouseDiff.x}px`)
-      applyTranslate(ghostElement, "horizontal", mouseDiff.x)
+      // applyTranslate(ghostElement, "horizontal", mouseDiff.x)
     }
 
     updateSiblingsPositioning(dragDirection, mouseDiff, e)
