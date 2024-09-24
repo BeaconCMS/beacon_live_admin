@@ -72,7 +72,6 @@
     let el = element.parentElement.cloneNode(true) as Element
     let elChildren = Array.from(el.children)
     for (let i = 0; i < elChildren.length; i++) {
-      elChildren[i].style.transition = i === selectedIndex ? "none" : "transform 0.15s"
       // Next line is only for debugging purposes. It helps find the cloned nodes
       elChildren[i].setAttribute("data-is-clone", "true")
     }
@@ -108,7 +107,7 @@
   }
 
   function applyNewOrder() {
-    if (newIndex !== null) {
+    if (newIndex !== dragElementInfo.selectedIndex) {
       // Reordering happened, apply new order
       let parent = $parentOfSelectedAstElement
       const selectedAstElement = parent.content.splice(dragElementInfo.selectedIndex, 1)[0]
@@ -246,42 +245,44 @@
     return distance
   }
 
-  function repositionGhosts(
-    dragDirection: DragDirection,
-    currentIndex: number,
-    destinationIndex: number,
-    locationInfos: LocationInfo[],
-  ) {
+  function repositionChildren(currentIndex: number, destinationIndex: number) {
     const newChildren = [...originalSiblings]
     const element = newChildren.splice(currentIndex, 1)[0]; // Remove the element at fromIndex
     newChildren.splice(destinationIndex, 0, element); // Insert the element at toIndex
     dragElementInfo.parentElementClone.replaceChildren(...newChildren);
-
-    // dragElementInfo.parentElementClone.removeChild(elementToMove);
-    // // Insert the element into its new position
-    // if (destinationIndex >= dragElementInfo.parentElementClone.children.length - 1) {
-    //   // If destinationIndex is the last element, append it at the end
-    //   dragElementInfo.parentElementClone.appendChild(elementToMove);
-    // } else {
-    //   // Otherwise, insert it before the sibling at destinationIndex
-    //   const referenceElement = dragElementInfo.parentElementClone.children[destinationIndex];
-    //   dragElementInfo.parentElementClone.insertBefore(elementToMove, referenceElement);
-    // }
-    // Array.from(dragElementInfo.parentElementClone.children).forEach((el, i) => {
-    //   if (i !== dragElementInfo.selectedIndex) {
-    //     const distance = calculateNewDistance(dragDirection, i, currentIndex, destinationIndex, locationInfos)
-    //     if (distance) {
-    //       if (dragDirection === "vertical") {
-    //         el.style.transform = `translateY(${distance - dragElementInfo.siblingLocationInfos[i].top}px)`
-    //       } else {
-    //         el.style.transform = `translateX(${distance - dragElementInfo.siblingLocationInfos[i].left}px)`
-    //       }
-    //     } else {
-    //       el.style.transform = null
-    //     }
-    //   }
-    // })
   }
+
+  function repositionGhosts(currentIndex: number, destinationIndex: number) {
+    let parentElement = dragElementInfo.parentElementClone;
+    // 1. First: Capture the initial positions (before DOM changes)
+    const children = Array.from(parentElement.children);
+    const firstRects = children.map(child => child.getBoundingClientRect());
+
+    // 2. Modify the DOM (this can be any modification of your choice)
+    repositionChildren(currentIndex, destinationIndex); // Assume this is your layout modification function
+
+    // 3. Last: Capture the final positions (after DOM changes)
+    const lastRects = children.map(child => child.getBoundingClientRect());
+
+    // 4. Invert: Calculate the deltas and apply the transform to each element
+    children.forEach((child, i) => {
+        const firstRect = firstRects[i];
+        const lastRect = lastRects[i];
+        const deltaX = firstRect.left - lastRect.left;
+        const deltaY = firstRect.top - lastRect.top;
+        // Apply the transform to invert the movement
+        child.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+        child.style.transition = 'transform 0s'; // No transition yet
+    });
+
+    // 5. Play: Remove the transform, allowing the browser to animate to the final position
+    requestAnimationFrame(() => {
+        children.forEach(child => {
+            child.style.transition = 'transform 0.15s'; // Add transition for smooth animation
+            child.style.transform = ''; 
+        });
+    });
+}
 
   function calculatePlaceholderPosition(
     dragDirection: DragDirection,
@@ -308,43 +309,28 @@
         .closest(".relative")
         .getBoundingClientRect()
     }
-    if (mouseDiff[dragDirection === "vertical" ? "y" : "x"] !== 0) {
-      let { currentIndex, destinationIndex } = findSwappedIndexes(dragDirection, mouseDiff, e)
-      if (currentIndex === destinationIndex) {
-        // No drag, reset effect.
-        if (newIndex !== null) {
-          // Reset the transforms on all elements but the one being dragged, which must keep following the cursor.
-          Array.from(dragElementInfo.parentElementClone.children).forEach(
-            (el, i) => i !== destinationIndex && (el.style.transform = null),
-          )
-        }
-        newIndex = null
-        // console.log("returning placeholder to its original position")
-        repositionGhosts(dragDirection, currentIndex, destinationIndex, [])
-        calculatePlaceholderPosition(
-          dragDirection,
-          currentIndex,
-          destinationIndex,
-          dragElementInfo.siblingLocationInfos,
-        )
-      } else {
-        let rearrangedInfos = sortedLocationInfos(dragElementInfo.siblingLocationInfos, currentIndex, destinationIndex)
-        repositionGhosts(dragDirection, currentIndex, destinationIndex, rearrangedInfos)
-        // calculatePlaceholderPosition(dragDirection, currentIndex, destinationIndex, rearrangedInfos)
-        newIndex = destinationIndex
-      }
+    let { currentIndex, destinationIndex } = findSwappedIndexes(dragDirection, mouseDiff, e)
+    if (newIndex !== destinationIndex) {
+      repositionGhosts(currentIndex, destinationIndex)
+      calculatePlaceholderPosition(
+        dragDirection,
+        currentIndex,
+        destinationIndex,
+        dragElementInfo.siblingLocationInfos,
+      )
+      newIndex = destinationIndex
     }
   }
 
-  function applyTranslate(el: Element, direction: "vertical" | "horizontal", amount: number) {
-    if (window.getComputedStyle(el).display === "contents") {
-      Array.from(el.children).forEach(
-        (child) => (child.style.transform = `${direction === "vertical" ? "translateY" : "translateX"}(${amount}px)`),
-      )
-    } else {
-      el.style.transform = `${direction === "vertical" ? "translateY" : "translateX"}(${amount}px)`
-    }
-  }
+  // function applyTranslate(el: Element, direction: "vertical" | "horizontal", amount: number) {
+  //   if (window.getComputedStyle(el).display === "contents") {
+  //     Array.from(el.children).forEach(
+  //       (child) => (child.style.transform = `${direction === "vertical" ? "translateY" : "translateX"}(${amount}px)`),
+  //     )
+  //   } else {
+  //     el.style.transform = `${direction === "vertical" ? "translateY" : "translateX"}(${amount}px)`
+  //   }
+  // }
 
   function handleMousemove(e: MouseEvent) {
     let ghostElement = getGhostElement()
