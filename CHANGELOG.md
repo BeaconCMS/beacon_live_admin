@@ -3,7 +3,7 @@
 ## 0.1.0-dev
 
 ### Enhancements
-  * Reorder pages - [#261](https://github.com/BeaconCMS/beacon/pull/578) by [@ddink](https://github.com/ddink)
+  * Reorder pages - [#261](https://github.com/BeaconCMS/beacon/pull/261)
   * Added Shared Info Handlers (`info_handle` callbacks) page - [#210](https://github.com/BeaconCMS/beacon/pull/210) by [@ddink](https://github.com/ddink)
 
 ## 0.1.0-rc.2 (2024-09-21
