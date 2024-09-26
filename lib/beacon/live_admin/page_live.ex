@@ -174,18 +174,22 @@ defmodule Beacon.LiveAdmin.PageLive do
       end)
       |> Enum.sort(fn {a, _}, {b, _} ->
         case {a, b} do
-          {"/layouts", _} -> true
-          {_, "/layouts"} -> false
+          {"/media_library", _} -> true
+          {_, "/media_library"} -> false
           {"/components", _} -> true
           {_, "/components"} -> false
+          {"/layouts", _} -> true
+          {_, "/layouts"} -> false
           {"/pages", _} -> true
           {_, "/pages"} -> false
           {"/live_data", _} -> true
           {_, "/live_data"} -> false
+          {"/events", _} -> true
+          {_, "/events"} -> false
+          {"/info_handlers", _} -> true
+          {_, "/info_handlers"} -> false
           {"/error_pages", _} -> true
           {_, "/error_pages"} -> false
-          {"/media_library", _} -> true
-          {_, "/media_library"} -> false
           {a, b} -> a <= b
         end
       end)

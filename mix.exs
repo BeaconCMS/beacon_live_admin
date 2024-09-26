@@ -10,7 +10,7 @@ defmodule Beacon.LiveAdmin.MixProject do
     [
       app: :beacon_live_admin,
       version: @version,
-      elixir: "~> 1.13",
+      elixir: "~> 1.14",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       name: "Beacon LiveAdmin",
@@ -97,7 +97,7 @@ defmodule Beacon.LiveAdmin.MixProject do
         {:beacon, github: "BeaconCMS/beacon", runtime: false}
 
       :else ->
-        {:beacon, "~> 0.1.0-rc.1", runtime: false}
+        {:beacon, ">= 0.0.0 and < 1.0.0", runtime: false}
     end
   end
 

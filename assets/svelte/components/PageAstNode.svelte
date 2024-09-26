@@ -4,7 +4,6 @@
     slotTargetElement,
     highlightedAstElement,
     isAstElement,
-    selectedElementMenu,
     setSelection,
     setSelectedDom,
   } from "$lib/stores/page"
@@ -25,9 +24,11 @@
   $: isEditable =
     isSelectedNode &&
     isAstElement(node) &&
+    Array.isArray(node.content) &&
     node.content.filter((e) => typeof e === "string").length === 1 &&
     !node.attrs?.selfClose
-  $: isParentOfSelectedNode = isAstElement(node) ? node.content.includes($selectedAstElement) : false
+  $: isParentOfSelectedNode =
+    isAstElement(node) && Array.isArray(node.content) ? node.content.includes($selectedAstElement) : false
 
   let children
   $: {
@@ -76,7 +77,6 @@
     setSelection(nodeId)
     setSelectedDom(currentTarget)
     initSelectedElementDragMenuPosition(currentTarget)
-    // tick().then(() => updateSelectedElementMenu())
   }
 
   function handleContentEdited({ target }: Event) {
@@ -135,20 +135,6 @@
       },
     }
   }
-
-  let selectedElementStyle = ""
-  $: {
-    if (isSelectedNode && $selectedElementMenu && $selectedElementMenu.mouseMovement) {
-      let { x, y } = mouseDiff($selectedElementMenu.mouseMovement)
-      if ($selectedElementMenu.dragDirection === "vertical") {
-        selectedElementStyle = `transform: translateY(${y}px);`
-      } else {
-        selectedElementStyle = `transform: translateX(${x}px);`
-      }
-    } else {
-      selectedElementStyle = ""
-    }
-  }
 </script>
 
 {#if isAstElement(node)}
@@ -163,6 +149,7 @@
       bind:this={htmlWrapper}
       class:contents={htmlWrapperHasMultipleElements}
       class:embedded-iframe={htmlWrapperHasIframe}
+      data-selected={isSelectedNode}
       on:mouseover|stopPropagation={handleMouseOver}
       on:mouseout|stopPropagation={handleMouseOut}
       on:click|preventDefault|stopPropagation={handleClick}
@@ -187,7 +174,6 @@
       on:mouseover|stopPropagation={handleMouseOver}
       on:mouseout|stopPropagation={handleMouseOut}
       on:click|preventDefault|stopPropagation={handleClick}
-      style={selectedElementStyle}
     >
       {#if !node.attrs?.selfClose}
         {#each children as child, childIndex}

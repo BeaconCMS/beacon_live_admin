@@ -1,38 +1,33 @@
 <script lang="ts" context="module">
-  import { get, writable, type Writable } from "svelte/store"
-  import { page, selectedAstElementId, selectedElementMenu, parentOfSelectedAstElement } from "$lib/stores/page"
-  import { getDragDirection, updateSelectedElementMenu, type Coords, type DragDirection } from "$lib/utils/drag-helpers"
+  import { writable, type Writable } from "svelte/store"
+  import { page, selectedAstElementId, parentOfSelectedAstElement } from "$lib/stores/page"
+  import {
+    findHoveredSiblingIndex,
+    getBoundingRect,
+    getDragDirection,
+    type Coords,
+    type DragDirection,
+  } from "$lib/utils/drag-helpers"
   import { live } from "$lib/stores/live"
 
-  export type LocationInfo = {
-    x: number
-    y: number
-    width: number
-    height: number
-    top: number
-    right: number
-    bottom: number
-    left: number
-    marginTop: number
-    marginBottom: number
-    marginLeft: number
-    marginRight: number
-  }
+  export type LocationInfo = Omit<DOMRect, "toJSON">
+
   interface DragInfo {
     parentElementClone: Element
     selectedIndex: number
-    siblingLocationInfos: LocationInfo[]
+    siblingLocationInfos: LocationInfo[] // LocationInfo[]
   }
 
   let currentHandleCoords: Coords
   let relativeWrapperRect: DOMRect
-  let dragHandleStyle: Writable<string> = writable("")
+  const dragHandleStyle: Writable<string> = writable("")
+  export const isDragging: Writable<boolean> = writable(false)
   let dragElementInfo: DragInfo
 
   export function initSelectedElementDragMenuPosition(selectedDomEl, mouseDiff?: Coords) {
     let rect = dragElementInfo
       ? dragElementInfo.siblingLocationInfos[dragElementInfo.selectedIndex]
-      : selectedDomEl.getBoundingClientRect()
+      : getBoundingRect(selectedDomEl)
     updateHandleCoords(rect, mouseDiff)
     let styles = []
     if (currentHandleCoords?.y) {
@@ -44,17 +39,14 @@
     dragHandleStyle.set(styles.join(";"))
   }
 
-  function updateHandleCoords(currentRect: DOMRect, movement: Coords = { x: 0, y: 0 }) {
+  function updateHandleCoords(currentRect: LocationInfo, movement: Coords = { x: 0, y: 0 }) {
     relativeWrapperRect = document
       .getElementById("ui-builder-app-container")
       .closest(".relative")
       .getBoundingClientRect()
-    let menu = get(selectedElementMenu)
-    let movX = menu?.dragDirection === "vertical" ? 0 : movement.x
-    let movY = menu?.dragDirection === "vertical" ? movement.y : 0
     currentHandleCoords = {
-      x: currentRect.x - relativeWrapperRect.x + movX + currentRect.width / 2 - 5,
-      y: currentRect.y - relativeWrapperRect.y + movY + currentRect.height + 5,
+      x: currentRect.x - relativeWrapperRect.x + movement.x + currentRect.width / 2 - 5,
+      y: currentRect.y - relativeWrapperRect.y + movement.y + currentRect.height + 5,
     }
   }
 </script>
@@ -64,8 +56,6 @@
 
   export let element: Element
   export let isParent = false // TODO: Not in use yet
-
-  selectedAstElementId.subscribe(() => updateSelectedElementMenu())
 
   let dragHandleElement: HTMLButtonElement
   $: canBeDragged = element?.parentElement?.children?.length > 1
@@ -89,8 +79,7 @@
       parentElementClone: el,
       selectedIndex,
       siblingLocationInfos: siblings.map((el, i) => {
-        let { x, y, width, height, top, right, bottom, left } = el.getBoundingClientRect()
-        let computedStyles = window.getComputedStyle(el)
+        let { x, y, width, height, top, right, bottom, left } = getBoundingRect(el)
         return {
           x,
           y,
@@ -100,19 +89,16 @@
           right,
           bottom,
           left,
-          marginTop: parseFloat(computedStyles.marginTop),
-          marginBottom: parseFloat(computedStyles.marginBottom),
-          marginLeft: parseFloat(computedStyles.marginLeft),
-          marginRight: parseFloat(computedStyles.marginRight),
         }
       }),
     }
     element.parentElement.style.display = "none"
-    element.parentElement.parentElement.insertBefore(el, element.parentElement)
+    element.parentElement.parentNode.insertBefore(el, element.parentElement)
   }
 
   let mouseDownEvent: MouseEvent
   async function handleMousedown(e: MouseEvent) {
+    $isDragging = true
     mouseDownEvent = e
     document.addEventListener("mousemove", handleMousemove)
     document.addEventListener("mouseup", handleMouseup)
@@ -134,6 +120,13 @@
       $live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast })
     }
   }
+
+  function resetDragElementHandle() {
+    dragHandleElement.style.transform = null
+    dragHandleElement.style.setProperty("--tw-translate-y", null)
+    dragHandleElement.style.setProperty("--tw-translate-x", null)
+  }
+
   async function handleMouseup(e: MouseEvent) {
     document.removeEventListener("mousemove", handleMousemove)
     document.removeEventListener("mouseup", handleMouseup)
@@ -145,7 +138,8 @@
     }
     mouseDownEvent = null
     await tick()
-    dragHandleElement.style.transform = null
+    $isDragging = false
+    resetDragElementHandle()
     placeholderStyle = null
   }
 
@@ -153,38 +147,17 @@
     return dragElementInfo.parentElementClone.children.item(dragElementInfo.selectedIndex)
   }
 
-  // Considers that the dragged element is hovering another one if their overlap is more than 50%.
-  function findHoveredSiblingIndex(dragDirection: DragDirection, mouseDiff: Coords, e: MouseEvent) {
-    const draggedElementInfo = dragElementInfo.siblingLocationInfos[dragElementInfo.selectedIndex]
-    if (dragDirection === "vertical") {
-      const { top, y, bottom, ...rest } = draggedElementInfo
-      const draggedRect = { ...rest, y: y + mouseDiff.y, top: top + mouseDiff.y, bottom: bottom + mouseDiff.y }
-      return dragElementInfo.siblingLocationInfos.findIndex((rect, index) => {
-        if (index !== dragElementInfo.selectedIndex) {
-          const overlap = Math.max(0, Math.min(draggedRect.bottom, rect.bottom) - Math.max(draggedRect.top, rect.top))
-          const overlapRatio = overlap / Math.min(draggedRect.height, rect.height)
-          return overlapRatio > 0.5
-        }
-      })
-    } else {
-      const { left, x, right, ...rest } = draggedElementInfo
-      const draggedRect = { ...rest, x: x + mouseDiff.x, left: left + mouseDiff.x, right: right + mouseDiff.x }
-      return dragElementInfo.siblingLocationInfos.findIndex((rect, index) => {
-        if (index !== dragElementInfo.selectedIndex) {
-          const overlap = Math.max(0, Math.min(draggedRect.right, rect.right) - Math.max(draggedRect.left, rect.left))
-          const overlapRatio = overlap / Math.min(draggedRect.width, rect.width)
-          return overlapRatio > 0.5
-        }
-      })
-    }
-  }
-
   function findSwappedIndexes(
     dragDirection: DragDirection,
     mouseDiff: Coords,
     e: MouseEvent,
   ): { currentIndex: number; destinationIndex: number } {
-    let hoveredElementIndex = findHoveredSiblingIndex(dragDirection, mouseDiff, e)
+    let hoveredElementIndex = findHoveredSiblingIndex(
+      dragDirection,
+      mouseDiff,
+      dragElementInfo.siblingLocationInfos,
+      dragElementInfo.selectedIndex,
+    )
     if (hoveredElementIndex === -1) {
       return {
         currentIndex: dragElementInfo.selectedIndex,
@@ -225,8 +198,10 @@
       newIndex = destinationIndex
     } else {
       if (draggedElementIndex > destinationIndex) {
+        // An element is being dragged earlier in the DOM
         newIndex = index < draggedElementIndex && index >= destinationIndex ? index + 1 : index
       } else {
+        // An element is being dragged further down in the DOM
         newIndex = index > draggedElementIndex && index <= destinationIndex ? index - 1 : index
       }
     }
@@ -234,16 +209,36 @@
     let i = 0
     if (dragDirection === "vertical") {
       while (i < newInfos.length && i < newIndex) {
-        distance += newInfos[i].height + newInfos[i].marginTop + newInfos[i].marginBottom
+        let gap = 0
+        if (i > 0) {
+          gap = dragElementInfo.siblingLocationInfos[i].top - dragElementInfo.siblingLocationInfos[i - 1].bottom
+        }
+        distance += newInfos[i].height + gap
         i++
       }
-      distance = distance + newInfos[newIndex].marginTop + dragElementInfo.siblingLocationInfos[0].top
+      let gap = 0
+      if (newIndex > 0) {
+        dragElementInfo.siblingLocationInfos
+        gap =
+          dragElementInfo.siblingLocationInfos[newIndex].top - dragElementInfo.siblingLocationInfos[newIndex - 1].bottom
+      }
+      distance += gap + dragElementInfo.siblingLocationInfos[0].top
     } else {
       while (i < newInfos.length && i < newIndex) {
-        distance += newInfos[i].width + newInfos[i].marginLeft + newInfos[i].marginRight
+        let gap = 0
+        if (i > 0) {
+          gap = dragElementInfo.siblingLocationInfos[i].left - dragElementInfo.siblingLocationInfos[i - 1].right
+        }
+        distance += newInfos[i].width + gap
         i++
       }
-      distance = distance + newInfos[newIndex].marginLeft + dragElementInfo.siblingLocationInfos[0].left
+      let gap = 0
+      if (newIndex > 0) {
+        dragElementInfo.siblingLocationInfos
+        gap =
+          dragElementInfo.siblingLocationInfos[newIndex].left - dragElementInfo.siblingLocationInfos[newIndex - 1].right
+      }
+      distance += gap + dragElementInfo.siblingLocationInfos[0].left
     }
     return distance
   }
@@ -279,9 +274,9 @@
     let distance = calculateNewDistance(dragDirection, currentIndex, currentIndex, destinationIndex, locationInfos)
     let draggedElementInfo = dragElementInfo.siblingLocationInfos[dragElementInfo.selectedIndex]
     if (dragDirection === "vertical") {
-      placeholderStyle = `top: ${distance - relativeWrapperRect.top + draggedElementInfo.marginTop}px; left: ${draggedElementInfo.left - relativeWrapperRect.left}px; height: ${draggedElementInfo.height}px; width: ${draggedElementInfo.width}px;`
+      placeholderStyle = `top: ${distance - relativeWrapperRect.top}px; left: ${draggedElementInfo.left - relativeWrapperRect.left}px; height: ${draggedElementInfo.height}px; width: ${draggedElementInfo.width}px;`
     } else {
-      placeholderStyle = `left: ${distance - relativeWrapperRect.left + draggedElementInfo.marginLeft}px; top: ${draggedElementInfo.top - relativeWrapperRect.top}px; height: ${draggedElementInfo.height}px; width: ${draggedElementInfo.width}px;`
+      placeholderStyle = `left: ${distance - relativeWrapperRect.left}px; top: ${draggedElementInfo.top - relativeWrapperRect.top}px; height: ${draggedElementInfo.height}px; width: ${draggedElementInfo.width}px;`
     }
   }
 
@@ -306,6 +301,7 @@
           )
         }
         newIndex = null
+        // console.log("returning placeholder to its original position")
         calculatePlaceholderPosition(
           dragDirection,
           currentIndex,
@@ -315,9 +311,22 @@
       } else {
         let rearrangedInfos = sortedLocationInfos(dragElementInfo.siblingLocationInfos, currentIndex, destinationIndex)
         repositionGhosts(dragDirection, currentIndex, destinationIndex, rearrangedInfos)
+        // console.log('Assigning placeholder to a new position');
+        // console.log('currentIndex', currentIndex)
+        // console.log('destinationIndex', destinationIndex)
         calculatePlaceholderPosition(dragDirection, currentIndex, destinationIndex, rearrangedInfos)
         newIndex = destinationIndex
       }
+    }
+  }
+
+  function applyTranslate(el: Element, direction: "vertical" | "horizontal", amount: number) {
+    if (window.getComputedStyle(el).display === "contents") {
+      Array.from(el.children).forEach(
+        (child) => (child.style.transform = `${direction === "vertical" ? "translateY" : "translateX"}(${amount}px)`),
+      )
+    } else {
+      el.style.transform = `${direction === "vertical" ? "translateY" : "translateX"}(${amount}px)`
     }
   }
 
@@ -332,10 +341,10 @@
       // Only the drag handle can use CSS variables because it has the `transform` tailwind class
       // CSS variables allow to control translate and rotate independently.
       dragHandleElement.style.setProperty("--tw-translate-y", `${mouseDiff.y}px`)
-      ghostElement.style.transform = `translateY(${mouseDiff.y}px)`
+      applyTranslate(ghostElement, "vertical", mouseDiff.y)
     } else {
       dragHandleElement.style.setProperty("--tw-translate-x", `${mouseDiff.x}px`)
-      ghostElement.style.transform = `translateX(${mouseDiff.x}px)`
+      applyTranslate(ghostElement, "horizontal", mouseDiff.x)
     }
 
     updateSiblingsPositioning(dragDirection, mouseDiff, e)
@@ -354,7 +363,6 @@
     bind:this={dragHandleElement}
     on:mousedown={handleMousedown}
     class="rounded-full w-6 h-6 flex justify-center items-center absolute bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 active:bg-blue-800 transform"
-    class:pointer-events-none={$selectedElementMenu?.dragging}
     class:rotate-90={rotated}
     style={$dragHandleStyle}
     data-test-id="drag-button"
