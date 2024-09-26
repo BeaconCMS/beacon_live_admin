@@ -11,7 +11,7 @@ const config = {
   },
   webServer: {
     command: "npm run e2e:server",
-    url: "http://127.0.0.1:4004/health",
+    url: "http://localhost:4004/health",
     reuseExistingServer: !process.env.CI,
     stdout: "pipe",
     stderr: "pipe",
