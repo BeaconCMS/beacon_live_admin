@@ -83,3 +83,45 @@ test('Reordering', async ({ page }) => {
         ]
     );
 });
+
+/* TODO: Need to reset test data after each test, because otherwise it will be pertained in database on saving changes */
+test.skip('Persistence on save', async ({ page }) => {
+    const source = page.getByTestId('margin-row-item-1');
+    const dragButton = page.getByTestId('drag-button');
+
+    await verifyOrder(
+        page,
+        '[data-test-id^=margin-row-item-]',
+        [
+            'margin-row-item-1',
+            'margin-row-item-2',
+            'margin-row-item-3',
+            'margin-row-item-4',
+            'margin-row-item-5',
+        ]
+    );
+
+    await source.click();
+    await expect(source).toHaveAttribute('data-selected', "true");
+    await expect(dragButton).toBeVisible();
+
+    await startDragging(page);
+    await dragTo(page, 'margin-row-item-3');
+    await page.mouse.up();
+
+    const newOrder = [
+        'margin-row-item-2',
+        'margin-row-item-3',
+        'margin-row-item-1',
+        'margin-row-item-4',
+        'margin-row-item-5',
+    ];
+
+    await verifyOrder(page, '[data-test-id^=margin-row-item-]', newOrder);
+
+    await page.getByRole('button', { name: 'Save Changes' }).click();
+    await expect(page.locator('[id="flash"]')).toContainText('Page updated successfully');
+    await page.reload();
+
+    await verifyOrder(page, '[data-test-id^=margin-row-item-]', newOrder);
+});
