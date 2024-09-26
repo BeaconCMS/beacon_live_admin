@@ -1,119 +1,121 @@
-Application.put_env(:beacon_live_admin, Beacon.LiveAdminTest.Endpoint,
-  url: [host: "localhost", port: 4000],
-  secret_key_base: "TrXbWpjZWxk0GXclXOHFCoufQh1oRK0N5rev5GcpbPCsuf2C/kbYlMgeEEAXPayF",
-  live_view: [signing_salt: "nXvN+c8y"],
-  render_errors: [view: Beacon.LiveAdminTest.ErrorView],
-  check_origin: false
-)
+# FIXME: isolate apps for unit tests and e2e test
 
-defmodule Beacon.LiveAdminTest.ErrorView do
-  def render(template, _assigns) do
-    Phoenix.Controller.status_message_from_template(template)
-  end
-end
+# Application.put_env(:beacon_live_admin, Beacon.LiveAdminTest.Endpoint,
+#   url: [host: "localhost", port: 4000],
+#   secret_key_base: "TrXbWpjZWxk0GXclXOHFCoufQh1oRK0N5rev5GcpbPCsuf2C/kbYlMgeEEAXPayF",
+#   live_view: [signing_salt: "nXvN+c8y"],
+#   render_errors: [view: Beacon.LiveAdminTest.ErrorView],
+#   check_origin: false
+# )
 
-defmodule Beacon.LiveAdminTest.Router do
-  use Phoenix.Router
-  use Beacon.LiveAdmin.Router
+# defmodule Beacon.LiveAdminTest.ErrorView do
+#   def render(template, _assigns) do
+#     Phoenix.Controller.status_message_from_template(template)
+#   end
+# end
 
-  pipeline :browser do
-    plug :fetch_session
-    plug Beacon.LiveAdmin.Plug
-  end
+# defmodule Beacon.LiveAdminTest.Router do
+#   use Phoenix.Router
+#   use Beacon.LiveAdmin.Router
 
-  scope "/" do
-    pipe_through :browser
-    beacon_live_admin("/admin")
-  end
-end
+#   pipeline :browser do
+#     plug :fetch_session
+#     plug Beacon.LiveAdmin.Plug
+#   end
 
-defmodule Beacon.LiveAdminTest.Endpoint do
-  use Phoenix.Endpoint, otp_app: :beacon_live_admin
+#   scope "/" do
+#     pipe_through :browser
+#     beacon_live_admin("/admin")
+#   end
+# end
 
-  plug Plug.Session,
-    store: :cookie,
-    key: "_live_view_key",
-    signing_salt: "/VEDsdfsffMnp5"
+# defmodule Beacon.LiveAdminTest.Endpoint do
+#   use Phoenix.Endpoint, otp_app: :beacon_live_admin
 
-  plug Beacon.LiveAdminTest.Router
-end
+#   plug Plug.Session,
+#     store: :cookie,
+#     key: "_live_view_key",
+#     signing_salt: "/VEDsdfsffMnp5"
 
-# Load config and Endpoints for testing that plug Beacon.LiveAdmin.Plug is missing from the Router :browser pipeline
-Application.put_env(:beacon_live_admin_plugless, Beacon.LiveAdminTest.PluglessEndpoint,
-  url: [host: "localhost", port: 4010],
-  secret_key_base: "TrXbWpjZWxk0GXclXOHFCoufQh1oRK0N5rev5GcpbPCsuf2C/kbYlMgeEEAXPayF",
-  live_view: [signing_salt: "nXvN+c8y"],
-  render_errors: [view: Beacon.LiveAdminTest.ErrorView],
-  check_origin: false
-)
+#   plug Beacon.LiveAdminTest.Router
+# end
 
-defmodule Beacon.LiveAdminTest.PluglessRouter do
-  use Phoenix.Router
-  use Beacon.LiveAdmin.Router
+# # Load config and Endpoints for testing that plug Beacon.LiveAdmin.Plug is missing from the Router :browser pipeline
+# Application.put_env(:beacon_live_admin_plugless, Beacon.LiveAdminTest.PluglessEndpoint,
+#   url: [host: "localhost", port: 4010],
+#   secret_key_base: "TrXbWpjZWxk0GXclXOHFCoufQh1oRK0N5rev5GcpbPCsuf2C/kbYlMgeEEAXPayF",
+#   live_view: [signing_salt: "nXvN+c8y"],
+#   render_errors: [view: Beacon.LiveAdminTest.ErrorView],
+#   check_origin: false
+# )
 
-  pipeline :browser do
-    plug :fetch_session
-  end
+# defmodule Beacon.LiveAdminTest.PluglessRouter do
+#   use Phoenix.Router
+#   use Beacon.LiveAdmin.Router
 
-  scope "/" do
-    pipe_through :browser
-    beacon_live_admin("/admin")
-  end
-end
+#   pipeline :browser do
+#     plug :fetch_session
+#   end
 
-defmodule Beacon.LiveAdminTest.PluglessEndpoint do
-  use Phoenix.Endpoint, otp_app: :beacon_live_admin_plugless
+#   scope "/" do
+#     pipe_through :browser
+#     beacon_live_admin("/admin")
+#   end
+# end
 
-  plug Plug.Session,
-    store: :cookie,
-    key: "_live_view_key",
-    signing_salt: "/VEDsdfsffMnp5"
+# defmodule Beacon.LiveAdminTest.PluglessEndpoint do
+#   use Phoenix.Endpoint, otp_app: :beacon_live_admin_plugless
 
-  plug Beacon.LiveAdminTest.PluglessRouter
-end
+#   plug Plug.Session,
+#     store: :cookie,
+#     key: "_live_view_key",
+#     signing_salt: "/VEDsdfsffMnp5"
 
-Supervisor.start_link(
-  [
-    Beacon.LiveAdminTest.Endpoint,
-    Beacon.LiveAdminTest.PluglessEndpoint
-  ],
-  strategy: :one_for_one
-)
+#   plug Beacon.LiveAdminTest.PluglessRouter
+# end
 
-Beacon.LiveAdminTest.Cluster.spawn([:"node1@127.0.0.1", :"node2@127.0.0.1"])
+# Supervisor.start_link(
+#   [
+#     Beacon.LiveAdminTest.Endpoint,
+#     Beacon.LiveAdminTest.PluglessEndpoint
+#   ],
+#   strategy: :one_for_one
+# )
 
-Beacon.LiveAdminTest.Cluster.start_beacon(:"node1@127.0.0.1",
-  sites: [
-    [
-      site: :site_a,
-      skip_boot?: true,
-      repo: MyApp.Repo,
-      endpoint: MyAppWeb.Endpoint,
-      router: MyApp.Router,
-      extra_page_fields: [
-        MyApp.PageField.Type
-      ]
-    ]
-  ]
-)
+# Beacon.LiveAdminTest.Cluster.spawn([:"node1@127.0.0.1", :"node2@127.0.0.1"])
 
-Beacon.LiveAdminTest.Cluster.start_beacon(:"node2@127.0.0.1",
-  sites: [
-    [
-      site: :site_b,
-      skip_boot?: true,
-      repo: MyApp.Repo,
-      endpoint: MyAppWeb.Endpoint,
-      router: MyApp.Router
-    ],
-    [
-      site: :site_c,
-      skip_boot?: true,
-      repo: MyApp.Repo,
-      endpoint: MyAppWeb.Endpoint,
-      router: MyApp.Router
-    ]
-  ]
-)
+# Beacon.LiveAdminTest.Cluster.start_beacon(:"node1@127.0.0.1",
+#   sites: [
+#     [
+#       site: :site_a,
+#       skip_boot?: true,
+#       repo: MyApp.Repo,
+#       endpoint: MyAppWeb.Endpoint,
+#       router: MyApp.Router,
+#       extra_page_fields: [
+#         MyApp.PageField.Type
+#       ]
+#     ]
+#   ]
+# )
+
+# Beacon.LiveAdminTest.Cluster.start_beacon(:"node2@127.0.0.1",
+#   sites: [
+#     [
+#       site: :site_b,
+#       skip_boot?: true,
+#       repo: MyApp.Repo,
+#       endpoint: MyAppWeb.Endpoint,
+#       router: MyApp.Router
+#     ],
+#     [
+#       site: :site_c,
+#       skip_boot?: true,
+#       repo: MyApp.Repo,
+#       endpoint: MyAppWeb.Endpoint,
+#       router: MyApp.Router
+#     ]
+#   ]
+# )
 
 ExUnit.start()

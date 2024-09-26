@@ -20,4 +20,4 @@ if Mix.env() == :dev do
     ]
 end
 
-if config_env() == :test, do: import_config("test.exs")
+if config_env() in [:test, :e2e], do: import_config("#{config_env()}.exs")

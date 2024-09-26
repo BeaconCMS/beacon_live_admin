@@ -1,30 +1,21 @@
 {
   "name": "beacon_live_admin",
-  "version": "1.0.0",
+  "version": "0.1.0-rc.1",
   "description": "Admin UI to manage content for sites built by [Beacon](https://github.com/BeaconCMS/beacon).",
-  "main": "index.js",
-  "directories": {
-    "lib": "lib",
-    "test": "test"
-  },
+  "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/BeaconCMS/beacon_live_admin.git"
+    "url": "git://github.com/BeaconCMS/beacon_live_admin.git"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/BeaconCMS/beacon_live_admin/issues"
-  },
-  "homepage": "https://github.com/BeaconCMS/beacon_live_admin#readme",
   "devDependencies": {
     "@playwright/test": "^1.47.1",
     "@types/node": "^22.5.5"
   },
   "scripts": {
-    "e2e:test": "npx playwright install && npx playwright test",
-    "e2e:test:ui": "npx playwright install && npx playwright test --ui",
-    "e2e:test:debug": "npx playwright install && npx playwright test --debug"
+    "setup": "mix deps.get && npm install && cd assets && npm install",
+    "e2e:server": "MIX_ENV=e2e mix test --cover --export-coverage e2e test/e2e/test_helper.exs",
+    "e2e:test": "mix assets.build && cd test/e2e && npx playwright install && npx playwright test",
+    "e2e:test:ui": "mix assets.build && cd test/e2e && npx playwright install && npx playwright test --ui",
+    "e2e:test:debug": "mix assets.build && cd test/e2e && npx playwright install && npx playwright test --debug"
   }
 }
