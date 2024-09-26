@@ -61,6 +61,8 @@ node_modules/
 # `direnv` local environment config
 .envrc
 
+node_modules
+
 # e2e test
 /blob-report/
 /playwright-report/
