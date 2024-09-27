@@ -98,7 +98,6 @@ jobs:
 
     env:
       MIX_ENV: e2e
-      ImageOS: ubuntu20
       HOME: /root
 
     runs-on: ubuntu-20.04
@@ -110,7 +109,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install unzip
-        run: apt update && apt -y install unzip
+        run: apt update && apt -y install unzip libssl-dev
 
       - name: Set up Elixir
         uses: erlef/setup-beam@v1
