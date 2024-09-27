@@ -109,11 +109,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Install unzip
+        run: apt update && apt -y install unzip
+
       - name: Set up Elixir
         uses: erlef/setup-beam@v1
         with:
-          elixir-version: ${{ matrix.elixir }}
           otp-version: ${{ matrix.otp }}
+          elixir-version: ${{ matrix.elixir }}
 
       - name: Cache mix deps
         uses: actions/cache@v4
@@ -166,8 +169,8 @@ jobs:
       - name: Set up Elixir
         uses: erlef/setup-beam@v1
         with:
-          elixir-version: ${{ matrix.elixir }}
           otp-version: ${{ matrix.otp }}
+          elixir-version: ${{ matrix.elixir }}
 
       - name: Cache mix deps
         uses: actions/cache@v4
