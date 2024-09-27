@@ -122,13 +122,9 @@ defmodule Beacon.LiveAdmin.Router do
       end)
 
     [
-      # layouts
-      {"/layouts", Beacon.LiveAdmin.LayoutEditorLive.Index, :index, %{}},
-      {"/layouts/new", Beacon.LiveAdmin.LayoutEditorLive.New, :new, %{}},
-      {"/layouts/:id", Beacon.LiveAdmin.LayoutEditorLive.Edit, :edit, %{}},
-      {"/layouts/:id/meta_tags", Beacon.LiveAdmin.LayoutEditorLive.MetaTags, :meta_tags, %{}},
-      {"/layouts/:id/revisions", Beacon.LiveAdmin.LayoutEditorLive.Revisions, :revisions, %{}},
-      {"/layouts/:id/resource_links", Beacon.LiveAdmin.LayoutEditorLive.ResourceLinks, :resource_links, %{}},
+      # media library
+      {"/media_library", Beacon.LiveAdmin.MediaLibraryLive.Index, :index, %{}},
+      {"/media_library/upload", Beacon.LiveAdmin.MediaLibraryLive.Index, :upload, %{}},
       # components
       {"/components", Beacon.LiveAdmin.ComponentEditorLive.Index, :index, %{}},
       {"/components/new", Beacon.LiveAdmin.ComponentEditorLive.New, :new, %{}},
@@ -137,6 +133,13 @@ defmodule Beacon.LiveAdmin.Router do
       {"/components/:id/slots/:slot_id", Beacon.LiveAdmin.ComponentEditorLive.Slots, :slots, %{}},
       {"/components/:id/slots/:slot_id/attrs/new", Beacon.LiveAdmin.ComponentEditorLive.SlotAttr, :new, %{}},
       {"/components/:id/slots/:slot_id/attrs/:attr_id", Beacon.LiveAdmin.ComponentEditorLive.SlotAttr, :edit, %{}},
+      # layouts
+      {"/layouts", Beacon.LiveAdmin.LayoutEditorLive.Index, :index, %{}},
+      {"/layouts/new", Beacon.LiveAdmin.LayoutEditorLive.New, :new, %{}},
+      {"/layouts/:id", Beacon.LiveAdmin.LayoutEditorLive.Edit, :edit, %{}},
+      {"/layouts/:id/meta_tags", Beacon.LiveAdmin.LayoutEditorLive.MetaTags, :meta_tags, %{}},
+      {"/layouts/:id/revisions", Beacon.LiveAdmin.LayoutEditorLive.Revisions, :revisions, %{}},
+      {"/layouts/:id/resource_links", Beacon.LiveAdmin.LayoutEditorLive.ResourceLinks, :resource_links, %{}},
       # pages
       {"/pages", Beacon.LiveAdmin.PageEditorLive.Index, :index, %{}},
       {"/pages/new", Beacon.LiveAdmin.PageEditorLive.New, :new, %{}},
@@ -146,22 +149,22 @@ defmodule Beacon.LiveAdmin.Router do
       {"/pages/:id/revisions", Beacon.LiveAdmin.PageEditorLive.Revisions, :revisions, %{}},
       {"/pages/:page_id/variants", Beacon.LiveAdmin.PageEditorLive.Variants, :variants, %{}},
       {"/pages/:page_id/variants/:variant_id", Beacon.LiveAdmin.PageEditorLive.Variants, :variants, %{}},
-      # event handlers
-      {"/events", Beacon.LiveAdmin.EventHandlerEditorLive.Index, :index, %{}},
-      {"/events/:id", Beacon.LiveAdmin.EventHandlerEditorLive.Index, :index, %{}},
-      # error pages
-      {"/error_pages", Beacon.LiveAdmin.ErrorPageEditorLive.Index, :index, %{}},
-      {"/error_pages/:status", Beacon.LiveAdmin.ErrorPageEditorLive.Index, :index, %{}},
       # live data
       {"/live_data", Beacon.LiveAdmin.LiveDataEditorLive.Index, :index, %{}},
       {"/live_data/new", Beacon.LiveAdmin.LiveDataEditorLive.Index, :new, %{}},
       {"/live_data/:live_data_id", Beacon.LiveAdmin.LiveDataEditorLive.Index, :edit, %{}},
       {"/live_data/:live_data_id/assigns", Beacon.LiveAdmin.LiveDataEditorLive.Assigns, :assigns, %{}},
       {"/live_data/:live_data_id/assigns/:assign_id", Beacon.LiveAdmin.LiveDataEditorLive.Assigns, :assigns, %{}},
-      # media library
-      {"/media_library", Beacon.LiveAdmin.MediaLibraryLive.Index, :index, %{}},
-      {"/media_library/upload", Beacon.LiveAdmin.MediaLibraryLive.Index, :upload, %{}},
-      {"/media_library/:id", Beacon.LiveAdmin.MediaLibraryLive.Index, :show, %{}}
+      {"/media_library/:id", Beacon.LiveAdmin.MediaLibraryLive.Index, :show, %{}},
+      # events
+      {"/events", Beacon.LiveAdmin.EventHandlerEditorLive.Index, :index, %{}},
+      {"/events/:id", Beacon.LiveAdmin.EventHandlerEditorLive.Index, :index, %{}},
+      # info handlers
+      {"/info_handlers", Beacon.LiveAdmin.InfoHandlerEditorLive.Index, :index, %{}},
+      {"/info_handlers/:handler_id", Beacon.LiveAdmin.InfoHandlerEditorLive.Index, :index, %{}},
+      # error pages
+      {"/error_pages", Beacon.LiveAdmin.ErrorPageEditorLive.Index, :index, %{}},
+      {"/error_pages/:status", Beacon.LiveAdmin.ErrorPageEditorLive.Index, :index, %{}}
     ]
     |> Enum.concat(additional_pages)
     |> Enum.map(fn {path, module, live_action, opts} ->
