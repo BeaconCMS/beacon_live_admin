@@ -119,7 +119,6 @@ export function getBoundingRect(el: Element): LocationInfo {
 // If there is a tie (which can happen when the element being dragged is bigger and completely overlaps
 // more than one element), this picks the one whose center is closest to the center of the dragged element.
 export function findHoveredSiblingIndex(
-  dragDirection: DragDirection,
   mouseDiff: Coords,
   siblingRects: LocationInfo[],
   selectedIndex: number,
@@ -130,7 +129,7 @@ export function findHoveredSiblingIndex(
   for (let i = 0; i < siblingRects.length; i++) {
     if (i !== selectedIndex) {
       const rect = siblingRects[i]
-      const overlap = calculateOverlap(rect, currentRect, dragDirection)
+      const overlap = calculateOverlap(rect, currentRect)
       if (overlap === 0) {
         continue
       }
@@ -152,16 +151,17 @@ export function findHoveredSiblingIndex(
   return bestMatchIndex
 }
 
-function calculateOverlap(rect: LocationInfo, draggedRect: LocationInfo, dragDirection: DragDirection): number {
-  if (dragDirection === "horizontal") {
-    const xOverlap = Math.max(0, Math.min(rect.right, draggedRect.right) - Math.max(rect.left, draggedRect.left))
-    return (100 * xOverlap) / Math.min(rect.width, draggedRect.width)
-  } else if (dragDirection === "vertical") {
-    const yOverlap = Math.max(0, Math.min(rect.bottom, draggedRect.bottom) - Math.max(rect.top, draggedRect.top))
-    return (100 * yOverlap) / Math.min(rect.height, draggedRect.height)
-  } else {
-    alert("Bidirational drag not supported yet")
-  }
+function calculateOverlap(rect: LocationInfo, draggedRect: LocationInfo): number {
+  const xOverlap = Math.max(0, Math.min(rect.right, draggedRect.right) - Math.max(rect.left, draggedRect.left))
+  const yOverlap = Math.max(0, Math.min(rect.bottom, draggedRect.bottom) - Math.max(rect.top, draggedRect.top))
+
+  const overlapArea = xOverlap * yOverlap
+  const rectArea = rect.width * rect.height
+  const draggedRectArea = draggedRect.width * draggedRect.height
+
+  const minArea = Math.min(rectArea, draggedRectArea)
+
+  return (100 * overlapArea) / minArea
 }
 
 function calculateCenterDistance(rect1: LocationInfo, rect2: LocationInfo): number {

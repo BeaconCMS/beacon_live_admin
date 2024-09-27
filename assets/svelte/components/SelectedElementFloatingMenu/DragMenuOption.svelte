@@ -10,12 +10,13 @@
   } from "$lib/utils/drag-helpers"
   import { live } from "$lib/stores/live"
 
-  export type LocationInfo = Omit<DOMRect, "toJSON">
+  export type LocationInfo = Omit<DOMRect, "toJSON"> | DOMRect
 
   interface DragInfo {
     parentElementClone: Element
     selectedIndex: number
-    siblingLocationInfos: LocationInfo[] // LocationInfo[]
+    originalSiblingRects: LocationInfo[] // LocationInfo[]
+    newSiblingRects: LocationInfo[] // LocationInfo[]
   }
 
   let currentHandleCoords: Coords
@@ -26,7 +27,7 @@
 
   export function initSelectedElementDragMenuPosition(selectedDomEl, mouseDiff?: Coords) {
     let rect = dragElementInfo
-      ? dragElementInfo.siblingLocationInfos[dragElementInfo.selectedIndex]
+      ? dragElementInfo.originalSiblingRects[dragElementInfo.selectedIndex]
       : getBoundingRect(selectedDomEl)
     updateHandleCoords(rect, mouseDiff)
     let styles = []
@@ -39,14 +40,20 @@
     dragHandleStyle.set(styles.join(";"))
   }
 
+  function calculateHandleXPosition(rect: LocationInfo) {
+    return rect.x + rect.width / 2 - 5
+  }
+  function calculateHandleYPosition(rect: LocationInfo) {
+    return rect.y + rect.height + 5
+  }
   function updateHandleCoords(currentRect: LocationInfo, movement: Coords = { x: 0, y: 0 }) {
     relativeWrapperRect = document
       .getElementById("ui-builder-app-container")
       .closest(".relative")
       .getBoundingClientRect()
     currentHandleCoords = {
-      x: currentRect.x - relativeWrapperRect.x + movement.x + currentRect.width / 2 - 5,
-      y: currentRect.y - relativeWrapperRect.y + movement.y + currentRect.height + 5,
+      x: calculateHandleXPosition(currentRect) - relativeWrapperRect.x + movement.x,
+      y: calculateHandleYPosition(currentRect) - relativeWrapperRect.y + movement.y,
     }
   }
 </script>
@@ -57,6 +64,7 @@
   export let element: Element
   export let isParent = false // TODO: Not in use yet
 
+  let originalSiblings: Element[]
   let dragHandleElement: HTMLButtonElement
   $: canBeDragged = element?.parentElement?.children?.length > 1
   $: rotated = !!element && getDragDirection(element) === "horizontal"
@@ -71,14 +79,13 @@
     let el = element.parentElement.cloneNode(true) as Element
     let elChildren = Array.from(el.children)
     for (let i = 0; i < elChildren.length; i++) {
-      elChildren[i].style.transition = i === selectedIndex ? "none" : "transform 0.15s"
       // Next line is only for debugging purposes. It helps find the cloned nodes
       elChildren[i].setAttribute("data-is-clone", "true")
     }
     dragElementInfo = {
       parentElementClone: el,
       selectedIndex,
-      siblingLocationInfos: siblings.map((el, i) => {
+      originalSiblingRects: siblings.map((el, i) => {
         let { x, y, width, height, top, right, bottom, left } = getBoundingRect(el)
         return {
           x,
@@ -94,6 +101,7 @@
     }
     element.parentElement.style.display = "none"
     element.parentElement.parentNode.insertBefore(el, element.parentElement)
+    originalSiblings = Array.from(dragElementInfo.parentElementClone.children)
   }
 
   let mouseDownEvent: MouseEvent
@@ -106,7 +114,7 @@
   }
 
   function applyNewOrder() {
-    if (newIndex !== null) {
+    if (newIndex !== dragElementInfo.selectedIndex) {
       // Reordering happened, apply new order
       let parent = $parentOfSelectedAstElement
       const selectedAstElement = parent.content.splice(dragElementInfo.selectedIndex, 1)[0]
@@ -141,21 +149,17 @@
     $isDragging = false
     resetDragElementHandle()
     placeholderStyle = null
+    originalSiblings = null
   }
 
   function getGhostElement() {
     return dragElementInfo.parentElementClone.children.item(dragElementInfo.selectedIndex)
   }
 
-  function findSwappedIndexes(
-    dragDirection: DragDirection,
-    mouseDiff: Coords,
-    e: MouseEvent,
-  ): { currentIndex: number; destinationIndex: number } {
+  function findSwappedIndexes(mouseDiff: Coords): { currentIndex: number; destinationIndex: number } {
     let hoveredElementIndex = findHoveredSiblingIndex(
-      dragDirection,
       mouseDiff,
-      dragElementInfo.siblingLocationInfos,
+      dragElementInfo.originalSiblingRects,
       dragElementInfo.selectedIndex,
     )
     if (hoveredElementIndex === -1) {
@@ -170,184 +174,108 @@
     }
   }
 
-  function sortedLocationInfos(
-    infos: LocationInfo[],
-    draggedElementIndex: number,
-    destinationIndex: number,
-  ): LocationInfo[] {
-    let newInfos = [...infos]
-    let info = newInfos.splice(draggedElementIndex, 1)[0]
-    newInfos.splice(destinationIndex, 0, info)
-    return newInfos
-  }
+  function repositionSiblings(currentIndex: number, destinationIndex: number) {
+    let parentElement = dragElementInfo.parentElementClone
+    // 1. First: Capture the initial positions (before DOM changes)
+    const children = Array.from(parentElement.children)
+    const firstRects = children.map((child) => child.getBoundingClientRect())
 
-  function calculateNewDistance(
-    dragDirection: DragDirection,
-    index: number,
-    draggedElementIndex: number,
-    destinationIndex: number,
-    newInfos: LocationInfo[],
-  ): number | undefined {
-    if (
-      (index < destinationIndex && index < draggedElementIndex) ||
-      (index > destinationIndex && index > draggedElementIndex)
-    )
-      return
-    let newIndex: number
-    if (index === draggedElementIndex) {
-      newIndex = destinationIndex
-    } else {
-      if (draggedElementIndex > destinationIndex) {
-        // An element is being dragged earlier in the DOM
-        newIndex = index < draggedElementIndex && index >= destinationIndex ? index + 1 : index
+    // 2. Modify the DOM
+    const newChildren = [...originalSiblings]
+    const element = newChildren.splice(currentIndex, 1)[0] // Remove the element at fromIndex
+    newChildren.splice(destinationIndex, 0, element) // Insert the element at toIndex
+    dragElementInfo.parentElementClone.replaceChildren(...newChildren)
+
+    // 3. Last: Capture the final positions (after DOM changes)
+    const lastRects = children.map((child) => child.getBoundingClientRect())
+
+    // 4. Invert: Calculate the deltas and apply the transform to each element
+    children.forEach((child, i) => {
+      if (i !== newIndex) {
+        const firstRect = firstRects[i]
+        const lastRect = lastRects[i]
+        const deltaX = firstRect.left - lastRect.left
+        const deltaY = firstRect.top - lastRect.top
+        // Apply the transform to invert the movement
+        child.style.transform = `translate(${deltaX}px, ${deltaY}px)`
       } else {
-        // An element is being dragged further down in the DOM
-        newIndex = index > draggedElementIndex && index <= destinationIndex ? index - 1 : index
+        // The current element must have no transforms. It's position is animated
+        // differently as it tracks the mouse movement
+        child.style.transform = `none`
       }
-    }
-    let distance = 0
-    let i = 0
-    if (dragDirection === "vertical") {
-      while (i < newInfos.length && i < newIndex) {
-        let gap = 0
-        if (i > 0) {
-          gap = dragElementInfo.siblingLocationInfos[i].top - dragElementInfo.siblingLocationInfos[i - 1].bottom
-        }
-        distance += newInfos[i].height + gap
-        i++
-      }
-      let gap = 0
-      if (newIndex > 0) {
-        dragElementInfo.siblingLocationInfos
-        gap =
-          dragElementInfo.siblingLocationInfos[newIndex].top - dragElementInfo.siblingLocationInfos[newIndex - 1].bottom
-      }
-      distance += gap + dragElementInfo.siblingLocationInfos[0].top
-    } else {
-      while (i < newInfos.length && i < newIndex) {
-        let gap = 0
-        if (i > 0) {
-          gap = dragElementInfo.siblingLocationInfos[i].left - dragElementInfo.siblingLocationInfos[i - 1].right
-        }
-        distance += newInfos[i].width + gap
-        i++
-      }
-      let gap = 0
-      if (newIndex > 0) {
-        dragElementInfo.siblingLocationInfos
-        gap =
-          dragElementInfo.siblingLocationInfos[newIndex].left - dragElementInfo.siblingLocationInfos[newIndex - 1].right
-      }
-      distance += gap + dragElementInfo.siblingLocationInfos[0].left
-    }
-    return distance
-  }
+      child.style.transition = "transform 0s"
+    })
 
-  function repositionGhosts(
-    dragDirection: DragDirection,
-    currentIndex: number,
-    destinationIndex: number,
-    locationInfos: LocationInfo[],
-  ) {
-    Array.from(dragElementInfo.parentElementClone.children).forEach((el, i) => {
-      if (i !== dragElementInfo.selectedIndex) {
-        const distance = calculateNewDistance(dragDirection, i, currentIndex, destinationIndex, locationInfos)
-        if (distance) {
-          if (dragDirection === "vertical") {
-            el.style.transform = `translateY(${distance - dragElementInfo.siblingLocationInfos[i].top}px)`
-          } else {
-            el.style.transform = `translateX(${distance - dragElementInfo.siblingLocationInfos[i].left}px)`
-          }
-        } else {
-          el.style.transform = null
-        }
-      }
+    // 5. Store the new positions for later use after all transforms have been added or removed
+    dragElementInfo.newSiblingRects = Array.from(dragElementInfo.parentElementClone.children).map((e) =>
+      e.getBoundingClientRect(),
+    )
+
+    // 6. Play: Remove the transform, allowing the browser to animate to the final position
+    requestAnimationFrame(() => {
+      children.forEach((child) => {
+        child.style.transition = "transform 0.2s" // Add transition for smooth animation
+        child.style.transform = ""
+      })
     })
   }
 
-  function calculatePlaceholderPosition(
-    dragDirection: DragDirection,
-    currentIndex: number,
-    destinationIndex: number,
-    locationInfos: LocationInfo[],
-  ) {
-    let distance = calculateNewDistance(dragDirection, currentIndex, currentIndex, destinationIndex, locationInfos)
-    let draggedElementInfo = dragElementInfo.siblingLocationInfos[dragElementInfo.selectedIndex]
-    if (dragDirection === "vertical") {
-      placeholderStyle = `top: ${distance - relativeWrapperRect.top}px; left: ${draggedElementInfo.left - relativeWrapperRect.left}px; height: ${draggedElementInfo.height}px; width: ${draggedElementInfo.width}px;`
+  function repositionPlaceholder(destinationIndex: number) {
+    // Calculate the position of the placeholder using the final positions
+    const currentRect = dragElementInfo.newSiblingRects[destinationIndex]
+    placeholderStyle = `top: ${currentRect.top - relativeWrapperRect.top}px; left: ${currentRect.left - relativeWrapperRect.left}px; height: ${currentRect.height}px; width: ${currentRect.width}px;`
+  }
+
+  function repositionGhostElement(currentIndex: number, destinationIndex: number, mouseDiff: Coords) {
+    const ghostElement = dragElementInfo.parentElementClone.children.item(destinationIndex)
+    let xDistance = 0
+    let yDistance = 0
+    if (currentIndex === destinationIndex) {
+      xDistance = mouseDiff.x
+      yDistance = mouseDiff.y
     } else {
-      placeholderStyle = `left: ${distance - relativeWrapperRect.left}px; top: ${draggedElementInfo.top - relativeWrapperRect.top}px; height: ${draggedElementInfo.height}px; width: ${draggedElementInfo.width}px;`
+      const oldRect = dragElementInfo.originalSiblingRects[currentIndex]
+      const newRect = dragElementInfo.newSiblingRects[destinationIndex]
+      xDistance = -(newRect.x - oldRect.x - mouseDiff.x)
+      yDistance = -(newRect.y - oldRect.y - mouseDiff.y)
     }
+    ghostElement.style.transition = "none"
+    ghostElement.style.transform = `translate(${xDistance}px,${yDistance}px)`
+  }
+
+  function repositionDragHandle(mouseDiff: Coords) {
+    dragHandleElement.style.setProperty("--tw-translate-x", `${mouseDiff.x}px`)
+    dragHandleElement.style.setProperty("--tw-translate-y", `${mouseDiff.y}px`)
   }
 
   let placeholderStyle: string = null
   let newIndex: number = null
-
-  function updateSiblingsPositioning(dragDirection: DragDirection, mouseDiff, e) {
+  function updateSiblingsPositioning(mouseDiff) {
     if (!relativeWrapperRect) {
       relativeWrapperRect = document
         .getElementById("ui-builder-app-container")
         .closest(".relative")
         .getBoundingClientRect()
     }
-    if (mouseDiff[dragDirection === "vertical" ? "y" : "x"] !== 0) {
-      let { currentIndex, destinationIndex } = findSwappedIndexes(dragDirection, mouseDiff, e)
-      if (currentIndex === destinationIndex) {
-        // No drag, reset effect.
-        if (newIndex !== null) {
-          // Reset the transforms on all elements but the one being dragged, which must keep following the cursor.
-          Array.from(dragElementInfo.parentElementClone.children).forEach(
-            (el, i) => i !== destinationIndex && (el.style.transform = null),
-          )
-        }
-        newIndex = null
-        // console.log("returning placeholder to its original position")
-        calculatePlaceholderPosition(
-          dragDirection,
-          currentIndex,
-          destinationIndex,
-          dragElementInfo.siblingLocationInfos,
-        )
-      } else {
-        let rearrangedInfos = sortedLocationInfos(dragElementInfo.siblingLocationInfos, currentIndex, destinationIndex)
-        repositionGhosts(dragDirection, currentIndex, destinationIndex, rearrangedInfos)
-        // console.log('Assigning placeholder to a new position');
-        // console.log('currentIndex', currentIndex)
-        // console.log('destinationIndex', destinationIndex)
-        calculatePlaceholderPosition(dragDirection, currentIndex, destinationIndex, rearrangedInfos)
-        newIndex = destinationIndex
-      }
+    let { currentIndex, destinationIndex } = findSwappedIndexes(mouseDiff)
+    if (newIndex !== destinationIndex) {
+      repositionSiblings(currentIndex, destinationIndex)
+      repositionPlaceholder(destinationIndex)
+      newIndex = destinationIndex
     }
-  }
-
-  function applyTranslate(el: Element, direction: "vertical" | "horizontal", amount: number) {
-    if (window.getComputedStyle(el).display === "contents") {
-      Array.from(el.children).forEach(
-        (child) => (child.style.transform = `${direction === "vertical" ? "translateY" : "translateX"}(${amount}px)`),
-      )
-    } else {
-      el.style.transform = `${direction === "vertical" ? "translateY" : "translateX"}(${amount}px)`
-    }
+    repositionGhostElement(currentIndex, destinationIndex, mouseDiff)
   }
 
   function handleMousemove(e: MouseEvent) {
     let ghostElement = getGhostElement()
     let dragDirection = getDragDirection(ghostElement)
     let mouseDiff: Coords = {
-      x: e.x - mouseDownEvent.x,
-      y: e.y - mouseDownEvent.y,
-    }
-    if (dragDirection === "vertical") {
-      // Only the drag handle can use CSS variables because it has the `transform` tailwind class
-      // CSS variables allow to control translate and rotate independently.
-      dragHandleElement.style.setProperty("--tw-translate-y", `${mouseDiff.y}px`)
-      applyTranslate(ghostElement, "vertical", mouseDiff.y)
-    } else {
-      dragHandleElement.style.setProperty("--tw-translate-x", `${mouseDiff.x}px`)
-      applyTranslate(ghostElement, "horizontal", mouseDiff.x)
+      x: dragDirection === "vertical" ? 0 : e.x - mouseDownEvent.x,
+      y: dragDirection === "horizontal" ? 0 : e.y - mouseDownEvent.y,
     }
 
-    updateSiblingsPositioning(dragDirection, mouseDiff, e)
+    updateSiblingsPositioning(mouseDiff)
+    repositionDragHandle(mouseDiff)
   }
 </script>
 

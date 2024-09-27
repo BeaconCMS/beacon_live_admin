@@ -253,30 +253,40 @@ var BeaconLiveAdmin = (() => {
           let css = this.source;
           if (color2 == null)
             color2 = pico.isColorSupported;
-          if (terminalHighlight) {
-            if (color2)
-              css = terminalHighlight(css);
+          let aside = (text2) => text2;
+          let mark = (text2) => text2;
+          let highlight = (text2) => text2;
+          if (color2) {
+            let { bold, gray, red } = pico.createColors(true);
+            mark = (text2) => bold(red(text2));
+            aside = (text2) => gray(text2);
+            if (terminalHighlight) {
+              highlight = (text2) => terminalHighlight(text2);
+            }
           }
           let lines = css.split(/\r?\n/);
           let start = Math.max(this.line - 3, 0);
           let end = Math.min(this.line + 2, lines.length);
           let maxWidth = String(end).length;
-          let mark, aside;
-          if (color2) {
-            let { bold, gray, red } = pico.createColors(true);
-            mark = (text2) => bold(red(text2));
-            aside = (text2) => gray(text2);
-          } else {
-            mark = aside = (str) => str;
-          }
           return lines.slice(start, end).map((line, index4) => {
             let number2 = start + 1 + index4;
             let gutter = " " + (" " + number2).slice(-maxWidth) + " | ";
             if (number2 === this.line) {
+              if (line.length > 160) {
+                let padding = 20;
+                let subLineStart = Math.max(0, this.column - padding);
+                let subLineEnd = Math.max(
+                  this.column + padding,
+                  this.endColumn + padding
+                );
+                let subLine = line.slice(subLineStart, subLineEnd);
+                let spacing2 = aside(gutter.replace(/\d/g, " ")) + line.slice(0, Math.min(this.column - 1, padding - 1)).replace(/[^\t]/g, " ");
+                return mark(">") + aside(gutter) + highlight(subLine) + "\n " + spacing2 + mark("^");
+              }
               let spacing = aside(gutter.replace(/\d/g, " ")) + line.slice(0, this.column - 1).replace(/[^\t]/g, " ");
-              return mark(">") + aside(gutter) + line + "\n " + spacing + mark("^");
+              return mark(">") + aside(gutter) + highlight(line) + "\n " + spacing + mark("^");
             }
-            return " " + aside(gutter) + line;
+            return " " + aside(gutter) + highlight(line);
           }).join("\n");
         }
         toString() {
@@ -289,15 +299,6 @@ var BeaconLiveAdmin = (() => {
       };
       module.exports = CssSyntaxError2;
       CssSyntaxError2.default = CssSyntaxError2;
-    }
-  });
-
-  // node_modules/postcss/lib/symbols.js
-  var require_symbols = __commonJS({
-    "node_modules/postcss/lib/symbols.js"(exports, module) {
-      "use strict";
-      module.exports.isClean = Symbol("isClean");
-      module.exports.my = Symbol("my");
     }
   });
 
@@ -637,14 +638,23 @@ var BeaconLiveAdmin = (() => {
     }
   });
 
+  // node_modules/postcss/lib/symbols.js
+  var require_symbols = __commonJS({
+    "node_modules/postcss/lib/symbols.js"(exports, module) {
+      "use strict";
+      module.exports.isClean = Symbol("isClean");
+      module.exports.my = Symbol("my");
+    }
+  });
+
   // node_modules/postcss/lib/node.js
   var require_node = __commonJS({
     "node_modules/postcss/lib/node.js"(exports, module) {
       "use strict";
-      var { isClean, my } = require_symbols();
       var CssSyntaxError2 = require_css_syntax_error();
       var Stringifier = require_stringifier();
       var stringify2 = require_stringify();
+      var { isClean, my } = require_symbols();
       function cloneNode(obj, parent) {
         let cloned = new obj.constructor();
         for (let i in obj) {
@@ -773,6 +783,9 @@ var BeaconLiveAdmin = (() => {
             }
           };
         }
+        markClean() {
+          this[isClean] = true;
+        }
         markDirty() {
           if (this[isClean]) {
             this[isClean] = false;
@@ -853,7 +866,7 @@ var BeaconLiveAdmin = (() => {
                 column: opts.end.column,
                 line: opts.end.line
               };
-            } else if (opts.endIndex) {
+            } else if (typeof opts.endIndex === "number") {
               end = this.positionInside(opts.endIndex);
             } else if (opts.index) {
               end = this.positionInside(opts.index + 1);
@@ -975,6 +988,22 @@ var BeaconLiveAdmin = (() => {
     }
   });
 
+  // node_modules/postcss/lib/comment.js
+  var require_comment = __commonJS({
+    "node_modules/postcss/lib/comment.js"(exports, module) {
+      "use strict";
+      var Node2 = require_node();
+      var Comment2 = class extends Node2 {
+        constructor(defaults3) {
+          super(defaults3);
+          this.type = "comment";
+        }
+      };
+      module.exports = Comment2;
+      Comment2.default = Comment2;
+    }
+  });
+
   // node_modules/postcss/lib/declaration.js
   var require_declaration = __commonJS({
     "node_modules/postcss/lib/declaration.js"(exports, module) {
@@ -997,745 +1026,18 @@ var BeaconLiveAdmin = (() => {
     }
   });
 
-  // (disabled):node_modules/source-map-js/source-map.js
-  var require_source_map = __commonJS({
-    "(disabled):node_modules/source-map-js/source-map.js"() {
-    }
-  });
-
-  // (disabled):path
-  var require_path = __commonJS({
-    "(disabled):path"() {
-    }
-  });
-
-  // (disabled):url
-  var require_url = __commonJS({
-    "(disabled):url"() {
-    }
-  });
-
-  // node_modules/nanoid/non-secure/index.cjs
-  var require_non_secure = __commonJS({
-    "node_modules/nanoid/non-secure/index.cjs"(exports, module) {
-      var urlAlphabet = "useandom-26T198340PX75pxJACKVERYMINDBUSHWOLF_GQZbfghjklqvwyzrict";
-      var customAlphabet = (alphabet, defaultSize = 21) => {
-        return (size = defaultSize) => {
-          let id = "";
-          let i = size;
-          while (i--) {
-            id += alphabet[Math.random() * alphabet.length | 0];
-          }
-          return id;
-        };
-      };
-      var nanoid = (size = 21) => {
-        let id = "";
-        let i = size;
-        while (i--) {
-          id += urlAlphabet[Math.random() * 64 | 0];
-        }
-        return id;
-      };
-      module.exports = { nanoid, customAlphabet };
-    }
-  });
-
-  // (disabled):fs
-  var require_fs = __commonJS({
-    "(disabled):fs"() {
-    }
-  });
-
-  // node_modules/postcss/lib/previous-map.js
-  var require_previous_map = __commonJS({
-    "node_modules/postcss/lib/previous-map.js"(exports, module) {
-      "use strict";
-      var { SourceMapConsumer, SourceMapGenerator } = require_source_map();
-      var { existsSync, readFileSync } = require_fs();
-      var { dirname, join: join2 } = require_path();
-      function fromBase64(str) {
-        if (Buffer) {
-          return Buffer.from(str, "base64").toString();
-        } else {
-          return window.atob(str);
-        }
-      }
-      var PreviousMap = class {
-        constructor(css, opts) {
-          if (opts.map === false)
-            return;
-          this.loadAnnotation(css);
-          this.inline = this.startWith(this.annotation, "data:");
-          let prev = opts.map ? opts.map.prev : void 0;
-          let text2 = this.loadMap(opts.from, prev);
-          if (!this.mapFile && opts.from) {
-            this.mapFile = opts.from;
-          }
-          if (this.mapFile)
-            this.root = dirname(this.mapFile);
-          if (text2)
-            this.text = text2;
-        }
-        consumer() {
-          if (!this.consumerCache) {
-            this.consumerCache = new SourceMapConsumer(this.text);
-          }
-          return this.consumerCache;
-        }
-        decodeInline(text2) {
-          let baseCharsetUri = /^data:application\/json;charset=utf-?8;base64,/;
-          let baseUri = /^data:application\/json;base64,/;
-          let charsetUri = /^data:application\/json;charset=utf-?8,/;
-          let uri = /^data:application\/json,/;
-          if (charsetUri.test(text2) || uri.test(text2)) {
-            return decodeURIComponent(text2.substr(RegExp.lastMatch.length));
-          }
-          if (baseCharsetUri.test(text2) || baseUri.test(text2)) {
-            return fromBase64(text2.substr(RegExp.lastMatch.length));
-          }
-          let encoding = text2.match(/data:application\/json;([^,]+),/)[1];
-          throw new Error("Unsupported source map encoding " + encoding);
-        }
-        getAnnotationURL(sourceMapString) {
-          return sourceMapString.replace(/^\/\*\s*# sourceMappingURL=/, "").trim();
-        }
-        isMap(map) {
-          if (typeof map !== "object")
-            return false;
-          return typeof map.mappings === "string" || typeof map._mappings === "string" || Array.isArray(map.sections);
-        }
-        loadAnnotation(css) {
-          let comments = css.match(/\/\*\s*# sourceMappingURL=/gm);
-          if (!comments)
-            return;
-          let start = css.lastIndexOf(comments.pop());
-          let end = css.indexOf("*/", start);
-          if (start > -1 && end > -1) {
-            this.annotation = this.getAnnotationURL(css.substring(start, end));
-          }
-        }
-        loadFile(path) {
-          this.root = dirname(path);
-          if (existsSync(path)) {
-            this.mapFile = path;
-            return readFileSync(path, "utf-8").toString().trim();
-          }
-        }
-        loadMap(file15, prev) {
-          if (prev === false)
-            return false;
-          if (prev) {
-            if (typeof prev === "string") {
-              return prev;
-            } else if (typeof prev === "function") {
-              let prevPath = prev(file15);
-              if (prevPath) {
-                let map = this.loadFile(prevPath);
-                if (!map) {
-                  throw new Error(
-                    "Unable to load previous source map: " + prevPath.toString()
-                  );
-                }
-                return map;
-              }
-            } else if (prev instanceof SourceMapConsumer) {
-              return SourceMapGenerator.fromSourceMap(prev).toString();
-            } else if (prev instanceof SourceMapGenerator) {
-              return prev.toString();
-            } else if (this.isMap(prev)) {
-              return JSON.stringify(prev);
-            } else {
-              throw new Error(
-                "Unsupported previous source map format: " + prev.toString()
-              );
-            }
-          } else if (this.inline) {
-            return this.decodeInline(this.annotation);
-          } else if (this.annotation) {
-            let map = this.annotation;
-            if (file15)
-              map = join2(dirname(file15), map);
-            return this.loadFile(map);
-          }
-        }
-        startWith(string, start) {
-          if (!string)
-            return false;
-          return string.substr(0, start.length) === start;
-        }
-        withContent() {
-          return !!(this.consumer().sourcesContent && this.consumer().sourcesContent.length > 0);
-        }
-      };
-      module.exports = PreviousMap;
-      PreviousMap.default = PreviousMap;
-    }
-  });
-
-  // node_modules/postcss/lib/input.js
-  var require_input = __commonJS({
-    "node_modules/postcss/lib/input.js"(exports, module) {
-      "use strict";
-      var { SourceMapConsumer, SourceMapGenerator } = require_source_map();
-      var { fileURLToPath, pathToFileURL } = require_url();
-      var { isAbsolute, resolve } = require_path();
-      var { nanoid } = require_non_secure();
-      var terminalHighlight = require_terminal_highlight();
-      var CssSyntaxError2 = require_css_syntax_error();
-      var PreviousMap = require_previous_map();
-      var fromOffsetCache = Symbol("fromOffsetCache");
-      var sourceMapAvailable = Boolean(SourceMapConsumer && SourceMapGenerator);
-      var pathAvailable = Boolean(resolve && isAbsolute);
-      var Input2 = class {
-        constructor(css, opts = {}) {
-          if (css === null || typeof css === "undefined" || typeof css === "object" && !css.toString) {
-            throw new Error(`PostCSS received ${css} instead of CSS string`);
-          }
-          this.css = css.toString();
-          if (this.css[0] === "\uFEFF" || this.css[0] === "\uFFFE") {
-            this.hasBOM = true;
-            this.css = this.css.slice(1);
-          } else {
-            this.hasBOM = false;
-          }
-          if (opts.from) {
-            if (!pathAvailable || /^\w+:\/\//.test(opts.from) || isAbsolute(opts.from)) {
-              this.file = opts.from;
-            } else {
-              this.file = resolve(opts.from);
-            }
-          }
-          if (pathAvailable && sourceMapAvailable) {
-            let map = new PreviousMap(this.css, opts);
-            if (map.text) {
-              this.map = map;
-              let file15 = map.consumer().file;
-              if (!this.file && file15)
-                this.file = this.mapResolve(file15);
-            }
-          }
-          if (!this.file) {
-            this.id = "<input css " + nanoid(6) + ">";
-          }
-          if (this.map)
-            this.map.file = this.from;
-        }
-        error(message, line, column, opts = {}) {
-          let result, endLine, endColumn;
-          if (line && typeof line === "object") {
-            let start = line;
-            let end = column;
-            if (typeof start.offset === "number") {
-              let pos = this.fromOffset(start.offset);
-              line = pos.line;
-              column = pos.col;
-            } else {
-              line = start.line;
-              column = start.column;
-            }
-            if (typeof end.offset === "number") {
-              let pos = this.fromOffset(end.offset);
-              endLine = pos.line;
-              endColumn = pos.col;
-            } else {
-              endLine = end.line;
-              endColumn = end.column;
-            }
-          } else if (!column) {
-            let pos = this.fromOffset(line);
-            line = pos.line;
-            column = pos.col;
-          }
-          let origin = this.origin(line, column, endLine, endColumn);
-          if (origin) {
-            result = new CssSyntaxError2(
-              message,
-              origin.endLine === void 0 ? origin.line : { column: origin.column, line: origin.line },
-              origin.endLine === void 0 ? origin.column : { column: origin.endColumn, line: origin.endLine },
-              origin.source,
-              origin.file,
-              opts.plugin
-            );
-          } else {
-            result = new CssSyntaxError2(
-              message,
-              endLine === void 0 ? line : { column, line },
-              endLine === void 0 ? column : { column: endColumn, line: endLine },
-              this.css,
-              this.file,
-              opts.plugin
-            );
-          }
-          result.input = { column, endColumn, endLine, line, source: this.css };
-          if (this.file) {
-            if (pathToFileURL) {
-              result.input.url = pathToFileURL(this.file).toString();
-            }
-            result.input.file = this.file;
-          }
-          return result;
-        }
-        fromOffset(offset) {
-          let lastLine, lineToIndex;
-          if (!this[fromOffsetCache]) {
-            let lines = this.css.split("\n");
-            lineToIndex = new Array(lines.length);
-            let prevIndex = 0;
-            for (let i = 0, l = lines.length; i < l; i++) {
-              lineToIndex[i] = prevIndex;
-              prevIndex += lines[i].length + 1;
-            }
-            this[fromOffsetCache] = lineToIndex;
-          } else {
-            lineToIndex = this[fromOffsetCache];
-          }
-          lastLine = lineToIndex[lineToIndex.length - 1];
-          let min = 0;
-          if (offset >= lastLine) {
-            min = lineToIndex.length - 1;
-          } else {
-            let max2 = lineToIndex.length - 2;
-            let mid;
-            while (min < max2) {
-              mid = min + (max2 - min >> 1);
-              if (offset < lineToIndex[mid]) {
-                max2 = mid - 1;
-              } else if (offset >= lineToIndex[mid + 1]) {
-                min = mid + 1;
-              } else {
-                min = mid;
-                break;
-              }
-            }
-          }
-          return {
-            col: offset - lineToIndex[min] + 1,
-            line: min + 1
-          };
-        }
-        mapResolve(file15) {
-          if (/^\w+:\/\//.test(file15)) {
-            return file15;
-          }
-          return resolve(this.map.consumer().sourceRoot || this.map.root || ".", file15);
-        }
-        origin(line, column, endLine, endColumn) {
-          if (!this.map)
-            return false;
-          let consumer = this.map.consumer();
-          let from = consumer.originalPositionFor({ column, line });
-          if (!from.source)
-            return false;
-          let to;
-          if (typeof endLine === "number") {
-            to = consumer.originalPositionFor({ column: endColumn, line: endLine });
-          }
-          let fromUrl;
-          if (isAbsolute(from.source)) {
-            fromUrl = pathToFileURL(from.source);
-          } else {
-            fromUrl = new URL(
-              from.source,
-              this.map.consumer().sourceRoot || pathToFileURL(this.map.mapFile)
-            );
-          }
-          let result = {
-            column: from.column,
-            endColumn: to && to.column,
-            endLine: to && to.line,
-            line: from.line,
-            url: fromUrl.toString()
-          };
-          if (fromUrl.protocol === "file:") {
-            if (fileURLToPath) {
-              result.file = fileURLToPath(fromUrl);
-            } else {
-              throw new Error(`file: protocol is not available in this PostCSS build`);
-            }
-          }
-          let source = consumer.sourceContentFor(from.source);
-          if (source)
-            result.source = source;
-          return result;
-        }
-        toJSON() {
-          let json = {};
-          for (let name of ["hasBOM", "css", "file", "id"]) {
-            if (this[name] != null) {
-              json[name] = this[name];
-            }
-          }
-          if (this.map) {
-            json.map = { ...this.map };
-            if (json.map.consumerCache) {
-              json.map.consumerCache = void 0;
-            }
-          }
-          return json;
-        }
-        get from() {
-          return this.file || this.id;
-        }
-      };
-      module.exports = Input2;
-      Input2.default = Input2;
-      if (terminalHighlight && terminalHighlight.registerInput) {
-        terminalHighlight.registerInput(Input2);
-      }
-    }
-  });
-
-  // node_modules/postcss/lib/map-generator.js
-  var require_map_generator = __commonJS({
-    "node_modules/postcss/lib/map-generator.js"(exports, module) {
-      "use strict";
-      var { SourceMapConsumer, SourceMapGenerator } = require_source_map();
-      var { dirname, relative, resolve, sep } = require_path();
-      var { pathToFileURL } = require_url();
-      var Input2 = require_input();
-      var sourceMapAvailable = Boolean(SourceMapConsumer && SourceMapGenerator);
-      var pathAvailable = Boolean(dirname && resolve && relative && sep);
-      var MapGenerator = class {
-        constructor(stringify2, root2, opts, cssString) {
-          this.stringify = stringify2;
-          this.mapOpts = opts.map || {};
-          this.root = root2;
-          this.opts = opts;
-          this.css = cssString;
-          this.originalCSS = cssString;
-          this.usesFileUrls = !this.mapOpts.from && this.mapOpts.absolute;
-          this.memoizedFileURLs = /* @__PURE__ */ new Map();
-          this.memoizedPaths = /* @__PURE__ */ new Map();
-          this.memoizedURLs = /* @__PURE__ */ new Map();
-        }
-        addAnnotation() {
-          let content;
-          if (this.isInline()) {
-            content = "data:application/json;base64," + this.toBase64(this.map.toString());
-          } else if (typeof this.mapOpts.annotation === "string") {
-            content = this.mapOpts.annotation;
-          } else if (typeof this.mapOpts.annotation === "function") {
-            content = this.mapOpts.annotation(this.opts.to, this.root);
-          } else {
-            content = this.outputFile() + ".map";
-          }
-          let eol = "\n";
-          if (this.css.includes("\r\n"))
-            eol = "\r\n";
-          this.css += eol + "/*# sourceMappingURL=" + content + " */";
-        }
-        applyPrevMaps() {
-          for (let prev of this.previous()) {
-            let from = this.toUrl(this.path(prev.file));
-            let root2 = prev.root || dirname(prev.file);
-            let map;
-            if (this.mapOpts.sourcesContent === false) {
-              map = new SourceMapConsumer(prev.text);
-              if (map.sourcesContent) {
-                map.sourcesContent = null;
-              }
-            } else {
-              map = prev.consumer();
-            }
-            this.map.applySourceMap(map, from, this.toUrl(this.path(root2)));
-          }
-        }
-        clearAnnotation() {
-          if (this.mapOpts.annotation === false)
-            return;
-          if (this.root) {
-            let node;
-            for (let i = this.root.nodes.length - 1; i >= 0; i--) {
-              node = this.root.nodes[i];
-              if (node.type !== "comment")
-                continue;
-              if (node.text.indexOf("# sourceMappingURL=") === 0) {
-                this.root.removeChild(i);
-              }
-            }
-          } else if (this.css) {
-            this.css = this.css.replace(/\n*?\/\*#[\S\s]*?\*\/$/gm, "");
-          }
-        }
-        generate() {
-          this.clearAnnotation();
-          if (pathAvailable && sourceMapAvailable && this.isMap()) {
-            return this.generateMap();
-          } else {
-            let result = "";
-            this.stringify(this.root, (i) => {
-              result += i;
-            });
-            return [result];
-          }
-        }
-        generateMap() {
-          if (this.root) {
-            this.generateString();
-          } else if (this.previous().length === 1) {
-            let prev = this.previous()[0].consumer();
-            prev.file = this.outputFile();
-            this.map = SourceMapGenerator.fromSourceMap(prev);
-          } else {
-            this.map = new SourceMapGenerator({ file: this.outputFile() });
-            this.map.addMapping({
-              generated: { column: 0, line: 1 },
-              original: { column: 0, line: 1 },
-              source: this.opts.from ? this.toUrl(this.path(this.opts.from)) : "<no source>"
-            });
-          }
-          if (this.isSourcesContent())
-            this.setSourcesContent();
-          if (this.root && this.previous().length > 0)
-            this.applyPrevMaps();
-          if (this.isAnnotation())
-            this.addAnnotation();
-          if (this.isInline()) {
-            return [this.css];
-          } else {
-            return [this.css, this.map];
-          }
-        }
-        generateString() {
-          this.css = "";
-          this.map = new SourceMapGenerator({ file: this.outputFile() });
-          let line = 1;
-          let column = 1;
-          let noSource = "<no source>";
-          let mapping = {
-            generated: { column: 0, line: 0 },
-            original: { column: 0, line: 0 },
-            source: ""
-          };
-          let lines, last;
-          this.stringify(this.root, (str, node, type) => {
-            this.css += str;
-            if (node && type !== "end") {
-              mapping.generated.line = line;
-              mapping.generated.column = column - 1;
-              if (node.source && node.source.start) {
-                mapping.source = this.sourcePath(node);
-                mapping.original.line = node.source.start.line;
-                mapping.original.column = node.source.start.column - 1;
-                this.map.addMapping(mapping);
-              } else {
-                mapping.source = noSource;
-                mapping.original.line = 1;
-                mapping.original.column = 0;
-                this.map.addMapping(mapping);
-              }
-            }
-            lines = str.match(/\n/g);
-            if (lines) {
-              line += lines.length;
-              last = str.lastIndexOf("\n");
-              column = str.length - last;
-            } else {
-              column += str.length;
-            }
-            if (node && type !== "start") {
-              let p = node.parent || { raws: {} };
-              let childless = node.type === "decl" || node.type === "atrule" && !node.nodes;
-              if (!childless || node !== p.last || p.raws.semicolon) {
-                if (node.source && node.source.end) {
-                  mapping.source = this.sourcePath(node);
-                  mapping.original.line = node.source.end.line;
-                  mapping.original.column = node.source.end.column - 1;
-                  mapping.generated.line = line;
-                  mapping.generated.column = column - 2;
-                  this.map.addMapping(mapping);
-                } else {
-                  mapping.source = noSource;
-                  mapping.original.line = 1;
-                  mapping.original.column = 0;
-                  mapping.generated.line = line;
-                  mapping.generated.column = column - 1;
-                  this.map.addMapping(mapping);
-                }
-              }
-            }
-          });
-        }
-        isAnnotation() {
-          if (this.isInline()) {
-            return true;
-          }
-          if (typeof this.mapOpts.annotation !== "undefined") {
-            return this.mapOpts.annotation;
-          }
-          if (this.previous().length) {
-            return this.previous().some((i) => i.annotation);
-          }
-          return true;
-        }
-        isInline() {
-          if (typeof this.mapOpts.inline !== "undefined") {
-            return this.mapOpts.inline;
-          }
-          let annotation = this.mapOpts.annotation;
-          if (typeof annotation !== "undefined" && annotation !== true) {
-            return false;
-          }
-          if (this.previous().length) {
-            return this.previous().some((i) => i.inline);
-          }
-          return true;
-        }
-        isMap() {
-          if (typeof this.opts.map !== "undefined") {
-            return !!this.opts.map;
-          }
-          return this.previous().length > 0;
-        }
-        isSourcesContent() {
-          if (typeof this.mapOpts.sourcesContent !== "undefined") {
-            return this.mapOpts.sourcesContent;
-          }
-          if (this.previous().length) {
-            return this.previous().some((i) => i.withContent());
-          }
-          return true;
-        }
-        outputFile() {
-          if (this.opts.to) {
-            return this.path(this.opts.to);
-          } else if (this.opts.from) {
-            return this.path(this.opts.from);
-          } else {
-            return "to.css";
-          }
-        }
-        path(file15) {
-          if (this.mapOpts.absolute)
-            return file15;
-          if (file15.charCodeAt(0) === 60)
-            return file15;
-          if (/^\w+:\/\//.test(file15))
-            return file15;
-          let cached = this.memoizedPaths.get(file15);
-          if (cached)
-            return cached;
-          let from = this.opts.to ? dirname(this.opts.to) : ".";
-          if (typeof this.mapOpts.annotation === "string") {
-            from = dirname(resolve(from, this.mapOpts.annotation));
-          }
-          let path = relative(from, file15);
-          this.memoizedPaths.set(file15, path);
-          return path;
-        }
-        previous() {
-          if (!this.previousMaps) {
-            this.previousMaps = [];
-            if (this.root) {
-              this.root.walk((node) => {
-                if (node.source && node.source.input.map) {
-                  let map = node.source.input.map;
-                  if (!this.previousMaps.includes(map)) {
-                    this.previousMaps.push(map);
-                  }
-                }
-              });
-            } else {
-              let input = new Input2(this.originalCSS, this.opts);
-              if (input.map)
-                this.previousMaps.push(input.map);
-            }
-          }
-          return this.previousMaps;
-        }
-        setSourcesContent() {
-          let already = {};
-          if (this.root) {
-            this.root.walk((node) => {
-              if (node.source) {
-                let from = node.source.input.from;
-                if (from && !already[from]) {
-                  already[from] = true;
-                  let fromUrl = this.usesFileUrls ? this.toFileUrl(from) : this.toUrl(this.path(from));
-                  this.map.setSourceContent(fromUrl, node.source.input.css);
-                }
-              }
-            });
-          } else if (this.css) {
-            let from = this.opts.from ? this.toUrl(this.path(this.opts.from)) : "<no source>";
-            this.map.setSourceContent(from, this.css);
-          }
-        }
-        sourcePath(node) {
-          if (this.mapOpts.from) {
-            return this.toUrl(this.mapOpts.from);
-          } else if (this.usesFileUrls) {
-            return this.toFileUrl(node.source.input.from);
-          } else {
-            return this.toUrl(this.path(node.source.input.from));
-          }
-        }
-        toBase64(str) {
-          if (Buffer) {
-            return Buffer.from(str).toString("base64");
-          } else {
-            return window.btoa(unescape(encodeURIComponent(str)));
-          }
-        }
-        toFileUrl(path) {
-          let cached = this.memoizedFileURLs.get(path);
-          if (cached)
-            return cached;
-          if (pathToFileURL) {
-            let fileURL = pathToFileURL(path).toString();
-            this.memoizedFileURLs.set(path, fileURL);
-            return fileURL;
-          } else {
-            throw new Error(
-              "`map.absolute` option is not available in this PostCSS build"
-            );
-          }
-        }
-        toUrl(path) {
-          let cached = this.memoizedURLs.get(path);
-          if (cached)
-            return cached;
-          if (sep === "\\") {
-            path = path.replace(/\\/g, "/");
-          }
-          let url2 = encodeURI(path).replace(/[#?]/g, encodeURIComponent);
-          this.memoizedURLs.set(path, url2);
-          return url2;
-        }
-      };
-      module.exports = MapGenerator;
-    }
-  });
-
-  // node_modules/postcss/lib/comment.js
-  var require_comment = __commonJS({
-    "node_modules/postcss/lib/comment.js"(exports, module) {
-      "use strict";
-      var Node2 = require_node();
-      var Comment2 = class extends Node2 {
-        constructor(defaults3) {
-          super(defaults3);
-          this.type = "comment";
-        }
-      };
-      module.exports = Comment2;
-      Comment2.default = Comment2;
-    }
-  });
-
   // node_modules/postcss/lib/container.js
   var require_container = __commonJS({
     "node_modules/postcss/lib/container.js"(exports, module) {
       "use strict";
-      var { isClean, my } = require_symbols();
-      var Declaration2 = require_declaration();
       var Comment2 = require_comment();
+      var Declaration2 = require_declaration();
       var Node2 = require_node();
-      var parse3;
-      var Rule2;
+      var { isClean, my } = require_symbols();
       var AtRule2;
+      var parse3;
       var Root2;
+      var Rule2;
       function cleanSource(nodes) {
         return nodes.map((i) => {
           if (i.nodes)
@@ -1744,11 +1046,11 @@ var BeaconLiveAdmin = (() => {
           return i;
         });
       }
-      function markDirtyUp(node) {
+      function markTreeDirty(node) {
         node[isClean] = false;
         if (node.proxyOf.nodes) {
           for (let i of node.proxyOf.nodes) {
-            markDirtyUp(i);
+            markTreeDirty(i);
           }
         }
       }
@@ -1869,7 +1171,11 @@ var BeaconLiveAdmin = (() => {
         insertBefore(exist, add) {
           let existIndex = this.index(exist);
           let type = existIndex === 0 ? "prepend" : false;
-          let nodes = this.normalize(add, this.proxyOf.nodes[existIndex], type).reverse();
+          let nodes = this.normalize(
+            add,
+            this.proxyOf.nodes[existIndex],
+            type
+          ).reverse();
           existIndex = this.index(exist);
           for (let node of nodes)
             this.proxyOf.nodes.splice(existIndex, 0, node);
@@ -1909,7 +1215,7 @@ var BeaconLiveAdmin = (() => {
               nodes.value = String(nodes.value);
             }
             nodes = [new Declaration2(nodes)];
-          } else if (nodes.selector) {
+          } else if (nodes.selector || nodes.selectors) {
             nodes = [new Rule2(nodes)];
           } else if (nodes.name) {
             nodes = [new AtRule2(nodes)];
@@ -1919,13 +1225,13 @@ var BeaconLiveAdmin = (() => {
             throw new Error("Unknown node type in node creation");
           }
           let processed = nodes.map((i) => {
-            if (!i[my])
+            if (!i[my] || !i.markClean)
               _Container.rebuild(i);
             i = i.proxyOf;
             if (i.parent)
               i.parent.removeChild(i);
             if (i[isClean])
-              markDirtyUp(i);
+              markTreeDirty(i);
             if (typeof i.raws.before === "undefined") {
               if (sample && typeof sample.raws.before !== "undefined") {
                 i.raws.before = sample.raws.before.replace(/\S/g, "");
@@ -2127,6 +1433,33 @@ var BeaconLiveAdmin = (() => {
     }
   });
 
+  // node_modules/postcss/lib/at-rule.js
+  var require_at_rule = __commonJS({
+    "node_modules/postcss/lib/at-rule.js"(exports, module) {
+      "use strict";
+      var Container2 = require_container();
+      var AtRule2 = class extends Container2 {
+        constructor(defaults3) {
+          super(defaults3);
+          this.type = "atrule";
+        }
+        append(...children2) {
+          if (!this.proxyOf.nodes)
+            this.nodes = [];
+          return super.append(...children2);
+        }
+        prepend(...children2) {
+          if (!this.proxyOf.nodes)
+            this.nodes = [];
+          return super.prepend(...children2);
+        }
+      };
+      module.exports = AtRule2;
+      AtRule2.default = AtRule2;
+      Container2.registerAtRule(AtRule2);
+    }
+  });
+
   // node_modules/postcss/lib/document.js
   var require_document = __commonJS({
     "node_modules/postcss/lib/document.js"(exports, module) {
@@ -2157,95 +1490,924 @@ var BeaconLiveAdmin = (() => {
     }
   });
 
-  // node_modules/postcss/lib/warn-once.js
-  var require_warn_once = __commonJS({
-    "node_modules/postcss/lib/warn-once.js"(exports, module) {
-      "use strict";
-      var printed = {};
-      module.exports = function warnOnce(message) {
-        if (printed[message])
-          return;
-        printed[message] = true;
-        if (typeof console !== "undefined" && console.warn) {
-          console.warn(message);
-        }
+  // node_modules/nanoid/non-secure/index.cjs
+  var require_non_secure = __commonJS({
+    "node_modules/nanoid/non-secure/index.cjs"(exports, module) {
+      var urlAlphabet = "useandom-26T198340PX75pxJACKVERYMINDBUSHWOLF_GQZbfghjklqvwyzrict";
+      var customAlphabet = (alphabet, defaultSize = 21) => {
+        return (size = defaultSize) => {
+          let id = "";
+          let i = size;
+          while (i--) {
+            id += alphabet[Math.random() * alphabet.length | 0];
+          }
+          return id;
+        };
       };
+      var nanoid = (size = 21) => {
+        let id = "";
+        let i = size;
+        while (i--) {
+          id += urlAlphabet[Math.random() * 64 | 0];
+        }
+        return id;
+      };
+      module.exports = { nanoid, customAlphabet };
     }
   });
 
-  // node_modules/postcss/lib/warning.js
-  var require_warning = __commonJS({
-    "node_modules/postcss/lib/warning.js"(exports, module) {
-      "use strict";
-      var Warning2 = class {
-        constructor(text2, opts = {}) {
-          this.type = "warning";
-          this.text = text2;
-          if (opts.node && opts.node.source) {
-            let range = opts.node.rangeBy(opts);
-            this.line = range.start.line;
-            this.column = range.start.column;
-            this.endLine = range.end.line;
-            this.endColumn = range.end.column;
-          }
-          for (let opt in opts)
-            this[opt] = opts[opt];
-        }
-        toString() {
-          if (this.node) {
-            return this.node.error(this.text, {
-              index: this.index,
-              plugin: this.plugin,
-              word: this.word
-            }).message;
-          }
-          if (this.plugin) {
-            return this.plugin + ": " + this.text;
-          }
-          return this.text;
-        }
-      };
-      module.exports = Warning2;
-      Warning2.default = Warning2;
+  // (disabled):path
+  var require_path = __commonJS({
+    "(disabled):path"() {
     }
   });
 
-  // node_modules/postcss/lib/result.js
-  var require_result = __commonJS({
-    "node_modules/postcss/lib/result.js"(exports, module) {
+  // (disabled):node_modules/source-map-js/source-map.js
+  var require_source_map = __commonJS({
+    "(disabled):node_modules/source-map-js/source-map.js"() {
+    }
+  });
+
+  // (disabled):url
+  var require_url = __commonJS({
+    "(disabled):url"() {
+    }
+  });
+
+  // (disabled):fs
+  var require_fs = __commonJS({
+    "(disabled):fs"() {
+    }
+  });
+
+  // node_modules/postcss/lib/previous-map.js
+  var require_previous_map = __commonJS({
+    "node_modules/postcss/lib/previous-map.js"(exports, module) {
       "use strict";
-      var Warning2 = require_warning();
-      var Result2 = class {
-        constructor(processor, root2, opts) {
-          this.processor = processor;
-          this.messages = [];
-          this.root = root2;
-          this.opts = opts;
-          this.css = void 0;
-          this.map = void 0;
+      var { existsSync, readFileSync } = require_fs();
+      var { dirname, join: join2 } = require_path();
+      var { SourceMapConsumer, SourceMapGenerator } = require_source_map();
+      function fromBase64(str) {
+        if (Buffer) {
+          return Buffer.from(str, "base64").toString();
+        } else {
+          return window.atob(str);
         }
-        toString() {
-          return this.css;
+      }
+      var PreviousMap = class {
+        constructor(css, opts) {
+          if (opts.map === false)
+            return;
+          this.loadAnnotation(css);
+          this.inline = this.startWith(this.annotation, "data:");
+          let prev = opts.map ? opts.map.prev : void 0;
+          let text2 = this.loadMap(opts.from, prev);
+          if (!this.mapFile && opts.from) {
+            this.mapFile = opts.from;
+          }
+          if (this.mapFile)
+            this.root = dirname(this.mapFile);
+          if (text2)
+            this.text = text2;
         }
-        warn(text2, opts = {}) {
-          if (!opts.plugin) {
-            if (this.lastPlugin && this.lastPlugin.postcssPlugin) {
-              opts.plugin = this.lastPlugin.postcssPlugin;
+        consumer() {
+          if (!this.consumerCache) {
+            this.consumerCache = new SourceMapConsumer(this.text);
+          }
+          return this.consumerCache;
+        }
+        decodeInline(text2) {
+          let baseCharsetUri = /^data:application\/json;charset=utf-?8;base64,/;
+          let baseUri = /^data:application\/json;base64,/;
+          let charsetUri = /^data:application\/json;charset=utf-?8,/;
+          let uri = /^data:application\/json,/;
+          let uriMatch = text2.match(charsetUri) || text2.match(uri);
+          if (uriMatch) {
+            return decodeURIComponent(text2.substr(uriMatch[0].length));
+          }
+          let baseUriMatch = text2.match(baseCharsetUri) || text2.match(baseUri);
+          if (baseUriMatch) {
+            return fromBase64(text2.substr(baseUriMatch[0].length));
+          }
+          let encoding = text2.match(/data:application\/json;([^,]+),/)[1];
+          throw new Error("Unsupported source map encoding " + encoding);
+        }
+        getAnnotationURL(sourceMapString) {
+          return sourceMapString.replace(/^\/\*\s*# sourceMappingURL=/, "").trim();
+        }
+        isMap(map) {
+          if (typeof map !== "object")
+            return false;
+          return typeof map.mappings === "string" || typeof map._mappings === "string" || Array.isArray(map.sections);
+        }
+        loadAnnotation(css) {
+          let comments = css.match(/\/\*\s*# sourceMappingURL=/g);
+          if (!comments)
+            return;
+          let start = css.lastIndexOf(comments.pop());
+          let end = css.indexOf("*/", start);
+          if (start > -1 && end > -1) {
+            this.annotation = this.getAnnotationURL(css.substring(start, end));
+          }
+        }
+        loadFile(path) {
+          this.root = dirname(path);
+          if (existsSync(path)) {
+            this.mapFile = path;
+            return readFileSync(path, "utf-8").toString().trim();
+          }
+        }
+        loadMap(file15, prev) {
+          if (prev === false)
+            return false;
+          if (prev) {
+            if (typeof prev === "string") {
+              return prev;
+            } else if (typeof prev === "function") {
+              let prevPath = prev(file15);
+              if (prevPath) {
+                let map = this.loadFile(prevPath);
+                if (!map) {
+                  throw new Error(
+                    "Unable to load previous source map: " + prevPath.toString()
+                  );
+                }
+                return map;
+              }
+            } else if (prev instanceof SourceMapConsumer) {
+              return SourceMapGenerator.fromSourceMap(prev).toString();
+            } else if (prev instanceof SourceMapGenerator) {
+              return prev.toString();
+            } else if (this.isMap(prev)) {
+              return JSON.stringify(prev);
+            } else {
+              throw new Error(
+                "Unsupported previous source map format: " + prev.toString()
+              );
+            }
+          } else if (this.inline) {
+            return this.decodeInline(this.annotation);
+          } else if (this.annotation) {
+            let map = this.annotation;
+            if (file15)
+              map = join2(dirname(file15), map);
+            return this.loadFile(map);
+          }
+        }
+        startWith(string, start) {
+          if (!string)
+            return false;
+          return string.substr(0, start.length) === start;
+        }
+        withContent() {
+          return !!(this.consumer().sourcesContent && this.consumer().sourcesContent.length > 0);
+        }
+      };
+      module.exports = PreviousMap;
+      PreviousMap.default = PreviousMap;
+    }
+  });
+
+  // node_modules/postcss/lib/input.js
+  var require_input = __commonJS({
+    "node_modules/postcss/lib/input.js"(exports, module) {
+      "use strict";
+      var { nanoid } = require_non_secure();
+      var { isAbsolute, resolve } = require_path();
+      var { SourceMapConsumer, SourceMapGenerator } = require_source_map();
+      var { fileURLToPath, pathToFileURL } = require_url();
+      var CssSyntaxError2 = require_css_syntax_error();
+      var PreviousMap = require_previous_map();
+      var terminalHighlight = require_terminal_highlight();
+      var fromOffsetCache = Symbol("fromOffsetCache");
+      var sourceMapAvailable = Boolean(SourceMapConsumer && SourceMapGenerator);
+      var pathAvailable = Boolean(resolve && isAbsolute);
+      var Input2 = class {
+        constructor(css, opts = {}) {
+          if (css === null || typeof css === "undefined" || typeof css === "object" && !css.toString) {
+            throw new Error(`PostCSS received ${css} instead of CSS string`);
+          }
+          this.css = css.toString();
+          if (this.css[0] === "\uFEFF" || this.css[0] === "\uFFFE") {
+            this.hasBOM = true;
+            this.css = this.css.slice(1);
+          } else {
+            this.hasBOM = false;
+          }
+          if (opts.from) {
+            if (!pathAvailable || /^\w+:\/\//.test(opts.from) || isAbsolute(opts.from)) {
+              this.file = opts.from;
+            } else {
+              this.file = resolve(opts.from);
             }
           }
-          let warning = new Warning2(text2, opts);
-          this.messages.push(warning);
-          return warning;
+          if (pathAvailable && sourceMapAvailable) {
+            let map = new PreviousMap(this.css, opts);
+            if (map.text) {
+              this.map = map;
+              let file15 = map.consumer().file;
+              if (!this.file && file15)
+                this.file = this.mapResolve(file15);
+            }
+          }
+          if (!this.file) {
+            this.id = "<input css " + nanoid(6) + ">";
+          }
+          if (this.map)
+            this.map.file = this.from;
         }
-        warnings() {
-          return this.messages.filter((i) => i.type === "warning");
+        error(message, line, column, opts = {}) {
+          let endColumn, endLine, result;
+          if (line && typeof line === "object") {
+            let start = line;
+            let end = column;
+            if (typeof start.offset === "number") {
+              let pos = this.fromOffset(start.offset);
+              line = pos.line;
+              column = pos.col;
+            } else {
+              line = start.line;
+              column = start.column;
+            }
+            if (typeof end.offset === "number") {
+              let pos = this.fromOffset(end.offset);
+              endLine = pos.line;
+              endColumn = pos.col;
+            } else {
+              endLine = end.line;
+              endColumn = end.column;
+            }
+          } else if (!column) {
+            let pos = this.fromOffset(line);
+            line = pos.line;
+            column = pos.col;
+          }
+          let origin = this.origin(line, column, endLine, endColumn);
+          if (origin) {
+            result = new CssSyntaxError2(
+              message,
+              origin.endLine === void 0 ? origin.line : { column: origin.column, line: origin.line },
+              origin.endLine === void 0 ? origin.column : { column: origin.endColumn, line: origin.endLine },
+              origin.source,
+              origin.file,
+              opts.plugin
+            );
+          } else {
+            result = new CssSyntaxError2(
+              message,
+              endLine === void 0 ? line : { column, line },
+              endLine === void 0 ? column : { column: endColumn, line: endLine },
+              this.css,
+              this.file,
+              opts.plugin
+            );
+          }
+          result.input = { column, endColumn, endLine, line, source: this.css };
+          if (this.file) {
+            if (pathToFileURL) {
+              result.input.url = pathToFileURL(this.file).toString();
+            }
+            result.input.file = this.file;
+          }
+          return result;
         }
-        get content() {
-          return this.css;
+        fromOffset(offset) {
+          let lastLine, lineToIndex;
+          if (!this[fromOffsetCache]) {
+            let lines = this.css.split("\n");
+            lineToIndex = new Array(lines.length);
+            let prevIndex = 0;
+            for (let i = 0, l = lines.length; i < l; i++) {
+              lineToIndex[i] = prevIndex;
+              prevIndex += lines[i].length + 1;
+            }
+            this[fromOffsetCache] = lineToIndex;
+          } else {
+            lineToIndex = this[fromOffsetCache];
+          }
+          lastLine = lineToIndex[lineToIndex.length - 1];
+          let min = 0;
+          if (offset >= lastLine) {
+            min = lineToIndex.length - 1;
+          } else {
+            let max2 = lineToIndex.length - 2;
+            let mid;
+            while (min < max2) {
+              mid = min + (max2 - min >> 1);
+              if (offset < lineToIndex[mid]) {
+                max2 = mid - 1;
+              } else if (offset >= lineToIndex[mid + 1]) {
+                min = mid + 1;
+              } else {
+                min = mid;
+                break;
+              }
+            }
+          }
+          return {
+            col: offset - lineToIndex[min] + 1,
+            line: min + 1
+          };
+        }
+        mapResolve(file15) {
+          if (/^\w+:\/\//.test(file15)) {
+            return file15;
+          }
+          return resolve(this.map.consumer().sourceRoot || this.map.root || ".", file15);
+        }
+        origin(line, column, endLine, endColumn) {
+          if (!this.map)
+            return false;
+          let consumer = this.map.consumer();
+          let from = consumer.originalPositionFor({ column, line });
+          if (!from.source)
+            return false;
+          let to;
+          if (typeof endLine === "number") {
+            to = consumer.originalPositionFor({ column: endColumn, line: endLine });
+          }
+          let fromUrl;
+          if (isAbsolute(from.source)) {
+            fromUrl = pathToFileURL(from.source);
+          } else {
+            fromUrl = new URL(
+              from.source,
+              this.map.consumer().sourceRoot || pathToFileURL(this.map.mapFile)
+            );
+          }
+          let result = {
+            column: from.column,
+            endColumn: to && to.column,
+            endLine: to && to.line,
+            line: from.line,
+            url: fromUrl.toString()
+          };
+          if (fromUrl.protocol === "file:") {
+            if (fileURLToPath) {
+              result.file = fileURLToPath(fromUrl);
+            } else {
+              throw new Error(`file: protocol is not available in this PostCSS build`);
+            }
+          }
+          let source = consumer.sourceContentFor(from.source);
+          if (source)
+            result.source = source;
+          return result;
+        }
+        toJSON() {
+          let json = {};
+          for (let name of ["hasBOM", "css", "file", "id"]) {
+            if (this[name] != null) {
+              json[name] = this[name];
+            }
+          }
+          if (this.map) {
+            json.map = { ...this.map };
+            if (json.map.consumerCache) {
+              json.map.consumerCache = void 0;
+            }
+          }
+          return json;
+        }
+        get from() {
+          return this.file || this.id;
         }
       };
-      module.exports = Result2;
-      Result2.default = Result2;
+      module.exports = Input2;
+      Input2.default = Input2;
+      if (terminalHighlight && terminalHighlight.registerInput) {
+        terminalHighlight.registerInput(Input2);
+      }
+    }
+  });
+
+  // node_modules/postcss/lib/root.js
+  var require_root = __commonJS({
+    "node_modules/postcss/lib/root.js"(exports, module) {
+      "use strict";
+      var Container2 = require_container();
+      var LazyResult;
+      var Processor2;
+      var Root2 = class extends Container2 {
+        constructor(defaults3) {
+          super(defaults3);
+          this.type = "root";
+          if (!this.nodes)
+            this.nodes = [];
+        }
+        normalize(child, sample, type) {
+          let nodes = super.normalize(child);
+          if (sample) {
+            if (type === "prepend") {
+              if (this.nodes.length > 1) {
+                sample.raws.before = this.nodes[1].raws.before;
+              } else {
+                delete sample.raws.before;
+              }
+            } else if (this.first !== sample) {
+              for (let node of nodes) {
+                node.raws.before = sample.raws.before;
+              }
+            }
+          }
+          return nodes;
+        }
+        removeChild(child, ignore) {
+          let index4 = this.index(child);
+          if (!ignore && index4 === 0 && this.nodes.length > 1) {
+            this.nodes[1].raws.before = this.nodes[index4].raws.before;
+          }
+          return super.removeChild(child);
+        }
+        toResult(opts = {}) {
+          let lazy = new LazyResult(new Processor2(), this, opts);
+          return lazy.stringify();
+        }
+      };
+      Root2.registerLazyResult = (dependant) => {
+        LazyResult = dependant;
+      };
+      Root2.registerProcessor = (dependant) => {
+        Processor2 = dependant;
+      };
+      module.exports = Root2;
+      Root2.default = Root2;
+      Container2.registerRoot(Root2);
+    }
+  });
+
+  // node_modules/postcss/lib/list.js
+  var require_list = __commonJS({
+    "node_modules/postcss/lib/list.js"(exports, module) {
+      "use strict";
+      var list3 = {
+        comma(string) {
+          return list3.split(string, [","], true);
+        },
+        space(string) {
+          let spaces = [" ", "\n", "	"];
+          return list3.split(string, spaces);
+        },
+        split(string, separators, last) {
+          let array = [];
+          let current = "";
+          let split = false;
+          let func = 0;
+          let inQuote = false;
+          let prevQuote = "";
+          let escape2 = false;
+          for (let letter of string) {
+            if (escape2) {
+              escape2 = false;
+            } else if (letter === "\\") {
+              escape2 = true;
+            } else if (inQuote) {
+              if (letter === prevQuote) {
+                inQuote = false;
+              }
+            } else if (letter === '"' || letter === "'") {
+              inQuote = true;
+              prevQuote = letter;
+            } else if (letter === "(") {
+              func += 1;
+            } else if (letter === ")") {
+              if (func > 0)
+                func -= 1;
+            } else if (func === 0) {
+              if (separators.includes(letter))
+                split = true;
+            }
+            if (split) {
+              if (current !== "")
+                array.push(current.trim());
+              current = "";
+              split = false;
+            } else {
+              current += letter;
+            }
+          }
+          if (last || current !== "")
+            array.push(current.trim());
+          return array;
+        }
+      };
+      module.exports = list3;
+      list3.default = list3;
+    }
+  });
+
+  // node_modules/postcss/lib/rule.js
+  var require_rule = __commonJS({
+    "node_modules/postcss/lib/rule.js"(exports, module) {
+      "use strict";
+      var Container2 = require_container();
+      var list3 = require_list();
+      var Rule2 = class extends Container2 {
+        constructor(defaults3) {
+          super(defaults3);
+          this.type = "rule";
+          if (!this.nodes)
+            this.nodes = [];
+        }
+        get selectors() {
+          return list3.comma(this.selector);
+        }
+        set selectors(values) {
+          let match = this.selector ? this.selector.match(/,\s*/) : null;
+          let sep = match ? match[0] : "," + this.raw("between", "beforeOpen");
+          this.selector = values.join(sep);
+        }
+      };
+      module.exports = Rule2;
+      Rule2.default = Rule2;
+      Container2.registerRule(Rule2);
+    }
+  });
+
+  // node_modules/postcss/lib/fromJSON.js
+  var require_fromJSON = __commonJS({
+    "node_modules/postcss/lib/fromJSON.js"(exports, module) {
+      "use strict";
+      var AtRule2 = require_at_rule();
+      var Comment2 = require_comment();
+      var Declaration2 = require_declaration();
+      var Input2 = require_input();
+      var PreviousMap = require_previous_map();
+      var Root2 = require_root();
+      var Rule2 = require_rule();
+      function fromJSON2(json, inputs) {
+        if (Array.isArray(json))
+          return json.map((n) => fromJSON2(n));
+        let { inputs: ownInputs, ...defaults3 } = json;
+        if (ownInputs) {
+          inputs = [];
+          for (let input of ownInputs) {
+            let inputHydrated = { ...input, __proto__: Input2.prototype };
+            if (inputHydrated.map) {
+              inputHydrated.map = {
+                ...inputHydrated.map,
+                __proto__: PreviousMap.prototype
+              };
+            }
+            inputs.push(inputHydrated);
+          }
+        }
+        if (defaults3.nodes) {
+          defaults3.nodes = json.nodes.map((n) => fromJSON2(n, inputs));
+        }
+        if (defaults3.source) {
+          let { inputId, ...source } = defaults3.source;
+          defaults3.source = source;
+          if (inputId != null) {
+            defaults3.source.input = inputs[inputId];
+          }
+        }
+        if (defaults3.type === "root") {
+          return new Root2(defaults3);
+        } else if (defaults3.type === "decl") {
+          return new Declaration2(defaults3);
+        } else if (defaults3.type === "rule") {
+          return new Rule2(defaults3);
+        } else if (defaults3.type === "comment") {
+          return new Comment2(defaults3);
+        } else if (defaults3.type === "atrule") {
+          return new AtRule2(defaults3);
+        } else {
+          throw new Error("Unknown node type: " + json.type);
+        }
+      }
+      module.exports = fromJSON2;
+      fromJSON2.default = fromJSON2;
+    }
+  });
+
+  // node_modules/postcss/lib/map-generator.js
+  var require_map_generator = __commonJS({
+    "node_modules/postcss/lib/map-generator.js"(exports, module) {
+      "use strict";
+      var { dirname, relative, resolve, sep } = require_path();
+      var { SourceMapConsumer, SourceMapGenerator } = require_source_map();
+      var { pathToFileURL } = require_url();
+      var Input2 = require_input();
+      var sourceMapAvailable = Boolean(SourceMapConsumer && SourceMapGenerator);
+      var pathAvailable = Boolean(dirname && resolve && relative && sep);
+      var MapGenerator = class {
+        constructor(stringify2, root2, opts, cssString) {
+          this.stringify = stringify2;
+          this.mapOpts = opts.map || {};
+          this.root = root2;
+          this.opts = opts;
+          this.css = cssString;
+          this.originalCSS = cssString;
+          this.usesFileUrls = !this.mapOpts.from && this.mapOpts.absolute;
+          this.memoizedFileURLs = /* @__PURE__ */ new Map();
+          this.memoizedPaths = /* @__PURE__ */ new Map();
+          this.memoizedURLs = /* @__PURE__ */ new Map();
+        }
+        addAnnotation() {
+          let content;
+          if (this.isInline()) {
+            content = "data:application/json;base64," + this.toBase64(this.map.toString());
+          } else if (typeof this.mapOpts.annotation === "string") {
+            content = this.mapOpts.annotation;
+          } else if (typeof this.mapOpts.annotation === "function") {
+            content = this.mapOpts.annotation(this.opts.to, this.root);
+          } else {
+            content = this.outputFile() + ".map";
+          }
+          let eol = "\n";
+          if (this.css.includes("\r\n"))
+            eol = "\r\n";
+          this.css += eol + "/*# sourceMappingURL=" + content + " */";
+        }
+        applyPrevMaps() {
+          for (let prev of this.previous()) {
+            let from = this.toUrl(this.path(prev.file));
+            let root2 = prev.root || dirname(prev.file);
+            let map;
+            if (this.mapOpts.sourcesContent === false) {
+              map = new SourceMapConsumer(prev.text);
+              if (map.sourcesContent) {
+                map.sourcesContent = null;
+              }
+            } else {
+              map = prev.consumer();
+            }
+            this.map.applySourceMap(map, from, this.toUrl(this.path(root2)));
+          }
+        }
+        clearAnnotation() {
+          if (this.mapOpts.annotation === false)
+            return;
+          if (this.root) {
+            let node;
+            for (let i = this.root.nodes.length - 1; i >= 0; i--) {
+              node = this.root.nodes[i];
+              if (node.type !== "comment")
+                continue;
+              if (node.text.startsWith("# sourceMappingURL=")) {
+                this.root.removeChild(i);
+              }
+            }
+          } else if (this.css) {
+            this.css = this.css.replace(/\n*\/\*#[\S\s]*?\*\/$/gm, "");
+          }
+        }
+        generate() {
+          this.clearAnnotation();
+          if (pathAvailable && sourceMapAvailable && this.isMap()) {
+            return this.generateMap();
+          } else {
+            let result = "";
+            this.stringify(this.root, (i) => {
+              result += i;
+            });
+            return [result];
+          }
+        }
+        generateMap() {
+          if (this.root) {
+            this.generateString();
+          } else if (this.previous().length === 1) {
+            let prev = this.previous()[0].consumer();
+            prev.file = this.outputFile();
+            this.map = SourceMapGenerator.fromSourceMap(prev, {
+              ignoreInvalidMapping: true
+            });
+          } else {
+            this.map = new SourceMapGenerator({
+              file: this.outputFile(),
+              ignoreInvalidMapping: true
+            });
+            this.map.addMapping({
+              generated: { column: 0, line: 1 },
+              original: { column: 0, line: 1 },
+              source: this.opts.from ? this.toUrl(this.path(this.opts.from)) : "<no source>"
+            });
+          }
+          if (this.isSourcesContent())
+            this.setSourcesContent();
+          if (this.root && this.previous().length > 0)
+            this.applyPrevMaps();
+          if (this.isAnnotation())
+            this.addAnnotation();
+          if (this.isInline()) {
+            return [this.css];
+          } else {
+            return [this.css, this.map];
+          }
+        }
+        generateString() {
+          this.css = "";
+          this.map = new SourceMapGenerator({
+            file: this.outputFile(),
+            ignoreInvalidMapping: true
+          });
+          let line = 1;
+          let column = 1;
+          let noSource = "<no source>";
+          let mapping = {
+            generated: { column: 0, line: 0 },
+            original: { column: 0, line: 0 },
+            source: ""
+          };
+          let last, lines;
+          this.stringify(this.root, (str, node, type) => {
+            this.css += str;
+            if (node && type !== "end") {
+              mapping.generated.line = line;
+              mapping.generated.column = column - 1;
+              if (node.source && node.source.start) {
+                mapping.source = this.sourcePath(node);
+                mapping.original.line = node.source.start.line;
+                mapping.original.column = node.source.start.column - 1;
+                this.map.addMapping(mapping);
+              } else {
+                mapping.source = noSource;
+                mapping.original.line = 1;
+                mapping.original.column = 0;
+                this.map.addMapping(mapping);
+              }
+            }
+            lines = str.match(/\n/g);
+            if (lines) {
+              line += lines.length;
+              last = str.lastIndexOf("\n");
+              column = str.length - last;
+            } else {
+              column += str.length;
+            }
+            if (node && type !== "start") {
+              let p = node.parent || { raws: {} };
+              let childless = node.type === "decl" || node.type === "atrule" && !node.nodes;
+              if (!childless || node !== p.last || p.raws.semicolon) {
+                if (node.source && node.source.end) {
+                  mapping.source = this.sourcePath(node);
+                  mapping.original.line = node.source.end.line;
+                  mapping.original.column = node.source.end.column - 1;
+                  mapping.generated.line = line;
+                  mapping.generated.column = column - 2;
+                  this.map.addMapping(mapping);
+                } else {
+                  mapping.source = noSource;
+                  mapping.original.line = 1;
+                  mapping.original.column = 0;
+                  mapping.generated.line = line;
+                  mapping.generated.column = column - 1;
+                  this.map.addMapping(mapping);
+                }
+              }
+            }
+          });
+        }
+        isAnnotation() {
+          if (this.isInline()) {
+            return true;
+          }
+          if (typeof this.mapOpts.annotation !== "undefined") {
+            return this.mapOpts.annotation;
+          }
+          if (this.previous().length) {
+            return this.previous().some((i) => i.annotation);
+          }
+          return true;
+        }
+        isInline() {
+          if (typeof this.mapOpts.inline !== "undefined") {
+            return this.mapOpts.inline;
+          }
+          let annotation = this.mapOpts.annotation;
+          if (typeof annotation !== "undefined" && annotation !== true) {
+            return false;
+          }
+          if (this.previous().length) {
+            return this.previous().some((i) => i.inline);
+          }
+          return true;
+        }
+        isMap() {
+          if (typeof this.opts.map !== "undefined") {
+            return !!this.opts.map;
+          }
+          return this.previous().length > 0;
+        }
+        isSourcesContent() {
+          if (typeof this.mapOpts.sourcesContent !== "undefined") {
+            return this.mapOpts.sourcesContent;
+          }
+          if (this.previous().length) {
+            return this.previous().some((i) => i.withContent());
+          }
+          return true;
+        }
+        outputFile() {
+          if (this.opts.to) {
+            return this.path(this.opts.to);
+          } else if (this.opts.from) {
+            return this.path(this.opts.from);
+          } else {
+            return "to.css";
+          }
+        }
+        path(file15) {
+          if (this.mapOpts.absolute)
+            return file15;
+          if (file15.charCodeAt(0) === 60)
+            return file15;
+          if (/^\w+:\/\//.test(file15))
+            return file15;
+          let cached = this.memoizedPaths.get(file15);
+          if (cached)
+            return cached;
+          let from = this.opts.to ? dirname(this.opts.to) : ".";
+          if (typeof this.mapOpts.annotation === "string") {
+            from = dirname(resolve(from, this.mapOpts.annotation));
+          }
+          let path = relative(from, file15);
+          this.memoizedPaths.set(file15, path);
+          return path;
+        }
+        previous() {
+          if (!this.previousMaps) {
+            this.previousMaps = [];
+            if (this.root) {
+              this.root.walk((node) => {
+                if (node.source && node.source.input.map) {
+                  let map = node.source.input.map;
+                  if (!this.previousMaps.includes(map)) {
+                    this.previousMaps.push(map);
+                  }
+                }
+              });
+            } else {
+              let input = new Input2(this.originalCSS, this.opts);
+              if (input.map)
+                this.previousMaps.push(input.map);
+            }
+          }
+          return this.previousMaps;
+        }
+        setSourcesContent() {
+          let already = {};
+          if (this.root) {
+            this.root.walk((node) => {
+              if (node.source) {
+                let from = node.source.input.from;
+                if (from && !already[from]) {
+                  already[from] = true;
+                  let fromUrl = this.usesFileUrls ? this.toFileUrl(from) : this.toUrl(this.path(from));
+                  this.map.setSourceContent(fromUrl, node.source.input.css);
+                }
+              }
+            });
+          } else if (this.css) {
+            let from = this.opts.from ? this.toUrl(this.path(this.opts.from)) : "<no source>";
+            this.map.setSourceContent(from, this.css);
+          }
+        }
+        sourcePath(node) {
+          if (this.mapOpts.from) {
+            return this.toUrl(this.mapOpts.from);
+          } else if (this.usesFileUrls) {
+            return this.toFileUrl(node.source.input.from);
+          } else {
+            return this.toUrl(this.path(node.source.input.from));
+          }
+        }
+        toBase64(str) {
+          if (Buffer) {
+            return Buffer.from(str).toString("base64");
+          } else {
+            return window.btoa(unescape(encodeURIComponent(str)));
+          }
+        }
+        toFileUrl(path) {
+          let cached = this.memoizedFileURLs.get(path);
+          if (cached)
+            return cached;
+          if (pathToFileURL) {
+            let fileURL = pathToFileURL(path).toString();
+            this.memoizedFileURLs.set(path, fileURL);
+            return fileURL;
+          } else {
+            throw new Error(
+              "`map.absolute` option is not available in this PostCSS build"
+            );
+          }
+        }
+        toUrl(path) {
+          let cached = this.memoizedURLs.get(path);
+          if (cached)
+            return cached;
+          if (sep === "\\") {
+            path = path.replace(/\\/g, "/");
+          }
+          let url2 = encodeURI(path).replace(/[#?]/g, encodeURIComponent);
+          this.memoizedURLs.set(path, url2);
+          return url2;
+        }
+      };
+      module.exports = MapGenerator;
     }
   });
 
@@ -2279,8 +2441,8 @@ var BeaconLiveAdmin = (() => {
       module.exports = function tokenizer(input, options = {}) {
         let css = input.css.valueOf();
         let ignore = options.ignoreErrors;
-        let code, next, quote, content, escape2;
-        let escaped, escapePos, prev, n, currentToken;
+        let code, content, escape2, next, quote;
+        let currentToken, escaped, escapePos, n, prev;
         let length2 = css.length;
         let pos = 0;
         let buffer = [];
@@ -2466,186 +2628,16 @@ var BeaconLiveAdmin = (() => {
     }
   });
 
-  // node_modules/postcss/lib/at-rule.js
-  var require_at_rule = __commonJS({
-    "node_modules/postcss/lib/at-rule.js"(exports, module) {
-      "use strict";
-      var Container2 = require_container();
-      var AtRule2 = class extends Container2 {
-        constructor(defaults3) {
-          super(defaults3);
-          this.type = "atrule";
-        }
-        append(...children2) {
-          if (!this.proxyOf.nodes)
-            this.nodes = [];
-          return super.append(...children2);
-        }
-        prepend(...children2) {
-          if (!this.proxyOf.nodes)
-            this.nodes = [];
-          return super.prepend(...children2);
-        }
-      };
-      module.exports = AtRule2;
-      AtRule2.default = AtRule2;
-      Container2.registerAtRule(AtRule2);
-    }
-  });
-
-  // node_modules/postcss/lib/root.js
-  var require_root = __commonJS({
-    "node_modules/postcss/lib/root.js"(exports, module) {
-      "use strict";
-      var Container2 = require_container();
-      var LazyResult;
-      var Processor2;
-      var Root2 = class extends Container2 {
-        constructor(defaults3) {
-          super(defaults3);
-          this.type = "root";
-          if (!this.nodes)
-            this.nodes = [];
-        }
-        normalize(child, sample, type) {
-          let nodes = super.normalize(child);
-          if (sample) {
-            if (type === "prepend") {
-              if (this.nodes.length > 1) {
-                sample.raws.before = this.nodes[1].raws.before;
-              } else {
-                delete sample.raws.before;
-              }
-            } else if (this.first !== sample) {
-              for (let node of nodes) {
-                node.raws.before = sample.raws.before;
-              }
-            }
-          }
-          return nodes;
-        }
-        removeChild(child, ignore) {
-          let index4 = this.index(child);
-          if (!ignore && index4 === 0 && this.nodes.length > 1) {
-            this.nodes[1].raws.before = this.nodes[index4].raws.before;
-          }
-          return super.removeChild(child);
-        }
-        toResult(opts = {}) {
-          let lazy = new LazyResult(new Processor2(), this, opts);
-          return lazy.stringify();
-        }
-      };
-      Root2.registerLazyResult = (dependant) => {
-        LazyResult = dependant;
-      };
-      Root2.registerProcessor = (dependant) => {
-        Processor2 = dependant;
-      };
-      module.exports = Root2;
-      Root2.default = Root2;
-      Container2.registerRoot(Root2);
-    }
-  });
-
-  // node_modules/postcss/lib/list.js
-  var require_list = __commonJS({
-    "node_modules/postcss/lib/list.js"(exports, module) {
-      "use strict";
-      var list3 = {
-        comma(string) {
-          return list3.split(string, [","], true);
-        },
-        space(string) {
-          let spaces = [" ", "\n", "	"];
-          return list3.split(string, spaces);
-        },
-        split(string, separators, last) {
-          let array = [];
-          let current = "";
-          let split = false;
-          let func = 0;
-          let inQuote = false;
-          let prevQuote = "";
-          let escape2 = false;
-          for (let letter of string) {
-            if (escape2) {
-              escape2 = false;
-            } else if (letter === "\\") {
-              escape2 = true;
-            } else if (inQuote) {
-              if (letter === prevQuote) {
-                inQuote = false;
-              }
-            } else if (letter === '"' || letter === "'") {
-              inQuote = true;
-              prevQuote = letter;
-            } else if (letter === "(") {
-              func += 1;
-            } else if (letter === ")") {
-              if (func > 0)
-                func -= 1;
-            } else if (func === 0) {
-              if (separators.includes(letter))
-                split = true;
-            }
-            if (split) {
-              if (current !== "")
-                array.push(current.trim());
-              current = "";
-              split = false;
-            } else {
-              current += letter;
-            }
-          }
-          if (last || current !== "")
-            array.push(current.trim());
-          return array;
-        }
-      };
-      module.exports = list3;
-      list3.default = list3;
-    }
-  });
-
-  // node_modules/postcss/lib/rule.js
-  var require_rule = __commonJS({
-    "node_modules/postcss/lib/rule.js"(exports, module) {
-      "use strict";
-      var Container2 = require_container();
-      var list3 = require_list();
-      var Rule2 = class extends Container2 {
-        constructor(defaults3) {
-          super(defaults3);
-          this.type = "rule";
-          if (!this.nodes)
-            this.nodes = [];
-        }
-        get selectors() {
-          return list3.comma(this.selector);
-        }
-        set selectors(values) {
-          let match = this.selector ? this.selector.match(/,\s*/) : null;
-          let sep = match ? match[0] : "," + this.raw("between", "beforeOpen");
-          this.selector = values.join(sep);
-        }
-      };
-      module.exports = Rule2;
-      Rule2.default = Rule2;
-      Container2.registerRule(Rule2);
-    }
-  });
-
   // node_modules/postcss/lib/parser.js
   var require_parser = __commonJS({
     "node_modules/postcss/lib/parser.js"(exports, module) {
       "use strict";
-      var Declaration2 = require_declaration();
-      var tokenizer = require_tokenize();
-      var Comment2 = require_comment();
       var AtRule2 = require_at_rule();
+      var Comment2 = require_comment();
+      var Declaration2 = require_declaration();
       var Root2 = require_root();
       var Rule2 = require_rule();
+      var tokenizer = require_tokenize();
       var SAFE_COMMENT_NEIGHBOR = {
         empty: true,
         space: true
@@ -2767,7 +2759,7 @@ var BeaconLiveAdmin = (() => {
         }
         colon(tokens) {
           let brackets = 0;
-          let token, type, prev;
+          let prev, token, type;
           for (let [i, element2] of tokens.entries()) {
             token = element2;
             type = token[0];
@@ -2877,12 +2869,12 @@ var BeaconLiveAdmin = (() => {
               let str = "";
               for (let j = i; j > 0; j--) {
                 let type = cache2[j][0];
-                if (str.trim().indexOf("!") === 0 && type !== "space") {
+                if (str.trim().startsWith("!") && type !== "space") {
                   break;
                 }
                 str = cache2.pop()[1] + str;
               }
-              if (str.trim().indexOf("!") === 0) {
+              if (str.trim().startsWith("!")) {
                 node.important = true;
                 node.raws.important = str;
                 tokens = cache2;
@@ -3190,8 +3182,8 @@ var BeaconLiveAdmin = (() => {
     "node_modules/postcss/lib/parse.js"(exports, module) {
       "use strict";
       var Container2 = require_container();
-      var Parser = require_parser();
       var Input2 = require_input();
+      var Parser = require_parser();
       function parse3(css, opts) {
         let input = new Input2(css, opts);
         let parser5 = new Parser(input);
@@ -3219,19 +3211,111 @@ var BeaconLiveAdmin = (() => {
     }
   });
 
+  // node_modules/postcss/lib/warning.js
+  var require_warning = __commonJS({
+    "node_modules/postcss/lib/warning.js"(exports, module) {
+      "use strict";
+      var Warning2 = class {
+        constructor(text2, opts = {}) {
+          this.type = "warning";
+          this.text = text2;
+          if (opts.node && opts.node.source) {
+            let range = opts.node.rangeBy(opts);
+            this.line = range.start.line;
+            this.column = range.start.column;
+            this.endLine = range.end.line;
+            this.endColumn = range.end.column;
+          }
+          for (let opt in opts)
+            this[opt] = opts[opt];
+        }
+        toString() {
+          if (this.node) {
+            return this.node.error(this.text, {
+              index: this.index,
+              plugin: this.plugin,
+              word: this.word
+            }).message;
+          }
+          if (this.plugin) {
+            return this.plugin + ": " + this.text;
+          }
+          return this.text;
+        }
+      };
+      module.exports = Warning2;
+      Warning2.default = Warning2;
+    }
+  });
+
+  // node_modules/postcss/lib/result.js
+  var require_result = __commonJS({
+    "node_modules/postcss/lib/result.js"(exports, module) {
+      "use strict";
+      var Warning2 = require_warning();
+      var Result2 = class {
+        constructor(processor, root2, opts) {
+          this.processor = processor;
+          this.messages = [];
+          this.root = root2;
+          this.opts = opts;
+          this.css = void 0;
+          this.map = void 0;
+        }
+        toString() {
+          return this.css;
+        }
+        warn(text2, opts = {}) {
+          if (!opts.plugin) {
+            if (this.lastPlugin && this.lastPlugin.postcssPlugin) {
+              opts.plugin = this.lastPlugin.postcssPlugin;
+            }
+          }
+          let warning = new Warning2(text2, opts);
+          this.messages.push(warning);
+          return warning;
+        }
+        warnings() {
+          return this.messages.filter((i) => i.type === "warning");
+        }
+        get content() {
+          return this.css;
+        }
+      };
+      module.exports = Result2;
+      Result2.default = Result2;
+    }
+  });
+
+  // node_modules/postcss/lib/warn-once.js
+  var require_warn_once = __commonJS({
+    "node_modules/postcss/lib/warn-once.js"(exports, module) {
+      "use strict";
+      var printed = {};
+      module.exports = function warnOnce(message) {
+        if (printed[message])
+          return;
+        printed[message] = true;
+        if (typeof console !== "undefined" && console.warn) {
+          console.warn(message);
+        }
+      };
+    }
+  });
+
   // node_modules/postcss/lib/lazy-result.js
   var require_lazy_result = __commonJS({
     "node_modules/postcss/lib/lazy-result.js"(exports, module) {
       "use strict";
-      var { isClean, my } = require_symbols();
-      var MapGenerator = require_map_generator();
-      var stringify2 = require_stringify();
       var Container2 = require_container();
       var Document2 = require_document();
-      var warnOnce = require_warn_once();
-      var Result2 = require_result();
+      var MapGenerator = require_map_generator();
       var parse3 = require_parse();
+      var Result2 = require_result();
       var Root2 = require_root();
+      var stringify2 = require_stringify();
+      var { isClean, my } = require_symbols();
+      var warnOnce = require_warn_once();
       var TYPE_TO_CLASS_NAME = {
         atrule: "AtRule",
         comment: "Comment",
@@ -3718,10 +3802,10 @@ var BeaconLiveAdmin = (() => {
     "node_modules/postcss/lib/no-work-result.js"(exports, module) {
       "use strict";
       var MapGenerator = require_map_generator();
-      var stringify2 = require_stringify();
-      var warnOnce = require_warn_once();
       var parse3 = require_parse();
       var Result2 = require_result();
+      var stringify2 = require_stringify();
+      var warnOnce = require_warn_once();
       var NoWorkResult = class {
         constructor(processor, css, opts) {
           css = css.toString();
@@ -3835,13 +3919,13 @@ var BeaconLiveAdmin = (() => {
   var require_processor = __commonJS({
     "node_modules/postcss/lib/processor.js"(exports, module) {
       "use strict";
-      var NoWorkResult = require_no_work_result();
-      var LazyResult = require_lazy_result();
       var Document2 = require_document();
+      var LazyResult = require_lazy_result();
+      var NoWorkResult = require_no_work_result();
       var Root2 = require_root();
       var Processor2 = class {
         constructor(plugins = []) {
-          this.version = "8.4.35";
+          this.version = "8.4.44";
           this.plugins = this.normalize(plugins);
         }
         normalize(plugins) {
@@ -3889,85 +3973,28 @@ var BeaconLiveAdmin = (() => {
     }
   });
 
-  // node_modules/postcss/lib/fromJSON.js
-  var require_fromJSON = __commonJS({
-    "node_modules/postcss/lib/fromJSON.js"(exports, module) {
-      "use strict";
-      var Declaration2 = require_declaration();
-      var PreviousMap = require_previous_map();
-      var Comment2 = require_comment();
-      var AtRule2 = require_at_rule();
-      var Input2 = require_input();
-      var Root2 = require_root();
-      var Rule2 = require_rule();
-      function fromJSON2(json, inputs) {
-        if (Array.isArray(json))
-          return json.map((n) => fromJSON2(n));
-        let { inputs: ownInputs, ...defaults3 } = json;
-        if (ownInputs) {
-          inputs = [];
-          for (let input of ownInputs) {
-            let inputHydrated = { ...input, __proto__: Input2.prototype };
-            if (inputHydrated.map) {
-              inputHydrated.map = {
-                ...inputHydrated.map,
-                __proto__: PreviousMap.prototype
-              };
-            }
-            inputs.push(inputHydrated);
-          }
-        }
-        if (defaults3.nodes) {
-          defaults3.nodes = json.nodes.map((n) => fromJSON2(n, inputs));
-        }
-        if (defaults3.source) {
-          let { inputId, ...source } = defaults3.source;
-          defaults3.source = source;
-          if (inputId != null) {
-            defaults3.source.input = inputs[inputId];
-          }
-        }
-        if (defaults3.type === "root") {
-          return new Root2(defaults3);
-        } else if (defaults3.type === "decl") {
-          return new Declaration2(defaults3);
-        } else if (defaults3.type === "rule") {
-          return new Rule2(defaults3);
-        } else if (defaults3.type === "comment") {
-          return new Comment2(defaults3);
-        } else if (defaults3.type === "atrule") {
-          return new AtRule2(defaults3);
-        } else {
-          throw new Error("Unknown node type: " + json.type);
-        }
-      }
-      module.exports = fromJSON2;
-      fromJSON2.default = fromJSON2;
-    }
-  });
-
   // node_modules/postcss/lib/postcss.js
   var require_postcss = __commonJS({
     "node_modules/postcss/lib/postcss.js"(exports, module) {
       "use strict";
+      var AtRule2 = require_at_rule();
+      var Comment2 = require_comment();
+      var Container2 = require_container();
       var CssSyntaxError2 = require_css_syntax_error();
       var Declaration2 = require_declaration();
-      var LazyResult = require_lazy_result();
-      var Container2 = require_container();
-      var Processor2 = require_processor();
-      var stringify2 = require_stringify();
-      var fromJSON2 = require_fromJSON();
       var Document2 = require_document();
-      var Warning2 = require_warning();
-      var Comment2 = require_comment();
-      var AtRule2 = require_at_rule();
-      var Result2 = require_result();
+      var fromJSON2 = require_fromJSON();
       var Input2 = require_input();
-      var parse3 = require_parse();
+      var LazyResult = require_lazy_result();
       var list3 = require_list();
-      var Rule2 = require_rule();
-      var Root2 = require_root();
       var Node2 = require_node();
+      var parse3 = require_parse();
+      var Processor2 = require_processor();
+      var Result2 = require_result();
+      var Root2 = require_root();
+      var Rule2 = require_rule();
+      var stringify2 = require_stringify();
+      var Warning2 = require_warning();
       function postcss2(...plugins) {
         if (plugins.length === 1 && Array.isArray(plugins[0])) {
           plugins = plugins[0];
@@ -9134,7 +9161,9 @@ var BeaconLiveAdmin = (() => {
         }
       },
       destroyed() {
-        this._instance.$destroy();
+        if (this._instance) {
+          window.addEventListener("phx:page-loading-stop", () => this._instance.$destroy(), { once: true });
+        }
       }
     };
     return {
@@ -12145,10 +12174,9 @@ var BeaconLiveAdmin = (() => {
   var currentComponentCategory = writable(null);
 
   // svelte/stores/dragAndDrop.ts
-  var draggedObject = writable(null);
-  var dragElementInfo = writable(null);
+  var draggedComponentDefinition = writable(null);
   var resetDrag = () => {
-    draggedObject.update(() => null);
+    draggedComponentDefinition.update(() => null);
   };
 
   // svelte/components/ComponentsSidebar.svelte
@@ -12198,10 +12226,10 @@ var BeaconLiveAdmin = (() => {
       },
       h: function hydrate() {
         attr_dev(h3, "class", "text-xs font-bold uppercase");
-        add_location(h3, file4, 86, 12, 2506);
+        add_location(h3, file4, 86, 12, 2545);
         attr_dev(li, "class", "mb-1 px-4");
         attr_dev(li, "data-test-id", "nav-item");
-        add_location(li, file4, 85, 10, 2447);
+        add_location(li, file4, 85, 10, 2486);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, li, anchor);
@@ -12272,10 +12300,10 @@ var BeaconLiveAdmin = (() => {
         this.h();
       },
       h: function hydrate() {
-        add_location(div, file4, 96, 12, 2886);
+        add_location(div, file4, 96, 12, 2925);
         attr_dev(li, "class", "p-2 pl-6 hover:bg-slate-50 hover:cursor-pointer");
         attr_dev(li, "data-test-id", "nav-item");
-        add_location(li, file4, 90, 10, 2646);
+        add_location(li, file4, 90, 10, 2685);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, li, anchor);
@@ -12554,7 +12582,7 @@ var BeaconLiveAdmin = (() => {
       },
       h: function hydrate() {
         attr_dev(p, "class", "mb-1 text-xs font-bold uppercase tracking-wider");
-        add_location(p, file4, 125, 12, 4098);
+        add_location(p, file4, 125, 12, 4137);
         attr_dev(img, "class", "w-full h-auto rounded ring-offset-2 ring-blue-500 transition hover:cursor-grab hover:ring-2");
         if (!src_url_equal(img.src, img_src_value = /*example*/
         ctx[18].thumbnail ? (
@@ -12565,11 +12593,11 @@ var BeaconLiveAdmin = (() => {
           attr_dev(img, "src", img_src_value);
         attr_dev(img, "alt", img_alt_value = /*example*/
         ctx[18].name);
-        add_location(img, file4, 127, 12, 4261);
+        add_location(img, file4, 127, 12, 4300);
         attr_dev(div, "draggable", "true");
         attr_dev(div, "class", "pt-6");
         attr_dev(div, "data-test-id", "component-preview-card");
-        add_location(div, file4, 118, 10, 3876);
+        add_location(div, file4, 118, 10, 3915);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, div, anchor);
@@ -12655,7 +12683,7 @@ var BeaconLiveAdmin = (() => {
         attr_dev(div, "class", "bg-black/50 absolute inset-0 z-50 svelte-uvq63b");
         attr_dev(div, "id", "backdrop");
         attr_dev(div, "data-test-id", "backdrop");
-        add_location(div, file4, 140, 2, 4633);
+        add_location(div, file4, 140, 2, 4672);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, div, anchor);
@@ -12824,17 +12852,17 @@ var BeaconLiveAdmin = (() => {
       },
       h: function hydrate() {
         attr_dev(h2, "class", "text-lg font-bold");
-        add_location(h2, file4, 80, 6, 2208);
+        add_location(h2, file4, 80, 6, 2247);
         attr_dev(div0, "class", "border-b border-slate-100 border-solid py-4 px-4");
         attr_dev(div0, "data-test-id", "logo");
-        add_location(div0, file4, 79, 4, 2119);
+        add_location(div0, file4, 79, 4, 2158);
         attr_dev(ul, "class", "py-4 h-[calc(100vh_-_61px)] overflow-y-auto");
         attr_dev(ul, "data-test-id", "component-tree");
-        add_location(ul, file4, 82, 4, 2269);
+        add_location(ul, file4, 82, 4, 2308);
         attr_dev(h4, "class", "mb-4 font-bold text-2xl");
-        add_location(h4, file4, 113, 6, 3558);
+        add_location(h4, file4, 113, 6, 3597);
         attr_dev(p, "class", "font-medium");
-        add_location(p, file4, 114, 6, 3654);
+        add_location(p, file4, 114, 6, 3693);
         attr_dev(div1, "class", "absolute w-96 left-0 bg-slate-50 inset-y-0 shadow-sm z-50 pt-3 pb-4 px-5 transition-transform duration-500 opacity-0 invisible overflow-y-auto min-h-screen");
         attr_dev(div1, "id", "component-previews");
         attr_dev(div1, "data-test-id", "component-previews");
@@ -12856,13 +12884,13 @@ var BeaconLiveAdmin = (() => {
           /*showExamples*/
           ctx[2]
         );
-        add_location(div1, file4, 102, 4, 3047);
+        add_location(div1, file4, 102, 4, 3086);
         attr_dev(div2, "class", "sticky top-0");
-        add_location(div2, file4, 78, 2, 2088);
+        add_location(div2, file4, 78, 2, 2127);
         attr_dev(div3, "class", "w-64 bg-white border-slate-100 border-solid border-r svelte-uvq63b");
         attr_dev(div3, "id", "left-sidebar");
         attr_dev(div3, "data-test-id", "left-sidebar");
-        add_location(div3, file4, 77, 0, 1973);
+        add_location(div3, file4, 77, 0, 2012);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, div3, anchor);
@@ -13065,10 +13093,10 @@ var BeaconLiveAdmin = (() => {
     let componentDefinitions;
     let componentDefinitionsByCategory;
     let currentDefinitions;
-    let $draggedObject;
+    let $draggedComponentDefinition;
     let $currentComponentCategory;
-    validate_store(draggedObject, "draggedObject");
-    component_subscribe($$self, draggedObject, ($$value) => $$invalidate(17, $draggedObject = $$value));
+    validate_store(draggedComponentDefinition, "draggedComponentDefinition");
+    component_subscribe($$self, draggedComponentDefinition, ($$value) => $$invalidate(17, $draggedComponentDefinition = $$value));
     validate_store(currentComponentCategory, "currentComponentCategory");
     component_subscribe($$self, currentComponentCategory, ($$value) => $$invalidate(0, $currentComponentCategory = $$value));
     let { $$slots: slots = {}, $$scope } = $$props;
@@ -13099,7 +13127,7 @@ var BeaconLiveAdmin = (() => {
       clearTimeout(hideComponentTimer);
     }
     function expandCategoryMenu(componentCategory) {
-      if ($draggedObject)
+      if ($draggedComponentDefinition)
         return;
       clearTimeout(hideComponentTimer);
       if (showExamples) {
@@ -13118,7 +13146,7 @@ var BeaconLiveAdmin = (() => {
     function dragStart(componentDefinition, e) {
       setTimeout(
         () => {
-          set_store_value(draggedObject, $draggedObject = componentDefinition, $draggedObject);
+          set_store_value(draggedComponentDefinition, $draggedComponentDefinition = componentDefinition, $draggedComponentDefinition);
           $$invalidate(2, showExamples = false);
         },
         100
@@ -13147,7 +13175,7 @@ var BeaconLiveAdmin = (() => {
       fade,
       translate,
       currentComponentCategory,
-      draggedObject,
+      draggedComponentDefinition,
       resetDrag,
       components,
       menuCategories,
@@ -13163,7 +13191,7 @@ var BeaconLiveAdmin = (() => {
       componentDefinitionsByCategory,
       currentDefinitions,
       componentDefinitions,
-      $draggedObject,
+      $draggedComponentDefinition,
       $currentComponentCategory
     });
     $$self.$inject_state = ($$props2) => {
@@ -13274,12 +13302,14 @@ var BeaconLiveAdmin = (() => {
   var highlightedAstElement = writable();
   var slotTargetElement = writable();
   var rootAstElement = derived([page], ([$page]) => {
-    return { tag: "root", attrs: {}, content: $page.ast };
+    if ($page) {
+      return { tag: "root", attrs: {}, content: $page.ast };
+    }
   });
   var selectedAstElement = derived(
     [page, selectedAstElementId],
     ([$page, $selectedAstElementId]) => {
-      if ($selectedAstElementId) {
+      if ($page && $selectedAstElementId) {
         if ($selectedAstElementId === "root")
           return get_store_value(rootAstElement);
         return findAstElement($page.ast, $selectedAstElementId);
@@ -13289,7 +13319,7 @@ var BeaconLiveAdmin = (() => {
   var parentOfSelectedAstElement = derived(
     [page, selectedAstElementId],
     ([$page, $selectedAstElementId]) => {
-      if ($selectedAstElementId) {
+      if ($page && $selectedAstElementId) {
         if ($selectedAstElementId === "root")
           return null;
         let levels = $selectedAstElementId.split(".");
@@ -13301,7 +13331,6 @@ var BeaconLiveAdmin = (() => {
     }
   );
   var selectedDomElement = writable(null);
-  var selectedElementMenu = writable(null);
   function setSelection(selectedId) {
     selectedAstElementId.update(() => selectedId);
   }
@@ -13311,7 +13340,6 @@ var BeaconLiveAdmin = (() => {
   function resetSelection() {
     selectedAstElementId.update(() => null);
     selectedDomElement.update(() => null);
-    selectedElementMenu.update(() => null);
   }
   function isAstElement(maybeNode) {
     return typeof maybeNode !== "string";
@@ -13342,6 +13370,13 @@ var BeaconLiveAdmin = (() => {
         }
       }
     }
+  }
+  function resetStores() {
+    page.set(null);
+    selectedAstElementId.set(null);
+    highlightedAstElement.set(null);
+    slotTargetElement.set(null);
+    selectedDomElement.set(null);
   }
 
   // svelte/components/LayoutAstNode.svelte
@@ -14365,73 +14400,6 @@ var BeaconLiveAdmin = (() => {
     default: () => PageAstNode_default
   });
 
-  // svelte/utils/drag-helpers.ts
-  function elementCanBeDroppedInTarget(draggedObject2) {
-    return true;
-  }
-  function mouseDiff(mouseMovement) {
-    return {
-      x: mouseMovement.current.x - mouseMovement.start.x,
-      y: mouseMovement.current.y - mouseMovement.start.y
-    };
-  }
-  function getDragDirection(element2) {
-    let parentEl = element2.parentElement;
-    let rects = Array.from(parentEl.children).map((child) => child.getBoundingClientRect());
-    if (rects.length > 1) {
-      if (rects[rects.length - 1].y - rects[0].y) {
-        return "vertical";
-      }
-      if (rects[rects.length - 1].x - rects[0].x) {
-        return "horizontal";
-      }
-    }
-    let flexDirection = window.getComputedStyle(parentEl).flexDirection;
-    return ["row", "row-reverse"].includes(flexDirection) ? "horizontal" : "vertical";
-  }
-  var relativeWrapperRect;
-  function getElementCoords(element2) {
-    if (!relativeWrapperRect) {
-      relativeWrapperRect = document.getElementById("ui-builder-app-container").closest(".relative").getBoundingClientRect();
-    }
-    let elementRect = element2.getBoundingClientRect();
-    let currentCoords = {
-      x: elementRect.x - relativeWrapperRect.x,
-      y: elementRect.y - relativeWrapperRect.y
-    };
-    return currentCoords;
-  }
-  function updateSelectedElementMenu(mouseMovement = null) {
-    let selectedEl = get_store_value(selectedDomElement);
-    if (!selectedEl) {
-      selectedElementMenu.set(null);
-      return;
-    }
-    let dragDirection = getDragDirection(selectedEl);
-    let currentCoords = getElementCoords(selectedEl);
-    let selectedElRect = selectedEl.getBoundingClientRect();
-    let menu = get_store_value(selectedElementMenu);
-    let elementCoords = menu && mouseMovement ? menu.elementCoords : { start: currentCoords, current: currentCoords };
-    let insertBefore = menu?.insertBefore || null;
-    let top = elementCoords.current.y + selectedElRect.height + 5;
-    let left = elementCoords.current.x + selectedElRect.width / 2 - 12;
-    if (mouseMovement) {
-      top = dragDirection === "horizontal" ? top : mouseMovement.current.y - relativeWrapperRect.y - 12;
-      left = dragDirection === "vertical" ? left : mouseMovement.current.x - relativeWrapperRect.x - 12;
-    }
-    if (!mouseMovement) {
-    }
-    selectedElementMenu.set({
-      top,
-      left,
-      elementCoords,
-      dragDirection,
-      dragging: !!mouseMovement,
-      mouseMovement,
-      insertBefore
-    });
-  }
-
   // svelte/stores/live.ts
   var live = writable();
 
@@ -14470,11 +14438,131 @@ var BeaconLiveAdmin = (() => {
     }
   }
 
+  // svelte/utils/drag-helpers.ts
+  function elementCanBeDroppedInTarget(draggedComponentDefinition2) {
+    return true;
+  }
+  function detectFlow(rects) {
+    let horizontal = false;
+    let vertical = false;
+    const threshold = 5;
+    for (let i = 1; i < rects.length; i++) {
+      let prevRect = rects[i - 1];
+      let currentRect = rects[i];
+      let xChange = Math.abs(currentRect.x - prevRect.x);
+      let yChange = Math.abs(currentRect.y - prevRect.y);
+      if (xChange > threshold && yChange < threshold) {
+        horizontal = true;
+      }
+      if (yChange > threshold) {
+        vertical = true;
+      }
+    }
+    if (horizontal && vertical) {
+      return "both";
+    } else if (horizontal) {
+      return "horizontal";
+    } else {
+      return "vertical";
+    }
+  }
+  function getDragDirection(element2) {
+    let parentEl = element2.parentElement;
+    if (parentEl === null) {
+      return "vertical";
+    }
+    let rects = Array.from(parentEl.children).map((child) => child.getBoundingClientRect());
+    return detectFlow(rects);
+  }
+  function getBoundingRect(el) {
+    if (window.getComputedStyle(el).display === "contents") {
+      if (el.children.length === 1) {
+        return el.children[0].getBoundingClientRect();
+      }
+      const rects = Array.from(el.children).map((e) => e.getBoundingClientRect());
+      let top = Math.min(...rects.map((r) => r.top));
+      let bottom = Math.max(...rects.map((r) => r.bottom));
+      let left = Math.min(...rects.map((r) => r.left));
+      let right = Math.max(...rects.map((r) => r.right));
+      return {
+        x: Math.min(...rects.map((r) => r.x)),
+        y: Math.min(...rects.map((r) => r.y)),
+        top,
+        right,
+        bottom,
+        left,
+        width: right - left,
+        height: bottom - top
+      };
+    }
+    return el.getBoundingClientRect();
+  }
+  function findHoveredSiblingIndex(dragDirection, mouseDiff, siblingRects, selectedIndex) {
+    const currentRect = offsetRect(siblingRects[selectedIndex], mouseDiff);
+    let bestMatchIndex = selectedIndex;
+    let bestOverlapScore = 0;
+    for (let i = 0; i < siblingRects.length; i++) {
+      if (i !== selectedIndex) {
+        const rect = siblingRects[i];
+        const overlap = calculateOverlap(rect, currentRect, dragDirection);
+        if (overlap === 0) {
+          continue;
+        }
+        if (overlap > bestOverlapScore) {
+          bestOverlapScore = overlap;
+          bestMatchIndex = i;
+          continue;
+        }
+        if (overlap === bestOverlapScore) {
+          let currentMatch = siblingRects[bestMatchIndex];
+          if (calculateCenterDistance(rect, currentMatch) < calculateCenterDistance(currentRect, currentMatch)) {
+            bestMatchIndex = i;
+          }
+        }
+      }
+    }
+    return bestMatchIndex;
+  }
+  function calculateOverlap(rect, draggedRect, dragDirection) {
+    if (dragDirection === "horizontal") {
+      const xOverlap = Math.max(0, Math.min(rect.right, draggedRect.right) - Math.max(rect.left, draggedRect.left));
+      return 100 * xOverlap / Math.min(rect.width, draggedRect.width);
+    } else if (dragDirection === "vertical") {
+      const yOverlap = Math.max(0, Math.min(rect.bottom, draggedRect.bottom) - Math.max(rect.top, draggedRect.top));
+      return 100 * yOverlap / Math.min(rect.height, draggedRect.height);
+    } else {
+      alert("Bidirational drag not supported yet");
+    }
+  }
+  function calculateCenterDistance(rect1, rect2) {
+    return calculateDistance(calculateCenter(rect1), calculateCenter(rect2));
+  }
+  function calculateCenter(rect) {
+    return {
+      x: rect.left + rect.width / 2,
+      y: rect.top + rect.height / 2
+    };
+  }
+  function calculateDistance(point1, point2) {
+    return Math.sqrt(Math.pow(point1.x - point2.x, 2) + Math.pow(point1.y - point2.y, 2));
+  }
+  function offsetRect(rect, mouseDiff) {
+    const newRect = { ...rect };
+    newRect.x += mouseDiff.x;
+    newRect.left += mouseDiff.x;
+    newRect.right += mouseDiff.x;
+    newRect.y += mouseDiff.y;
+    newRect.top += mouseDiff.y;
+    newRect.bottom += mouseDiff.y;
+    return newRect;
+  }
+
   // svelte/components/SelectedElementFloatingMenu/DragMenuOption.svelte
   var DragMenuOption_exports = {};
   __export(DragMenuOption_exports, {
     default: () => DragMenuOption_default,
-    initSelectedElementDragMenuPosition: () => initSelectedElementDragMenuPosition
+    initSelectedElementDragMenuPosition: () => initSelectedElementDragMenuPosition,
+    isDragging: () => isDragging
   });
   var file6 = "svelte/components/SelectedElementFloatingMenu/DragMenuOption.svelte";
   function create_if_block4(ctx) {
@@ -14523,37 +14611,31 @@ var BeaconLiveAdmin = (() => {
       h: function hydrate() {
         attr_dev(path0, "d", "M 1 2.5 C 1 1.948 1.448 1.5 2 1.5 L 10 1.5 C 10.552 1.5 11 1.948 11 2.5 L 11 2.5 C 11 3.052 10.552 3.5 10 3.5 L 2 3.5 C 1.448 3.5 1 3.052 1 2.5 Z");
         attr_dev(path0, "fill", "currentColor");
-        add_location(path0, file6, 346, 7, 13499);
+        add_location(path0, file6, 374, 7, 13510);
         attr_dev(path1, "d", "M 1 6 C 1 5.448 1.448 5 2 5 L 10 5 C 10.552 5 11 5.448 11 6 L 11 6 C 11 6.552 10.552 7 10 7 L 2 7 C 1.448 7 1 6.552 1 6 Z");
         attr_dev(path1, "fill", "currentColor");
-        add_location(path1, file6, 349, 14, 13705);
+        add_location(path1, file6, 377, 14, 13716);
         attr_dev(path2, "d", "M 1 9.5 C 1 8.948 1.448 8.5 2 8.5 L 10 8.5 C 10.552 8.5 11 8.948 11 9.5 L 11 9.5 C 11 10.052 10.552 10.5 10 10.5 L 2 10.5 C 1.448 10.5 1 10.052 1 9.5 Z");
         attr_dev(path2, "fill", "currentColor");
-        add_location(path2, file6, 352, 14, 13887);
+        add_location(path2, file6, 380, 14, 13898);
         attr_dev(svg, "xmlns", "http://www.w3.org/2000/svg");
         attr_dev(svg, "width", "12");
         attr_dev(svg, "height", "12");
-        add_location(svg, file6, 345, 4, 13429);
+        add_location(svg, file6, 373, 4, 13440);
         attr_dev(button, "class", "rounded-full w-6 h-6 flex justify-center items-center absolute bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 active:bg-blue-800 transform");
         attr_dev(
           button,
           "style",
           /*$dragHandleStyle*/
-          ctx[5]
-        );
-        toggle_class(
-          button,
-          "pointer-events-none",
-          /*$selectedElementMenu*/
-          ctx[4]?.dragging
+          ctx[4]
         );
         toggle_class(
           button,
           "rotate-90",
           /*rotated*/
-          ctx[3]
+          ctx[2]
         );
-        add_location(button, file6, 337, 2, 13008);
+        add_location(button, file6, 366, 2, 13083);
       },
       m: function mount(target, anchor) {
         if (if_block)
@@ -14570,7 +14652,7 @@ var BeaconLiveAdmin = (() => {
             button,
             "mousedown",
             /*handleMousedown*/
-            ctx[6],
+            ctx[5],
             false,
             false,
             false,
@@ -14596,30 +14678,21 @@ var BeaconLiveAdmin = (() => {
           if_block = null;
         }
         if (dirty & /*$dragHandleStyle*/
-        32) {
+        16) {
           attr_dev(
             button,
             "style",
             /*$dragHandleStyle*/
-            ctx2[5]
-          );
-        }
-        if (dirty & /*$selectedElementMenu*/
-        16) {
-          toggle_class(
-            button,
-            "pointer-events-none",
-            /*$selectedElementMenu*/
-            ctx2[4]?.dragging
+            ctx2[4]
           );
         }
         if (dirty & /*rotated*/
-        8) {
+        4) {
           toggle_class(
             button,
             "rotate-90",
             /*rotated*/
-            ctx2[3]
+            ctx2[2]
           );
         }
       },
@@ -14639,7 +14712,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_if_block4.name,
       type: "if",
-      source: "(281:0) {#if canBeDragged}",
+      source: "(292:0) {#if canBeDragged}",
       ctx
     });
     return block;
@@ -14661,7 +14734,7 @@ var BeaconLiveAdmin = (() => {
         attr_dev(div, "class", "absolute transition-all");
         attr_dev(div, "style", div_style_value = "background-color:aqua; opacity: 0.5; " + /*placeholderStyle*/
         ctx[1]);
-        add_location(div, file6, 335, 4, 12890);
+        add_location(div, file6, 364, 4, 12965);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, div, anchor);
@@ -14683,7 +14756,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_if_block_13.name,
       type: "if",
-      source: "(282:2) {#if placeholderStyle}",
+      source: "(293:2) {#if placeholderStyle}",
       ctx
     });
     return block;
@@ -14692,7 +14765,7 @@ var BeaconLiveAdmin = (() => {
     let if_block_anchor;
     let if_block = (
       /*canBeDragged*/
-      ctx[2] && create_if_block4(ctx)
+      ctx[3] && create_if_block4(ctx)
     );
     const block = {
       c: function create3() {
@@ -14713,7 +14786,7 @@ var BeaconLiveAdmin = (() => {
       p: function update2(ctx2, [dirty]) {
         if (
           /*canBeDragged*/
-          ctx2[2]
+          ctx2[3]
         ) {
           if (if_block) {
             if_block.p(ctx2, dirty);
@@ -14747,15 +14820,13 @@ var BeaconLiveAdmin = (() => {
     return block;
   }
   var currentHandleCoords;
-  var relativeWrapperRect2;
+  var relativeWrapperRect;
   var dragHandleStyle = writable("");
-  function initSelectedElementDragMenuPosition(selectedDomEl, mouseDiff2) {
-    let selectedEl;
-    let dragInfo = get_store_value(dragElementInfo);
-    if (dragInfo) {
-      selectedEl = dragInfo.parentElementClone.children.item(dragInfo.selectedIndex);
-    }
-    updateHandleCoords(selectedEl || selectedDomEl, mouseDiff2);
+  var isDragging = writable(false);
+  var dragElementInfo;
+  function initSelectedElementDragMenuPosition(selectedDomEl, mouseDiff) {
+    let rect = dragElementInfo ? dragElementInfo.siblingLocationInfos[dragElementInfo.selectedIndex] : getBoundingRect(selectedDomEl);
+    updateHandleCoords(rect, mouseDiff);
     let styles = [];
     if (currentHandleCoords?.y) {
       styles.push(`top: ${currentHandleCoords.y}px`);
@@ -14765,270 +14836,249 @@ var BeaconLiveAdmin = (() => {
     }
     dragHandleStyle.set(styles.join(";"));
   }
-  function updateHandleCoords(selectedEl, movement = { x: 0, y: 0 }) {
-    relativeWrapperRect2 = document.getElementById("ui-builder-app-container").closest(".relative").getBoundingClientRect();
-    let currentRect = selectedEl.getBoundingClientRect();
-    let menu = get_store_value(selectedElementMenu);
-    let movX = menu?.dragDirection === "vertical" ? 0 : movement.x;
-    let movY = menu?.dragDirection === "vertical" ? movement.y : 0;
+  function updateHandleCoords(currentRect, movement = { x: 0, y: 0 }) {
+    relativeWrapperRect = document.getElementById("ui-builder-app-container").closest(".relative").getBoundingClientRect();
     currentHandleCoords = {
-      x: currentRect.x - relativeWrapperRect2.x + movX + currentRect.width / 2 - 5,
-      y: currentRect.y - relativeWrapperRect2.y + movY + currentRect.height + 5
+      x: currentRect.x - relativeWrapperRect.x + movement.x + currentRect.width / 2 - 5,
+      y: currentRect.y - relativeWrapperRect.y + movement.y + currentRect.height + 5
     };
   }
+  function getGhostElement() {
+    return dragElementInfo.parentElementClone.children.item(dragElementInfo.selectedIndex);
+  }
+  function findSwappedIndexes(dragDirection, mouseDiff, e) {
+    let hoveredElementIndex = findHoveredSiblingIndex(dragDirection, mouseDiff, dragElementInfo.siblingLocationInfos, dragElementInfo.selectedIndex);
+    if (hoveredElementIndex === -1) {
+      return {
+        currentIndex: dragElementInfo.selectedIndex,
+        destinationIndex: dragElementInfo.selectedIndex
+      };
+    }
+    return {
+      currentIndex: dragElementInfo.selectedIndex,
+      destinationIndex: hoveredElementIndex
+    };
+  }
+  function sortedLocationInfos(infos, draggedElementIndex, destinationIndex) {
+    let newInfos = [...infos];
+    let info = newInfos.splice(draggedElementIndex, 1)[0];
+    newInfos.splice(destinationIndex, 0, info);
+    return newInfos;
+  }
+  function calculateNewDistance(dragDirection, index4, draggedElementIndex, destinationIndex, newInfos) {
+    if (index4 < destinationIndex && index4 < draggedElementIndex || index4 > destinationIndex && index4 > draggedElementIndex)
+      return;
+    let newIndex;
+    if (index4 === draggedElementIndex) {
+      newIndex = destinationIndex;
+    } else {
+      if (draggedElementIndex > destinationIndex) {
+        newIndex = index4 < draggedElementIndex && index4 >= destinationIndex ? index4 + 1 : index4;
+      } else {
+        newIndex = index4 > draggedElementIndex && index4 <= destinationIndex ? index4 - 1 : index4;
+      }
+    }
+    let distance = 0;
+    let i = 0;
+    if (dragDirection === "vertical") {
+      while (i < newInfos.length && i < newIndex) {
+        let gap2 = 0;
+        if (i > 0) {
+          gap2 = dragElementInfo.siblingLocationInfos[i].top - dragElementInfo.siblingLocationInfos[i - 1].bottom;
+        }
+        distance += newInfos[i].height + gap2;
+        i++;
+      }
+      let gap = 0;
+      if (newIndex > 0) {
+        dragElementInfo.siblingLocationInfos;
+        gap = dragElementInfo.siblingLocationInfos[newIndex].top - dragElementInfo.siblingLocationInfos[newIndex - 1].bottom;
+      }
+      distance += gap + dragElementInfo.siblingLocationInfos[0].top;
+    } else {
+      while (i < newInfos.length && i < newIndex) {
+        let gap2 = 0;
+        if (i > 0) {
+          gap2 = dragElementInfo.siblingLocationInfos[i].left - dragElementInfo.siblingLocationInfos[i - 1].right;
+        }
+        distance += newInfos[i].width + gap2;
+        i++;
+      }
+      let gap = 0;
+      if (newIndex > 0) {
+        dragElementInfo.siblingLocationInfos;
+        gap = dragElementInfo.siblingLocationInfos[newIndex].left - dragElementInfo.siblingLocationInfos[newIndex - 1].right;
+      }
+      distance += gap + dragElementInfo.siblingLocationInfos[0].left;
+    }
+    return distance;
+  }
   function instance6($$self, $$props, $$invalidate) {
-    let rotated;
     let canBeDragged;
-    let $dragElementInfo;
-    let $selectedDomElement;
+    let rotated;
+    let $isDragging, $$unsubscribe_isDragging = noop2, $$subscribe_isDragging = () => ($$unsubscribe_isDragging(), $$unsubscribe_isDragging = subscribe(isDragging, ($$value) => $$invalidate(12, $isDragging = $$value)), isDragging);
     let $page;
     let $live;
     let $selectedAstElementId;
     let $parentOfSelectedAstElement;
-    let $selectedElementMenu;
     let $dragHandleStyle;
-    validate_store(dragElementInfo, "dragElementInfo");
-    component_subscribe($$self, dragElementInfo, ($$value) => $$invalidate(11, $dragElementInfo = $$value));
-    validate_store(selectedDomElement, "selectedDomElement");
-    component_subscribe($$self, selectedDomElement, ($$value) => $$invalidate(7, $selectedDomElement = $$value));
+    validate_store(isDragging, "isDragging");
+    component_subscribe($$self, isDragging, ($$value) => $$invalidate(12, $isDragging = $$value));
     validate_store(page, "page");
-    component_subscribe($$self, page, ($$value) => $$invalidate(12, $page = $$value));
+    component_subscribe($$self, page, ($$value) => $$invalidate(13, $page = $$value));
     validate_store(live, "live");
-    component_subscribe($$self, live, ($$value) => $$invalidate(13, $live = $$value));
+    component_subscribe($$self, live, ($$value) => $$invalidate(14, $live = $$value));
     validate_store(selectedAstElementId, "selectedAstElementId");
-    component_subscribe($$self, selectedAstElementId, ($$value) => $$invalidate(14, $selectedAstElementId = $$value));
+    component_subscribe($$self, selectedAstElementId, ($$value) => $$invalidate(15, $selectedAstElementId = $$value));
     validate_store(parentOfSelectedAstElement, "parentOfSelectedAstElement");
-    component_subscribe($$self, parentOfSelectedAstElement, ($$value) => $$invalidate(15, $parentOfSelectedAstElement = $$value));
-    validate_store(selectedElementMenu, "selectedElementMenu");
-    component_subscribe($$self, selectedElementMenu, ($$value) => $$invalidate(4, $selectedElementMenu = $$value));
+    component_subscribe($$self, parentOfSelectedAstElement, ($$value) => $$invalidate(16, $parentOfSelectedAstElement = $$value));
     validate_store(dragHandleStyle, "dragHandleStyle");
-    component_subscribe($$self, dragHandleStyle, ($$value) => $$invalidate(5, $dragHandleStyle = $$value));
+    component_subscribe($$self, dragHandleStyle, ($$value) => $$invalidate(4, $dragHandleStyle = $$value));
+    $$self.$$.on_destroy.push(() => $$unsubscribe_isDragging());
     let { $$slots: slots = {}, $$scope } = $$props;
     validate_slots("DragMenuOption", slots, []);
+    let { element: element2 } = $$props;
+    let { isParent = false } = $$props;
+    let originalSiblings;
     let dragHandleElement;
     function snapshotSelectedElementSiblings() {
-      let siblings = Array.from($selectedDomElement.parentElement.children);
-      let selectedIndex = siblings.indexOf($selectedDomElement);
-      let el = $selectedDomElement.parentElement.cloneNode(true);
+      let siblings = Array.from(element2.parentElement.children);
+      let selectedIndex = siblings.indexOf(element2);
+      let el = element2.parentElement.cloneNode(true);
       let elChildren = Array.from(el.children);
       for (let i = 0; i < elChildren.length; i++) {
-        if (i !== selectedIndex) {
-          elChildren[i].style.transition = "transform 0.15s";
-        }
+        elChildren[i].setAttribute("data-is-clone", "true");
       }
-      set_store_value(
-        dragElementInfo,
-        $dragElementInfo = {
-          parentElementClone: el,
-          selectedIndex,
-          siblingLocationInfos: siblings.map((el2, i) => {
-            let { x, y, width, height, top, right, bottom, left } = el2.getBoundingClientRect();
-            let computedStyles = window.getComputedStyle(el2);
-            return {
-              x,
-              y,
-              width,
-              height,
-              top,
-              right,
-              bottom,
-              left,
-              marginTop: parseFloat(computedStyles.marginTop),
-              marginBottom: parseFloat(computedStyles.marginBottom),
-              marginLeft: parseFloat(computedStyles.marginLeft),
-              marginRight: parseFloat(computedStyles.marginRight)
-            };
-          })
-        },
-        $dragElementInfo
-      );
-      set_store_value(selectedDomElement, $selectedDomElement.parentElement.style.display = "none", $selectedDomElement);
-      $selectedDomElement.parentElement.parentElement.insertBefore(el, $selectedDomElement.parentElement);
+      dragElementInfo = {
+        parentElementClone: el,
+        selectedIndex,
+        siblingLocationInfos: siblings.map((el2, i) => {
+          let { x, y, width, height, top, right, bottom, left } = getBoundingRect(el2);
+          return {
+            x,
+            y,
+            width,
+            height,
+            top,
+            right,
+            bottom,
+            left
+          };
+        })
+      };
+      $$invalidate(6, element2.parentElement.style.display = "none", element2);
+      element2.parentElement.parentNode.insertBefore(el, element2.parentElement);
+      originalSiblings = Array.from(dragElementInfo.parentElementClone.children);
     }
     let mouseDownEvent;
     async function handleMousedown(e) {
+      set_store_value(isDragging, $isDragging = true, $isDragging);
       mouseDownEvent = e;
       document.addEventListener("mousemove", handleMousemove);
       document.addEventListener("mouseup", handleMouseup);
       snapshotSelectedElementSiblings();
     }
     function applyNewOrder() {
-      if (newIndex !== null) {
+      if (newIndex !== dragElementInfo.selectedIndex) {
         let parent = $parentOfSelectedAstElement;
-        const selectedAstElement2 = parent.content.splice($dragElementInfo.selectedIndex, 1)[0];
+        const selectedAstElement2 = parent.content.splice(dragElementInfo.selectedIndex, 1)[0];
         parent.content.splice(newIndex, 0, selectedAstElement2);
         set_store_value(page, $page.ast = [...$page.ast], $page);
         let parts = $selectedAstElementId.split(".");
         parts[parts.length - 1] = newIndex.toString();
         set_store_value(selectedAstElementId, $selectedAstElementId = parts.join("."), $selectedAstElementId);
-        tick().then(() => initSelectedElementDragMenuPosition($selectedDomElement));
         $live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast });
       }
     }
+    function resetDragElementHandle() {
+      $$invalidate(0, dragHandleElement.style.transform = null, dragHandleElement);
+      dragHandleElement.style.setProperty("--tw-translate-y", null);
+      dragHandleElement.style.setProperty("--tw-translate-x", null);
+    }
     async function handleMouseup(e) {
       document.removeEventListener("mousemove", handleMousemove);
+      document.removeEventListener("mouseup", handleMouseup);
       applyNewOrder();
-      if ($dragElementInfo) {
-        set_store_value(selectedDomElement, $selectedDomElement.parentElement.style.display = null, $selectedDomElement);
-        $dragElementInfo.parentElementClone.remove();
-        set_store_value(dragElementInfo, $dragElementInfo = null, $dragElementInfo);
+      if (dragElementInfo) {
+        $$invalidate(6, element2.parentElement.style.display = null, element2);
+        dragElementInfo.parentElementClone.remove();
+        dragElementInfo = null;
       }
       mouseDownEvent = null;
       await tick();
-      setSelectedDom($selectedDomElement);
-      $$invalidate(0, dragHandleElement.style.transform = null, dragHandleElement);
+      set_store_value(isDragging, $isDragging = false, $isDragging);
+      resetDragElementHandle();
       $$invalidate(1, placeholderStyle = null);
+      originalSiblings = null;
     }
-    function getGhostElement() {
-      return $dragElementInfo.parentElementClone.children.item($dragElementInfo.selectedIndex);
+    function repositionChildren(currentIndex, destinationIndex) {
+      const newChildren = [...originalSiblings];
+      const element3 = newChildren.splice(currentIndex, 1)[0];
+      newChildren.splice(destinationIndex, 0, element3);
+      dragElementInfo.parentElementClone.replaceChildren(...newChildren);
     }
-    function findHoveredSiblingIndex(dragDirection, mouseDiff2, e) {
-      const draggedElementInfo = $dragElementInfo.siblingLocationInfos[$dragElementInfo.selectedIndex];
-      if (dragDirection === "vertical") {
-        const { top, y, bottom, ...rest } = draggedElementInfo;
-        const draggedRect = {
-          ...rest,
-          y: y + mouseDiff2.y,
-          top: top + mouseDiff2.y,
-          bottom: bottom + mouseDiff2.y
-        };
-        return $dragElementInfo.siblingLocationInfos.findIndex((rect, index4) => {
-          if (index4 !== $dragElementInfo.selectedIndex) {
-            const overlap = Math.max(0, Math.min(draggedRect.bottom, rect.bottom) - Math.max(draggedRect.top, rect.top));
-            const overlapRatio = overlap / Math.min(draggedRect.height, rect.height);
-            return overlapRatio > 0.5;
-          }
+    function repositionGhosts(currentIndex, destinationIndex) {
+      let parentElement = dragElementInfo.parentElementClone;
+      const children2 = Array.from(parentElement.children);
+      const firstRects = children2.map((child) => child.getBoundingClientRect());
+      repositionChildren(currentIndex, destinationIndex);
+      const lastRects = children2.map((child) => child.getBoundingClientRect());
+      children2.forEach((child, i) => {
+        const firstRect = firstRects[i];
+        const lastRect = lastRects[i];
+        const deltaX = firstRect.left - lastRect.left;
+        const deltaY = firstRect.top - lastRect.top;
+        child.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+        child.style.transition = "transform 0s";
+      });
+      requestAnimationFrame(() => {
+        children2.forEach((child) => {
+          child.style.transition = "transform 0.15s";
+          child.style.transform = "";
         });
-      } else {
-        const { left, x, right, ...rest } = draggedElementInfo;
-        const draggedRect = {
-          ...rest,
-          x: x + mouseDiff2.x,
-          left: left + mouseDiff2.x,
-          right: right + mouseDiff2.x
-        };
-        return $dragElementInfo.siblingLocationInfos.findIndex((rect, index4) => {
-          if (index4 !== $dragElementInfo.selectedIndex) {
-            const overlap = Math.max(0, Math.min(draggedRect.right, rect.right) - Math.max(draggedRect.left, rect.left));
-            const overlapRatio = overlap / Math.min(draggedRect.width, rect.width);
-            return overlapRatio > 0.5;
-          }
-        });
-      }
-    }
-    function findSwappedIndexes(dragDirection, mouseDiff2, e) {
-      let hoveredElementIndex = findHoveredSiblingIndex(dragDirection, mouseDiff2, e);
-      if (hoveredElementIndex === -1) {
-        return {
-          currentIndex: $dragElementInfo.selectedIndex,
-          destinationIndex: $dragElementInfo.selectedIndex
-        };
-      }
-      return {
-        currentIndex: $dragElementInfo.selectedIndex,
-        destinationIndex: hoveredElementIndex
-      };
-    }
-    function sortedLocationInfos(infos, draggedElementIndex, destinationIndex) {
-      let newInfos = [...$dragElementInfo.siblingLocationInfos];
-      let info = newInfos.splice(draggedElementIndex, 1)[0];
-      newInfos.splice(destinationIndex, 0, info);
-      return newInfos;
-    }
-    function calculateNewDistance(dragDirection, index4, draggedElementIndex, destinationIndex, newInfos) {
-      if (index4 < destinationIndex && index4 < draggedElementIndex || index4 > destinationIndex && index4 > draggedElementIndex)
-        return;
-      let newIndex2;
-      if (index4 === draggedElementIndex) {
-        newIndex2 = destinationIndex;
-      } else {
-        if (draggedElementIndex > destinationIndex) {
-          newIndex2 = index4 < draggedElementIndex && index4 >= destinationIndex ? index4 + 1 : index4;
-        } else {
-          newIndex2 = index4 > draggedElementIndex && index4 <= destinationIndex ? index4 - 1 : index4;
-        }
-      }
-      let distance = 0;
-      let i = 0;
-      if (dragDirection === "vertical") {
-        while (i < newInfos.length && i < newIndex2) {
-          distance += newInfos[i].height + newInfos[i].marginTop + newInfos[i].marginBottom;
-          i++;
-        }
-        distance = distance + newInfos[newIndex2].marginTop + $dragElementInfo.siblingLocationInfos[0].top;
-      } else {
-        while (i < newInfos.length && i < newIndex2) {
-          distance += newInfos[i].width + newInfos[i].marginLeft + newInfos[i].marginRight;
-          i++;
-        }
-        distance = distance + newInfos[newIndex2].marginLeft + $dragElementInfo.siblingLocationInfos[0].left;
-      }
-      return distance;
-    }
-    function repositionGhosts(dragDirection, currentIndex, destinationIndex, locationInfos) {
-      Array.from($dragElementInfo.parentElementClone.children).forEach((el, i) => {
-        if (i !== $dragElementInfo.selectedIndex) {
-          const distance = calculateNewDistance(dragDirection, i, currentIndex, destinationIndex, locationInfos);
-          if (distance) {
-            if (dragDirection === "vertical") {
-              el.style.transform = `translateY(${distance - $dragElementInfo.siblingLocationInfos[i].top}px)`;
-            } else {
-              el.style.transform = `translateX(${distance - $dragElementInfo.siblingLocationInfos[i].left}px)`;
-            }
-          } else {
-            el.style.transform = null;
-          }
-        }
       });
     }
-    function calculatePlaceholderPosition(dragDirection, currentIndex, destinationIndex, locationInfos) {
-      let distance = calculateNewDistance(dragDirection, currentIndex, currentIndex, destinationIndex, locationInfos);
-      let draggedElementInfo = $dragElementInfo.siblingLocationInfos[$dragElementInfo.selectedIndex];
-      if (dragDirection === "vertical") {
-        $$invalidate(1, placeholderStyle = `top: ${distance - relativeWrapperRect2.top + draggedElementInfo.marginTop}px; left: ${draggedElementInfo.left - relativeWrapperRect2.left}px; height: ${draggedElementInfo.height}px; width: ${draggedElementInfo.width}px;`);
-      } else {
-        $$invalidate(1, placeholderStyle = `left: ${distance - relativeWrapperRect2.left + draggedElementInfo.marginLeft}px; top: ${draggedElementInfo.top - relativeWrapperRect2.top}px; height: ${draggedElementInfo.height}px; width: ${draggedElementInfo.width}px;`);
-      }
+    function calculatePlaceholderPosition(dragDirection, currentIndex, destinationIndex, locationInfos, mouseDiff) {
+      const currentRect = dragElementInfo.siblingLocationInfos[currentIndex];
+      const destinationRect = dragElementInfo.siblingLocationInfos[destinationIndex];
+      $$invalidate(1, placeholderStyle = `top: ${destinationRect.top - relativeWrapperRect.top}px; left: ${destinationRect.left - relativeWrapperRect.left}px; height: ${currentRect.height}px; width: ${currentRect.width}px;`);
     }
     let placeholderStyle = null;
     let newIndex = null;
-    function updateSiblingsPositioning(dragDirection, mouseDiff2, e) {
-      if (!relativeWrapperRect2) {
-        relativeWrapperRect2 = document.getElementById("ui-builder-app-container").closest(".relative").getBoundingClientRect();
+    function updateSiblingsPositioning(dragDirection, mouseDiff, e) {
+      if (!relativeWrapperRect) {
+        relativeWrapperRect = document.getElementById("ui-builder-app-container").closest(".relative").getBoundingClientRect();
       }
-      if (mouseDiff2[dragDirection === "vertical" ? "y" : "x"] !== 0) {
-        let { currentIndex, destinationIndex } = findSwappedIndexes(dragDirection, mouseDiff2, e);
-        if (currentIndex === destinationIndex) {
-          if (newIndex !== null) {
-            Array.from($dragElementInfo.parentElementClone.children).forEach((el, i) => i !== destinationIndex && (el.style.transform = null));
-          }
-          newIndex = null;
-          calculatePlaceholderPosition(dragDirection, currentIndex, destinationIndex, $dragElementInfo.siblingLocationInfos);
-        } else {
-          let rearrangedInfos = sortedLocationInfos($dragElementInfo.siblingLocationInfos, currentIndex, destinationIndex);
-          repositionGhosts(dragDirection, currentIndex, destinationIndex, rearrangedInfos);
-          calculatePlaceholderPosition(dragDirection, currentIndex, destinationIndex, rearrangedInfos);
-          newIndex = destinationIndex;
-        }
+      let { currentIndex, destinationIndex } = findSwappedIndexes(dragDirection, mouseDiff, e);
+      if (newIndex !== destinationIndex) {
+        repositionGhosts(currentIndex, destinationIndex);
+        calculatePlaceholderPosition(dragDirection, currentIndex, destinationIndex, dragElementInfo.siblingLocationInfos, mouseDiff);
+        newIndex = destinationIndex;
       }
     }
     function handleMousemove(e) {
       let ghostElement = getGhostElement();
       let dragDirection = getDragDirection(ghostElement);
-      let mouseDiff2 = {
+      let mouseDiff = {
         x: e.x - mouseDownEvent.x,
         y: e.y - mouseDownEvent.y
       };
       if (dragDirection === "vertical") {
-        dragHandleElement.style.setProperty("--tw-translate-y", `${mouseDiff2.y}px`);
-        ghostElement.style.transform = `translateY(${mouseDiff2.y}px)`;
+        dragHandleElement.style.setProperty("--tw-translate-y", `${mouseDiff.y}px`);
       } else {
-        dragHandleElement.style.setProperty("--tw-translate-x", `${mouseDiff2.x}px`);
-        ghostElement.style.transform = `translateX(${mouseDiff2.x}px)`;
+        dragHandleElement.style.setProperty(
+          "--tw-translate-x",
+          `${mouseDiff.x}px`
+        );
       }
-      updateSiblingsPositioning(dragDirection, mouseDiff2, e);
+      updateSiblingsPositioning(dragDirection, mouseDiff, e);
     }
-    const writable_props = [];
+    $$self.$$.on_mount.push(function() {
+      if (element2 === void 0 && !("element" in $$props || $$self.$$.bound[$$self.$$.props["element"]])) {
+        console.warn("<DragMenuOption> was created without expected prop 'element'");
+      }
+    });
+    const writable_props = ["element", "isParent"];
     Object.keys($$props).forEach((key) => {
       if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$" && key !== "slot")
         console.warn(`<DragMenuOption> was created with unknown prop '${key}'`);
@@ -15039,53 +15089,66 @@ var BeaconLiveAdmin = (() => {
         $$invalidate(0, dragHandleElement);
       });
     }
+    $$self.$$set = ($$props2) => {
+      if ("element" in $$props2)
+        $$invalidate(6, element2 = $$props2.element);
+      if ("isParent" in $$props2)
+        $$invalidate(7, isParent = $$props2.isParent);
+    };
     $$self.$capture_state = () => ({
-      get: get_store_value,
       writable,
       page,
-      selectedDomElement,
       selectedAstElementId,
-      selectedElementMenu,
       parentOfSelectedAstElement,
-      setSelectedDom,
-      dragElementInfo,
+      findHoveredSiblingIndex,
+      getBoundingRect,
       getDragDirection,
       live,
       currentHandleCoords,
-      relativeWrapperRect: relativeWrapperRect2,
+      relativeWrapperRect,
       dragHandleStyle,
+      isDragging,
+      dragElementInfo,
       initSelectedElementDragMenuPosition,
       updateHandleCoords,
       tick,
+      element: element2,
+      isParent,
+      originalSiblings,
       dragHandleElement,
       snapshotSelectedElementSiblings,
       mouseDownEvent,
       handleMousedown,
       applyNewOrder,
+      resetDragElementHandle,
       handleMouseup,
       getGhostElement,
-      findHoveredSiblingIndex,
       findSwappedIndexes,
       sortedLocationInfos,
       calculateNewDistance,
+      repositionChildren,
       repositionGhosts,
       calculatePlaceholderPosition,
       placeholderStyle,
       newIndex,
       updateSiblingsPositioning,
       handleMousemove,
-      canBeDragged,
       rotated,
-      $dragElementInfo,
-      $selectedDomElement,
+      canBeDragged,
+      $isDragging,
       $page,
       $live,
       $selectedAstElementId,
       $parentOfSelectedAstElement,
-      $selectedElementMenu,
       $dragHandleStyle
     });
     $$self.$inject_state = ($$props2) => {
+      if ("element" in $$props2)
+        $$invalidate(6, element2 = $$props2.element);
+      if ("isParent" in $$props2)
+        $$invalidate(7, isParent = $$props2.isParent);
+      if ("originalSiblings" in $$props2)
+        originalSiblings = $$props2.originalSiblings;
       if ("dragHandleElement" in $$props2)
         $$invalidate(0, dragHandleElement = $$props2.dragHandleElement);
       if ("mouseDownEvent" in $$props2)
@@ -15094,48 +15157,48 @@ var BeaconLiveAdmin = (() => {
         $$invalidate(1, placeholderStyle = $$props2.placeholderStyle);
       if ("newIndex" in $$props2)
         newIndex = $$props2.newIndex;
-      if ("canBeDragged" in $$props2)
-        $$invalidate(2, canBeDragged = $$props2.canBeDragged);
       if ("rotated" in $$props2)
-        $$invalidate(3, rotated = $$props2.rotated);
+        $$invalidate(2, rotated = $$props2.rotated);
+      if ("canBeDragged" in $$props2)
+        $$invalidate(3, canBeDragged = $$props2.canBeDragged);
     };
     if ($$props && "$$inject" in $$props) {
       $$self.$inject_state($$props.$$inject);
     }
     $$self.$$.update = () => {
-      if ($$self.$$.dirty & /*$selectedDomElement*/
-      128) {
+      if ($$self.$$.dirty & /*element*/
+      64) {
         $:
-          $$invalidate(3, rotated = getDragDirection($selectedDomElement) === "horizontal");
+          $$invalidate(3, canBeDragged = element2?.parentElement?.children?.length > 1);
       }
-      if ($$self.$$.dirty & /*$selectedDomElement*/
-      128) {
+      if ($$self.$$.dirty & /*element*/
+      64) {
         $:
-          $$invalidate(2, canBeDragged = $selectedDomElement?.parentElement?.children?.length > 1);
+          $$invalidate(2, rotated = !!element2 && getDragDirection(element2) === "horizontal");
       }
-      if ($$self.$$.dirty & /*$selectedDomElement*/
-      128) {
+      if ($$self.$$.dirty & /*element*/
+      64) {
         $: {
-          initSelectedElementDragMenuPosition($selectedDomElement);
+          !!element2 && initSelectedElementDragMenuPosition(element2);
         }
       }
     };
     return [
       dragHandleElement,
       placeholderStyle,
-      canBeDragged,
       rotated,
-      $selectedElementMenu,
+      canBeDragged,
       $dragHandleStyle,
       handleMousedown,
-      $selectedDomElement,
+      element2,
+      isParent,
       button_binding
     ];
   }
   var DragMenuOption = class extends SvelteComponentDev {
     constructor(options) {
       super(options);
-      init2(this, options, instance6, create_fragment6, safe_not_equal, {});
+      init2(this, options, instance6, create_fragment6, safe_not_equal, { element: 6, isParent: 7 });
       dispatch_dev("SvelteRegisterComponent", {
         component: this,
         tagName: "DragMenuOption",
@@ -15143,19 +15206,33 @@ var BeaconLiveAdmin = (() => {
         id: create_fragment6.name
       });
     }
+    get element() {
+      return this.$$.ctx[6];
+    }
+    set element(element2) {
+      this.$$set({ element: element2 });
+      flush();
+    }
+    get isParent() {
+      return this.$$.ctx[7];
+    }
+    set isParent(isParent) {
+      this.$$set({ isParent });
+      flush();
+    }
   };
-  create_custom_element(DragMenuOption, {}, [], [], true);
+  create_custom_element(DragMenuOption, { "element": {}, "isParent": { "type": "Boolean" } }, [], [], true);
   var DragMenuOption_default = DragMenuOption;
 
   // svelte/components/PageAstNode.svelte
   var file7 = "svelte/components/PageAstNode.svelte";
   function add_css2(target) {
-    append_styles(target, "svelte-fu018p", ".dragged-element-placeholder.svelte-fu018p{outline:2px dashed red;pointer-events:none}.embedded-iframe{display:inline}.embedded-iframe > iframe{pointer-events:none}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiUGFnZUFzdE5vZGUuc3ZlbHRlIiwibWFwcGluZ3MiOiJBQXFORSwwQ0FBNkIsQ0FDM0IsT0FBTyxDQUFFLEdBQUcsQ0FBQyxNQUFNLENBQUMsR0FBRyxDQUd2QixjQUFjLENBQUUsSUFDbEIsQ0FFUSxnQkFBa0IsQ0FDeEIsT0FBTyxDQUFFLE1BQ1gsQ0FFUSx5QkFBMkIsQ0FDakMsY0FBYyxDQUFFLElBQ2xCIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIlBhZ2VBc3ROb2RlLnN2ZWx0ZSJdfQ== */");
+    append_styles(target, "svelte-fu018p", ".dragged-element-placeholder.svelte-fu018p{outline:2px dashed red;pointer-events:none}.embedded-iframe{display:inline}.embedded-iframe > iframe{pointer-events:none}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiUGFnZUFzdE5vZGUuc3ZlbHRlIiwibWFwcGluZ3MiOiJBQWtNRSwwQ0FBNkIsQ0FDM0IsT0FBTyxDQUFFLEdBQUcsQ0FBQyxNQUFNLENBQUMsR0FBRyxDQUd2QixjQUFjLENBQUUsSUFDbEIsQ0FFUSxnQkFBa0IsQ0FDeEIsT0FBTyxDQUFFLE1BQ1gsQ0FFUSx5QkFBMkIsQ0FDakMsY0FBYyxDQUFFLElBQ2xCIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIlBhZ2VBc3ROb2RlLnN2ZWx0ZSJdfQ== */");
   }
   function get_each_context3(ctx, list3, i) {
     const child_ctx = ctx.slice();
-    child_ctx[30] = list3[i];
-    child_ctx[32] = i;
+    child_ctx[27] = list3[i];
+    child_ctx[29] = i;
     return child_ctx;
   }
   function create_else_block_12(ctx) {
@@ -15178,7 +15255,7 @@ var BeaconLiveAdmin = (() => {
         insert_hydration_dev(target, t, anchor);
       },
       p: function update2(ctx2, dirty) {
-        if (dirty[0] & /*node*/
+        if (dirty & /*node*/
         1)
           set_data_dev(
             t,
@@ -15198,7 +15275,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_else_block_12.name,
       type: "else",
-      source: "(190:0) {:else}",
+      source: "(171:0) {:else}",
       ctx
     });
     return block;
@@ -15240,7 +15317,7 @@ var BeaconLiveAdmin = (() => {
         return 3;
       return 4;
     }
-    current_block_type_index = select_block_type_1(ctx, [-1, -1]);
+    current_block_type_index = select_block_type_1(ctx, -1);
     if_block = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
     const block = {
       c: function create3() {
@@ -15299,7 +15376,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_if_block5.name,
       type: "if",
-      source: "(137:0) {#if isAstElement(node)}",
+      source: "(121:0) {#if isAstElement(node)}",
       ctx
     });
     return block;
@@ -15396,7 +15473,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_else_block2.name,
       type: "else",
-      source: "(156:2) {:else}",
+      source: "(141:2) {:else}",
       ctx
     });
     return block;
@@ -15418,7 +15495,7 @@ var BeaconLiveAdmin = (() => {
         this.h();
       },
       l: function claim(nodes) {
-        div = claim_element(nodes, "DIV", {});
+        div = claim_element(nodes, "DIV", { "data-selected": true });
         var div_nodes = children(div);
         html_tag = claim_html_tag(div_nodes, false);
         div_nodes.forEach(detach_dev);
@@ -15426,37 +15503,43 @@ var BeaconLiveAdmin = (() => {
       },
       h: function hydrate() {
         html_tag.a = null;
+        attr_dev(
+          div,
+          "data-selected",
+          /*isSelectedNode*/
+          ctx[4]
+        );
         toggle_class(
           div,
           "contents",
           /*htmlWrapperHasMultipleElements*/
-          ctx[8]
+          ctx[7]
         );
         toggle_class(
           div,
           "embedded-iframe",
           /*htmlWrapperHasIframe*/
-          ctx[7]
+          ctx[6]
         );
-        add_location(div, file7, 163, 4, 5466);
+        add_location(div, file7, 147, 4, 4888);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, div, anchor);
         html_tag.m(raw_value, div);
-        ctx[28](div);
+        ctx[25](div);
         if (!mounted) {
           dispose = [
             listen_dev(div, "mouseover", stop_propagation(
               /*handleMouseOver*/
-              ctx[18]
+              ctx[16]
             ), false, false, true, false),
             listen_dev(div, "mouseout", stop_propagation(
               /*handleMouseOut*/
-              ctx[19]
+              ctx[17]
             ), false, false, true, false),
             listen_dev(div, "click", stop_propagation(prevent_default(
               /*handleClick*/
-              ctx[20]
+              ctx[18]
             )), false, true, true, false),
             action_destroyer(highlightContent_action = highlightContent.call(null, div, {
               selected: (
@@ -15465,7 +15548,7 @@ var BeaconLiveAdmin = (() => {
               ),
               highlighted: (
                 /*isHighlightedNode*/
-                ctx[11]
+                ctx[10]
               )
             }))
           ];
@@ -15473,12 +15556,21 @@ var BeaconLiveAdmin = (() => {
         }
       },
       p: function update2(ctx2, dirty) {
-        if (dirty[0] & /*node*/
+        if (dirty & /*node*/
         1 && raw_value !== (raw_value = /*node*/
         ctx2[0].rendered_html + ""))
           html_tag.p(raw_value);
-        if (highlightContent_action && is_function(highlightContent_action.update) && dirty[0] & /*isSelectedNode, isHighlightedNode*/
-        2064)
+        if (dirty & /*isSelectedNode*/
+        16) {
+          attr_dev(
+            div,
+            "data-selected",
+            /*isSelectedNode*/
+            ctx2[4]
+          );
+        }
+        if (highlightContent_action && is_function(highlightContent_action.update) && dirty & /*isSelectedNode, isHighlightedNode*/
+        1040)
           highlightContent_action.update.call(null, {
             selected: (
               /*isSelectedNode*/
@@ -15486,25 +15578,25 @@ var BeaconLiveAdmin = (() => {
             ),
             highlighted: (
               /*isHighlightedNode*/
-              ctx2[11]
+              ctx2[10]
             )
           });
-        if (dirty[0] & /*htmlWrapperHasMultipleElements*/
-        256) {
+        if (dirty & /*htmlWrapperHasMultipleElements*/
+        128) {
           toggle_class(
             div,
             "contents",
             /*htmlWrapperHasMultipleElements*/
-            ctx2[8]
+            ctx2[7]
           );
         }
-        if (dirty[0] & /*htmlWrapperHasIframe*/
-        128) {
+        if (dirty & /*htmlWrapperHasIframe*/
+        64) {
           toggle_class(
             div,
             "embedded-iframe",
             /*htmlWrapperHasIframe*/
-            ctx2[7]
+            ctx2[6]
           );
         }
       },
@@ -15514,7 +15606,7 @@ var BeaconLiveAdmin = (() => {
         if (detaching) {
           detach_dev(div);
         }
-        ctx[28](null);
+        ctx[25](null);
         mounted = false;
         run_all(dispose);
       }
@@ -15523,7 +15615,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_if_block_42.name,
       type: "if",
-      source: "(144:31) ",
+      source: "(128:31) ",
       ctx
     });
     return block;
@@ -15532,13 +15624,13 @@ var BeaconLiveAdmin = (() => {
     let current;
     const default_slot_template = (
       /*#slots*/
-      ctx[27].default
+      ctx[24].default
     );
     const default_slot = create_slot(
       default_slot_template,
       ctx,
       /*$$scope*/
-      ctx[26],
+      ctx[23],
       null
     );
     const block = {
@@ -15558,21 +15650,21 @@ var BeaconLiveAdmin = (() => {
       },
       p: function update2(ctx2, dirty) {
         if (default_slot) {
-          if (default_slot.p && (!current || dirty[0] & /*$$scope*/
-          67108864)) {
+          if (default_slot.p && (!current || dirty & /*$$scope*/
+          8388608)) {
             update_slot_base(
               default_slot,
               default_slot_template,
               ctx2,
               /*$$scope*/
-              ctx2[26],
+              ctx2[23],
               !current ? get_all_dirty_from_scope(
                 /*$$scope*/
-                ctx2[26]
+                ctx2[23]
               ) : get_slot_changes(
                 default_slot_template,
                 /*$$scope*/
-                ctx2[26],
+                ctx2[23],
                 dirty,
                 null
               ),
@@ -15600,7 +15692,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_if_block_32.name,
       type: "if",
-      source: "(142:71) ",
+      source: "(126:71) ",
       ctx
     });
     return block;
@@ -15629,7 +15721,7 @@ var BeaconLiveAdmin = (() => {
         insert_hydration_dev(target, html_anchor, anchor);
       },
       p: function update2(ctx2, dirty) {
-        if (dirty[0] & /*node*/
+        if (dirty & /*node*/
         1 && raw_value !== (raw_value = "<!--" + /*node*/
         ctx2[0].content + "-->"))
           html_tag.p(raw_value);
@@ -15647,7 +15739,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_if_block_23.name,
       type: "if",
-      source: "(140:39) ",
+      source: "(124:39) ",
       ctx
     });
     return block;
@@ -15676,7 +15768,7 @@ var BeaconLiveAdmin = (() => {
         insert_hydration_dev(target, html_anchor, anchor);
       },
       p: function update2(ctx2, dirty) {
-        if (dirty[0] & /*node*/
+        if (dirty & /*node*/
         1 && raw_value !== (raw_value = "<!--" + /*node*/
         ctx2[0].content + "-->"))
           html_tag.p(raw_value);
@@ -15694,7 +15786,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_if_block_14.name,
       type: "if",
-      source: '(138:2) {#if node.tag === \\"html_comment\\"}',
+      source: '(122:2) {#if node.tag === \\"html_comment\\"}',
       ctx
     });
     return block;
@@ -15717,17 +15809,17 @@ var BeaconLiveAdmin = (() => {
     function select_block_type_2(ctx2, dirty) {
       if (
         /*isDragTarget*/
-        ctx2[12] && /*$draggedObject*/
-        ctx2[13]
+        ctx2[11] && /*$draggedComponentDefinition*/
+        ctx2[12]
       )
         return create_if_block_62;
       if (
         /*previewDropInside*/
-        ctx2[15]
+        ctx2[13]
       )
         return create_if_block_7;
     }
-    let current_block_type = select_block_type_2(ctx, [-1, -1]);
+    let current_block_type = select_block_type_2(ctx, -1);
     let if_block = current_block_type && current_block_type(ctx);
     const block = {
       c: function create3() {
@@ -15761,7 +15853,7 @@ var BeaconLiveAdmin = (() => {
         current = true;
       },
       p: function update2(ctx2, dirty) {
-        if (dirty[0] & /*children, nodeId*/
+        if (dirty & /*children, nodeId*/
         34) {
           each_value = ensure_array_like_dev(
             /*children*/
@@ -15828,7 +15920,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_if_block_52.name,
       type: "if",
-      source: "(178:6) {#if !node.attrs?.selfClose}",
+      source: "(159:6) {#if !node.attrs?.selfClose}",
       ctx
     });
     return block;
@@ -15840,12 +15932,12 @@ var BeaconLiveAdmin = (() => {
       props: {
         node: (
           /*child*/
-          ctx[30]
+          ctx[27]
         ),
         nodeId: (
           /*nodeId*/
           ctx[1] + "." + /*childIndex*/
-          ctx[32]
+          ctx[29]
         )
       },
       $$inline: true
@@ -15863,15 +15955,15 @@ var BeaconLiveAdmin = (() => {
       },
       p: function update2(ctx2, dirty) {
         const pageastnode_changes = {};
-        if (dirty[0] & /*children*/
+        if (dirty & /*children*/
         32)
           pageastnode_changes.node = /*child*/
-          ctx2[30];
-        if (dirty[0] & /*nodeId*/
+          ctx2[27];
+        if (dirty & /*nodeId*/
         2)
           pageastnode_changes.nodeId = /*nodeId*/
           ctx2[1] + "." + /*childIndex*/
-          ctx2[32];
+          ctx2[29];
         pageastnode.$set(pageastnode_changes);
       },
       i: function intro(local) {
@@ -15892,7 +15984,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_each_block3.name,
       type: "each",
-      source: "(179:8) {#each children as child, childIndex}",
+      source: "(160:8) {#each children as child, childIndex}",
       ctx
     });
     return block;
@@ -15914,7 +16006,7 @@ var BeaconLiveAdmin = (() => {
       },
       h: function hydrate() {
         attr_dev(div, "class", "dragged-element-placeholder svelte-fu018p");
-        add_location(div, file7, 203, 10, 7037);
+        add_location(div, file7, 184, 10, 6385);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, div, anchor);
@@ -15930,7 +16022,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_if_block_7.name,
       type: "if",
-      source: "(184:36) ",
+      source: "(165:36) ",
       ctx
     });
     return block;
@@ -15939,8 +16031,8 @@ var BeaconLiveAdmin = (() => {
     let div;
     let html_tag;
     let raw_value = (
-      /*$draggedObject*/
-      ctx[13].example + ""
+      /*$draggedComponentDefinition*/
+      ctx[12].example + ""
     );
     const block = {
       c: function create3() {
@@ -15958,16 +16050,16 @@ var BeaconLiveAdmin = (() => {
       h: function hydrate() {
         html_tag.a = null;
         attr_dev(div, "class", "dragged-element-placeholder svelte-fu018p");
-        add_location(div, file7, 201, 10, 6912);
+        add_location(div, file7, 182, 10, 6247);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, div, anchor);
         html_tag.m(raw_value, div);
       },
       p: function update2(ctx2, dirty) {
-        if (dirty[0] & /*$draggedObject*/
-        8192 && raw_value !== (raw_value = /*$draggedObject*/
-        ctx2[13].example + ""))
+        if (dirty & /*$draggedComponentDefinition*/
+        4096 && raw_value !== (raw_value = /*$draggedComponentDefinition*/
+        ctx2[12].example + ""))
           html_tag.p(raw_value);
       },
       d: function destroy(detaching) {
@@ -15980,7 +16072,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_if_block_62.name,
       type: "if",
-      source: "(182:8) {#if isDragTarget && $draggedObject}",
+      source: "(163:8) {#if isDragTarget && $draggedComponentDefinition}",
       ctx
     });
     return block;
@@ -16003,24 +16095,26 @@ var BeaconLiveAdmin = (() => {
         )
       },
       {
+        "data-selected-parent": (
+          /*isParentOfSelectedNode*/
+          ctx[8]
+        )
+      },
+      {
         "data-highlighted": (
           /*isHighlightedNode*/
-          ctx[11]
+          ctx[10]
         )
       },
       {
         "data-slot-target": (
           /*isDragTarget*/
-          ctx[12]
+          ctx[11]
         )
       },
       { contenteditable: (
         /*isEditable*/
-        ctx[10]
-      ) },
-      { style: (
-        /*selectedElementStyle*/
-        ctx[6]
+        ctx[9]
       ) }
     ];
     let svelte_element_data = {};
@@ -16045,10 +16139,10 @@ var BeaconLiveAdmin = (() => {
           {
             class: true,
             "data-selected": true,
+            "data-selected-parent": true,
             "data-highlighted": true,
             "data-slot-target": true,
-            contenteditable: true,
-            style: true
+            contenteditable: true
           }
         );
         var svelte_element_nodes = children(svelte_element);
@@ -16062,21 +16156,14 @@ var BeaconLiveAdmin = (() => {
           /*node*/
           ctx[0].tag
         )(svelte_element, svelte_element_data);
-        toggle_class(
-          svelte_element,
-          "hidden",
-          /*isParentOfSelectedNode*/
-          ctx[9] && /*$dragElementInfo*/
-          ctx[14]
-        );
         toggle_class(svelte_element, "svelte-fu018p", true);
-        add_location(svelte_element, file7, 178, 4, 6046);
+        add_location(svelte_element, file7, 160, 4, 5383);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, svelte_element, anchor);
         if (if_block)
           if_block.m(svelte_element, null);
-        ctx[29](svelte_element);
+        ctx[26](svelte_element);
         current = true;
         if (!mounted) {
           dispose = [
@@ -16084,7 +16171,7 @@ var BeaconLiveAdmin = (() => {
               svelte_element,
               "blur",
               /*handleContentEdited*/
-              ctx[21],
+              ctx[19],
               false,
               false,
               false,
@@ -16092,35 +16179,23 @@ var BeaconLiveAdmin = (() => {
             ),
             listen_dev(svelte_element, "dragenter", stop_propagation(
               /*handleDragEnter*/
-              ctx[16]
+              ctx[14]
             ), false, false, true, false),
             listen_dev(svelte_element, "dragleave", stop_propagation(
               /*handleDragLeave*/
+              ctx[15]
+            ), false, false, true, false),
+            listen_dev(svelte_element, "mouseover", stop_propagation(
+              /*handleMouseOver*/
+              ctx[16]
+            ), false, false, true, false),
+            listen_dev(svelte_element, "mouseout", stop_propagation(
+              /*handleMouseOut*/
               ctx[17]
             ), false, false, true, false),
-            listen_dev(
-              svelte_element,
-              "mouseover",
-              /*handleMouseOver*/
-              ctx[18],
-              false,
-              false,
-              false,
-              false
-            ),
-            listen_dev(
-              svelte_element,
-              "mouseout",
-              /*handleMouseOut*/
-              ctx[19],
-              false,
-              false,
-              false,
-              false
-            ),
             listen_dev(svelte_element, "click", stop_propagation(prevent_default(
               /*handleClick*/
-              ctx[20]
+              ctx[18]
             )), false, true, true, false)
           ];
           mounted = true;
@@ -16131,7 +16206,7 @@ var BeaconLiveAdmin = (() => {
         ctx2[0].attrs?.selfClose) {
           if (if_block) {
             if_block.p(ctx2, dirty);
-            if (dirty[0] & /*node*/
+            if (dirty & /*node*/
             1) {
               transition_in(if_block, 1);
             }
@@ -16153,48 +16228,43 @@ var BeaconLiveAdmin = (() => {
           ctx2[0].tag
         )(svelte_element, svelte_element_data = get_spread_update(svelte_element_levels, [
           { class: "relative" },
-          dirty[0] & /*node*/
+          dirty & /*node*/
           1 && /*node*/
           ctx2[0].attrs,
-          (!current || dirty[0] & /*isSelectedNode*/
+          (!current || dirty & /*isSelectedNode*/
           16) && {
             "data-selected": (
               /*isSelectedNode*/
               ctx2[4]
             )
           },
-          (!current || dirty[0] & /*isHighlightedNode*/
-          2048) && {
+          (!current || dirty & /*isParentOfSelectedNode*/
+          256) && {
+            "data-selected-parent": (
+              /*isParentOfSelectedNode*/
+              ctx2[8]
+            )
+          },
+          (!current || dirty & /*isHighlightedNode*/
+          1024) && {
             "data-highlighted": (
               /*isHighlightedNode*/
+              ctx2[10]
+            )
+          },
+          (!current || dirty & /*isDragTarget*/
+          2048) && {
+            "data-slot-target": (
+              /*isDragTarget*/
               ctx2[11]
             )
           },
-          (!current || dirty[0] & /*isDragTarget*/
-          4096) && {
-            "data-slot-target": (
-              /*isDragTarget*/
-              ctx2[12]
-            )
-          },
-          (!current || dirty[0] & /*isEditable*/
-          1024) && { contenteditable: (
+          (!current || dirty & /*isEditable*/
+          512) && { contenteditable: (
             /*isEditable*/
-            ctx2[10]
-          ) },
-          (!current || dirty[0] & /*selectedElementStyle*/
-          64) && { style: (
-            /*selectedElementStyle*/
-            ctx2[6]
+            ctx2[9]
           ) }
         ]));
-        toggle_class(
-          svelte_element,
-          "hidden",
-          /*isParentOfSelectedNode*/
-          ctx2[9] && /*$dragElementInfo*/
-          ctx2[14]
-        );
         toggle_class(svelte_element, "svelte-fu018p", true);
       },
       i: function intro(local) {
@@ -16213,7 +16283,7 @@ var BeaconLiveAdmin = (() => {
         }
         if (if_block)
           if_block.d();
-        ctx[29](null);
+        ctx[26](null);
         mounted = false;
         run_all(dispose);
       }
@@ -16222,7 +16292,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_dynamic_element2.name,
       type: "child_dynamic_element",
-      source: '(160:4) <svelte:element       this={node.tag}       class=\\"relative\\"       class:hidden={isParentOfSelectedNode && $dragElementInfo}       bind:this={domElement}       {...node.attrs}       data-selected={isSelectedNode}       data-highlighted={isHighlightedNode}       data-slot-target={isDragTarget}       contenteditable={isEditable}       on:blur={handleContentEdited}       on:dragenter|stopPropagation={handleDragEnter}       on:dragleave|stopPropagation={handleDragLeave}       on:mouseover={handleMouseOver}       on:mouseout={handleMouseOut}       on:click|preventDefault|stopPropagation={handleClick}       style={selectedElementStyle}     >',
+      source: '(142:4) <svelte:element       this={node.tag}       class=\\"relative\\"       bind:this={domElement}       {...node.attrs}       data-selected={isSelectedNode}       data-selected-parent={isParentOfSelectedNode}       data-highlighted={isHighlightedNode}       data-slot-target={isDragTarget}       contenteditable={isEditable}       on:blur={handleContentEdited}       on:dragenter|stopPropagation={handleDragEnter}       on:dragleave|stopPropagation={handleDragLeave}       on:mouseover|stopPropagation={handleMouseOver}       on:mouseout|stopPropagation={handleMouseOut}       on:click|preventDefault|stopPropagation={handleClick}     >',
       ctx
     });
     return block;
@@ -16236,7 +16306,7 @@ var BeaconLiveAdmin = (() => {
     const if_block_creators = [create_if_block5, create_else_block_12];
     const if_blocks = [];
     function select_block_type(ctx2, dirty) {
-      if (dirty[0] & /*node*/
+      if (dirty & /*node*/
       1)
         show_if = null;
       if (show_if == null)
@@ -16248,7 +16318,7 @@ var BeaconLiveAdmin = (() => {
         return 0;
       return 1;
     }
-    current_block_type_index = select_block_type(ctx, [-1, -1]);
+    current_block_type_index = select_block_type(ctx, -1);
     if_block = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
     const block = {
       c: function create3() {
@@ -16264,7 +16334,7 @@ var BeaconLiveAdmin = (() => {
         insert_hydration_dev(target, if_block_anchor, anchor);
         current = true;
       },
-      p: function update2(ctx2, dirty) {
+      p: function update2(ctx2, [dirty]) {
         let previous_block_index = current_block_type_index;
         current_block_type_index = select_block_type(ctx2, dirty);
         if (current_block_type_index === previous_block_index) {
@@ -16350,24 +16420,18 @@ var BeaconLiveAdmin = (() => {
     let isParentOfSelectedNode;
     let htmlWrapperHasMultipleElements;
     let htmlWrapperHasIframe;
-    let $selectedElementMenu;
     let $highlightedAstElement;
-    let $slotTargetElement;
-    let $draggedObject;
     let $selectedAstElement;
-    let $dragElementInfo;
-    validate_store(selectedElementMenu, "selectedElementMenu");
-    component_subscribe($$self, selectedElementMenu, ($$value) => $$invalidate(22, $selectedElementMenu = $$value));
+    let $slotTargetElement;
+    let $draggedComponentDefinition;
     validate_store(highlightedAstElement, "highlightedAstElement");
-    component_subscribe($$self, highlightedAstElement, ($$value) => $$invalidate(23, $highlightedAstElement = $$value));
-    validate_store(slotTargetElement, "slotTargetElement");
-    component_subscribe($$self, slotTargetElement, ($$value) => $$invalidate(24, $slotTargetElement = $$value));
-    validate_store(draggedObject, "draggedObject");
-    component_subscribe($$self, draggedObject, ($$value) => $$invalidate(13, $draggedObject = $$value));
+    component_subscribe($$self, highlightedAstElement, ($$value) => $$invalidate(20, $highlightedAstElement = $$value));
     validate_store(selectedAstElement, "selectedAstElement");
-    component_subscribe($$self, selectedAstElement, ($$value) => $$invalidate(25, $selectedAstElement = $$value));
-    validate_store(dragElementInfo, "dragElementInfo");
-    component_subscribe($$self, dragElementInfo, ($$value) => $$invalidate(14, $dragElementInfo = $$value));
+    component_subscribe($$self, selectedAstElement, ($$value) => $$invalidate(21, $selectedAstElement = $$value));
+    validate_store(slotTargetElement, "slotTargetElement");
+    component_subscribe($$self, slotTargetElement, ($$value) => $$invalidate(22, $slotTargetElement = $$value));
+    validate_store(draggedComponentDefinition, "draggedComponentDefinition");
+    component_subscribe($$self, draggedComponentDefinition, ($$value) => $$invalidate(12, $draggedComponentDefinition = $$value));
     let { $$slots: slots = {}, $$scope } = $$props;
     validate_slots("PageAstNode", slots, ["default"]);
     let { node } = $$props;
@@ -16377,19 +16441,19 @@ var BeaconLiveAdmin = (() => {
     let previewDropInside;
     let children2;
     function handleDragEnter() {
-      if ($draggedObject) {
-        if (isAstElement(node) && elementCanBeDroppedInTarget($draggedObject)) {
+      if ($draggedComponentDefinition) {
+        if (isAstElement(node) && elementCanBeDroppedInTarget($draggedComponentDefinition)) {
           set_store_value(slotTargetElement, $slotTargetElement = node, $slotTargetElement);
         }
       }
     }
     function handleDragLeave() {
-      if (isAstElement(node) && elementCanBeDroppedInTarget($draggedObject) && $slotTargetElement === node) {
+      if (isAstElement(node) && elementCanBeDroppedInTarget($draggedComponentDefinition) && $slotTargetElement === node) {
         set_store_value(slotTargetElement, $slotTargetElement = void 0, $slotTargetElement);
       }
     }
     function handleMouseOver() {
-      if (!$selectedElementMenu?.dragging) {
+      if (!$selectedAstElement) {
         isAstElement(node) && set_store_value(highlightedAstElement, $highlightedAstElement = node, $highlightedAstElement);
       }
     }
@@ -16400,7 +16464,6 @@ var BeaconLiveAdmin = (() => {
       setSelection(nodeId);
       setSelectedDom(currentTarget);
       initSelectedElementDragMenuPosition(currentTarget);
-      tick().then(() => updateSelectedElementMenu());
     }
     function handleContentEdited({ target }) {
       let children3 = target.children;
@@ -16422,7 +16485,6 @@ var BeaconLiveAdmin = (() => {
         }
       }
     }
-    let selectedElementStyle = "";
     $$self.$$.on_mount.push(function() {
       if (node === void 0 && !("node" in $$props || $$self.$$.bound[$$self.$$.props["node"]])) {
         console.warn("<PageAstNode> was created without expected prop 'node'");
@@ -16454,24 +16516,19 @@ var BeaconLiveAdmin = (() => {
       if ("nodeId" in $$props2)
         $$invalidate(1, nodeId = $$props2.nodeId);
       if ("$$scope" in $$props2)
-        $$invalidate(26, $$scope = $$props2.$$scope);
+        $$invalidate(23, $$scope = $$props2.$$scope);
     };
     $$self.$capture_state = () => ({
       selectedAstElement,
       slotTargetElement,
       highlightedAstElement,
       isAstElement,
-      selectedElementMenu,
       setSelection,
       setSelectedDom,
-      tick,
-      draggedObject,
-      dragElementInfo,
-      updateSelectedElementMenu,
+      draggedComponentDefinition,
       updateNodeContent,
       updateAst,
       elementCanBeDroppedInTarget,
-      mouseDiff,
       initSelectedElementDragMenuPosition,
       node,
       nodeId,
@@ -16486,7 +16543,6 @@ var BeaconLiveAdmin = (() => {
       handleClick,
       handleContentEdited,
       highlightContent,
-      selectedElementStyle,
       isSelectedNode,
       htmlWrapperHasIframe,
       htmlWrapperHasMultipleElements,
@@ -16494,12 +16550,10 @@ var BeaconLiveAdmin = (() => {
       isEditable,
       isHighlightedNode,
       isDragTarget,
-      $selectedElementMenu,
       $highlightedAstElement,
-      $slotTargetElement,
-      $draggedObject,
       $selectedAstElement,
-      $dragElementInfo
+      $slotTargetElement,
+      $draggedComponentDefinition
     });
     $$self.$inject_state = ($$props2) => {
       if ("node" in $$props2)
@@ -16511,56 +16565,54 @@ var BeaconLiveAdmin = (() => {
       if ("domElement" in $$props2)
         $$invalidate(3, domElement = $$props2.domElement);
       if ("previewDropInside" in $$props2)
-        $$invalidate(15, previewDropInside = $$props2.previewDropInside);
+        $$invalidate(13, previewDropInside = $$props2.previewDropInside);
       if ("children" in $$props2)
         $$invalidate(5, children2 = $$props2.children);
-      if ("selectedElementStyle" in $$props2)
-        $$invalidate(6, selectedElementStyle = $$props2.selectedElementStyle);
       if ("isSelectedNode" in $$props2)
         $$invalidate(4, isSelectedNode = $$props2.isSelectedNode);
       if ("htmlWrapperHasIframe" in $$props2)
-        $$invalidate(7, htmlWrapperHasIframe = $$props2.htmlWrapperHasIframe);
+        $$invalidate(6, htmlWrapperHasIframe = $$props2.htmlWrapperHasIframe);
       if ("htmlWrapperHasMultipleElements" in $$props2)
-        $$invalidate(8, htmlWrapperHasMultipleElements = $$props2.htmlWrapperHasMultipleElements);
+        $$invalidate(7, htmlWrapperHasMultipleElements = $$props2.htmlWrapperHasMultipleElements);
       if ("isParentOfSelectedNode" in $$props2)
-        $$invalidate(9, isParentOfSelectedNode = $$props2.isParentOfSelectedNode);
+        $$invalidate(8, isParentOfSelectedNode = $$props2.isParentOfSelectedNode);
       if ("isEditable" in $$props2)
-        $$invalidate(10, isEditable = $$props2.isEditable);
+        $$invalidate(9, isEditable = $$props2.isEditable);
       if ("isHighlightedNode" in $$props2)
-        $$invalidate(11, isHighlightedNode = $$props2.isHighlightedNode);
+        $$invalidate(10, isHighlightedNode = $$props2.isHighlightedNode);
       if ("isDragTarget" in $$props2)
-        $$invalidate(12, isDragTarget = $$props2.isDragTarget);
+        $$invalidate(11, isDragTarget = $$props2.isDragTarget);
     };
     if ($$props && "$$inject" in $$props) {
       $$self.$inject_state($$props.$$inject);
     }
     $$self.$$.update = () => {
-      if ($$self.$$.dirty[0] & /*$slotTargetElement, node*/
-      16777217) {
+      if ($$self.$$.dirty & /*$slotTargetElement, node*/
+      4194305) {
         $:
-          $$invalidate(12, isDragTarget = $slotTargetElement === node);
+          $$invalidate(11, isDragTarget = $slotTargetElement === node);
       }
-      if ($$self.$$.dirty[0] & /*$selectedAstElement, node*/
-      33554433) {
+      if ($$self.$$.dirty & /*$selectedAstElement, node*/
+      2097153) {
         $:
           $$invalidate(4, isSelectedNode = $selectedAstElement === node);
       }
-      if ($$self.$$.dirty[0] & /*$highlightedAstElement, node*/
-      8388609) {
+      if ($$self.$$.dirty & /*$highlightedAstElement, node*/
+      1048577) {
         $:
-          $$invalidate(11, isHighlightedNode = $highlightedAstElement === node);
+          $$invalidate(10, isHighlightedNode = $highlightedAstElement === node);
       }
-      if ($$self.$$.dirty[0] & /*isSelectedNode, node*/
+      if ($$self.$$.dirty & /*isSelectedNode, node*/
       17) {
         $:
-          $$invalidate(10, isEditable = isSelectedNode && isAstElement(node) && node.content.filter((e) => typeof e === "string").length === 1 && !node.attrs?.selfClose);
+          $$invalidate(9, isEditable = isSelectedNode && isAstElement(node) && Array.isArray(node.content) && node.content.filter((e) => typeof e === "string").length === 1 && !node.attrs?.selfClose);
       }
-      if ($$self.$$.dirty[0] & /*node, $selectedAstElement*/
-      33554433) {
+      if ($$self.$$.dirty & /*node, $selectedAstElement*/
+      2097153) {
         $:
-          $$invalidate(9, isParentOfSelectedNode = isAstElement(node) ? node.content.includes($selectedAstElement) : false);
+          $$invalidate(8, isParentOfSelectedNode = isAstElement(node) && Array.isArray(node.content) ? node.content.includes($selectedAstElement) : false);
       }
-      if ($$self.$$.dirty[0] & /*node*/
+      if ($$self.$$.dirty & /*node*/
       1) {
         $: {
           if (isAstElement(node)) {
@@ -16568,40 +16620,25 @@ var BeaconLiveAdmin = (() => {
           }
         }
       }
-      if ($$self.$$.dirty[0] & /*htmlWrapper*/
+      if ($$self.$$.dirty & /*htmlWrapper*/
       4) {
         $:
-          $$invalidate(8, htmlWrapperHasMultipleElements = (() => {
+          $$invalidate(7, htmlWrapperHasMultipleElements = (() => {
             return !!htmlWrapper && htmlWrapper.childElementCount > 1;
           })());
       }
-      if ($$self.$$.dirty[0] & /*htmlWrapper*/
+      if ($$self.$$.dirty & /*htmlWrapper*/
       4) {
         $:
-          $$invalidate(7, htmlWrapperHasIframe = (() => {
+          $$invalidate(6, htmlWrapperHasIframe = (() => {
             return !!htmlWrapper && htmlWrapper.getElementsByTagName("iframe").length > 0;
           })());
       }
-      if ($$self.$$.dirty[0] & /*isSelectedNode, domElement, htmlWrapper*/
+      if ($$self.$$.dirty & /*isSelectedNode, domElement, htmlWrapper*/
       28) {
         $: {
           if (isSelectedNode) {
             setSelectedDom(domElement || htmlWrapper);
-          }
-        }
-      }
-      if ($$self.$$.dirty[0] & /*isSelectedNode, $selectedElementMenu*/
-      4194320) {
-        $: {
-          if (isSelectedNode && $selectedElementMenu && $selectedElementMenu.mouseMovement) {
-            let { x, y } = mouseDiff($selectedElementMenu.mouseMovement);
-            if ($selectedElementMenu.dragDirection === "vertical") {
-              $$invalidate(6, selectedElementStyle = `transform: translateY(${y}px);`);
-            } else {
-              $$invalidate(6, selectedElementStyle = `transform: translateX(${x}px);`);
-            }
-          } else {
-            $$invalidate(6, selectedElementStyle = "");
           }
         }
       }
@@ -16613,15 +16650,13 @@ var BeaconLiveAdmin = (() => {
       domElement,
       isSelectedNode,
       children2,
-      selectedElementStyle,
       htmlWrapperHasIframe,
       htmlWrapperHasMultipleElements,
       isParentOfSelectedNode,
       isEditable,
       isHighlightedNode,
       isDragTarget,
-      $draggedObject,
-      $dragElementInfo,
+      $draggedComponentDefinition,
       previewDropInside,
       handleDragEnter,
       handleDragLeave,
@@ -16629,10 +16664,9 @@ var BeaconLiveAdmin = (() => {
       handleMouseOut,
       handleClick,
       handleContentEdited,
-      $selectedElementMenu,
       $highlightedAstElement,
-      $slotTargetElement,
       $selectedAstElement,
+      $slotTargetElement,
       $$scope,
       slots,
       div_binding,
@@ -16642,7 +16676,7 @@ var BeaconLiveAdmin = (() => {
   var PageAstNode = class extends SvelteComponentDev {
     constructor(options) {
       super(options);
-      init2(this, options, instance7, create_fragment7, safe_not_equal, { node: 0, nodeId: 1 }, add_css2, [-1, -1]);
+      init2(this, options, instance7, create_fragment7, safe_not_equal, { node: 0, nodeId: 1 }, add_css2);
       dispatch_dev("SvelteRegisterComponent", {
         component: this,
         tagName: "PageAstNode",
@@ -16675,7 +16709,7 @@ var BeaconLiveAdmin = (() => {
   });
   var file8 = "svelte/components/PagePreview.svelte";
   function add_css3(target) {
-    append_styles(target, "svelte-8goy8c", '.contents[data-nochildren="true"], .contents[data-nochildren="true"]{display:inline}[data-slot-target="true"]{outline-color:red;outline-width:2px;outline-style:dashed}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiUGFnZVByZXZpZXcuc3ZlbHRlIiwibWFwcGluZ3MiOiJBQStGVSxvRUFBc0UsQ0FJNUUsT0FBTyxDQUFFLE1BQ1gsQ0FDUSx5QkFBMkIsQ0FDakMsYUFBYSxDQUFFLEdBQUcsQ0FDbEIsYUFBYSxDQUFFLEdBQUcsQ0FDbEIsYUFBYSxDQUFFLE1BQ2pCIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIlBhZ2VQcmV2aWV3LnN2ZWx0ZSJdfQ== */');
+    append_styles(target, "svelte-r4h6jy", '.contents[data-nochildren="true"], .contents[data-nochildren="true"]{display:inline}[data-slot-target="true"]{outline-color:red;outline-width:2px;outline-style:dashed}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiUGFnZVByZXZpZXcuc3ZlbHRlIiwibWFwcGluZ3MiOiJBQXFGVSxvRUFBc0UsQ0FJNUUsT0FBTyxDQUFFLE1BQ1gsQ0FDUSx5QkFBMkIsQ0FDakMsYUFBYSxDQUFFLEdBQUcsQ0FDbEIsYUFBYSxDQUFFLEdBQUcsQ0FDbEIsYUFBYSxDQUFFLE1BQ2pCIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIlBhZ2VQcmV2aWV3LnN2ZWx0ZSJdfQ== */');
   }
   function create_if_block6(ctx) {
     let browserframe;
@@ -16732,7 +16766,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_if_block6.name,
       type: "if",
-      source: "(55:2) {#if $page}",
+      source: "(52:2) {#if $page}",
       ctx
     });
     return block;
@@ -16775,19 +16809,19 @@ var BeaconLiveAdmin = (() => {
       },
       h: function hydrate() {
         set_custom_element_data(page_wrapper, "class", "relative");
-        add_location(page_wrapper, file8, 82, 10, 2611);
+        add_location(page_wrapper, file8, 77, 10, 2653);
         attr_dev(div0, "id", "page-wrapper");
         attr_dev(div0, "class", "p-1 m-1");
         attr_dev(div0, "data-selected", div0_data_selected_value = /*$selectedAstElementId*/
         ctx[2] === "root");
-        add_location(div0, file8, 81, 8, 2512);
+        add_location(div0, file8, 76, 8, 2554);
         attr_dev(div1, "role", "document");
         set_style(div1, "--outlined-id", "title-1");
         attr_dev(div1, "id", "fake-browser-content");
         attr_dev(div1, "class", div1_class_value = "bg-white rounded-b-xl relative overflow-hidden flex-1 " + /*isDraggingOver*/
         (ctx[0] && "border-dashed border-blue-500 border-2"));
         attr_dev(div1, "data-test-id", "browser-content");
-        add_location(div1, file8, 71, 6, 2120);
+        add_location(div1, file8, 66, 6, 2162);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, div1, anchor);
@@ -16831,7 +16865,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_default_slot.name,
       type: "slot",
-      source: "(56:4) <BrowserFrame page={$page}>",
+      source: "(53:4) <BrowserFrame page={$page}>",
       ctx
     });
     return block;
@@ -16861,7 +16895,7 @@ var BeaconLiveAdmin = (() => {
       h: function hydrate() {
         attr_dev(div, "class", "flex-1 px-8 pb-4 flex max-h-full");
         attr_dev(div, "data-test-id", "main");
-        add_location(div, file8, 68, 0, 2001);
+        add_location(div, file8, 63, 0, 2043);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, div, anchor);
@@ -16925,7 +16959,7 @@ var BeaconLiveAdmin = (() => {
     let $page;
     let $live;
     let $slotTargetElement;
-    let $draggedObject;
+    let $draggedComponentDefinition;
     let $currentComponentCategory;
     let $selectedAstElementId;
     validate_store(page, "page");
@@ -16934,8 +16968,8 @@ var BeaconLiveAdmin = (() => {
     component_subscribe($$self, live, ($$value) => $$invalidate(5, $live = $$value));
     validate_store(slotTargetElement, "slotTargetElement");
     component_subscribe($$self, slotTargetElement, ($$value) => $$invalidate(6, $slotTargetElement = $$value));
-    validate_store(draggedObject, "draggedObject");
-    component_subscribe($$self, draggedObject, ($$value) => $$invalidate(7, $draggedObject = $$value));
+    validate_store(draggedComponentDefinition, "draggedComponentDefinition");
+    component_subscribe($$self, draggedComponentDefinition, ($$value) => $$invalidate(7, $draggedComponentDefinition = $$value));
     validate_store(currentComponentCategory, "currentComponentCategory");
     component_subscribe($$self, currentComponentCategory, ($$value) => $$invalidate(8, $currentComponentCategory = $$value));
     validate_store(selectedAstElementId, "selectedAstElementId");
@@ -16946,11 +16980,11 @@ var BeaconLiveAdmin = (() => {
     async function handleDragDrop(e) {
       let { target } = e;
       set_store_value(currentComponentCategory, $currentComponentCategory = null, $currentComponentCategory);
-      if (!$draggedObject)
+      if (!$draggedComponentDefinition)
         return;
-      let draggedObj = $draggedObject;
-      if (elementCanBeDroppedInTarget(draggedObj)) {
-        if (!(target instanceof HTMLElement) || target.id === "fake-browser-content" || !$slotTargetElement || $slotTargetElement.attrs.selfClose) {
+      let draggedObj = $draggedComponentDefinition;
+      if (target.id !== "fake-browser-content" && elementCanBeDroppedInTarget(draggedObj)) {
+        if (!(target instanceof HTMLElement) || !$slotTargetElement || $slotTargetElement.attrs.selfClose) {
           resetDragDrop();
           return;
         }
@@ -16973,10 +17007,10 @@ var BeaconLiveAdmin = (() => {
       resetDragDrop();
     }
     async function addBasicComponentToTarget2(astElement) {
-      if (!$draggedObject)
+      if (!$draggedComponentDefinition)
         return;
-      let componentDefinition = $draggedObject;
-      set_store_value(draggedObject, $draggedObject = null, $draggedObject);
+      let componentDefinition = $draggedComponentDefinition;
+      set_store_value(draggedComponentDefinition, $draggedComponentDefinition = null, $draggedComponentDefinition);
       let targetNode = astElement;
       $live.pushEvent(
         "render_component_in_page",
@@ -17009,7 +17043,7 @@ var BeaconLiveAdmin = (() => {
       currentComponentCategory,
       page,
       slotTargetElement,
-      draggedObject,
+      draggedComponentDefinition,
       resetDrag,
       live,
       elementCanBeDroppedInTarget,
@@ -17021,7 +17055,7 @@ var BeaconLiveAdmin = (() => {
       $page,
       $live,
       $slotTargetElement,
-      $draggedObject,
+      $draggedComponentDefinition,
       $currentComponentCategory,
       $selectedAstElementId
     });
@@ -26813,7 +26847,7 @@ var BeaconLiveAdmin = (() => {
   // svelte/components/PageWrapper.svelte
   var file9 = "svelte/components/PageWrapper.svelte";
   function add_css4(target) {
-    append_styles(target, "svelte-xbvayw", '[data-selected="true"], [data-highlighted="true"]{outline-color:#06b6d4;outline-width:2px;outline-style:dashed}:before, :after{pointer-events:none}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiUGFnZVdyYXBwZXIuc3ZlbHRlIiwibWFwcGluZ3MiOiJBQXVEVSxpREFBbUQsQ0FDekQsYUFBYSxDQUFFLE9BQU8sQ0FDdEIsYUFBYSxDQUFFLEdBQUcsQ0FDbEIsYUFBYSxDQUFFLE1BQ2pCLENBRVEsZUFBaUIsQ0FDdkIsY0FBYyxDQUFFLElBQ2xCIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIlBhZ2VXcmFwcGVyLnN2ZWx0ZSJdfQ== */');
+    append_styles(target, "svelte-1rms11c", '[data-selected="true"]{outline-color:#06b6d4;outline-width:1px;outline-style:solid}[data-selected="true"].contents > *{outline-color:#06b6d4;outline-width:1px;outline-style:solid}[data-highlighted="true"]{outline-color:#06b6d4;outline-width:2px;outline-style:dashed}:before, :after{pointer-events:none}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiUGFnZVdyYXBwZXIuc3ZlbHRlIiwibWFwcGluZ3MiOiJBQTBEVSxzQkFBd0IsQ0FDOUIsYUFBYSxDQUFFLE9BQU8sQ0FDdEIsYUFBYSxDQUFFLEdBQUcsQ0FDbEIsYUFBYSxDQUFFLEtBQ2pCLENBQ1EsbUNBQXFDLENBQzNDLGFBQWEsQ0FBRSxPQUFPLENBQ3RCLGFBQWEsQ0FBRSxHQUFHLENBQ2xCLGFBQWEsQ0FBRSxLQUNqQixDQUVRLHlCQUEyQixDQUNqQyxhQUFhLENBQUUsT0FBTyxDQUN0QixhQUFhLENBQUUsR0FBRyxDQUNsQixhQUFhLENBQUUsTUFDakIsQ0FFUSxlQUFpQixDQUN2QixjQUFjLENBQUUsSUFDbEIiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiUGFnZVdyYXBwZXIuc3ZlbHRlIl19 */');
   }
   function get_each_context4(ctx, list3, i) {
     const child_ctx = ctx.slice();
@@ -26879,12 +26913,13 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_each_block_12.name,
       type: "each",
-      source: "(44:6) {#each $page.ast as astNode, index}",
+      source: "(46:8) {#each $page.ast as astNode, index}",
       ctx
     });
     return block;
   }
   function create_default_slot2(ctx) {
+    let div;
     let t;
     let current;
     let each_value_1 = ensure_array_like_dev(
@@ -26900,21 +26935,32 @@ var BeaconLiveAdmin = (() => {
     });
     const block = {
       c: function create3() {
+        div = element("div");
         for (let i = 0; i < each_blocks.length; i += 1) {
           each_blocks[i].c();
         }
         t = space();
+        this.h();
       },
       l: function claim(nodes) {
+        div = claim_element(nodes, "DIV", { class: true });
+        var div_nodes = children(div);
         for (let i = 0; i < each_blocks.length; i += 1) {
-          each_blocks[i].l(nodes);
+          each_blocks[i].l(div_nodes);
         }
+        div_nodes.forEach(detach_dev);
         t = claim_space(nodes);
+        this.h();
+      },
+      h: function hydrate() {
+        attr_dev(div, "class", "contents");
+        add_location(div, file9, 48, 6, 1778);
       },
       m: function mount(target, anchor) {
+        insert_hydration_dev(target, div, anchor);
         for (let i = 0; i < each_blocks.length; i += 1) {
           if (each_blocks[i]) {
-            each_blocks[i].m(target, anchor);
+            each_blocks[i].m(div, null);
           }
         }
         insert_hydration_dev(target, t, anchor);
@@ -26937,7 +26983,7 @@ var BeaconLiveAdmin = (() => {
               each_blocks[i] = create_each_block_12(child_ctx);
               each_blocks[i].c();
               transition_in(each_blocks[i], 1);
-              each_blocks[i].m(t.parentNode, t);
+              each_blocks[i].m(div, null);
             }
           }
           group_outros();
@@ -26964,6 +27010,7 @@ var BeaconLiveAdmin = (() => {
       },
       d: function destroy(detaching) {
         if (detaching) {
+          detach_dev(div);
           detach_dev(t);
         }
         destroy_each(each_blocks, detaching);
@@ -27079,8 +27126,8 @@ var BeaconLiveAdmin = (() => {
         this.h();
       },
       h: function hydrate() {
-        add_location(span, file9, 43, 0, 1425);
-        add_location(div, file9, 44, 0, 1464);
+        add_location(span, file9, 43, 0, 1418);
+        add_location(div, file9, 44, 0, 1457);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, span, anchor);
@@ -27199,7 +27246,7 @@ var BeaconLiveAdmin = (() => {
       window.reloadStylesheet = reloadStylesheet;
       reloadStylesheet();
     });
-    page.subscribe(async ({ ast }) => {
+    page.subscribe(async () => {
       await tick();
       window.reloadStylesheet && window.reloadStylesheet();
     });
@@ -27526,8 +27573,8 @@ var BeaconLiveAdmin = (() => {
   var file11 = "svelte/components/SidebarSection.svelte";
   function get_each_context5(ctx, list3, i) {
     const child_ctx = ctx.slice();
-    child_ctx[31] = list3[i];
-    child_ctx[33] = i;
+    child_ctx[32] = list3[i];
+    child_ctx[34] = i;
     return child_ctx;
   }
   var get_value_slot_changes_1 = (dirty) => ({});
@@ -27561,11 +27608,11 @@ var BeaconLiveAdmin = (() => {
       },
       h: function hydrate() {
         attr_dev(span, "class", "hero-trash text-red hover:text-red");
-        add_location(span, file11, 89, 13, 2753);
+        add_location(span, file11, 90, 13, 2830);
         attr_dev(button, "type", "button");
         attr_dev(button, "class", "ml-4");
         attr_dev(button, "title", "Delete attribute");
-        add_location(button, file11, 88, 10, 2637);
+        add_location(button, file11, 89, 10, 2714);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, button, anchor);
@@ -27573,7 +27620,7 @@ var BeaconLiveAdmin = (() => {
         if (!mounted) {
           dispose = listen_dev(button, "click", stop_propagation(
             /*deleteAttribute*/
-            ctx[8]
+            ctx[9]
           ), false, false, true, false);
           mounted = true;
         }
@@ -27591,7 +27638,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_if_block_8.name,
       type: "if",
-      source: "(82:8) {#if !disableDelete}",
+      source: "(84:8) {#if !disableDelete}",
       ctx
     });
     return block;
@@ -27600,13 +27647,13 @@ var BeaconLiveAdmin = (() => {
     let current;
     const input_slot_template = (
       /*#slots*/
-      ctx[18].input
+      ctx[19].input
     );
     const input_slot = create_slot(
       input_slot_template,
       ctx,
       /*$$scope*/
-      ctx[17],
+      ctx[18],
       get_input_slot_context_1
     );
     const input_slot_or_fallback = input_slot || fallback_block_1(ctx);
@@ -27628,20 +27675,20 @@ var BeaconLiveAdmin = (() => {
       p: function update2(ctx2, dirty) {
         if (input_slot) {
           if (input_slot.p && (!current || dirty[0] & /*$$scope*/
-          131072)) {
+          262144)) {
             update_slot_base(
               input_slot,
               input_slot_template,
               ctx2,
               /*$$scope*/
-              ctx2[17],
+              ctx2[18],
               !current ? get_all_dirty_from_scope(
                 /*$$scope*/
-                ctx2[17]
+                ctx2[18]
               ) : get_slot_changes(
                 input_slot_template,
                 /*$$scope*/
-                ctx2[17],
+                ctx2[18],
                 dirty,
                 get_input_slot_changes_1
               ),
@@ -27649,8 +27696,8 @@ var BeaconLiveAdmin = (() => {
             );
           }
         } else {
-          if (input_slot_or_fallback && input_slot_or_fallback.p && (!current || dirty[0] & /*$$scope, $$slots, placeholder, internalValue, large, astNodes*/
-          147502)) {
+          if (input_slot_or_fallback && input_slot_or_fallback.p && (!current || dirty[0] & /*$$scope, $$slots, placeholder, internalValue, disabled, large, astNodes*/
+          295022)) {
             input_slot_or_fallback.p(ctx2, !current ? [-1, -1] : dirty);
           }
         }
@@ -27674,7 +27721,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_if_block_15.name,
       type: "if",
-      source: "(117:21) ",
+      source: "(119:21) ",
       ctx
     });
     return block;
@@ -27685,25 +27732,25 @@ var BeaconLiveAdmin = (() => {
     let current;
     const input_slot_template = (
       /*#slots*/
-      ctx[18].input
+      ctx[19].input
     );
     const input_slot = create_slot(
       input_slot_template,
       ctx,
       /*$$scope*/
-      ctx[17],
+      ctx[18],
       get_input_slot_context
     );
     const input_slot_or_fallback = input_slot || fallback_block(ctx);
     const value_slot_template = (
       /*#slots*/
-      ctx[18].value
+      ctx[19].value
     );
     const value_slot = create_slot(
       value_slot_template,
       ctx,
       /*$$scope*/
-      ctx[17],
+      ctx[18],
       get_value_slot_context
     );
     const block = {
@@ -27729,7 +27776,7 @@ var BeaconLiveAdmin = (() => {
       },
       h: function hydrate() {
         attr_dev(div, "class", "pt-3");
-        add_location(div, file11, 121, 4, 3799);
+        add_location(div, file11, 122, 4, 3876);
       },
       m: function mount(target, anchor) {
         if (input_slot_or_fallback) {
@@ -27745,20 +27792,20 @@ var BeaconLiveAdmin = (() => {
       p: function update2(ctx2, dirty) {
         if (input_slot) {
           if (input_slot.p && (!current || dirty[0] & /*$$scope*/
-          131072)) {
+          262144)) {
             update_slot_base(
               input_slot,
               input_slot_template,
               ctx2,
               /*$$scope*/
-              ctx2[17],
+              ctx2[18],
               !current ? get_all_dirty_from_scope(
                 /*$$scope*/
-                ctx2[17]
+                ctx2[18]
               ) : get_slot_changes(
                 input_slot_template,
                 /*$$scope*/
-                ctx2[17],
+                ctx2[18],
                 dirty,
                 get_input_slot_changes
               ),
@@ -27767,26 +27814,26 @@ var BeaconLiveAdmin = (() => {
           }
         } else {
           if (input_slot_or_fallback && input_slot_or_fallback.p && (!current || dirty[0] & /*placeholder, internalValue*/
-          36)) {
+          68)) {
             input_slot_or_fallback.p(ctx2, !current ? [-1, -1] : dirty);
           }
         }
         if (value_slot) {
           if (value_slot.p && (!current || dirty[0] & /*$$scope*/
-          131072)) {
+          262144)) {
             update_slot_base(
               value_slot,
               value_slot_template,
               ctx2,
               /*$$scope*/
-              ctx2[17],
+              ctx2[18],
               !current ? get_all_dirty_from_scope(
                 /*$$scope*/
-                ctx2[17]
+                ctx2[18]
               ) : get_slot_changes(
                 value_slot_template,
                 /*$$scope*/
-                ctx2[17],
+                ctx2[18],
                 dirty,
                 get_value_slot_changes
               ),
@@ -27822,7 +27869,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_if_block7.name,
       type: "if",
-      source: '(105:2) {#if $$slots[\\"value\\"]}',
+      source: '(107:2) {#if $$slots[\\"value\\"]}',
       ctx
     });
     return block;
@@ -27860,7 +27907,7 @@ var BeaconLiveAdmin = (() => {
       },
       p: function update2(ctx2, dirty) {
         if (dirty[0] & /*highlightAstElement, astNodes, unhighlightAstElement, moveAstElement, select, placeholder, handleKeydown, updateNodeContents, large*/
-        15054) {
+        30094) {
           each_value = ensure_array_like_dev(
             /*astNodes*/
             ctx2[1]
@@ -27895,7 +27942,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_if_block_53.name,
       type: "if",
-      source: "(142:25) ",
+      source: "(145:25) ",
       ctx
     });
     return block;
@@ -27916,7 +27963,7 @@ var BeaconLiveAdmin = (() => {
     let if_block0 = current_block_type(ctx);
     let if_block1 = (
       /*$$slots*/
-      ctx[14]["value"] && create_if_block_33(ctx)
+      ctx[15]["value"] && create_if_block_33(ctx)
     );
     const block = {
       c: function create3() {
@@ -27954,12 +28001,12 @@ var BeaconLiveAdmin = (() => {
         }
         if (
           /*$$slots*/
-          ctx2[14]["value"]
+          ctx2[15]["value"]
         ) {
           if (if_block1) {
             if_block1.p(ctx2, dirty);
             if (dirty[0] & /*$$slots*/
-            16384) {
+            32768) {
               transition_in(if_block1, 1);
             }
           } else {
@@ -28000,7 +28047,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_if_block_24.name,
       type: "if",
-      source: "(119:6) {#if internalValue}",
+      source: "(121:6) {#if internalValue}",
       ctx
     });
     return block;
@@ -28013,9 +28060,9 @@ var BeaconLiveAdmin = (() => {
     function change_handler_1(...args) {
       return (
         /*change_handler_1*/
-        ctx[26](
+        ctx[27](
           /*idx*/
-          ctx[33],
+          ctx[34],
           ...args
         )
       );
@@ -28043,8 +28090,8 @@ var BeaconLiveAdmin = (() => {
           ctx[2]
         );
         input.value = input_value_value = /*astNode*/
-        ctx[31];
-        add_location(input, file11, 213, 12, 8769);
+        ctx[32];
+        add_location(input, file11, 215, 12, 8869);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, input, anchor);
@@ -28054,7 +28101,7 @@ var BeaconLiveAdmin = (() => {
               input,
               "keydown",
               /*handleKeydown*/
-              ctx[9],
+              ctx[10],
               false,
               false,
               false,
@@ -28078,7 +28125,7 @@ var BeaconLiveAdmin = (() => {
         }
         if (dirty[0] & /*astNodes*/
         2 && input_value_value !== (input_value_value = /*astNode*/
-        ctx[31]) && input.value !== input_value_value) {
+        ctx[32]) && input.value !== input_value_value) {
           prop_dev(input, "value", input_value_value);
         }
       },
@@ -28094,7 +28141,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_else_block_13.name,
       type: "else",
-      source: "(207:10) {:else}",
+      source: "(210:10) {:else}",
       ctx
     });
     return block;
@@ -28107,9 +28154,9 @@ var BeaconLiveAdmin = (() => {
     function change_handler(...args) {
       return (
         /*change_handler*/
-        ctx[25](
+        ctx[26](
           /*idx*/
-          ctx[33],
+          ctx[34],
           ...args
         )
       );
@@ -28133,8 +28180,8 @@ var BeaconLiveAdmin = (() => {
           ctx[2]
         );
         textarea.value = textarea_value_value = /*astNode*/
-        ctx[31];
-        add_location(textarea, file11, 205, 12, 8447);
+        ctx[32];
+        add_location(textarea, file11, 207, 12, 8547);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, textarea, anchor);
@@ -28144,7 +28191,7 @@ var BeaconLiveAdmin = (() => {
               textarea,
               "keydown",
               /*handleKeydown*/
-              ctx[9],
+              ctx[10],
               false,
               false,
               false,
@@ -28168,7 +28215,7 @@ var BeaconLiveAdmin = (() => {
         }
         if (dirty[0] & /*astNodes*/
         2 && textarea_value_value !== (textarea_value_value = /*astNode*/
-        ctx[31])) {
+        ctx[32])) {
           prop_dev(textarea, "value", textarea_value_value);
         }
       },
@@ -28184,7 +28231,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_if_block_72.name,
       type: "if",
-      source: "(199:26) ",
+      source: "(202:26) ",
       ctx
     });
     return block;
@@ -28197,7 +28244,7 @@ var BeaconLiveAdmin = (() => {
     let t0;
     let t1_value = (
       /*astNode*/
-      ctx[31].tag + ""
+      ctx[32].tag + ""
     );
     let t1;
     let t2;
@@ -28207,7 +28254,7 @@ var BeaconLiveAdmin = (() => {
     let span1;
     let t5_value = (
       /*astNode*/
-      ctx[31].tag + ""
+      ctx[32].tag + ""
     );
     let t5;
     let t6;
@@ -28223,7 +28270,7 @@ var BeaconLiveAdmin = (() => {
     let span2;
     let t10_value = (
       /*astNode*/
-      ctx[31].tag + ""
+      ctx[32].tag + ""
     );
     let t10;
     let t11;
@@ -28239,7 +28286,7 @@ var BeaconLiveAdmin = (() => {
     let span4;
     let t16_value = (
       /*astNode*/
-      ctx[31].tag + ""
+      ctx[32].tag + ""
     );
     let t16;
     let t17;
@@ -28254,36 +28301,36 @@ var BeaconLiveAdmin = (() => {
     function click_handler_1() {
       return (
         /*click_handler_1*/
-        ctx[20](
+        ctx[21](
           /*astNode*/
-          ctx[31]
+          ctx[32]
         )
       );
     }
     function click_handler_2() {
       return (
         /*click_handler_2*/
-        ctx[21](
+        ctx[22](
           /*astNode*/
-          ctx[31]
+          ctx[32]
         )
       );
     }
     function click_handler_3() {
       return (
         /*click_handler_3*/
-        ctx[22](
+        ctx[23](
           /*astNode*/
-          ctx[31]
+          ctx[32]
         )
       );
     }
     function mouseenter_handler() {
       return (
         /*mouseenter_handler*/
-        ctx[23](
+        ctx[24](
           /*astNode*/
-          ctx[31]
+          ctx[32]
         )
       );
     }
@@ -28436,60 +28483,60 @@ var BeaconLiveAdmin = (() => {
         this.h();
       },
       h: function hydrate() {
-        add_location(code, file11, 157, 22, 5187);
-        add_location(span0, file11, 157, 16, 5181);
+        add_location(code, file11, 159, 22, 5287);
+        add_location(span0, file11, 159, 16, 5281);
         attr_dev(span1, "class", "sr-only");
-        add_location(span1, file11, 162, 23, 5558);
+        add_location(span1, file11, 164, 23, 5658);
         attr_dev(path0, "d", "M21.731 2.269a2.625 2.625 0 0 0-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 0 0 0-3.712ZM19.513 8.199l-3.712-3.712-8.4 8.4a5.25 5.25 0 0 0-1.32 2.214l-.8 2.685a.75.75 0 0 0 .933.933l2.685-.8a5.25 5.25 0 0 0 2.214-1.32l8.4-8.4Z");
-        add_location(path0, file11, 164, 20, 5744);
+        add_location(path0, file11, 166, 20, 5844);
         attr_dev(path1, "d", "M5.25 5.25a3 3 0 0 0-3 3v10.5a3 3 0 0 0 3 3h10.5a3 3 0 0 0 3-3V13.5a.75.75 0 0 0-1.5 0v5.25a1.5 1.5 0 0 1-1.5 1.5H5.25a1.5 1.5 0 0 1-1.5-1.5V8.25a1.5 1.5 0 0 1 1.5-1.5h5.25a.75.75 0 0 0 0-1.5H5.25Z");
-        add_location(path1, file11, 167, 20, 6061);
+        add_location(path1, file11, 169, 20, 6161);
         attr_dev(svg0, "xmlns", "http://www.w3.org/2000/svg");
         attr_dev(svg0, "viewBox", "0 0 24 24");
         attr_dev(svg0, "fill", "currentColor");
         attr_dev(svg0, "class", "w-3 h-3");
-        add_location(svg0, file11, 163, 18, 5627);
+        add_location(svg0, file11, 165, 18, 5727);
         attr_dev(button0, "class", "flex items-center justify-center gap-x-0.5 px-2 py-1 bg-cyan-300 font-bold text-xs uppercase tracking-wide rounded transition-colors hover:bg-cyan-900 active:bg-cyan-700 hover:text-white");
-        add_location(button0, file11, 158, 16, 5245);
+        add_location(button0, file11, 160, 16, 5345);
         attr_dev(div0, "class", "flex items-center justify-between");
-        add_location(div0, file11, 156, 14, 5117);
+        add_location(div0, file11, 158, 14, 5217);
         attr_dev(span2, "class", "sr-only");
-        add_location(span2, file11, 179, 29, 6857);
-        add_location(span3, file11, 179, 18, 6846);
+        add_location(span2, file11, 181, 29, 6957);
+        add_location(span3, file11, 181, 18, 6946);
         attr_dev(path2, "fill-rule", "evenodd");
         attr_dev(path2, "d", "M11.47 2.47a.75.75 0 0 1 1.06 0l7.5 7.5a.75.75 0 1 1-1.06 1.06l-6.22-6.22V21a.75.75 0 0 1-1.5 0V4.81l-6.22 6.22a.75.75 0 1 1-1.06-1.06l7.5-7.5Z");
         attr_dev(path2, "clip-rule", "evenodd");
-        add_location(path2, file11, 181, 20, 7053);
+        add_location(path2, file11, 183, 20, 7153);
         attr_dev(svg1, "xmlns", "http://www.w3.org/2000/svg");
         attr_dev(svg1, "viewBox", "0 0 24 24");
         attr_dev(svg1, "fill", "currentColor");
         attr_dev(svg1, "class", "w-3 h-3");
-        add_location(svg1, file11, 180, 18, 6936);
+        add_location(svg1, file11, 182, 18, 7036);
         attr_dev(button1, "class", "flex items-center justify-center gap-x-0.5 px-1.5 py-1 bg-cyan-800 font-bold text-xs uppercase tracking-wide rounded hover:bg-cyan-950 active:bg-cyan-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white");
         button1.disabled = button1_disabled_value = /*idx*/
-        ctx[33] === 0;
-        add_location(button1, file11, 174, 16, 6460);
+        ctx[34] === 0;
+        add_location(button1, file11, 176, 16, 6560);
         attr_dev(span4, "class", "sr-only");
-        add_location(span4, file11, 193, 29, 7817);
-        add_location(span5, file11, 193, 18, 7806);
+        add_location(span4, file11, 195, 29, 7917);
+        add_location(span5, file11, 195, 18, 7906);
         attr_dev(path3, "fill-rule", "evenodd");
         attr_dev(path3, "d", "M12 2.25a.75.75 0 0 1 .75.75v16.19l6.22-6.22a.75.75 0 1 1 1.06 1.06l-7.5 7.5a.75.75 0 0 1-1.06 0l-7.5-7.5a.75.75 0 1 1 1.06-1.06l6.22 6.22V3a.75.75 0 0 1 .75-.75Z");
         attr_dev(path3, "clip-rule", "evenodd");
-        add_location(path3, file11, 195, 20, 8015);
+        add_location(path3, file11, 197, 20, 8115);
         attr_dev(svg2, "xmlns", "http://www.w3.org/2000/svg");
         attr_dev(svg2, "viewBox", "0 0 24 24");
         attr_dev(svg2, "fill", "currentColor");
         attr_dev(svg2, "class", "w-3 h-3");
-        add_location(svg2, file11, 194, 18, 7898);
+        add_location(svg2, file11, 196, 18, 7998);
         attr_dev(button2, "class", "flex items-center justify-center gap-x-0.5 px-1.5 py-1 bg-cyan-800 font-bold text-xs uppercase tracking-wide rounded hover:bg-cyan-950 active:bg-cyan-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white");
         button2.disabled = button2_disabled_value = /*idx*/
-        ctx[33] === /*astNodes*/
+        ctx[34] === /*astNodes*/
         ctx[1].length - 1;
-        add_location(button2, file11, 188, 16, 7403);
+        add_location(button2, file11, 190, 16, 7503);
         attr_dev(div1, "class", "mt-2 grid grid-cols-2 gap-x-1");
-        add_location(div1, file11, 173, 14, 6400);
+        add_location(div1, file11, 175, 14, 6500);
         attr_dev(div2, "class", "mt-5");
-        add_location(div2, file11, 151, 12, 4932);
+        add_location(div2, file11, 153, 12, 5032);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, div2, anchor);
@@ -28543,7 +28590,7 @@ var BeaconLiveAdmin = (() => {
               div2,
               "mouseleave",
               /*mouseleave_handler*/
-              ctx[24],
+              ctx[25],
               false,
               false,
               false,
@@ -28557,23 +28604,23 @@ var BeaconLiveAdmin = (() => {
         ctx = new_ctx;
         if (dirty[0] & /*astNodes*/
         2 && t1_value !== (t1_value = /*astNode*/
-        ctx[31].tag + ""))
+        ctx[32].tag + ""))
           set_data_dev(t1, t1_value);
         if (dirty[0] & /*astNodes*/
         2 && t5_value !== (t5_value = /*astNode*/
-        ctx[31].tag + ""))
+        ctx[32].tag + ""))
           set_data_dev(t5, t5_value);
         if (dirty[0] & /*astNodes*/
         2 && t10_value !== (t10_value = /*astNode*/
-        ctx[31].tag + ""))
+        ctx[32].tag + ""))
           set_data_dev(t10, t10_value);
         if (dirty[0] & /*astNodes*/
         2 && t16_value !== (t16_value = /*astNode*/
-        ctx[31].tag + ""))
+        ctx[32].tag + ""))
           set_data_dev(t16, t16_value);
         if (dirty[0] & /*astNodes*/
         2 && button2_disabled_value !== (button2_disabled_value = /*idx*/
-        ctx[33] === /*astNodes*/
+        ctx[34] === /*astNodes*/
         ctx[1].length - 1)) {
           prop_dev(button2, "disabled", button2_disabled_value);
         }
@@ -28590,7 +28637,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_if_block_63.name,
       type: "if",
-      source: "(144:10) {#if isAstElement(astNode)}",
+      source: "(147:10) {#if isAstElement(astNode)}",
       ctx
     });
     return block;
@@ -28605,7 +28652,7 @@ var BeaconLiveAdmin = (() => {
       if (show_if == null)
         show_if = !!isAstElement(
           /*astNode*/
-          ctx2[31]
+          ctx2[32]
         );
       if (show_if)
         return create_if_block_63;
@@ -28654,7 +28701,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_each_block5.name,
       type: "each",
-      source: "(143:8) {#each astNodes as astNode, idx}",
+      source: "(146:8) {#each astNodes as astNode, idx}",
       ctx
     });
     return block;
@@ -28686,8 +28733,8 @@ var BeaconLiveAdmin = (() => {
           ctx[2]
         );
         input.value = /*internalValue*/
-        ctx[5];
-        add_location(input, file11, 135, 10, 4349);
+        ctx[6];
+        add_location(input, file11, 137, 10, 4449);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, input, anchor);
@@ -28697,7 +28744,7 @@ var BeaconLiveAdmin = (() => {
               input,
               "keydown",
               /*handleKeydown*/
-              ctx[9],
+              ctx[10],
               false,
               false,
               false,
@@ -28707,7 +28754,7 @@ var BeaconLiveAdmin = (() => {
               input,
               "change",
               /*handleTextChange*/
-              ctx[10],
+              ctx[11],
               false,
               false,
               false,
@@ -28728,13 +28775,13 @@ var BeaconLiveAdmin = (() => {
           );
         }
         if (dirty[0] & /*internalValue*/
-        32 && input.value !== /*internalValue*/
-        ctx2[5]) {
+        64 && input.value !== /*internalValue*/
+        ctx2[6]) {
           prop_dev(
             input,
             "value",
             /*internalValue*/
-            ctx2[5]
+            ctx2[6]
           );
         }
       },
@@ -28750,7 +28797,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_else_block3.name,
       type: "else",
-      source: "(129:8) {:else}",
+      source: "(132:8) {:else}",
       ctx
     });
     return block;
@@ -28778,8 +28825,10 @@ var BeaconLiveAdmin = (() => {
           ctx[2]
         );
         textarea.value = /*internalValue*/
+        ctx[6];
+        textarea.disabled = /*disabled*/
         ctx[5];
-        add_location(textarea, file11, 127, 10, 4054);
+        add_location(textarea, file11, 128, 10, 4131);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, textarea, anchor);
@@ -28789,7 +28838,7 @@ var BeaconLiveAdmin = (() => {
               textarea,
               "keydown",
               /*handleKeydown*/
-              ctx[9],
+              ctx[10],
               false,
               false,
               false,
@@ -28799,7 +28848,7 @@ var BeaconLiveAdmin = (() => {
               textarea,
               "change",
               /*handleTextChange*/
-              ctx[10],
+              ctx[11],
               false,
               false,
               false,
@@ -28820,11 +28869,20 @@ var BeaconLiveAdmin = (() => {
           );
         }
         if (dirty[0] & /*internalValue*/
-        32) {
+        64) {
           prop_dev(
             textarea,
             "value",
             /*internalValue*/
+            ctx2[6]
+          );
+        }
+        if (dirty[0] & /*disabled*/
+        32) {
+          prop_dev(
+            textarea,
+            "disabled",
+            /*disabled*/
             ctx2[5]
           );
         }
@@ -28841,7 +28899,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_if_block_43.name,
       type: "if",
-      source: "(120:8) {#if large}",
+      source: "(122:8) {#if large}",
       ctx
     });
     return block;
@@ -28851,13 +28909,13 @@ var BeaconLiveAdmin = (() => {
     let current;
     const value_slot_template = (
       /*#slots*/
-      ctx[18].value
+      ctx[19].value
     );
     const value_slot = create_slot(
       value_slot_template,
       ctx,
       /*$$scope*/
-      ctx[17],
+      ctx[18],
       get_value_slot_context_1
     );
     const block = {
@@ -28877,7 +28935,7 @@ var BeaconLiveAdmin = (() => {
       },
       h: function hydrate() {
         attr_dev(div, "class", "pt-3");
-        add_location(div, file11, 145, 10, 4684);
+        add_location(div, file11, 147, 10, 4784);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, div, anchor);
@@ -28889,20 +28947,20 @@ var BeaconLiveAdmin = (() => {
       p: function update2(ctx2, dirty) {
         if (value_slot) {
           if (value_slot.p && (!current || dirty[0] & /*$$scope*/
-          131072)) {
+          262144)) {
             update_slot_base(
               value_slot,
               value_slot_template,
               ctx2,
               /*$$scope*/
-              ctx2[17],
+              ctx2[18],
               !current ? get_all_dirty_from_scope(
                 /*$$scope*/
-                ctx2[17]
+                ctx2[18]
               ) : get_slot_changes(
                 value_slot_template,
                 /*$$scope*/
-                ctx2[17],
+                ctx2[18],
                 dirty,
                 get_value_slot_changes_1
               ),
@@ -28933,7 +28991,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_if_block_33.name,
       type: "if",
-      source: '(139:8) {#if $$slots[\\"value\\"]}',
+      source: '(142:8) {#if $$slots[\\"value\\"]}',
       ctx
     });
     return block;
@@ -28948,7 +29006,7 @@ var BeaconLiveAdmin = (() => {
     function select_block_type_1(ctx2, dirty) {
       if (
         /*internalValue*/
-        ctx2[5]
+        ctx2[6]
       )
         return 0;
       if (
@@ -29032,7 +29090,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: fallback_block_1.name,
       type: "fallback",
-      source: "(118:23)        ",
+      source: "(120:23)        ",
       ctx
     });
     return block;
@@ -29064,8 +29122,8 @@ var BeaconLiveAdmin = (() => {
           ctx[2]
         );
         input.value = /*internalValue*/
-        ctx[5];
-        add_location(input, file11, 112, 6, 3533);
+        ctx[6];
+        add_location(input, file11, 113, 6, 3610);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, input, anchor);
@@ -29075,7 +29133,7 @@ var BeaconLiveAdmin = (() => {
               input,
               "keydown",
               /*handleKeydown*/
-              ctx[9],
+              ctx[10],
               false,
               false,
               false,
@@ -29085,7 +29143,7 @@ var BeaconLiveAdmin = (() => {
               input,
               "change",
               /*handleTextChange*/
-              ctx[10],
+              ctx[11],
               false,
               false,
               false,
@@ -29106,13 +29164,13 @@ var BeaconLiveAdmin = (() => {
           );
         }
         if (dirty[0] & /*internalValue*/
-        32 && input.value !== /*internalValue*/
-        ctx2[5]) {
+        64 && input.value !== /*internalValue*/
+        ctx2[6]) {
           prop_dev(
             input,
             "value",
             /*internalValue*/
-            ctx2[5]
+            ctx2[6]
           );
         }
       },
@@ -29128,7 +29186,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: fallback_block.name,
       type: "fallback",
-      source: "(106:23)        ",
+      source: "(108:23)        ",
       ctx
     });
     return block;
@@ -29153,13 +29211,13 @@ var BeaconLiveAdmin = (() => {
     let dispose;
     const heading_slot_template = (
       /*#slots*/
-      ctx[18].heading
+      ctx[19].heading
     );
     const heading_slot = create_slot(
       heading_slot_template,
       ctx,
       /*$$scope*/
-      ctx[17],
+      ctx[18],
       get_heading_slot_context
     );
     let if_block0 = !/*disableDelete*/
@@ -29169,7 +29227,7 @@ var BeaconLiveAdmin = (() => {
     function select_block_type(ctx2, dirty) {
       if (
         /*$$slots*/
-        ctx2[14]["value"]
+        ctx2[15]["value"]
       )
         return 0;
       if (
@@ -29253,20 +29311,20 @@ var BeaconLiveAdmin = (() => {
       },
       h: function hydrate() {
         attr_dev(span0, "class", "hover:text-blue-700 active:text-blue-900");
-        add_location(span0, file11, 86, 8, 2512);
-        add_location(span1, file11, 85, 6, 2497);
+        add_location(span0, file11, 87, 8, 2589);
+        add_location(span1, file11, 86, 6, 2574);
         attr_dev(path, "fill-rule", "evenodd");
         attr_dev(path, "d", "M11.47 7.72a.75.75 0 0 1 1.06 0l7.5 7.5a.75.75 0 1 1-1.06 1.06L12 9.31l-6.97 6.97a.75.75 0 0 1-1.06-1.06l7.5-7.5Z");
         attr_dev(path, "clip-rule", "evenodd");
-        add_location(path, file11, 100, 10, 3189);
+        add_location(path, file11, 101, 10, 3266);
         attr_dev(svg, "xmlns", "http://www.w3.org/2000/svg");
         attr_dev(svg, "viewBox", "0 0 24 24");
         attr_dev(svg, "fill", "currentColor");
         attr_dev(svg, "class", "w-5 h-5 stroke-slate-500 fill-slate-500 group-hover:stroke-current group-hover:fill-current");
-        add_location(svg, file11, 94, 8, 2949);
+        add_location(svg, file11, 95, 8, 3026);
         attr_dev(span2, "class", span2_class_value = /*expanded*/
         ctx[0] ? "" : " [&_path]:origin-center [&_path]:rotate-180");
-        add_location(span2, file11, 93, 6, 2864);
+        add_location(span2, file11, 94, 6, 2941);
         attr_dev(button, "type", "button");
         attr_dev(button, "class", "w-full flex items-center justify-between gap-x-1 p-1 font-semibold group");
         attr_dev(
@@ -29275,11 +29333,11 @@ var BeaconLiveAdmin = (() => {
           /*expanded*/
           ctx[0]
         );
-        add_location(button, file11, 79, 4, 2293);
+        add_location(button, file11, 80, 4, 2370);
         attr_dev(header, "class", "flex items-center text-sm mb-2 font-medium");
-        add_location(header, file11, 78, 2, 2229);
+        add_location(header, file11, 79, 2, 2306);
         attr_dev(section, "class", "p-4 border-b border-b-gray-100 border-solid");
-        add_location(section, file11, 77, 0, 2165);
+        add_location(section, file11, 78, 0, 2242);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, section, anchor);
@@ -29307,7 +29365,7 @@ var BeaconLiveAdmin = (() => {
             button,
             "click",
             /*click_handler*/
-            ctx[19],
+            ctx[20],
             false,
             false,
             false,
@@ -29319,20 +29377,20 @@ var BeaconLiveAdmin = (() => {
       p: function update2(ctx2, dirty) {
         if (heading_slot) {
           if (heading_slot.p && (!current || dirty[0] & /*$$scope*/
-          131072)) {
+          262144)) {
             update_slot_base(
               heading_slot,
               heading_slot_template,
               ctx2,
               /*$$scope*/
-              ctx2[17],
+              ctx2[18],
               !current ? get_all_dirty_from_scope(
                 /*$$scope*/
-                ctx2[17]
+                ctx2[18]
               ) : get_slot_changes(
                 heading_slot_template,
                 /*$$scope*/
-                ctx2[17],
+                ctx2[18],
                 dirty,
                 get_heading_slot_changes
               ),
@@ -29437,9 +29495,9 @@ var BeaconLiveAdmin = (() => {
     let $selectedAstElementId;
     let $highlightedAstElement;
     validate_store(selectedAstElementId, "selectedAstElementId");
-    component_subscribe($$self, selectedAstElementId, ($$value) => $$invalidate(28, $selectedAstElementId = $$value));
+    component_subscribe($$self, selectedAstElementId, ($$value) => $$invalidate(29, $selectedAstElementId = $$value));
     validate_store(highlightedAstElement, "highlightedAstElement");
-    component_subscribe($$self, highlightedAstElement, ($$value) => $$invalidate(29, $highlightedAstElement = $$value));
+    component_subscribe($$self, highlightedAstElement, ($$value) => $$invalidate(30, $highlightedAstElement = $$value));
     let { $$slots: slots = {}, $$scope } = $$props;
     validate_slots("SidebarSection", slots, ["heading", "input", "value"]);
     const $$slots = compute_slots(slots);
@@ -29451,6 +29509,7 @@ var BeaconLiveAdmin = (() => {
     let { placeholder = "" } = $$props;
     let { large = false } = $$props;
     let { disableDelete = false } = $$props;
+    let { disabled = false } = $$props;
     function highlightAstElement(astElement) {
       set_store_value(highlightedAstElement, $highlightedAstElement = astElement, $highlightedAstElement);
     }
@@ -29470,7 +29529,7 @@ var BeaconLiveAdmin = (() => {
       if (e.key === "Enter" && text2 && text2.length > 0 && text2 !== value2) {
         dispatch2("update", text2);
         if (clearOnUpdate) {
-          $$invalidate(5, internalValue = null);
+          $$invalidate(6, internalValue = null);
           e.target.value = "";
         }
       }
@@ -29505,7 +29564,8 @@ var BeaconLiveAdmin = (() => {
       "expanded",
       "placeholder",
       "large",
-      "disableDelete"
+      "disableDelete",
+      "disabled"
     ];
     Object.keys($$props).forEach((key) => {
       if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$" && key !== "slot")
@@ -29521,11 +29581,11 @@ var BeaconLiveAdmin = (() => {
     const change_handler_1 = (idx, e) => updateNodeContents(e, idx);
     $$self.$$set = ($$props2) => {
       if ("value" in $$props2)
-        $$invalidate(15, value2 = $$props2.value);
+        $$invalidate(16, value2 = $$props2.value);
       if ("astNodes" in $$props2)
         $$invalidate(1, astNodes = $$props2.astNodes);
       if ("clearOnUpdate" in $$props2)
-        $$invalidate(16, clearOnUpdate = $$props2.clearOnUpdate);
+        $$invalidate(17, clearOnUpdate = $$props2.clearOnUpdate);
       if ("expanded" in $$props2)
         $$invalidate(0, expanded = $$props2.expanded);
       if ("placeholder" in $$props2)
@@ -29534,8 +29594,10 @@ var BeaconLiveAdmin = (() => {
         $$invalidate(3, large = $$props2.large);
       if ("disableDelete" in $$props2)
         $$invalidate(4, disableDelete = $$props2.disableDelete);
+      if ("disabled" in $$props2)
+        $$invalidate(5, disabled = $$props2.disabled);
       if ("$$scope" in $$props2)
-        $$invalidate(17, $$scope = $$props2.$$scope);
+        $$invalidate(18, $$scope = $$props2.$$scope);
     };
     $$self.$capture_state = () => ({
       createEventDispatcher,
@@ -29551,6 +29613,7 @@ var BeaconLiveAdmin = (() => {
       placeholder,
       large,
       disableDelete,
+      disabled,
       highlightAstElement,
       unhighlightAstElement,
       deleteAttribute,
@@ -29566,11 +29629,11 @@ var BeaconLiveAdmin = (() => {
     });
     $$self.$inject_state = ($$props2) => {
       if ("value" in $$props2)
-        $$invalidate(15, value2 = $$props2.value);
+        $$invalidate(16, value2 = $$props2.value);
       if ("astNodes" in $$props2)
         $$invalidate(1, astNodes = $$props2.astNodes);
       if ("clearOnUpdate" in $$props2)
-        $$invalidate(16, clearOnUpdate = $$props2.clearOnUpdate);
+        $$invalidate(17, clearOnUpdate = $$props2.clearOnUpdate);
       if ("expanded" in $$props2)
         $$invalidate(0, expanded = $$props2.expanded);
       if ("placeholder" in $$props2)
@@ -29579,8 +29642,10 @@ var BeaconLiveAdmin = (() => {
         $$invalidate(3, large = $$props2.large);
       if ("disableDelete" in $$props2)
         $$invalidate(4, disableDelete = $$props2.disableDelete);
+      if ("disabled" in $$props2)
+        $$invalidate(5, disabled = $$props2.disabled);
       if ("internalValue" in $$props2)
-        $$invalidate(5, internalValue = $$props2.internalValue);
+        $$invalidate(6, internalValue = $$props2.internalValue);
       if ("astElements" in $$props2)
         astElements = $$props2.astElements;
     };
@@ -29599,10 +29664,10 @@ var BeaconLiveAdmin = (() => {
           if (astNodes?.length === 1) {
             let first = astNodes[0];
             if (!isAstElement(first)) {
-              $$invalidate(5, internalValue = first);
+              $$invalidate(6, internalValue = first);
             }
           } else if (astNodes) {
-            $$invalidate(5, internalValue = null);
+            $$invalidate(6, internalValue = null);
           }
         }
       }
@@ -29613,6 +29678,7 @@ var BeaconLiveAdmin = (() => {
       placeholder,
       large,
       disableDelete,
+      disabled,
       internalValue,
       highlightAstElement,
       unhighlightAstElement,
@@ -29647,13 +29713,14 @@ var BeaconLiveAdmin = (() => {
         create_fragment11,
         safe_not_equal,
         {
-          value: 15,
+          value: 16,
           astNodes: 1,
-          clearOnUpdate: 16,
+          clearOnUpdate: 17,
           expanded: 0,
           placeholder: 2,
           large: 3,
-          disableDelete: 4
+          disableDelete: 4,
+          disabled: 5
         },
         null,
         [-1, -1]
@@ -29666,7 +29733,7 @@ var BeaconLiveAdmin = (() => {
       });
     }
     get value() {
-      return this.$$.ctx[15];
+      return this.$$.ctx[16];
     }
     set value(value2) {
       this.$$set({ value: value2 });
@@ -29680,7 +29747,7 @@ var BeaconLiveAdmin = (() => {
       flush();
     }
     get clearOnUpdate() {
-      return this.$$.ctx[16];
+      return this.$$.ctx[17];
     }
     set clearOnUpdate(clearOnUpdate) {
       this.$$set({ clearOnUpdate });
@@ -29714,8 +29781,15 @@ var BeaconLiveAdmin = (() => {
       this.$$set({ disableDelete });
       flush();
     }
+    get disabled() {
+      return this.$$.ctx[5];
+    }
+    set disabled(disabled) {
+      this.$$set({ disabled });
+      flush();
+    }
   };
-  create_custom_element(SidebarSection, { "value": {}, "astNodes": {}, "clearOnUpdate": { "type": "Boolean" }, "expanded": { "type": "Boolean" }, "placeholder": {}, "large": { "type": "Boolean" }, "disableDelete": { "type": "Boolean" } }, ["heading", "input", "value"], [], true);
+  create_custom_element(SidebarSection, { "value": {}, "astNodes": {}, "clearOnUpdate": { "type": "Boolean" }, "expanded": { "type": "Boolean" }, "placeholder": {}, "large": { "type": "Boolean" }, "disableDelete": { "type": "Boolean" }, "disabled": { "type": "Boolean" } }, ["heading", "input", "value"], [], true);
   var SidebarSection_default = SidebarSection;
 
   // svelte/components/PropertiesSidebar.svelte
@@ -29761,7 +29835,7 @@ var BeaconLiveAdmin = (() => {
       },
       h: function hydrate() {
         attr_dev(div, "class", "p-4 pt-8 font-medium text-lg text-center");
-        add_location(div, file12, 287, 6, 10567);
+        add_location(div, file12, 292, 6, 10690);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, div, anchor);
@@ -29779,7 +29853,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_else_block4.name,
       type: "else",
-      source: "(261:4) {:else}",
+      source: "(266:4) {:else}",
       ctx
     });
     return block;
@@ -29800,9 +29874,9 @@ var BeaconLiveAdmin = (() => {
     let t7;
     let div1;
     let show_if = (
-      /*$draggedObject*/
+      /*$draggedComponentDefinition*/
       ctx[8] && elementCanBeDroppedInTarget(
-        /*$draggedObject*/
+        /*$draggedComponentDefinition*/
         ctx[8]
       )
     );
@@ -29928,23 +30002,23 @@ var BeaconLiveAdmin = (() => {
       },
       h: function hydrate() {
         attr_dev(span, "class", "sr-only");
-        add_location(span, file12, 171, 10, 5691);
+        add_location(span, file12, 171, 10, 5704);
         attr_dev(path, "fill-rule", "evenodd");
         attr_dev(path, "d", "M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25Zm-1.72 6.97a.75.75 0 1 0-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 1 0 1.06 1.06L12 13.06l1.72 1.72a.75.75 0 1 0 1.06-1.06L13.06 12l1.72-1.72a.75.75 0 1 0-1.06-1.06L12 10.94l-1.72-1.72Z");
         attr_dev(path, "clip-rule", "evenodd");
-        add_location(path, file12, 178, 12, 5945);
+        add_location(path, file12, 178, 12, 5958);
         attr_dev(svg, "xmlns", "http://www.w3.org/2000/svg");
         attr_dev(svg, "viewBox", "0 0 24 24");
         attr_dev(svg, "fill", "currentColor");
         attr_dev(svg, "class", "w-6 h-6 hover:text-blue-700 active:text-blue-900");
-        add_location(svg, file12, 172, 10, 5736);
+        add_location(svg, file12, 172, 10, 5749);
         attr_dev(button, "type", "button");
         attr_dev(button, "class", "absolute p-2 top-2 right-1");
-        add_location(button, file12, 170, 8, 5597);
+        add_location(button, file12, 170, 8, 5610);
         attr_dev(div0, "class", "border-b text-lg font-medium leading-5 p-4 relative");
-        add_location(div0, file12, 145, 6, 4519);
+        add_location(div0, file12, 145, 6, 4532);
         attr_dev(div1, "class", "relative");
-        add_location(div1, file12, 246, 6, 8997);
+        add_location(div1, file12, 251, 6, 9094);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, div0, anchor);
@@ -30046,11 +30120,11 @@ var BeaconLiveAdmin = (() => {
           });
           check_outros();
         }
-        if (dirty[0] & /*$draggedObject*/
+        if (dirty[0] & /*$draggedComponentDefinition*/
         256)
-          show_if = /*$draggedObject*/
+          show_if = /*$draggedComponentDefinition*/
           ctx2[8] && elementCanBeDroppedInTarget(
-            /*$draggedObject*/
+            /*$draggedComponentDefinition*/
             ctx2[8]
           );
         if (show_if) {
@@ -30202,23 +30276,23 @@ var BeaconLiveAdmin = (() => {
       },
       h: function hydrate() {
         attr_dev(span0, "class", "sr-only");
-        add_location(span0, file12, 149, 12, 4748);
+        add_location(span0, file12, 149, 12, 4761);
         attr_dev(span1, "class", "absolute opacity-0 invisible right-9 min-w-[100px] bg-amber-100 py-1 px-1.5 rounded text-xs text-medium transition group-hover:opacity-100 group-hover:visible");
-        add_location(span1, file12, 150, 12, 4802);
+        add_location(span1, file12, 150, 12, 4815);
         attr_dev(path, "stroke-linecap", "round");
         attr_dev(path, "stroke-linejoin", "round");
         attr_dev(path, "d", "M3 4.5h14.25M3 9h9.75M3 13.5h5.25m5.25-.75L17.25 9m0 0L21 12.75M17.25 9v12");
-        add_location(path, file12, 162, 14, 5339);
+        add_location(path, file12, 162, 14, 5352);
         attr_dev(svg, "xmlns", "http://www.w3.org/2000/svg");
         attr_dev(svg, "fill", "currentColor");
         attr_dev(svg, "viewBox", "0 0 24 24");
         attr_dev(svg, "stroke-width", "1.5");
         attr_dev(svg, "stroke", "currentColor");
         attr_dev(svg, "class", "w-6 h-6 hover:text-blue-700 active:text-blue-900");
-        add_location(svg, file12, 154, 12, 5049);
+        add_location(svg, file12, 154, 12, 5062);
         attr_dev(button, "type", "button");
         attr_dev(button, "class", "absolute p-2 top-2 right-9 group");
-        add_location(button, file12, 148, 10, 4644);
+        add_location(button, file12, 148, 10, 4657);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, button, anchor);
@@ -30364,9 +30438,9 @@ var BeaconLiveAdmin = (() => {
       h: function hydrate() {
         attr_dev(button, "type", "button");
         attr_dev(button, "class", "bg-blue-500 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-2 px-4 rounded outline-2 w-full");
-        add_location(button, file12, 226, 10, 8095);
+        add_location(button, file12, 225, 10, 8075);
         attr_dev(div, "class", "p-4");
-        add_location(div, file12, 225, 8, 8067);
+        add_location(div, file12, 224, 8, 8047);
       },
       m: function mount(target, anchor) {
         mount_component(sidebarsection, target, anchor);
@@ -30726,7 +30800,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_heading_slot_4.name,
       type: "slot",
-      source: '(179:12) <svelte:fragment slot=\\"heading\\">',
+      source: '(178:12) <svelte:fragment slot=\\"heading\\">',
       ctx
     });
     return block;
@@ -30756,7 +30830,6 @@ var BeaconLiveAdmin = (() => {
     }
     sidebarsection = new SidebarSection_default({
       props: {
-        clearOnUpdate: true,
         value: (
           /*value*/
           ctx[40]
@@ -30909,13 +30982,13 @@ var BeaconLiveAdmin = (() => {
         attr_dev(input0, "type", "text");
         attr_dev(input0, "class", "w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm");
         attr_dev(input0, "placeholder", "Attribute name");
-        add_location(input0, file12, 209, 12, 7429);
+        add_location(input0, file12, 208, 12, 7409);
         attr_dev(input1, "type", "text");
         attr_dev(input1, "class", "w-full mt-2 py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm");
         attr_dev(input1, "placeholder", "Attribute value");
-        add_location(input1, file12, 216, 12, 7730);
+        add_location(input1, file12, 215, 12, 7710);
         attr_dev(div, "class", "p-4 border-b border-b-gray-100 border-solid");
-        add_location(div, file12, 208, 10, 7359);
+        add_location(div, file12, 207, 10, 7339);
         this.first = div;
       },
       m: function mount(target, anchor) {
@@ -30976,7 +31049,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_each_block6.name,
       type: "each",
-      source: "(182:8) {#each arbitraryAttributes as attribute, index (attribute)}",
+      source: "(181:8) {#each arbitraryAttributes as attribute, index (attribute)}",
       ctx
     });
     return block;
@@ -30988,11 +31061,13 @@ var BeaconLiveAdmin = (() => {
     let current;
     sidebarsection0 = new SidebarSection_default({
       props: {
+        disabled: true,
         value: (
           /*$selectedAstElement*/
           ctx[0].arg
         ),
         large: true,
+        disableDelete: true,
         $$slots: { heading: [create_heading_slot_3] },
         $$scope: { ctx }
       },
@@ -31005,6 +31080,7 @@ var BeaconLiveAdmin = (() => {
     );
     sidebarsection1 = new SidebarSection_default({
       props: {
+        disableDelete: true,
         $$slots: {
           input: [create_input_slot_1],
           heading: [create_heading_slot_2]
@@ -31072,7 +31148,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_if_block_34.name,
       type: "if",
-      source: '(208:6) {#if $selectedAstElement.tag === \\"eex_block\\"}',
+      source: '(207:6) {#if $selectedAstElement.tag === \\"eex_block\\"}',
       ctx
     });
     return block;
@@ -31099,7 +31175,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_heading_slot_3.name,
       type: "slot",
-      source: '(210:10) <svelte:fragment slot=\\"heading\\">',
+      source: '(215:10) <svelte:fragment slot=\\"heading\\">',
       ctx
     });
     return block;
@@ -31126,7 +31202,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_heading_slot_2.name,
       type: "slot",
-      source: '(214:10) <svelte:fragment slot=\\"heading\\">',
+      source: '(219:10) <svelte:fragment slot=\\"heading\\">',
       ctx
     });
     return block;
@@ -31147,7 +31223,7 @@ var BeaconLiveAdmin = (() => {
         this.h();
       },
       h: function hydrate() {
-        add_location(p, file12, 241, 12, 8818);
+        add_location(p, file12, 246, 12, 8915);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, p, anchor);
@@ -31163,7 +31239,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_input_slot_1.name,
       type: "slot",
-      source: '(215:10) <svelte:fragment slot=\\"input\\">',
+      source: '(220:10) <svelte:fragment slot=\\"input\\">',
       ctx
     });
     return block;
@@ -31192,7 +31268,7 @@ var BeaconLiveAdmin = (() => {
       },
       h: function hydrate() {
         attr_dev(div0, "class", "flex rounded-lg outline-dashed outline-2 h-full text-center justify-center items-center");
-        add_location(div0, file12, 256, 12, 9413);
+        add_location(div0, file12, 261, 12, 9536);
         attr_dev(div1, "class", "absolute bg-white opacity-70 w-full h-full p-4");
         attr_dev(div1, "role", "list");
         toggle_class(
@@ -31201,7 +31277,7 @@ var BeaconLiveAdmin = (() => {
           /*isDraggingOver*/
           ctx[3]
         );
-        add_location(div1, file12, 248, 10, 9106);
+        add_location(div1, file12, 253, 10, 9229);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, div1, anchor);
@@ -31259,7 +31335,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_if_block_25.name,
       type: "if",
-      source: "(222:8) {#if $draggedObject && elementCanBeDroppedInTarget($draggedObject)}",
+      source: "(227:8) {#if $draggedComponentDefinition && elementCanBeDroppedInTarget($draggedComponentDefinition)}",
       ctx
     });
     return block;
@@ -31331,7 +31407,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_if_block_16.name,
       type: "if",
-      source: "(236:8) {#if $selectedAstElement.content?.length > 0}",
+      source: "(241:8) {#if $selectedAstElement.content?.length > 0}",
       ctx
     });
     return block;
@@ -31358,7 +31434,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_heading_slot_1.name,
       type: "slot",
-      source: '(244:12) <svelte:fragment slot=\\"heading\\">',
+      source: '(249:12) <svelte:fragment slot=\\"heading\\">',
       ctx
     });
     return block;
@@ -31385,7 +31461,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_heading_slot.name,
       type: "slot",
-      source: '(250:8) <svelte:fragment slot=\\"heading\\">',
+      source: '(255:8) <svelte:fragment slot=\\"heading\\">',
       ctx
     });
     return block;
@@ -31431,10 +31507,10 @@ var BeaconLiveAdmin = (() => {
       },
       h: function hydrate() {
         attr_dev(span, "class", "sr-only");
-        add_location(span, file12, 282, 19, 10418);
+        add_location(span, file12, 287, 19, 10541);
         attr_dev(button, "type", "button");
         attr_dev(button, "class", "bg-red-500 hover:bg-red-700 active:bg-red-800 text-white font-bold py-2 px-4 rounded outline-2 w-full");
-        add_location(button, file12, 277, 10, 10192);
+        add_location(button, file12, 282, 10, 10315);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, button, anchor);
@@ -31478,7 +31554,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_input_slot.name,
       type: "slot",
-      source: '(251:8) <svelte:fragment slot=\\"input\\">',
+      source: '(256:8) <svelte:fragment slot=\\"input\\">',
       ctx
     });
     return block;
@@ -31520,10 +31596,10 @@ var BeaconLiveAdmin = (() => {
       },
       h: function hydrate() {
         attr_dev(div0, "class", "sticky top-0 overflow-y-auto h-screen");
-        add_location(div0, file12, 143, 2, 4431);
+        add_location(div0, file12, 143, 2, 4444);
         attr_dev(div1, "class", "w-64 bg-white");
         attr_dev(div1, "data-test-id", "right-sidebar");
-        add_location(div1, file12, 142, 0, 4372);
+        add_location(div1, file12, 142, 0, 4385);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, div1, anchor);
@@ -31588,7 +31664,7 @@ var BeaconLiveAdmin = (() => {
     let $live;
     let $selectedAstElement;
     let $selectedAstElementId;
-    let $draggedObject;
+    let $draggedComponentDefinition;
     validate_store(page, "page");
     component_subscribe($$self, page, ($$value) => $$invalidate(32, $page = $$value));
     validate_store(live, "live");
@@ -31597,8 +31673,8 @@ var BeaconLiveAdmin = (() => {
     component_subscribe($$self, selectedAstElement, ($$value) => $$invalidate(0, $selectedAstElement = $$value));
     validate_store(selectedAstElementId, "selectedAstElementId");
     component_subscribe($$self, selectedAstElementId, ($$value) => $$invalidate(22, $selectedAstElementId = $$value));
-    validate_store(draggedObject, "draggedObject");
-    component_subscribe($$self, draggedObject, ($$value) => $$invalidate(8, $draggedObject = $$value));
+    validate_store(draggedComponentDefinition, "draggedComponentDefinition");
+    component_subscribe($$self, draggedComponentDefinition, ($$value) => $$invalidate(8, $draggedComponentDefinition = $$value));
     let { $$slots: slots = {}, $$scope } = $$props;
     validate_slots("PropertiesSidebar", slots, []);
     const dispatch2 = createEventDispatcher();
@@ -31717,7 +31793,7 @@ var BeaconLiveAdmin = (() => {
       createEventDispatcher,
       Pill: Pill_default,
       SidebarSection: SidebarSection_default,
-      draggedObject,
+      draggedComponentDefinition,
       live,
       page,
       selectedAstElement,
@@ -31754,7 +31830,7 @@ var BeaconLiveAdmin = (() => {
       $live,
       $selectedAstElement,
       $selectedAstElementId,
-      $draggedObject
+      $draggedComponentDefinition
     });
     $$self.$inject_state = ($$props2) => {
       if ("classList" in $$props2)
@@ -31813,7 +31889,7 @@ var BeaconLiveAdmin = (() => {
       isRootNode,
       sidebarTitle,
       editableAttrs,
-      $draggedObject,
+      $draggedComponentDefinition,
       addArbitraryAttribute,
       saveArbitraryAttribute,
       deleteAttribute,
@@ -31860,6 +31936,117 @@ var BeaconLiveAdmin = (() => {
     default: () => SelectedElementFloatingMenu_default
   });
   var file13 = "svelte/components/SelectedElementFloatingMenu.svelte";
+  function create_if_block9(ctx) {
+    let div;
+    let div_style_value;
+    let t;
+    let dragmenuoption;
+    let current;
+    let if_block = (
+      /*showMenu*/
+      ctx[1] && create_if_block_17(ctx)
+    );
+    dragmenuoption = new DragMenuOption_default({
+      props: { element: (
+        /*$selectedDomElement*/
+        ctx[2]
+      ) },
+      $$inline: true
+    });
+    const block = {
+      c: function create3() {
+        div = element("div");
+        if (if_block)
+          if_block.c();
+        t = space();
+        create_component(dragmenuoption.$$.fragment);
+        this.h();
+      },
+      l: function claim(nodes) {
+        div = claim_element(nodes, "DIV", { class: true, style: true });
+        var div_nodes = children(div);
+        if (if_block)
+          if_block.l(div_nodes);
+        div_nodes.forEach(detach_dev);
+        t = claim_space(nodes);
+        claim_component(dragmenuoption.$$.fragment, nodes);
+        this.h();
+      },
+      h: function hydrate() {
+        attr_dev(div, "class", "selected-element-menu absolute");
+        attr_dev(div, "style", div_style_value = `top: ${/*menuPosition*/
+        ctx[3].y}px; left: ${/*menuPosition*/
+        ctx[3].x}px;`);
+        add_location(div, file13, 39, 2, 1389);
+      },
+      m: function mount(target, anchor) {
+        insert_hydration_dev(target, div, anchor);
+        if (if_block)
+          if_block.m(div, null);
+        ctx[7](div);
+        insert_hydration_dev(target, t, anchor);
+        mount_component(dragmenuoption, target, anchor);
+        current = true;
+      },
+      p: function update2(ctx2, dirty) {
+        if (
+          /*showMenu*/
+          ctx2[1]
+        ) {
+          if (if_block) {
+            if_block.p(ctx2, dirty);
+          } else {
+            if_block = create_if_block_17(ctx2);
+            if_block.c();
+            if_block.m(div, null);
+          }
+        } else if (if_block) {
+          if_block.d(1);
+          if_block = null;
+        }
+        if (!current || dirty & /*menuPosition*/
+        8 && div_style_value !== (div_style_value = `top: ${/*menuPosition*/
+        ctx2[3].y}px; left: ${/*menuPosition*/
+        ctx2[3].x}px;`)) {
+          attr_dev(div, "style", div_style_value);
+        }
+        const dragmenuoption_changes = {};
+        if (dirty & /*$selectedDomElement*/
+        4)
+          dragmenuoption_changes.element = /*$selectedDomElement*/
+          ctx2[2];
+        dragmenuoption.$set(dragmenuoption_changes);
+      },
+      i: function intro(local) {
+        if (current)
+          return;
+        transition_in(dragmenuoption.$$.fragment, local);
+        current = true;
+      },
+      o: function outro(local) {
+        transition_out(dragmenuoption.$$.fragment, local);
+        current = false;
+      },
+      d: function destroy(detaching) {
+        if (detaching) {
+          detach_dev(div);
+          detach_dev(t);
+        }
+        if (if_block)
+          if_block.d();
+        ctx[7](null);
+        destroy_component(dragmenuoption, detaching);
+      }
+    };
+    dispatch_dev("SvelteRegisterBlock", {
+      block,
+      id: create_if_block9.name,
+      type: "if",
+      source: "(34:0) {#if $selectedAstElement}",
+      ctx
+    });
+    return block;
+  }
   function create_if_block_17(ctx) {
     let button;
     let span;
@@ -31886,12 +32073,12 @@ var BeaconLiveAdmin = (() => {
       },
       h: function hydrate() {
         attr_dev(span, "class", "hero-trash");
-        add_location(span, file13, 50, 6, 1803);
+        add_location(span, file13, 51, 8, 1925);
         attr_dev(button, "class", "absolute top-0 -m-3 w-6 h-6 rounded-full flex justify-center items-center bg-red-500 text-white hover:bg-red-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 active:bg-red-800");
         attr_dev(button, "style", button_style_value = `left: ${/*menuPosition*/
-        ctx[2].width}px;`);
+        ctx[3].width}px;`);
         attr_dev(button, "aria-label", "Delete component");
-        add_location(button, file13, 44, 4, 1454);
+        add_location(button, file13, 45, 6, 1564);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, button, anchor);
@@ -31901,7 +32088,7 @@ var BeaconLiveAdmin = (() => {
             button,
             "click",
             /*deleteComponent*/
-            ctx[4],
+            ctx[5],
             false,
             false,
             false,
@@ -31912,8 +32099,8 @@ var BeaconLiveAdmin = (() => {
       },
       p: function update2(ctx2, dirty) {
         if (dirty & /*menuPosition*/
-        4 && button_style_value !== (button_style_value = `left: ${/*menuPosition*/
-        ctx2[2].width}px;`)) {
+        8 && button_style_value !== (button_style_value = `left: ${/*menuPosition*/
+        ctx2[3].width}px;`)) {
           attr_dev(button, "style", button_style_value);
         }
       },
@@ -31929,145 +32116,56 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_if_block_17.name,
       type: "if",
-      source: "(37:2) {#if showMenu}",
-      ctx
-    });
-    return block;
-  }
-  function create_if_block9(ctx) {
-    let dragmenuoption;
-    let current;
-    dragmenuoption = new DragMenuOption_default({ $$inline: true });
-    const block = {
-      c: function create3() {
-        create_component(dragmenuoption.$$.fragment);
-      },
-      l: function claim(nodes) {
-        claim_component(dragmenuoption.$$.fragment, nodes);
-      },
-      m: function mount(target, anchor) {
-        mount_component(dragmenuoption, target, anchor);
-        current = true;
-      },
-      i: function intro(local) {
-        if (current)
-          return;
-        transition_in(dragmenuoption.$$.fragment, local);
-        current = true;
-      },
-      o: function outro(local) {
-        transition_out(dragmenuoption.$$.fragment, local);
-        current = false;
-      },
-      d: function destroy(detaching) {
-        destroy_component(dragmenuoption, detaching);
-      }
-    };
-    dispatch_dev("SvelteRegisterBlock", {
-      block,
-      id: create_if_block9.name,
-      type: "if",
-      source: "(49:0) {#if $selectedElementMenu}",
+      source: "(40:4) {#if showMenu}",
       ctx
     });
     return block;
   }
   function create_fragment13(ctx) {
-    let div;
-    let div_style_value;
-    let t;
-    let if_block1_anchor;
+    let if_block_anchor;
     let current;
-    let if_block0 = (
-      /*showMenu*/
-      ctx[1] && create_if_block_17(ctx)
-    );
-    let if_block1 = (
-      /*$selectedElementMenu*/
-      ctx[3] && create_if_block9(ctx)
+    let if_block = (
+      /*$selectedAstElement*/
+      ctx[4] && create_if_block9(ctx)
     );
     const block = {
       c: function create3() {
-        div = element("div");
-        if (if_block0)
-          if_block0.c();
-        t = space();
-        if (if_block1)
-          if_block1.c();
-        if_block1_anchor = empty();
-        this.h();
+        if (if_block)
+          if_block.c();
+        if_block_anchor = empty();
       },
       l: function claim(nodes) {
-        div = claim_element(nodes, "DIV", { class: true, style: true });
-        var div_nodes = children(div);
-        if (if_block0)
-          if_block0.l(div_nodes);
-        div_nodes.forEach(detach_dev);
-        t = claim_space(nodes);
-        if (if_block1)
-          if_block1.l(nodes);
-        if_block1_anchor = empty();
-        this.h();
-      },
-      h: function hydrate() {
-        attr_dev(div, "class", "selected-element-menu absolute");
-        attr_dev(div, "style", div_style_value = `top: ${/*menuPosition*/
-        ctx[2].y}px; left: ${/*menuPosition*/
-        ctx[2].x}px;`);
-        add_location(div, file13, 38, 0, 1291);
+        if (if_block)
+          if_block.l(nodes);
+        if_block_anchor = empty();
       },
       m: function mount(target, anchor) {
-        insert_hydration_dev(target, div, anchor);
-        if (if_block0)
-          if_block0.m(div, null);
-        ctx[6](div);
-        insert_hydration_dev(target, t, anchor);
-        if (if_block1)
-          if_block1.m(target, anchor);
-        insert_hydration_dev(target, if_block1_anchor, anchor);
+        if (if_block)
+          if_block.m(target, anchor);
+        insert_hydration_dev(target, if_block_anchor, anchor);
         current = true;
       },
       p: function update2(ctx2, [dirty]) {
         if (
-          /*showMenu*/
-          ctx2[1]
+          /*$selectedAstElement*/
+          ctx2[4]
         ) {
-          if (if_block0) {
-            if_block0.p(ctx2, dirty);
-          } else {
-            if_block0 = create_if_block_17(ctx2);
-            if_block0.c();
-            if_block0.m(div, null);
-          }
-        } else if (if_block0) {
-          if_block0.d(1);
-          if_block0 = null;
-        }
-        if (!current || dirty & /*menuPosition*/
-        4 && div_style_value !== (div_style_value = `top: ${/*menuPosition*/
-        ctx2[2].y}px; left: ${/*menuPosition*/
-        ctx2[2].x}px;`)) {
-          attr_dev(div, "style", div_style_value);
-        }
-        if (
-          /*$selectedElementMenu*/
-          ctx2[3]
-        ) {
-          if (if_block1) {
-            if (dirty & /*$selectedElementMenu*/
-            8) {
-              transition_in(if_block1, 1);
+          if (if_block) {
+            if_block.p(ctx2, dirty);
+            if (dirty & /*$selectedAstElement*/
+            16) {
+              transition_in(if_block, 1);
             }
           } else {
-            if_block1 = create_if_block9(ctx2);
-            if_block1.c();
-            transition_in(if_block1, 1);
-            if_block1.m(if_block1_anchor.parentNode, if_block1_anchor);
+            if_block = create_if_block9(ctx2);
+            if_block.c();
+            transition_in(if_block, 1);
+            if_block.m(if_block_anchor.parentNode, if_block_anchor);
           }
-        } else if (if_block1) {
+        } else if (if_block) {
           group_outros();
-          transition_out(if_block1, 1, 1, () => {
-            if_block1 = null;
+          transition_out(if_block, 1, 1, () => {
+            if_block = null;
           });
           check_outros();
         }
@@ -32075,24 +32173,19 @@ var BeaconLiveAdmin = (() => {
       i: function intro(local) {
         if (current)
           return;
-        transition_in(if_block1);
+        transition_in(if_block);
         current = true;
       },
       o: function outro(local) {
-        transition_out(if_block1);
+        transition_out(if_block);
         current = false;
       },
       d: function destroy(detaching) {
         if (detaching) {
-          detach_dev(div);
-          detach_dev(t);
-          detach_dev(if_block1_anchor);
+          detach_dev(if_block_anchor);
         }
-        if (if_block0)
-          if_block0.d();
-        ctx[6](null);
-        if (if_block1)
-          if_block1.d(detaching);
+        if (if_block)
+          if_block.d(detaching);
       }
     };
     dispatch_dev("SvelteRegisterBlock", {
@@ -32108,13 +32201,16 @@ var BeaconLiveAdmin = (() => {
     let showMenu;
     let $selectedAstElementId;
     let $selectedDomElement;
-    let $selectedElementMenu;
+    let $isDragging;
+    let $selectedAstElement;
     validate_store(selectedAstElementId, "selectedAstElementId");
-    component_subscribe($$self, selectedAstElementId, ($$value) => $$invalidate(7, $selectedAstElementId = $$value));
+    component_subscribe($$self, selectedAstElementId, ($$value) => $$invalidate(8, $selectedAstElementId = $$value));
     validate_store(selectedDomElement, "selectedDomElement");
-    component_subscribe($$self, selectedDomElement, ($$value) => $$invalidate(5, $selectedDomElement = $$value));
-    validate_store(selectedElementMenu, "selectedElementMenu");
-    component_subscribe($$self, selectedElementMenu, ($$value) => $$invalidate(3, $selectedElementMenu = $$value));
+    component_subscribe($$self, selectedDomElement, ($$value) => $$invalidate(2, $selectedDomElement = $$value));
+    validate_store(isDragging, "isDragging");
+    component_subscribe($$self, isDragging, ($$value) => $$invalidate(6, $isDragging = $$value));
+    validate_store(selectedAstElement, "selectedAstElement");
+    component_subscribe($$self, selectedAstElement, ($$value) => $$invalidate(4, $selectedAstElement = $$value));
     let { $$slots: slots = {}, $$scope } = $$props;
     validate_slots("SelectedElementFloatingMenu", slots, []);
     let menuDOMElement;
@@ -32139,25 +32235,28 @@ var BeaconLiveAdmin = (() => {
       });
     }
     $$self.$capture_state = () => ({
+      selectedAstElement,
       DragMenuOption: DragMenuOption_default,
+      isDragging,
       selectedAstElementId,
       selectedDomElement,
-      selectedElementMenu,
       resetSelection,
       deleteAstNode,
+      getBoundingRect,
       menuDOMElement,
       menuPosition,
       deleteComponent,
       showMenu,
       $selectedAstElementId,
       $selectedDomElement,
-      $selectedElementMenu
+      $isDragging,
+      $selectedAstElement
     });
     $$self.$inject_state = ($$props2) => {
       if ("menuDOMElement" in $$props2)
         $$invalidate(0, menuDOMElement = $$props2.menuDOMElement);
       if ("menuPosition" in $$props2)
-        $$invalidate(2, menuPosition = $$props2.menuPosition);
+        $$invalidate(3, menuPosition = $$props2.menuPosition);
       if ("showMenu" in $$props2)
         $$invalidate(1, showMenu = $$props2.showMenu);
     };
@@ -32165,23 +32264,23 @@ var BeaconLiveAdmin = (() => {
       $$self.$inject_state($$props.$$inject);
     }
     $$self.$$.update = () => {
-      if ($$self.$$.dirty & /*$selectedDomElement*/
-      32) {
+      if ($$self.$$.dirty & /*$selectedDomElement, $isDragging*/
+      68) {
         $:
-          $$invalidate(1, showMenu = !!$selectedDomElement && $selectedDomElement.checkVisibility());
+          $$invalidate(1, showMenu = !!$selectedDomElement && !$isDragging);
       }
       if ($$self.$$.dirty & /*showMenu, menuDOMElement, $selectedDomElement*/
-      35) {
+      7) {
         $:
-          $$invalidate(2, menuPosition = (() => {
+          $$invalidate(3, menuPosition = (() => {
             if (!(showMenu && document && menuDOMElement && $selectedDomElement)) {
               return { x: 0, y: 0, width: 0, height: 0 };
             }
-            let relativeWrapperRect3 = menuDOMElement.closest(".relative").getBoundingClientRect();
-            let currentRect = $selectedDomElement.getBoundingClientRect();
+            let relativeWrapperRect2 = getBoundingRect(menuDOMElement.closest(".relative"));
+            let currentRect = getBoundingRect($selectedDomElement);
             return {
-              x: currentRect.x - relativeWrapperRect3.x,
-              y: currentRect.y - relativeWrapperRect3.y,
+              x: currentRect.x - relativeWrapperRect2.x,
+              y: currentRect.y - relativeWrapperRect2.y,
               width: currentRect.width,
               height: currentRect.height
             };
@@ -32191,10 +32290,11 @@ var BeaconLiveAdmin = (() => {
     return [
       menuDOMElement,
       showMenu,
-      menuPosition,
-      $selectedElementMenu,
-      deleteComponent,
       $selectedDomElement,
+      menuPosition,
+      $selectedAstElement,
+      deleteComponent,
+      $isDragging,
       div_binding
     ];
   }
@@ -32284,7 +32384,7 @@ var BeaconLiveAdmin = (() => {
         attr_dev(div, "class", "flex min-h-screen bg-gray-100");
         attr_dev(div, "id", "ui-builder-app-container");
         attr_dev(div, "data-test-id", "app-container");
-        add_location(div, file14, 28, 0, 921);
+        add_location(div, file14, 33, 0, 1011);
       },
       m: function mount(target, anchor) {
         mount_component(backdrop, target, anchor);
@@ -32368,6 +32468,9 @@ var BeaconLiveAdmin = (() => {
     let { tailwindConfig: tailwindConfig2 } = $$props;
     let { tailwindInput: tailwindInput2 } = $$props;
     let { live: live2 } = $$props;
+    onDestroy(() => {
+      resetStores();
+    });
     $$self.$$.on_mount.push(function() {
       if (components === void 0 && !("components" in $$props || $$self.$$.bound[$$self.$$.props["components"]])) {
         console.warn("<UiBuilder> was created without expected prop 'components'");
@@ -32404,12 +32507,14 @@ var BeaconLiveAdmin = (() => {
         $$invalidate(4, live2 = $$props2.live);
     };
     $$self.$capture_state = () => ({
+      onDestroy,
       ComponentsSidebar: ComponentsSidebar_default,
       Backdrop: Backdrop_default,
       PagePreview: PagePreview_default,
       PropertiesSidebar: PropertiesSidebar_default,
       SelectedElementFloatingMenu: SelectedElementFloatingMenu_default,
       pageStore: page,
+      resetStores,
       liveStore: live,
       tailwindConfigStore: tailwindConfig,
       tailwindInputStore: tailwindInput,
