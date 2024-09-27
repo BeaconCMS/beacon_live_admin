@@ -98,12 +98,29 @@ jobs:
 
     env:
       MIX_ENV: e2e
+      PHOENIX_VERSION: ${{matrix.phoenix-version}}
+      PHOENIX_LIVE_VIEW_VERSION: ${{matrix.phoenix-live-view-version}}
       ImageOS: ubuntu20
       HOME: /root
 
     runs-on: ubuntu-20.04
     container:
       image: mcr.microsoft.com/playwright:v1.47.1-focal
+
+    services:
+      postgres:
+        image: postgres:13.1
+        env:
+          POSTGRES_DB: beacon_live_admin_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
 
     steps:
       - name: Checkout code
@@ -141,7 +158,12 @@ jobs:
 
       - run: npm run setup
 
-      - run: npm run e2e:test
+      - name: Run e2e tests
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:${{job.services.postgres.ports[5432]}}/beacon_live_admin_test
+        run: |
+          epmd -daemon
+          npm run e2e:test
 
   quality:
     name: "quality: OTP ${{matrix.otp}} | Elixir ${{matrix.elixir}} | Phoenix ${{matrix.phoenix-version}} | LiveView ${{matrix.phoenix-live-view-version}}"
