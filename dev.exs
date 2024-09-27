@@ -11,6 +11,7 @@
 Logger.configure(level: :debug)
 
 Application.put_env(:beacon_live_admin, DemoWeb.Endpoint,
+  adapter: Bandit.PhoenixAdapter,
   url: [host: "localhost"],
   secret_key_base: "TrXbWpjZWxk0GXclXOHFCoufQh1oRK0N5rev5GcpbPCsuf2C/kbYlMgeEEAXPayF",
   live_view: [signing_salt: "nXvN+c8y"],
