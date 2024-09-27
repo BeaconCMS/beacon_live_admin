@@ -1,6 +1,6 @@
 Application.put_env(:beacon_live_admin, Beacon.LiveAdminTest.E2E.Endpoint,
   http: [ip: {127, 0, 0, 1}, port: 4004],
-  # adapter: Bandit.PhoenixAdapter,
+  adapter: Bandit.PhoenixAdapter,
   server: true,
   live_view: [signing_salt: "aaaaaaaa"],
   secret_key_base: String.duplicate("a", 64),
