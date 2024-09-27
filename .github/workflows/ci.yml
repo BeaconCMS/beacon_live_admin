@@ -103,14 +103,14 @@ jobs:
 
     runs-on: ubuntu-20.04
     container:
-      image: mcr.microsoft.com/playwright:v1.47.1-jammy
+      image: mcr.microsoft.com/playwright:v1.47.1-focal
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Install OS packages
-        run: apt update && apt -y install unzip libssl-dev
+        run: apt update && apt -y install unzip openssl
 
       - name: Set up Elixir
         uses: erlef/setup-beam@v1
