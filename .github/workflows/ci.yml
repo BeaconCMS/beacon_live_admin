@@ -98,10 +98,10 @@ jobs:
 
     env:
       MIX_ENV: e2e
-      ImageOS: ubuntu22
+      ImageOS: ubuntu20
       HOME: /root
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     container:
       image: mcr.microsoft.com/playwright:v1.47.1-jammy
 
