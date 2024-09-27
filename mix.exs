@@ -68,6 +68,7 @@ defmodule Beacon.LiveAdmin.MixProject do
       {:live_monaco_editor, "~> 0.1"},
 
       # Dev, Test, Docs
+      {:bandit, "~> 1.0", only: :dev, optional: true},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:ex_doc, "~> 0.29", only: :dev, runtime: false}
     ]
