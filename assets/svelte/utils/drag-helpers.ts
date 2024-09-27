@@ -152,16 +152,16 @@ export function findHoveredSiblingIndex(
 }
 
 function calculateOverlap(rect: LocationInfo, draggedRect: LocationInfo): number {
-  const xOverlap = Math.max(0, Math.min(rect.right, draggedRect.right) - Math.max(rect.left, draggedRect.left));
-  const yOverlap = Math.max(0, Math.min(rect.bottom, draggedRect.bottom) - Math.max(rect.top, draggedRect.top));
-  
-  const overlapArea = xOverlap * yOverlap;
-  const rectArea = rect.width * rect.height;
-  const draggedRectArea = draggedRect.width * draggedRect.height;
-  
-  const minArea = Math.min(rectArea, draggedRectArea);
-  
-  return (100 * overlapArea) / minArea;
+  const xOverlap = Math.max(0, Math.min(rect.right, draggedRect.right) - Math.max(rect.left, draggedRect.left))
+  const yOverlap = Math.max(0, Math.min(rect.bottom, draggedRect.bottom) - Math.max(rect.top, draggedRect.top))
+
+  const overlapArea = xOverlap * yOverlap
+  const rectArea = rect.width * rect.height
+  const draggedRectArea = draggedRect.width * draggedRect.height
+
+  const minArea = Math.min(rectArea, draggedRectArea)
+
+  return (100 * overlapArea) / minArea
 }
 
 function calculateCenterDistance(rect1: LocationInfo, rect2: LocationInfo): number {
