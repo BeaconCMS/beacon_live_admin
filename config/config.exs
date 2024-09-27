@@ -6,9 +6,11 @@ config :logger, :console,
 
 config :phoenix, :json_library, Jason
 
-if Mix.env() == :dev do
+if Mix.env() in [:dev, :e2e] do
+  config :tailwind, version: "3.4.4"
+
   config :tailwind,
-    version: "3.4.1",
+    version: "3.4.4",
     beacon_live_admin: [
       args: ~w(
       --minify
@@ -20,4 +22,6 @@ if Mix.env() == :dev do
     ]
 end
 
-if config_env() in [:test, :e2e], do: import_config("#{config_env()}.exs")
+if Mix.env() in [:test, :e2e] do
+  config :logger, level: :error
+end
