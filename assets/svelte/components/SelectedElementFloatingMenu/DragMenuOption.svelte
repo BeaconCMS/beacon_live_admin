@@ -156,12 +156,8 @@
     return dragElementInfo.parentElementClone.children.item(dragElementInfo.selectedIndex)
   }
 
-  function findSwappedIndexes(
-    dragDirection: DragDirection,
-    mouseDiff: Coords,
-  ): { currentIndex: number; destinationIndex: number } {
+  function findSwappedIndexes(mouseDiff: Coords): { currentIndex: number; destinationIndex: number } {
     let hoveredElementIndex = findHoveredSiblingIndex(
-      dragDirection,
       mouseDiff,
       dragElementInfo.originalSiblingRects,
       dragElementInfo.selectedIndex,
@@ -254,14 +250,14 @@
 
   let placeholderStyle: string = null
   let newIndex: number = null
-  function updateSiblingsPositioning(dragDirection: DragDirection, mouseDiff, e) {
+  function updateSiblingsPositioning(mouseDiff) {
     if (!relativeWrapperRect) {
       relativeWrapperRect = document
         .getElementById("ui-builder-app-container")
         .closest(".relative")
         .getBoundingClientRect()
     }
-    let { currentIndex, destinationIndex } = findSwappedIndexes(dragDirection, mouseDiff)
+    let { currentIndex, destinationIndex } = findSwappedIndexes(mouseDiff)
     if (newIndex !== destinationIndex) {
       repositionSiblings(currentIndex, destinationIndex)
       repositionPlaceholder(destinationIndex)
@@ -278,7 +274,7 @@
       y: dragDirection === "horizontal" ? 0 : e.y - mouseDownEvent.y,
     }
 
-    updateSiblingsPositioning(dragDirection, mouseDiff, e)
+    updateSiblingsPositioning(mouseDiff)
     repositionDragHandle(mouseDiff)
   }
 </script>
