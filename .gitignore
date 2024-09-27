@@ -64,7 +64,7 @@ node_modules/
 node_modules
 
 # e2e test
+/test/e2e/test-results/
 /blob-report/
 /playwright-report/
 /playwright/.cache/
-/test-results/
