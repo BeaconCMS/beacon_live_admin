@@ -60,7 +60,6 @@ defmodule Beacon.LiveAdmin.MixProject do
 
       # Runtime
       {:ecto, "~> 3.6"},
-      {:plug_cowboy, "~> 2.5"},
       {:phoenix_html, "~> 4.0"},
       {:live_svelte, "~> 0.12"},
       {:floki, ">= 0.30.0"},
@@ -70,6 +69,7 @@ defmodule Beacon.LiveAdmin.MixProject do
       {:live_monaco_editor, "~> 0.1"},
 
       # Dev, Test, Docs
+      {:bandit, "~> 1.0", only: :dev, optional: true},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:ex_doc, "~> 0.29", only: :dev, runtime: false}
     ]

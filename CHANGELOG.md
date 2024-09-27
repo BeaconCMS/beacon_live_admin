@@ -6,6 +6,9 @@
   * Reorder pages - [#261](https://github.com/BeaconCMS/beacon_live_admin/pull/261)
   * Added Shared Info Handlers (`info_handle` callbacks) page - [#210](https://github.com/BeaconCMS/beacon_live_admin/pull/210) by [@ddink](https://github.com/ddink)
 
+### Fixes
+  * Remove unnecessary `:plug_cowboy` dependency - [#262](https://github.com/BeaconCMS/beacon_live_admin/pull/262)
+
 ## 0.1.0-rc.2 (2024-09-21
 
 ### Breaking Changes
