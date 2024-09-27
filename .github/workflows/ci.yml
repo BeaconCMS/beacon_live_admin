@@ -83,6 +83,63 @@ jobs:
           epmd -daemon
           mix test
 
+  e2e-test:
+    name: "e2e-test: OTP ${{matrix.otp}} | Elixir ${{matrix.elixir}} | Phoenix ${{matrix.phoenix-version}} | LiveView ${{matrix.phoenix-live-view-version}}"
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # latest
+          - otp: "27"
+            elixir: "1.17"
+            phoenix-version: "~> 1.7"
+            phoenix-live-view-version: "~> 0.20"
+
+    env:
+      MIX_ENV: e2e
+      ImageOS: ubuntu22
+      HOME: /root
+
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.47.1-jammy
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          elixir-version: ${{ matrix.elixir }}
+          otp-version: ${{ matrix.otp }}
+
+      - name: Cache mix deps
+        uses: actions/cache@v4
+        id: cache-deps
+        with:
+          path: |
+            deps
+            _build
+          key: mix-${{ env.MIX_ENV }}-${{ runner.os }}-${{ matrix.otp }}-${{ matrix.elixir }}-${{ matrix.phoenix-version }}-${{ matrix.phoenix-live-view-version }}-${{ hashFiles('**/mix.lock') }}
+          restore-keys: |
+            mix-${{ env.MIX_ENV }}-${{ runner.os }}-${{ matrix.otp }}-${{ matrix.elixir }}-${{ matrix.phoenix-version }}-${{ matrix.phoenix-live-view-version }}-${{ hashFiles('**/mix.lock') }}
+
+      - run: mix deps.get
+
+      - name: Restore npm cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - run: npm run setup
+
+      - run: npm run e2e:test
+
   quality:
     name: "quality: OTP ${{matrix.otp}} | Elixir ${{matrix.elixir}} | Phoenix ${{matrix.phoenix-version}} | LiveView ${{matrix.phoenix-live-view-version}}"
 
