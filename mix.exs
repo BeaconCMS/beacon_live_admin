@@ -59,7 +59,6 @@ defmodule Beacon.LiveAdmin.MixProject do
 
       # Runtime
       {:ecto, "~> 3.6"},
-      {:plug_cowboy, "~> 2.5"},
       {:phoenix_html, "~> 4.0"},
       {:live_svelte, "~> 0.12"},
       {:floki, ">= 0.30.0"},
