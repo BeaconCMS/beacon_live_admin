@@ -1,12 +1,7 @@
 <script lang="ts" context="module">
   import { writable, type Writable } from "svelte/store"
   import { page, selectedAstElementId, parentOfSelectedAstElement } from "$lib/stores/page"
-  import {
-    findHoveredSiblingIndex,
-    getBoundingRect,
-    getDragDirection,
-    type Coords,
-  } from "$lib/utils/drag-helpers"
+  import { findHoveredSiblingIndex, getBoundingRect, getDragDirection, type Coords } from "$lib/utils/drag-helpers"
   import { live } from "$lib/stores/live"
 
   export type LocationInfo = Omit<DOMRect, "toJSON"> | DOMRect
@@ -291,9 +286,10 @@
     class="rounded-full w-6 h-6 flex justify-center items-center absolute bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 active:bg-blue-800 transform"
     style={$dragHandleStyle}
   >
-    <span 
+    <span
       class:hero-arrows-right-left={dragDirection === "horizontal"}
       class:hero-arrows-up-down={dragDirection === "vertical"}
-      class:hero-arrows-pointing-out={dragDirection === "both"}></span>
+      class:hero-arrows-pointing-out={dragDirection === "both"}
+    ></span>
   </button>
 {/if}
