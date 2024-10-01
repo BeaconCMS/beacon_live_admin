@@ -1,6 +1,7 @@
-// import { test, expect } from "./test-fixtures";
-import { test, expect } from "@playwright/test";
-const { syncLV, attributeMutations } = require("./utils");
+import { test, expect } from "./test-fixtures";
+const { syncLV } = require("./utils");
+
+test.use({ scenario: "basic" });
 
 test("renders", async ({ page }) => {
   await page.goto("/admin");
@@ -19,6 +20,16 @@ test("shows the list of available sites", async ({ page }) => {
   await expect(page.locator("h2#admin-sites")).toHaveText("Sites");
 
   await expect(page.getByRole("heading", { name: siteName })).toBeVisible();
+});
+
+test("shows the list of available pages", async ({ page }) => {
+  const siteName = "site_a";
+
+  await page.goto("/admin/site_a/pages");
+  await syncLV(page);
+
+  // FIXME: write a proper assert
+  await expect(page.locator("span").filter({ hasText: "/home" })).toHaveCount(1);
 });
 
 [

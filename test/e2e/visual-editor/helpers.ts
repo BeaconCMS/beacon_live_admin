@@ -1,4 +1,3 @@
-
 import { expect, type Page as PlayWrightPage } from '@playwright/test';
 
 export async function startDragging(page: PlayWrightPage) {

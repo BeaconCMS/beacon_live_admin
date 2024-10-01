@@ -1,24 +1,21 @@
-import {
-  test as baseTest,
-  BrowserContext,
-  expect,
-  Page,
-} from "@playwright/test";
+// https://mfeckie.dev/blog/testing-liveview-with-playwright
+
+import { test as baseTest, expect, Page } from "@playwright/test";
 
 interface TestMetadata {
   page: Page;
+  scenario: string;
 }
 
 export const test = baseTest.extend<TestMetadata>({
-  page: async ({ browser }, use) => {
+  scenario: "",
+  page: async ({ browser, scenario }, use) => {
     // This checks out the DB and gets the user agent string
     const resp = await fetch("http://localhost:4020/sandbox", {
       method: "POST",
     });
 
     const userAgentString = await resp.text();
-
-    console.log("User agent string: ", userAgentString);
 
     // We setup a new browser context with the user agent string
     // This allows the database to be sandboxed and provides isolation
@@ -28,6 +25,16 @@ export const test = baseTest.extend<TestMetadata>({
     });
 
     const page = await context.newPage();
+
+    console.log(`Running test with scenario: ${scenario}`);
+    const r = await page.request.post(
+      `http://localhost:4020/fixtures/${scenario}`,
+      {
+        headers: {
+          "user-agent": userAgentString,
+        },
+      },
+    );
 
     await use(page);
 

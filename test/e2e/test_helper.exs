@@ -1,3 +1,5 @@
+Code.require_file("fixtures.ex", __DIR__)
+
 Application.put_env(:beacon_live_admin, :ecto_repos, [Beacon.LiveAdminTest.E2E.Repo])
 
 Application.put_env(
@@ -56,6 +58,10 @@ defmodule Beacon.LiveAdminTest.E2E.Router do
   use Beacon.LiveAdmin.Router
   import Phoenix.LiveView.Router
 
+  pipeline :api do
+    plug :accepts, ["json"]
+  end
+
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
@@ -65,6 +71,11 @@ defmodule Beacon.LiveAdminTest.E2E.Router do
 
   pipeline :beacon_admin do
     plug Beacon.LiveAdmin.Plug
+  end
+
+  scope "/fixtures" do
+    pipe_through :api
+    post "/:scenario", Beacon.LiveAdminTest.E2E.FixturesController, :fixture
   end
 
   scope "/admin" do
@@ -90,6 +101,7 @@ defmodule Beacon.LiveAdminTest.E2E.Endpoint do
 
   socket "/live", Phoenix.LiveView.Socket, websocket: [connect_info: [:user_agent, session: @session_options]]
 
+  # https://hexdocs.pm/phoenix_ecto/Phoenix.Ecto.SQL.Sandbox.html#module-acceptance-tests-with-liveviews
   plug Phoenix.Ecto.SQL.Sandbox,
     at: "/sandbox",
     repo: Beacon.LiveAdminTest.E2E.Repo,
@@ -127,17 +139,32 @@ defmodule Beacon.LiveAdminTest.E2E.Endpoint do
   defp halt(conn, _opts), do: conn
 end
 
+defmodule Beacon.LiveAdminTest.E2E.FixturesController do
+  use Phoenix.Controller, formats: [:html, :json]
+  import Plug.Conn
+
+  def fixture(conn, %{"scenario" => scenario}) do
+    case Plug.Conn.get_req_header(conn, "user-agent") do
+      [metadata | _] ->
+        Phoenix.Ecto.SQL.Sandbox.allow(metadata, Ecto.Adapters.SQL.Sandbox)
+    end
+
+    Beacon.LiveAdminTest.E2E.Fixtures.scenario(scenario) |> dbg
+
+    send_resp(conn, 200, "")
+  end
+end
+
 defmodule Beacon.LiveAdminTest.E2E.Migrations.AddBeaconTables do
   use Ecto.Migration
   def up, do: Beacon.Migration.up()
   def down, do: Beacon.Migration.up()
 end
 
-{:ok, _} = Ecto.Adapters.Postgres.ensure_all_started(Beacon.LiveAdminTest.E2E.Repo, :temporary)
-_ = Ecto.Adapters.Postgres.storage_down(Beacon.LiveAdminTest.E2E.Repo.config())
-:ok = Ecto.Adapters.Postgres.storage_up(Beacon.LiveAdminTest.E2E.Repo.config())
+Beacon.LiveAdminTest.E2E.Repo.__adapter__().storage_down(Beacon.LiveAdminTest.E2E.Repo.config())
+Beacon.LiveAdminTest.E2E.Repo.__adapter__().storage_up(Beacon.LiveAdminTest.E2E.Repo.config())
 {:ok, _pid} = Beacon.LiveAdminTest.E2E.Repo.start_link()
-:ok = Ecto.Migrator.up(Beacon.LiveAdminTest.E2E.Repo, 0, Beacon.LiveAdminTest.E2E.Migrations.AddBeaconTables, log: false)
+:ok = Ecto.Migrator.up(Beacon.LiveAdminTest.E2E.Repo, 0, Beacon.LiveAdminTest.E2E.Migrations.AddBeaconTables)
 
 {:ok, _} = Application.ensure_all_started(:beacon)
 

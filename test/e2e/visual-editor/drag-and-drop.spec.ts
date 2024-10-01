@@ -1,7 +1,11 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from "../test-fixtures";
+const { syncLV } = require("../utils");
 import { dragTo, startDragging, verifyOrder } from './helpers';
 
-const siteName = 'dockyard_com';
+const siteName = 'site_a';
+const pagePath = "/drag-n-drop";
+
+test.use({ scenario: "drag_n_drop" });
 
 /*
     Instead of all these steps, we could also go to the edit page directly,
@@ -11,9 +15,10 @@ const siteName = 'dockyard_com';
 */
 test.beforeEach(async ({ page }) => {
     await page.goto(`/admin/${siteName}/pages`);
-    await page.getByRole('searchbox').fill('dnd');
+    await syncLV(page);
+    await page.getByRole("searchbox").fill("drag-n-drop");
     // note: it navigates when clicking the td's, not the tr
-    await page.getByRole('cell', { name: '/test-dnd', exact: true }).click();
+    await page.getByRole('cell', { name: pagePath, exact: true }).click();
     // Switch to visual editor
     await page.getByRole('button', { name: 'Visual Editor' }).click();
 });
@@ -21,6 +26,7 @@ test.beforeEach(async ({ page }) => {
 // Note: while dragging, only the element clones are visible.
 // On drop, the clones get removed and the original elements will be visible again
 test('It shows clones and placeholder for initiated drop location', async ({ page }) => {
+    await syncLV(page);
     const firstItem = page.getByTestId('margin-row-item-1');
     const dragButton = page.getByTestId('drag-button');
 
