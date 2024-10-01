@@ -24,9 +24,12 @@ export function mouseDiff(mouseMovement: CoordsDiff): Coords {
   }
 }
 
+function centerInAxis(rect: DOMRect, axis: "x" | "y"): number {
+  return axis === "x" ? rect.x + rect.width / 2 : rect.y + rect.height / 2
+}
 // Detects if elements flow generally in an horizontal direction, a vertical one or
 // both (e.g. they form a grid or overflow to the the next line)
-function detectFlow(rects) {
+function detectFlow(rects: DOMRect[]) {
   let horizontal = false
   let vertical = false
 
@@ -35,8 +38,11 @@ function detectFlow(rects) {
     let prevRect = rects[i - 1]
     let currentRect = rects[i]
 
-    let xChange = Math.abs(currentRect.x - prevRect.x)
-    let yChange = Math.abs(currentRect.y - prevRect.y)
+    // Use the centers in each axis to determine flow, not the top/left corners because
+    // when elements have different heights/widths but are vertically/horizontally aligned
+    // their corners might not be aligned but the general direction is still clear
+    let xChange = Math.abs(centerInAxis(currentRect, "x") - centerInAxis(prevRect, "x"))
+    let yChange = Math.abs(centerInAxis(currentRect, "y") - centerInAxis(prevRect, "y"))
 
     // Check for horizontal flow: significant x change with minimal y change
     if (xChange > threshold && yChange < threshold) {
@@ -69,7 +75,9 @@ export function getDragDirection(element: Element): DragDirection {
     return "vertical"
   }
 
-  let rects = Array.from(parentEl.children).map((child) => child.getBoundingClientRect())
+  const siblings = Array.from(parentEl.children)
+  const rects = siblings.map((el) => el.getBoundingClientRect())
+
   return detectFlow(rects)
 }
 
@@ -119,7 +127,6 @@ export function getBoundingRect(el: Element): LocationInfo {
 // If there is a tie (which can happen when the element being dragged is bigger and completely overlaps
 // more than one element), this picks the one whose center is closest to the center of the dragged element.
 export function findHoveredSiblingIndex(
-  dragDirection: DragDirection,
   mouseDiff: Coords,
   siblingRects: LocationInfo[],
   selectedIndex: number,
@@ -130,7 +137,7 @@ export function findHoveredSiblingIndex(
   for (let i = 0; i < siblingRects.length; i++) {
     if (i !== selectedIndex) {
       const rect = siblingRects[i]
-      const overlap = calculateOverlap(rect, currentRect, dragDirection)
+      const overlap = calculateOverlap(rect, currentRect)
       if (overlap === 0) {
         continue
       }
@@ -152,16 +159,17 @@ export function findHoveredSiblingIndex(
   return bestMatchIndex
 }
 
-function calculateOverlap(rect: LocationInfo, draggedRect: LocationInfo, dragDirection: DragDirection): number {
-  if (dragDirection === "horizontal") {
-    const xOverlap = Math.max(0, Math.min(rect.right, draggedRect.right) - Math.max(rect.left, draggedRect.left))
-    return (100 * xOverlap) / Math.min(rect.width, draggedRect.width)
-  } else if (dragDirection === "vertical") {
-    const yOverlap = Math.max(0, Math.min(rect.bottom, draggedRect.bottom) - Math.max(rect.top, draggedRect.top))
-    return (100 * yOverlap) / Math.min(rect.height, draggedRect.height)
-  } else {
-    alert("Bidirational drag not supported yet")
-  }
+function calculateOverlap(rect: LocationInfo, draggedRect: LocationInfo): number {
+  const xOverlap = Math.max(0, Math.min(rect.right, draggedRect.right) - Math.max(rect.left, draggedRect.left))
+  const yOverlap = Math.max(0, Math.min(rect.bottom, draggedRect.bottom) - Math.max(rect.top, draggedRect.top))
+
+  const overlapArea = xOverlap * yOverlap
+  const rectArea = rect.width * rect.height
+  const draggedRectArea = draggedRect.width * draggedRect.height
+
+  const minArea = Math.min(rectArea, draggedRectArea)
+
+  return (100 * overlapArea) / minArea
 }
 
 function calculateCenterDistance(rect1: LocationInfo, rect2: LocationInfo): number {
