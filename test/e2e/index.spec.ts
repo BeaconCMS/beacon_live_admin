@@ -1,8 +1,9 @@
+// import { test, expect } from "./test-fixtures";
 import { test, expect } from "@playwright/test";
 const { syncLV, attributeMutations } = require("./utils");
 
 test("renders", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/admin");
   await syncLV(page);
 
   await expect(page).toHaveTitle("Beacon LiveAdmin");
@@ -12,7 +13,7 @@ test("renders", async ({ page }) => {
 test("shows the list of available sites", async ({ page }) => {
   const siteName = "site_a";
 
-  await page.goto("/");
+  await page.goto("/admin");
   await syncLV(page);
 
   await expect(page.locator("h2#admin-sites")).toHaveText("Sites");
@@ -34,14 +35,14 @@ test("shows the list of available sites", async ({ page }) => {
   const siteName = "site_a";
 
   test(`shows link for ${name}`, async ({ page, baseURL }) => {
-    await page.goto("/");
+    await page.goto("/admin");
     await syncLV(page);
 
     const link = page.getByRole("link").nth(index);
 
     await expect(link).toBeVisible();
     await expect(link).toHaveText(name);
-    await expect(link).toHaveAttribute("href", `/${siteName}/${path}`);
+    await expect(link).toHaveAttribute("href", `/admin/${siteName}/${path}`);
 
     await link.click();
     await syncLV(page);

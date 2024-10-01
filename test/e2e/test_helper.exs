@@ -1,5 +1,17 @@
+Application.put_env(:beacon_live_admin, :ecto_repos, [Beacon.LiveAdminTest.E2E.Repo])
+
+Application.put_env(
+  :beacon_live_admin,
+  Beacon.LiveAdminTest.E2E.Repo,
+  url: System.get_env("DATABASE_URL") || "postgres://localhost:5432/beacon_live_admin_test",
+  pool: Ecto.Adapters.SQL.Sandbox,
+  pool_size: System.schedulers_online() * 2,
+  stacktrace: true,
+  show_sensitive_data_on_connection_error: true
+)
+
 Application.put_env(:beacon_live_admin, Beacon.LiveAdminTest.E2E.Endpoint,
-  http: [ip: {127, 0, 0, 1}, port: 4004],
+  http: [ip: {127, 0, 0, 1}, port: 4020],
   adapter: Bandit.PhoenixAdapter,
   server: true,
   live_view: [signing_salt: "aaaaaaaa"],
@@ -15,6 +27,10 @@ Application.put_env(:beacon_live_admin, Beacon.LiveAdminTest.E2E.Endpoint,
 )
 
 Process.register(self(), :e2e_helper)
+
+defmodule Beacon.LiveAdminTest.E2E.Repo do
+  use Ecto.Repo, otp_app: :beacon_live_admin, adapter: Ecto.Adapters.Postgres
+end
 
 defmodule Beacon.LiveAdminTest.E2E.ErrorHTML do
   def render(template, _), do: Phoenix.Controller.status_message_from_template(template)
@@ -36,6 +52,7 @@ end
 
 defmodule Beacon.LiveAdminTest.E2E.Router do
   use Phoenix.Router
+  use Beacon.Router
   use Beacon.LiveAdmin.Router
   import Phoenix.LiveView.Router
 
@@ -50,9 +67,14 @@ defmodule Beacon.LiveAdminTest.E2E.Router do
     plug Beacon.LiveAdmin.Plug
   end
 
-  scope "/" do
+  scope "/admin" do
     pipe_through [:browser, :beacon_admin]
     beacon_live_admin("/")
+  end
+
+  scope "/" do
+    pipe_through :browser
+    beacon_site "/site_a", site: :site_a
   end
 end
 
@@ -66,10 +88,16 @@ defmodule Beacon.LiveAdminTest.E2E.Endpoint do
     same_site: "Lax"
   ]
 
-  socket "/live", Phoenix.LiveView.Socket, websocket: [connect_info: [session: @session_options]]
+  socket "/live", Phoenix.LiveView.Socket, websocket: [connect_info: [:user_agent, session: @session_options]]
+
+  plug Phoenix.Ecto.SQL.Sandbox,
+    at: "/sandbox",
+    repo: Beacon.LiveAdminTest.E2E.Repo,
+    timeout: 15_000
 
   plug Plug.Static, from: {:phoenix, "priv/static"}, at: "/assets/phoenix"
   plug Plug.Static, from: {:phoenix_live_view, "priv/static"}, at: "/assets/phoenix_live_view"
+  plug Plug.Static, from: {:beacon, "priv/static"}, at: "/assets/beacon"
   plug Plug.Static, from: {:beacon_live_admin, "priv/static"}, at: "/assets/beacon_live_admin"
   plug Plug.Static, from: System.tmp_dir!(), at: "/tmp"
 
@@ -99,33 +127,43 @@ defmodule Beacon.LiveAdminTest.E2E.Endpoint do
   defp halt(conn, _opts), do: conn
 end
 
+defmodule Beacon.LiveAdminTest.E2E.Migrations.AddBeaconTables do
+  use Ecto.Migration
+  def up, do: Beacon.Migration.up()
+  def down, do: Beacon.Migration.up()
+end
+
+{:ok, _} = Ecto.Adapters.Postgres.ensure_all_started(Beacon.LiveAdminTest.E2E.Repo, :temporary)
+_ = Ecto.Adapters.Postgres.storage_down(Beacon.LiveAdminTest.E2E.Repo.config())
+:ok = Ecto.Adapters.Postgres.storage_up(Beacon.LiveAdminTest.E2E.Repo.config())
+{:ok, _pid} = Beacon.LiveAdminTest.E2E.Repo.start_link()
+:ok = Ecto.Migrator.up(Beacon.LiveAdminTest.E2E.Repo, 0, Beacon.LiveAdminTest.E2E.Migrations.AddBeaconTables, log: false)
+
+{:ok, _} = Application.ensure_all_started(:beacon)
+
 {:ok, _} =
   Supervisor.start_link(
     [
+      # Beacon.LiveAdminTest.E2E.Repo,
       Beacon.LiveAdminTest.E2E.Endpoint,
-      {Phoenix.PubSub, name: Beacon.LiveAdminTest.E2E.PubSub}
+      {Phoenix.PubSub, name: Beacon.LiveAdminTest.E2E.PubSub},
+      {
+        Beacon,
+        sites: [
+          [
+            site: :site_a,
+            skip_boot?: true,
+            repo: Beacon.LiveAdminTest.E2E.Repo,
+            endpoint: Beacon.LiveAdminTest.E2E.Endpoint,
+            router: Beacon.LiveAdminTest.E2E.Router
+          ]
+        ]
+      }
     ],
     strategy: :one_for_one
   )
 
-node1 = :"node1@127.0.0.1"
-
-Beacon.LiveAdminTest.Cluster.spawn([node1])
-
-:ok =
-  Beacon.LiveAdminTest.Cluster.start_beacon(node1,
-    sites: [
-      [
-        site: :site_a,
-        skip_boot?: true,
-        repo: MyApp.Repo,
-        endpoint: MyAppWeb.Endpoint,
-        router: MyApp.Router
-      ]
-    ]
-  )
-
-IO.puts("Starting admin at #{Beacon.LiveAdminTest.E2E.Endpoint.url()}")
+IO.puts("Starting node at #{Beacon.LiveAdminTest.E2E.Endpoint.url()}")
 
 unless IEx.started?() do
   # when running the test server manually, we halt after

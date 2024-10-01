@@ -121,7 +121,7 @@ defmodule Beacon.LiveAdminTest.Cluster do
     rpc(node, Application, :put_env, [
       :my_app,
       MyAppWeb.Endpoint,
-      http: [ip: {127, 0, 0, 1}, port: Enum.random(4010..4099)],
+      http: [ip: {127, 0, 0, 1}, port: Enum.random(4030..4099)],
       # adapter: Bandit.PhoenixAdapter,
       server: true,
       live_view: [signing_salt: "aaaaaaaa"],

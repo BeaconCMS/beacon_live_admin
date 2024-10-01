@@ -6,12 +6,12 @@ const config = {
   use: {
     trace: "retain-on-failure",
     screenshot: "only-on-failure",
-    baseURL: "http://localhost:4004",
+    baseURL: "http://localhost:4020/admin",
     ignoreHTTPSErrors: true,
   },
   webServer: {
     command: "npm run e2e:server",
-    url: "http://localhost:4004/health",
+    url: "http://localhost:4020/health",
     reuseExistingServer: !process.env.CI,
     stdout: "pipe",
     stderr: "pipe",
