@@ -24,9 +24,13 @@ export function mouseDiff(mouseMovement: CoordsDiff): Coords {
   }
 }
 
+
+function centerInAxis(rect: DOMRect, axis: "x" | "y"): number {
+  return axis === "x" ? (rect.x + rect.width / 2) : (rect.y + rect.height / 2)
+}
 // Detects if elements flow generally in an horizontal direction, a vertical one or
 // both (e.g. they form a grid or overflow to the the next line)
-function detectFlow(rects) {
+function detectFlow(rects: DOMRect[]) {
   let horizontal = false
   let vertical = false
 
@@ -35,8 +39,11 @@ function detectFlow(rects) {
     let prevRect = rects[i - 1]
     let currentRect = rects[i]
 
-    let xChange = Math.abs(currentRect.x - prevRect.x)
-    let yChange = Math.abs(currentRect.y - prevRect.y)
+    // Use the centers in each axis to determine flow, not the top/left corners because
+    // when elements have different heights/widths but are vertically/horizontally aligned 
+    // their corners might not be aligned but the general direction is still clear
+    let xChange = Math.abs(centerInAxis(currentRect, 'x') - centerInAxis(prevRect, 'x'))
+    let yChange = Math.abs(centerInAxis(currentRect, 'y') - centerInAxis(prevRect, 'y'))
 
     // Check for horizontal flow: significant x change with minimal y change
     if (xChange > threshold && yChange < threshold) {
@@ -69,7 +76,9 @@ export function getDragDirection(element: Element): DragDirection {
     return "vertical"
   }
 
-  let rects = Array.from(parentEl.children).map((child) => child.getBoundingClientRect())
+  const siblings = Array.from(parentEl.children);
+  const rects = siblings.map((el) => el.getBoundingClientRect())
+
   return detectFlow(rects)
 }
 
