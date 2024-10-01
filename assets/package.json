@@ -3,20 +3,12 @@
   "version": "0.1.0-rc.1",
   "license": "MIT",
   "repository": {},
-  "scripts": {
-    "format": "prettier --write .",
-    "format-check": "prettier --check ."
-  },
   "devDependencies": {
     "@tailwindcss/container-queries": "^0.1",
     "esbuild": "^0.20",
     "esbuild-plugin-import-glob": "^0.1",
     "esbuild-svelte": "^0.8",
-    "eslint": "^8.57",
-    "eslint-config-prettier": "^9.1",
     "postcss": "^8.4.44",
-    "prettier": "^3.2",
-    "prettier-plugin-svelte": "^3.2",
     "svelte": "^4.2",
     "svelte-preprocess": "^5.1",
     "typescript": "^5.3"

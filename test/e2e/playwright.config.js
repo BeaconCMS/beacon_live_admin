@@ -1,4 +1,4 @@
-const { devices } = require("@playwright/test");
+const { devices } = require("@playwright/test")
 
 const config = {
   forbidOnly: !!process.env.CI,
@@ -28,10 +28,10 @@ const config = {
     {
       name: "webkit",
       use: { ...devices["Desktop Safari"] },
-    }
+    },
   ],
   outputDir: "test-results",
-  globalTeardown: require.resolve("./teardown")
-};
+  globalTeardown: require.resolve("./teardown"),
+}
 
-module.exports = config;
+module.exports = config

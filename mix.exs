@@ -105,13 +105,14 @@ defmodule Beacon.LiveAdmin.MixProject do
     [
       setup: ["deps.get", "assets.setup", "assets.build"],
       dev: "run --no-halt dev.exs",
-      "format.all": ["format", "cmd npm run format --prefix ./assets"],
+      "format.all": ["format", "cmd npm run format"],
       "format.all.check": [
         "format --check-formatted",
-        "cmd npm run format-check --prefix ./assets"
+        "cmd npm run format-check"
       ],
       "assets.setup": [
         "tailwind.install --if-missing --no-assets",
+        "cmd npm install",
         "cmd npm install --prefix assets"
       ],
       "assets.build": [
