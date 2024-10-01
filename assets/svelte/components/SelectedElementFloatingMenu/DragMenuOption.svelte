@@ -1,13 +1,7 @@
 <script lang="ts" context="module">
   import { writable, type Writable } from "svelte/store"
   import { page, selectedAstElementId, parentOfSelectedAstElement } from "$lib/stores/page"
-  import {
-    findHoveredSiblingIndex,
-    getBoundingRect,
-    getDragDirection,
-    type Coords,
-    type DragDirection,
-  } from "$lib/utils/drag-helpers"
+  import { findHoveredSiblingIndex, getBoundingRect, getDragDirection, type Coords } from "$lib/utils/drag-helpers"
   import { live } from "$lib/stores/live"
 
   export type LocationInfo = Omit<DOMRect, "toJSON"> | DOMRect
@@ -67,7 +61,7 @@
   let originalSiblings: Element[]
   let dragHandleElement: HTMLButtonElement
   $: canBeDragged = element?.parentElement?.children?.length > 1
-  $: rotated = !!element && getDragDirection(element) === "horizontal"
+  $: dragDirection = getDragDirection(element)
   $: {
     // Update drag menu position when the element store changes
     !!element && initSelectedElementDragMenuPosition(element)
@@ -99,7 +93,10 @@
         }
       }),
     }
-    element.parentElement.style.display = "none"
+    // If this is expressed as `element.parentElement.style.display = "none"` for some reason svelte
+    // thinks it has to invalidate the `element` and recompute all state that observes it.
+    const style = element.parentElement.style
+    style.display = "none"
     element.parentElement.parentNode.insertBefore(el, element.parentElement)
     originalSiblings = Array.from(dragElementInfo.parentElementClone.children)
   }
@@ -114,7 +111,7 @@
   }
 
   function applyNewOrder() {
-    if (newIndex !== dragElementInfo.selectedIndex) {
+    if (newIndex !== null && newIndex !== dragElementInfo.selectedIndex) {
       // Reordering happened, apply new order
       let parent = $parentOfSelectedAstElement
       const selectedAstElement = parent.content.splice(dragElementInfo.selectedIndex, 1)[0]
@@ -287,20 +284,12 @@
     bind:this={dragHandleElement}
     on:mousedown={handleMousedown}
     class="rounded-full w-6 h-6 flex justify-center items-center absolute bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 active:bg-blue-800 transform"
-    class:rotate-90={rotated}
     style={$dragHandleStyle}
   >
-    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
-      ><path
-        d="M 1 2.5 C 1 1.948 1.448 1.5 2 1.5 L 10 1.5 C 10.552 1.5 11 1.948 11 2.5 L 11 2.5 C 11 3.052 10.552 3.5 10 3.5 L 2 3.5 C 1.448 3.5 1 3.052 1 2.5 Z"
-        fill="currentColor"
-      ></path><path
-        d="M 1 6 C 1 5.448 1.448 5 2 5 L 10 5 C 10.552 5 11 5.448 11 6 L 11 6 C 11 6.552 10.552 7 10 7 L 2 7 C 1.448 7 1 6.552 1 6 Z"
-        fill="currentColor"
-      ></path><path
-        d="M 1 9.5 C 1 8.948 1.448 8.5 2 8.5 L 10 8.5 C 10.552 8.5 11 8.948 11 9.5 L 11 9.5 C 11 10.052 10.552 10.5 10 10.5 L 2 10.5 C 1.448 10.5 1 10.052 1 9.5 Z"
-        fill="currentColor"
-      ></path></svg
-    >
+    <span
+      class:hero-arrows-right-left={dragDirection === "horizontal"}
+      class:hero-arrows-up-down={dragDirection === "vertical"}
+      class:hero-arrows-pointing-out={dragDirection === "both"}
+    ></span>
   </button>
 {/if}
