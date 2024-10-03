@@ -93,7 +93,6 @@ defmodule Beacon.LiveAdminTest.Cluster do
       [
         url: System.get_env("DATABASE_URL") || "postgres://localhost:5432/beacon_live_admin_test",
         pool: Ecto.Adapters.SQL.Sandbox,
-        pool_size: System.schedulers_online() * 2,
         stacktrace: true,
         show_sensitive_data_on_connection_error: true
       ]

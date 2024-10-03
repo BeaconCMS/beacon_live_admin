@@ -2,10 +2,13 @@ Code.require_file("fixtures.ex", __DIR__)
 
 Application.put_env(:beacon_live_admin, :ecto_repos, [Beacon.LiveAdminTest.E2E.Repo])
 
+repo_url = System.get_env("DATABASE_URL") || "postgres://localhost:5432/beacon_live_admin_e2e_test"
+dbg(repo_url)
+
 Application.put_env(
   :beacon_live_admin,
   Beacon.LiveAdminTest.E2E.Repo,
-  url: System.get_env("DATABASE_URL") || "postgres://localhost:5432/beacon_live_admin_test",
+  url: System.get_env("DATABASE_URL") || "postgres://localhost:5432/beacon_live_admin_e2e_test",
   pool: Ecto.Adapters.SQL.Sandbox,
   stacktrace: true,
   show_sensitive_data_on_connection_error: true
@@ -160,8 +163,8 @@ defmodule Beacon.LiveAdminTest.E2E.Migrations.AddBeaconTables do
   def down, do: Beacon.Migration.up()
 end
 
-Beacon.LiveAdminTest.E2E.Repo.__adapter__().storage_down(Beacon.LiveAdminTest.E2E.Repo.config())
-Beacon.LiveAdminTest.E2E.Repo.__adapter__().storage_up(Beacon.LiveAdminTest.E2E.Repo.config())
+Beacon.LiveAdminTest.E2E.Repo.__adapter__().storage_down(Beacon.LiveAdminTest.E2E.Repo.config()) |> dbg()
+Beacon.LiveAdminTest.E2E.Repo.__adapter__().storage_up(Beacon.LiveAdminTest.E2E.Repo.config()) |> dbg()
 {:ok, _pid} = Beacon.LiveAdminTest.E2E.Repo.start_link()
 :ok = Ecto.Migrator.up(Beacon.LiveAdminTest.E2E.Repo, 0, Beacon.LiveAdminTest.E2E.Migrations.AddBeaconTables)
 
