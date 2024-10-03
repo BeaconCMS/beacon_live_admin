@@ -61,7 +61,7 @@
   }
 </script>
 
-<div class="flex-1 px-8 pb-4 flex max-h-full" data-test-id="main">
+<div class="flex-1 px-8 pb-4 flex max-h-full" data-testid="main">
   {#if $page}
     <BrowserFrame page={$page}>
       <div
@@ -72,7 +72,7 @@
         id="fake-browser-content"
         class="bg-white rounded-b-xl relative overflow-hidden flex-1 {isDraggingOver &&
           'border-dashed border-blue-500 border-2'}"
-        data-test-id="browser-content"
+        data-testid="browser-content"
       >
         <div id="page-wrapper" class="p-1 m-1" data-selected={$selectedAstElementId === "root"}>
           <page-wrapper class="relative"></page-wrapper>
