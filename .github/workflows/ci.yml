@@ -111,7 +111,7 @@ jobs:
       postgres:
         image: postgres:13.1
         env:
-          POSTGRES_DB: beacon_live_admin_test
+          POSTGRES_DB: beacon_live_admin_e2e_test
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
         options: >-
@@ -160,10 +160,8 @@ jobs:
 
       - name: Run e2e tests
         env:
-          DATABASE_URL: postgresql://postgres:postgres@localhost:${{job.services.postgres.ports[5432]}}/beacon_live_admin_test
-        run: |
-          epmd -daemon
-          npm run e2e:test
+          DATABASE_URL: postgresql://postgres:postgres@localhost:${{job.services.postgres.ports[5432]}}/beacon_live_admin_e2e_test
+        run: npm run e2e:test
 
   quality:
     name: "quality: OTP ${{matrix.otp}} | Elixir ${{matrix.elixir}} | Phoenix ${{matrix.phoenix-version}} | LiveView ${{matrix.phoenix-live-view-version}}"
