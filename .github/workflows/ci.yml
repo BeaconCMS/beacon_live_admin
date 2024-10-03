@@ -83,6 +83,86 @@ jobs:
           epmd -daemon
           mix test
 
+  e2e-test:
+    name: "e2e-test: OTP ${{matrix.otp}} | Elixir ${{matrix.elixir}} | Phoenix ${{matrix.phoenix-version}} | LiveView ${{matrix.phoenix-live-view-version}}"
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # latest
+          - otp: "27"
+            elixir: "1.17"
+            phoenix-version: "~> 1.7"
+            phoenix-live-view-version: "~> 0.20"
+
+    env:
+      MIX_ENV: e2e
+      PHOENIX_VERSION: ${{matrix.phoenix-version}}
+      PHOENIX_LIVE_VIEW_VERSION: ${{matrix.phoenix-live-view-version}}
+      ImageOS: ubuntu20
+      HOME: /root
+
+    runs-on: ubuntu-20.04
+    container:
+      image: mcr.microsoft.com/playwright:v1.47.1-focal
+
+    services:
+      postgres:
+        image: postgres:13.1
+        env:
+          POSTGRES_DB: beacon_live_admin_e2e_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install OS packages
+        run: apt update && apt -y install unzip openssl
+
+      - name: Set up Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          otp-version: ${{ matrix.otp }}
+          elixir-version: ${{ matrix.elixir }}
+
+      - name: Cache mix deps
+        uses: actions/cache@v4
+        id: cache-deps
+        with:
+          path: |
+            deps
+            _build
+          key: mix-${{ env.MIX_ENV }}-${{ runner.os }}-${{ matrix.otp }}-${{ matrix.elixir }}-${{ matrix.phoenix-version }}-${{ matrix.phoenix-live-view-version }}-${{ hashFiles('**/mix.lock') }}
+          restore-keys: |
+            mix-${{ env.MIX_ENV }}-${{ runner.os }}-${{ matrix.otp }}-${{ matrix.elixir }}-${{ matrix.phoenix-version }}-${{ matrix.phoenix-live-view-version }}-${{ hashFiles('**/mix.lock') }}
+
+      - run: mix deps.get
+
+      - name: Restore npm cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - run: npm run setup
+
+      - name: Run e2e tests
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:${{job.services.postgres.ports[5432]}}/beacon_live_admin_e2e_test
+        run: npm run e2e:test
+
   quality:
     name: "quality: OTP ${{matrix.otp}} | Elixir ${{matrix.elixir}} | Phoenix ${{matrix.phoenix-version}} | LiveView ${{matrix.phoenix-live-view-version}}"
 
@@ -109,8 +189,8 @@ jobs:
       - name: Set up Elixir
         uses: erlef/setup-beam@v1
         with:
-          elixir-version: ${{ matrix.elixir }}
           otp-version: ${{ matrix.otp }}
+          elixir-version: ${{ matrix.elixir }}
 
       - name: Cache mix deps
         uses: actions/cache@v4

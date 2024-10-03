@@ -31,7 +31,7 @@
 </script>
 
 <Backdrop />
-<div class="flex min-h-screen bg-gray-100" id="ui-builder-app-container" data-test-id="app-container">
+<div class="flex min-h-screen bg-gray-100" id="ui-builder-app-container" data-testid="app-container">
   <!-- Left sidebar -->
   <ComponentsSidebar {components} />
 

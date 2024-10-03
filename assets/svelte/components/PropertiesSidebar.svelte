@@ -140,7 +140,7 @@
   }
 </script>
 
-<div class="w-64 bg-white" data-test-id="right-sidebar">
+<div class="w-64 bg-white" data-testid="right-sidebar">
   <div class="sticky top-0 overflow-y-auto h-screen">
     {#if $selectedAstElement}
       <div class="border-b text-lg font-medium leading-5 p-4 relative">
