@@ -163,6 +163,9 @@ defmodule Beacon.LiveAdminTest.E2E.Migrations.AddBeaconTables do
   def down, do: Beacon.Migration.up()
 end
 
+Beacon.LiveAdminTest.E2E.Repo.__adapter__() |> dbg()
+Beacon.LiveAdminTest.E2E.Repo.config() |> dbg()
+
 Beacon.LiveAdminTest.E2E.Repo.__adapter__().storage_down(Beacon.LiveAdminTest.E2E.Repo.config()) |> dbg()
 Beacon.LiveAdminTest.E2E.Repo.__adapter__().storage_up(Beacon.LiveAdminTest.E2E.Repo.config()) |> dbg()
 {:ok, _pid} = Beacon.LiveAdminTest.E2E.Repo.start_link()
