@@ -27,6 +27,7 @@ test.beforeEach(async ({ page }) => {
 // On drop, the clones get removed and the original elements will be visible again
 test("It shows clones and placeholder for initiated drop location", async ({ page }) => {
   await syncLV(page)
+
   const firstItem = page.getByTestId("margin-row-item-1")
   const dragButton = page.getByTestId("drag-button")
 
@@ -54,10 +55,12 @@ test("It shows clones and placeholder for initiated drop location", async ({ pag
 })
 
 test("Reordering", async ({ page }) => {
+  await syncLV(page)
+
   const source = page.getByTestId("margin-row-item-1")
   const dragButton = page.getByTestId("drag-button")
 
-  await verifyOrder(page, "[data-test-id^=margin-row-item-]", [
+  await verifyOrder(page, "[data-testid^=margin-row-item-]", [
     "margin-row-item-1",
     "margin-row-item-2",
     "margin-row-item-3",
@@ -73,7 +76,7 @@ test("Reordering", async ({ page }) => {
   await dragTo(page, "margin-row-item-3")
   await page.mouse.up()
 
-  await verifyOrder(page, "[data-test-id^=margin-row-item-]", [
+  await verifyOrder(page, "[data-testid^=margin-row-item-]", [
     "margin-row-item-2",
     "margin-row-item-3",
     "margin-row-item-1",
@@ -82,12 +85,13 @@ test("Reordering", async ({ page }) => {
   ])
 })
 
-/* TODO: Need to reset test data after each test, because otherwise it will be pertained in database on saving changes */
-test.skip("Persistence on save", async ({ page }) => {
+test("Persistence on save", async ({ page }) => {
+  await syncLV(page)
+
   const source = page.getByTestId("margin-row-item-1")
   const dragButton = page.getByTestId("drag-button")
 
-  await verifyOrder(page, "[data-test-id^=margin-row-item-]", [
+  await verifyOrder(page, "[data-testid^=margin-row-item-]", [
     "margin-row-item-1",
     "margin-row-item-2",
     "margin-row-item-3",
@@ -111,11 +115,11 @@ test.skip("Persistence on save", async ({ page }) => {
     "margin-row-item-5",
   ]
 
-  await verifyOrder(page, "[data-test-id^=margin-row-item-]", newOrder)
+  await verifyOrder(page, "[data-testid^=margin-row-item-]", newOrder)
 
   await page.getByRole("button", { name: "Save Changes" }).click()
   await expect(page.locator('[id="flash"]')).toContainText("Page updated successfully")
   await page.reload()
 
-  await verifyOrder(page, "[data-test-id^=margin-row-item-]", newOrder)
+  await verifyOrder(page, "[data-testid^=margin-row-item-]", newOrder)
 })

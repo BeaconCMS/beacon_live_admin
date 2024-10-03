@@ -28,7 +28,7 @@ export async function dragTo(
 export async function verifyOrder(page: PlayWrightPage, childrenSelector: string, childrenTestIds: Array<string>) {
   await Promise.all(
     childrenTestIds.map((testId, index) => {
-      return expect(page.locator(childrenSelector).nth(index)).toHaveAttribute("data-test-id", testId)
+      return expect(page.locator(childrenSelector).nth(index)).toHaveAttribute("data-testid", testId)
     }),
   )
 }

@@ -23,8 +23,6 @@ test("shows the list of available sites", async ({ page }) => {
 })
 
 test("shows the list of available pages", async ({ page }) => {
-  const siteName = "site_a"
-
   await page.goto("/admin/site_a/pages")
   await syncLV(page)
 

@@ -88,7 +88,7 @@ if Mix.env() == :test do
     sites: [
       [
         site: :site_a,
-        skip_boot?: true,
+        mode: :testing,
         repo: MyApp.Repo,
         endpoint: MyAppWeb.Endpoint,
         router: MyApp.Router,
@@ -103,14 +103,14 @@ if Mix.env() == :test do
     sites: [
       [
         site: :site_b,
-        skip_boot?: true,
+        mode: :testing,
         repo: MyApp.Repo,
         endpoint: MyAppWeb.Endpoint,
         router: MyApp.Router
       ],
       [
         site: :site_c,
-        skip_boot?: true,
+        mode: :manual,
         repo: MyApp.Repo,
         endpoint: MyAppWeb.Endpoint,
         router: MyApp.Router

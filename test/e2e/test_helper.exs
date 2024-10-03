@@ -7,7 +7,6 @@ Application.put_env(
   Beacon.LiveAdminTest.E2E.Repo,
   url: System.get_env("DATABASE_URL") || "postgres://localhost:5432/beacon_live_admin_test",
   pool: Ecto.Adapters.SQL.Sandbox,
-  pool_size: System.schedulers_online() * 2,
   stacktrace: true,
   show_sensitive_data_on_connection_error: true
 )
@@ -149,7 +148,7 @@ defmodule Beacon.LiveAdminTest.E2E.FixturesController do
         Phoenix.Ecto.SQL.Sandbox.allow(metadata, Ecto.Adapters.SQL.Sandbox)
     end
 
-    Beacon.LiveAdminTest.E2E.Fixtures.scenario(scenario) |> dbg
+    Beacon.LiveAdminTest.E2E.Fixtures.scenario(scenario)
 
     send_resp(conn, 200, "")
   end
@@ -179,7 +178,7 @@ Beacon.LiveAdminTest.E2E.Repo.__adapter__().storage_up(Beacon.LiveAdminTest.E2E.
         sites: [
           [
             site: :site_a,
-            skip_boot?: true,
+            mode: :testing,
             repo: Beacon.LiveAdminTest.E2E.Repo,
             endpoint: Beacon.LiveAdminTest.E2E.Endpoint,
             router: Beacon.LiveAdminTest.E2E.Router

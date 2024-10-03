@@ -15,7 +15,7 @@ npm run e2e:test
 ```
 
 ```sh
-npm run e2e:test -- test_name.spec.js:10 --project chromium --debug
+npm run e2e:test test_name.spec.js:10 --project chromium --debug
 ```
 
 Or call `playwright` directly to skip installing dependencies and building assets
