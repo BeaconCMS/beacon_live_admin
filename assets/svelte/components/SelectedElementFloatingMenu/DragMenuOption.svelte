@@ -1,6 +1,6 @@
 <script lang="ts" context="module">
   import { writable, type Writable } from "svelte/store"
-  import { page, selectedAstElementId, parentOfSelectedAstElement } from "$lib/stores/page"
+  import { page, selectedAstElementId, parentOfSelectedAstElement, parentSelectedAstElementId, grandParentOfSelectedAstElement } from "$lib/stores/page"
   import { findHoveredSiblingIndex, getBoundingRect, getDragDirection, type Coords } from "$lib/utils/drag-helpers"
   import { live } from "$lib/stores/live"
 
@@ -123,25 +123,35 @@
   }
 
   function applyNewOrder() {
-    if (newIndex !== null && newIndex !== dragElementInfo.selectedIndex) {
+    let parent = isParent ? $grandParentOfSelectedAstElement : $parentOfSelectedAstElement
+
+    if (newIndex !== null && newIndex !== dragElementInfo.selectedIndex && !!parent) {
       // Reordering happened, apply new order
-      let parent = $parentOfSelectedAstElement
       const selectedAstElement = parent.content.splice(dragElementInfo.selectedIndex, 1)[0]
       parent.content.splice(newIndex, 0, selectedAstElement)
       // Update the selectedAstElementId so the same item remains selected
+      if (isParent) {
+        let parts = $selectedAstElementId.split(".")
+        parts[parts.length - 2] = newIndex.toString()
+        $selectedAstElementId = parts.join(".")          
+      } else {
+        let parts = $selectedAstElementId.split(".")
+        parts[parts.length - 1] = newIndex.toString()
+        $selectedAstElementId = parts.join(".")        
+      }
+      // console.log('$page.ast[0]', $page.ast[0]);
       $page.ast = [...$page.ast]
-      let parts = $selectedAstElementId.split(".")
-      parts[parts.length - 1] = newIndex.toString()
-      $selectedAstElementId = parts.join(".")
       // Update in the server
       $live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast })
     }
   }
 
   function resetDragElementHandle() {
-    dragHandleElement.style.transform = null
-    dragHandleElement.style.setProperty("--tw-translate-y", null)
-    dragHandleElement.style.setProperty("--tw-translate-x", null)
+    if (dragHandleElement) {
+      dragHandleElement.style.transform = null
+      dragHandleElement.style.setProperty("--tw-translate-y", null)
+      dragHandleElement.style.setProperty("--tw-translate-x", null)
+    }
   }
 
   async function handleMouseup(e: MouseEvent) {
