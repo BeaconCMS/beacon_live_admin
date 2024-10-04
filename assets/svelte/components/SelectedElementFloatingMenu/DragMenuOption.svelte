@@ -13,43 +13,23 @@
     newSiblingRects: LocationInfo[] // LocationInfo[]
   }
 
-  let currentHandleCoords: Coords
-  let relativeWrapperRect: DOMRect
-  const dragHandleStyle: Writable<string> = writable("")
   export const isDragging: Writable<boolean> = writable(false)
-  let dragElementInfo: DragInfo
 
-  export function initSelectedElementDragMenuPosition(selectedDomEl, mouseDiff?: Coords) {
-    let rect = dragElementInfo
-      ? dragElementInfo.originalSiblingRects[dragElementInfo.selectedIndex]
-      : getBoundingRect(selectedDomEl)
-    updateHandleCoords(rect, mouseDiff)
-    let styles = []
-    if (currentHandleCoords?.y) {
-      styles.push(`top: ${currentHandleCoords.y}px`)
+  function calculateHandleXPosition(rect: LocationInfo, position: 'bottom' | 'left') {
+    if (position === 'bottom') {
+      return rect.x + rect.width / 2 - 5
+    } else {
+      return rect.x - 5
     }
-    if (currentHandleCoords?.x) {
-      styles.push(`left: ${currentHandleCoords.x}px`)
+  }
+  function calculateHandleYPosition(rect: LocationInfo, position: 'bottom' | 'left') {
+    if (position === 'bottom') {
+      return rect.y + rect.height + 5
+    } else {
+      return rect.y + rect.height / 2 - 5
     }
-    dragHandleStyle.set(styles.join(";"))
   }
 
-  function calculateHandleXPosition(rect: LocationInfo) {
-    return rect.x + rect.width / 2 - 5
-  }
-  function calculateHandleYPosition(rect: LocationInfo) {
-    return rect.y + rect.height + 5
-  }
-  function updateHandleCoords(currentRect: LocationInfo, movement: Coords = { x: 0, y: 0 }) {
-    relativeWrapperRect = document
-      .getElementById("ui-builder-app-container")
-      .closest(".relative")
-      .getBoundingClientRect()
-    currentHandleCoords = {
-      x: calculateHandleXPosition(currentRect) - relativeWrapperRect.x + movement.x,
-      y: calculateHandleYPosition(currentRect) - relativeWrapperRect.y + movement.y,
-    }
-  }
 </script>
 
 <script lang="ts">
@@ -60,12 +40,44 @@
 
   let originalSiblings: Element[]
   let dragHandleElement: HTMLButtonElement
+  let dragHandleStyle = ""
+  let currentHandleCoords: Coords
+  let relativeWrapperRect: DOMRect
+  let dragElementInfo: DragInfo
+
   $: canBeDragged = element?.parentElement?.children?.length > 1
   $: dragDirection = getDragDirection(element)
   $: {
+    console.log('#######updated element received!!')
     // Update drag menu position when the element store changes
-    !!element && initSelectedElementDragMenuPosition(element)
+    !!element && initSelectedElementDragMenuPosition(element, isParent)
   }
+
+  function updateHandleCoords(currentRect: LocationInfo, isParent: boolean) {
+    relativeWrapperRect = document
+      .getElementById("ui-builder-app-container")
+      .closest(".relative")
+      .getBoundingClientRect()
+    const handlePosition = isParent ? 'left' : 'bottom';
+    currentHandleCoords = {
+      x: calculateHandleXPosition(currentRect, handlePosition) - relativeWrapperRect.x,
+      y: calculateHandleYPosition(currentRect, handlePosition) - relativeWrapperRect.y,
+    }
+  }
+  function initSelectedElementDragMenuPosition(selectedDomEl: Element, isParent: boolean = false) {
+    let rect = dragElementInfo
+      ? dragElementInfo.originalSiblingRects[dragElementInfo.selectedIndex]
+      : getBoundingRect(selectedDomEl)
+    updateHandleCoords(rect, isParent)
+    let styles = []
+    if (currentHandleCoords?.y) {
+      styles.push(`top: ${currentHandleCoords.y}px`)
+    }
+    if (currentHandleCoords?.x) {
+      styles.push(`left: ${currentHandleCoords.x}px`)
+    }
+    dragHandleStyle = styles.join(";")
+  }  
 
   function snapshotSelectedElementSiblings() {
     let siblings = Array.from(element.parentElement.children)
@@ -92,6 +104,7 @@
           left,
         }
       }),
+      newSiblingRects: null
     }
     // If this is expressed as `element.parentElement.style.display = "none"` for some reason svelte
     // thinks it has to invalidate the `element` and recompute all state that observes it.
@@ -284,7 +297,7 @@
     bind:this={dragHandleElement}
     on:mousedown={handleMousedown}
     class="rounded-full w-6 h-6 flex justify-center items-center absolute bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 active:bg-blue-800 transform"
-    style={$dragHandleStyle}
+    style={dragHandleStyle}
   >
     <span
       class:hero-arrows-right-left={dragDirection === "horizontal"}
