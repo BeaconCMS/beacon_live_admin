@@ -19,7 +19,7 @@
     if (position === 'bottom') {
       return rect.x + rect.width / 2 - 5
     } else {
-      return rect.x - 5
+      return rect.x - 25
     }
   }
   function calculateHandleYPosition(rect: LocationInfo, position: 'bottom' | 'left') {
@@ -48,7 +48,6 @@
   $: canBeDragged = element?.parentElement?.children?.length > 1
   $: dragDirection = getDragDirection(element)
   $: {
-    console.log('#######updated element received!!')
     // Update drag menu position when the element store changes
     !!element && initSelectedElementDragMenuPosition(element, isParent)
   }
