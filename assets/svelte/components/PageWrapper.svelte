@@ -56,12 +56,12 @@
 </div>
 
 <style>
-  :global([data-selected="true"]) {
+  :global([data-selected="true"], [data-selected-parent="true"]) {
     outline-color: #06b6d4;
     outline-width: 1px;
     outline-style: solid;
   }
-  :global([data-selected="true"].contents > *) {
+  :global([data-selected="true"].contents > *, [data-selected-parent="true"].contents > *) {
     outline-color: #06b6d4;
     outline-width: 1px;
     outline-style: solid;
