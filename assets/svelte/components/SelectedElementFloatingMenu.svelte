@@ -56,6 +56,6 @@
 
   <DragMenuOption element={$selectedDomElement} />
   {#if $selectedDomElement?.parentElement}
-    <DragMenuOption element={$selectedDomElement.parentElement} isParent={true}/>
+    <DragMenuOption element={$selectedDomElement.parentElement} isParent={true} />
   {/if}
 {/if}

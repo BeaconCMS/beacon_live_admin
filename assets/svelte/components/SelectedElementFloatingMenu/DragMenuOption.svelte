@@ -1,6 +1,12 @@
 <script lang="ts" context="module">
   import { writable, type Writable } from "svelte/store"
-  import { page, selectedAstElementId, parentOfSelectedAstElement, parentSelectedAstElementId, grandParentOfSelectedAstElement } from "$lib/stores/page"
+  import {
+    page,
+    selectedAstElementId,
+    parentOfSelectedAstElement,
+    parentSelectedAstElementId,
+    grandParentOfSelectedAstElement,
+  } from "$lib/stores/page"
   import { findHoveredSiblingIndex, getBoundingRect, getDragDirection, type Coords } from "$lib/utils/drag-helpers"
   import { live } from "$lib/stores/live"
 
@@ -15,21 +21,20 @@
 
   export const isDragging: Writable<boolean> = writable(false)
 
-  function calculateHandleXPosition(rect: LocationInfo, position: 'bottom' | 'left') {
-    if (position === 'bottom') {
+  function calculateHandleXPosition(rect: LocationInfo, position: "bottom" | "left") {
+    if (position === "bottom") {
       return rect.x + rect.width / 2 - 5
     } else {
       return rect.x - 25
     }
   }
-  function calculateHandleYPosition(rect: LocationInfo, position: 'bottom' | 'left') {
-    if (position === 'bottom') {
+  function calculateHandleYPosition(rect: LocationInfo, position: "bottom" | "left") {
+    if (position === "bottom") {
       return rect.y + rect.height + 5
     } else {
       return rect.y + rect.height / 2 - 5
     }
   }
-
 </script>
 
 <script lang="ts">
@@ -57,7 +62,7 @@
       .getElementById("ui-builder-app-container")
       .closest(".relative")
       .getBoundingClientRect()
-    const handlePosition = isParent ? 'left' : 'bottom';
+    const handlePosition = isParent ? "left" : "bottom"
     currentHandleCoords = {
       x: calculateHandleXPosition(currentRect, handlePosition) - relativeWrapperRect.x,
       y: calculateHandleYPosition(currentRect, handlePosition) - relativeWrapperRect.y,
@@ -76,7 +81,7 @@
       styles.push(`left: ${currentHandleCoords.x}px`)
     }
     dragHandleStyle = styles.join(";")
-  }  
+  }
 
   function snapshotSelectedElementSiblings() {
     let siblings = Array.from(element.parentElement.children)
@@ -103,7 +108,7 @@
           left,
         }
       }),
-      newSiblingRects: null
+      newSiblingRects: null,
     }
     // If this is expressed as `element.parentElement.style.display = "none"` for some reason svelte
     // thinks it has to invalidate the `element` and recompute all state that observes it.
@@ -133,11 +138,11 @@
       if (isParent) {
         let parts = $selectedAstElementId.split(".")
         parts[parts.length - 2] = newIndex.toString()
-        $selectedAstElementId = parts.join(".")          
+        $selectedAstElementId = parts.join(".")
       } else {
         let parts = $selectedAstElementId.split(".")
         parts[parts.length - 1] = newIndex.toString()
-        $selectedAstElementId = parts.join(".")        
+        $selectedAstElementId = parts.join(".")
       }
       // console.log('$page.ast[0]', $page.ast[0]);
       $page.ast = [...$page.ast]

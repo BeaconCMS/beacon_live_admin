@@ -27,25 +27,31 @@ function getParentId(id: string | null) {
   let levels = id.split(".")
   if (levels.length === 1) return "root"
   levels.pop()
-  return levels.join(".")  
+  return levels.join(".")
 }
 
-export const parentSelectedAstElementId: Readable<string> = derived([selectedAstElementId], ([$selectedAstElementId]) => {
-  return getParentId($selectedAstElementId);
-})
+export const parentSelectedAstElementId: Readable<string> = derived(
+  [selectedAstElementId],
+  ([$selectedAstElementId]) => {
+    return getParentId($selectedAstElementId)
+  },
+)
 
-export const grandParentSelectedAstElementId: Readable<string> = derived([parentSelectedAstElementId], ([$parentSelectedAstElementId]) => {
-  return getParentId($parentSelectedAstElementId);
-})
+export const grandParentSelectedAstElementId: Readable<string> = derived(
+  [parentSelectedAstElementId],
+  ([$parentSelectedAstElementId]) => {
+    return getParentId($parentSelectedAstElementId)
+  },
+)
 
 export const parentOfSelectedAstElement: Readable<AstElement | undefined> = derived(
   [page, parentSelectedAstElementId],
-  ([$page, $parentSelectedAstElementId]) => findAstElement($page.ast, $parentSelectedAstElementId)
+  ([$page, $parentSelectedAstElementId]) => findAstElement($page.ast, $parentSelectedAstElementId),
 )
 
 export const grandParentOfSelectedAstElement: Readable<AstElement | undefined> = derived(
   [page, grandParentSelectedAstElementId],
-  ([$page, $grandParentSelectedAstElementId]) => findAstElement($page.ast, $grandParentSelectedAstElementId)
+  ([$page, $grandParentSelectedAstElementId]) => findAstElement($page.ast, $grandParentSelectedAstElementId),
 )
 
 export const selectedDomElement: Writable<Element | null> = writable(null)
@@ -68,7 +74,7 @@ export function isAstElement(maybeNode: AstNode): maybeNode is AstElement {
 }
 
 export function findAstElement(ast: AstNode[], id: string): AstElement {
-  if (id === "root") return get(rootAstElement);
+  if (id === "root") return get(rootAstElement)
   let indexes = id.split(".").map((s) => parseInt(s, 10))
   let node: AstNode = ast[indexes[0]] as AstElement
   ast = node.content
