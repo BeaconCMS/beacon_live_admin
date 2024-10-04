@@ -11,7 +11,6 @@
   import { updateNodeContent, updateAst } from "$lib/utils/ast-manipulation"
   import { elementCanBeDroppedInTarget } from "$lib/utils/drag-helpers"
   import type { AstNode } from "$lib/types"
-  import { initSelectedElementDragMenuPosition } from "./SelectedElementFloatingMenu/DragMenuOption.svelte"
   export let node: AstNode
   export let nodeId: string
 
@@ -76,7 +75,6 @@
   function handleClick({ currentTarget }: Event) {
     setSelection(nodeId)
     setSelectedDom(currentTarget)
-    initSelectedElementDragMenuPosition(currentTarget)
   }
 
   function handleContentEdited({ target }: Event) {
