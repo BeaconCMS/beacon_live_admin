@@ -75,6 +75,7 @@ export function isAstElement(maybeNode: AstNode): maybeNode is AstElement {
 
 export function findAstElement(ast: AstNode[], id: string): AstElement {
   if (id === "root") return get(rootAstElement)
+  if (!id) return null;
   let indexes = id.split(".").map((s) => parseInt(s, 10))
   let node: AstNode = ast[indexes[0]] as AstElement
   ast = node.content
