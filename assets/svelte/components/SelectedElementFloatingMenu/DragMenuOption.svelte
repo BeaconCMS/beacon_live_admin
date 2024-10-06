@@ -4,7 +4,6 @@
     page,
     selectedAstElementId,
     parentOfSelectedAstElement,
-    parentSelectedAstElementId,
     grandParentOfSelectedAstElement,
   } from "$lib/stores/page"
   import { findHoveredSiblingIndex, getBoundingRect, getDragDirection, type Coords } from "$lib/utils/drag-helpers"
@@ -58,10 +57,9 @@
   }
 
   function updateHandleCoords(currentRect: LocationInfo, isParent: boolean) {
-    relativeWrapperRect = document
-      .getElementById("ui-builder-app-container")
-      .closest(".relative")
-      .getBoundingClientRect()
+    let appContainer = document.getElementById("ui-builder-app-container")
+    if (!appContainer) return;
+    relativeWrapperRect = appContainer.closest(".relative").getBoundingClientRect()
     const handlePosition = isParent ? "left" : "bottom"
     currentHandleCoords = {
       x: calculateHandleXPosition(currentRect, handlePosition) - relativeWrapperRect.x,
@@ -127,24 +125,65 @@
     snapshotSelectedElementSiblings()
   }
 
+  function isComment(n: Node): n is Comment {
+    return n.nodeType === Node.COMMENT_NODE
+  }
+  function isElement(n: Node): n is Comment {
+    return n.nodeType === Node.ELEMENT_NODE;
+  }
+  function isCommentOrElement(n: Node): n is Comment | Element {
+    return isElement(n) || isComment(n)
+  }
+
+  // Indexes don't necessarily match indexes in the AST tree. The reason is that the drag and drop
+  // works with Elements, and thus ignores non-renderable nodes like HTML comments.
+  // Because of that, and because if we move elements without moving the comments directly before that element
+  // those comments will very likely end up commenting the wrong element, we want precedent comments to behave in a 
+  // "sticky" way: When you drag an element, you are moving that element along with any html comment directly
+  // preceding that element. This is not necessarily accurate 100% of the time, but it's a lot more accurate
+  // than never moving the comments.
+  function correctIndex(index: number): [number, number]{
+    const nodes = Array.from(element.parentElement.childNodes).filter(isCommentOrElement)
+    const elements = Array.from(element.parentElement.children)
+    const targetElement = elements[index];
+    let startIndex = -1;
+    let endIndex = -1;
+    for(let i = 0; i < nodes.length; i++) {
+      const node = nodes[i]
+      if (isComment(node) && startIndex < 0) {
+        startIndex = i
+        continue
+      }
+      if (node === targetElement) {
+        endIndex = i
+        break;
+      }
+      startIndex = -1 
+    }
+    return [startIndex, endIndex]
+  }
+
   function applyNewOrder() {
     let parent = isParent ? $grandParentOfSelectedAstElement : $parentOfSelectedAstElement
 
     if (newIndex !== null && newIndex !== dragElementInfo.selectedIndex && !!parent) {
       // Reordering happened, apply new order
-      const selectedAstElement = parent.content.splice(dragElementInfo.selectedIndex, 1)[0]
-      parent.content.splice(newIndex, 0, selectedAstElement)
+      const [startIndex, endIndex] = correctIndex(dragElementInfo.selectedIndex)
+      const movedAstNodes = parent.content.splice(startIndex, endIndex - startIndex + 1)
+      const [insertIndex] = correctIndex(newIndex)
+      parent.content.splice(insertIndex, 0, ...movedAstNodes)
       // Update the selectedAstElementId so the same item remains selected
       if (isParent) {
+        let newSelectedIndex = insertIndex + endIndex - startIndex
         let parts = $selectedAstElementId.split(".")
-        parts[parts.length - 2] = newIndex.toString()
+        parts[parts.length - 2] = newSelectedIndex.toString()
         $selectedAstElementId = parts.join(".")
       } else {
+        let newSelectedIndex = insertIndex + endIndex - startIndex
         let parts = $selectedAstElementId.split(".")
-        parts[parts.length - 1] = newIndex.toString()
+        parts[parts.length - 1] = newSelectedIndex.toString()
         $selectedAstElementId = parts.join(".")
       }
-      // console.log('$page.ast[0]', $page.ast[0]);
       $page.ast = [...$page.ast]
       // Update in the server
       $live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast })
