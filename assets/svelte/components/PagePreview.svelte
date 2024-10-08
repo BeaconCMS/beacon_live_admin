@@ -11,7 +11,10 @@
   let isDraggingOver = false
 
   async function handleDragDrop(e: DragEvent) {
-    let { target, dataTransfer: { layoutZone } } = e
+    let {
+      target,
+      dataTransfer: { layoutZone },
+    } = e
     $currentComponentCategory = null
     if (!$draggedComponentDefinition) return
     let draggedObj = $draggedComponentDefinition

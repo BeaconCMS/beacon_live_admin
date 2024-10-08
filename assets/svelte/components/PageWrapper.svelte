@@ -11,7 +11,7 @@
 
   let wrapper: HTMLElement
   let styleWrapper: HTMLElement
-  let contentWrapper: HTMLElement;
+  let contentWrapper: HTMLElement
   let twConfig = $tailwindConfig
   let configPromise = import(twConfig)
   onMount(async () => {
@@ -44,7 +44,7 @@
   // Annotates the drop event here to know wether it was fired before the main content
   // or after it.
   function handleDragDrop(e: DragEvent) {
-    const target = e.target;
+    const target = e.target
     if (target.compareDocumentPosition(contentWrapper) & Node.DOCUMENT_POSITION_PRECEDING) {
       e.dataTransfer.layoutZone = "epilogue"
     } else if (target.compareDocumentPosition(contentWrapper) & Node.DOCUMENT_POSITION_FOLLOWING) {
