@@ -121,7 +121,7 @@ defmodule Beacon.LiveAdmin.PageBuilder.Table do
   Updates the current page based on incoming params and a `count_fn` which returns the number of
   items which have already been seen.
 
-  Can be called as a helper inside a `Beacon.LiveAdmin.PageBuilder.handle_params/3` callback when
+  Can be called as a helper inside a `c:Beacon.LiveAdmin.PageBuilder.handle_params/3` callback when
   updating params for a Table.
   """
   @spec handle_params(Socket.t(), map(), (Page.t() -> integer())) :: Socket.t()
