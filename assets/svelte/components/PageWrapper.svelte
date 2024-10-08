@@ -1,7 +1,8 @@
 <svelte:options customElement={{ tag: "page-wrapper", shadow: "open", customElement: true }} />
 
 <script lang="ts">
-  import LayoutAstNode from "./LayoutAstNode.svelte"
+  import LayoutWrapper from "./LayoutWrapper.svelte"
+  import LayoutAstNodes from "./LayoutAstNodes.svelte"
   import PageAstNode from "./PageAstNode.svelte"
   import { page } from "$lib/stores/page"
   import { tailwindConfig } from "$lib/stores/tailwindConfig"
@@ -13,6 +14,7 @@
   let styleWrapper: HTMLElement
   let twConfig = $tailwindConfig
   let configPromise = import(twConfig)
+
   onMount(async () => {
     const { default: tailwindConfig } = await configPromise
     const tailwind = createTailwindcss({ tailwindConfig })
@@ -43,16 +45,14 @@
 
 <span bind:this={styleWrapper}></span>
 <div bind:this={wrapper} on:click={preventLinkNavigation}>
-  {#each $page.layout.ast as layoutAstNode}
-    <LayoutAstNode node={layoutAstNode}>
-      <!-- This seemingly useless wrapper is here just so we are sure that the layout and the page don't share the same parent, which screws the position calculations -->
-      <div class="contents">
-        {#each $page.ast as astNode, index}
-          <PageAstNode node={astNode} nodeId={String(index)} />
-        {/each}
-      </div>
-    </LayoutAstNode>
-  {/each}
+  <LayoutAstNodes nodes={$page.layout.ast}>
+    <!-- This seemingly useless wrapper is here just so we are sure that the layout and the page don't share the same parent, which screws the position calculations -->
+    <div class="contents">
+      {#each $page.ast as astNode, index}
+        <PageAstNode node={astNode} nodeId={String(index)} />
+      {/each}
+    </div>
+  </LayoutAstNodes>
 </div>
 
 <style>
