@@ -123,6 +123,7 @@ defmodule Beacon.LiveAdmin.MixProject do
   defp docs do
     [
       main: "Beacon.LiveAdmin",
+      logo: "assets/images/beacon_logo.png",
       source_ref: "v#{@version}",
       source_url: "https://github.com/BeaconCMS/beacon_live_admin",
       extra_section: "GUIDES",
