@@ -1,6 +1,11 @@
 <script context="module" lang="ts">
   function filterWhile<T>(array: T[], condition: (T) => boolean) {
-    return array.filter((el, i) => !array.slice(0, i).some(condition))
+    const items = []
+    for (let i = 0; i < array.length; ++i) {
+      if (!condition(array[i])) break
+      items.push(array[i])
+    }
+    return items;
   }
 </script>
 
