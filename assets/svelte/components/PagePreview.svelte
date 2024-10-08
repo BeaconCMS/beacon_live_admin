@@ -11,7 +11,10 @@
   let isDraggingOver = false
 
   async function handleDragDrop(e: DragEvent) {
-    let { target, dataTransfer: { layoutZone } } = e
+    let {
+      target,
+      dataTransfer: { layoutZone },
+    } = e
     $currentComponentCategory = null
     if (!$draggedComponentDefinition) return
     let draggedObj = $draggedComponentDefinition
@@ -22,7 +25,7 @@
         ({ ast }: { ast: AstNode[] }) => {
           // If the element was dropped before the main content, it appends it at the top of the page
           // otherwise it appends it at the bottom of the page
-          const newAst = layoutZone === 'preamble' ?  [...ast, ...$page.ast] : [...$page.ast, ...ast] 
+          const newAst = layoutZone === "preamble" ? [...ast, ...$page.ast] : [...$page.ast, ...ast]
           $live.pushEvent("update_page_ast", { id: $page.id, ast: newAst })
         },
       )
