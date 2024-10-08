@@ -5,7 +5,7 @@
       if (!condition(array[i])) break
       items.push(array[i])
     }
-    return items;
+    return items
   }
 </script>
 
