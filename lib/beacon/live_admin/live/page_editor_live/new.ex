@@ -35,7 +35,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.New do
 
   defp build_new_page(site, [layout | _] = _layouts) do
     %Beacon.Content.Page{
-      path: "/New Page #{NaiveDateTime.utc_now()}",
+      path: "/new-page-#{Date.utc_today()}",
       site: site,
       layout_id: layout.id,
       layout: layout,
