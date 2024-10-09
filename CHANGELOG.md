@@ -1,13 +1,21 @@
 # Changelog
 
-## 0.1.0-dev
+## 0.1.0 (2024-10-09)
 
 ### Enhancements
+  * [Visual Editor] Keep comments in their correct position in the tree #268
+  * [Visual Editor] Allow to drag the parent of the selected element #267
+  * [Visual Editor] Improve bidirectional drag and drop #266
+  * [Visual Editor] Animate drag and drop using FLIP approach and simplify calculation of all elements #264
   * Reorder pages - [#261](https://github.com/BeaconCMS/beacon_live_admin/pull/261)
   * Added Shared Info Handlers (`info_handle` callbacks) page - [#210](https://github.com/BeaconCMS/beacon_live_admin/pull/210) by [@ddink](https://github.com/ddink)
 
 ### Fixes
+  * [Page Editor] remove path whitespace in new pages form
   * Remove unnecessary `:plug_cowboy` dependency - [#262](https://github.com/BeaconCMS/beacon_live_admin/pull/262)
+
+### Documentation
+  * Fix install guide link
 
 ## 0.1.0-rc.2 (2024-09-21
 
