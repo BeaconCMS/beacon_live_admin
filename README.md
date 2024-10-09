@@ -4,7 +4,7 @@ Admin UI to manage content for sites built by [Beacon](https://github.com/Beacon
 
 ## Status
 
-Pre-release version. You can expect incomplete features and breaking changes before a stable v0.1.0 is released.
+You can expect incomplete features and breaking changes before a stable v1.0 is released.
 
 ## Minimum Requirements
 
