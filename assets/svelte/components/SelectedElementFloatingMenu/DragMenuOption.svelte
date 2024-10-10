@@ -156,6 +156,9 @@
       }
       if (node === targetElement) {
         endIndex = i
+        if (startIndex < 0) {
+          startIndex = i
+        }
         break
       }
       startIndex = -1
