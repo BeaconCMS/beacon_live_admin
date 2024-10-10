@@ -44,11 +44,13 @@
   // Annotates the drop event here to know wether it was fired before the main content
   // or after it.
   function handleDragDrop(e: DragEvent) {
-    const target = e.target
-    if (target.compareDocumentPosition(contentWrapper) & Node.DOCUMENT_POSITION_PRECEDING) {
-      e.dataTransfer.layoutZone = "epilogue"
-    } else if (target.compareDocumentPosition(contentWrapper) & Node.DOCUMENT_POSITION_FOLLOWING) {
-      e.dataTransfer.layoutZone = "preamble"
+    const target = e.target as Node
+    if (!wrapper.contains(target)) {
+      if (target.compareDocumentPosition(contentWrapper) & Node.DOCUMENT_POSITION_PRECEDING) {
+        e.dataTransfer.layoutZone = "epilogue"
+      } else if (target.compareDocumentPosition(contentWrapper) & Node.DOCUMENT_POSITION_FOLLOWING) {
+        e.dataTransfer.layoutZone = "preamble"
+      }
     }
   }
 </script>

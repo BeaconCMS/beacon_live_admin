@@ -177,11 +177,15 @@
         {#each children as child, childIndex}
           <svelte:self node={child} nodeId="{nodeId}.{childIndex}" />
         {/each}
+        <!-- Using the component definition's example is actually visually confusing. Disabled for now -->
         {#if isDragTarget && $draggedComponentDefinition}
+          <div class="dragged-element-placeholder">Preview</div>
+        {/if}
+        <!-- {#if isDragTarget && $draggedComponentDefinition}
           <div class="dragged-element-placeholder">{@html $draggedComponentDefinition.example}</div>
         {:else if previewDropInside}
           <div class="dragged-element-placeholder">Preview</div>
-        {/if}
+        {/if} -->
       {/if}
     </svelte:element>
   {/if}
