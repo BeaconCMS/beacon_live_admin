@@ -94,7 +94,7 @@ defmodule Beacon.LiveAdmin.MixProject do
         {:beacon, path: path, runtime: false}
 
       @dev? ->
-        {:beacon, github: "BeaconCMS/beacon", runtime: false, branch: "lp-beacon-test"}
+        {:beacon, github: "BeaconCMS/beacon", runtime: false}
 
       :else ->
         {:beacon, ">= 0.0.0 and < 1.0.0", runtime: false}
