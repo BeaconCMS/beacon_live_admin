@@ -132,7 +132,9 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install OS packages
-        run: apt update && apt -y install unzip openssl
+        uses: ConorMacBride/install-package@v1
+        with:
+          apt: unzip openssl
 
       - uses: actions/setup-node@v4
         with:
