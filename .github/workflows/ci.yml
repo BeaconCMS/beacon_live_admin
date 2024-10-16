@@ -10,7 +10,6 @@ on:
     paths-ignore:
       - 'guides/**'
 
-
 permissions:
   contents: write
 
@@ -109,14 +108,15 @@ jobs:
       HOME: /root
 
     runs-on: ubuntu-20.04
-    container:
-      image: mcr.microsoft.com/playwright:v1.47.1-focal
+    timeout-minutes: 60
+    # container:
+    #   image: mcr.microsoft.com/playwright:v1.47.1-focal
 
     services:
       postgres:
         image: postgres:13.1
         env:
-          POSTGRES_DB: beacon_live_admin_e2e_test
+          POSTGRES_DB: beacon_live_admin_test
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
         options: >-
@@ -133,6 +133,10 @@ jobs:
 
       - name: Install OS packages
         run: apt update && apt -y install unzip openssl
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
 
       - name: Set up Elixir
         uses: erlef/setup-beam@v1
@@ -163,9 +167,12 @@ jobs:
 
       - run: npm run setup
 
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+
       - name: Run e2e tests
         env:
-          DATABASE_URL: postgresql://postgres:postgres@localhost:${{job.services.postgres.ports[5432]}}/beacon_live_admin_e2e_test
+          DATABASE_URL: postgresql://postgres:postgres@localhost:${{job.services.postgres.ports[5432]}}/beacon_live_admin_test
         run: npm run e2e:test
 
   quality:
