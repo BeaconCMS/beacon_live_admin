@@ -1,6 +1,11 @@
 <script lang="ts" context="module">
   import { writable, type Writable } from "svelte/store"
-  import { page, selectedAstElementId, parentOfSelectedAstElement } from "$lib/stores/page"
+  import {
+    page,
+    selectedAstElementId,
+    parentOfSelectedAstElement,
+    grandParentOfSelectedAstElement,
+  } from "$lib/stores/page"
   import { findHoveredSiblingIndex, getBoundingRect, getDragDirection, type Coords } from "$lib/utils/drag-helpers"
   import { live } from "$lib/stores/live"
 
@@ -13,41 +18,20 @@
     newSiblingRects: LocationInfo[] // LocationInfo[]
   }
 
-  let currentHandleCoords: Coords
-  let relativeWrapperRect: DOMRect
-  const dragHandleStyle: Writable<string> = writable("")
   export const isDragging: Writable<boolean> = writable(false)
-  let dragElementInfo: DragInfo
 
-  export function initSelectedElementDragMenuPosition(selectedDomEl, mouseDiff?: Coords) {
-    let rect = dragElementInfo
-      ? dragElementInfo.originalSiblingRects[dragElementInfo.selectedIndex]
-      : getBoundingRect(selectedDomEl)
-    updateHandleCoords(rect, mouseDiff)
-    let styles = []
-    if (currentHandleCoords?.y) {
-      styles.push(`top: ${currentHandleCoords.y}px`)
+  function calculateHandleXPosition(rect: LocationInfo, position: "bottom" | "left") {
+    if (position === "bottom") {
+      return rect.x + rect.width / 2 - 5
+    } else {
+      return rect.x - 25
     }
-    if (currentHandleCoords?.x) {
-      styles.push(`left: ${currentHandleCoords.x}px`)
-    }
-    dragHandleStyle.set(styles.join(";"))
   }
-
-  function calculateHandleXPosition(rect: LocationInfo) {
-    return rect.x + rect.width / 2 - 5
-  }
-  function calculateHandleYPosition(rect: LocationInfo) {
-    return rect.y + rect.height + 5
-  }
-  function updateHandleCoords(currentRect: LocationInfo, movement: Coords = { x: 0, y: 0 }) {
-    relativeWrapperRect = document
-      .getElementById("ui-builder-app-container")
-      .closest(".relative")
-      .getBoundingClientRect()
-    currentHandleCoords = {
-      x: calculateHandleXPosition(currentRect) - relativeWrapperRect.x + movement.x,
-      y: calculateHandleYPosition(currentRect) - relativeWrapperRect.y + movement.y,
+  function calculateHandleYPosition(rect: LocationInfo, position: "bottom" | "left") {
+    if (position === "bottom") {
+      return rect.y + rect.height + 5
+    } else {
+      return rect.y + rect.height / 2 - 5
     }
   }
 </script>
@@ -60,11 +44,41 @@
 
   let originalSiblings: Element[]
   let dragHandleElement: HTMLButtonElement
+  let dragHandleStyle = ""
+  let currentHandleCoords: Coords
+  let relativeWrapperRect: DOMRect
+  let dragElementInfo: DragInfo
+
   $: canBeDragged = element?.parentElement?.children?.length > 1
   $: dragDirection = getDragDirection(element)
   $: {
     // Update drag menu position when the element store changes
-    !!element && initSelectedElementDragMenuPosition(element)
+    !!element && initSelectedElementDragMenuPosition(element, isParent)
+  }
+
+  function updateHandleCoords(currentRect: LocationInfo, isParent: boolean) {
+    let appContainer = document.getElementById("ui-builder-app-container")
+    if (!appContainer) return
+    relativeWrapperRect = appContainer.closest(".relative").getBoundingClientRect()
+    const handlePosition = isParent ? "left" : "bottom"
+    currentHandleCoords = {
+      x: calculateHandleXPosition(currentRect, handlePosition) - relativeWrapperRect.x,
+      y: calculateHandleYPosition(currentRect, handlePosition) - relativeWrapperRect.y,
+    }
+  }
+  function initSelectedElementDragMenuPosition(selectedDomEl: Element, isParent: boolean = false) {
+    let rect = dragElementInfo
+      ? dragElementInfo.originalSiblingRects[dragElementInfo.selectedIndex]
+      : getBoundingRect(selectedDomEl)
+    updateHandleCoords(rect, isParent)
+    let styles = []
+    if (currentHandleCoords?.y) {
+      styles.push(`top: ${currentHandleCoords.y}px`)
+    }
+    if (currentHandleCoords?.x) {
+      styles.push(`left: ${currentHandleCoords.x}px`)
+    }
+    dragHandleStyle = styles.join(";")
   }
 
   function snapshotSelectedElementSiblings() {
@@ -92,6 +106,7 @@
           left,
         }
       }),
+      newSiblingRects: null,
     }
     // If this is expressed as `element.parentElement.style.display = "none"` for some reason svelte
     // thinks it has to invalidate the `element` and recompute all state that observes it.
@@ -110,26 +125,80 @@
     snapshotSelectedElementSiblings()
   }
 
+  function isComment(n: Node): n is Comment {
+    return n.nodeType === Node.COMMENT_NODE
+  }
+  function isElement(n: Node): n is Comment {
+    return n.nodeType === Node.ELEMENT_NODE
+  }
+  function isCommentOrElement(n: Node): n is Comment | Element {
+    return isElement(n) || isComment(n)
+  }
+
+  // Indexes don't necessarily match indexes in the AST tree. The reason is that the drag and drop
+  // works with Elements, and thus ignores non-renderable nodes like HTML comments.
+  // Because of that, and because if we move elements without moving the comments directly before that element
+  // those comments will very likely end up commenting the wrong element, we want precedent comments to behave in a
+  // "sticky" way: When you drag an element, you are moving that element along with any html comment directly
+  // preceding that element. This is not necessarily accurate 100% of the time, but it's a lot more accurate
+  // than never moving the comments.
+  function correctIndex(index: number): [number, number] {
+    const nodes = Array.from(element.parentElement.childNodes).filter(isCommentOrElement)
+    const elements = Array.from(element.parentElement.children)
+    const targetElement = elements[index]
+    let startIndex = -1
+    let endIndex = -1
+    for (let i = 0; i < nodes.length; i++) {
+      const node = nodes[i]
+      if (isComment(node) && startIndex < 0) {
+        startIndex = i
+        continue
+      }
+      if (node === targetElement) {
+        endIndex = i
+        if (startIndex < 0) {
+          startIndex = i
+        }
+        break
+      }
+      startIndex = -1
+    }
+    return [startIndex, endIndex]
+  }
+
   function applyNewOrder() {
-    if (newIndex !== null && newIndex !== dragElementInfo.selectedIndex) {
+    let parent = isParent ? $grandParentOfSelectedAstElement : $parentOfSelectedAstElement
+
+    if (newIndex !== null && newIndex !== dragElementInfo.selectedIndex && !!parent) {
       // Reordering happened, apply new order
-      let parent = $parentOfSelectedAstElement
-      const selectedAstElement = parent.content.splice(dragElementInfo.selectedIndex, 1)[0]
-      parent.content.splice(newIndex, 0, selectedAstElement)
+      const [startIndex, endIndex] = correctIndex(dragElementInfo.selectedIndex)
+      const movedAstNodes = parent.content.splice(startIndex, endIndex - startIndex + 1)
+      const [insertIndex] = correctIndex(newIndex)
+      parent.content.splice(insertIndex, 0, ...movedAstNodes)
       // Update the selectedAstElementId so the same item remains selected
+      if (isParent) {
+        let newSelectedIndex = insertIndex + endIndex - startIndex
+        let parts = $selectedAstElementId.split(".")
+        parts[parts.length - 2] = newSelectedIndex.toString()
+        $selectedAstElementId = parts.join(".")
+      } else {
+        let newSelectedIndex = insertIndex + endIndex - startIndex
+        let parts = $selectedAstElementId.split(".")
+        parts[parts.length - 1] = newSelectedIndex.toString()
+        $selectedAstElementId = parts.join(".")
+      }
       $page.ast = [...$page.ast]
-      let parts = $selectedAstElementId.split(".")
-      parts[parts.length - 1] = newIndex.toString()
-      $selectedAstElementId = parts.join(".")
       // Update in the server
       $live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast })
     }
   }
 
   function resetDragElementHandle() {
-    dragHandleElement.style.transform = null
-    dragHandleElement.style.setProperty("--tw-translate-y", null)
-    dragHandleElement.style.setProperty("--tw-translate-x", null)
+    if (dragHandleElement) {
+      dragHandleElement.style.transform = null
+      dragHandleElement.style.setProperty("--tw-translate-y", null)
+      dragHandleElement.style.setProperty("--tw-translate-x", null)
+    }
   }
 
   async function handleMouseup(e: MouseEvent) {

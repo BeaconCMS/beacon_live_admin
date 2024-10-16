@@ -11,7 +11,6 @@
   import { updateNodeContent, updateAst } from "$lib/utils/ast-manipulation"
   import { elementCanBeDroppedInTarget } from "$lib/utils/drag-helpers"
   import type { AstNode } from "$lib/types"
-  import { initSelectedElementDragMenuPosition } from "./SelectedElementFloatingMenu/DragMenuOption.svelte"
   export let node: AstNode
   export let nodeId: string
 
@@ -76,7 +75,6 @@
   function handleClick({ currentTarget }: Event) {
     setSelection(nodeId)
     setSelectedDom(currentTarget)
-    initSelectedElementDragMenuPosition(currentTarget)
   }
 
   function handleContentEdited({ target }: Event) {
@@ -179,11 +177,15 @@
         {#each children as child, childIndex}
           <svelte:self node={child} nodeId="{nodeId}.{childIndex}" />
         {/each}
+        <!-- Using the component definition's example is actually visually confusing. Disabled for now -->
         {#if isDragTarget && $draggedComponentDefinition}
+          <div class="dragged-element-placeholder">Preview</div>
+        {/if}
+        <!-- {#if isDragTarget && $draggedComponentDefinition}
           <div class="dragged-element-placeholder">{@html $draggedComponentDefinition.example}</div>
         {:else if previewDropInside}
           <div class="dragged-element-placeholder">Preview</div>
-        {/if}
+        {/if} -->
       {/if}
     </svelte:element>
   {/if}

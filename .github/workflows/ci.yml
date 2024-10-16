@@ -1,17 +1,22 @@
 name: CI
 
 on:
-  pull_request:
   push:
     branches:
       - main
+    paths-ignore:
+      - 'guides/**'
+  pull_request:
+    paths-ignore:
+      - 'guides/**'
+
 
 permissions:
   contents: write
 
 jobs:
   test:
-    name: "test: OTP ${{matrix.otp}} | Elixir ${{matrix.elixir}} | Phoenix ${{matrix.phoenix-version}} | LiveView ${{matrix.phoenix-live-view-version}}"
+    name: "test: OTP ${{matrix.otp}} | Elixir ${{matrix.elixir}} | Phoenix ${{matrix.phoenix}} | LiveView ${{matrix.phoenix-live-view}} | PG ${{matrix.postgres}}"
 
     strategy:
       fail-fast: false
