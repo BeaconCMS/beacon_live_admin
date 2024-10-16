@@ -104,8 +104,8 @@ jobs:
       MIX_ENV: e2e
       PHOENIX_VERSION: ${{matrix.phoenix-version}}
       PHOENIX_LIVE_VIEW_VERSION: ${{matrix.phoenix-live-view-version}}
-      ImageOS: ubuntu20
-      HOME: /root
+      # ImageOS: ubuntu20
+      # HOME: /root
 
     runs-on: ubuntu-20.04
     timeout-minutes: 60
