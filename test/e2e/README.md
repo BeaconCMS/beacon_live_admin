@@ -10,9 +10,13 @@ npm run setup
 
 ## Run
 
+Install deps and run the entire test suite:
+
 ```sh
 npm run e2e:test
 ```
+
+Or run a single test:
 
 ```sh
 npm run e2e:test test_name.spec.js:10 --project chromium --debug
@@ -24,4 +28,9 @@ if that step has already been done or assets have not changed:
 ```sh
 cd test/e2e
 npx playwright test
+```
+
+```sh
+cd test/e2e
+npx playwright test --ui
 ```

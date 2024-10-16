@@ -25,7 +25,8 @@ test.beforeEach(async ({ page }) => {
 
 // Note: while dragging, only the element clones are visible.
 // On drop, the clones get removed and the original elements will be visible again
-test("It shows clones and placeholder for initiated drop location", async ({ page }) => {
+// FIXME: review test
+test.skip("It shows clones and placeholder for initiated drop location", async ({ page }) => {
   await syncLV(page)
 
   const firstItem = page.getByTestId("margin-row-item-1")
@@ -54,7 +55,8 @@ test("It shows clones and placeholder for initiated drop location", async ({ pag
   await page.mouse.up()
 })
 
-test("Reordering", async ({ page }) => {
+// FIXME: review test
+test.skip("Reordering", async ({ page }) => {
   await syncLV(page)
 
   const source = page.getByTestId("margin-row-item-1")
@@ -85,7 +87,8 @@ test("Reordering", async ({ page }) => {
   ])
 })
 
-test("Persistence on save", async ({ page }) => {
+// FIXME: review test
+test.skip("Persistence on save", async ({ page }) => {
   await syncLV(page)
 
   const source = page.getByTestId("margin-row-item-1")

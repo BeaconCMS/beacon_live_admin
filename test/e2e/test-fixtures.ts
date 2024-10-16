@@ -26,7 +26,6 @@ export const test = baseTest.extend<TestMetadata>({
 
     const page = await context.newPage()
 
-    console.log(`Running test with scenario: ${scenario}`)
     const r = await page.request.post(`http://localhost:4020/fixtures/${scenario}`, {
       headers: {
         "user-agent": userAgentString,
