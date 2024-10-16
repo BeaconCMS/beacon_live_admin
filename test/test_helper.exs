@@ -95,35 +95,6 @@ if Mix.env() == :test do
         extra_page_fields: [
           MyApp.PageField.Type
         ]
-      ],
-      [
-        site: :site_a,
-        mode: :testing,
-        repo: MyApp.Repo,
-        endpoint: MyAppWeb.Endpoint,
-        router: MyApp.Router,
-        extra_page_fields: [
-          MyApp.PageField.Type
-        ]
-      ]
-    ]
-  )
-
-  Beacon.LiveAdminTest.Cluster.start_beacon(:"node2@127.0.0.1",
-    sites: [
-      [
-        site: :site_b,
-        mode: :testing,
-        repo: MyApp.Repo,
-        endpoint: MyAppWeb.Endpoint,
-        router: MyApp.Router
-      ],
-      [
-        site: :site_c,
-        mode: :manual,
-        repo: MyApp.Repo,
-        endpoint: MyAppWeb.Endpoint,
-        router: MyApp.Router
       ]
     ]
   )
