@@ -33,7 +33,6 @@ defmodule Beacon.LiveAdmin.Web do
       use Phoenix.LiveView,
         layout: {Beacon.LiveAdmin.Layouts, :app}
 
-      # FIXME: config.testing
       if Code.ensure_loaded?(Mix.Project) and Mix.env() == :e2e do
         on_mount Beacon.LiveAdminTest.LiveAcceptance
       end

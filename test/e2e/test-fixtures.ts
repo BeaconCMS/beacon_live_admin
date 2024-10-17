@@ -7,7 +7,7 @@ interface TestMetadata {
   scenario: string
 }
 
-export const test = baseTest.extend<TestMetadata>({
+const test = baseTest.extend<TestMetadata>({
   scenario: "",
   page: async ({ browser, scenario }, use) => {
     // This checks out the DB and gets the user agent string
@@ -26,7 +26,7 @@ export const test = baseTest.extend<TestMetadata>({
 
     const page = await context.newPage()
 
-    const r = await page.request.post(`http://localhost:4020/fixtures/${scenario}`, {
+    await page.request.post(`http://localhost:4020/fixtures/${scenario}`, {
       headers: {
         "user-agent": userAgentString,
       },
@@ -42,4 +42,5 @@ export const test = baseTest.extend<TestMetadata>({
     })
   },
 })
-export { expect }
+
+export { test, expect }
