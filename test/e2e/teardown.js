@@ -3,7 +3,7 @@ import { request } from "@playwright/test"
 export default async () => {
   try {
     const context = await request.newContext({
-      baseURL: "http://localhost:4020/admin"
+      baseURL: "http://localhost:4020/admin",
     })
     await context.post("/halt")
   } catch (e) {
