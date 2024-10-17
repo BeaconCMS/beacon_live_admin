@@ -1,5 +1,5 @@
-import { test, expect } from "../test-fixtures"
-const { syncLV } = require("../utils")
+import { test, expect } from "../../test-fixtures"
+import { syncLV } from "../../utils"
 
 const siteName = "site_a"
 const pagePath = "/drag-n-drop"

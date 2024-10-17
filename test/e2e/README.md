@@ -5,32 +5,32 @@ Based on [LiveView e2e tests](https://github.com/phoenixframework/phoenix_live_v
 ## Setup
 
 ```sh
-npm run setup
+npm install
+npx playwright install --with-deps
 ```
 
 ## Run
 
-Install deps and run the entire test suite:
+Single test spec:
 
 ```sh
-npm run e2e:test
+npx playwright test tests/index.spec.ts
 ```
 
-Or run a single test:
+Single test by line:
 
 ```sh
-npm run e2e:test test_name.spec.js:10 --project chromium --debug
+npx playwright test tests/index.spec.ts:6
 ```
 
-Or call `playwright` directly to skip installing dependencies and building assets
-if that step has already been done or assets have not changed:
+Filter browser:
 
 ```sh
-cd test/e2e
-npx playwright test
+npx playwright test tests/index.spec.ts: --project chromium
 ```
 
+UI:
+
 ```sh
-cd test/e2e
 npx playwright test --ui
 ```

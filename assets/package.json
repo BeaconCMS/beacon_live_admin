@@ -1,8 +1,20 @@
 {
   "name": "beacon_live_admin",
   "version": "0.1.0",
+  "description": "LiveView Admin for Beacon",
   "license": "MIT",
-  "repository": {},
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/BeaconCMS/beacon_live_admin.git"
+  },
+  "dependencies": {
+    "@mhsdesign/jit-browser-tailwindcss": "^0.4",
+    "@monaco-editor/loader": "^1.4",
+    "live_svelte": "file:../deps/live_svelte",
+    "phoenix": "file:../deps/phoenix",
+    "phoenix_html": "file:../deps/phoenix_html",
+    "phoenix_live_view": "file:../deps/phoenix_live_view"
+  },
   "devDependencies": {
     "@tailwindcss/container-queries": "^0.1",
     "esbuild": "^0.20",
@@ -12,13 +24,5 @@
     "svelte": "^4.2",
     "svelte-preprocess": "^5.1",
     "typescript": "^5.3"
-  },
-  "dependencies": {
-    "@mhsdesign/jit-browser-tailwindcss": "^0.4",
-    "@monaco-editor/loader": "^1.4",
-    "live_svelte": "file:../deps/live_svelte",
-    "phoenix": "file:../deps/phoenix",
-    "phoenix_html": "file:../deps/phoenix_html",
-    "phoenix_live_view": "file:../deps/phoenix_live_view"
   }
 }

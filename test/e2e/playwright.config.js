@@ -1,4 +1,4 @@
-const { devices } = require("@playwright/test")
+import { devices } from "@playwright/test"
 
 const config = {
   forbidOnly: !!process.env.CI,
@@ -36,4 +36,4 @@ const config = {
   globalTeardown: require.resolve("./teardown"),
 }
 
-module.exports = config
+export default config

@@ -104,13 +104,9 @@ jobs:
       MIX_ENV: e2e
       PHOENIX_VERSION: ${{matrix.phoenix-version}}
       PHOENIX_LIVE_VIEW_VERSION: ${{matrix.phoenix-live-view-version}}
-      # ImageOS: ubuntu20
-      # HOME: /root
 
     runs-on: ubuntu-20.04
     timeout-minutes: 60
-    # container:
-    #   image: mcr.microsoft.com/playwright:v1.47.1-focal
 
     services:
       postgres:
@@ -167,8 +163,7 @@ jobs:
 
       - run: npm run setup
 
-      - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
+      - run: npm run e2e:setup
 
       - name: Run e2e tests
         env:

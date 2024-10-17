@@ -1,5 +1,5 @@
-import { test, expect } from "../test-fixtures"
-const { syncLV } = require("../utils")
+import { test, expect } from "../../test-fixtures"
+import { syncLV } from "../../utils"
 import { dragTo, startDragging, verifyOrder } from "./helpers"
 
 const siteName = "site_a"

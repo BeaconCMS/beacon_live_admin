@@ -1,4 +1,4 @@
-const { expect } = require("@playwright/test")
+import { expect } from "@playwright/test"
 
 // a helper function to wait until the LV has no pending events
 const syncLV = async (page) => {
