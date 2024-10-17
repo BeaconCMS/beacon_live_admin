@@ -33,6 +33,7 @@ defmodule Beacon.LiveAdmin.MixProject do
     ]
   end
 
+  defp elixirc_paths(:e2e), do: ["lib", "test/support", "test/e2e/support"]
   defp elixirc_paths(:test), do: ["lib", "test/support"]
   defp elixirc_paths(_), do: ["lib"]
 
@@ -68,7 +69,7 @@ defmodule Beacon.LiveAdmin.MixProject do
       {:live_monaco_editor, "~> 0.1"},
 
       # Dev, Test, Docs
-      {:bandit, "~> 1.0", only: :dev, optional: true},
+      {:bandit, "~> 1.0", only: [:dev, :e2e], optional: true},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:ex_doc, "~> 0.29", only: :dev, runtime: false}
     ]
@@ -104,13 +105,14 @@ defmodule Beacon.LiveAdmin.MixProject do
     [
       setup: ["deps.get", "assets.setup", "assets.build"],
       dev: "run --no-halt dev.exs",
-      "format.all": ["format", "cmd npm run format --prefix ./assets"],
+      "format.all": ["format", "cmd npm run format"],
       "format.all.check": [
         "format --check-formatted",
-        "cmd npm run format-check --prefix ./assets"
+        "cmd npm run format-check"
       ],
       "assets.setup": [
         "tailwind.install --if-missing --no-assets",
+        "cmd npm install",
         "cmd npm install --prefix assets"
       ],
       "assets.build": [
