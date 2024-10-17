@@ -15,7 +15,7 @@ permissions:
 
 jobs:
   test:
-    name: "test: OTP ${{matrix.otp}} | Elixir ${{matrix.elixir}} | Phoenix ${{matrix.phoenix}} | LV ${{matrix.phoenix-live-view}}"
+    name: "test: OTP ${{matrix.otp}} | Elixir ${{matrix.elixir}} | Phoenix ${{matrix.phoenix}} | LV ${{matrix.phoenix-live-view}} | PG ${{matrix.postgres}}"
 
     strategy:
       fail-fast: false
@@ -26,12 +26,14 @@ jobs:
             elixir: "1.14.0"
             phoenix: "1.7.0"
             phoenix-live-view: "0.20.2"
+            postgres: '13.0-alpine'
 
           # latest
           - otp: "27"
             elixir: "1.17"
             phoenix: "~> 1.7"
-            phoenix-live-view: "~> 0.20"
+            phoenix-live-view: "1.0.0-rc.7"
+            postgres: '16.4-alpine'
 
     env:
       MIX_ENV: test
@@ -42,7 +44,7 @@ jobs:
 
     services:
       postgres:
-        image: postgres:13.1
+        image: postgres:${{matrix.postgres}}
         env:
           POSTGRES_DB: beacon_live_admin_test
           POSTGRES_USER: postgres
@@ -88,7 +90,7 @@ jobs:
           mix test
 
   e2e-test:
-    name: "e2e-test: OTP ${{matrix.otp}} | Elixir ${{matrix.elixir}} | Phoenix ${{matrix.phoenix}} | LV ${{matrix.phoenix-live-view}}"
+    name: "e2e-test: OTP ${{matrix.otp}} | Elixir ${{matrix.elixir}} | Phoenix ${{matrix.phoenix}} | LV ${{matrix.phoenix-live-view}} | PG ${{matrix.postgres}}"
 
     strategy:
       fail-fast: false
@@ -98,7 +100,8 @@ jobs:
           - otp: "27"
             elixir: "1.17"
             phoenix: "~> 1.7"
-            phoenix-live-view: "~> 0.20"
+            phoenix-live-view: "1.0.0-rc.7"
+            postgres: '16.4-alpine'
 
     env:
       MIX_ENV: e2e
@@ -110,7 +113,7 @@ jobs:
 
     services:
       postgres:
-        image: postgres:13.1
+        image: postgres:${{matrix.postgres}}
         env:
           POSTGRES_DB: beacon_live_admin_test
           POSTGRES_USER: postgres
@@ -171,7 +174,7 @@ jobs:
         run: npm run e2e:test
 
   quality:
-    name: "quality: OTP ${{matrix.otp}} | Elixir ${{matrix.elixir}} | Phoenix ${{matrix.phoenix}} | LiveView ${{matrix.phoenix-live-view}}"
+    name: "quality: OTP ${{matrix.otp}} | Elixir ${{matrix.elixir}} | Phoenix ${{matrix.phoenix}} | LV ${{matrix.phoenix-live-view}}"
 
     strategy:
       fail-fast: false
@@ -181,7 +184,7 @@ jobs:
           - otp: "27"
             elixir: "1.17"
             phoenix: "~> 1.7"
-            phoenix-live-view: "~> 0.20"
+            phoenix-live-view: "1.0.0-rc.7"
 
     env:
       MIX_ENV: dev
