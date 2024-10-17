@@ -1,5 +1,3 @@
-Code.require_file("fixtures.ex", __DIR__)
-
 Application.put_env(:beacon_live_admin, :ecto_repos, [Beacon.LiveAdminTest.E2E.Repo])
 
 repo_url = System.get_env("DATABASE_URL") || "postgres://localhost:5432/beacon_live_admin_test"
