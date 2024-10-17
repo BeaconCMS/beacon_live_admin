@@ -97,8 +97,8 @@ jobs:
           # latest
           - otp: "27"
             elixir: "1.17"
-            phoenix-version: "~> 1.7"
-            phoenix-live-view-version: "~> 0.20"
+            phoenix: "~> 1.7"
+            phoenix-live-view: "~> 0.20"
 
     env:
       MIX_ENV: e2e
@@ -180,8 +180,8 @@ jobs:
           # latest
           - otp: "27"
             elixir: "1.17"
-            phoenix-version: "~> 1.7"
-            phoenix-live-view-version: "~> 0.20"
+            phoenix: "~> 1.7"
+            phoenix-live-view: "~> 0.20"
 
     env:
       MIX_ENV: dev
