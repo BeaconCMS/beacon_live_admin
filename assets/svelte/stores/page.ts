@@ -23,7 +23,7 @@ export const selectedAstElement: Readable<AstElement | undefined> = derived(
 )
 
 function getParentId(id: string | null) {
-  if (id === "root") return null
+  if (id === null || id === "root") return null
   let levels = id.split(".")
   if (levels.length === 1) return "root"
   levels.pop()
