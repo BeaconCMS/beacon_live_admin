@@ -357,7 +357,7 @@
     bind:this={dragHandleElement}
     on:mousedown={handleMousedown}
     class="rounded-full w-6 h-6 flex justify-center items-center absolute bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 active:bg-blue-800 transform"
-    style={$dragHandleStyle}
+    style={dragHandleStyle}
     data-testid="drag-button"
   >
     <span
