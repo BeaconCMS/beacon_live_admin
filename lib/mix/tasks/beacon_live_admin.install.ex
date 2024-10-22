@@ -26,6 +26,7 @@ defmodule Mix.Tasks.BeaconLiveAdmin.Install do
   @doc false
   def info(_argv, _composing_task) do
     %Igniter.Mix.Task.Info{
+      group: :beacon_live_admin,
       example: @example,
       schema: [path: :string],
       aliases: [p: :path],
