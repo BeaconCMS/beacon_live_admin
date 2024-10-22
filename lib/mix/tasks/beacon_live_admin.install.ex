@@ -42,7 +42,6 @@ defmodule Mix.Tasks.BeaconLiveAdmin.Install do
     validate_options!(path)
 
     {igniter, router} = Igniter.Libs.Phoenix.select_router(igniter)
-    # {igniter, [endpoint]} = Igniter.Libs.Phoenix.endpoints_for_router(igniter, router)
 
     igniter
     |> Igniter.Project.Formatter.import_dep(:beacon_live_admin)
