@@ -1,7 +1,7 @@
 defmodule Beacon.LiveAdmin.MixProject do
   use Mix.Project
 
-  @version "0.1.0"
+  @version "0.1.1"
   @dev? String.ends_with?(@version, "-dev")
   @source_url "https://github.com/BeaconCMS/beacon_live_admin"
   @homepage_url "https://beaconcms.org"
