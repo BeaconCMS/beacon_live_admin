@@ -1,9 +1,10 @@
 # Changelog
 
-## 0.1.1-dev
+## Unreleased
 
 ### Fixes
   - [Visual Editor] Allow to drop elements into the page over the layout
+  - [Visual Editor] Fix small bug that prevented deleting an item
 
 ## 0.1.0 (2024-10-09)
 
