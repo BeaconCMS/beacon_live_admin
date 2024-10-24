@@ -13,16 +13,18 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.ShowComponent do
       socket
       |> assign(assigns)
       |> assign(:is_image?, MediaLibrary.is_image?(site, asset))
-      |> assign(:url, MediaLibrary.url_for(site, asset))
       |> assign(:urls, urls_for(site, asset))
 
     {:ok, socket}
   end
 
   defp urls_for(site, asset) do
-    site
-    |> MediaLibrary.urls_for(asset)
-    |> Enum.with_index()
+    urls =
+      site
+      |> MediaLibrary.urls_for(asset)
+      |> Enum.with_index(1)
+
+    [{{"name", asset.file_name}, 0} | urls]
   end
 
   @impl true
@@ -38,7 +40,7 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.ShowComponent do
               <label class="block text-sm font-semibold leading-6 text-zinc-800 capitalize">
                 <%= key %>
               </label>
-              <input type="text" id={"url-#{index}"} value={url} class="flex  mt-2 block w-full rounded-lg text-zinc-900 focus:ring-0 sm:text-sm sm:leading-6" />
+              <input type="text" id={"url-#{index}"} value={url} readonly class="flex  mt-2 block w-full rounded-lg text-zinc-900 focus:ring-0 sm:text-sm sm:leading-6" />
             </div>
             <div class="flex">
               <button phx-click={JS.dispatch("beacon_admin:clipcopy", to: "#url-#{index}")}>
