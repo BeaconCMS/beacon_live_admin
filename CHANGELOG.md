@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Enhancements
+  - [Media Library] Display asset file name on show details to allow easy copy and paste
+
 ## 0.1.1 (2024-10-23)
 
 ### Fixes
