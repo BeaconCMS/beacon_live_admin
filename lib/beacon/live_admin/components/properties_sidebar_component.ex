@@ -42,7 +42,7 @@ defmodule Beacon.LiveAdmin.PropertiesSidebarComponent do
       )
 
     ~H"""
-      <div class="w-64 bg-white" data-testid="right-sidebar">
+      <div class="mt-4 w-64 bg-white" data-testid="right-sidebar">
         <div class="sticky top-0 overflow-y-auto h-screen">
           <%= if @selected_ast_element do %>
             <div class="border-b text-lg font-medium leading-5 p-4 relative">
