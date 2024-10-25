@@ -28,44 +28,41 @@ export function mouseDiff(mouseMovement: CoordsDiff): Coords {
 // both (e.g. they form a grid or overflow to the the next line)
 function detectFlow(rects: DOMRect[]) {
   // Sort elements by their left position (to analyze horizontal arrangement)
-  const sortedByLeft = [...rects].sort((a, b) => a.left - b.left);
+  const sortedByLeft = [...rects].sort((a, b) => a.left - b.left)
   // Sort elements by their top position (to analyze vertical arrangement)
-  const sortedByTop = [...rects].sort((a, b) => a.top - b.top);
+  const sortedByTop = [...rects].sort((a, b) => a.top - b.top)
 
   // Calculate the average horizontal and vertical spacing between elements
-  const avgHorizontalDiff = getAverageDifference(sortedByLeft, 'left');
-  const avgVerticalDiff = getAverageDifference(sortedByTop, 'top');
+  const avgHorizontalDiff = getAverageDifference(sortedByLeft, "left")
+  const avgVerticalDiff = getAverageDifference(sortedByTop, "top")
 
   // Determine the dominant flow
   if (avgHorizontalDiff > avgVerticalDiff) {
-      // Check if all elements are roughly centered vertically
-      const isCenteredHorizontally = checkVerticalCenterAlignment(sortedByLeft);
-      return isCenteredHorizontally ? 'horizontal' : 'both';
+    // Check if all elements are roughly centered vertically
+    const isCenteredHorizontally = checkVerticalCenterAlignment(sortedByLeft)
+    return isCenteredHorizontally ? "horizontal" : "both"
   } else if (avgVerticalDiff > avgHorizontalDiff) {
-      return 'vertical';
+    return "vertical"
   }
-  return 'both';
+  return "both"
 }
 
 // Helper to calculate average difference for a given property (top or left)
 function getAverageDifference(rects, property) {
-  let totalDiff = 0;
+  let totalDiff = 0
   for (let i = 1; i < rects.length; i++) {
-      totalDiff += Math.abs(rects[i][property] - rects[i - 1][property]);
+    totalDiff += Math.abs(rects[i][property] - rects[i - 1][property])
   }
-  return totalDiff / (rects.length - 1);
+  return totalDiff / (rects.length - 1)
 }
 
 // Helper to check if elements are centered vertically relative to each other
 function checkVerticalCenterAlignment(rects) {
-  const centers = rects.map(rect => (rect.top + rect.bottom) / 2);
-  const minCenter = Math.min(...centers);
-  const maxCenter = Math.max(...centers);
-  return (maxCenter - minCenter) < 17; // tolerance for alignment, adjust as needed
+  const centers = rects.map((rect) => (rect.top + rect.bottom) / 2)
+  const minCenter = Math.min(...centers)
+  const maxCenter = Math.max(...centers)
+  return maxCenter - minCenter < 17 // tolerance for alignment, adjust as needed
 }
-
-
-
 
 // Determines if the drag of the current element should vertical or horizontal based on the
 // flow of its siblings
