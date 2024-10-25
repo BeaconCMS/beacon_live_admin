@@ -285,20 +285,34 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
         </div>
       </.modal>
 
-      <.svelte
-        :if={@editor == "visual"}
-        name="components/UiBuilder"
-        class={svelte_page_builder_class(@editor)}
-        props={
-          %{
-            components: @components,
-            page: @builder_page,
-            tailwindConfig: @tailwind_config,
-            tailwindInput: @tailwind_input
-          }
-        }
-        socket={@socket}
-      />
+      <%= if @editor == "visual" do %>
+        <div class="flex">
+          <.svelte
+            name="components/UiBuilder"
+            class={svelte_page_builder_class(@editor)}
+            props={
+              %{
+                components: @components,
+                page: @builder_page,
+                tailwindConfig: @tailwind_config,
+                tailwindInput: @tailwind_input
+              }
+            }
+            socket={@socket}
+          />
+          <div class="w-64 bg-white" data-testid="right-sidebar">
+            <div class="sticky top-0 overflow-y-auto h-screen">
+              <%= if @selected_ast_element do %>
+                <div class="border-b text-lg font-medium leading-5 p-4 relative">
+                  <%= @selected_ast_element["tag"] %>
+                  <%!-- <p>(<%= inspect(@selected_ast_element) %>)</p> --%>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+
 
       <div class={[
         "grid items-start grid-cols-1 mx-auto mt-4 gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3 h-auto",

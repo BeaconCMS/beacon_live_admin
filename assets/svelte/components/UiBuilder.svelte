@@ -30,16 +30,16 @@
   }
 </script>
 
-<Backdrop />
 <div class="flex min-h-screen bg-gray-100" id="ui-builder-app-container" data-testid="app-container">
+  <Backdrop />
   <!-- Left sidebar -->
   <ComponentsSidebar {components} />
 
   <!-- Main -->
   <PagePreview />
 
-  <!-- Right sidebar -->
-  <PropertiesSidebar on:droppedIntoTarget={(e) => addBasicComponentToTarget(e.detail)} />
+  <!-- Right sidebar -->  
+  <!-- <PropertiesSidebar on:droppedIntoTarget={(e) => addBasicComponentToTarget(e.detail)} /> -->
 
   <SelectedElementFloatingMenu />
 </div>

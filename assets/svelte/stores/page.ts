@@ -1,6 +1,7 @@
 import { writable, derived, get } from "svelte/store"
 import type { Writable, Readable } from "svelte/store"
 import type { AstElement, AstNode, Page } from "$lib/types"
+import { live } from "$lib/stores/live"
 
 export const page: Writable<Page> = writable()
 export const selectedAstElementId: Writable<string | undefined> = writable()
@@ -17,7 +18,9 @@ export const selectedAstElement: Readable<AstElement | undefined> = derived(
   [page, selectedAstElementId],
   ([$page, $selectedAstElementId]) => {
     if ($page && $selectedAstElementId) {
-      return findAstElement($page.ast, $selectedAstElementId)
+      const element = findAstElement($page.ast, $selectedAstElementId)
+      get(live).pushEvent('select_ast_element', { element })
+      return element
     }
   },
 )
