@@ -7,6 +7,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
   alias Beacon.LiveAdmin.Content
   alias Beacon.LiveAdmin.RuntimeCSS
   alias Beacon.LiveAdmin.WebAPI
+  alias Beacon.LiveAdmin.PropertiesSidebarComponent
   alias Ecto.Changeset
 
   @impl true
@@ -295,21 +296,13 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
                 components: @components,
                 page: @builder_page,
                 tailwindConfig: @tailwind_config,
-                tailwindInput: @tailwind_input
+                tailwindInput: @tailwind_input,
+                selectedAstElementId: @selected_ast_element_id
               }
             }
             socket={@socket}
           />
-          <div class="w-64 bg-white" data-testid="right-sidebar">
-            <div class="sticky top-0 overflow-y-auto h-screen">
-              <%= if @selected_ast_element do %>
-                <div class="border-b text-lg font-medium leading-5 p-4 relative">
-                  <%= @selected_ast_element["tag"] %>
-                  <%!-- <p>(<%= inspect(@selected_ast_element) %>)</p> --%>
-                </div>
-              <% end %>
-            </div>
-          </div>
+          <.live_component module={PropertiesSidebarComponent} id="properties_sidebar" page={@builder_page} selected_ast_element_id={@selected_ast_element_id} />
         </div>
       <% end %>
 

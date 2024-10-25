@@ -8,7 +8,6 @@
     page,
     selectedAstElement,
     selectedAstElementId,
-    findAstElement,
     isAstElement,
     setSelection,
     resetSelection,

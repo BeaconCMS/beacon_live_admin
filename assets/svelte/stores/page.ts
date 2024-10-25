@@ -18,9 +18,7 @@ export const selectedAstElement: Readable<AstElement | undefined> = derived(
   [page, selectedAstElementId],
   ([$page, $selectedAstElementId]) => {
     if ($page && $selectedAstElementId) {
-      const element = findAstElement($page.ast, $selectedAstElementId)
-      get(live).pushEvent('select_ast_element', { element })
-      return element
+      return findAstElement($page.ast, $selectedAstElementId)
     }
   },
 )
@@ -60,7 +58,7 @@ export const grandParentOfSelectedAstElement: Readable<AstElement | undefined> =
 export const selectedDomElement: Writable<Element | null> = writable(null)
 
 export function setSelection(selectedId: string) {
-  selectedAstElementId.update(() => selectedId)
+  get(live).pushEvent('select_ast_element', { id: selectedId })
 }
 
 export function setSelectedDom(selectedDom: Element) {
@@ -68,7 +66,7 @@ export function setSelectedDom(selectedDom: Element) {
 }
 
 export function resetSelection() {
-  selectedAstElementId.update(() => null)
+  get(live).pushEvent('select_ast_element', { id: null })
   selectedDomElement.update(() => null)
 }
 
@@ -109,7 +107,7 @@ export function _findAstElementId(ast: AstNode[], astNode: AstNode, id: string):
 
 export function resetStores() {
   page.set(null)
-  selectedAstElementId.set(null)
+  get(live).pushEvent('select_ast_element', { id: null })
   highlightedAstElement.set(null)
   slotTargetElement.set(null)
   selectedDomElement.set(null)

@@ -5,7 +5,7 @@
   import PagePreview from "./PagePreview.svelte"
   import PropertiesSidebar from "./PropertiesSidebar.svelte"
   import SelectedElementFloatingMenu from "./SelectedElementFloatingMenu.svelte"
-  import { page as pageStore, resetStores } from "$lib/stores/page"
+  import { page as pageStore, resetStores, selectedAstElementId as selectedAstElementIdStore } from "$lib/stores/page"
   import { live as liveStore } from "$lib/stores/live"
   import { tailwindConfig as tailwindConfigStore } from "$lib/stores/tailwindConfig"
   import { tailwindInput as tailwindInputStore } from "$lib/stores/tailwindInput"
@@ -15,11 +15,14 @@
   export let page: Page
   export let tailwindConfig: string
   export let tailwindInput: string
+  export let selectedAstElementId: string
   export let live
+  
   $: $pageStore = page
   $: $tailwindConfigStore = tailwindConfig
   $: $tailwindInputStore = tailwindInput
   $: $liveStore = live
+  $: $selectedAstElementIdStore = selectedAstElementId
 
   onDestroy(() => {
     resetStores()
