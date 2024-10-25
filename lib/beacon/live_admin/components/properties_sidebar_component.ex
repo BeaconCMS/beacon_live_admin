@@ -1,16 +1,11 @@
 defmodule Beacon.LiveAdmin.PropertiesSidebarComponent do
   # In Phoenix apps, the line is typically: use MyAppWeb, :live_component
   use Phoenix.LiveComponent
+  use Beacon.LiveAdmin.Web, :live_component
   require Logger
 
   def find_ast_element(_nodes, nil), do: nil
   def find_ast_element(nodes, xpath) do
-    Logger.debug("########################")
-    Logger.debug("########################")
-    Logger.debug("######### XPATH #########")
-    Logger.debug("########################")
-    Logger.debug("########################")
-    Logger.debug(xpath)
     parts = String.split(xpath, ".") |> Enum.map(&String.to_integer/1)
     find_ast_element_recursive(nodes, parts)
   end
@@ -52,28 +47,7 @@ defmodule Beacon.LiveAdmin.PropertiesSidebarComponent do
             <div class="border-b text-lg font-medium leading-5 p-4 relative">
               <%= @selected_ast_element["tag"] %>
               <%= if assigns.selected_ast_element_id !== "root" do %>
-                <button type="button" class="absolute p-2 top-2 right-9 group" phx-click="select_ast_element" phx-value-id={@parent_node_id}>
-                  <span class="sr-only">Up one level</span>
-                  <span
-                    class="absolute opacity-0 invisible right-9 min-w-[100px] bg-amber-100 py-1 px-1.5 rounded text-xs text-medium transition group-hover:opacity-100 group-hover:visible"
-                    >
-                    Up one level
-                  </span>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="currentColor"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.5"
-                    stroke="currentColor"
-                    class="w-6 h-6 hover:text-blue-700 active:text-blue-900"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M3 4.5h14.25M3 9h9.75M3 13.5h5.25m5.25-.75L17.25 9m0 0L21 12.75M17.25 9v12"
-                    />
-                  </svg>
-                </button>
+                <.svelte name="components/GoToParentButton" class="contents" socket={@socket}/>
               <% end %>
               <button type="button" class="absolute p-2 top-2 right-1" phx-click="reset_selection">
                 <span class="sr-only">Close</span>

@@ -180,12 +180,12 @@
         let newSelectedIndex = insertIndex + endIndex - startIndex
         let parts = $selectedAstElementId.split(".")
         parts[parts.length - 2] = newSelectedIndex.toString()
-        $live.pushEvent('select_ast_element', { id: parts.join(".") })
+        $selectedAstElementId = parts.join(".")
       } else {
         let newSelectedIndex = insertIndex + endIndex - startIndex
         let parts = $selectedAstElementId.split(".")
         parts[parts.length - 1] = newSelectedIndex.toString()
-        $live.pushEvent('select_ast_element', { id: parts.join(".") })
+        $selectedAstElementId = parts.join(".")
       }
       $page.ast = [...$page.ast]
       // Update in the server

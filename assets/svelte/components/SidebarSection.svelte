@@ -2,7 +2,6 @@
   import { createEventDispatcher } from "svelte"
   import type { AstElement, AstNode } from "$lib/types"
   import { highlightedAstElement, findAstElementId, selectedAstElementId, isAstElement } from "$lib/stores/page"
-    import { live } from "$lib/stores/live"
   // import CodeEditor from "./CodeEditor.svelte"
 
   const dispatch = createEventDispatcher()
@@ -59,7 +58,7 @@
   }
   function select(astElement: AstElement) {
     let id = findAstElementId(astElement)
-    $live.pushEvent('select_ast_element', { id })
+    $selectedAstElementId = id
   }
   function moveAstElement(movement: number, astElement: AstElement) {
     if (!astNodes) return
