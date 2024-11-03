@@ -39,8 +39,5 @@
   <!-- Main -->
   <PagePreview />
 
-  <!-- Right sidebar -->  
-  <!-- <PropertiesSidebar on:droppedIntoTarget={(e) => addBasicComponentToTarget(e.detail)} /> -->
-
   <SelectedElementFloatingMenu />
 </div>

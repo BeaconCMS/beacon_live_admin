@@ -4,6 +4,11 @@ defmodule Beacon.LiveAdmin.PropertiesSidebarComponent do
   use Beacon.LiveAdmin.Web, :live_component
   require Logger
 
+  def mount(socket) do
+    socket = assign_new(socket, :new_attributes, fn -> [] end)
+    {:ok, socket}
+  end
+
   def find_ast_element(_nodes, nil), do: nil
   def find_ast_element(nodes, xpath) do
     parts = String.split(xpath, ".") |> Enum.map(&String.to_integer/1)
@@ -21,9 +26,15 @@ defmodule Beacon.LiveAdmin.PropertiesSidebarComponent do
   defp parent_xpath(nil), do: nil
   defp parent_xpath(xpath) do
     case String.split(xpath, ".") do
-      [str] -> "root"
+      [_str] -> "root"
       parts -> parts |> Enum.drop(-1) |> Enum.join(".")
     end
+  end
+
+  def handle_event("add_attribute", _params, socket) do
+    new_attribute = %{name: "", value: ""}
+    new_attributes = socket.assigns.new_attributes ++ [new_attribute]
+    {:noreply, assign(socket, :new_attributes, new_attributes)}
   end
 
   def render(assigns) do
@@ -38,7 +49,7 @@ defmodule Beacon.LiveAdmin.PropertiesSidebarComponent do
       assign(assigns,
         selected_ast_element: selected_ast_element,
         parent_node_id: parent_node_id,
-        attributes_editable: selected_ast_element["tag"] not in ["eex", "eex_block"]
+        attributes_editable: selected_ast_element["tag"] not in ["eex", "eex_block"],
       )
 
     ~H"""
@@ -67,10 +78,26 @@ defmodule Beacon.LiveAdmin.PropertiesSidebarComponent do
                 </svg>
               </button>
             </div>
+
+            <%!-- Editable attributes --%>
             <%= if @attributes_editable do %>
-              <.sidebar_section placeholder="Placeholder" name="Attr name" value="Attr value"></.sidebar_section>
-              <.sidebar_section placeholder="Placeholder" name="Attr name 2" value="Attr value 2"></.sidebar_section>
+              <%= for {name, value} <- @selected_ast_element["attrs"] do %>
+                <.sidebar_section name={name} value={value} edit_name={false} placeholder="Some placeholder"/>
+              <% end %>
             <% end %>
+
+            <%!-- New attributes --%>
+            <%= if @attributes_editable do %>
+              <%= for {name, value} <- @new_attributes do %>
+                <.sidebar_section name={name} value={value} edit_name={true} placeholder="Some placeholder"/>
+              <% end %>
+            <% end %>
+            <div class="p-4">
+              <button
+                type="button"
+                class="bg-blue-500 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-2 px-4 rounded outline-2 w-full"
+                phx-click="add_attribute" phx-target={@myself}>+ Add attribute</button>
+            </div>
           <% end %>
         </div>
       </div>
@@ -81,21 +108,26 @@ defmodule Beacon.LiveAdmin.PropertiesSidebarComponent do
     ~H"""
     <section class="p-4 border-b border-b-gray-100 border-solid">
       <header class="flex items-center text-sm mb-2 font-medium">
-          <%!-- on:click={() => (expanded = !expanded)} --%>
-          <%!-- aria-expanded={expanded} --%>
         <button
           type="button"
           class="w-full flex items-center justify-between gap-x-1 p-1 font-semibold group"
         >
           <span>
             <span class="hover:text-blue-700 active:text-blue-900">
-              <%= @name %>
+              <%= if @edit_name do %>
+                <input
+                  type="text"
+                  class="w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm"
+                  value={@name}
+                />
+              <% else %>
+                <%= @name %>
+              <% end %>
             </span>
             <button type="button" class="ml-4" title="Delete attribute">
               <span class="hero-trash text-red hover:text-red"></span>
             </button>
           </span>
-          <%!-- <span class={expanded ? "" : " [&_path]:origin-center [&_path]:rotate-180"}> --%>
           <span>
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -111,7 +143,6 @@ defmodule Beacon.LiveAdmin.PropertiesSidebarComponent do
             </svg>
           </span>
         </button>
-        <!-- Classes -->
       </header>
       <input
         type="text"
