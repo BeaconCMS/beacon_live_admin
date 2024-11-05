@@ -36,9 +36,8 @@ defmodule Mix.Tasks.BeaconLiveAdmin.Install do
   end
 
   @doc false
-  def igniter(igniter, argv \\ []) do
-    {_arguments, argv} = positional_args!(argv)
-    options = options!(argv)
+  def igniter(igniter) do
+    options = igniter.args.options
     path = Keyword.fetch!(options, :path)
     validate_options!(path)
 
