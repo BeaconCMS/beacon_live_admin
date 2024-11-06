@@ -1,6 +1,6 @@
 # Beacon LiveAdmin
 
-Admin UI to manage content for sites built by [Beacon](https://github.com/BeaconCMS/beacon).
+Phoenix LiveView web interface to manage content for sites built by [Beacon](https://github.com/BeaconCMS/beacon).
 
 ## Status
 
