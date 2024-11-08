@@ -72,12 +72,12 @@ defmodule Beacon.LiveAdmin.PropertiesSidebarComponent do
             <%= if @attributes_editable do %>
               <%!-- Editable attributes --%>
               <%= for {{name, value}, index} <- Enum.with_index(@selected_ast_element["attrs"]) do %>
-                <.live_component module={PropertiesSidebarSectionComponent} id="class-section" parent={@myself} name={name} value={value} edit_name={false} index={index} placeholder="Some placeholder"/>
+                <.live_component module={PropertiesSidebarSectionComponent} id="class-section" parent={@myself} name={name} value={value} edit_name={false} index={index} />
               <% end %>
 
               <%!-- New attributes --%>
               <%= for {%{name: name, value: value}, index} <- Enum.with_index(@new_attributes) do %>
-                <.live_component module={PropertiesSidebarSectionComponent} id={"new-attribute-section-#{index}"} parent={@myself} name={name} value={value} edit_name={true} index={index} placeholder="Some placeholder"/>
+                <.live_component module={PropertiesSidebarSectionComponent} id={"new-attribute-section-#{index}"} parent={@myself} name={name} value={value} edit_name={true} index={index} />
               <% end %>
             <% end %>
             <div class="p-4">
