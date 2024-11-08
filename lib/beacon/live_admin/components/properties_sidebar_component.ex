@@ -101,10 +101,7 @@ defmodule Beacon.LiveAdmin.PropertiesSidebarComponent do
               <% end %>
             <% end %>
             <div class="p-4">
-              <button
-                type="button"
-                class="bg-blue-500 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-2 px-4 rounded outline-2 w-full"
-                phx-click="add_attribute" phx-target={@myself}>+ Add attribute</button>
+              <.add_attribute_button parent={@myself}/>
             </div>
           <% end %>
         </div>
@@ -137,6 +134,16 @@ defmodule Beacon.LiveAdmin.PropertiesSidebarComponent do
       <%= if @selected_ast_element_id !== "root" do %>
         <.svelte name="components/GoToParentButton" class="contents" socket={@socket}/>
       <% end %>
+    """
+  end
+
+  def add_attribute_button(assigns) do
+    ~H"""
+      <button
+        type="button"
+        class="bg-blue-500 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-2 px-4 rounded outline-2 w-full"
+        phx-click="add_attribute"
+        phx-target={@parent}>+ Add attribute</button>
     """
   end
 end
