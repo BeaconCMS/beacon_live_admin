@@ -3,7 +3,12 @@
 ## Unreleased
 
 ### Enhancements
+  - Add `beacon_live_admin.install` Igniter task
   - [Media Library] Display asset file name on show details to allow easy copy and paste
+
+### Fixes
+  - [Visual Editor] Pass down slot to nested components
+  - [Visual Editor] Improve flow detection
 
 ## 0.1.1 (2024-10-23)
 
