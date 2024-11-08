@@ -10,6 +10,21 @@ defmodule Beacon.LiveAdmin.PropertiesSidebarComponent do
     {:ok, socket}
   end
 
+  def update(assigns, socket) do
+    selected_ast_element = case assigns.selected_ast_element_id do
+      "root" -> %{ "tag" => "root", "attrs" => %{}, "content" => assigns.page.ast }
+      xpath -> find_ast_element(assigns.page.ast, xpath)
+    end
+
+    socket =
+      assign(socket,
+        selected_ast_element: selected_ast_element,
+        attributes_editable: selected_ast_element["tag"] not in ["eex", "eex_block"]
+      )
+
+    {:ok, assign(socket, assigns)}
+  end
+
   def find_ast_element(_nodes, nil), do: nil
   def find_ast_element(nodes, xpath) do
     parts = String.split(xpath, ".") |> Enum.map(&String.to_integer/1)
@@ -24,14 +39,10 @@ defmodule Beacon.LiveAdmin.PropertiesSidebarComponent do
     end
   end
 
-  defp parent_xpath(nil), do: nil
-  defp parent_xpath(xpath) do
-    case String.split(xpath, ".") do
-      [_str] -> "root"
-      parts -> parts |> Enum.drop(-1) |> Enum.join(".")
-    end
-  end
-
+  @spec handle_event(<<_::104, _::_*24>>, any(), %{
+          :assigns => atom() | %{:new_attributes => list(), optional(any()) => any()},
+          optional(any()) => any()
+        }) :: {:noreply, map()}
   def handle_event("add_attribute", _params, socket) do
     new_attribute = %{name: "", value: ""}
     new_attributes = socket.assigns.new_attributes ++ [new_attribute]
@@ -68,20 +79,6 @@ defmodule Beacon.LiveAdmin.PropertiesSidebarComponent do
           | %{:page => atom() | %{:ast => any(), optional(any()) => any()}, :selected_ast_element_id => nil | binary(), optional(any()) => any()}
         ) :: Phoenix.LiveView.Rendered.t()
   def render(assigns) do
-    selected_ast_element = case assigns.selected_ast_element_id do
-      "root" -> %{ "tag" => "root", "attrs" => %{}, "content" => assigns.page.ast }
-      xpath -> find_ast_element(assigns.page.ast, xpath)
-    end
-
-    parent_node_id = parent_xpath(assigns.selected_ast_element_id)
-
-    assigns =
-      assign(assigns,
-        selected_ast_element: selected_ast_element,
-        parent_node_id: parent_node_id,
-        attributes_editable: selected_ast_element["tag"] not in ["eex", "eex_block"]
-      )
-
     ~H"""
       <div class="mt-4 w-64 bg-white" data-testid="right-sidebar">
         <div class="sticky top-0 overflow-y-auto h-screen">
