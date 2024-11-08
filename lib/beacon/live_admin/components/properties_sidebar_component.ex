@@ -54,26 +54,6 @@ defmodule Beacon.LiveAdmin.PropertiesSidebarComponent do
     {:noreply, assign(socket, :new_attributes, new_attributes)}
   end
 
-  # def handle_event("update_attribute_name", %{"index" => index, "name" => name}, socket) do
-  #   Logger.debug("Updating attribute name: #{index} - #{name}")
-  #   index = String.to_integer(index)
-  #   new_attributes = Enum.map(socket.assigns.new_attributes, fn
-  #     {attr, i} when i == index -> %{attr | name: name}
-  #     attr -> attr
-  #   end)
-  #   {:noreply, assign(socket, :new_attributes, new_attributes)}
-  # end
-
-  # def handle_event("update_attribute_value", %{"index" => index, "value" => value}, socket) do
-  #   Logger.debug("Updating attribute value: #{index} - #{value}")
-  #   index = String.to_integer(index)
-  #   new_attributes = Enum.map(socket.assigns.new_attributes, fn
-  #     {attr, i} when i == index -> %{attr | value: value}
-  #     attr -> attr
-  #   end)
-  #   {:noreply, assign(socket, :new_attributes, new_attributes)}
-  # end
-
   @spec render(
           atom()
           | %{:page => atom() | %{:ast => any(), optional(any()) => any()}, :selected_ast_element_id => nil | binary(), optional(any()) => any()}
