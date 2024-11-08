@@ -27,7 +27,7 @@ defmodule Beacon.LiveAdmin.PropertiesSidebarSectionComponent do
                 <%= @name %>
               <% end %>
             </span>
-            <button type="button" class="ml-4" title="Delete attribute" phx-click="delete_attribute" phx-value-index={@index} phx-target={@myself}>
+            <button type="button" class="ml-4" title="Delete attribute" phx-click="delete_attribute" phx-value-index={@index} phx-target={@parent}>
               <span class="hero-trash text-red hover:text-red"></span>
             </button>
           </span>
