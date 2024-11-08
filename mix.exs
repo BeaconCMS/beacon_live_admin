@@ -117,8 +117,9 @@ defmodule Beacon.LiveAdmin.MixProject do
         "cmd npm install --prefix assets"
       ],
       "assets.build": [
-        "tailwind beacon_live_admin --minify",
-        "cmd --cd assets node build.js --deploy"
+        "tailwind beacon_live_admin",
+        "tailwind beacon_live_admin_min",
+        "cmd --cd assets node build.js"
       ]
     ]
   end

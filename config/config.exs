@@ -12,12 +12,11 @@ if Mix.env() in [:dev, :e2e] do
   config :tailwind,
     version: "3.4.4",
     beacon_live_admin: [
-      args: ~w(
-      --minify
-      --config=tailwind.config.js
-      --input=css/beacon_live_admin.css
-      --output=../priv/static/beacon_live_admin.min.css
-    ),
+      args: ~w(---config=tailwind.config.js --input=css/beacon_live_admin.css --output=../priv/static/beacon_live_admin.css ),
+      cd: Path.expand("../assets", __DIR__)
+    ],
+    beacon_live_admin_min: [
+      args: ~w(--minify --config=tailwind.config.js --input=css/beacon_live_admin.css --output=../priv/static/beacon_live_admin.min.css),
       cd: Path.expand("../assets", __DIR__)
     ]
 end
