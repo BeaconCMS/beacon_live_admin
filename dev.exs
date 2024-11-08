@@ -26,6 +26,7 @@ Application.put_env(:beacon_live_admin, DemoWeb.Endpoint,
   live_reload: [
     patterns: [
       ~r"dist/.*(js|css|png|jpeg|jpg|gif|svg)$",
+      ~r"priv/static/.*(css|js)$",
       ~r"lib/beacon/live_admin/.*(ex)$",
       ~r"lib/beacon/live_admin/(components|controllers|pages)/.*(ex)$"
     ]

@@ -52,11 +52,11 @@ node_modules/
 # Ignore ssr build for svelte.
 /priv/svelte/
 
+# Ignore assets sourcemaps
+/priv/static/*.map
+
 # Ignore automatically generated Svelte files by the ~V sigil
 /assets/svelte/_build/
-
-# Ignore ssr build for svelte.
-/priv/svelte/
 
 # `direnv` local environment config
 .envrc
