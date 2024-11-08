@@ -29,7 +29,7 @@ defmodule Beacon.LiveAdmin.PropertiesSidebarSectionComponent do
     <section class="p-4 border-b border-b-gray-100 border-solid">
       <header class="flex items-center text-sm mb-2 font-medium">
         <div class="w-full flex items-center justify-between gap-x-1 p-1 font-semibold group">
-          <span>
+          <span class="flex-grow">
             <span class="hover:text-blue-700 active:text-blue-900">
               <%= if @edit_name do %>
                 <input
@@ -45,8 +45,8 @@ defmodule Beacon.LiveAdmin.PropertiesSidebarSectionComponent do
                 <%= @name %>
               <% end %>
             </span>
-            <.delete_button index={@index} parent={@parent}/>
           </span>
+          <.delete_button index={@index} parent={@parent}/>
           <.toggle_button/>
         </div>
       </header>
