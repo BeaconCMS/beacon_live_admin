@@ -2,10 +2,11 @@ defmodule Beacon.LiveAdmin.PropertiesSidebarComponent do
   # In Phoenix apps, the line is typically: use MyAppWeb, :live_component
   use Phoenix.LiveComponent
   use Beacon.LiveAdmin.Web, :live_component
+  alias Beacon.LiveAdmin.PropertiesSidebarSectionComponent
   require Logger
 
   def mount(socket) do
-    socket = assign_new(socket, :new_attributes, fn -> [] end)
+    socket = assign(socket, :new_attributes, [])
     {:ok, socket}
   end
 
@@ -37,6 +38,36 @@ defmodule Beacon.LiveAdmin.PropertiesSidebarComponent do
     {:noreply, assign(socket, :new_attributes, new_attributes)}
   end
 
+  def handle_event("delete_attribute", %{"index" => index}, socket) do
+    Logger.debug("Deleting attribute: #{index}")
+    new_attributes = List.delete_at(socket.assigns.new_attributes, String.to_integer(index))
+    {:noreply, assign(socket, :new_attributes, new_attributes)}
+  end
+
+  def handle_event("update_attribute_name", %{"index" => index, "name" => name}, socket) do
+    Logger.debug("Updating attribute name: #{index} - #{name}")
+    index = String.to_integer(index)
+    new_attributes = Enum.map(socket.assigns.new_attributes, fn
+      {attr, i} when i == index -> %{attr | name: name}
+      attr -> attr
+    end)
+    {:noreply, assign(socket, :new_attributes, new_attributes)}
+  end
+
+  def handle_event("update_attribute_value", %{"index" => index, "value" => value}, socket) do
+    Logger.debug("Updating attribute value: #{index} - #{value}")
+    index = String.to_integer(index)
+    new_attributes = Enum.map(socket.assigns.new_attributes, fn
+      {attr, i} when i == index -> %{attr | value: value}
+      attr -> attr
+    end)
+    {:noreply, assign(socket, :new_attributes, new_attributes)}
+  end
+
+  @spec render(
+          atom()
+          | %{:page => atom() | %{:ast => any(), optional(any()) => any()}, :selected_ast_element_id => nil | binary(), optional(any()) => any()}
+        ) :: Phoenix.LiveView.Rendered.t()
   def render(assigns) do
     selected_ast_element = case assigns.selected_ast_element_id do
       "root" -> %{ "tag" => "root", "attrs" => %{}, "content" => assigns.page.ast }
@@ -49,7 +80,7 @@ defmodule Beacon.LiveAdmin.PropertiesSidebarComponent do
       assign(assigns,
         selected_ast_element: selected_ast_element,
         parent_node_id: parent_node_id,
-        attributes_editable: selected_ast_element["tag"] not in ["eex", "eex_block"],
+        attributes_editable: selected_ast_element["tag"] not in ["eex", "eex_block"]
       )
 
     ~H"""
@@ -79,17 +110,15 @@ defmodule Beacon.LiveAdmin.PropertiesSidebarComponent do
               </button>
             </div>
 
-            <%!-- Editable attributes --%>
             <%= if @attributes_editable do %>
-              <%= for {name, value} <- @selected_ast_element["attrs"] do %>
-                <.sidebar_section name={name} value={value} edit_name={false} placeholder="Some placeholder"/>
+              <%!-- Editable attributes --%>
+              <%= for {{name, value}, index} <- Enum.with_index(@selected_ast_element["attrs"]) do %>
+                <.live_component module={PropertiesSidebarSectionComponent} id="class-section" parent={@myself} name={name} value={value} edit_name={false} index={index} placeholder="Some placeholder"/>
               <% end %>
-            <% end %>
 
-            <%!-- New attributes --%>
-            <%= if @attributes_editable do %>
-              <%= for {name, value} <- @new_attributes do %>
-                <.sidebar_section name={name} value={value} edit_name={true} placeholder="Some placeholder"/>
+              <%!-- New attributes --%>
+              <%= for {%{name: name, value: value}, index} <- Enum.with_index(@new_attributes) do %>
+                <.live_component module={PropertiesSidebarSectionComponent} id={"new-attribute-section-#{index}"} parent={@myself} name={name} value={value} edit_name={true} index={index} placeholder="Some placeholder"/>
               <% end %>
             <% end %>
             <div class="p-4">
@@ -101,55 +130,6 @@ defmodule Beacon.LiveAdmin.PropertiesSidebarComponent do
           <% end %>
         </div>
       </div>
-    """
-  end
-
-  def sidebar_section(assigns) do
-    ~H"""
-    <section class="p-4 border-b border-b-gray-100 border-solid">
-      <header class="flex items-center text-sm mb-2 font-medium">
-        <button
-          type="button"
-          class="w-full flex items-center justify-between gap-x-1 p-1 font-semibold group"
-        >
-          <span>
-            <span class="hover:text-blue-700 active:text-blue-900">
-              <%= if @edit_name do %>
-                <input
-                  type="text"
-                  class="w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm"
-                  value={@name}
-                />
-              <% else %>
-                <%= @name %>
-              <% end %>
-            </span>
-            <button type="button" class="ml-4" title="Delete attribute">
-              <span class="hero-trash text-red hover:text-red"></span>
-            </button>
-          </span>
-          <span>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              class="w-5 h-5 stroke-slate-500 fill-slate-500 group-hover:stroke-current group-hover:fill-current"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M11.47 7.72a.75.75 0 0 1 1.06 0l7.5 7.5a.75.75 0 1 1-1.06 1.06L12 9.31l-6.97 6.97a.75.75 0 0 1-1.06-1.06l7.5-7.5Z"
-                clip-rule="evenodd"
-              />
-            </svg>
-          </span>
-        </button>
-      </header>
-      <input
-        type="text"
-        class="w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm"
-        value={@value}
-      />
-    </section>
     """
   end
 end

@@ -81,14 +81,6 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
   end
 
   def handle_event("select_ast_element",  %{ "id" => id }, socket) do
-    Logger.debug("########################")
-    Logger.debug("########################")
-    Logger.debug("########################")
-    Logger.debug("####select_ast_element####")
-    Logger.debug("########################")
-    Logger.debug("########################")
-    Logger.debug("########################")
-    Logger.debug(id)
     {:noreply,
       socket
       |> assign(selected_ast_element_id: id)
