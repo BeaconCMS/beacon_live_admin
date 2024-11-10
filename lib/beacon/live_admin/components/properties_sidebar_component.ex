@@ -5,6 +5,25 @@ defmodule Beacon.LiveAdmin.PropertiesSidebarComponent do
   alias Beacon.LiveAdmin.PropertiesSidebarSectionComponent
   require Logger
 
+  defmodule Attribute do
+    use Ecto.Schema
+    import Ecto.Changeset
+
+    # Define an embedded schema (no database backing)
+    embedded_schema do
+      field :name, :string
+      field :value, :string
+    end
+
+    # Function to create and validate changeset
+    def changeset(attrs) do
+      %__MODULE__{}
+      |> cast(attrs, [:name, :value])
+      |> validate_required([:name, :value])
+    end
+  end
+
+
   def mount(socket) do
     socket = assign(socket, :new_attributes, [])
     {:ok, socket}
@@ -44,8 +63,10 @@ defmodule Beacon.LiveAdmin.PropertiesSidebarComponent do
           optional(any()) => any()
         }) :: {:noreply, map()}
   def handle_event("add_attribute", _params, socket) do
-    new_attribute = %{name: "", value: ""}
+    new_attribute = Attribute.changeset(%{"name" => "", "value" => ""})
     new_attributes = socket.assigns.new_attributes ++ [new_attribute]
+    Logger.debug("############################## Adding new attribute")
+    Logger.debug("############################## New attributes: #{inspect(new_attributes)}")
     {:noreply, assign(socket, :new_attributes, new_attributes)}
   end
 
@@ -71,13 +92,13 @@ defmodule Beacon.LiveAdmin.PropertiesSidebarComponent do
 
             <%= if @attributes_editable do %>
               <%!-- Editable attributes --%>
-              <%= for {{name, value}, index} <- Enum.with_index(@selected_ast_element["attrs"]) do %>
-                <.live_component module={PropertiesSidebarSectionComponent} id="class-section" parent={@myself} name={name} value={value} edit_name={false} index={index} />
-              <% end %>
+              <%!-- <%= for {{name, value}, index} <- Enum.with_index(@selected_ast_element["attrs"]) do %>
+                <.live_component module={PropertiesSidebarSectionComponent} id="class-section"  attribute_changeset={changeset} parent={@myself} edit_name={false} index={index} />
+              <% end %> --%>
 
               <%!-- New attributes --%>
-              <%= for {%{name: name, value: value}, index} <- Enum.with_index(@new_attributes) do %>
-                <.live_component module={PropertiesSidebarSectionComponent} id={"new-attribute-section-#{index}"} parent={@myself} name={name} value={value} edit_name={true} index={index} />
+              <%= for {changeset, index} <- Enum.with_index(@new_attributes) do %>
+                <.live_component module={PropertiesSidebarSectionComponent} id={"new-attribute-section-#{index}"} parent={@myself} attribute_changeset={changeset} edit_name={true} index={index} />
               <% end %>
             <% end %>
             <div class="p-4">

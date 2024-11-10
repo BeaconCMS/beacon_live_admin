@@ -4,58 +4,25 @@ defmodule Beacon.LiveAdmin.PropertiesSidebarSectionComponent do
   use Beacon.LiveAdmin.Web, :live_component
   require Logger
 
-  # def handle_event("update_attribute_name", %{"index" => index, "name" => name}, socket) do
-  #   Logger.debug("Updating attribute name: #{index} - #{name}")
-  #   index = String.to_integer(index)
-  #   new_attributes = Enum.map(socket.assigns.new_attributes, fn
-  #     {attr, i} when i == index -> %{attr | name: name}
-  #     attr -> attr
-  #   end)
-  #   {:noreply, assign(socket, :new_attributes, new_attributes)}
-  # end
-
-  # def handle_event("update_attribute_value", %{"index" => index, "value" => value}, socket) do
-  #   Logger.debug("Updating attribute value: #{index} - #{value}")
-  #   index = String.to_integer(index)
-  #   new_attributes = Enum.map(socket.assigns.new_attributes, fn
-  #     {attr, i} when i == index -> %{attr | value: value}
-  #     attr -> attr
-  #   end)
-  #   {:noreply, assign(socket, :new_attributes, new_attributes)}
-  # end
-
-  def handle_event("update_attribute", %{ "name" => name, "value" => value}, socket) do
-    Logger.debug("Updating attribute: #{name} - #{value}")
-    Logger.debug("Assigns: #{inspect(socket.assigns)}")
-    index = socket.assigns.index
-    # new_attributes = Enum.map(socket.assigns.new_attributes, fn
-    #   {attr, i} when i == index -> %{attr | name: name, value: value}
-    #   attr -> attr
-    # end)
-    # {:noreply, assign(socket, :new_attributes, new_attributes)}
-    {:noreply, socket}
+  def update(assigns, socket) do
+    Logger.debug("########## PropertiesSidebarSectionComponent update assigns: #{inspect(assigns)}")
+    {:ok,
+      assign(socket, assigns) |> assign(:form, to_form(assigns.attribute_changeset))
+    }
   end
 
   def render(assigns) do
     ~H"""
     <section class="p-4 border-b border-b-gray-100 border-solid">
-      <form phx-change="update_attribute" phx-blur="check_and_save" phx-target={@myself}>
+      <.form for={@form} phx-submit="check_and_save">
         <header class="flex items-center text-sm mb-2 font-medium">
           <div class="w-full flex items-center justify-between gap-x-1 p-1 font-semibold group">
             <span class="flex-grow">
               <span class="hover:text-blue-700 active:text-blue-900">
                 <%= if @edit_name do %>
-                  <input
-                    type="text"
-                    class="w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm"
-                    value={@name}
-                    name="name"
-                    phx-input="update_attribute_name"
-                    phx-value-index={@index}
-                    phx-target={@parent}
-                  />
+                  <.input field={@form[:name]} type="text" class="w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm"/>
                 <% else %>
-                  <%= @name %>
+                  <%= @attribute_changeset[:name] %>
                 <% end %>
               </span>
             </span>
@@ -63,16 +30,8 @@ defmodule Beacon.LiveAdmin.PropertiesSidebarSectionComponent do
             <.toggle_button/>
           </div>
         </header>
-        <input
-          type="text"
-          class="w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm"
-          value={@value}
-          name="value"
-          phx-input="update_attribute_value"
-          phx-value-index={@index}
-          phx-target={@parent}
-        />
-      </form>
+        <.input field={@form[:value]} type="text" class="w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm" />
+      </.form>
     </section>
     """
   end
