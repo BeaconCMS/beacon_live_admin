@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.2.0 (2024-11-14)
+
 ### Enhancements
   - Add `beacon_live_admin.install` Igniter task
   - [Media Library] Display asset file name on show details to allow easy copy and paste
