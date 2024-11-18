@@ -68,6 +68,7 @@ defmodule Beacon.LiveAdmin.Cluster do
     end
 
     node = pick_node(nodes)
+    dbg(node)
     do_call(site, node, mod, fun, args)
   end
 
