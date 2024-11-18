@@ -127,6 +127,8 @@ defmodule Beacon.LiveAdmin.PageLive do
 
     # %URI{host: host, path: path} = parsed_url
     # Phoenix.Router.route_info(socket.router, "GET", path, host) |> dbg
+    #
+    %URI{host: host, path: path} = URI.parse(url)
 
     case Phoenix.Router.route_info(socket.router, "GET", path, host) do
       %{beacon: %{"page" => page}} ->
