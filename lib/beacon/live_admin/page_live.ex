@@ -122,11 +122,11 @@ defmodule Beacon.LiveAdmin.PageLive do
   defp lookup_page!(socket, url) do
     dbg(url)
 
-    parsed_url = URI.parse(url)
-    dbg(parsed_url)
+    # parsed_url = URI.parse(url)
+    # dbg(parsed_url)
 
-    %URI{host: host, path: path} = parsed_url
-    Phoenix.Router.route_info(socket.router, "GET", path, host) |> dbg
+    # %URI{host: host, path: path} = parsed_url
+    # Phoenix.Router.route_info(socket.router, "GET", path, host) |> dbg
 
     case Phoenix.Router.route_info(socket.router, "GET", path, host) do
       %{beacon: %{"page" => page}} ->
