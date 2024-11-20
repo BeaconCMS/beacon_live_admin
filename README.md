@@ -1,15 +1,15 @@
 # Beacon LiveAdmin
 
-Admin UI to manage content for sites built by [Beacon](https://github.com/BeaconCMS/beacon).
+Phoenix LiveView web interface to manage content for sites built by [Beacon](https://github.com/BeaconCMS/beacon).
 
 ## Status
 
-Pre-release version. You can expect incomplete features and breaking changes before a stable v0.1.0 is released.
+You can expect incomplete features and breaking changes before a stable v1.0 is released.
 
 ## Minimum Requirements
 
 - Erlang/OTP v25.1
-- Elixir v1.13.4
+- Elixir v1.14
 
 ## Local Development
 

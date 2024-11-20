@@ -2,43 +2,79 @@
   import {
     selectedAstElement,
     slotTargetElement,
-    selectedAstElementId,
     highlightedAstElement,
     isAstElement,
+    setSelection,
+    setSelectedDom,
   } from "$lib/stores/page"
-  import { draggedObject } from "$lib/stores/dragAndDrop"
+  import { draggedComponentDefinition } from "$lib/stores/dragAndDrop"
   import { updateNodeContent, updateAst } from "$lib/utils/ast-manipulation"
   import { elementCanBeDroppedInTarget } from "$lib/utils/drag-helpers"
   import type { AstNode } from "$lib/types"
   export let node: AstNode
   export let nodeId: string
 
+  let htmlWrapper: HTMLElement
+  let domElement: Element
+  let previewDropInside: boolean
   $: isDragTarget = $slotTargetElement === node
   $: isSelectedNode = $selectedAstElement === node
   $: isHighlightedNode = $highlightedAstElement === node
-  $: isEditable = isSelectedNode && isAstElement(node) && node.content.filter((e) => typeof e === "string").length === 1
+  $: isEditable =
+    isSelectedNode &&
+    isAstElement(node) &&
+    Array.isArray(node.content) &&
+    node.content.filter((e) => typeof e === "string").length === 1 &&
+    !node.attrs?.selfClose
+  $: isParentOfSelectedNode =
+    isAstElement(node) && Array.isArray(node.content) ? node.content.includes($selectedAstElement) : false
+
+  let children
+  $: {
+    if (isAstElement(node)) {
+      children = node.content
+    }
+  }
+
+  $: htmlWrapperHasMultipleElements = ((): Boolean => {
+    return !!htmlWrapper && htmlWrapper.childElementCount > 1
+  })()
+  $: htmlWrapperHasIframe = ((): Boolean => {
+    return !!htmlWrapper && htmlWrapper.getElementsByTagName("iframe").length > 0
+  })()
+
+  $: {
+    if (isSelectedNode) {
+      setSelectedDom(domElement || htmlWrapper)
+    }
+  }
 
   function handleDragEnter() {
-    if (isAstElement(node) && elementCanBeDroppedInTarget($draggedObject)) {
-      $slotTargetElement = node
+    if ($draggedComponentDefinition) {
+      if (isAstElement(node) && elementCanBeDroppedInTarget($draggedComponentDefinition)) {
+        $slotTargetElement = node
+      }
     }
   }
 
   function handleDragLeave() {
-    if (isAstElement(node) && elementCanBeDroppedInTarget($draggedObject) && $slotTargetElement === node) {
+    if (isAstElement(node) && elementCanBeDroppedInTarget($draggedComponentDefinition) && $slotTargetElement === node) {
       $slotTargetElement = undefined
     }
   }
 
   function handleMouseOver() {
-    isAstElement(node) && ($highlightedAstElement = node)
+    if (!$selectedAstElement) {
+      isAstElement(node) && ($highlightedAstElement = node)
+    }
   }
   function handleMouseOut() {
     $highlightedAstElement = undefined
   }
 
-  function handleClick() {
-    $selectedAstElementId = nodeId
+  function handleClick({ currentTarget }: Event) {
+    setSelection(nodeId)
+    setSelectedDom(currentTarget)
   }
 
   function handleContentEdited({ target }: Event) {
@@ -108,32 +144,25 @@
     <slot />
   {:else if node.rendered_html}
     <div
-      class="contents"
+      bind:this={htmlWrapper}
+      class:contents={htmlWrapperHasMultipleElements}
+      class:embedded-iframe={htmlWrapperHasIframe}
+      data-selected={isSelectedNode}
       on:mouseover|stopPropagation={handleMouseOver}
       on:mouseout|stopPropagation={handleMouseOut}
-      on:click|preventDefault|stopPropagation={() => ($selectedAstElementId = nodeId)}
+      on:click|preventDefault|stopPropagation={handleClick}
       use:highlightContent={{ selected: isSelectedNode, highlighted: isHighlightedNode }}
     >
       {@html node.rendered_html}
     </div>
-  {:else if node.attrs?.selfClose}
-    <svelte:element
-      this={node.tag}
-      {...node.attrs}
-      data-selected={isSelectedNode}
-      data-highlighted={isHighlightedNode}
-      data-slot-target={isDragTarget && !$slotTargetElement.attrs.selfClose}
-      on:dragenter|stopPropagation={handleDragEnter}
-      on:dragleave|stopPropagation={handleDragLeave}
-      on:mouseover|stopPropagation={handleMouseOver}
-      on:mouseout|stopPropagation={handleMouseOut}
-      on:click|preventDefault|stopPropagation={handleClick}
-    />
   {:else}
     <svelte:element
       this={node.tag}
+      class="relative"
+      bind:this={domElement}
       {...node.attrs}
       data-selected={isSelectedNode}
+      data-selected-parent={isParentOfSelectedNode}
       data-highlighted={isHighlightedNode}
       data-slot-target={isDragTarget}
       contenteditable={isEditable}
@@ -142,13 +171,21 @@
       on:dragleave|stopPropagation={handleDragLeave}
       on:mouseover|stopPropagation={handleMouseOver}
       on:mouseout|stopPropagation={handleMouseOut}
-      on:click|preventDefault|stopPropagation={() => ($selectedAstElementId = nodeId)}
+      on:click|preventDefault|stopPropagation={handleClick}
     >
-      {#each node.content as subnode, index}
-        <svelte:self node={subnode} nodeId="{nodeId}.{index}" />
-      {/each}
-      {#if isDragTarget && $draggedObject}
-        <div class="dragged-element-placeholder">{@html $draggedObject.example}</div>
+      {#if !node.attrs?.selfClose}
+        {#each children as child, childIndex}
+          <svelte:self node={child} nodeId="{nodeId}.{childIndex}" />
+        {/each}
+        <!-- Using the component definition's example is actually visually confusing. Disabled for now -->
+        {#if isDragTarget && $draggedComponentDefinition}
+          <div class="dragged-element-placeholder">Preview</div>
+        {/if}
+        <!-- {#if isDragTarget && $draggedComponentDefinition}
+          <div class="dragged-element-placeholder">{@html $draggedComponentDefinition.example}</div>
+        {:else if previewDropInside}
+          <div class="dragged-element-placeholder">Preview</div>
+        {/if} -->
       {/if}
     </svelte:element>
   {/if}
@@ -159,5 +196,16 @@
 <style>
   .dragged-element-placeholder {
     outline: 2px dashed red;
+
+    /* Disable pointer events to block out any dragOver event triggers on the placeholder while dragging */
+    pointer-events: none;
+  }
+
+  :global(.embedded-iframe) {
+    display: inline;
+  }
+
+  :global(.embedded-iframe > iframe) {
+    pointer-events: none;
   }
 </style>

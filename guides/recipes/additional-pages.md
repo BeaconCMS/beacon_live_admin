@@ -21,6 +21,8 @@ Admin pages must use the `Beacon.LiveAdmin.PageBuilder` module, which provides t
 
 ```elixir
 defmodule MyAppWeb.Admin.DocumentsLive.Index do
+  use Beacon.LiveAdmin.PageBuilder
+
   @impl true
   def menu_link(_prefix, _live_action), do: {:root, "Documents"}
 

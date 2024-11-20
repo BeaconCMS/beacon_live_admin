@@ -2,7 +2,7 @@
   import { fade } from "svelte/transition"
   import { translate } from "$lib/utils/animations"
   import { currentComponentCategory } from "$lib/stores/currentComponentCategory"
-  import { draggedObject } from "$lib/stores/dragAndDrop"
+  import { draggedComponentDefinition, resetDrag } from "$lib/stores/dragAndDrop"
   import type { ComponentCategory, ComponentDefinition, MenuCategory } from "$lib/types"
   export let components: ComponentDefinition[]
 
@@ -49,7 +49,7 @@
   }
 
   function expandCategoryMenu(componentCategory: ComponentCategory) {
-    if ($draggedObject) return
+    if ($draggedComponentDefinition) return
     clearTimeout(hideComponentTimer)
     if (showExamples) {
       changeCategoryTimer = setTimeout(() => {
@@ -64,33 +64,33 @@
 
   function dragStart(componentDefinition: ComponentDefinition, e: DragEvent) {
     setTimeout(() => {
-      $draggedObject = componentDefinition
+      $draggedComponentDefinition = componentDefinition
       showExamples = false
     }, 100)
   }
 
   function dragEnd() {
-    $draggedObject = null
+    resetDrag()
   }
 </script>
 
 <!-- Left sidebar -->
-<div class="w-64 bg-white border-slate-100 border-solid border-r" id="left-sidebar" data-test-id="left-sidebar">
+<div class="w-64 bg-white border-slate-100 border-solid border-r" id="left-sidebar" data-testid="left-sidebar">
   <div class="sticky top-0">
-    <div class="border-b border-slate-100 border-solid py-4 px-4" data-test-id="logo">
+    <div class="border-b border-slate-100 border-solid py-4 px-4" data-testid="logo">
       <h2 class="text-lg font-bold">Components</h2>
     </div>
-    <ul class="py-4 h-[calc(100vh_-_61px)] overflow-y-auto" data-test-id="component-tree">
+    <ul class="py-4 h-[calc(100vh_-_61px)] overflow-y-auto" data-testid="component-tree">
       {#each menuCategories as category}
         {#if menuCategories.length > 1}
-          <li class="mb-1 px-4" data-test-id="nav-item">
+          <li class="mb-1 px-4" data-testid="nav-item">
             <h3 class="text-xs font-bold uppercase">{category.name}</h3>
           </li>
         {/if}
         {#each category.items as item}
           <li
             class="p-2 pl-6 hover:bg-slate-50 hover:cursor-pointer"
-            data-test-id="nav-item"
+            data-testid="nav-item"
             on:mouseenter={() => expandCategoryMenu(item)}
             on:mouseleave={collapseCategoryMenu}
           >
@@ -106,7 +106,7 @@
       class:!opacity-100={showExamples}
       class:!visible={showExamples}
       id="component-previews"
-      data-test-id="component-previews"
+      data-testid="component-previews"
       transition:translate={{ x: 384 }}
       on:mouseenter={abortCollapseCategoryMenu}
       on:mouseleave={collapseCategoryMenu}
@@ -121,7 +121,7 @@
             on:dragstart={(e) => dragStart(example, e)}
             on:dragend={dragEnd}
             class="pt-6"
-            data-test-id="component-preview-card"
+            data-testid="component-preview-card"
           >
             <p class="mb-1 text-xs font-bold uppercase tracking-wider">{example.name}</p>
             <!-- TODO: replace image src with local placeholder image-->
@@ -142,7 +142,7 @@
     class="bg-black/50 absolute inset-0 z-50"
     transition:fade={{ duration: 300 }}
     id="backdrop"
-    data-test-id="backdrop"
+    data-testid="backdrop"
   ></div>
 {/if}
 

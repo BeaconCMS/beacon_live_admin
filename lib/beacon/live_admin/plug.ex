@@ -2,13 +2,17 @@ defmodule Beacon.LiveAdmin.Plug do
   @moduledoc """
   Required plug to load Admin pages allow navigation.
 
-  Must be added in the pipeline, see the Installation guide for more details.
+  Must be added in the pipeline, see the [Installation guide](file:///Users/apb/dev/beacon_live_admin/doc/installation.html#mount-admin-in-the-router) for more details.
   """
 
+  @doc false
   use Plug.Builder, init_mode: Phoenix.plug_init_mode()
 
+  @doc false
+  def call(conn, opts), do: super(conn, opts)
+
   plug Plug.Static,
-    at: "__beacon_live_admin_static/",
+    at: "__beacon_live_admin_static__/",
     from: :beacon_live_admin,
     only: ["images"]
 
@@ -22,13 +26,15 @@ defmodule Beacon.LiveAdmin.Plug do
   # either from another beacon site running in another node or from CDNs.
   # that also covers loading fonts (icons) for the admin interface itself,
   # and also loading assets and workers for the code editor
+  @doc false
   def secure_headers(conn, _opts) do
     Phoenix.Controller.put_secure_browser_headers(conn, %{
       "content-security-policy" => "default-src 'self' 'unsafe-inline' data: blob: *"
     })
   end
 
-  def page_url(%{path_info: ["__beacon_live_admin", "assets" | _]} = conn, _opts), do: conn
+  @doc false
+  def page_url(%{path_info: ["__beacon_live_admin__", "assets" | _]} = conn, _opts), do: conn
 
   def page_url(conn, _opts) do
     Plug.Conn.put_session(

@@ -4,29 +4,78 @@ import type { AstElement, AstNode, Page } from "$lib/types"
 
 export const page: Writable<Page> = writable()
 export const selectedAstElementId: Writable<string | undefined> = writable()
-// export const highlightedAstElementId: Writable<string | undefined> = writable();
 export const highlightedAstElement: Writable<AstElement | undefined> = writable()
 export const slotTargetElement: Writable<AstElement | undefined> = writable()
-
 export const rootAstElement: Readable<AstElement | undefined> = derived([page], ([$page]) => {
   // This is a virtual AstElement intended to simulate the page itself to reorder the components at the first level.
-  return { tag: "root", attrs: {}, content: $page.ast }
+  if ($page) {
+    return { tag: "root", attrs: {}, content: $page.ast }
+  }
 })
+
 export const selectedAstElement: Readable<AstElement | undefined> = derived(
   [page, selectedAstElementId],
   ([$page, $selectedAstElementId]) => {
-    if ($selectedAstElementId) {
-      if ($selectedAstElementId === "root") return get(rootAstElement)
+    if ($page && $selectedAstElementId) {
       return findAstElement($page.ast, $selectedAstElementId)
     }
   },
 )
+
+function getParentId(id: string | null) {
+  if (id === null || id === "root") return null
+  let levels = id.split(".")
+  if (levels.length === 1) return "root"
+  levels.pop()
+  return levels.join(".")
+}
+
+export const parentSelectedAstElementId: Readable<string> = derived(
+  [selectedAstElementId],
+  ([$selectedAstElementId]) => {
+    return getParentId($selectedAstElementId)
+  },
+)
+
+export const grandParentSelectedAstElementId: Readable<string> = derived(
+  [parentSelectedAstElementId],
+  ([$parentSelectedAstElementId]) => {
+    return getParentId($parentSelectedAstElementId)
+  },
+)
+
+export const parentOfSelectedAstElement: Readable<AstElement | undefined> = derived(
+  [page, parentSelectedAstElementId],
+  ([$page, $parentSelectedAstElementId]) => findAstElement($page.ast, $parentSelectedAstElementId),
+)
+
+export const grandParentOfSelectedAstElement: Readable<AstElement | undefined> = derived(
+  [page, grandParentSelectedAstElementId],
+  ([$page, $grandParentSelectedAstElementId]) => findAstElement($page.ast, $grandParentSelectedAstElementId),
+)
+
+export const selectedDomElement: Writable<Element | null> = writable(null)
+
+export function setSelection(selectedId: string) {
+  selectedAstElementId.update(() => selectedId)
+}
+
+export function setSelectedDom(selectedDom: Element) {
+  selectedDomElement.update(() => selectedDom)
+}
+
+export function resetSelection() {
+  selectedAstElementId.update(() => null)
+  selectedDomElement.update(() => null)
+}
 
 export function isAstElement(maybeNode: AstNode): maybeNode is AstElement {
   return typeof maybeNode !== "string"
 }
 
 export function findAstElement(ast: AstNode[], id: string): AstElement {
+  if (id === "root") return get(rootAstElement)
+  if (!id) return null
   let indexes = id.split(".").map((s) => parseInt(s, 10))
   let node: AstNode = ast[indexes[0]] as AstElement
   ast = node.content
@@ -53,4 +102,12 @@ export function _findAstElementId(ast: AstNode[], astNode: AstNode, id: string):
       }
     }
   }
+}
+
+export function resetStores() {
+  page.set(null)
+  selectedAstElementId.set(null)
+  highlightedAstElement.set(null)
+  slotTargetElement.set(null)
+  selectedDomElement.set(null)
 }

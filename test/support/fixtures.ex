@@ -56,6 +56,18 @@ defmodule Beacon.LiveAdmin.Fixtures do
     rpc(node, Beacon.Content, :create_error_page!, [attrs])
   end
 
+  def event_handler_fixture(node \\ node1(), attrs \\ %{}) do
+    attrs =
+      Enum.into(attrs, %{
+        site: "site_a",
+        name: "foo",
+        code: "{:noreply, socket}"
+      })
+
+    {:ok, event_handler} = rpc(node, Beacon.Content, :create_event_handler, [attrs])
+    event_handler
+  end
+
   def media_library_asset_fixture(node \\ node1(), attrs \\ %{}) do
     file_metadata = file_metadata_fixture(node, attrs)
     rpc(node, Beacon.MediaLibrary, :upload, [file_metadata])
@@ -109,5 +121,16 @@ defmodule Beacon.LiveAdmin.Fixtures do
     {:ok, live_data} = rpc(node, Beacon.Content, :create_assign_for_live_data, [live_data, attrs])
 
     Enum.find(live_data.assigns, &(&1.key == attrs.key))
+  end
+
+  def info_handler_fixture(node \\ node(), attrs \\ %{}) do
+    attrs =
+      Enum.into(attrs, %{
+        site: "site_a",
+        msg: "{:receive_msg, email_address}",
+        code: "{:noreply, socket}"
+      })
+
+    rpc(node, Beacon.Content, :create_info_handler!, [attrs])
   end
 end

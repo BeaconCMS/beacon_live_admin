@@ -19,7 +19,7 @@
     <svelte:element this={node.tag} {...node.attrs}>
       {#if node.content}
         {#each node.content as subnode, index}
-          <svelte:self node={subnode} />
+          <svelte:self node={subnode}><slot /></svelte:self>
         {/each}
       {/if}
     </svelte:element>

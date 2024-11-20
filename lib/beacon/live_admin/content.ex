@@ -115,20 +115,24 @@ defmodule Beacon.LiveAdmin.Content do
     call(site, Beacon.Content, :delete_variant_from_page, [page, variant])
   end
 
-  def change_page_event_handler(site, event_handler, attrs \\ %{}) do
-    call(site, Beacon.Content, :change_page_event_handler, [event_handler, attrs])
+  def change_event_handler(site, event_handler, attrs \\ %{}) do
+    call(site, Beacon.Content, :change_event_handler, [event_handler, attrs])
   end
 
-  def create_event_handler_for_page(site, page, attrs) do
-    call(site, Beacon.Content, :create_event_handler_for_page, [page, attrs])
+  def list_event_handlers(site) do
+    call(site, Beacon.Content, :list_event_handlers, [site])
   end
 
-  def update_event_handler_for_page(site, page, event_handler, attrs) do
-    call(site, Beacon.Content, :update_event_handler_for_page, [page, event_handler, attrs])
+  def create_event_handler(site, attrs) do
+    call(site, Beacon.Content, :create_event_handler, [attrs])
   end
 
-  def delete_event_handler_from_page(site, page, event_handler) do
-    call(site, Beacon.Content, :delete_event_handler_from_page, [page, event_handler])
+  def update_event_handler(site, event_handler, attrs) do
+    call(site, Beacon.Content, :update_event_handler, [event_handler, attrs])
+  end
+
+  def delete_event_handler(site, event_handler) do
+    call(site, Beacon.Content, :delete_event_handler, [event_handler])
   end
 
   def component_categories(site) do
@@ -261,5 +265,25 @@ defmodule Beacon.LiveAdmin.Content do
 
   def delete_live_data_assign(site, live_data_assign) do
     call(site, Beacon.Content, :delete_live_data_assign, [live_data_assign, site])
+  end
+
+  def create_info_handler(site, attrs) do
+    call(site, Beacon.Content, :create_info_handler, [attrs])
+  end
+
+  def change_info_handler(site, info_handler, attrs \\ %{}) do
+    call(site, Beacon.Content, :change_info_handler, [info_handler, attrs])
+  end
+
+  def list_info_handlers(site) do
+    call(site, Beacon.Content, :list_info_handlers, [site])
+  end
+
+  def update_info_handler(site, info_handler, attrs) do
+    call(site, Beacon.Content, :update_info_handler, [info_handler, attrs])
+  end
+
+  def delete_info_handler(site, info_handler) do
+    call(site, Beacon.Content, :delete_info_handler, [info_handler])
   end
 end

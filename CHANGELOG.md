@@ -1,18 +1,91 @@
 # Changelog
 
-## 0.1.0-rc.1
+## Unreleased
+
+## 0.2.0 (2024-11-14)
 
 ### Enhancements
-  * Media Library
-    * Upload, preview, and display image location
-  * Error Page
-  * Components
-  * Layouts
-  * Pages
-    * Visual Editor with HEEx and 2-way sync support
-  * Live Data
-  * Custom Pages
-  * Router helper `~p` to generate paths with site prefixes
-  * Content management through the `Beacon.Content` API
-  * A/B Variants
-  * TailwindCSS compiler
+  - Add `beacon_live_admin.install` Igniter task
+  - [Media Library] Display asset file name on show details to allow easy copy and paste
+
+### Fixes
+  - [Visual Editor] Pass down slot to nested components
+  - [Visual Editor] Improve flow detection
+
+## 0.1.1 (2024-10-23)
+
+### Fixes
+  - [Visual Editor] Allow to drop elements into the page over the layout
+  - [Visual Editor] Fix small bug that prevented deleting an item
+
+## 0.1.0 (2024-10-09)
+
+### Enhancements
+  - [Visual Editor] Keep comments in their correct position in the tree #268
+  - [Visual Editor] Allow to drag the parent of the selected element #267
+  - [Visual Editor] Improve bidirectional drag and drop #266
+  - [Visual Editor] Animate drag and drop using FLIP approach and simplify calculation of all elements #264
+  - Reorder pages - [#261](https://github.com/BeaconCMS/beacon_live_admin/pull/261)
+  - Added Shared Info Handlers (`info_handle` callbacks) page - [#210](https://github.com/BeaconCMS/beacon_live_admin/pull/210) by [@ddink](https://github.com/ddink)
+
+### Fixes
+  - [Page Editor] remove path whitespace in new pages form
+  - Remove unnecessary `:plug_cowboy` dependency - [#262](https://github.com/BeaconCMS/beacon_live_admin/pull/262)
+
+### Documentation
+  - Fix install guide link
+
+## 0.1.0-rc.2 (2024-09-21
+
+### Breaking Changes
+  - Require minimum Elixir v1.14
+  - Require minimum Gettext v0.26 to use the new backend module
+
+### Fixes
+  - [Visual Editor] Fix a race condition between update AST and save change events - [#240](https://github.com/BeaconCMS/beacon_live_admin/pull/240)
+  - Skip `PageBuilder.Table.handle_params/3` when the requested page has no pagination data - [#236](https://github.com/BeaconCMS/beacon_live_admin/pull/236)
+
+### Enhancements
+  - [Visual Editor] Improve DnD highlight states and simplify logic significantly - [#219](https://github.com/BeaconCMS/beacon_live_admin/pull/219)
+  - [Visual Editor] Better detect overlapping when dragging elements to reorder - [#216](https://github.com/BeaconCMS/beacon_live_admin/pull/216)
+  - [Visual Editor] Display a delete icon on selected elements - [#209](https://github.com/BeaconCMS/beacon_live_admin/pull/209)
+  - [Visual Editor] Better detect horizontal/vertical drag and drop flow - [#215](https://github.com/BeaconCMS/beacon_live_admin/pull/215)
+
+### Fixes
+  - [Dev] Fix tailwind watch config
+  - [Visual Editor] Fix drag button orientation - [#218](https://github.com/BeaconCMS/beacon_live_admin/pull/218)
+  - [Visual Editor] Do not show drag buttons on elements that are only children - [#217](https://github.com/BeaconCMS/beacon_live_admin/pull/217)
+  - [Visual Editor] Keep current element select after drag and drop event - [#214](https://github.com/BeaconCMS/beacon_live_admin/pull/214)
+
+## 0.1.0-rc.1 (2024-08-27)
+
+### Enhancements
+  - [Event Handler] Added Event Handlers - [#195](https://github.com/BeaconCMS/beacon_live_admin/pull/195)
+  - [Visual Editor] Allow to reorder an element among its siblings with drag and drop - [#174](https://github.com/BeaconCMS/beacon_live_admin/pull/174)
+
+### Fixes
+  - [Visual Editor] Disable dragLeave trigger on drag placeholder - [#208](https://github.com/BeaconCMS/beacon_live_admin/pull/208)
+  - [Visual Editor] Reset drag states when dropping, even on invalid targets - [#206](https://github.com/BeaconCMS/beacon_live_admin/pull/206)
+  - [Visual Editor] Disable interacting with iframes - [#198](https://github.com/BeaconCMS/beacon_live_admin/pull/198)
+  - Remove defunct reference to agent assigns - [#200](https://github.com/BeaconCMS/beacon_live_admin/pull/200) by @kelcecil
+
+## 0.1.0-rc.0 (2024-08-02)
+
+### Enhancements
+  - Media Library
+    - Upload, preview, and display image location
+    - Sorting and pagination
+  - Error Page
+  - Components
+    - Sorting and pagination
+  - Layouts
+    - Sorting and pagination
+  - Pages
+    - Visual Editor with HEEx and 2-way sync support
+    - Sorting and pagination
+  - Live Data
+  - Custom Pages
+  - Router helper `~p` to generate paths with site prefixes
+  - Content management through the `Beacon.Content` API
+  - A/B Variants
+  - TailwindCSS compiler

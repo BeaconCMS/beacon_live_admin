@@ -93,7 +93,6 @@ defmodule Beacon.LiveAdminTest.Cluster do
       [
         url: System.get_env("DATABASE_URL") || "postgres://localhost:5432/beacon_live_admin_test",
         pool: Ecto.Adapters.SQL.Sandbox,
-        pool_size: System.schedulers_online() * 2,
         stacktrace: true,
         show_sensitive_data_on_connection_error: true
       ]
@@ -121,12 +120,19 @@ defmodule Beacon.LiveAdminTest.Cluster do
     rpc(node, Application, :put_env, [
       :my_app,
       MyAppWeb.Endpoint,
-      url: [host: "localhost", port: Enum.random(4010..4099)],
-      secret_key_base: "TrXbWpjZWxk0GXclXOHFCoufQh1oRK0N5rev5GcpbPCsuf2C/kbYlMgeEEAXPayF",
-      live_view: [signing_salt: "nXvN+c8y"],
-      render_errors: [view: MyApp.ErrorView],
-      debug_errors: true,
-      check_origin: false
+      http: [ip: {127, 0, 0, 1}, port: Enum.random(4030..4099)],
+      # adapter: Bandit.PhoenixAdapter,
+      server: true,
+      live_view: [signing_salt: "aaaaaaaa"],
+      secret_key_base: String.duplicate("a", 64),
+      render_errors: [
+        formats: [
+          html: MyApp.ErrorHTML
+        ],
+        layout: false
+      ],
+      pubsub_server: MyApp.PubSub,
+      debug_errors: false
     ])
 
     {:ok, _} = rpc(node, Application, :ensure_all_started, [:beacon])
@@ -134,6 +140,7 @@ defmodule Beacon.LiveAdminTest.Cluster do
     children = [
       MyApp.Repo,
       MyAppWeb.Endpoint,
+      {Phoenix.PubSub, name: MyApp.PubSub},
       {Beacon, beacon_config}
     ]
 
@@ -151,7 +158,5 @@ defmodule Beacon.LiveAdminTest.Cluster do
 
         """
     end
-
-    :ok
   end
 end

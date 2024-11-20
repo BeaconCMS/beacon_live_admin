@@ -1,15 +1,35 @@
 defmodule Beacon.LiveAdmin.PageBuilder.Table do
   @moduledoc """
-  Admin Table
+  Represents a Table in the LiveAdmin UI, with pagination, filtering, and sorting.
   """
 
   defstruct [:per_page, :current_page, :page_count, :sort_by, :query]
 
+  @type t :: %__MODULE__{
+          per_page: integer(),
+          current_page: integer(),
+          page_count: integer(),
+          sort_by: atom(),
+          query: String.t()
+        }
+
   import Beacon.LiveAdmin.Router, only: [beacon_live_admin_path: 4]
+
   alias Beacon.LiveAdmin.PageBuilder.Page
   alias Beacon.LiveAdmin.PageBuilder.Table
   alias Phoenix.LiveView.Socket
 
+  @doc """
+  Initializes a new `Table` struct.
+
+  ## Options
+
+    * `sort_by` - (required) the field on which to sort the table contents
+    * `per_page` - the number of items to display per page (defaults to 15)
+
+  """
+  @spec build(keyword()) :: Table.t()
+  @spec build(term()) :: nil
   def build(opts) when is_list(opts) do
     per_page = Keyword.get(opts, :per_page, 15)
     sort_by = Keyword.get(opts, :sort_by) || raise ":sort_by is required in :table options"
@@ -25,6 +45,12 @@ defmodule Beacon.LiveAdmin.PageBuilder.Table do
 
   def build(_opts), do: nil
 
+  @doc """
+  Pushes updated Table data to the websocket.
+
+  The Beacon Page containing the table will be automatically updated
+  """
+  @spec update(Socket.t(), keyword()) :: Socket.t()
   def update(%Socket{} = socket, new_table) when is_list(new_table) do
     new_table = Map.new(new_table)
 
@@ -34,6 +60,16 @@ defmodule Beacon.LiveAdmin.PageBuilder.Table do
     end)
   end
 
+  @doc """
+  Generates a path for the previous page of a paginated table.
+
+  ## Usage
+
+  ```
+  <.link patch={Table.prev_path(@socket, @page)}>
+  ```
+  """
+  @spec prev_path(Socket.t(), Page.t()) :: String.t()
   def prev_path(socket, %Page{
         site: site,
         path: path,
@@ -44,6 +80,16 @@ defmodule Beacon.LiveAdmin.PageBuilder.Table do
     beacon_live_admin_path(socket, site, path, query_params)
   end
 
+  @doc """
+  Generates a path for the next page of a paginated table.
+
+  ## Usage
+
+  ```
+  <.link patch={Table.next_path(@socket, @page)}>
+  ```
+  """
+  @spec next_path(Socket.t(), Page.t()) :: String.t()
   def next_path(socket, %Page{
         site: site,
         path: path,
@@ -54,14 +100,34 @@ defmodule Beacon.LiveAdmin.PageBuilder.Table do
     beacon_live_admin_path(socket, site, path, query_params)
   end
 
+  @doc """
+  Generates a path to navigate from the current page to another given page.
+
+  If the current and goto pages are the same, it will still append table params to the path.
+
+  ## Usage
+
+  ```
+  <.link patch={Table.goto_path(@socket, @page)}>
+  ```
+  """
+  @spec goto_path(Socket.t(), Page.t(), Page.t()) :: String.t()
   def goto_path(socket, %Page{site: site, path: path, table: table}, page) do
     query_params = query_params(table, page: page)
     beacon_live_admin_path(socket, site, path, query_params)
   end
 
-  def handle_params(socket, params, count_fn) do
-    %{per_page: per_page, sort_by: sort_by} = socket.assigns.beacon_page.table
+  @doc """
+  Updates the current page based on incoming params and a `count_fn` which returns the number of
+  items which have already been seen.
 
+  Can be called as a helper inside a `c:Beacon.LiveAdmin.PageBuilder.handle_params/3` callback when
+  updating params for a Table.
+  """
+  @spec handle_params(Socket.t(), map(), (Page.t() -> integer())) :: Socket.t()
+  def handle_params(socket, params, count_fn)
+
+  def handle_params(%{assigns: %{beacon_page: %{table: %{per_page: per_page, sort_by: sort_by}}}} = socket, params, count_fn) do
     current_page = params |> Map.get("page", "1") |> String.to_integer()
     page_count = ceil(count_fn.(socket.assigns.beacon_page) / per_page)
     sort_by = params |> Map.get("sort_by", sort_by) |> safe_to_atom()
@@ -75,9 +141,17 @@ defmodule Beacon.LiveAdmin.PageBuilder.Table do
     )
   end
 
+  def handle_params(socket, _params, _count_fn), do: socket
+
   defp safe_to_atom(value) when is_atom(value), do: value
   defp safe_to_atom(value) when is_binary(value), do: String.to_existing_atom(value)
 
+  @doc """
+  Creates a list of query params based on the existing params in a given `table` and a new set of incoming params.
+
+  The existing and incoming params will be merged, with precedence for the latter (incoming will overwrite existing).
+  """
+  @spec query_params(Table.t(), keyword()) :: map()
   def query_params(%Table{} = table, new_params) when is_list(new_params) do
     new_params = Map.new(new_params)
 

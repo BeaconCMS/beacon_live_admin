@@ -24,7 +24,7 @@ defmodule Beacon.LiveAdmin.Web do
         layouts: [html: Beacon.LiveAdmin.Layouts]
 
       import Plug.Conn
-      import Beacon.LiveAdmin.Gettext
+      use Gettext, backend: Beacon.LiveAdmin.Gettext
     end
   end
 
@@ -32,6 +32,10 @@ defmodule Beacon.LiveAdmin.Web do
     quote do
       use Phoenix.LiveView,
         layout: {Beacon.LiveAdmin.Layouts, :app}
+
+      if Code.ensure_loaded?(Mix.Project) and Mix.env() == :e2e do
+        on_mount Beacon.LiveAdminTest.LiveAcceptance
+      end
 
       unquote(html_helpers())
     end
@@ -61,7 +65,7 @@ defmodule Beacon.LiveAdmin.Web do
       import Phoenix.HTML
       import Beacon.LiveAdmin.AdminComponents
       import Beacon.LiveAdmin.Components, only: [template_error: 1]
-      import Beacon.LiveAdmin.Gettext
+      use Gettext, backend: Beacon.LiveAdmin.Gettext
       import LiveSvelte
 
       import Beacon.LiveAdmin.Router,

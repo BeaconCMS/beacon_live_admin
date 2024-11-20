@@ -1,0 +1,28 @@
+{
+  "name": "beacon_live_admin",
+  "version": "0.2.0",
+  "description": "LiveView Admin for Beacon",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/BeaconCMS/beacon_live_admin.git"
+  },
+  "devDependencies": {
+    "eslint": "^8.57",
+    "eslint-config-prettier": "^9.1",
+    "prettier": "^3.2",
+    "prettier-plugin-svelte": "^3.2",
+    "@playwright/test": "^1.47.1",
+    "@types/node": "^22.5.5"
+  },
+  "scripts": {
+    "format": "prettier --write .",
+    "format-check": "prettier --check .",
+    "setup": "mix deps.get && npm install && cd assets && npm install",
+    "e2e:setup": "cd test/e2e && npx playwright install --with-deps",
+    "e2e:server": "MIX_ENV=e2e mix test e2e test/e2e/test_helper.exs",
+    "e2e:test": "mix assets.build && cd test/e2e && npx playwright test",
+    "e2e:test:ui": "mix assets.build && cd test/e2e && npx playwright test --ui",
+    "e2e:test:debug": "mix assets.build && cd test/e2e && npx playwright test --debug"
+  }
+}

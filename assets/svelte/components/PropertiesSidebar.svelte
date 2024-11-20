@@ -1,12 +1,21 @@
 <script lang="ts">
+  import { createEventDispatcher } from "svelte"
   import Pill from "$lib/components/Pill.svelte"
   import SidebarSection from "$lib/components/SidebarSection.svelte"
-  import { createEventDispatcher } from "svelte"
-  import { draggedObject } from "$lib/stores/dragAndDrop"
+  import { draggedComponentDefinition } from "$lib/stores/dragAndDrop"
   import { live } from "$lib/stores/live"
-  import { updateNodeContent } from "$lib/utils/ast-manipulation"
-  import { page, selectedAstElement, selectedAstElementId, findAstElement, isAstElement } from "$lib/stores/page"
+  import {
+    page,
+    selectedAstElement,
+    selectedAstElementId,
+    findAstElement,
+    isAstElement,
+    setSelection,
+    resetSelection,
+  } from "$lib/stores/page"
   import type { AstNode } from "$lib/types"
+  import { getParentNodeId } from "$lib/utils/ast-helpers"
+  import { deleteAstNode, updateNodeContent } from "$lib/utils/ast-manipulation"
   import { elementCanBeDroppedInTarget } from "$lib/utils/drag-helpers"
 
   const dispatch = createEventDispatcher()
@@ -23,6 +32,32 @@
   $: isRootNode = !!$selectedAstElementId && $selectedAstElementId === "root"
   $: attributesEditable = !["eex", "eex_block"].includes($selectedAstElement?.tag)
 
+  let arbitraryAttributes = []
+
+  function addArbitraryAttribute() {
+    arbitraryAttributes = [...arbitraryAttributes, { name: "", value: "" }]
+  }
+
+  function saveArbitraryAttribute(index: number) {
+    let attribute = arbitraryAttributes[index]
+    if (attribute.name && attribute.value) {
+      let node = $selectedAstElement
+      if (node && isAstElement(node)) {
+        node.attrs[attribute.name] = attribute.value
+        $live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast })
+        arbitraryAttributes = arbitraryAttributes.filter((_, i) => i !== index)
+      }
+    }
+  }
+
+  function deleteAttribute(name: string) {
+    let node = $selectedAstElement
+    if (node && isAstElement(node)) {
+      delete node.attrs[name]
+      $live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast })
+    }
+  }
+
   async function addClasses({ detail: newClasses }: CustomEvent<string>) {
     let node = $selectedAstElement
     if (node) {
@@ -33,18 +68,9 @@
     }
   }
 
-  function parentNodeId() {
-    if ($selectedAstElementId) {
-      let parts = $selectedAstElementId.split(".")
-      if (parts.length === 1) return "root"
-      return parts.slice(0, -1).join(".")
-    }
-  }
   function selectParentNode() {
-    let parentId = parentNodeId()
-    if (parentId) {
-      $selectedAstElementId = parentId
-    }
+    let parentId = getParentNodeId($selectedAstElementId)
+    setSelection(parentId)
   }
 
   async function deleteClass(className: string) {
@@ -80,17 +106,11 @@
   }
 
   async function deleteComponent() {
-    let node = $selectedAstElement
-    if (!node) return
+    if (!$selectedAstElementId) return
+
     if (confirm("Are you sure you want to delete this component?")) {
-      let parentId = parentNodeId()
-      let content = parentId && parentId !== "root" ? findAstElement($page.ast, parentId)?.content : $page.ast
-      if (content) {
-        let targetIndex = (content as unknown[]).indexOf(node)
-        content.splice(targetIndex, 1)
-        $selectedAstElementId = undefined
-        $live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast })
-      }
+      deleteAstNode($selectedAstElementId)
+      resetSelection()
     }
   }
 
@@ -120,7 +140,7 @@
   }
 </script>
 
-<div class="w-64 bg-white" data-test-id="right-sidebar">
+<div class="w-64 bg-white" data-testid="right-sidebar">
   <div class="sticky top-0 overflow-y-auto h-screen">
     {#if $selectedAstElement}
       <div class="border-b text-lg font-medium leading-5 p-4 relative">
@@ -148,7 +168,7 @@
             </svg>
           </button>
         {/if}
-        <button type="button" class="absolute p-2 top-2 right-1" on:click={() => ($selectedAstElementId = undefined)}>
+        <button type="button" class="absolute p-2 top-2 right-1" on:click={resetSelection}>
           <span class="sr-only">Close</span>
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -165,7 +185,7 @@
         </button>
       </div>
       {#if attributesEditable}
-        <SidebarSection clearOnUpdate={true} on:update={addClasses} placeholder="Add new class">
+        <SidebarSection clearOnUpdate={true} on:update={addClasses} disableDelete={true} placeholder="Add new class">
           <svelte:fragment slot="heading">Classes</svelte:fragment>
           <svelte:fragment slot="value">
             {#each classList as className}
@@ -176,21 +196,52 @@
         {#each editableAttrs as entry (entry)}
           {@const [name, value] = entry}
           <SidebarSection
-            clearOnUpdate={true}
             {value}
+            on:delete={() => deleteAttribute(name)}
             on:textChange={(e) => updateAttribute(name, e)}
             placeholder="Set {name}"
           >
             <svelte:fragment slot="heading">{name}</svelte:fragment>
           </SidebarSection>
         {/each}
+        {#each arbitraryAttributes as attribute, index (attribute)}
+          <div class="p-4 border-b border-b-gray-100 border-solid">
+            <input
+              type="text"
+              class="w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm"
+              placeholder="Attribute name"
+              bind:value={attribute.name}
+              on:blur={() => saveArbitraryAttribute(index)}
+            />
+            <input
+              type="text"
+              class="w-full mt-2 py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm"
+              placeholder="Attribute value"
+              bind:value={attribute.value}
+              on:blur={() => saveArbitraryAttribute(index)}
+            />
+          </div>
+        {/each}
+        <div class="p-4">
+          <button
+            type="button"
+            class="bg-blue-500 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-2 px-4 rounded outline-2 w-full"
+            on:click={addArbitraryAttribute}>+ Add attribute</button
+          >
+        </div>
       {/if}
       {#if $selectedAstElement.tag === "eex_block"}
-        <SidebarSection on:update={updateArg} value={$selectedAstElement.arg} large={true}>
+        <SidebarSection
+          on:update={updateArg}
+          disabled={true}
+          value={$selectedAstElement.arg}
+          large={true}
+          disableDelete={true}
+        >
           <svelte:fragment slot="heading">Block argument</svelte:fragment>
           <svelte:fragment slot="input"></svelte:fragment>
         </SidebarSection>
-        <SidebarSection>
+        <SidebarSection disableDelete={true}>
           <svelte:fragment slot="heading">Block content</svelte:fragment>
           <svelte:fragment slot="input">
             <p>The content of eex blocks can't be edited from the visual editor yet. Please use the code editor.</p>
@@ -199,7 +250,7 @@
       {/if}
 
       <div class="relative">
-        {#if $draggedObject && elementCanBeDroppedInTarget($draggedObject)}
+        {#if $draggedComponentDefinition && elementCanBeDroppedInTarget($draggedComponentDefinition)}
           <div
             class="absolute bg-white opacity-70 w-full h-full p-4"
             class:opacity-90={isDraggingOver}
@@ -217,6 +268,7 @@
           <SidebarSection
             astNodes={$selectedAstElement.content}
             large={true}
+            disableDelete={true}
             on:textChange={(e) => updateText(e)}
             on:nodesChange={changeNodes}
           >
@@ -225,7 +277,7 @@
         {/if}
       </div>
 
-      <SidebarSection expanded={false}>
+      <SidebarSection expanded={false} disableDelete={true}>
         <svelte:fragment slot="heading">Delete</svelte:fragment>
         <svelte:fragment slot="input">
           <button

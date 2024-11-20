@@ -11,6 +11,7 @@
 Logger.configure(level: :debug)
 
 Application.put_env(:beacon_live_admin, DemoWeb.Endpoint,
+  adapter: Bandit.PhoenixAdapter,
   url: [host: "localhost"],
   secret_key_base: "TrXbWpjZWxk0GXclXOHFCoufQh1oRK0N5rev5GcpbPCsuf2C/kbYlMgeEEAXPayF",
   live_view: [signing_salt: "nXvN+c8y"],
@@ -19,12 +20,13 @@ Application.put_env(:beacon_live_admin, DemoWeb.Endpoint,
   check_origin: false,
   pubsub_server: Demo.PubSub,
   watchers: [
-    tailwind: {Tailwind, :install_and_run, [:default, ~w(--watch)]},
+    tailwind: {Tailwind, :install_and_run, [:beacon_live_admin, ~w(--watch)]},
     node: ["build.js", "--watch", cd: Path.expand("./assets", __DIR__)]
   ],
   live_reload: [
     patterns: [
       ~r"dist/.*(js|css|png|jpeg|jpg|gif|svg)$",
+      ~r"priv/static/.*(css|js)$",
       ~r"lib/beacon/live_admin/.*(ex)$",
       ~r"lib/beacon/live_admin/(components|controllers|pages)/.*(ex)$"
     ]

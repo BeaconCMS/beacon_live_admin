@@ -4,6 +4,10 @@ defmodule MyApp.ErrorView do
   end
 end
 
+defmodule MyApp.ErrorHTML do
+  def render(template, _), do: Phoenix.Controller.status_message_from_template(template)
+end
+
 defmodule MyApp.Repo do
   use Ecto.Repo, otp_app: :my_app, adapter: Ecto.Adapters.Postgres
 end

@@ -10,7 +10,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
   alias Beacon.LiveAdmin.CoreComponents
   alias Beacon.LiveAdmin.PageBuilder.Table
 
-  import Beacon.LiveAdmin.Gettext
+  use Gettext, backend: Beacon.LiveAdmin.Gettext
   import Beacon.LiveAdmin.Router, only: [beacon_live_admin_path: 3]
 
   defdelegate header(assigns), to: CoreComponents
@@ -27,6 +27,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
   @menu_link_active_class "inline-block p-4 text-blue-600 border-b-2 border-blue-600 rounded-t-lg active"
   @menu_link_regular_class "inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300"
 
+  @doc false
   attr :socket, :map
   attr :flash, :map
   attr :beacon_layout, :map
@@ -39,6 +40,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
     """
   end
 
+  @doc false
   attr :socket, :map
   attr :site, :atom
   attr :current_action, :atom
@@ -85,6 +87,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
     """
   end
 
+  @doc false
   attr :socket, :map
   attr :flash, :map
   attr :page, :any
@@ -97,6 +100,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
     """
   end
 
+  @doc false
   attr :socket, :map
   attr :site, :atom
   attr :current_action, :atom
@@ -139,14 +143,12 @@ defmodule Beacon.LiveAdmin.AdminComponents do
       <.link patch={beacon_live_admin_path(@socket, @site, "/pages/#{@page_id}/variants")} class={if(@current_action == :variants, do: @active_class, else: @regular_class)}>Variants</.link>
     </li>
     <li class="mr-2">
-      <.link patch={beacon_live_admin_path(@socket, @site, "/pages/#{@page_id}/events")} class={if(@current_action == :events, do: @active_class, else: @regular_class)}>Events</.link>
-    </li>
-    <li class="mr-2">
       <.link patch={beacon_live_admin_path(@socket, @site, "/pages/#{@page_id}/revisions")} class={if(@current_action == :revisions, do: @active_class, else: @regular_class)}>Revisions</.link>
     </li>
     """
   end
 
+  @doc false
   attr :socket, :map
   attr :flash, :map
   attr :component, :any
@@ -159,6 +161,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
     """
   end
 
+  @doc false
   attr :socket, :map
   attr :site, :atom
   attr :current_action, :atom
@@ -197,6 +200,9 @@ defmodule Beacon.LiveAdmin.AdminComponents do
     """
   end
 
+  @doc """
+  Renders a thumbnail image.
+  """
   attr :source, :string, default: nil
 
   def thumbnail(assigns) do

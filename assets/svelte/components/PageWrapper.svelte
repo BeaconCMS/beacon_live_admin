@@ -11,6 +11,7 @@
 
   let wrapper: HTMLElement
   let styleWrapper: HTMLElement
+  let contentWrapper: HTMLElement
   let twConfig = $tailwindConfig
   let configPromise = import(twConfig)
   onMount(async () => {
@@ -29,7 +30,7 @@
     window.reloadStylesheet = reloadStylesheet
     reloadStylesheet()
   })
-  page.subscribe(async ({ ast }) => {
+  page.subscribe(async () => {
     await tick()
     window.reloadStylesheet && window.reloadStylesheet()
   })
@@ -39,21 +40,48 @@
       event.preventDefault()
     }
   }
+
+  // Annotates the drop event here to know wether it was fired before the main content
+  // or after it.
+  function handleDragDrop(e: DragEvent) {
+    const target = e.target as Node
+    if (!contentWrapper.contains(target)) {
+      if (target.compareDocumentPosition(contentWrapper) & Node.DOCUMENT_POSITION_PRECEDING) {
+        e.dataTransfer.layoutZone = "epilogue"
+      } else if (target.compareDocumentPosition(contentWrapper) & Node.DOCUMENT_POSITION_FOLLOWING) {
+        e.dataTransfer.layoutZone = "preamble"
+      }
+    }
+  }
 </script>
 
 <span bind:this={styleWrapper}></span>
-<div bind:this={wrapper} on:click={preventLinkNavigation}>
+<div bind:this={wrapper} on:click={preventLinkNavigation} on:drop={handleDragDrop}>
   {#each $page.layout.ast as layoutAstNode}
     <LayoutAstNode node={layoutAstNode}>
-      {#each $page.ast as astNode, index}
-        <PageAstNode node={astNode} nodeId={String(index)} />
-      {/each}
+      <!-- This seemingly useless wrapper is here just so we are sure that the layout and the page don't share the same parent, which screws the position calculations -->
+      <div class="contents" bind:this={contentWrapper}>
+        {#each $page.ast as astNode, index}
+          <PageAstNode node={astNode} nodeId={String(index)} />
+        {/each}
+      </div>
     </LayoutAstNode>
   {/each}
 </div>
 
 <style>
-  :global([data-selected="true"], [data-highlighted="true"]) {
+  :global([data-selected="true"], [data-selected-parent="true"]) {
+    outline-color: #06b6d4;
+    outline-width: 1px;
+    outline-style: solid;
+  }
+  :global([data-selected="true"].contents > *, [data-selected-parent="true"].contents > *) {
+    outline-color: #06b6d4;
+    outline-width: 1px;
+    outline-style: solid;
+  }
+  /* TODO: Apply this styles to [data-selected-parent="true"] once dragging of the parent element is allowed */
+  :global([data-highlighted="true"]) {
     outline-color: #06b6d4;
     outline-width: 2px;
     outline-style: dashed;

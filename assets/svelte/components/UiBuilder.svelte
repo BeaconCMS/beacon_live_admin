@@ -1,9 +1,11 @@
 <script lang="ts">
+  import { onDestroy } from "svelte"
   import ComponentsSidebar from "./ComponentsSidebar.svelte"
   import Backdrop from "./Backdrop.svelte"
   import PagePreview from "./PagePreview.svelte"
   import PropertiesSidebar from "./PropertiesSidebar.svelte"
-  import { page as pageStore } from "$lib/stores/page"
+  import SelectedElementFloatingMenu from "./SelectedElementFloatingMenu.svelte"
+  import { page as pageStore, resetStores } from "$lib/stores/page"
   import { live as liveStore } from "$lib/stores/live"
   import { tailwindConfig as tailwindConfigStore } from "$lib/stores/tailwindConfig"
   import { tailwindInput as tailwindInputStore } from "$lib/stores/tailwindInput"
@@ -19,13 +21,17 @@
   $: $tailwindInputStore = tailwindInput
   $: $liveStore = live
 
+  onDestroy(() => {
+    resetStores()
+  })
+
   function addBasicComponentToTarget(e: CustomEvent) {
     // This method is in PagePreview.
   }
 </script>
 
 <Backdrop />
-<div class="flex min-h-screen bg-gray-100" data-test-id="app-container">
+<div class="flex min-h-screen bg-gray-100" id="ui-builder-app-container" data-testid="app-container">
   <!-- Left sidebar -->
   <ComponentsSidebar {components} />
 
@@ -34,4 +40,6 @@
 
   <!-- Right sidebar -->
   <PropertiesSidebar on:droppedIntoTarget={(e) => addBasicComponentToTarget(e.detail)} />
+
+  <SelectedElementFloatingMenu />
 </div>
