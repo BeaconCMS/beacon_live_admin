@@ -1423,6 +1423,10 @@ select{
   flex-shrink: 0;
 }
 
+.flex-grow{
+  flex-grow: 1;
+}
+
 .basis-2\/12{
   flex-basis: 16.666667%;
 }
