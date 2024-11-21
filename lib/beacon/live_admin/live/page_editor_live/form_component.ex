@@ -51,10 +51,6 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
      end)}
   end
 
-  def update(%{template: _template}, %{assigns: %{editor: "visual"}} = socket) do
-    {:ok, socket}
-  end
-
   def update(%{template: template}, %{assigns: %{editor: "code"}} = socket) do
     params = Map.merge(socket.assigns.form.params, %{"template" => template})
     changeset = Content.change_page(socket.assigns.site, socket.assigns.page, params)
@@ -63,10 +59,6 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
      socket
      |> assign_form(changeset)
      |> assign_template(template)}
-  end
-
-  def update(%{ast: _ast}, %{assigns: %{editor: "code"}} = socket) do
-    {:ok, socket}
   end
 
   def update(%{ast: ast}, %{assigns: %{editor: "visual"}} = socket) do
@@ -82,6 +74,32 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
       |> maybe_assign_builder_page(changeset)
       |> assign(:template, template)
 
+    {:ok, socket}
+  end
+
+  def update(%{path: path, attrs: attrs}, %{assigns: %{editor: "visual"}} = socket) do
+    # FIXME: update attrs in path
+    dbg(path)
+    dbg(attrs)
+    # dbg(socket.assigns.builder_page.ast)
+    ast = socket.assigns.builder_page.ast
+
+    template = Beacon.Template.HEEx.HEExDecoder.decode(ast)
+    params = Map.merge(socket.assigns.form.params, %{"template" => template})
+    changeset = Content.change_page(socket.assigns.site, socket.assigns.page, params)
+
+    socket =
+      socket
+      |> LiveMonacoEditor.set_value(template, to: "template")
+      |> assign_form(changeset)
+      |> assign_template(template)
+      |> maybe_assign_builder_page(changeset)
+      |> assign(:template, template)
+
+    {:ok, socket}
+  end
+
+  def update(_, socket) do
     {:ok, socket}
   end
 

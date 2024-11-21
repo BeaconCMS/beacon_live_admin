@@ -72,19 +72,19 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
   end
 
   def handle_event("update_page_ast", %{"ast" => ast}, socket) do
-    send_update(Beacon.LiveAdmin.PageEditorLive.FormComponent,
-      id: "page-editor-form-edit",
-      ast: ast
-    )
-
+    send_update(Beacon.LiveAdmin.PageEditorLive.FormComponent, id: "page-editor-form-edit", ast: ast)
     {:noreply, socket}
   end
 
   # FIXME: refresh properties sidebar
   def handle_event("select_ast_element", %{"id" => id}, socket) do
-    {:noreply,
-     socket
-     |> assign(selected_ast_element_id: id)}
+    {:noreply, assign(socket, selected_ast_element_id: id)}
+  end
+
+  @impl true
+  def handle_info({:updated_element, %{path: path, attrs: attrs}}, socket) do
+    send_update(Beacon.LiveAdmin.PageEditorLive.FormComponent, id: "page-editor-form-edit", path: path, attrs: attrs)
+    {:noreply, socket}
   end
 
   @impl true

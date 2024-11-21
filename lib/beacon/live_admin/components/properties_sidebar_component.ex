@@ -1,69 +1,24 @@
-defmodule Beacon.LiveAdmin.VisualEditor.Element do
-  use Ecto.Schema
-  import Ecto.Changeset
-
-  embedded_schema do
-    embeds_many :attributes, Beacon.LiveAdmin.VisualEditor.Attribute, on_replace: :delete
-  end
-
-  def changeset(element, attrs \\ %{}) do
-    %__MODULE__{}
-    |> cast(attrs, [])
-    |> cast_embed(:attributes,
-      sort_param: :attributes_sort,
-      drop_param: :attributes_drop
-    )
-  end
-end
-
-defmodule Beacon.LiveAdmin.VisualEditor.Attribute do
-  use Ecto.Schema
-  import Ecto.Changeset
-
-  embedded_schema do
-    field :name, :string
-    field :value, :string
-  end
-
-  def changeset(attribute, attrs \\ %{}) do
-    %__MODULE__{}
-    |> cast(attrs, [:name, :value])
-    |> validate_required([:name, :value])
-  end
-end
-
 defmodule Beacon.LiveAdmin.PropertiesSidebarComponent do
   use Beacon.LiveAdmin.Web, :live_component
-  alias Beacon.LiveAdmin.PropertiesSidebarSectionComponent
-  alias Beacon.LiveAdmin.VisualEditor.Element
-  alias Beacon.LiveAdmin.VisualEditor.Attribute
-
-  def mount(socket) do
-    # FIXME: populate existing/current element attributes
-    changeset =
-      Element.changeset(%Element{}, %{
-        attributes: [
-          %{name: "class", value: "bg-red-500"}
-        ]
-      })
-
-    {:ok,
-     socket
-     # FIXME: remove `:new_attributes`
-     |> assign(new_attributes: [])
-     |> assign_form(changeset)}
-  end
+  alias Beacon.LiveAdmin.VisualEditor.ClassControl
+  alias Beacon.LiveAdmin.VisualEditor.OpacityControl
+  alias Beacon.LiveAdmin.VisualEditor.KeyValueControl
 
   def update(assigns, socket) do
+    selected_ast_element_id = assigns.selected_ast_element_id
+
     selected_ast_element =
-      case assigns.selected_ast_element_id do
+      case selected_ast_element_id do
         "root" -> %{"tag" => "root", "attrs" => %{}, "content" => assigns.page.ast}
         xpath -> find_ast_element(assigns.page.ast, xpath)
-      end
+      end || %{}
+
+    selected_ast_element = Map.put(selected_ast_element, "path", selected_ast_element_id)
 
     {:ok,
      socket
      |> assign(assigns)
+     |> assign_new(:new_attributes, fn -> [] end)
      |> assign(
        selected_ast_element: selected_ast_element,
        attributes_editable: selected_ast_element["tag"] not in ["eex", "eex_block"]
@@ -86,22 +41,20 @@ defmodule Beacon.LiveAdmin.PropertiesSidebarComponent do
     end
   end
 
-  # def handle_event("add_attribute", _params, socket) do
-  #   new_attribute = Attribute.changeset(%{"name" => "", "value" => ""})
-  #   new_attributes = socket.assigns.new_attributes ++ [new_attribute]
-  #   dbg(new_attributes)
-  #   {:noreply, assign(socket, :new_attributes, new_attributes)}
-  # end
+  def handle_event("add_attribute", _params, socket) do
+    new_attributes =
+      case List.last(socket.assigns.new_attributes) do
+        nil -> [0]
+        last -> socket.assigns.new_attributes ++ [last + 1]
+      end
+
+    {:noreply, assign(socket, :new_attributes, new_attributes)}
+  end
 
   # def handle_event("delete_attribute", %{"index" => index}, socket) do
   #   new_attributes = List.delete_at(socket.assigns.new_attributes, String.to_integer(index))
   #   {:noreply, assign(socket, :new_attributes, new_attributes)}
   # end
-
-  def handle_event("validate", %{"element" => element_params} = p, socket) do
-    changeset = Element.changeset(%Element{}, element_params)
-    {:noreply, assign_form(socket, changeset)}
-  end
 
   def render(assigns) do
     ~H"""
@@ -115,42 +68,21 @@ defmodule Beacon.LiveAdmin.PropertiesSidebarComponent do
           </div>
 
           <%= if @attributes_editable do %>
-            <.simple_form for={@form} id="element-form" phx-target={@myself} phx-change="validate" phx-submit="save">
-              <.inputs_for :let={f_attribute} field={@form[:attributes]}>
-                <input type="hidden" name="element[attributes_sort][]" value={f_attribute.index} />
-                <.input field={f_attribute[:name]} type="text" label="Name" />
-                <.input field={f_attribute[:value]} type="text" label="Value" />
-                <button type="button" name="element[attributes_drop][]" value={f_attribute.index} phx-click={JS.dispatch("change")}>
-                  Delete <.icon name="hero-x-mark-solid" class="w-6 h-6 relative top-2" />
-                </button>
-              </.inputs_for>
-              <input type="hidden" name="element[attributes_drop][]" />
-              <button type="button" name="element[attributes_sort][]" value="new" phx-click={JS.dispatch("change")}>
-                Add
-              </button>
-            </.simple_form>
-
-            <%!-- Editable attributes --%>
-            <%!-- <%= for {{name, value}, index} <- Enum.with_index(@selected_ast_element["attrs"]) do %>
-                <.live_component module={PropertiesSidebarSectionComponent} id="class-section"  attribute_changeset={changeset} parent={@myself} edit_name={false} index={index} />
-              <% end %> --%>
-
-            <%!-- New attributes --%>
-            <%= for {changeset, index} <- Enum.with_index(@new_attributes) do %>
-              <.live_component module={PropertiesSidebarSectionComponent} id={"new-attribute-section-#{index}"} parent={@myself} attribute_changeset={changeset} edit_name={true} index={index} />
+            <.live_component module={ClassControl} id={"control-class-#{assigns.selected_ast_element_id}"} element={@selected_ast_element} />
+            <.live_component module={OpacityControl} id={"control-opacity-#{assigns.selected_ast_element_id}"} element={@selected_ast_element} />
+            <%= for index <- @new_attributes do %>
+              <.live_component module={KeyValueControl} id={"control-key-value-#{assigns.selected_ast_element_id}-idx-#{index}"} element={@selected_ast_element} index={index} />
             <% end %>
           <% end %>
           <div class="p-4">
-            <.add_attribute_button parent={@myself} />
+            <button type="button" class="bg-blue-500 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-2 px-4 rounded outline-2 w-full" phx-click="add_attribute" phx-target={@myself}>
+              + Add attribute
+            </button>
           </div>
         <% end %>
       </div>
     </div>
     """
-  end
-
-  defp assign_form(socket, %Ecto.Changeset{} = changeset) do
-    assign(socket, :form, to_form(changeset))
   end
 
   defp close_button(assigns) do
@@ -173,14 +105,6 @@ defmodule Beacon.LiveAdmin.PropertiesSidebarComponent do
     <%= if @selected_ast_element_id !== "root" do %>
       <.svelte name="components/GoToParentButton" class="contents" socket={@socket} />
     <% end %>
-    """
-  end
-
-  defp add_attribute_button(assigns) do
-    ~H"""
-    <button type="button" class="bg-blue-500 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-2 px-4 rounded outline-2 w-full" phx-click="add_attribute" phx-target={@parent}>
-      + Add attribute
-    </button>
     """
   end
 end
