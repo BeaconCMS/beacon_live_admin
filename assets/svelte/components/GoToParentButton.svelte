@@ -8,7 +8,6 @@
   }
 </script>
 
-
 <button type="button" class="absolute p-2 top-2 right-9 group" on:click={selectParentNode}>
   <span class="sr-only">Up one level</span>
   <span

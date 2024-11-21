@@ -16,7 +16,7 @@
   export let tailwindConfig: string
   export let tailwindInput: string
   export let live
-  
+
   $: $pageStore = page
   $: $tailwindConfigStore = tailwindConfig
   $: $tailwindInputStore = tailwindInput

@@ -80,11 +80,10 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
     {:noreply, socket}
   end
 
-  def handle_event("select_ast_element",  %{ "id" => id }, socket) do
+  def handle_event("select_ast_element", %{"id" => id}, socket) do
     {:noreply,
-      socket
-      |> assign(selected_ast_element_id: id)
-    }
+     socket
+     |> assign(selected_ast_element_id: id)}
   end
 
   @impl true
