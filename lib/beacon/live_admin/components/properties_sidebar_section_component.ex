@@ -1,6 +1,4 @@
 defmodule Beacon.LiveAdmin.PropertiesSidebarSectionComponent do
-  # In Phoenix apps, the line is typically: use MyAppWeb, :live_component
-  use Phoenix.LiveComponent
   use Beacon.LiveAdmin.Web, :live_component
   require Logger
 

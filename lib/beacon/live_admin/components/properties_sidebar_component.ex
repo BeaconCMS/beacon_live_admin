@@ -1,9 +1,7 @@
 defmodule Beacon.LiveAdmin.PropertiesSidebarComponent do
-  # In Phoenix apps, the line is typically: use MyAppWeb, :live_component
-  use Phoenix.LiveComponent
   use Beacon.LiveAdmin.Web, :live_component
-  alias Beacon.LiveAdmin.PropertiesSidebarSectionComponent
   require Logger
+  alias Beacon.LiveAdmin.PropertiesSidebarSectionComponent
 
   defmodule Attribute do
     use Ecto.Schema
