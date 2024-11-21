@@ -1,16 +1,26 @@
-# FIXME: we could remove this component for now
 defmodule Beacon.LiveAdmin.PropertiesSidebarSectionComponent do
+require Logger
   use Beacon.LiveAdmin.Web, :live_component
 
-  def update(assigns, socket) do
+  def mount(assigns, socket) do
+    Logger.debug("Mounting PropertiesSidebarSectionComponent")
     dbg(assigns)
-    {:ok, assign(socket, assigns) |> assign(:form, to_form(assigns.attribute_changeset))}
+    dbg(socket)
+    dbg(to_form(assigns.attribute_changeset))
+    assigns = assign(assigns, :form, to_form(assigns.attribute_changeset))
+    # {:ok, assign(socket, "form", to_form(assigns.attribute_changeset))}
+    {:ok, assign(socket, assigns) }
+  end
+
+  def update(assigns, socket) do
+    Logger.debug("updating PropertiesSidebarSectionComponent")
+    {:ok, socket }
   end
 
   def render(assigns) do
     ~H"""
     <section class="p-4 border-b border-b-gray-100 border-solid">
-      <.form for={@form} phx-submit="check_and_save">
+      <.form for={assigns.form} phx-submit="check_and_save">
         <header class="flex items-center text-sm mb-2 font-medium">
           <div class="w-full flex items-center justify-between gap-x-1 p-1 font-semibold group">
             <span class="flex-grow">
