@@ -1,3 +1,4 @@
+# FIXME: we could remove this component for now
 defmodule Beacon.LiveAdmin.PropertiesSidebarSectionComponent do
   use Beacon.LiveAdmin.Web, :live_component
 
