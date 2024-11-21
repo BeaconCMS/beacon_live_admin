@@ -1,6 +1,5 @@
 defmodule Beacon.LiveAdmin.PropertiesSidebarComponent do
   use Beacon.LiveAdmin.Web, :live_component
-  require Logger
   alias Beacon.LiveAdmin.PropertiesSidebarSectionComponent
 
   defmodule Attribute do
@@ -58,15 +57,10 @@ defmodule Beacon.LiveAdmin.PropertiesSidebarComponent do
     end
   end
 
-  @spec handle_event(<<_::104, _::_*24>>, any(), %{
-          :assigns => atom() | %{:new_attributes => list(), optional(any()) => any()},
-          optional(any()) => any()
-        }) :: {:noreply, map()}
   def handle_event("add_attribute", _params, socket) do
     new_attribute = Attribute.changeset(%{"name" => "", "value" => ""})
     new_attributes = socket.assigns.new_attributes ++ [new_attribute]
-    Logger.debug("############################## Adding new attribute")
-    Logger.debug("############################## New attributes: #{inspect(new_attributes)}")
+    dbg(new_attributes)
     {:noreply, assign(socket, :new_attributes, new_attributes)}
   end
 
@@ -75,10 +69,6 @@ defmodule Beacon.LiveAdmin.PropertiesSidebarComponent do
     {:noreply, assign(socket, :new_attributes, new_attributes)}
   end
 
-  @spec render(
-          atom()
-          | %{:page => atom() | %{:ast => any(), optional(any()) => any()}, :selected_ast_element_id => nil | binary(), optional(any()) => any()}
-        ) :: Phoenix.LiveView.Rendered.t()
   def render(assigns) do
     ~H"""
     <div class="mt-4 w-64 bg-white" data-testid="right-sidebar">
@@ -110,7 +100,7 @@ defmodule Beacon.LiveAdmin.PropertiesSidebarComponent do
     """
   end
 
-  def close_button(assigns) do
+  defp close_button(assigns) do
     ~H"""
     <button type="button" class="absolute p-2 top-2 right-1" phx-click="reset_selection">
       <span class="sr-only">Close</span>
@@ -125,7 +115,7 @@ defmodule Beacon.LiveAdmin.PropertiesSidebarComponent do
     """
   end
 
-  def go_to_parent_button(assigns) do
+  defp go_to_parent_button(assigns) do
     ~H"""
     <%= if @selected_ast_element_id !== "root" do %>
       <.svelte name="components/GoToParentButton" class="contents" socket={@socket} />
@@ -133,7 +123,7 @@ defmodule Beacon.LiveAdmin.PropertiesSidebarComponent do
     """
   end
 
-  def add_attribute_button(assigns) do
+  defp add_attribute_button(assigns) do
     ~H"""
     <button type="button" class="bg-blue-500 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-2 px-4 rounded outline-2 w-full" phx-click="add_attribute" phx-target={@parent}>
       + Add attribute

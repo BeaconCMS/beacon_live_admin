@@ -1,9 +1,8 @@
 defmodule Beacon.LiveAdmin.PropertiesSidebarSectionComponent do
   use Beacon.LiveAdmin.Web, :live_component
-  require Logger
 
   def update(assigns, socket) do
-    Logger.debug("########## PropertiesSidebarSectionComponent update assigns: #{inspect(assigns)}")
+    dbg(assigns)
     {:ok, assign(socket, assigns) |> assign(:form, to_form(assigns.attribute_changeset))}
   end
 
@@ -32,7 +31,7 @@ defmodule Beacon.LiveAdmin.PropertiesSidebarSectionComponent do
     """
   end
 
-  def delete_button(assigns) do
+  defp delete_button(assigns) do
     ~H"""
     <button type="button" class="ml-4" title="Delete attribute" phx-click="delete_attribute" phx-value-index={@index} phx-target={@parent}>
       <span class="hero-trash text-red hover:text-red"></span>
@@ -40,7 +39,7 @@ defmodule Beacon.LiveAdmin.PropertiesSidebarSectionComponent do
     """
   end
 
-  def toggle_button(assigns) do
+  defp toggle_button(assigns) do
     ~H"""
     <button type="button">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 stroke-slate-500 fill-slate-500 group-hover:stroke-current group-hover:fill-current">
