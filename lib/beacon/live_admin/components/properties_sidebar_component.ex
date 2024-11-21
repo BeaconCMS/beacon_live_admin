@@ -1,28 +1,50 @@
+defmodule Beacon.LiveAdmin.VisualEditor.Attributes do
+  use Ecto.Schema
+  import Ecto.Changeset
+
+  embedded_schema do
+    embeds_many :attributes, Beacon.LiveAdmin.VisualEditor.Attribute
+  end
+
+  def changeset(attrs) do
+    %__MODULE__{}
+    |> cast(attrs, [])
+    |> cast_embed(:attributes)
+  end
+end
+
+defmodule Beacon.LiveAdmin.VisualEditor.Attribute do
+  use Ecto.Schema
+  import Ecto.Changeset
+
+  embedded_schema do
+    field :name, :string
+    field :value, :string
+  end
+
+  def changeset(attribute, attrs \\ %{}) do
+    %__MODULE__{}
+    |> cast(attrs, [:name, :value])
+    |> validate_required([:name, :value])
+  end
+end
+
 defmodule Beacon.LiveAdmin.PropertiesSidebarComponent do
   use Beacon.LiveAdmin.Web, :live_component
   alias Beacon.LiveAdmin.PropertiesSidebarSectionComponent
-
-  defmodule Attribute do
-    use Ecto.Schema
-    import Ecto.Changeset
-
-    # Define an embedded schema (no database backing)
-    embedded_schema do
-      field(:name, :string)
-      field(:value, :string)
-    end
-
-    # Function to create and validate changeset
-    def changeset(attrs) do
-      %__MODULE__{}
-      |> cast(attrs, [:name, :value])
-      |> validate_required([:name, :value])
-    end
-  end
+  alias Beacon.LiveAdmin.VisualEditor.Attributes
+  alias Beacon.LiveAdmin.VisualEditor.Attribute
 
   def mount(socket) do
-    socket = assign(socket, :new_attributes, [])
-    {:ok, socket}
+    existing_attributes = Attributes.changeset(%{attributes: [
+      %{name: "class", value: "bg-red-500"},
+    ]})
+    form = to_form(existing_attributes)
+
+    # socket = assign(socket, :new_attributes, [])
+    # {:ok, socket}
+
+    {:ok, assign(socket, form: form)}
   end
 
   def update(assigns, socket) do

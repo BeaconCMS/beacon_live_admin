@@ -4,7 +4,7 @@ locals_without_parens = [
 ]
 
 [
-  import_deps: [:phoenix, :beacon],
+  import_deps: [:phoenix, :phoenix_live_view, :ecto, :beacon],
   plugins: [Phoenix.LiveView.HTMLFormatter],
   inputs: ["*.{heex,ex,exs}", "{config,lib,test}/**/*.{heex,ex,exs}"],
   line_length: 150,
