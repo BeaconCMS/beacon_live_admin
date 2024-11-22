@@ -9,27 +9,41 @@ require Logger
       |> assign_new(:form, fn -> to_form(assigns.attribute_changeset) end) }
   end
 
-  def handle_event("check_name", %{ "value" => name}, socket) do
+  @spec handle_event(<<_::64, _::_*56>>, any(), any()) :: {:noreply, any()}
+  def handle_event("validate", %{ "attribute" => %{ "name" => name, "value" => value } }, socket) do
+    changeset = socket.assigns.attribute_changeset
+    |> Ecto.Changeset.cast(%{"name" => name, "value" => value}, [:name, :value])
+    # |> Ecto.Changeset.validate_required([:name, :value])
+    |> Map.put(:action, :validate)
+    dbg(changeset)
+
+    Logger.debug("################################################## changeset #{inspect(changeset)}")
+    {:noreply, assign(socket, :form, to_form(changeset))}
+  end
+
+  def handle_event("hide_name_input", _, socket) do
     Logger.debug("################################################## check_and_save in child")
     Logger.debug("################################################## check_and_save in child")
     Logger.debug("################################################## check_and_save in child #{inspect(socket.assigns.form)}")
-    case String.length(name) do
-      0 -> {:noreply, assign(socket, :edit_name, true)}
-      _ -> {:noreply, assign(socket, :edit_name, false)}
-    end
-  end
 
-  def handle_event("check_value", unsigned_params, socket) do
-    Logger.debug("################################################## check_and_save in child")
-    Logger.debug("################################################## check_and_save in child")
-    Logger.debug("################################################## check_and_save in child #{inspect(unsigned_params)}")
+    # case socket.assigns.form do
+    #   0 -> {:noreply, assign(socket, :edit_name, true)}
+    #   _ -> {:noreply, assign(socket, :edit_name, false)}
+    # end
     {:noreply, socket}
   end
+
+  # def handle_event("check_value", unsigned_params, socket) do
+  #   Logger.debug("################################################## check_and_save in child")
+  #   Logger.debug("################################################## check_and_save in child")
+  #   Logger.debug("################################################## check_and_save in child #{inspect(unsigned_params)}")
+  #   {:noreply, socket}
+  # end
 
   def render(assigns) do
     ~H"""
     <section class="p-4 border-b border-b-gray-100 border-solid">
-      <.form for={@form}>
+      <.form for={@form} phx-change="validate" phx-target={@myself}>
         <header class="flex items-center text-sm mb-2 font-medium">
           <div class="w-full flex items-center justify-between gap-x-1 p-1 font-semibold group">
             <span class="flex-grow">
@@ -38,9 +52,9 @@ require Logger
                   <.input
                     id={"name-input-#{@index}"}
                     field={@form[:name]}
-                    type="text"
-                    phx-blur="check_name"
+                    phx-blur="hide_name_input"
                     phx-target={@myself}
+                    type="text"
                     class="w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm" />
                 <% else %>
                   <%= Phoenix.HTML.Form.input_value(@form, :name) %>
@@ -55,7 +69,6 @@ require Logger
           id={"name-value-#{@index}"}
           field={@form[:value]}
           type="text"
-          phx-blur="check_and_save"
           phx-target={@myself}
           class="w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm" />
       </.form>

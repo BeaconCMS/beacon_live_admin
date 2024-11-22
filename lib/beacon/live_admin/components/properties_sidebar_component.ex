@@ -1,20 +1,20 @@
-defmodule Beacon.LiveAdmin.VisualEditor.Element do
-  use Ecto.Schema
-  import Ecto.Changeset
+# defmodule Beacon.LiveAdmin.VisualEditor.Element do
+#   use Ecto.Schema
+#   import Ecto.Changeset
 
-  embedded_schema do
-    embeds_many :attributes, Beacon.LiveAdmin.VisualEditor.Attribute, on_replace: :delete
-  end
+#   embedded_schema do
+#     embeds_many :attributes, Beacon.LiveAdmin.VisualEditor.Attribute, on_replace: :delete
+#   end
 
-  # def changeset(element, attrs \\ %{}) do
-  #   %__MODULE__{}
-  #   |> cast(attrs, [])
-  #   |> cast_embed(:attributes,
-  #     sort_param: :attributes_sort,
-  #     drop_param: :attributes_drop
-  #   )
-  # end
-end
+#   # def changeset(element, attrs \\ %{}) do
+#   #   %__MODULE__{}
+#   #   |> cast(attrs, [])
+#   #   |> cast_embed(:attributes,
+#   #     sort_param: :attributes_sort,
+#   #     drop_param: :attributes_drop
+#   #   )
+#   # end
+# end
 
 defmodule Beacon.LiveAdmin.VisualEditor.Attribute do
   use Ecto.Schema
@@ -35,7 +35,7 @@ end
 defmodule Beacon.LiveAdmin.PropertiesSidebarComponent do
   use Beacon.LiveAdmin.Web, :live_component
   alias Beacon.LiveAdmin.PropertiesSidebarSectionComponent
-  alias Beacon.LiveAdmin.VisualEditor.Element
+  # alias Beacon.LiveAdmin.VisualEditor.Element
   alias Beacon.LiveAdmin.VisualEditor.Attribute
 
   def mount(socket) do
@@ -99,10 +99,10 @@ defmodule Beacon.LiveAdmin.PropertiesSidebarComponent do
   # end
 
 
-  def handle_event("validate", %{"element" => element_params} = p, socket) do
-    changeset = Element.changeset(%Element{}, element_params)
-    {:noreply, assign_form(socket, changeset)}
-  end
+  # def handle_event("validate", %{"element" => element_params} = p, socket) do
+  #   changeset = Element.changeset(%Element{}, element_params)
+  #   {:noreply, assign_form(socket, changeset)}
+  # end
 
   def render(assigns) do
     ~H"""
