@@ -8,7 +8,7 @@
   import { tailwindInput } from "$lib/stores/tailwindInput"
   import { createTailwindcss } from "@mhsdesign/jit-browser-tailwindcss"
   import { onMount, tick } from "svelte"
-  import {decode} from 'html-entities'
+  import { decode } from "html-entities"
 
   let wrapper: HTMLElement
   let styleWrapper: HTMLElement
