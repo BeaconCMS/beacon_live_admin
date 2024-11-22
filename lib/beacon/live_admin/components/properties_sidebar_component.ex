@@ -89,14 +89,7 @@ defmodule Beacon.LiveAdmin.PropertiesSidebarComponent do
 
   def handle_event("add_attribute", _params, socket) do
     new_attribute = Attribute.changeset(%{"name" => "", "value" => ""})
-    # changeset =
-    #   Element.changeset(%Element{}, %{
-    #     attributes: [
-    #       %{name: "nameeee", value: "valueeee"}
-    #     ]
-    #   })
     new_attributes = socket.assigns.new_attributes ++ [new_attribute]
-    # dbg(new_attributes)
     {:noreply, assign(socket, :new_attributes, new_attributes)}
   end
 

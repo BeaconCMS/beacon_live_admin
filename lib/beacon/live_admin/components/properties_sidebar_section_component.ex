@@ -2,22 +2,17 @@ defmodule Beacon.LiveAdmin.PropertiesSidebarSectionComponent do
 require Logger
   use Beacon.LiveAdmin.Web, :live_component
 
-  def mount(assigns, socket) do
-    Logger.debug("Mounting PropertiesSidebarSectionComponent")
-    dbg(assigns)
-    dbg(socket)
-    dbg(to_form(assigns.attribute_changeset))
-    assigns = assign(assigns, :form, to_form(assigns.attribute_changeset))
-    # {:ok, assign(socket, "form", to_form(assigns.attribute_changeset))}
-    {:ok, assign(socket, assigns) }
-  end
-
   def update(assigns, socket) do
-    Logger.debug("updating PropertiesSidebarSectionComponent")
-    {:ok, socket }
+    Logger.debug("update socket: #{inspect(socket)}")
+    Logger.debug("update assigns: #{inspect(assigns)}")
+    {:ok,
+      socket
+      |> assign(assigns)
+      |> assign_new(:form, fn -> to_form(assigns.attribute_changeset) end) }
   end
 
   def render(assigns) do
+    Logger.debug("render assigns: #{inspect(assigns)}")
     ~H"""
     <section class="p-4 border-b border-b-gray-100 border-solid">
       <.form for={assigns.form} phx-submit="check_and_save">
@@ -26,9 +21,9 @@ require Logger
             <span class="flex-grow">
               <span class="hover:text-blue-700 active:text-blue-900">
                 <%= if @edit_name do %>
-                  <.input field={@form[:name]} type="text" class="w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm" />
-                <% else %>
-                  <%= @attribute_changeset[:name] %>
+                  <.input id={"name-input-#{@index}"} field={@form[:name]} type="text" class="w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm" />
+                <% else %>attribute_changeset
+                  <%= @form[:name] %>
                 <% end %>
               </span>
             </span>
@@ -36,7 +31,7 @@ require Logger
             <.toggle_button />
           </div>
         </header>
-        <.input field={@form[:value]} type="text" class="w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm" />
+        <.input id={"name-value-#{@index}"} field={@form[:value]} type="text" class="w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm" />
       </.form>
     </section>
     """
