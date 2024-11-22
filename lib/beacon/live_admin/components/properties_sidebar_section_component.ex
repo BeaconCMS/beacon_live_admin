@@ -3,27 +3,47 @@ require Logger
   use Beacon.LiveAdmin.Web, :live_component
 
   def update(assigns, socket) do
-    Logger.debug("update socket: #{inspect(socket)}")
-    Logger.debug("update assigns: #{inspect(assigns)}")
     {:ok,
       socket
       |> assign(assigns)
       |> assign_new(:form, fn -> to_form(assigns.attribute_changeset) end) }
   end
 
+  def handle_event("check_name", %{ "value" => name}, socket) do
+    Logger.debug("################################################## check_and_save in child")
+    Logger.debug("################################################## check_and_save in child")
+    Logger.debug("################################################## check_and_save in child #{inspect(socket.assigns.form)}")
+    case String.length(name) do
+      0 -> {:noreply, assign(socket, :edit_name, true)}
+      _ -> {:noreply, assign(socket, :edit_name, false)}
+    end
+  end
+
+  def handle_event("check_value", unsigned_params, socket) do
+    Logger.debug("################################################## check_and_save in child")
+    Logger.debug("################################################## check_and_save in child")
+    Logger.debug("################################################## check_and_save in child #{inspect(unsigned_params)}")
+    {:noreply, socket}
+  end
+
   def render(assigns) do
-    Logger.debug("render assigns: #{inspect(assigns)}")
     ~H"""
     <section class="p-4 border-b border-b-gray-100 border-solid">
-      <.form for={assigns.form} phx-submit="check_and_save">
+      <.form for={@form}>
         <header class="flex items-center text-sm mb-2 font-medium">
           <div class="w-full flex items-center justify-between gap-x-1 p-1 font-semibold group">
             <span class="flex-grow">
               <span class="hover:text-blue-700 active:text-blue-900">
                 <%= if @edit_name do %>
-                  <.input id={"name-input-#{@index}"} field={@form[:name]} type="text" class="w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm" />
-                <% else %>attribute_changeset
-                  <%= @form[:name] %>
+                  <.input
+                    id={"name-input-#{@index}"}
+                    field={@form[:name]}
+                    type="text"
+                    phx-blur="check_name"
+                    phx-target={@myself}
+                    class="w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm" />
+                <% else %>
+                  <%= Phoenix.HTML.Form.input_value(@form, :name) %>
                 <% end %>
               </span>
             </span>
@@ -31,7 +51,13 @@ require Logger
             <.toggle_button />
           </div>
         </header>
-        <.input id={"name-value-#{@index}"} field={@form[:value]} type="text" class="w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm" />
+        <.input
+          id={"name-value-#{@index}"}
+          field={@form[:value]}
+          type="text"
+          phx-blur="check_and_save"
+          phx-target={@myself}
+          class="w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm" />
       </.form>
     </section>
     """

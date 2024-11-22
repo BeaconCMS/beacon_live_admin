@@ -98,6 +98,7 @@ defmodule Beacon.LiveAdmin.PropertiesSidebarComponent do
   #   {:noreply, assign(socket, :new_attributes, new_attributes)}
   # end
 
+
   def handle_event("validate", %{"element" => element_params} = p, socket) do
     changeset = Element.changeset(%Element{}, element_params)
     {:noreply, assign_form(socket, changeset)}
