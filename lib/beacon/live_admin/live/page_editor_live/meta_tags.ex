@@ -2,7 +2,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.MetaTags do
   @moduledoc false
 
   use Beacon.LiveAdmin.PageBuilder
-  alias Beacon.LiveAdmin.Content
+  alias Beacon.LiveAdmin.Client.Content
   alias Beacon.LiveAdmin.MetaTagsComponent
 
   @impl true

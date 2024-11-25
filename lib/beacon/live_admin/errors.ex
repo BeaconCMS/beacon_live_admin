@@ -8,7 +8,7 @@ defmodule Beacon.LiveAdmin.ClusterError do
   defexception message: "Error in cluster"
 end
 
-defmodule Beacon.LiveAdmin.PageNotFound do
+defmodule Beacon.LiveAdmin.PageNotFoundError do
   @moduledoc false
   defexception [:message, plug_status: 404]
 end

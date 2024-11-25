@@ -3,8 +3,8 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
 
   use Beacon.LiveAdmin.Web, :live_component
 
-  alias Beacon.LiveAdmin.Config
-  alias Beacon.LiveAdmin.Content
+  alias Beacon.LiveAdmin.Client.Config
+  alias Beacon.LiveAdmin.Client.Content
   alias Beacon.LiveAdmin.RuntimeCSS
   alias Beacon.LiveAdmin.WebAPI
   alias Ecto.Changeset

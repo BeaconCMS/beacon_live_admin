@@ -3,7 +3,7 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Index do
 
   use Beacon.LiveAdmin.PageBuilder
 
-  alias Beacon.LiveAdmin.Content
+  alias Beacon.LiveAdmin.Client.Content
 
   def menu_link(_, :index), do: {:root, "Live Data"}
   def menu_link(_, :new), do: {:root, "Live Data"}

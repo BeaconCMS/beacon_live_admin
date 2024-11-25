@@ -1,4 +1,4 @@
-defmodule Beacon.LiveAdmin.Content do
+defmodule Beacon.LiveAdmin.Client.Content do
   @moduledoc false
 
   import Beacon.LiveAdmin.Cluster, only: [call: 4]

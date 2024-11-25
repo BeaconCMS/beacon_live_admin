@@ -2,8 +2,8 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.UploadFormComponent do
   @moduledoc false
 
   use Beacon.LiveAdmin.Web, :live_component
-  alias Beacon.LiveAdmin.Config
-  alias Beacon.LiveAdmin.MediaLibrary
+  alias Beacon.LiveAdmin.Client.Config
+  alias Beacon.LiveAdmin.Client.MediaLibrary
 
   @impl true
   def update(assigns, socket) do

@@ -2,7 +2,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Revisions do
   @moduledoc false
 
   use Beacon.LiveAdmin.PageBuilder
-  alias Beacon.LiveAdmin.Content
+  alias Beacon.LiveAdmin.Client.Content
 
   @impl true
   def menu_link("/pages", :revisions), do: {:submenu, "Pages"}

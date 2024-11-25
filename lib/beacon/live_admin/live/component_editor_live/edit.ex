@@ -2,7 +2,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.Edit do
   @moduledoc false
 
   use Beacon.LiveAdmin.PageBuilder
-  alias Beacon.LiveAdmin.Content
+  alias Beacon.LiveAdmin.Client.Content
 
   @impl true
   def menu_link("/components", :edit), do: {:submenu, "Components"}

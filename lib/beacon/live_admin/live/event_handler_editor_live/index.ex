@@ -2,7 +2,7 @@ defmodule Beacon.LiveAdmin.EventHandlerEditorLive.Index do
   @moduledoc false
   use Beacon.LiveAdmin.PageBuilder
 
-  alias Beacon.LiveAdmin.Content
+  alias Beacon.LiveAdmin.Client.Content
 
   def menu_link(_, :index), do: {:root, "Event Handlers"}
 
