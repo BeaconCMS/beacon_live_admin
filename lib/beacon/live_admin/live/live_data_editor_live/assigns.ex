@@ -3,7 +3,7 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Assigns do
 
   use Beacon.LiveAdmin.PageBuilder
 
-  alias Beacon.LiveAdmin.Content
+  alias Beacon.LiveAdmin.Client.Content
 
   def menu_link("/live_data", :assigns), do: {:submenu, "Live Data"}
   def menu_link(_, _), do: :skip

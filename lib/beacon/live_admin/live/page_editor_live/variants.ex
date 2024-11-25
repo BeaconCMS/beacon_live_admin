@@ -3,7 +3,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
 
   use Beacon.LiveAdmin.PageBuilder
 
-  alias Beacon.LiveAdmin.Content
+  alias Beacon.LiveAdmin.Client.Content
 
   def menu_link("/pages", :variants), do: {:submenu, "Pages"}
   def menu_link(_, _), do: :skip

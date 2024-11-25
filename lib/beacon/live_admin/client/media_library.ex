@@ -1,4 +1,4 @@
-defmodule Beacon.LiveAdmin.MediaLibrary do
+defmodule Beacon.LiveAdmin.Client.MediaLibrary do
   @moduledoc false
 
   import Beacon.LiveAdmin.Cluster, only: [call: 4]

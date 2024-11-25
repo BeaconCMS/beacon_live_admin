@@ -3,7 +3,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.Slots do
 
   use Beacon.LiveAdmin.PageBuilder
 
-  alias Beacon.LiveAdmin.Content
+  alias Beacon.LiveAdmin.Client.Content
 
   def menu_link("/components", :slots), do: {:submenu, "Components"}
   def menu_link(_, _), do: :skip

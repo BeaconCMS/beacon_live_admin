@@ -3,7 +3,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
 
   use Beacon.LiveAdmin.PageBuilder, table: [sort_by: "path"]
 
-  alias Beacon.LiveAdmin.Content
+  alias Beacon.LiveAdmin.Client.Content
 
   @impl true
   def menu_link(_, :index), do: {:root, "Pages"}
