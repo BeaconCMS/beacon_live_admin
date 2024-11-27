@@ -2,7 +2,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
   @moduledoc false
   require Logger
   use Beacon.LiveAdmin.PageBuilder
-  alias Beacon.LiveAdmin.Content
+  alias Beacon.LiveAdmin.Client.Content
   alias Beacon.LiveAdmin.WebAPI
 
   @impl true

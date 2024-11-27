@@ -2,7 +2,7 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.FormComponent do
   @moduledoc false
 
   use Beacon.LiveAdmin.Web, :live_component
-  alias Beacon.LiveAdmin.Content
+  alias Beacon.LiveAdmin.Client.Content
 
   @impl true
   def update(%{site: site, beacon_layout: beacon_layout} = assigns, socket) do
@@ -173,7 +173,7 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.FormComponent do
   defp layout_status(%{site: nil, id: nil}), do: nil
 
   defp layout_status(%{site: site, id: id}),
-    do: Beacon.LiveAdmin.Content.get_latest_layout_event(site, id).event
+    do: Content.get_latest_layout_event(site, id).event
 
   defp layout_name(source), do: Ecto.Changeset.get_field(source, :title)
 

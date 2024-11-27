@@ -3,6 +3,8 @@ defmodule Beacon.LiveAdmin.Router do
   Routing for Beacon LiveAdmin.
   """
 
+  require Logger
+
   @type conn_or_socket :: Phoenix.LiveView.Socket.t() | Plug.Conn.t()
 
   defmacro __using__(_opts) do
@@ -61,8 +63,10 @@ defmodule Beacon.LiveAdmin.Router do
 
   ## Options
 
-    * `:on_mount` (optional) , an optional list of `on_mount` hooks passed to `live_session`.
-    This will allow for authenticated routes, among other uses.
+    * `:name` (required) `atom()` - register your instance with a unique name.
+      Note that the name has to match the one used in your instance configuration.
+    * `:on_mount` (optional) - an optional list of `on_mount` hooks passed to `live_session`.
+      This will allow for authenticated routes, among other uses.
 
   """
   defmacro beacon_live_admin(prefix, opts \\ []) do
@@ -88,8 +92,7 @@ defmodule Beacon.LiveAdmin.Router do
         {additional_pages, opts} = Keyword.pop(opts, :additional_pages, [])
         pages = Beacon.LiveAdmin.Router.__pages__(additional_pages)
 
-        {session_name, session_opts} =
-          Beacon.LiveAdmin.Router.__session_options__(prefix, pages, opts)
+        {_instance_name, session_name, session_opts} = Beacon.LiveAdmin.Router.__options__(pages, opts)
 
         import Phoenix.Router, only: [get: 4]
         import Phoenix.LiveView.Router, only: [live: 4, live_session: 3]
@@ -196,8 +199,36 @@ defmodule Beacon.LiveAdmin.Router do
   end
 
   @doc false
-  def __session_options__(prefix, pages, opts) do
-    # TODO validate options
+  # TODO validate options
+  def __options__(pages, opts) do
+    instance_name =
+      Keyword.get_lazy(opts, :name, fn ->
+        Logger.warning("""
+        missing required option :name in beacon_live_admin/2
+
+        It will default to :admin but it's recommended to provide a unique name for your instance.
+
+        Example:
+
+            beacon_live_admin "/admin", name: :admin
+
+        """)
+
+        :admin
+      end)
+
+    instance_name =
+      cond do
+        String.starts_with?(Atom.to_string(instance_name), ["beacon", "__beacon"]) ->
+          raise ArgumentError, ":name can not start with beacon or __beacon, got: #{instance_name}"
+
+        instance_name && is_atom(instance_name) ->
+          instance_name
+
+        :invalid ->
+          raise ArgumentError, ":name must be an atom, got: #{inspect(instance_name)}"
+      end
+
     if Keyword.has_key?(opts, :root_layout) do
       raise ArgumentError, """
       you cannot assign a different root_layout.
@@ -221,7 +252,8 @@ defmodule Beacon.LiveAdmin.Router do
     ]
 
     {
-      opts[:live_session_name] || String.to_atom("beacon_live_admin_#{prefix}"),
+      instance_name,
+      opts[:live_session_name] || String.to_atom("beacon_live_admin_#{instance_name}"),
       [
         root_layout: {Beacon.LiveAdmin.Layouts, :admin},
         session: {__MODULE__, :__session__, session_args},
@@ -302,20 +334,6 @@ defmodule Beacon.LiveAdmin.Router do
     prefix = router.__beacon_live_admin_prefix__()
     path = sanitize_path("#{prefix}")
     Phoenix.VerifiedRoutes.unverified_path(conn_or_socket, router, path, %{})
-  end
-
-  @doc """
-  Generates a `url` with the proper admin prefix for a `site`.
-
-  ## Example
-
-      iex> Beacon.LiveAdmin.Router.beacon_live_admin_url(MyAppWeb.Endpoint, @socket, :my_site, "/pages")
-      "https://myapp.com/my_admin/my_site/pages"
-
-  """
-  def beacon_live_admin_url(endpoint, conn_or_socket, site, path, params \\ %{})
-      when is_atom(site) and is_binary(path) do
-    endpoint.url() <> beacon_live_admin_path(conn_or_socket, site, path, params)
   end
 
   @doc """

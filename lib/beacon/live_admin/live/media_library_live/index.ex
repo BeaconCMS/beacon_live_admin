@@ -3,7 +3,7 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.Index do
 
   use Beacon.LiveAdmin.PageBuilder, table: [sort_by: "file_name"]
 
-  alias Beacon.LiveAdmin.MediaLibrary
+  alias Beacon.LiveAdmin.Client.MediaLibrary
   alias Beacon.MediaLibrary.Asset
 
   @impl true

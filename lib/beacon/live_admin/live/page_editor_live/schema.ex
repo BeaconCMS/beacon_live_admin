@@ -2,7 +2,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Schema do
   @moduledoc false
 
   use Beacon.LiveAdmin.PageBuilder
-  alias Beacon.LiveAdmin.Content
+  alias Beacon.LiveAdmin.Client.Content
 
   @impl true
   def menu_link("/layouts", :schema), do: {:submenu, "Layouts"}

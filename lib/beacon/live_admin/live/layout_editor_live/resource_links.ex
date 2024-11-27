@@ -3,7 +3,7 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.ResourceLinks do
 
   use Beacon.LiveAdmin.PageBuilder
 
-  alias Beacon.LiveAdmin.Content
+  alias Beacon.LiveAdmin.Client.Content
   alias Phoenix.HTML.Form
 
   @default_attributes ~w(rel href)

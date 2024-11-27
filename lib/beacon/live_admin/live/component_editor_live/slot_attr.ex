@@ -2,7 +2,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.SlotAttr do
   @moduledoc false
 
   use Beacon.LiveAdmin.PageBuilder
-  alias Beacon.LiveAdmin.Content
+  alias Beacon.LiveAdmin.Client.Content
 
   @impl true
   def menu_link("/components", :attrs), do: {:submenu, "Components"}
