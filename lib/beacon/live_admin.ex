@@ -8,7 +8,7 @@ defmodule Beacon.LiveAdmin do
   alias Beacon.LiveAdmin.Config
 
   @doc """
-  Starts Beacon LiveAdmin's main supervisor and a supervisor for each instance.
+  Starts Beacon LiveAdmin's instances.
   """
   def start_link(opts) when is_list(opts) do
     Supervisor.start_link(__MODULE__, opts, name: __MODULE__)
