@@ -73,7 +73,7 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.IndexTest do
     refute html =~ ld1.path
   end
 
-  test "raises when missing beacon_live_admin_url in the session" do
+  test "raises when missing beacon_live_admin_page_url in the session" do
     assert_raise RuntimeError, fn ->
       conn =
         Phoenix.ConnTest.dispatch(

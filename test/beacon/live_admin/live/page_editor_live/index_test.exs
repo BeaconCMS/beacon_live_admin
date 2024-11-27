@@ -28,7 +28,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.IndexTest do
     assert_redirected(live, "/admin/site_c/pages")
   end
 
-  test "raises when missing beacon_live_admin_url in the session" do
+  test "raises when missing beacon_live_admin_page_url in the session" do
     assert_raise RuntimeError, fn ->
       conn =
         Phoenix.ConnTest.dispatch(
