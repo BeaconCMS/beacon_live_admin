@@ -68,15 +68,7 @@ defmodule Beacon.LiveAdmin.Cluster do
     end
 
     node = pick_node(nodes)
-    enable_beacon_autoload(site, node)
     do_call(site, node, mod, fun, args)
-  end
-
-  # Before a function call is made to the remote node,
-  # we need to enable Beacon's ErrorHandler (module autoload)
-  # because that call might depend on modules that have not been loaded yet.
-  defp enable_beacon_autoload(site, node) do
-    do_call(site, node, Beacon.ErrorHandler, :enable, [site])
   end
 
   defp do_call(site, node, mod, fun, args) do
