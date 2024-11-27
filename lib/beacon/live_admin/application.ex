@@ -6,11 +6,11 @@ defmodule Beacon.LiveAdmin.Application do
   @impl true
   def start(_type, _args) do
     children = [
+      Beacon.LiveAdmin.Registry,
       {Phoenix.PubSub, name: Beacon.LiveAdmin.PubSub},
       Beacon.LiveAdmin.Cluster
     ]
 
-    opts = [strategy: :one_for_one, name: Beacon.LiveAdmin.Supervisor]
-    Supervisor.start_link(children, opts)
+    Supervisor.start_link(children, strategy: :one_for_one, name: Beacon.LiveAdmin.Supervisor)
   end
 end
