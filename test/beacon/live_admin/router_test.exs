@@ -59,28 +59,27 @@ defmodule Beacon.LiveAdmin.RouterTest do
   end
 
   describe "session options" do
-    test "session name based on prefix" do
-      assert {:beacon_live_admin_prefix, _} = Router.__session_options__("prefix", [], [])
+    test "session name based on instance name" do
+      assert {_, :beacon_live_admin_test, _} = Router.__options__([], name: :test)
     end
 
     test "allow adding custom mount hooks" do
-      assert {:beacon_live_admin_prefix,
+      assert {:admin, :beacon_live_admin_admin,
               [
                 root_layout: {Beacon.LiveAdmin.Layouts, :admin},
                 session: {Beacon.LiveAdmin.Router, :__session__, [[]]},
                 on_mount: [SomeHook]
-              ]} = Router.__session_options__("prefix", [], on_mount: [SomeHook])
+              ]} = Router.__options__([], on_mount: [SomeHook])
     end
 
     test "preserve Hooks.AssignAgent position if defined by user" do
-      assert {:beacon_live_admin_admin,
+      assert {:admin, :beacon_live_admin_admin,
               [
                 root_layout: {Beacon.LiveAdmin.Layouts, :admin},
                 session: {Beacon.LiveAdmin.Router, :__session__, [[]]},
                 on_mount: [AssignUser, Beacon.LiveAdmin.Hooks.AssignAgent, SomeHook]
               ]} =
-               Router.__session_options__(
-                 "admin",
+               Router.__options__(
                  [],
                  on_mount: [AssignUser, Beacon.LiveAdmin.Hooks.AssignAgent, SomeHook]
                )
@@ -88,13 +87,13 @@ defmodule Beacon.LiveAdmin.RouterTest do
 
     test "does not assign root_layout" do
       assert_raise ArgumentError, fn ->
-        Router.__session_options__("admin", [], root_layout: {MyApp.Layouts, :other})
+        Router.__options__([], root_layout: {MyApp.Layouts, :other})
       end
     end
 
     test "does not assign layout" do
       assert_raise ArgumentError, fn ->
-        Router.__session_options__("admin", [], layout: {MyApp.Layouts, :other})
+        Router.__options__([], layout: {MyApp.Layouts, :other})
       end
     end
   end
