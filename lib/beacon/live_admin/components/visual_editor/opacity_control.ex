@@ -43,8 +43,7 @@ require Logger
     opacity = extract_opacity(classes) || "100";
     {:ok,
      socket
-     |> assign(path: path)
-     |> assign(classes: classes)
+     |> assign(path: path, classes: classes)
      |> assign_form(opacity)}
   end
 
