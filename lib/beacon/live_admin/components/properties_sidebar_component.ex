@@ -60,10 +60,10 @@ defmodule Beacon.LiveAdmin.PropertiesSidebarComponent do
     ~H"""
     <div class="mt-4 w-64 bg-white" data-testid="right-sidebar">
       <div class="sticky top-0 overflow-y-auto h-screen">
-        <%= if @selected_ast_element do %>
+        <%= if @selected_ast_element_id do %>
           <div class="border-b text-lg font-medium leading-5 p-4 relative">
             <%= @selected_ast_element["tag"] %>
-            <.go_to_parent_button selected_ast_element_id={assigns.selected_ast_element_id} socket={@socket} />
+            <.go_to_parent_button selected_ast_element_id={@selected_ast_element_id} socket={@socket} />
             <.close_button />
           </div>
 
