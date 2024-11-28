@@ -11,7 +11,7 @@ require Logger
         type="text"
         class="w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm"
         phx-keydown="add_class"
-        target={@myself}>
+        phx-target={@myself}>
       <div class="pt-3">
         <%= for css_class <- @classes do %>
           <div class="inline-flex items-center rounded-full bg-slate-700 text-white text-xs px-3 pr-0 m-1 leading-4">
@@ -52,15 +52,15 @@ require Logger
     {:ok, assign(socket, assigns)}
   end
 
-  # # TODO: validate class is valid
-  # def handle_event("update", %{"value" => class}, socket) do
-  #   %{path: path} = socket.assigns
-  #   send(self(), {:updated_element, %{path: path, attrs: %{"class" => class}}})
-  #   {:noreply, socket}
-  # end
+  defp build_class(classes, new_class) do
+    Enum.uniq(classes ++ [new_class])
+    |> Enum.join(" ")
+  end
 
-  def handle_event("add_class", %{"key" => "Enter", "value" => class}, socket) do
-    dbg(class)
+  def handle_event("add_class", %{"key" => "Enter", "value" => new_class}, socket) do
+    %{path: path, classes: classes} = socket.assigns
+    send(self(), {:updated_element, %{path: path, attrs: %{"class" => build_class(classes, new_class)}}})
+    {:noreply, socket}
   end
 
   def handle_event("add_class", _, socket) do
