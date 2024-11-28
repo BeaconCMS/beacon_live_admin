@@ -84,19 +84,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
   end
 
   defp update_node(node, attrs) do
-    updated_attrs = Map.merge(node["attrs"], attrs, fn
-      "class", old_val, new_val -> merge_classes(old_val, new_val)
-      _key, _old_val, new_val -> new_val
-    end)
-
-    %{node | "attrs" => updated_attrs}
-  end
-
-  defp merge_classes(old_classes, new_classes) do
-    old_classes_list = String.split(old_classes, " ")
-    new_classes_list = String.split(new_classes, " ")
-    merged_classes_list = Enum.uniq(old_classes_list ++ new_classes_list)
-    Enum.join(merged_classes_list, " ")
+    %{node | "attrs" => Map.merge(node["attrs"], attrs)}
   end
 
   defp update_node_recursive(nodes, [index], attrs) do

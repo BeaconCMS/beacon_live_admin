@@ -20,37 +20,49 @@ require Logger
     {:ok, assign_form(socket, "")}
   end
 
+  defp find_opacity_class(classes) do
+    classes
+    |> String.split(" ", trim: true)
+    |> Enum.find(fn s -> String.starts_with?(s, "opacity-") end)
+  end
+
+  defp extract_opacity(classes) do
+    case find_opacity_class(classes) do
+      nil -> nil
+      class ->
+        class
+        |> String.split("-")
+        |> List.last()
+    end
+  end
+
   def update(%{element: element}, socket) do
     path = Map.get(element, "path", "")
 
-    # TODO: extract opacity value from `class`
-    _class = get_in(element, ["attrs", "class"]) || ""
-    opacity = "100"
-    dbg(element)
-    dbg(path)
+    classes = get_in(element, ["attrs", "class"]) || ""
+    opacity = extract_opacity(classes) || "100";
     {:ok,
      socket
      |> assign(path: path)
+     |> assign(classes: classes)
      |> assign_form(opacity)}
   end
 
   # TODO: validate opacity value is valid is valid
   def handle_event("update", %{"value" => opacity}, socket) do
-    Logger.debug("#########################################################")
-    Logger.debug("#########################################################")
-    Logger.debug("#########################################################")
-    Logger.debug("#########################################################")
-    Logger.debug("################## handle_event(update) #################")
-    dbg(socket.assigns)
-    %{path: path} = socket.assigns
-    class = build_class(opacity)
+    %{path: path, classes: classes} = socket.assigns
+    class = build_class(classes, opacity)
     send(self(), {:updated_element, %{path: path, attrs: %{"class" => class}}})
-    Logger.debug("################## handle_event(update) last line #################")
     {:noreply, assign_form(socket, opacity)}
   end
 
-  defp build_class(opacity) do
-    "opacity-#{opacity}"
+  defp build_class(classes, opacity) do
+    other_classes =
+      classes
+      |> String.split(" ", trim: true)
+      |> Enum.reject(fn s -> String.starts_with?(s, "opacity-") end)
+    new_class = "opacity-#{opacity}"
+    Enum.join([new_class | other_classes], " ")
   end
 
   defp assign_form(socket, value) do
