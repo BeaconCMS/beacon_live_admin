@@ -6,12 +6,13 @@ require Logger
   # FIXME: create functions components to reuse shared styles (currently defined in PropertiesSidebarSectionComponent)
   def render(assigns) do
     ~H"""
-    <section class="p-4 border-b border-b-gray-100 border-solid">
+    <section id={@id} class="p-4 border-b border-b-gray-100 border-solid">
       <input
         type="text"
         class="w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm"
-        phx-keydown="add_class"
-        phx-target={@myself}>
+        id={"#{@id}-input"}
+        phx-hook="ClassControlAddClassAndClear"
+      >
       <div class="pt-3">
         <%= for css_class <- @classes do %>
           <div class="inline-flex items-center rounded-full bg-slate-700 text-white text-xs px-3 pr-0 m-1 leading-4">
@@ -38,13 +39,19 @@ require Logger
     """
   end
 
-  def update(%{element: element}, socket) do
+  def mount(socket) do
+    {:ok, socket}
+  end
+
+  def update(assigns, socket) do
+    %{element: element, id: id } = assigns
     path = Map.get(element, "path", "")
     classes =
       (get_in(element, ["attrs", "class"]) || "")
       |> String.split(" ", trim: true)
     {:ok,
      socket
+     |> assign(assigns)
      |> assign(path: path, classes: classes)}
   end
 
@@ -57,14 +64,9 @@ require Logger
     |> Enum.join(" ")
   end
 
-  def handle_event("add_class", %{"key" => "Enter", "value" => new_class}, socket) do
+  def handle_event("add_class", %{ "value" => new_class}, socket) do
     %{path: path, classes: classes} = socket.assigns
     send(self(), {:updated_element, %{path: path, attrs: %{"class" => build_class(classes, new_class)}}})
-    {:noreply, socket}
-  end
-
-  def handle_event("add_class", _, socket) do
-    # Do nothing for any other key
     {:noreply, socket}
   end
 
