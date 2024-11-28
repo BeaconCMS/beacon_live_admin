@@ -84,15 +84,24 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
   end
 
   defp update_node(node, attrs) do
-    # TODO: This is too native. Classes should be merged, not replaced
-    %{node | "attrs" => Map.merge(node.attrs, attrs)}
+    updated_attrs = Map.merge(node["attrs"], attrs, fn
+      "class", old_val, new_val -> merge_classes(old_val, new_val)
+      _key, _old_val, new_val -> new_val
+    end)
+
+    %{node | "attrs" => updated_attrs}
+  end
+
+  defp merge_classes(old_classes, new_classes) do
+    old_classes_list = String.split(old_classes, " ")
+    new_classes_list = String.split(new_classes, " ")
+    merged_classes_list = Enum.uniq(old_classes_list ++ new_classes_list)
+    Enum.join(merged_classes_list, " ")
   end
 
   defp update_node_recursive(nodes, [index], attrs) do
     nodes
-    |> List.update_at(index, fn node ->
-      %{node | "content" => List.update_at(node.content, index, fn node -> update_node(node, attrs) end)}
-    end)
+    |> List.update_at(index, fn node -> update_node(node, attrs) end)
   end
 
   defp update_node_recursive(nodes, [index | rest], attrs) do
@@ -103,16 +112,8 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
   end
 
   def update(%{path: path, attrs: attrs}, %{assigns: %{editor: "visual"}} = socket) do
-    # FIXME: update attrs in path
-    ast = socket.assigns.builder_page.ast
-    dbg(path)
-    dbg(attrs)
-    Logger.debug("######## AST BEFORE")
-    dbg(ast)
-    ast = update_node(ast, path, attrs)
-    Logger.debug("######## AST AFTER")
-    dbg(ast)
-
+    ast = update_node(socket.assigns.builder_page.ast, path, attrs)
+    # TODO: Don't save immediately. Debounce serializing this to a template
     template = Beacon.Template.HEEx.HEExDecoder.decode(ast)
     params = Map.merge(socket.assigns.form.params, %{"template" => template})
     changeset = Content.change_page(socket.assigns.site, socket.assigns.page, params)

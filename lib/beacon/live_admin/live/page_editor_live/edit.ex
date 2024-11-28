@@ -76,7 +76,6 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
     {:noreply, socket}
   end
 
-  # FIXME: refresh properties sidebar
   def handle_event("select_ast_element", %{"id" => id}, socket) do
     {:noreply, assign(socket, selected_ast_element_id: id)}
   end
