@@ -3,7 +3,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.OpacityControl do
   # https://tailwindcss.com/docs/opacity
 
   use Beacon.LiveAdmin.Web, :live_component
-
+require Logger
   # FIXME: create functions components to reuse shared styles (currently defined in PropertiesSidebarSectionComponent)
   def render(assigns) do
     ~H"""
@@ -20,21 +20,28 @@ defmodule Beacon.LiveAdmin.VisualEditor.OpacityControl do
     {:ok, assign_form(socket, "")}
   end
 
-  def update(%{element: element}, socket) do
-    path = Map.get(element, "path", "")
+  # def update(%{element: element}, socket) do
+  #   path = Map.get(element, "path", "")
 
-    # TODO: extract opacity value from `class`
-    _class = get_in(element, ["attrs", "class"]) || ""
-    opacity = "100"
-
-    {:ok,
-     socket
-     |> assign(path: path)
-     |> assign_form(opacity)}
-  end
+  #   # TODO: extract opacity value from `class`
+  #   _class = get_in(element, ["attrs", "class"]) || ""
+  #   opacity = "100"
+  #   dbg(element)
+  #   dbg(path)
+  #   {:ok,
+  #    socket
+  #    |> assign(path: path)
+  #    |> assign_form(opacity)}
+  # end
 
   # TODO: validate opacity value is valid is valid
   def handle_event("update", %{"value" => opacity}, socket) do
+    Logger.debug("#########################################################")
+    Logger.debug("#########################################################")
+    Logger.debug("#########################################################")
+    Logger.debug("#########################################################")
+    Logger.debug("################## handle_event(update) #################")
+    dbg(socket)
     %{path: path} = socket.assigns
     class = build_class(opacity)
     send(self(), {:updated_element, %{path: path, attrs: %{"class" => class}}})

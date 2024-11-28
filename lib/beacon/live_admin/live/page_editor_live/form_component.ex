@@ -9,6 +9,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
   alias Beacon.LiveAdmin.WebAPI
   alias Beacon.LiveAdmin.PropertiesSidebarComponent
   alias Ecto.Changeset
+  require Logger
 
   @impl true
   def update(%{site: site, page: page} = assigns, socket) do
@@ -77,12 +78,40 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
     {:ok, socket}
   end
 
+  def update_node(nodes, path, attrs) do
+    indices = String.split(path, ".") |> Enum.map(&String.to_integer/1)
+    update_node_recursive(nodes, indices, attrs)
+  end
+
+  defp update_node(node, attrs) do
+    # TODO: This is too native. Classes should be merged, not replaced
+    %{node | "attrs" => Map.merge(node.attrs, attrs)}
+  end
+
+  defp update_node_recursive(nodes, [index], attrs) do
+    nodes
+    |> List.update_at(index, fn node ->
+      %{node | "content" => List.update_at(node.content, index, fn node -> update_node(node, attrs) end)}
+    end)
+  end
+
+  defp update_node_recursive(nodes, [index | rest], attrs) do
+    nodes
+    |> List.update_at(index, fn node ->
+      %{node | "content" => update_node_recursive(node["content"], rest, attrs)}
+    end)
+  end
+
   def update(%{path: path, attrs: attrs}, %{assigns: %{editor: "visual"}} = socket) do
     # FIXME: update attrs in path
+    ast = socket.assigns.builder_page.ast
     dbg(path)
     dbg(attrs)
-    # dbg(socket.assigns.builder_page.ast)
-    ast = socket.assigns.builder_page.ast
+    Logger.debug("######## AST BEFORE")
+    dbg(ast)
+    ast = update_node(ast, path, attrs)
+    Logger.debug("######## AST AFTER")
+    dbg(ast)
 
     template = Beacon.Template.HEEx.HEExDecoder.decode(ast)
     params = Map.merge(socket.assigns.form.params, %{"template" => template})
