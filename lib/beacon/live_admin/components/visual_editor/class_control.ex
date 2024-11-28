@@ -72,8 +72,9 @@ require Logger
   end
 
   def handle_event("delete_class", %{ "class" => css_class }, socket) do
-    classes = socket.assigns.classes |> Enum.reject(&(&1 == css_class))
-    {:noreply,
-      assign(socket, classes: classes)}
+    %{path: path, classes: classes} = socket.assigns
+    classes = Enum.reject(classes, &(&1 == css_class)) |> Enum.join(" ")
+    send(self(), {:updated_element, %{path: path, attrs: %{"class" => classes}}})
+    {:noreply, socket}
   end
 end
