@@ -68,10 +68,10 @@ defmodule Beacon.LiveAdmin.PropertiesSidebarComponent do
           </div>
 
           <%= if @attributes_editable do %>
-            <.live_component module={ClassControl} id={"control-class-#{assigns.selected_ast_element_id}"} element={@selected_ast_element} />
-            <.live_component module={OpacityControl} id={"control-opacity-#{assigns.selected_ast_element_id}"} element={@selected_ast_element} />
+            <.live_component module={ClassControl} id={"control-class-#{@selected_ast_element_id}"} element={@selected_ast_element} />
+            <.live_component module={OpacityControl} id={"control-opacity-#{@selected_ast_element_id}"} element={@selected_ast_element} />
             <%= for index <- @new_attributes do %>
-              <.live_component module={KeyValueControl} id={"control-key-value-#{assigns.selected_ast_element_id}-idx-#{index}"} element={@selected_ast_element} index={index} />
+              <.live_component module={KeyValueControl} id={"control-key-value-#{@selected_ast_element_id}-idx-#{index}"} element={@selected_ast_element} index={index} />
             <% end %>
           <% end %>
           <div class="p-4">
