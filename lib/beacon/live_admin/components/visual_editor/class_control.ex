@@ -21,6 +21,7 @@ require Logger
               class="p-2 rounded-full inline-block bg-slate-700 text-white hover:text-blue-400 active:text-blue-500"
               type="button"
               phx-click="delete_class"
+              phx-value-class={css_class}
               phx-target={@myself}
             >
               <span class="sr-only">Delete class:</span>
@@ -70,8 +71,9 @@ require Logger
     {:noreply, socket}
   end
 
-  def handle_event("delete_class", _, socket) do
-    # TODO: Not implemented
-    {:noreply, socket}
+  def handle_event("delete_class", %{ "class" => css_class }, socket) do
+    classes = socket.assigns.classes |> Enum.reject(&(&1 == css_class))
+    {:noreply,
+      assign(socket, classes: classes)}
   end
 end
