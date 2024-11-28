@@ -61,7 +61,7 @@ require Logger
       classes
       |> String.split(" ", trim: true)
       |> Enum.reject(fn s -> String.starts_with?(s, "opacity-") end)
-    Enum.join(other_classes ++ "opacity-#{opacity}", " ")
+    Enum.join(other_classes ++ ["opacity-#{opacity}"], " ")
   end
 
   defp assign_form(socket, value) do
