@@ -3,7 +3,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.OpacityControl do
   # https://tailwindcss.com/docs/opacity
 
   use Beacon.LiveAdmin.Web, :live_component
-require Logger
+  require Logger
   # FIXME: create functions components to reuse shared styles (currently defined in PropertiesSidebarSectionComponent)
   def render(assigns) do
     ~H"""
@@ -28,7 +28,9 @@ require Logger
 
   defp extract_opacity(classes) do
     case find_opacity_class(classes) do
-      nil -> nil
+      nil ->
+        nil
+
       class ->
         class
         |> String.split("-")
@@ -40,7 +42,8 @@ require Logger
     path = Map.get(element, "path", "")
 
     classes = get_in(element, ["attrs", "class"]) || ""
-    opacity = extract_opacity(classes) || "100";
+    opacity = extract_opacity(classes) || "100"
+
     {:ok,
      socket
      |> assign(path: path, classes: classes)
@@ -60,6 +63,7 @@ require Logger
       classes
       |> String.split(" ", trim: true)
       |> Enum.reject(fn s -> String.starts_with?(s, "opacity-") end)
+
     Enum.join(other_classes ++ ["opacity-#{opacity}"], " ")
   end
 

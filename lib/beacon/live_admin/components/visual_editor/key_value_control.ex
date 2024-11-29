@@ -10,7 +10,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.KeyValueControl do
       <.form :let={f} for={@form} as={@as} phx-target={@myself} phx-blur="update">
         <.input field={f[:name]} label="Name" />
         <%!-- phx-debounce="blur" /> --%>
-        <.input field={f[:value]} label="Value" phx-debounce="update"/>
+        <.input field={f[:value]} label="Value" phx-debounce="update" />
         <%!-- phx-debounce="blur" /> --%>
       </.form>
     </div>
