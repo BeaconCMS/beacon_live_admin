@@ -44,6 +44,7 @@ defmodule Beacon.LiveAdmin.VisualEditor do
     end
   end
 
+  # FIXME: update "root" node
   def update_node(nodes, path, attrs) do
     indices = String.split(path, ".") |> Enum.map(&String.to_integer/1)
     update_node_recursive(nodes, indices, attrs)
