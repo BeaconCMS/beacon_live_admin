@@ -3,8 +3,11 @@ import { CodeEditorHook } from "../../deps/live_monaco_editor/priv/static/live_m
 import { getHooks } from "live_svelte"
 import classControlHooks from "../../lib/beacon/live_admin/components/visual_editor/class_control"
 import * as Components from "../svelte/**/*.svelte"
+
 let Hooks = {}
+
 Hooks.CodeEditorHook = CodeEditorHook
+
 topbar.config({ barColors: { 0: "#29d" }, shadowColor: "rgba(0, 0, 0, .3)" })
 window.addEventListener("phx:page-loading-start", (_info) => topbar.show(300))
 window.addEventListener("phx:page-loading-stop", (_info) => topbar.hide())

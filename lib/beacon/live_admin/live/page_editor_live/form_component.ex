@@ -3,13 +3,15 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
 
   use Beacon.LiveAdmin.Web, :live_component
 
+  require Logger
+
+  alias Ecto.Changeset
   alias Beacon.LiveAdmin.Client.Config
   alias Beacon.LiveAdmin.Client.Content
   alias Beacon.LiveAdmin.RuntimeCSS
   alias Beacon.LiveAdmin.WebAPI
+  alias Beacon.LiveAdmin.VisualEditor
   alias Beacon.LiveAdmin.PropertiesSidebarComponent
-  alias Ecto.Changeset
-  require Logger
 
   @impl true
   def update(%{site: site, page: page} = assigns, socket) do
@@ -52,6 +54,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
      end)}
   end
 
+  # updated template from code editor
   def update(%{template: template}, %{assigns: %{editor: "code"}} = socket) do
     params = Map.merge(socket.assigns.form.params, %{"template" => template})
     changeset = Content.change_page(socket.assigns.site, socket.assigns.page, params)
@@ -62,6 +65,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
      |> assign_template(template)}
   end
 
+  # updated ast from visual editor
   def update(%{ast: ast}, %{assigns: %{editor: "visual"}} = socket) do
     template = Beacon.Template.HEEx.HEExDecoder.decode(ast)
     params = Map.merge(socket.assigns.form.params, %{"template" => template})
@@ -78,29 +82,12 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
     {:ok, socket}
   end
 
-  def update_node(nodes, path, attrs) do
-    indices = String.split(path, ".") |> Enum.map(&String.to_integer/1)
-    update_node_recursive(nodes, indices, attrs)
-  end
+  # updated element from visual editor control
+  def update(%{element: element, updated: updated}, %{assigns: %{editor: "visual"}} = socket) do
+    path = Map.get(element, "path", "")
+    attrs = Map.get(updated, "attrs", %{})
 
-  defp update_node(node, attrs) do
-    %{node | "attrs" => Map.merge(node["attrs"], attrs)}
-  end
-
-  defp update_node_recursive(nodes, [index], attrs) do
-    nodes
-    |> List.update_at(index, fn node -> update_node(node, attrs) end)
-  end
-
-  defp update_node_recursive(nodes, [index | rest], attrs) do
-    nodes
-    |> List.update_at(index, fn node ->
-      %{node | "content" => update_node_recursive(node["content"], rest, attrs)}
-    end)
-  end
-
-  def update(%{path: path, attrs: attrs}, %{assigns: %{editor: "visual"}} = socket) do
-    ast = update_node(socket.assigns.builder_page.ast, path, attrs)
+    ast = VisualEditor.update_node(socket.assigns.builder_page.ast, path, attrs)
     # TODO: Don't save immediately. Debounce serializing this to a template
     template = Beacon.Template.HEEx.HEExDecoder.decode(ast)
     params = Map.merge(socket.assigns.form.params, %{"template" => template})

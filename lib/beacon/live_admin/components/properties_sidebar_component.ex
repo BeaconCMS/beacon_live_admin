@@ -1,19 +1,17 @@
 defmodule Beacon.LiveAdmin.PropertiesSidebarComponent do
   use Beacon.LiveAdmin.Web, :live_component
+  alias Beacon.LiveAdmin.VisualEditor
   alias Beacon.LiveAdmin.VisualEditor.ClassControl
   alias Beacon.LiveAdmin.VisualEditor.OpacityControl
   alias Beacon.LiveAdmin.VisualEditor.KeyValueControl
 
   def update(assigns, socket) do
-    selected_ast_element_id = assigns.selected_ast_element_id
+    {_, selected_ast_element} =
+      assigns.page.ast
+      |> VisualEditor.find_element(assigns.selected_ast_element_id)
+      |> Map.pop("content")
 
-    selected_ast_element =
-      case selected_ast_element_id do
-        "root" -> %{"tag" => "root", "attrs" => %{}, "content" => assigns.page.ast}
-        xpath -> find_ast_element(assigns.page.ast, xpath)
-      end || %{}
-
-    selected_ast_element = Map.put(selected_ast_element, "path", selected_ast_element_id)
+    selected_ast_element = Map.put(selected_ast_element, "path", assigns.selected_ast_element_id)
 
     {:ok,
      socket
@@ -21,24 +19,8 @@ defmodule Beacon.LiveAdmin.PropertiesSidebarComponent do
      |> assign_new(:new_attributes, fn -> [] end)
      |> assign(
        selected_ast_element: selected_ast_element,
-       attributes_editable: selected_ast_element["tag"] not in ["eex", "eex_block"]
+       attributes_editable: VisualEditor.element_editable?(selected_ast_element)
      )}
-  end
-
-  def find_ast_element(_nodes, nil), do: nil
-
-  def find_ast_element(nodes, xpath) do
-    parts = String.split(xpath, ".") |> Enum.map(&String.to_integer/1)
-    find_ast_element_recursive(nodes, parts)
-  end
-
-  defp find_ast_element_recursive(nodes, [index | []]), do: Enum.at(nodes, index)
-
-  defp find_ast_element_recursive(nodes, [index | rest]) do
-    case Enum.at(nodes, index) do
-      nil -> nil
-      node -> find_ast_element_recursive(node["content"], rest)
-    end
   end
 
   def handle_event("add_attribute", _params, socket) do

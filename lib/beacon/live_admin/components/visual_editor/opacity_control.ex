@@ -4,6 +4,8 @@ defmodule Beacon.LiveAdmin.VisualEditor.OpacityControl do
 
   use Beacon.LiveAdmin.Web, :live_component
   require Logger
+  alias Beacon.LiveAdmin.VisualEditor
+
   # FIXME: create functions components to reuse shared styles (currently defined in PropertiesSidebarSectionComponent)
   def render(assigns) do
     ~H"""
@@ -20,51 +22,20 @@ defmodule Beacon.LiveAdmin.VisualEditor.OpacityControl do
     {:ok, assign_form(socket, "")}
   end
 
-  defp find_opacity_class(classes) do
-    classes
-    |> String.split(" ", trim: true)
-    |> Enum.find(fn s -> String.starts_with?(s, "opacity-") end)
-  end
-
-  defp extract_opacity(classes) do
-    case find_opacity_class(classes) do
-      nil ->
-        nil
-
-      class ->
-        class
-        |> String.split("-")
-        |> List.last()
-    end
-  end
-
-  def update(%{element: element}, socket) do
-    path = Map.get(element, "path", "")
-
-    classes = get_in(element, ["attrs", "class"]) || ""
-    opacity = extract_opacity(classes) || "100"
+  def update(%{element: element} = assigns, socket) do
+    opacity = VisualEditor.extract_utility_class_value(element, "opacity", "100")
 
     {:ok,
      socket
-     |> assign(path: path, classes: classes)
+     |> assign(assigns)
      |> assign_form(opacity)}
   end
 
   # TODO: validate opacity value is valid is valid
   def handle_event("update", %{"value" => opacity}, socket) do
-    %{path: path, classes: classes} = socket.assigns
-    class = build_class(classes, opacity)
-    send(self(), {:updated_element, %{path: path, attrs: %{"class" => class}}})
+    class = VisualEditor.merge_class(socket.assigns.element, "opacity-#{opacity}")
+    send(self(), {:updated_element, {socket.assigns.element, %{"attrs" => %{"class" => class}}}})
     {:noreply, assign_form(socket, opacity)}
-  end
-
-  defp build_class(classes, opacity) do
-    other_classes =
-      classes
-      |> String.split(" ", trim: true)
-      |> Enum.reject(fn s -> String.starts_with?(s, "opacity-") end)
-
-    Enum.join(other_classes ++ ["opacity-#{opacity}"], " ")
   end
 
   defp assign_form(socket, value) do
