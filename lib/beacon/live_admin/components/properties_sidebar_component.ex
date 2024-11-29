@@ -6,7 +6,7 @@ defmodule Beacon.LiveAdmin.PropertiesSidebarComponent do
   alias Beacon.LiveAdmin.VisualEditor.OpacityControl
   alias Beacon.LiveAdmin.VisualEditor.KeyValueControl
 
-  def update(%{selected_ast_element_id: nil} = assigns, socket) do
+  def update(%{selected_element_path: nil} = assigns, socket) do
     {:ok,
      socket
      |> assign(assigns)
@@ -15,16 +15,16 @@ defmodule Beacon.LiveAdmin.PropertiesSidebarComponent do
   end
 
   def update(assigns, socket) do
-    %{page: %{ast: page}, selected_ast_element_id: selected_ast_element_id} = assigns
+    %{page: %{ast: page}, selected_element_path: selected_element_path} = assigns
 
     selected_element =
-      case VisualEditor.find_element(page, selected_ast_element_id) do
+      case VisualEditor.find_element(page, selected_element_path) do
         nil ->
           nil
 
         element ->
           {_, selected_element} = Map.pop(element, "content")
-          Map.put(selected_element, "path", selected_ast_element_id)
+          Map.put(selected_element, "path", selected_element_path)
       end
 
     {:ok,

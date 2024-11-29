@@ -320,12 +320,12 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
                 page: @builder_page,
                 tailwindConfig: @tailwind_config,
                 tailwindInput: @tailwind_input,
-                selectedAstElementId: @selected_ast_element_id
+                selectedAstElementId: @selected_element_path
               }
             }
             socket={@socket}
           />
-          <.live_component module={PropertiesSidebarComponent} id="properties_sidebar" page={@builder_page} selected_ast_element_id={@selected_ast_element_id} />
+          <.live_component module={PropertiesSidebarComponent} id="properties_sidebar" page={@builder_page} selected_element_path={@selected_element_path} />
         </div>
       <% end %>
 

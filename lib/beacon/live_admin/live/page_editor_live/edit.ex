@@ -16,7 +16,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
 
     socket =
       socket
-      |> assign_new(:selected_ast_element_id, fn -> nil end)
+      |> assign_new(:selected_element_path, fn -> nil end)
       |> assign_new(:layouts, fn -> Content.list_layouts(site) end)
       |> assign_new(:components, fn ->
         components = Content.list_components(site, per_page: :infinity)
@@ -76,8 +76,8 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
     {:noreply, socket}
   end
 
-  def handle_event("select_ast_element", %{"id" => id}, socket) do
-    {:noreply, assign(socket, selected_ast_element_id: id)}
+  def handle_event("select_element", %{"path" => path}, socket) do
+    {:noreply, assign(socket, selected_element_path: path)}
   end
 
   @impl true
@@ -97,7 +97,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
       site={@beacon_page.site}
       layouts={@layouts}
       page={@page}
-      selected_ast_element_id={@selected_ast_element_id}
+      selected_element_path={@selected_element_path}
       components={@components}
       editor={@editor}
       patch="/pages"
