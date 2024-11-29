@@ -2,18 +2,26 @@ defmodule Beacon.LiveAdmin.VisualEditor.KeyValueControl do
   @moduledoc false
 
   use Beacon.LiveAdmin.Web, :live_component
-
+  require Logger
   # FIXME: create functions components to reuse shared styles (currently defined in PropertiesSidebarSectionComponent)
   def render(assigns) do
     ~H"""
-    <div id={@id}>
+    <section id={@id} class="p-4 border-b border-b-gray-100 border-solid">
       <.form :let={f} for={@form} as={@as} phx-target={@myself} phx-blur="update">
-        <.input field={f[:name]} label="Name" />
-        <%!-- phx-debounce="blur" /> --%>
-        <.input field={f[:value]} label="Value" phx-debounce="update" />
-        <%!-- phx-debounce="blur" /> --%>
+        <.input
+          class="w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm"
+          field={f[:name]}
+          label="Name"
+          phx-blur="name_blur"
+          phx-target={@myself}/>
+        <.input
+          class="w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm"
+          field={f[:value]}
+          label="Value"
+          phx-blur="value_blur"
+           phx-target={@myself}/>
       </.form>
-    </div>
+    </section>
     """
   end
 
@@ -34,6 +42,22 @@ defmodule Beacon.LiveAdmin.VisualEditor.KeyValueControl do
 
   def update(assigns, socket) do
     {:ok, assign(socket, assigns)}
+  end
+
+  def handle_event("name_blur", attrs, socket) do
+    Logger.debug("##################################")
+    Logger.debug("########### name_blur ###############")
+    Logger.debug("##################################")
+    dbg(attrs)
+    {:noreply, socket}
+  end
+
+  def handle_event("value_blur", attrs, socket) do
+    Logger.debug("##################################")
+    Logger.debug("########### value_blur ###############")
+    Logger.debug("##################################")
+    dbg(attrs)
+    {:noreply, socket}
   end
 
   # TODO: validate k/v is valid
