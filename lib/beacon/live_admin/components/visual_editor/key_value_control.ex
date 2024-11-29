@@ -58,8 +58,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.KeyValueControl do
     %{name: name, value: value} = socket.assigns
     if value != "" do
       send(self(), {:updated_element, {socket.assigns.element["path"], %{"attrs" => %{name => value}}}})
-      send(self(), {:clear_new_attribute, {}})
-      # send(socket.parent_pid, {:clear_new_attribute})
+      send_update(Beacon.LiveAdmin.PropertiesSidebarComponent, id: "properties-sidebar", add_new_attribute: false)
     end
     {:noreply, socket}
   end

@@ -5,7 +5,7 @@ defmodule Beacon.LiveAdmin.PropertiesSidebarComponent do
   alias Beacon.LiveAdmin.VisualEditor.ClassControl
   alias Beacon.LiveAdmin.VisualEditor.OpacityControl
   alias Beacon.LiveAdmin.VisualEditor.KeyValueControl
-
+require Logger
   def update(%{selected_element_path: nil} = assigns, socket) do
     {:ok,
      socket
@@ -26,6 +26,12 @@ defmodule Beacon.LiveAdmin.PropertiesSidebarComponent do
           {_, selected_element} = Map.pop(element, "content")
           Map.put(selected_element, "path", selected_element_path)
       end
+
+    Logger.debug("################################")
+    Logger.debug("################################")
+    Logger.debug("################################")
+    Logger.debug("################################")
+    dbg(assigns)
     {:ok,
      socket
      |> assign(assigns)
@@ -40,13 +46,9 @@ defmodule Beacon.LiveAdmin.PropertiesSidebarComponent do
     {:noreply, assign(socket, :add_new_attribute, true)}
   end
 
-  def handle_event("clear_new_attribute", _params, socket) do
-    {:noreply, assign(socket, :add_new_attribute, false)}
-  end
-
   def render(assigns) do
     ~H"""
-    <div class="mt-4 w-64 bg-white" data-testid="right-sidebar">
+    <div id="properties-sidebar" class="mt-4 w-64 bg-white" data-testid="right-sidebar">
       <div :if={@selected_element} class="sticky top-0 overflow-y-auto h-screen">
         <div class="border-b text-lg font-medium leading-5 p-4 relative">
           <%= @selected_element["tag"] %>
@@ -67,7 +69,7 @@ defmodule Beacon.LiveAdmin.PropertiesSidebarComponent do
         <div class="p-4">
           <button
             type="button"
-            class="bg-blue-500 disabled:opacity-25 text-white font-bold py-2 px-4 rounded outline-2 w-full"
+            class="bg-blue-500 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-2 px-4 rounded outline-2 w-full"
             phx-click="add_new_attribute"
             disabled={@add_new_attribute}
             phx-target={@myself}>

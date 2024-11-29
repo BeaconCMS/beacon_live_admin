@@ -2566,11 +2566,6 @@ select{
   --tw-ring-offset-width: 2px;
 }
 
-.blur{
-  --tw-blur: blur(8px);
-  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
-}
-
 .invert{
   --tw-invert: invert(100%);
   filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
@@ -2997,6 +2992,19 @@ select{
 .disabled\:bg-gray-300:disabled{
   --tw-bg-opacity: 1;
   background-color: rgb(209 213 219 / var(--tw-bg-opacity));
+}
+
+.disabled\:bg-gray-500:disabled{
+  --tw-bg-opacity: 1;
+  background-color: rgb(107 114 128 / var(--tw-bg-opacity));
+}
+
+.disabled\:opacity-75:disabled{
+  opacity: 0.75;
+}
+
+.disabled\:opacity-25:disabled{
+  opacity: 0.25;
 }
 
 .group:first-child .group-first\:block{
