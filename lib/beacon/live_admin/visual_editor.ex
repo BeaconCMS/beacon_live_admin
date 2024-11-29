@@ -1,33 +1,38 @@
 defmodule Beacon.LiveAdmin.VisualEditor do
   @type page :: [element()]
-
-  # %{
-  #  "attrs" => %{},
-  #  "content" => [" Verify, contribute, and adapt to your needs. A\n            project for the community. "],
-  #  "path" => "0.0.0.1.3.1",
-  #  "tag" => "p"
-  # }
-
   @type element :: map()
-  #   "attrs" => map(),
-  #   "content" => list(),
-  #   "path" => binary(),
-  #   "tag" => binary()
-  # }
 
-  def find_element(page, "root" = _path) do
+  def find_element(page, "root" = _path) when is_list(page) do
     %{"tag" => "root", "attrs" => %{}, "content" => page}
   end
 
-  def find_element(page, path) do
-    find_ast_element(page, path) || %{}
+  def find_element(page, path) when is_list(page) and is_binary(path) do
+    find_ast_element(page, path)
   end
 
-  def find_ast_element(_nodes, nil), do: nil
+  def find_element(_page, _path), do: nil
 
-  def find_ast_element(nodes, xpath) do
-    parts = String.split(xpath, ".") |> Enum.map(&String.to_integer/1)
-    find_ast_element_recursive(nodes, parts)
+  defp find_ast_element(nodes, path) do
+    case String.split(path, ".") do
+      [] ->
+        nil
+
+      parts ->
+        parts =
+          parts
+          |> Enum.reduce([], fn
+            "", acc ->
+              acc
+
+            part, acc ->
+              [String.to_integer(part) | acc]
+          end)
+          |> Enum.reverse()
+
+        find_ast_element_recursive(nodes, parts)
+    end
+  rescue
+    _ -> nil
   end
 
   defp find_ast_element_recursive(nodes, [index | []]), do: Enum.at(nodes, index)

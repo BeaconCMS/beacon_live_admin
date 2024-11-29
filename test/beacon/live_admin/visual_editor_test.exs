@@ -3,6 +3,42 @@ defmodule Beacon.LiveAdmin.VisualEditorTest do
 
   alias Beacon.LiveAdmin.VisualEditor
 
+  describe "find_element" do
+    setup do
+      page = [
+        %{
+          "attrs" => %{"id" => "0"},
+          "content" => [
+            %{
+              "attrs" => %{"id" => "0.0"},
+              "content" => []
+            },
+            %{
+              "attrs" => %{"id" => "0.1"},
+              "content" => []
+            }
+          ]
+        }
+      ]
+
+      [page: page]
+    end
+
+    test "find by path", %{page: page} do
+      assert %{"attrs" => %{"id" => "0"}} = VisualEditor.find_element(page, "0")
+      assert %{"attrs" => %{"id" => "0.0"}} = VisualEditor.find_element(page, "0.0")
+      assert %{"attrs" => %{"id" => "0.1"}} = VisualEditor.find_element(page, "0.1")
+    end
+
+    test "ignore invalid page or path", %{page: page} do
+      refute VisualEditor.find_element(page, ".")
+      refute VisualEditor.find_element(page, "")
+      refute VisualEditor.find_element(page, nil)
+      refute VisualEditor.find_element(page, "0.z")
+      refute VisualEditor.find_element(nil, "0")
+    end
+  end
+
   test "element_editable?" do
     assert VisualEditor.element_editable?(%{"tag" => "p"})
 
