@@ -9,8 +9,8 @@ defmodule Beacon.LiveAdmin.VisualEditor.OpacityControl do
   # FIXME: create functions components to reuse shared styles (currently defined in PropertiesSidebarSectionComponent)
   def render(assigns) do
     ~H"""
-    <section class="p-4 border-b border-b-gray-100 border-solid">
-      <.form for={@form} phx-target={@myself} phx-change="update">
+    <section id={@id} class="p-4 border-b border-b-gray-100 border-solid">
+      <.form for={@form} phx-target={@myself} phx-change="update" phx-throttle="1000">
         <.input field={@form[:value]} label="Opacity" type="range" min="0" max="100" step="5" />
       </.form>
     </section>
