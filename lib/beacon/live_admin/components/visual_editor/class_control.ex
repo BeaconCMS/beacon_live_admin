@@ -3,6 +3,8 @@ defmodule Beacon.LiveAdmin.VisualEditor.ClassControl do
 
   use Beacon.LiveAdmin.Web, :live_component
   require Logger
+  alias Beacon.LiveAdmin.VisualEditor
+
   # FIXME: create functions components to reuse shared styles (currently defined in PropertiesSidebarSectionComponent)
   def render(assigns) do
     ~H"""
@@ -40,38 +42,33 @@ defmodule Beacon.LiveAdmin.VisualEditor.ClassControl do
   end
 
   def update(assigns, socket) do
-    %{element: element, id: id} = assigns
-    path = Map.get(element, "path", "")
+    %{element: element} = assigns
 
     classes =
-      (get_in(element, ["attrs", "class"]) || "")
+      element
+      |> VisualEditor.element_class()
       |> String.split(" ", trim: true)
 
     {:ok,
      socket
      |> assign(assigns)
-     |> assign(path: path, classes: classes)}
-  end
-
-  def update(assigns, socket) do
-    {:ok, assign(socket, assigns)}
-  end
-
-  defp build_class(classes, new_class) do
-    Enum.uniq(classes ++ [new_class])
-    |> Enum.join(" ")
+     |> assign(classes: classes)}
   end
 
   def handle_event("add_class", %{"value" => new_class}, socket) do
-    %{path: path, classes: classes} = socket.assigns
-    send(self(), {:updated_element, %{path: path, attrs: %{"class" => build_class(classes, new_class)}}})
+    class = VisualEditor.merge_class(socket.assigns.element, new_class)
+    send(self(), {:updated_element, {socket.assigns.element["path"], %{"attrs" => %{"class" => class}}}})
     {:noreply, socket}
   end
 
-  def handle_event("delete_class", %{"class" => css_class}, socket) do
-    %{path: path, classes: classes} = socket.assigns
-    classes = Enum.reject(classes, &(&1 == css_class)) |> Enum.join(" ")
-    send(self(), {:updated_element, %{path: path, attrs: %{"class" => classes}}})
+  def handle_event("delete_class", %{"class" => deleted_class}, socket) do
+    class =
+      socket.assigns.classes
+      |> Enum.reject(&(&1 == deleted_class))
+      |> Enum.join(" ")
+
+    send(self(), {:updated_element, {socket.assigns.element["path"], %{"attrs" => %{"class" => class}}}})
+
     {:noreply, socket}
   end
 end

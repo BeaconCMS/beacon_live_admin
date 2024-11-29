@@ -13483,7 +13483,7 @@ var BeaconLiveAdmin = (() => {
     ([$page, $selectedAstElementId]) => {
       if ($page && $selectedAstElementId) {
         const element2 = findAstElement($page.ast, $selectedAstElementId);
-        get_store_value(live).pushEvent("select_ast_element", { id: $selectedAstElementId });
+        get_store_value(live).pushEvent("select_element", { path: $selectedAstElementId });
         return element2;
       }
     }
