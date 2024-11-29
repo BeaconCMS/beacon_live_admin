@@ -54,18 +54,12 @@ defmodule Beacon.LiveAdmin.VisualEditor.KeyValueControl do
     Logger.debug("########### value_blur ###############")
     %{name: name, value: value} = socket.assigns
     if value == "" do
-      dbg(socket.assigns.element)
       send(self(), {:updated_element, {socket.assigns.element["path"], %{"attrs" => %{name => value}}}})
     end
     {:noreply, socket}
   end
 
-  def handle_event("update", attrs, socket) do
-    dbg(attrs)
-    %{ "name" => name, "value" => value} = attrs
-    {:noreply,
-      socket
-      |> assign(name: name, value: value)
-    }
+  def handle_event("update", %{ "name" => name, "value" => value}, socket) do
+    {:noreply, assign(socket, name: name, value: value)}
   end
 end
