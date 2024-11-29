@@ -10,7 +10,7 @@ defmodule Beacon.LiveAdmin.PropertiesSidebarComponent do
     {:ok,
      socket
      |> assign(assigns)
-     |> assign_new(:new_attributes, fn -> [] end)
+     |> assign_new(:add_new_attribute, fn -> false end)
      |> assign(selected_element: nil)}
   end
 
@@ -26,28 +26,23 @@ defmodule Beacon.LiveAdmin.PropertiesSidebarComponent do
           {_, selected_element} = Map.pop(element, "content")
           Map.put(selected_element, "path", selected_element_path)
       end
-
     {:ok,
      socket
      |> assign(assigns)
-     |> assign_new(:new_attributes, fn -> [] end)
      |> assign(selected_element: selected_element)}
   end
 
-  def handle_event("add_attribute", _params, socket) do
-    new_attributes =
-      case List.last(socket.assigns.new_attributes) do
-        nil -> [0]
-        last -> socket.assigns.new_attributes ++ [last + 1]
-      end
-
-    {:noreply, assign(socket, :new_attributes, new_attributes)}
+  defp other_attributes(selected_element) do
+    Enum.filter(selected_element["attrs"], fn {k, _} -> k != "class" end)
   end
 
-  # def handle_event("delete_attribute", %{"index" => index}, socket) do
-  #   new_attributes = List.delete_at(socket.assigns.new_attributes, String.to_integer(index))
-  #   {:noreply, assign(socket, :new_attributes, new_attributes)}
-  # end
+  def handle_event("add_new_attribute", _params, socket) do
+    {:noreply, assign(socket, :add_new_attribute, true)}
+  end
+
+  def handle_event("clear_new_attribute", _params, socket) do
+    {:noreply, assign(socket, :add_new_attribute, false)}
+  end
 
   def render(assigns) do
     ~H"""
@@ -62,12 +57,20 @@ defmodule Beacon.LiveAdmin.PropertiesSidebarComponent do
         <%= if VisualEditor.element_editable?(@selected_element) do %>
           <.live_component module={ClassControl} id="control-class" element={@selected_element} />
           <.live_component module={OpacityControl} id="control-opacity" element={@selected_element} />
-          <%= for index <- @new_attributes do %>
-            <.live_component module={KeyValueControl} id={"control-key-value-#{@selected_element["path"]}-idx-#{index}"} element={@selected_element} index={index} />
+          <%= for {name, value} <- other_attributes(@selected_element) do %>
+            <.live_component module={KeyValueControl} id={"control-key-value-#{@selected_element["path"]}-#{name}"} element={@selected_element} name={name} value={value} />
+          <% end %>
+          <%= if @add_new_attribute do %>
+            <.live_component module={KeyValueControl} id={"control-key-value-#{@selected_element["path"]}-new"} element={@selected_element} />
           <% end %>
         <% end %>
         <div class="p-4">
-          <button type="button" class="bg-blue-500 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-2 px-4 rounded outline-2 w-full" phx-click="add_attribute" phx-target={@myself}>
+          <button
+            type="button"
+            class="bg-blue-500 disabled:opacity-25 text-white font-bold py-2 px-4 rounded outline-2 w-full"
+            phx-click="add_new_attribute"
+            disabled={@add_new_attribute}
+            phx-target={@myself}>
             + Add attribute
           </button>
         </div>

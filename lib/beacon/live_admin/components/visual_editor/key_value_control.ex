@@ -34,15 +34,19 @@ defmodule Beacon.LiveAdmin.VisualEditor.KeyValueControl do
     """
   end
 
-  # FIXME: avoid remount to preserve state
-  def mount(socket) do
-    {:ok,
-      socket
-      |> assign(edit_name: true, name: "", value: "")}
-  end
+  # # FIXME: avoid remount to preserve state
+  # def mount(socket) do
+  #   {:ok,
+  #     socket
+  #     |> assign(edit_name: true, name: "", value: "")}
+  # end
 
   def update(assigns, socket) do
-    {:ok, assign(socket, assigns)}
+    name = Map.get(assigns, :name, "")
+    value = Map.get(assigns, :value, "")
+    {:ok,
+      assign(socket, assigns)
+      |> assign(edit_name: name == "", name: name, value: value)}
   end
 
   def handle_event("name_blur", _, socket) do
@@ -51,10 +55,11 @@ defmodule Beacon.LiveAdmin.VisualEditor.KeyValueControl do
   end
 
   def handle_event("value_blur", _, socket) do
-    Logger.debug("########### value_blur ###############")
     %{name: name, value: value} = socket.assigns
-    if value == "" do
+    if value != "" do
       send(self(), {:updated_element, {socket.assigns.element["path"], %{"attrs" => %{name => value}}}})
+      send(self(), {:clear_new_attribute, {}})
+      # send(socket.parent_pid, {:clear_new_attribute})
     end
     {:noreply, socket}
   end
