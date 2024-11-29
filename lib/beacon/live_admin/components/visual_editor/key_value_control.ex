@@ -42,7 +42,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.KeyValueControl do
     dbg(attrs)
     # %{"name" => name, "value" => value} = Map.get(attrs, Atom.to_string(socket.assigns.as), %{})
     # %{path: path} = socket.assigns
-    # send(self(), {:updated_element, %{path: path, attrs: %{name => value}}})
+    # send(self(), {:updated_element, {socket.assigns.element["path"], %{"attrs" => %{name => value}}}})
     # {:noreply, assign_form(socket, name, value)}
     {:noreply, socket}
   end

@@ -57,7 +57,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.ClassControl do
 
   def handle_event("add_class", %{"value" => new_class}, socket) do
     class = VisualEditor.merge_class(socket.assigns.element, new_class)
-    send(self(), {:updated_element, {socket.assigns.element, %{"attrs" => %{"class" => class}}}})
+    send(self(), {:updated_element, {socket.assigns.element["path"], %{"attrs" => %{"class" => class}}}})
     {:noreply, socket}
   end
 
@@ -67,7 +67,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.ClassControl do
       |> Enum.reject(&(&1 == deleted_class))
       |> Enum.join(" ")
 
-    send(self(), {:updated_element, {socket.assigns.element, %{"attrs" => %{"class" => class}}}})
+    send(self(), {:updated_element, {socket.assigns.element["path"], %{"attrs" => %{"class" => class}}}})
 
     {:noreply, socket}
   end

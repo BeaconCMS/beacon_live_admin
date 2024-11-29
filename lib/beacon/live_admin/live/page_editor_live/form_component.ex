@@ -83,8 +83,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
   end
 
   # updated element from visual editor control
-  def update(%{element: element, updated: updated}, %{assigns: %{editor: "visual"}} = socket) do
-    path = Map.get(element, "path", "")
+  def update(%{path: path, updated: updated}, %{assigns: %{editor: "visual"}} = socket) do
     attrs = Map.get(updated, "attrs", %{})
 
     ast = VisualEditor.update_node(socket.assigns.builder_page.ast, path, attrs)
