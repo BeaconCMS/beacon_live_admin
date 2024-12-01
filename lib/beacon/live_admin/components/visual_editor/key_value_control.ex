@@ -34,13 +34,6 @@ defmodule Beacon.LiveAdmin.VisualEditor.KeyValueControl do
     """
   end
 
-  # # FIXME: avoid remount to preserve state
-  # def mount(socket) do
-  #   {:ok,
-  #     socket
-  #     |> assign(edit_name: true, name: "", value: "")}
-  # end
-
   def update(assigns, socket) do
     name = Map.get(assigns, :name, "")
     value = Map.get(assigns, :value, "")
@@ -58,7 +51,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.KeyValueControl do
     %{name: name, value: value} = socket.assigns
     if value != "" do
       send(self(), {:updated_element, {socket.assigns.element["path"], %{"attrs" => %{name => value}}}})
-      send_update(Beacon.LiveAdmin.PropertiesSidebarComponent, id: "properties-sidebar", add_new_attribute: false)
+      send_update(Beacon.LiveAdmin.PropertiesSidebarComponent, id: "properties_sidebar", add_new_attribute: false)
     end
     {:noreply, socket}
   end

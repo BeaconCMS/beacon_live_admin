@@ -5,7 +5,7 @@ defmodule Beacon.LiveAdmin.PropertiesSidebarComponent do
   alias Beacon.LiveAdmin.VisualEditor.ClassControl
   alias Beacon.LiveAdmin.VisualEditor.OpacityControl
   alias Beacon.LiveAdmin.VisualEditor.KeyValueControl
-require Logger
+
   def update(%{selected_element_path: nil} = assigns, socket) do
     {:ok,
      socket
@@ -14,9 +14,7 @@ require Logger
      |> assign(selected_element: nil)}
   end
 
-  def update(assigns, socket) do
-    %{page: %{ast: page}, selected_element_path: selected_element_path} = assigns
-
+  def update(%{page: %{ast: page}, selected_element_path: selected_element_path} = assigns, socket) do
     selected_element =
       case VisualEditor.find_element(page, selected_element_path) do
         nil ->
@@ -27,15 +25,14 @@ require Logger
           Map.put(selected_element, "path", selected_element_path)
       end
 
-    Logger.debug("################################")
-    Logger.debug("################################")
-    Logger.debug("################################")
-    Logger.debug("################################")
-    dbg(assigns)
     {:ok,
      socket
      |> assign(assigns)
      |> assign(selected_element: selected_element)}
+  end
+
+  def update(assigns, socket) do
+    {:ok, assign(socket, assigns)}
   end
 
   defp other_attributes(selected_element) do
@@ -48,7 +45,7 @@ require Logger
 
   def render(assigns) do
     ~H"""
-    <div id="properties-sidebar" class="mt-4 w-64 bg-white" data-testid="right-sidebar">
+    <div id={@id} class="mt-4 w-64 bg-white" data-testid="right-sidebar">
       <div :if={@selected_element} class="sticky top-0 overflow-y-auto h-screen">
         <div class="border-b text-lg font-medium leading-5 p-4 relative">
           <%= @selected_element["tag"] %>
