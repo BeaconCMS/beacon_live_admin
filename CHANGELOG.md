@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+### Enhancements
+  - Introduce `Beacon.LiveAdmin.Config`
+
+### Fixes
+  - [Visual Editor] Decode HTML entities in Tailwind compiler
+
+### Chores
+  - Remove unused router helper `beacon_live_admin_url/4`
+
 ## 0.2.0 (2024-11-14)
 
 ### Enhancements
