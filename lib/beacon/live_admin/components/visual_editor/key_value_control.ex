@@ -8,7 +8,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.KeyValueControl do
     ~H"""
     <section id={@id} class="p-4 border-b border-b-gray-100 border-solid">
       <%= if @editing do %>
-        <form phx-submit="save" phx-reset="cancel_edit" phx-target={@myself}>
+        <form phx-submit="save" phx-change="handle_change" phx-target={@myself}>
           <input
             class="w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm"
             placeholder="Name"
@@ -25,6 +25,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.KeyValueControl do
               class="bg-blue-500 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-2 px-4 rounded outline-2">Save</button>
             <button
               type="reset"
+              name="cancel"
               class="bg-red-500 hover:bg-red-700 active:bg-red-800 text-white font-bold py-2 px-4 rounded outline-2">Cancel</button>
           </div>
         </form>
@@ -84,6 +85,15 @@ defmodule Beacon.LiveAdmin.VisualEditor.KeyValueControl do
 
   def handle_event("start_edit", _params, socket) do
     {:noreply, assign(socket, :editing, true)}
+  end
+
+  def handle_event("handle_change", attrs, socket) do
+    case attrs do
+      %{ "_target" => ["cancel"]} ->
+        {:noreply, assign(socket, :editing, false)}
+      _ ->
+        {:noreply, socket}
+    end
   end
 
   def handle_event("save", %{ "name" => name, "value" => value}, socket) do
