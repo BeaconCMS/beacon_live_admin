@@ -1473,6 +1473,10 @@ select{
   cursor: default;
 }
 
+.cursor-not-allowed{
+  cursor: not-allowed;
+}
+
 .grid-flow-col{
   grid-auto-flow: column;
 }
@@ -1594,6 +1598,11 @@ select{
 
 .gap-y-8{
   row-gap: 2rem;
+}
+
+.gap-x-2{
+  -moz-column-gap: 0.5rem;
+       column-gap: 0.5rem;
 }
 
 .space-x-6 > :not([hidden]) ~ :not([hidden]){
@@ -1940,6 +1949,11 @@ select{
 .bg-zinc-900{
   --tw-bg-opacity: 1;
   background-color: rgb(24 24 27 / var(--tw-bg-opacity));
+}
+
+.bg-gray-500{
+  --tw-bg-opacity: 1;
+  background-color: rgb(107 114 128 / var(--tw-bg-opacity));
 }
 
 .fill-cyan-900{
@@ -2443,6 +2457,11 @@ select{
   color: rgb(24 24 27 / var(--tw-text-opacity));
 }
 
+.text-blue-500{
+  --tw-text-opacity: 1;
+  color: rgb(59 130 246 / var(--tw-text-opacity));
+}
+
 .antialiased{
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -2793,6 +2812,11 @@ select{
   background-color: rgb(63 63 70 / var(--tw-bg-opacity));
 }
 
+.hover\:bg-gray-700:hover{
+  --tw-bg-opacity: 1;
+  background-color: rgb(55 65 81 / var(--tw-bg-opacity));
+}
+
 .hover\:text-\[\#304254\]:hover{
   --tw-text-opacity: 1;
   color: rgb(48 66 84 / var(--tw-text-opacity));
@@ -2959,6 +2983,11 @@ select{
 .active\:bg-red-800:active{
   --tw-bg-opacity: 1;
   background-color: rgb(153 27 27 / var(--tw-bg-opacity));
+}
+
+.active\:bg-gray-800:active{
+  --tw-bg-opacity: 1;
+  background-color: rgb(31 41 55 / var(--tw-bg-opacity));
 }
 
 .active\:text-blue-500:active{
