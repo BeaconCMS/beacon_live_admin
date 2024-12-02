@@ -63,16 +63,17 @@ defmodule Beacon.LiveAdmin.PropertiesSidebarComponent do
             <.live_component module={KeyValueControl} id={"control-key-value-#{@selected_element["path"]}-new"} element={@selected_element} />
           <% end %>
         <% end %>
-        <div class="p-4">
-          <button
-            type="button"
-            class="bg-blue-500 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-2 px-4 rounded outline-2 w-full"
-            phx-click="add_new_attribute"
-            disabled={@add_new_attribute}
-            phx-target={@myself}>
-            + Add attribute
-          </button>
-        </div>
+        <%= if !@add_new_attribute do %>
+          <div class="p-4">
+            <button
+              type="button"
+              class="bg-blue-500 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-2 px-4 rounded outline-2 w-full"
+              phx-click="add_new_attribute"
+              phx-target={@myself}>
+              + Add attribute
+            </button>
+          </div>
+        <% end %>
       </div>
     </div>
     """
