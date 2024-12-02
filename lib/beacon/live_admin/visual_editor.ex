@@ -55,6 +55,7 @@ defmodule Beacon.LiveAdmin.VisualEditor do
       node["attrs"]
       |> Map.merge(attrs)
       |> Map.drop(deleted_attributes)
+
     %{node | "attrs" => new_attrs}
   end
 

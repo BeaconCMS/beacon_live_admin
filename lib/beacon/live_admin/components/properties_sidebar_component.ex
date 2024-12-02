@@ -53,15 +53,9 @@ defmodule Beacon.LiveAdmin.PropertiesSidebarComponent do
           <.live_component module={ClassControl} id="control-class" element={@selected_element} />
           <.live_component module={OpacityControl} id="control-opacity" element={@selected_element} />
           <%= for {name, value} <- other_attributes(@selected_element) do %>
-            <.live_component
-              module={KeyValueControl}
-              id={"control-key-value-#{@selected_element["path"]}-#{name}"}
-              element={@selected_element} name={name} value={value}/>
+            <.live_component module={KeyValueControl} id={"control-key-value-#{@selected_element["path"]}-#{name}"} element={@selected_element} name={name} value={value} />
           <% end %>
-          <.live_component
-            module={KeyValueControl}
-            id={"control-key-value-#{@selected_element["path"]}-new"}
-            element={@selected_element} />
+          <.live_component module={KeyValueControl} id={"control-key-value-#{@selected_element["path"]}-new"} element={@selected_element} />
         <% end %>
       </div>
     </div>
