@@ -81,8 +81,8 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
   end
 
   @impl true
-  def handle_info({:updated_element, {path, updated}}, socket) do
-    send_update(Beacon.LiveAdmin.PageEditorLive.FormComponent, id: "page-editor-form-edit", path: path, updated: updated)
+  def handle_info({:element_changed, {path, payload}}, socket) do
+    send_update(Beacon.LiveAdmin.PageEditorLive.FormComponent, id: "page-editor-form-edit", path: path, payload: payload)
     {:noreply, socket}
   end
 

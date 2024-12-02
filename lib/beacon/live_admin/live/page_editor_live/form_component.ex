@@ -82,11 +82,14 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
     {:ok, socket}
   end
 
-  # updated element from visual editor control
-  def update(%{path: path, updated: updated}, %{assigns: %{editor: "visual"}} = socket) do
+  # changed element from visual editor control
+  def update(%{path: path, payload: payload}, %{assigns: %{editor: "visual"}} = socket) do
+    updated = Map.get(payload, :updated, %{})
     attrs = Map.get(updated, "attrs", %{})
-    deleted_attributes = Map.get(updated, "deleted_attributes", [])
-    ast = VisualEditor.update_node(socket.assigns.builder_page.ast, path, attrs, deleted_attributes)
+    deleted_attrs = Map.get(payload, :deleted, [])
+
+    ast = VisualEditor.update_node(socket.assigns.builder_page.ast, path, attrs, deleted_attrs)
+
     # TODO: Don't save immediately. Debounce serializing this to a template
     template = Beacon.Template.HEEx.HEExDecoder.decode(ast)
     params = Map.merge(socket.assigns.form.params, %{"template" => template})

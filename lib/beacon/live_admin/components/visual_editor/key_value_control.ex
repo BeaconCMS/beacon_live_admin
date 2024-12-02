@@ -74,31 +74,27 @@ defmodule Beacon.LiveAdmin.VisualEditor.KeyValueControl do
     {:noreply, assign(socket, :editing, true)}
   end
 
-  def handle_event("handle_change", attrs, socket) do
-    case attrs do
-      %{"_target" => ["cancel"]} ->
-        {:noreply, assign(socket, :editing, false)}
+  def handle_event("handle_change", %{"_target" => ["cancel"]}, socket) do
+    {:noreply, assign(socket, :editing, false)}
+  end
 
-      _ ->
-        {:noreply, socket}
-    end
+  def handle_event("handle_change", _attrs, socket) do
+    {:noreply, socket}
   end
 
   def handle_event("delete", _, socket) do
-    send(self(), {:updated_element, {socket.assigns.element["path"], %{"deleted_attributes" => [socket.assigns.name]}}})
+    send(self(), {:element_changed, {socket.assigns.element["path"], %{deleted: [socket.assigns.name]}}})
     {:noreply, socket}
   end
 
   def handle_event("save", %{"name" => name, "value" => value}, socket) do
-    if can_save(name, value, socket) do
-      send(self(), {:updated_element, {socket.assigns.element["path"], %{"attrs" => %{name => value}}}})
+    if can_save(name) do
+      send(self(), {:element_changed, {socket.assigns.element["path"], %{updated: %{"attrs" => %{name => value}}}}})
       {:noreply, socket |> assign(:editing, false)}
     else
       {:noreply, socket}
     end
   end
 
-  defp can_save(name, value, _socket) do
-    name != "" && value != ""
-  end
+  defp can_save(name), do: name != ""
 end
