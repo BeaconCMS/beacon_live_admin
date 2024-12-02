@@ -39,8 +39,17 @@ defmodule Beacon.LiveAdmin.VisualEditor.KeyValueControl do
             phx-click="start_edit"
             phx-target={@myself}
           >
-            <span class="sr-only">Edit class:</span>
+            <span class="sr-only">Edit attribute</span>
             <.icon name="hero-pencil-square" class="w-5 h-5" />
+          </button>
+          <button
+            type="button"
+            class="rounded-full inline-block hover:text-red-400 text-red-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+            phx-click="delete"
+            phx-target={@myself}
+          >
+            <span class="sr-only">Delete attribute</span>
+            <.icon name="hero-trash" class="w-5 h-5" />
           </button>
         </div>
         <input
@@ -96,6 +105,11 @@ defmodule Beacon.LiveAdmin.VisualEditor.KeyValueControl do
     end
   end
 
+  def handle_event("delete", _, socket) do
+    send(self(), {:updated_element, {socket.assigns.element["path"], %{"deleted_attributes" => [socket.assigns.name]}}})
+    {:noreply, socket}
+  end
+
   def handle_event("save", %{ "name" => name, "value" => value}, socket) do
     if can_save(name, value, socket) do
       send(self(), {:updated_element, {socket.assigns.element["path"], %{"attrs" => %{name => value}}}})
@@ -108,22 +122,4 @@ defmodule Beacon.LiveAdmin.VisualEditor.KeyValueControl do
   defp can_save(name, value, _socket) do
     name != "" && value != ""
   end
-
-  # def handle_event("name_blur", _, socket) do
-  #   %{name: name} = socket.assigns
-  #   {:noreply, socket |> assign(:edit_name, name == "")}
-  # end
-
-  # def handle_event("value_blur", _, socket) do
-  #   %{name: name, value: value} = socket.assigns
-  #   if value != "" do
-  #     send(self(), {:updated_element, {socket.assigns.element["path"], %{"attrs" => %{name => value}}}})
-  #     send_update(Beacon.LiveAdmin.PropertiesSidebarComponent, id: "properties_sidebar", add_new_attribute: false)
-  #   end
-  #   {:noreply, socket}
-  # end
-
-  # def handle_event("update", %{ "name" => name, "value" => value}, socket) do
-  #   {:noreply, assign(socket, name: name, value: value)}
-  # end
 end

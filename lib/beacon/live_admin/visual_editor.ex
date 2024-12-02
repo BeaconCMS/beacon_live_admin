@@ -45,24 +45,28 @@ defmodule Beacon.LiveAdmin.VisualEditor do
   end
 
   # FIXME: update "root" node
-  def update_node(nodes, path, attrs) do
+  def update_node(nodes, path, attrs, deleted_attributes) do
     indices = String.split(path, ".") |> Enum.map(&String.to_integer/1)
-    update_node_recursive(nodes, indices, attrs)
+    update_node_recursive(nodes, indices, attrs, deleted_attributes)
   end
 
-  defp update_node(node, attrs) do
-    %{node | "attrs" => Map.merge(node["attrs"], attrs)}
+  defp update_node(node, attrs, deleted_attributes) do
+    new_attrs =
+      node["attrs"]
+      |> Map.merge(attrs)
+      |> Map.drop(deleted_attributes)
+    %{node | "attrs" => new_attrs}
   end
 
-  defp update_node_recursive(nodes, [index], attrs) do
+  defp update_node_recursive(nodes, [index], attrs, deleted_attributes) do
     nodes
-    |> List.update_at(index, fn node -> update_node(node, attrs) end)
+    |> List.update_at(index, fn node -> update_node(node, attrs, deleted_attributes) end)
   end
 
-  defp update_node_recursive(nodes, [index | rest], attrs) do
+  defp update_node_recursive(nodes, [index | rest], attrs, deleted_attributes) do
     nodes
     |> List.update_at(index, fn node ->
-      %{node | "content" => update_node_recursive(node["content"], rest, attrs)}
+      %{node | "content" => update_node_recursive(node["content"], rest, attrs, deleted_attributes)}
     end)
   end
 
