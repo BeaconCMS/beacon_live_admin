@@ -39,10 +39,6 @@ defmodule Beacon.LiveAdmin.PropertiesSidebarComponent do
     Enum.filter(selected_element["attrs"], fn {k, _} -> k != "class" end)
   end
 
-  def handle_event("add_new_attribute", _params, socket) do
-    {:noreply, assign(socket, :add_new_attribute, true)}
-  end
-
   def render(assigns) do
     ~H"""
     <div id={@id} class="mt-4 w-64 bg-white" data-testid="right-sidebar">
@@ -57,22 +53,15 @@ defmodule Beacon.LiveAdmin.PropertiesSidebarComponent do
           <.live_component module={ClassControl} id="control-class" element={@selected_element} />
           <.live_component module={OpacityControl} id="control-opacity" element={@selected_element} />
           <%= for {name, value} <- other_attributes(@selected_element) do %>
-            <.live_component module={KeyValueControl} id={"control-key-value-#{@selected_element["path"]}-#{name}"} element={@selected_element} name={name} value={value} />
+            <.live_component
+              module={KeyValueControl}
+              id={"control-key-value-#{@selected_element["path"]}-#{name}"}
+              element={@selected_element} name={name} value={value}/>
           <% end %>
-          <%= if @add_new_attribute do %>
-            <.live_component module={KeyValueControl} id={"control-key-value-#{@selected_element["path"]}-new"} element={@selected_element} />
-          <% end %>
-        <% end %>
-        <%= if !@add_new_attribute do %>
-          <div class="p-4">
-            <button
-              type="button"
-              class="bg-blue-500 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-2 px-4 rounded outline-2 w-full"
-              phx-click="add_new_attribute"
-              phx-target={@myself}>
-              + Add attribute
-            </button>
-          </div>
+          <.live_component
+            module={KeyValueControl}
+            id={"control-key-value-#{@selected_element["path"]}-new"}
+            element={@selected_element} />
         <% end %>
       </div>
     </div>
