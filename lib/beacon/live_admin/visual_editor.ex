@@ -13,26 +13,33 @@ defmodule Beacon.LiveAdmin.VisualEditor do
   def find_element(_page, _path), do: nil
 
   defp find_ast_element(nodes, path) do
-    case String.split(path, ".") do
+    case resolve_path(path) do
       [] ->
         nil
 
       parts ->
-        parts =
-          parts
-          |> Enum.reduce([], fn
-            "", acc ->
-              acc
-
-            part, acc ->
-              [String.to_integer(part) | acc]
-          end)
-          |> Enum.reverse()
-
         find_ast_element_recursive(nodes, parts)
     end
+  end
+
+  defp resolve_path(path) when is_binary(path) do
+    case String.split(path, ".") do
+      [] ->
+        []
+
+      parts ->
+        parts
+        |> Enum.reduce([], fn
+          "", acc ->
+            acc
+
+          part, acc ->
+            [String.to_integer(part) | acc]
+        end)
+        |> Enum.reverse()
+    end
   rescue
-    _ -> nil
+    _ -> []
   end
 
   defp find_ast_element_recursive(nodes, [index | []]), do: Enum.at(nodes, index)
@@ -45,29 +52,27 @@ defmodule Beacon.LiveAdmin.VisualEditor do
   end
 
   # FIXME: update "root" node
-  def update_node(nodes, path, attrs, deleted_attributes) do
-    indices = String.split(path, ".") |> Enum.map(&String.to_integer/1)
-    update_node_recursive(nodes, indices, attrs, deleted_attributes)
+  def update_node(nodes, path, attrs, deleted_attrs) do
+    path = resolve_path(path)
+    update_node_recursive(nodes, path, attrs, deleted_attrs)
   end
 
-  defp update_node(node, attrs, deleted_attributes) do
+  defp update_node(node, attrs, deleted_attrs) do
     new_attrs =
       node["attrs"]
       |> Map.merge(attrs)
-      |> Map.drop(deleted_attributes)
+      |> Map.drop(deleted_attrs)
 
     %{node | "attrs" => new_attrs}
   end
 
-  defp update_node_recursive(nodes, [index], attrs, deleted_attributes) do
-    nodes
-    |> List.update_at(index, fn node -> update_node(node, attrs, deleted_attributes) end)
+  defp update_node_recursive(nodes, [index], attrs, deleted_attrs) do
+    List.update_at(nodes, index, fn node -> update_node(node, attrs, deleted_attrs) end)
   end
 
-  defp update_node_recursive(nodes, [index | rest], attrs, deleted_attributes) do
-    nodes
-    |> List.update_at(index, fn node ->
-      %{node | "content" => update_node_recursive(node["content"], rest, attrs, deleted_attributes)}
+  defp update_node_recursive(nodes, [index | rest], attrs, deleted_attrs) do
+    List.update_at(nodes, index, fn node ->
+      %{node | "content" => update_node_recursive(node["content"], rest, attrs, deleted_attrs)}
     end)
   end
 
