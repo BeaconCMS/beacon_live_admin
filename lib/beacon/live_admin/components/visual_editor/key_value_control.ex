@@ -74,50 +74,29 @@ defmodule Beacon.LiveAdmin.VisualEditor.KeyValueControl do
     value = Map.get(assigns, :value, "")
 
     {:ok,
-<<<<<<< HEAD
       assign(socket, assigns)
       |> assign(name: name, value: value)}
-=======
-     assign(socket, assigns)
-     |> assign(edit_name: name == "", name: name, value: value)}
->>>>>>> f6b8bf645b75deb6bd377ff849657bc0b349d6a0
   end
 
   def handle_event("add_new_attribute", _params, socket) do
     {:noreply, assign(socket, :editing, true)}
   end
 
-<<<<<<< HEAD
   def handle_event("start_edit", _params, socket) do
     {:noreply, assign(socket, :editing, true)}
   end
 
   def handle_event("save", %{ "name" => name, "value" => value}, socket) do
     if can_save(name, value, socket) do
-=======
-  def handle_event("value_blur", _, socket) do
-    %{name: name, value: value} = socket.assigns
-
-    if value != "" do
->>>>>>> f6b8bf645b75deb6bd377ff849657bc0b349d6a0
       send(self(), {:updated_element, {socket.assigns.element["path"], %{"attrs" => %{name => value}}}})
       {:noreply, socket |> assign(:editing, false)}
     else
       {:noreply, socket}
     end
-<<<<<<< HEAD
   end
 
   defp can_save(name, value, _socket) do
     name != "" && value != ""
-=======
-
-    {:noreply, socket}
-  end
-
-  def handle_event("update", %{"name" => name, "value" => value}, socket) do
-    {:noreply, assign(socket, name: name, value: value)}
->>>>>>> f6b8bf645b75deb6bd377ff849657bc0b349d6a0
   end
 
   # def handle_event("name_blur", _, socket) do
