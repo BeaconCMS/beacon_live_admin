@@ -3,7 +3,7 @@ defmodule Beacon.LiveAdmin.Router do
   Routing for Beacon LiveAdmin.
   """
 
-  require Logger
+  # require Logger
 
   @type conn_or_socket :: Phoenix.LiveView.Socket.t() | Plug.Conn.t()
 
@@ -203,16 +203,17 @@ defmodule Beacon.LiveAdmin.Router do
   def __options__(pages, opts) do
     instance_name =
       Keyword.get_lazy(opts, :name, fn ->
-        Logger.warning("""
-        missing required option :name in beacon_live_admin/2
-
-        It will default to :admin but it's recommended to provide a unique name for your instance.
-
-        Example:
-
-            beacon_live_admin "/admin", name: :admin
-
-        """)
+        # TODO: enable this warning after we start using Config
+        # Logger.warning("""
+        # missing required option :name in beacon_live_admin/2
+        #
+        # It will default to :admin but it's recommended to provide a unique name for your instance.
+        #
+        # Example:
+        #
+        #     beacon_live_admin "/admin", name: :admin
+        #
+        # """)
 
         :admin
       end)
