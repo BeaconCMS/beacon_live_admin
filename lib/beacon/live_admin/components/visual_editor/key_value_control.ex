@@ -8,18 +8,14 @@ defmodule Beacon.LiveAdmin.VisualEditor.KeyValueControl do
   def render(assigns) do
     ~H"""
     <div id={@id}>
-      <.live_component
-        module={ControlSection}
-        label={if !@editing && @name !== "", do: @name}
-        name={@name}
-        path={@element["path"]}
-        id={"#{@id}-section"}>
+      <.live_component module={ControlSection} label={if !@editing && @name !== "", do: @name} name={@name} path={@element["path"]} id={"#{@id}-section"}>
         <:header_buttons>
           <button
             type="button"
             class="rounded-full inline-block hover:text-blue-400 text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
             phx-click="start_edit"
-            phx-target={@myself}>
+            phx-target={@myself}
+          >
             <span class="sr-only">Edit attribute</span>
             <.icon name="hero-pencil-square" class="w-5 h-5" />
           </button>
@@ -38,9 +34,9 @@ defmodule Beacon.LiveAdmin.VisualEditor.KeyValueControl do
             <input class="w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm cursor-not-allowed" placeholder="Value" name="value" disabled value={@value} />
           <% end %>
           <%= if @name == "" and @value == "" do %>
-              <button type="button" class="bg-blue-500 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-2 px-4 rounded outline-2 w-full" phx-click="add_new_attribute" phx-target={@myself}>
-                + Add attribute
-              </button>
+            <button type="button" class="bg-blue-500 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-2 px-4 rounded outline-2 w-full" phx-click="add_new_attribute" phx-target={@myself}>
+              + Add attribute
+            </button>
           <% end %>
         <% end %>
       </.live_component>
