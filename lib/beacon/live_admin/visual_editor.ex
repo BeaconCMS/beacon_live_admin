@@ -109,6 +109,6 @@ defmodule Beacon.LiveAdmin.VisualEditor do
 
   def merge_class(element, new) do
     current = get_in(element, ["attrs", "class"]) || ""
-    Twix.tw([current, new])
+    Turboprop.Merge.merge([current, new])
   end
 end

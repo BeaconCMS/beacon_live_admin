@@ -128,9 +128,12 @@ defmodule Beacon.LiveAdmin.VisualEditor.KeyValueControl do
       dbg("Changeset is valid. #{inspect(changeset)}")
       %{name: name, value: value} = changeset.data
       changes = %{updated: %{"attrs" => %{name => value}}}
-      changes = if name != socket.assigns.name do
-        Map.put(changes, :deleted, [socket.assigns.name])
-      end
+      changes =
+        if name != socket.assigns.name do
+          Map.put_new(changes, :deleted, [socket.assigns.name])
+        else
+          changes
+        end
       send(self(), {:element_changed, {socket.assigns.element["path"], changes}})
       {:noreply, assign(socket, editing: false, name: name, value: value, form: to_form(changeset))}
     else

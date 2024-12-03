@@ -169,7 +169,8 @@
           </button>
         {/if}
         <ResetSelectionButton />
-=      </div>
+        =
+      </div>
       {#if attributesEditable}
         <SidebarSection clearOnUpdate={true} on:update={addClasses} disableDelete={true} placeholder="Add new class">
           <svelte:fragment slot="heading">Classes</svelte:fragment>

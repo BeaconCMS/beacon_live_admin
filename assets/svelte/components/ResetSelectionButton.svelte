@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { resetSelection, } from "$lib/stores/page"
+  import { resetSelection } from "$lib/stores/page"
 </script>
 
 <button type="button" class="absolute p-2 top-2 right-1" on:click={resetSelection}>
