@@ -1,6 +1,7 @@
 defmodule Beacon.LiveAdmin.VisualEditor.KeyValueControl do
   @moduledoc false
 
+require IEx
   use Beacon.LiveAdmin.Web, :live_component
   alias Beacon.LiveAdmin.VisualEditor.ControlSection
   require Logger
@@ -74,11 +75,11 @@ defmodule Beacon.LiveAdmin.VisualEditor.KeyValueControl do
   end
 
   def handle_event("save", %{"name" => name, "value" => value}, socket) do
-    if can_save(name) do
+    name = String.trim(name)
+    value = String.trim(value)
+    if can_save(name, socket) do
       changes = %{updated: %{"attrs" => %{name => value}}}
-      if name != socket.assigns.name do
-        changes = Map.put_new(changes, :deleted, [socket.assigns.name])
-      end
+      changes = if name != socket.assigns.name, do: Map.put_new(changes, :deleted, [socket.assigns.name])
       send(self(), {:element_changed, {socket.assigns.element["path"], changes}})
       {:noreply, socket |> assign(:editing, false)}
     else
@@ -86,5 +87,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.KeyValueControl do
     end
   end
 
-  defp can_save(name), do: name != ""
+  defp can_save(name, socket) do
+    name != "" && !Map.has_key?(socket.assigns.element["attrs"], name)
+  end
 end

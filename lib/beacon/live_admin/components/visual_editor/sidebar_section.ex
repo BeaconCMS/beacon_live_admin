@@ -8,7 +8,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.ControlSection do
     <section id={@id} class="p-4 border-b border-b-gray-100 border-solid">
       <%= if @label do %>
         <div class="mb-2 flex items-center justify-between group">
-          <label class="block font-medium capitalize text-sm/5"><%= @label %></label>
+          <label class="block font-medium text-sm/5"><%= @label %></label>
           <div>
             <%= if assigns[:header_buttons] do %>
               <%= render_slot(@header_buttons) %>
