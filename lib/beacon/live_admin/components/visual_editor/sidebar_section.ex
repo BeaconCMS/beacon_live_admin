@@ -38,13 +38,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.ControlSection do
   end
 
   def handle_event("delete", _, socket) do
-    send(
-      self(),
-      {
-        :element_changed,
-        {socket.assigns.path, %{deleted: [socket.assigns.name]}}
-      }
-    )
+    send(self(), {:element_changed, {socket.assigns.path, %{deleted: [socket.assigns.name]}}})
     {:noreply, socket}
   end
 end

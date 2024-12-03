@@ -79,7 +79,11 @@ defmodule Beacon.LiveAdmin.VisualEditor.KeyValueControl do
 
   def handle_event("save", %{"name" => name, "value" => value}, socket) do
     if can_save(name) do
-      send(self(), {:element_changed, {socket.assigns.element["path"], %{updated: %{"attrs" => %{name => value}}}}})
+      changes = %{updated: %{"attrs" => %{name => value}}}
+      if name != socket.assigns.name do
+        changes = Map.put_new(changes, :deleted, [socket.assigns.name])
+      end
+      send(self(), {:element_changed, {socket.assigns.element["path"], changes}})
       {:noreply, socket |> assign(:editing, false)}
     else
       {:noreply, socket}

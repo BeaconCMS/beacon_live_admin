@@ -21,6 +21,8 @@ export const selectedAstElement: Readable<AstElement | undefined> = derived(
       const element = findAstElement($page.ast, $selectedAstElementId)
       get(live).pushEvent("select_element", { path: $selectedAstElementId })
       return element
+    } else {
+      get(live).pushEvent("select_element", { path: null })
     }
   },
 )

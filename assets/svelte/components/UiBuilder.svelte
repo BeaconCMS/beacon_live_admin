@@ -25,10 +25,6 @@
   onDestroy(() => {
     resetStores()
   })
-
-  function addBasicComponentToTarget(e: CustomEvent) {
-    // This method is in PagePreview.
-  }
 </script>
 
 <div class="flex min-h-screen bg-gray-100" id="ui-builder-app-container" data-testid="app-container">
