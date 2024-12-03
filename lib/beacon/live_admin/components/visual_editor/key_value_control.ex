@@ -13,7 +13,6 @@ defmodule Beacon.LiveAdmin.VisualEditor.KeyValueControl do
     end
   end
 
-
   def render(assigns) do
     ~H"""
     <div id={@id}>
@@ -30,20 +29,11 @@ defmodule Beacon.LiveAdmin.VisualEditor.KeyValueControl do
           </button>
         </:header_buttons>
         <%= if @editing do %>
-          <.form
-            :let={f}
-            for={@form}
-            phx-submit="save"
-            phx-change="handle_change"
-            phx-target={@myself}>
-          <%!-- <form phx-submit="save" phx-change="handle_change" phx-target={@myself}> --%>
-            <.input
-              field={f[:name]}
-              placeholder="Name"
-              name="name"
-              class="w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm" />
+          <.form :let={f} for={@form} phx-submit="save" phx-change="handle_change" phx-target={@myself}>
+            <%!-- <form phx-submit="save" phx-change="handle_change" phx-target={@myself}> --%>
+            <.input field={f[:name]} placeholder="Name" name="name" class="w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm" />
 
-            <.input field={f[:value]} placeholder="Value" name="value" class="mt-3 w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm"  />
+            <.input field={f[:value]} placeholder="Value" name="value" class="mt-3 w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm" />
 
             <%!-- <input class="w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm" placeholder="Name" name="name" value={@name} /> --%>
             <%!-- <input class="mt-3 w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm" placeholder="Value" name="value" value={@value} /> --%>
@@ -78,6 +68,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.KeyValueControl do
     value = Map.get(assigns, :value, "")
     form_data = %FormData{name: name, value: value}
     changeset = changeset(form_data)
+
     {:ok,
      assign(socket, assigns)
      |> assign(form: to_form(changeset), name: name, value: value)}
@@ -106,8 +97,6 @@ defmodule Beacon.LiveAdmin.VisualEditor.KeyValueControl do
     {:noreply, socket}
   end
 
-
-
   # def handle_event("save", %{"name" => name, "value" => value}, socket) do
   #   name = String.trim(name)
   #   value = String.trim(value)
@@ -124,16 +113,19 @@ defmodule Beacon.LiveAdmin.VisualEditor.KeyValueControl do
   def handle_event("save", params, socket) do
     existing_attrs = socket.assigns.element["attrs"] || %{}
     changeset = changeset(%FormData{name: params["name"], value: params["value"]}, existing_attrs)
+
     if changeset.valid? do
       dbg("Changeset is valid. #{inspect(changeset)}")
       %{name: name, value: value} = changeset.data
       changes = %{updated: %{"attrs" => %{name => value}}}
+
       changes =
         if name != socket.assigns.name do
           Map.put_new(changes, :deleted, [socket.assigns.name])
         else
           changes
         end
+
       send(self(), {:element_changed, {socket.assigns.element["path"], changes}})
       {:noreply, assign(socket, editing: false, name: name, value: value, form: to_form(changeset))}
     else
