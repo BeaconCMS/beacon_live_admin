@@ -10,10 +10,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.OpacityControl do
   def render(assigns) do
     ~H"""
     <div id={@id} class="contents">
-      <.live_component
-        module={ControlSection}
-        label="Opacity"
-        id={"#{@id}-section"}>
+      <.live_component module={ControlSection} label="Opacity" id={"#{@id}-section"}>
         <.form for={@form} phx-target={@myself} phx-change="update" phx-throttle="1000">
           <.input field={@form[:value]} type="range" min="0" max="100" step="5" />
         </.form>
