@@ -42,6 +42,7 @@ node_modules/
 
 # LSP
 /.elixir_ls
+/.lexical
 
 # Local iex config
 .iex.exs
