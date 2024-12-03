@@ -137,7 +137,8 @@ defmodule Beacon.LiveAdmin.VisualEditor.KeyValueControl do
       send(self(), {:element_changed, {socket.assigns.element["path"], changes}})
       {:noreply, assign(socket, editing: false, name: name, value: value, form: to_form(changeset))}
     else
-      {:noreply, assign(socket, changeset: changeset)}
+      dbg(changeset.errors)
+      {:noreply, assign(socket, form: to_form(changeset))}
     end
   end
 
