@@ -1,7 +1,7 @@
 defmodule Beacon.LiveAdmin.VisualEditor.KeyValueControl do
   @moduledoc false
 
-require IEx
+  require IEx
   use Beacon.LiveAdmin.Web, :live_component
   alias Beacon.LiveAdmin.VisualEditor.ControlSection
 
@@ -35,11 +35,11 @@ require IEx
             <.input field={f[:name]} placeholder="Name" class="w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm" />
             <%!-- <%= inspect(f[:value]) %> --%>
             <.input field={f[:value]} errors={["error 1", "error 2"]} placeholder="Value" class="mt-3 w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm" />
-              <div class="error-messages">
-                <%= for {field, {message, _}} <- @changeset.errors do %>
-                  <p><%= field %> <%= message %></p>
-                <% end %>
-              </div>
+            <div class="error-messages">
+              <%= for {field, {message, _}} <- @changeset.errors do %>
+                <p><%= field %> <%= message %></p>
+              <% end %>
+            </div>
             <%!-- <input class="w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm" placeholder="Name" name="name" value={@name} /> --%>
             <%!-- <input class="mt-3 w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm" placeholder="Value" name="value" value={@value} /> --%>
             <div class="mt-3 grid grid-cols-2 gap-x-2">
@@ -95,7 +95,7 @@ require IEx
     {:noreply, socket}
   end
 
-  def handle_event("save", %{"form_data" => params }, socket) do
+  def handle_event("save", %{"form_data" => params}, socket) do
     existing_attrs = socket.assigns.element["attrs"] || %{}
     changeset = changeset(socket.assigns.changeset, %{name: params["name"], value: params["value"]}, existing_attrs)
 
