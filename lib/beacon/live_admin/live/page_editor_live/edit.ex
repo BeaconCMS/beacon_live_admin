@@ -77,7 +77,6 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
   end
 
   def handle_event("select_element", %{"path" => path}, socket) do
-    dbg("################ select_element: #{inspect(path)}")
     {:noreply, assign(socket, selected_element_path: path)}
   end
 
