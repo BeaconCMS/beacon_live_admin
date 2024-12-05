@@ -148,7 +148,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.Slots do
       <Beacon.LiveAdmin.AdminComponents.component_header socket={@socket} flash={@flash} component={@component} live_action={@live_action} />
 
       <.header>
-        <%= @page_title %>
+        {@page_title}
         <:actions>
           <.button type="button" phx-click="create_new">New Slot</.button>
         </:actions>
@@ -181,7 +181,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.Slots do
           <div class="h-full lg:overflow-y-auto pb-4 lg:h-[calc(100vh_-_239px)]">
             <.table :if={@selected} id="slots" rows={@component.slots} row_click={fn row -> "select-#{row.id}" end}>
               <:col :let={slot} :for={{attr, suffix} <- [{:name, ""}]} label={"#{attr}#{suffix}"}>
-                <%= Map.fetch!(slot, attr) %>
+                {Map.fetch!(slot, attr)}
               </:col>
             </.table>
           </div>
@@ -202,7 +202,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.Slots do
               rows={@streams.slot_attrs}
               row_click={fn {_dom_id, attr} -> JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/components/#{@component.id}/slots/#{@selected.id}/attrs/#{attr.id}")) end}
             >
-              <:col :let={{_, attr}} label="Slot Attributes"><%= attr.name %></:col>
+              <:col :let={{_, attr}} label="Slot Attributes">{attr.name}</:col>
               <:action :let={{_, attr}}>
                 <.link
                   patch={beacon_live_admin_path(@socket, @beacon_page.site, "/components/#{@component.id}/slots/#{@selected.id}/attrs/#{attr.id}")}

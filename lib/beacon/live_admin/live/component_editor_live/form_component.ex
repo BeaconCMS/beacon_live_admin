@@ -382,7 +382,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
       <Beacon.LiveAdmin.AdminComponents.component_header socket={@socket} flash={@flash} component={@component} live_action={@live_action} />
 
       <.header>
-        <%= @page_title %>
+        {@page_title}
         <:actions>
           <.button phx-disable-with="Saving..." form="component-form" class="uppercase">Save Changes</.button>
         </:actions>
@@ -394,7 +394,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
             <legend class="text-sm font-bold tracking-widest text-[#445668] uppercase">Component settings</legend>
             <.input field={f[:name]} phx-debounce="100" type="text" label="Name" />
             <.input field={f[:category]} type="select" options={categories_to_options(@site)} label="Category" />
-            <.error :for={msg <- Enum.map(f[:attrs].errors, &translate_error(&1))}><%= msg %></.error>
+            <.error :for={msg <- Enum.map(f[:attrs].errors, &translate_error(&1))}>{msg}</.error>
             <input type="hidden" name="component[body]" id="component-form_body" value={Phoenix.HTML.Form.input_value(f, :body)} />
             <input type="hidden" name="component[template]" id="component-form_template" value={Phoenix.HTML.Form.input_value(f, :template)} />
             <input type="hidden" name="component[example]" id="component-form_example" value={Phoenix.HTML.Form.input_value(f, :example)} />
@@ -413,7 +413,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
           </.form>
 
           <.table id="attrs" rows={get_component_attrs_from_form(@form)} row_click={fn attr -> JS.push("show_attr_modal", value: %{attr_id: attr.id}, target: @myself) end}>
-            <:col :let={attr} label="Component Attributes"><%= attr.name %></:col>
+            <:col :let={attr} label="Component Attributes">{attr.name}</:col>
             <:action :let={attr}>
               <.link
                 phx-click="show_attr_modal"
@@ -446,7 +446,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
         <div class="col-span-full lg:col-span-2 space-y-6">
           <div>
             <.label for={@form[:body].id}>Body</.label>
-            <%= template_error(@form[:body]) %>
+            {template_error(@form[:body])}
             <div class="py-6 w-full rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
               <LiveMonacoEditor.code_editor
                 path="body"
@@ -460,7 +460,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
 
           <div>
             <.label for={@form[:template].id}>Template</.label>
-            <%= template_error(@form[:template]) %>
+            {template_error(@form[:template])}
             <div class="py-6 w-full rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
               <LiveMonacoEditor.code_editor
                 path="template"
@@ -474,7 +474,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
 
           <div>
             <.label for={@form[:example].id}>Example</.label>
-            <%= template_error(@form[:example]) %>
+            {template_error(@form[:example])}
             <div class="py-6 w-full rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
               <LiveMonacoEditor.code_editor
                 path="example"
@@ -489,7 +489,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
       </div>
 
       <.modal :if={@show_attr_modal} id="attr-modal" on_cancel={JS.push("close_modal", target: @myself)} show>
-        <p class="text-2xl font-bold mb-12"><%= @modal_title %></p>
+        <p class="text-2xl font-bold mb-12">{@modal_title}</p>
         <.form :let={f} id="new-path-form" for={@attr_form} phx-change="validate_attr" phx-submit="add_attr" phx-target={@myself} class="space-y-8">
           <.input type="hidden" name={f[:component_id].name} value={f[:component_id].value} />
           <.input field={f[:name]} type="text" phx-debounce="100" label="Attr Name" />

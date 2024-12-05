@@ -56,7 +56,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
     ~H"""
     <div class="mb-10 text-sm font-medium text-center text-gray-500 border-b border-gray-200">
       <ul class="flex flex-wrap -mb-px">
-        <%= layout_menu_items(assigns) %>
+        {layout_menu_items(assigns)}
       </ul>
     </div>
     """
@@ -116,7 +116,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
     ~H"""
     <div class="mb-10 text-sm font-medium text-center text-gray-500 border-b border-gray-200">
       <ul class="flex flex-wrap -mb-px">
-        <%= page_menu_items(assigns) %>
+        {page_menu_items(assigns)}
       </ul>
     </div>
     """
@@ -177,7 +177,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
     ~H"""
     <div class="mb-10 text-sm font-medium text-center text-gray-500 border-b border-gray-200">
       <ul class="flex flex-wrap -mb-px">
-        <%= component_menu_items(assigns) %>
+        {component_menu_items(assigns)}
       </ul>
     </div>
     """
@@ -253,7 +253,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
                 </button>
               </div>
               <div id={"#{@id}-content"}>
-                <%= render_slot(@inner_block) %>
+                {render_slot(@inner_block)}
               </div>
             </.focus_wrap>
           </div>
@@ -296,9 +296,9 @@ defmodule Beacon.LiveAdmin.AdminComponents do
       <p :if={@title} class="flex items-center gap-1.5 text-sm font-semibold leading-6">
         <.icon :if={@kind == :info} name="hero-information-circle-mini" class="w-4 h-4" />
         <.icon :if={@kind == :error} name="hero-exclamation-circle-mini" class="w-4 h-4" />
-        <%= @title %>
+        {@title}
       </p>
-      <p class="mt-2 text-sm leading-5"><%= msg %></p>
+      <p class="mt-2 text-sm leading-5">{msg}</p>
       <button type="button" class="absolute p-2 group top-1 right-1" aria-label={gettext("close")}>
         <.icon name="hero-x-mark-solid" class="w-5 h-5 opacity-40 group-hover:opacity-70" />
       </button>
@@ -352,9 +352,9 @@ defmodule Beacon.LiveAdmin.AdminComponents do
     ~H"""
     <.form :let={f} for={@for} as={@as} {@rest}>
       <div class="mt-10 space-y-8">
-        <%= render_slot(@inner_block, f) %>
+        {render_slot(@inner_block, f)}
         <div :for={action <- @actions} class="flex items-center justify-between gap-6 mt-2">
-          <%= render_slot(action, f) %>
+          {render_slot(action, f)}
         </div>
       </div>
     </.form>
@@ -386,7 +386,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
       ]}
       {@rest}
     >
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </button>
     """
   end
@@ -444,9 +444,9 @@ defmodule Beacon.LiveAdmin.AdminComponents do
       <label class="flex items-center gap-4 text-sm leading-6 text-zinc-600">
         <input type="hidden" name={@name} value="false" />
         <input type="checkbox" id={@id} name={@name} value="true" checked={@checked} class="rounded border-zinc-300 text-zinc-900 focus:ring-0" {@rest} />
-        <%= @label %>
+        {@label}
       </label>
-      <.error :for={msg <- @errors}><%= msg %></.error>
+      <.error :for={msg <- @errors}>{msg}</.error>
     </div>
     """
   end
@@ -455,7 +455,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
     ~H"""
     <div phx-feedback-for={@name}>
       <%= if @label do %>
-        <.label for={@id}><%= @label %></.label>
+        <.label for={@id}>{@label}</.label>
       <% end %>
       <select
         id={@id}
@@ -464,10 +464,10 @@ defmodule Beacon.LiveAdmin.AdminComponents do
         multiple={@multiple}
         {@rest}
       >
-        <option :if={@prompt} value=""><%= @prompt %></option>
-        <%= Phoenix.HTML.Form.options_for_select(@options, @value) %>
+        <option :if={@prompt} value="">{@prompt}</option>
+        {Phoenix.HTML.Form.options_for_select(@options, @value)}
       </select>
-      <.error :for={msg <- @errors}><%= msg %></.error>
+      <.error :for={msg <- @errors}>{msg}</.error>
     </div>
     """
   end
@@ -476,7 +476,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
     ~H"""
     <div phx-feedback-for={@name}>
       <%= if @label do %>
-        <.label for={@id}><%= @label %></.label>
+        <.label for={@id}>{@label}</.label>
       <% end %>
       <textarea
         id={@id}
@@ -489,7 +489,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
         ]}
         {@rest}
       ><%= Phoenix.HTML.Form.normalize_value("textarea", @value) %></textarea>
-      <.error :for={msg <- @errors}><%= msg %></.error>
+      <.error :for={msg <- @errors}>{msg}</.error>
     </div>
     """
   end
@@ -499,7 +499,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
     ~H"""
     <div phx-feedback-for={@name}>
       <%= if @label do %>
-        <.label for={@id}><%= @label %></.label>
+        <.label for={@id}>{@label}</.label>
       <% end %>
       <input
         type={@type}
@@ -514,7 +514,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
         ]}
         {@rest}
       />
-      <.error :for={msg <- @errors}><%= msg %></.error>
+      <.error :for={msg <- @errors}>{msg}</.error>
     </div>
     """
   end
@@ -528,7 +528,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
   def label(assigns) do
     ~H"""
     <label for={@for} class="mb-2 block font-medium capitalize text-sm/5 text-[#304254]">
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </label>
     """
   end
@@ -542,7 +542,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
     ~H"""
     <p class="flex gap-3 mt-3 text-sm leading-6 text-rose-600 phx-no-feedback:hidden">
       <.icon name="hero-exclamation-circle-mini" class="mt-0.5 h-5 w-5 flex-none" />
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </p>
     """
   end
@@ -583,8 +583,8 @@ defmodule Beacon.LiveAdmin.AdminComponents do
       <table class="w-[40rem] mt-6 sm:w-full">
         <thead class="text-sm leading-6 text-left text-zinc-500">
           <tr>
-            <th :for={col <- @col} class="pt-0 pb-4 pl-0 pr-6 font-sans font-semibold uppercase text-sm tracking-[1.68px]"><%= col[:label] %></th>
-            <th class="relative p-0 pb-4"><span class="sr-only"><%= gettext("Actions") %></span></th>
+            <th :for={col <- @col} class="pt-0 pb-4 pl-0 pr-6 font-sans font-semibold uppercase text-sm tracking-[1.68px]">{col[:label]}</th>
+            <th class="relative p-0 pb-4"><span class="sr-only">{gettext("Actions")}</span></th>
           </tr>
         </thead>
         <tbody id={@id} phx-update={match?(%Phoenix.LiveView.LiveStream{}, @rows) && "stream"} class="relative text-sm leading-6 divide-y border-grey-100 divide-grey-100 text-[#111625] font-medium">
@@ -593,7 +593,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
               <div class="block py-4 pr-6">
                 <span class="absolute right-0 -inset-y-px -left-3 group-hover:bg-[#F0F5F9] sm:rounded-l-xl" />
                 <span class={["relative", i == 0 && "font-semibold text-zinc-900"]}>
-                  <%= render_slot(col, @row_item.(row)) %>
+                  {render_slot(col, @row_item.(row))}
                 </span>
               </div>
             </td>
@@ -602,7 +602,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
                 <div class="flex justify-end">
                   <span class="absolute left-0 -inset-y-px -right-3 group-hover:bg-[#F0F5F9] sm:rounded-r-xl" />
                   <span :for={action <- @action} class="relative text-sm font-medium font-semibold text-right text-zinc-900 hover:text-zinc-700 whitespace-nowrap">
-                    <%= render_slot(action, @row_item.(row)) %>
+                    {render_slot(action, @row_item.(row))}
                   </span>
                 </div>
               </div>
@@ -633,8 +633,8 @@ defmodule Beacon.LiveAdmin.AdminComponents do
     <div class="mt-14">
       <dl class="-my-4 divide-y divide-zinc-100">
         <div :for={item <- @item} class="flex gap-4 py-4 text-sm leading-6 sm:gap-8">
-          <dt class="flex-none w-1/4 text-zinc-500"><%= item.title %></dt>
-          <dd class="text-zinc-700"><%= render_slot(item) %></dd>
+          <dt class="flex-none w-1/4 text-zinc-500">{item.title}</dt>
+          <dd class="text-zinc-700">{render_slot(item)}</dd>
         </div>
       </dl>
     </div>
@@ -656,7 +656,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
     <div class="mt-16">
       <.link navigate={@navigate} class="text-sm font-semibold leading-6 text-zinc-900 hover:text-zinc-700">
         <.icon name="hero-arrow-left-solid" class="w-3 h-3" />
-        <%= render_slot(@inner_block) %>
+        {render_slot(@inner_block)}
       </.link>
     </div>
     """
@@ -672,7 +672,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
   def main_content(assigns) do
     ~H"""
     <div class={"#{@class} px-4 py-2 mt-6 bg-white col-span-full rounded-[1.1rem]"}>
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </div>
     """
   end
@@ -743,7 +743,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
                   "px-3 pb-0.5 pt-1.5 border-b-4 border-transparent hover:text-blue-600 hover:border-blue-600 active:text-blue-700 focus:outline-none focus:duration-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300 focus-visible:rounded focus-visible:duration-300 transition-link duration-300 only-large"
             }
           >
-            <%= page %>
+            {page}
           </.link>
         </span>
         <span :if={page == :sep}>

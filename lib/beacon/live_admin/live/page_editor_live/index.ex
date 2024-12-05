@@ -54,9 +54,9 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
 
     <.main_content>
       <.table id="pages" rows={@streams.pages} row_click={fn {_dom_id, page} -> JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/pages/#{page.id}")) end}>
-        <:col :let={{_, page}} label="Title"><%= page.title %></:col>
-        <:col :let={{_, page}} label="Path"><%= page.path %></:col>
-        <:col :let={{_, page}} label="Status"><%= display_status(page.status) %></:col>
+        <:col :let={{_, page}} label="Title">{page.title}</:col>
+        <:col :let={{_, page}} label="Path">{page.path}</:col>
+        <:col :let={{_, page}} label="Status">{display_status(page.status)}</:col>
         <:action :let={{_, page}}>
           <div class="sr-only">
             <.link navigate={beacon_live_admin_path(@socket, @beacon_page.site, "/pages/#{page.id}")}>Show</.link>

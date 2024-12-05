@@ -248,7 +248,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
       <Beacon.LiveAdmin.AdminComponents.page_header socket={@socket} flash={@flash} page={@page} live_action={@live_action} />
 
       <.header>
-        <%= @page_title %>
+        {@page_title}
         <:actions>
           <.button :if={@live_action in [:new, :edit] && @editor == "code" && @page.format == :heex} type="button" phx-click="enable_editor" phx-value-editor="visual" class="uppercase">
             Visual Editor
@@ -315,12 +315,12 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
             <.input field={f[:template]} type="hidden" name="page[template]" id="page-form_template" value={Phoenix.HTML.Form.input_value(f, :template)} />
 
             <%= for mod <- extra_page_fields(@site) do %>
-              <%= extra_page_field(@site, @extra_fields, mod) %>
+              {extra_page_field(@site, @extra_fields, mod)}
             <% end %>
           </.form>
         </div>
         <div class="col-span-full lg:col-span-2">
-          <%= template_error(@form[:template]) %>
+          {template_error(@form[:template])}
           <div class="py-6 w-full rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
             <LiveMonacoEditor.code_editor
               path="template"

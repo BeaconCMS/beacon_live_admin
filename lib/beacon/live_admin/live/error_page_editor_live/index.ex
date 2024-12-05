@@ -198,7 +198,7 @@ defmodule Beacon.LiveAdmin.ErrorPageEditorLive.Index do
     ~H"""
     <div>
       <.header>
-        <%= @page_title %>
+        {@page_title}
         <:actions>
           <.button type="button" id="new-error-page-button" phx-click="create_new" class="uppercase">
             New Error Page
@@ -241,7 +241,7 @@ defmodule Beacon.LiveAdmin.ErrorPageEditorLive.Index do
           <div class="h-full lg:overflow-y-auto pb-4 lg:h-[calc(100vh_-_239px)]">
             <.table id="error-pages" rows={@error_pages} row_click={fn row -> "select-#{row.status}" end}>
               <:col :let={error_page} label="status">
-                <%= Map.fetch!(error_page, :status) %>
+                {Map.fetch!(error_page, :status)}
               </:col>
             </.table>
           </div>

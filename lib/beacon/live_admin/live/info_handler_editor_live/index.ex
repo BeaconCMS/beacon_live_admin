@@ -185,7 +185,7 @@ defmodule Beacon.LiveAdmin.InfoHandlerEditorLive.Index do
     ~H"""
     <div>
       <.header>
-        <%= @page_title %>
+        {@page_title}
         <:actions>
           <.button type="button" id="new-info-handler-button" phx-click="create_new" class="uppercase">
             New Handle Info Callback
@@ -228,7 +228,7 @@ defmodule Beacon.LiveAdmin.InfoHandlerEditorLive.Index do
           <div class="h-full lg:overflow-y-auto pb-4 lg:h-[calc(100vh_-_239px)]">
             <.table id="info-handlers" rows={@info_handlers} row_click={fn row -> "select-#{row.id}" end}>
               <:col :let={info_handler} label="msg">
-                <%= Map.fetch!(info_handler, :msg) %>
+                {Map.fetch!(info_handler, :msg)}
               </:col>
             </.table>
           </div>

@@ -250,7 +250,7 @@ defmodule Beacon.LiveAdmin.PageLive do
       class="w-full transition-colors outline-none active:text-blue-700 focus-visible:[&:not(:active)]:ring-2 @[350px]:focus-visible:[&:not(:active)]:ring-4 focus-visible:ring-purple-500 hover:bg-slate-100 flex rounded items-center justify-center @[180px]:justify-start gap-0 @[180px]:gap-2 @[240px]:gap-3  @[300px]:gap-4 px-[18px] py-3.5 @[180px]:p-2 @[240px]:py-3.5 @[240px]:px-2 @[350px]:py-4 antialiased font-semibold text-base @[240px]:text-lg  @[300px]:text-xl @[350px]:text-2xl text-slate-800"
     >
       <span :if={@icon} aria-hidden="true" class={@icon <> " aspect-square h-7 @[180px]:h-4.5 w-7 @[180px]:w-4.5 @[350px]:h-7 @[350px]:w-7"}></span>
-      <div class="hidden font-semibold @[180px]:block line-clamp-1 text-blue-700"><%= @text %></div>
+      <div class="hidden font-semibold @[180px]:block line-clamp-1 text-blue-700">{@text}</div>
     </.link>
     """
   end
@@ -266,7 +266,7 @@ defmodule Beacon.LiveAdmin.PageLive do
       class="w-full transition-colors outline-none active:text-blue-700 focus-visible:[&:not(:active)]:ring-2 @[350px]:focus-visible:[&:not(:active)]:ring-4 focus-visible:ring-purple-500 hover:bg-slate-100 flex rounded items-center justify-center @[180px]:justify-start gap-0 @[180px]:gap-2 @[240px]:gap-3  @[300px]:gap-4 px-[18px] py-3.5 @[180px]:p-2 @[240px]:py-3.5 @[240px]:px-2 @[350px]:py-4 antialiased font-semibold text-base @[240px]:text-lg  @[300px]:text-xl @[350px]:text-2xl text-slate-800"
     >
       <span :if={@icon} aria-hidden="true" class={@icon <> " aspect-square h-7 @[180px]:h-4.5 w-7 @[180px]:w-4.5 @[350px]:h-7 @[350px]:w-7"}></span>
-      <div class="hidden font-semibold @[180px]:block line-clamp-1"><%= @text %></div>
+      <div class="hidden font-semibold @[180px]:block line-clamp-1">{@text}</div>
     </.link>
     """
   end
@@ -276,7 +276,7 @@ defmodule Beacon.LiveAdmin.PageLive do
 
     ~H"""
     <span :if={@icon} aria-hidden="true" class={@icon <> " aspect-square h-7 @[180px]:h-4.5 w-7 @[180px]:w-4.5 @[350px]:h-7 @[350px]:w-7"}></span>
-    <span class=""><%= @text %></span>
+    <span class="">{@text}</span>
     """
   end
 end

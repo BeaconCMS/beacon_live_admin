@@ -59,7 +59,7 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.UploadFormComponent do
       <section phx-drop-target={@uploads.asset.ref}>
         <%= for entry <- @uploads.asset.entries do %>
           <article class="upload-entry">
-            <progress value={entry.progress} max="100"><%= entry.progress %>%</progress>
+            <progress value={entry.progress} max="100">{entry.progress}%</progress>
           </article>
         <% end %>
       </section>
@@ -71,8 +71,8 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.UploadFormComponent do
         <%= for entry <- @uploads.asset.entries do %>
           <%= for err <- upload_errors(@uploads.asset, entry) do %>
             <p class="text-red-600">
-              <%= entry.client_name %>
-              <%= Phoenix.Naming.humanize(err) %>
+              {entry.client_name}
+              {Phoenix.Naming.humanize(err)}
             </p>
           <% end %>
           <.button phx-click="cancel-upload" phx-value-ref={entry.ref}>Cancel</.button>
@@ -83,7 +83,7 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.UploadFormComponent do
         <h3>Successfully uploaded</h3>
         <%= for asset <- @uploaded_assets do %>
           <img :if={MediaLibrary.is_image?(@site, asset)} src={MediaLibrary.url_for(@site, asset)} class="mb-8" />
-          <p class="text-green-600"><%= asset.file_name %></p>
+          <p class="text-green-600">{asset.file_name}</p>
         <% end %>
       </div>
     </div>

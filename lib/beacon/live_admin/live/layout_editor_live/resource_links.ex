@@ -107,7 +107,7 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.ResourceLinks do
       <Beacon.LiveAdmin.AdminComponents.layout_header socket={@socket} flash={@flash} beacon_layout={@beacon_layout} live_action={@live_action} />
 
       <.header>
-        <%= @page_title %>
+        {@page_title}
         <:actions>
           <.button phx-disable-with="Saving..." form="resource-links-form" class="uppercase">Save Changes</.button>
         </:actions>
@@ -152,7 +152,7 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.ResourceLinks do
           <.simple_form :let={f} for={%{}} as={:attribute} phx-submit="save-new-attribute">
             <div class="flex items-center gap-2">
               <%= for preset <- ~w(type crossorigin sizes as) do %>
-                <.button phx-click={JS.set_attribute({"value", preset}, to: "#attribute_name")}><%= preset %></.button>
+                <.button phx-click={JS.set_attribute({"value", preset}, to: "#attribute_name")}>{preset}</.button>
               <% end %>
             </div>
 
