@@ -25,7 +25,7 @@ defmodule Beacon.LiveAdmin.Components do
     assigns = %{raw: render(assigns, &Beacon.Web.Components.image_set/1)}
 
     ~H"""
-    <%= {:safe, @raw} %>
+    {{:safe, @raw}}
     """
   end
 
@@ -46,7 +46,7 @@ defmodule Beacon.LiveAdmin.Components do
     }
 
     ~H"""
-    <.error :if={@message}><%= @message %></.error>
+    <.error :if={@message}>{@message}</.error>
     <code :if={@compilation_error} class="mt-3 text-sm text-rose-600 phx-no-feedback:hidden">
       <pre><%= @compilation_error %></pre>
     </code>

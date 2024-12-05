@@ -117,8 +117,8 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.Index do
     <.main_content>
       <.table id="assets" rows={@streams.assets} row_click={fn {_dom_id, asset} -> JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/media_library/#{asset.id}")) end}>
         <:col :let={{_, asset}} label=""><Beacon.LiveAdmin.AdminComponents.thumbnail source={MediaLibrary.url_for(asset.site, asset.thumbnail)} /></:col>
-        <:col :let={{_, asset}} label="File Name"><%= asset.file_name %></:col>
-        <:col :let={{_, asset}} label="type"><%= asset.media_type %></:col>
+        <:col :let={{_, asset}} label="File Name">{asset.file_name}</:col>
+        <:col :let={{_, asset}} label="type">{asset.media_type}</:col>
         <:action :let={{_, asset}}>
           <.link aria-label="View asset" title="View asset" class="flex items-center justify-center w-10 h-10" patch={beacon_live_admin_path(@socket, @beacon_page.site, "/media_library/#{asset.id}")}>
             <.icon name="hero-eye text-[#61758A] hover:text-[#304254]" />

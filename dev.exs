@@ -53,7 +53,7 @@ defmodule DemoWeb.CustomPage do
   def render(assigns) do
     ~H"""
     <div>Custom</div>
-    <span>Val: <%= @val %></span>
+    <span>Val: {@val}</span>
     """
   end
 end

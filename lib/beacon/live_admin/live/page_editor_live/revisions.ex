@@ -56,7 +56,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Revisions do
       <Beacon.LiveAdmin.AdminComponents.page_header socket={@socket} flash={@flash} page={@page} live_action={@live_action} />
 
       <.header>
-        <%= @page_title %>
+        {@page_title}
       </.header>
 
       <.main_content class="h-auto">
@@ -97,26 +97,26 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Revisions do
         </div>
       </div>
       <h3 class="flex items-center pt-2 mb-1 text-lg font-semibold text-gray-900">
-        <%= Phoenix.Naming.humanize(@event.event) %> <span class="ml-2 text-sm text-gray-500"><%= format_datetime(@event.inserted_at) %></span>
+        {Phoenix.Naming.humanize(@event.event)} <span class="ml-2 text-sm text-gray-500">{format_datetime(@event.inserted_at)}</span>
         <span class="hidden group-first:block bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded ml-3">Latest</span>
       </h3>
 
       <ol :if={@event.snapshot} class="space-y-4">
         <li>
           <h4 class="text-gray-600 text-bold">Path</h4>
-          <%= @event.snapshot.page.path %>
+          {@event.snapshot.page.path}
         </li>
         <li>
           <h4 class="text-gray-600">Title</h4>
-          <%= @event.snapshot.page.title %>
+          {@event.snapshot.page.title}
         </li>
         <li>
           <h4 class="text-gray-600">Description</h4>
-          <%= @event.snapshot.page.description %>
+          {@event.snapshot.page.description}
         </li>
         <li>
           <h4 class="text-gray-600">Format</h4>
-          <%= @event.snapshot.page.format %>
+          {@event.snapshot.page.format}
         </li>
         <li>
           <h4 class="text-gray-600">Template</h4>
@@ -146,7 +146,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Revisions do
         </li>
         <li>
           <h4 class="text-gray-600">Meta Tags</h4>
-          <%= render_meta_tags(@event.snapshot.page.meta_tags) %>
+          {render_meta_tags(@event.snapshot.page.meta_tags)}
         </li>
         <li>
           <h4 class="text-gray-600">Variants</h4>
@@ -168,10 +168,10 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Revisions do
     ~H"""
     <.table :if={@variants != []} id="variants" rows={@variants}>
       <:col :let={variant} label="name">
-        <%= variant.name %>
+        {variant.name}
       </:col>
       <:col :let={variant} label="weight">
-        <%= variant.weight %>
+        {variant.weight}
       </:col>
       <:col :let={variant} label="template">
         <.link class="text-blue-600 hover:underline" phx-click={JS.push("show_modal", value: %{event_id: @event_id, variant_id: variant.id})}>
@@ -189,7 +189,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Revisions do
     ~H"""
     <.table :if={@event_handlers != []} id="event-handlers" rows={@event_handlers}>
       <:col :let={event_handler} label="name">
-        <%= event_handler.name %>
+        {event_handler.name}
       </:col>
       <:col :let={event_handler} label="code">
         <.link class="text-blue-600 hover:underline" phx-click={JS.push("show_modal", value: %{event_id: @event_id, event_handler_id: event_handler.id})}>
@@ -228,7 +228,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Revisions do
     ~H"""
     <.table id="meta_tags" rows={@meta_tags}>
       <:col :let={meta_tag} :for={attr <- @attributes} label={attr}>
-        <%= meta_tag[attr] %>
+        {meta_tag[attr]}
       </:col>
     </.table>
     """
