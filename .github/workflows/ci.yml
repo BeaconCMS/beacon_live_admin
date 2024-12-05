@@ -217,6 +217,8 @@ jobs:
 
       - run: mix compile --warnings-as-errors
 
+      - run: mix deps.unlock --check-unused
+
       - run: mix assets.setup
 
       - run: mix format.all
@@ -226,5 +228,3 @@ jobs:
           commit_message: auto format code
 
       - run: mix format.all.check
-
-      - run: mix deps.unlock --check-unused
