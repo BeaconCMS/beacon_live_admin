@@ -1,7 +1,7 @@
 {
   "name": "beacon_live_admin",
-  "version": "0.2.0",
-  "description": "LiveView Admin for Beacon",
+  "version": "0.3.0",
+  "description": "Phoenix LiveView Admin Panel to manage Beacon CMS sites.",
   "license": "MIT",
   "repository": {
     "type": "git",
