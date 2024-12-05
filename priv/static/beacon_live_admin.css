@@ -1423,6 +1423,10 @@ select{
   flex-shrink: 0;
 }
 
+.flex-grow{
+  flex-grow: 1;
+}
+
 .basis-2\/12{
   flex-basis: 16.666667%;
 }
@@ -1467,6 +1471,10 @@ select{
 
 .cursor-default{
   cursor: default;
+}
+
+.cursor-not-allowed{
+  cursor: not-allowed;
 }
 
 .grid-flow-col{
@@ -1566,6 +1574,11 @@ select{
 .gap-x-1{
   -moz-column-gap: 0.25rem;
        column-gap: 0.25rem;
+}
+
+.gap-x-2{
+  -moz-column-gap: 0.5rem;
+       column-gap: 0.5rem;
 }
 
 .gap-x-4{
@@ -2329,6 +2342,11 @@ select{
   color: rgb(242 54 48 / var(--tw-text-opacity));
 }
 
+.text-blue-500{
+  --tw-text-opacity: 1;
+  color: rgb(59 130 246 / var(--tw-text-opacity));
+}
+
 .text-blue-600{
   --tw-text-opacity: 1;
   color: rgb(37 99 235 / var(--tw-text-opacity));
@@ -2817,6 +2835,11 @@ select{
 .hover\:text-gray-600:hover{
   --tw-text-opacity: 1;
   color: rgb(75 85 99 / var(--tw-text-opacity));
+}
+
+.hover\:text-red-400:hover{
+  --tw-text-opacity: 1;
+  color: rgb(248 113 113 / var(--tw-text-opacity));
 }
 
 .hover\:text-red-700:hover{

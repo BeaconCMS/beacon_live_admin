@@ -26,6 +26,7 @@ erl_crash.dump
 beacon_live_admin-*.tar
 
 # Ignore assets that are produced by build tools.
+/assets/css/app.css
 /priv/static/assets/
 
 # Ignore digested assets cache.

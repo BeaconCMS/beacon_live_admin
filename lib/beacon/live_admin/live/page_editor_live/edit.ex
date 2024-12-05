@@ -1,6 +1,6 @@
 defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
   @moduledoc false
-
+  require Logger
   use Beacon.LiveAdmin.PageBuilder
   alias Beacon.LiveAdmin.Client.Content
   alias Beacon.LiveAdmin.WebAPI
@@ -16,6 +16,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
 
     socket =
       socket
+      |> assign_new(:selected_element_path, fn -> nil end)
       |> assign_new(:layouts, fn -> Content.list_layouts(site) end)
       |> assign_new(:components, fn ->
         components = Content.list_components(site, per_page: :infinity)
@@ -71,11 +72,17 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
   end
 
   def handle_event("update_page_ast", %{"ast" => ast}, socket) do
-    send_update(Beacon.LiveAdmin.PageEditorLive.FormComponent,
-      id: "page-editor-form-edit",
-      ast: ast
-    )
+    send_update(Beacon.LiveAdmin.PageEditorLive.FormComponent, id: "page-editor-form-edit", ast: ast)
+    {:noreply, socket}
+  end
 
+  def handle_event("select_element", %{"path" => path}, socket) do
+    {:noreply, assign(socket, selected_element_path: path)}
+  end
+
+  @impl true
+  def handle_info({:element_changed, {path, payload}}, socket) do
+    send_update(Beacon.LiveAdmin.PageEditorLive.FormComponent, id: "page-editor-form-edit", path: path, payload: payload)
     {:noreply, socket}
   end
 
@@ -90,6 +97,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
       site={@beacon_page.site}
       layouts={@layouts}
       page={@page}
+      selected_element_path={@selected_element_path}
       components={@components}
       editor={@editor}
       patch="/pages"
