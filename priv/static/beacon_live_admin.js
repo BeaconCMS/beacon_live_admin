@@ -190,7 +190,7 @@ var BeaconLiveAdmin = (() => {
     "node_modules/picocolors/picocolors.browser.js"(exports, module) {
       var x = String;
       var create3 = function() {
-        return { isColorSupported: false, reset: x, bold: x, dim: x, italic: x, underline: x, inverse: x, hidden: x, strikethrough: x, black: x, red: x, green: x, yellow: x, blue: x, magenta: x, cyan: x, white: x, gray: x, bgBlack: x, bgRed: x, bgGreen: x, bgYellow: x, bgBlue: x, bgMagenta: x, bgCyan: x, bgWhite: x };
+        return { isColorSupported: false, reset: x, bold: x, dim: x, italic: x, underline: x, inverse: x, hidden: x, strikethrough: x, black: x, red: x, green: x, yellow: x, blue: x, magenta: x, cyan: x, white: x, gray: x, bgBlack: x, bgRed: x, bgGreen: x, bgYellow: x, bgBlue: x, bgMagenta: x, bgCyan: x, bgWhite: x, blackBright: x, redBright: x, greenBright: x, yellowBright: x, blueBright: x, magentaBright: x, cyanBright: x, whiteBright: x, bgBlackBright: x, bgRedBright: x, bgGreenBright: x, bgYellowBright: x, bgBlueBright: x, bgMagentaBright: x, bgCyanBright: x, bgWhiteBright: x };
       };
       module.exports = create3();
       module.exports.createColors = create3;
@@ -680,6 +680,27 @@ var BeaconLiveAdmin = (() => {
         }
         return cloned;
       }
+      function sourceOffset(inputCSS, position2) {
+        if (position2 && typeof position2.offset !== "undefined") {
+          return position2.offset;
+        }
+        let column = 1;
+        let line = 1;
+        let offset = 0;
+        for (let i = 0; i < inputCSS.length; i++) {
+          if (line === position2.line && column === position2.column) {
+            offset = i;
+            break;
+          }
+          if (inputCSS[i] === "\n") {
+            column = 1;
+            line += 1;
+          } else {
+            column += 1;
+          }
+        }
+        return offset;
+      }
       var Node3 = class {
         constructor(defaults3 = {}) {
           this.raws = {};
@@ -783,6 +804,7 @@ var BeaconLiveAdmin = (() => {
             }
           };
         }
+        /* c8 ignore next 3 */
         markClean() {
           this[isClean] = true;
         }
@@ -801,24 +823,28 @@ var BeaconLiveAdmin = (() => {
           let index4 = this.parent.index(this);
           return this.parent.nodes[index4 + 1];
         }
-        positionBy(opts, stringRepresentation) {
+        positionBy(opts) {
           let pos = this.source.start;
           if (opts.index) {
-            pos = this.positionInside(opts.index, stringRepresentation);
+            pos = this.positionInside(opts.index);
           } else if (opts.word) {
-            stringRepresentation = this.toString();
+            let stringRepresentation = this.source.input.css.slice(
+              sourceOffset(this.source.input.css, this.source.start),
+              sourceOffset(this.source.input.css, this.source.end)
+            );
             let index4 = stringRepresentation.indexOf(opts.word);
             if (index4 !== -1)
-              pos = this.positionInside(index4, stringRepresentation);
+              pos = this.positionInside(index4);
           }
           return pos;
         }
-        positionInside(index4, stringRepresentation) {
-          let string = stringRepresentation || this.toString();
+        positionInside(index4) {
           let column = this.source.start.column;
           let line = this.source.start.line;
-          for (let i = 0; i < index4; i++) {
-            if (string[i] === "\n") {
+          let offset = sourceOffset(this.source.input.css, this.source.start);
+          let end = offset + index4;
+          for (let i = offset; i < end; i++) {
+            if (this.source.input.css[i] === "\n") {
               column = 1;
               line += 1;
             } else {
@@ -846,11 +872,16 @@ var BeaconLiveAdmin = (() => {
             line: start.line
           };
           if (opts.word) {
-            let stringRepresentation = this.toString();
+            let stringRepresentation = this.source.input.css.slice(
+              sourceOffset(this.source.input.css, this.source.start),
+              sourceOffset(this.source.input.css, this.source.end)
+            );
             let index4 = stringRepresentation.indexOf(opts.word);
             if (index4 !== -1) {
-              start = this.positionInside(index4, stringRepresentation);
-              end = this.positionInside(index4 + opts.word.length, stringRepresentation);
+              start = this.positionInside(index4);
+              end = this.positionInside(
+                index4 + opts.word.length
+              );
             }
           } else {
             if (opts.start) {
@@ -1225,13 +1256,15 @@ var BeaconLiveAdmin = (() => {
             throw new Error("Unknown node type in node creation");
           }
           let processed = nodes.map((i) => {
-            if (!i[my] || !i.markClean)
+            if (!i[my])
               _Container.rebuild(i);
             i = i.proxyOf;
             if (i.parent)
               i.parent.removeChild(i);
             if (i[isClean])
               markTreeDirty(i);
+            if (!i.raws)
+              i.raws = {};
             if (typeof i.raws.before === "undefined") {
               if (sample && typeof sample.raws.before !== "undefined") {
                 i.raws.before = sample.raws.before.replace(/\S/g, "");
@@ -1497,7 +1530,7 @@ var BeaconLiveAdmin = (() => {
       var customAlphabet = (alphabet, defaultSize = 21) => {
         return (size = defaultSize) => {
           let id = "";
-          let i = size;
+          let i = size | 0;
           while (i--) {
             id += alphabet[Math.random() * alphabet.length | 0];
           }
@@ -1506,7 +1539,7 @@ var BeaconLiveAdmin = (() => {
       };
       var nanoid = (size = 21) => {
         let id = "";
-        let i = size;
+        let i = size | 0;
         while (i--) {
           id += urlAlphabet[Math.random() * 64 | 0];
         }
@@ -1955,12 +1988,12 @@ var BeaconLiveAdmin = (() => {
           let func = 0;
           let inQuote = false;
           let prevQuote = "";
-          let escape2 = false;
+          let escape3 = false;
           for (let letter of string) {
-            if (escape2) {
-              escape2 = false;
+            if (escape3) {
+              escape3 = false;
             } else if (letter === "\\") {
-              escape2 = true;
+              escape3 = true;
             } else if (inQuote) {
               if (letter === prevQuote) {
                 inQuote = false;
@@ -2441,7 +2474,7 @@ var BeaconLiveAdmin = (() => {
       module.exports = function tokenizer(input, options = {}) {
         let css = input.css.valueOf();
         let ignore = options.ignoreErrors;
-        let code, content, escape2, next, quote;
+        let code, content, escape3, next, quote;
         let currentToken, escaped, escapePos, n, prev;
         let length2 = css.length;
         let pos = 0;
@@ -2564,13 +2597,13 @@ var BeaconLiveAdmin = (() => {
             }
             case BACKSLASH: {
               next = pos;
-              escape2 = true;
+              escape3 = true;
               while (css.charCodeAt(next + 1) === BACKSLASH) {
                 next += 1;
-                escape2 = !escape2;
+                escape3 = !escape3;
               }
               code = css.charCodeAt(next + 1);
-              if (escape2 && code !== SLASH && code !== SPACE3 && code !== NEWLINE && code !== TAB && code !== CR && code !== FEED) {
+              if (escape3 && code !== SLASH && code !== SPACE3 && code !== NEWLINE && code !== TAB && code !== CR && code !== FEED) {
                 next += 1;
                 if (RE_HEX_ESCAPE.test(css.charAt(next))) {
                   while (RE_HEX_ESCAPE.test(css.charAt(next + 1))) {
@@ -3925,7 +3958,7 @@ var BeaconLiveAdmin = (() => {
       var Root2 = require_root();
       var Processor2 = class {
         constructor(plugins = []) {
-          this.version = "8.4.44";
+          this.version = "8.4.49";
           this.plugins = this.normalize(plugins);
         }
         normalize(plugins) {
@@ -6496,7 +6529,8 @@ var BeaconLiveAdmin = (() => {
                 line: 1,
                 column: 1
               }
-            }
+            },
+            sourceIndex: 0
           });
           this.root.append(selector);
           this.current = selector;
@@ -6835,7 +6869,7 @@ var BeaconLiveAdmin = (() => {
             return this.namespace();
           }
           var nextSigTokenPos = this.locateNextMeaningfulToken(this.position);
-          if (nextSigTokenPos < 0 || this.tokens[nextSigTokenPos][_tokenize.FIELDS.TYPE] === tokens.comma) {
+          if (nextSigTokenPos < 0 || this.tokens[nextSigTokenPos][_tokenize.FIELDS.TYPE] === tokens.comma || this.tokens[nextSigTokenPos][_tokenize.FIELDS.TYPE] === tokens.closeParenthesis) {
             var nodes = this.parseWhitespaceEquivalentTokens(nextSigTokenPos);
             if (nodes.length > 0) {
               var last = this.current.last;
@@ -6920,7 +6954,8 @@ var BeaconLiveAdmin = (() => {
           var selector = new _selector["default"]({
             source: {
               start: tokenStart(this.tokens[this.position + 1])
-            }
+            },
+            sourceIndex: this.tokens[this.position + 1][_tokenize.FIELDS.START_POS]
           });
           this.current.parent.append(selector);
           this.current = selector;
@@ -6989,8 +7024,9 @@ var BeaconLiveAdmin = (() => {
           if (last && last.type === types2.PSEUDO) {
             var selector = new _selector["default"]({
               source: {
-                start: tokenStart(this.tokens[this.position - 1])
-              }
+                start: tokenStart(this.tokens[this.position])
+              },
+              sourceIndex: this.tokens[this.position][_tokenize.FIELDS.START_POS]
             });
             var cache2 = this.current;
             last.append(selector);
@@ -7697,9 +7733,9 @@ var BeaconLiveAdmin = (() => {
     }
   });
 
-  // node_modules/@mhsdesign/jit-browser-tailwindcss/node_modules/postcss-nested/index.js
+  // node_modules/postcss-nested/index.js
   var require_postcss_nested = __commonJS({
-    "node_modules/@mhsdesign/jit-browser-tailwindcss/node_modules/postcss-nested/index.js"(exports, module) {
+    "node_modules/postcss-nested/index.js"(exports, module) {
       var parser5 = require_dist();
       function parse3(str, rule2) {
         let nodes;
@@ -9075,7 +9111,7 @@ var BeaconLiveAdmin = (() => {
     _mountEditor() {
       this.opts.value = this.value;
       loader_default.config({
-        paths: { vs: "https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs" }
+        paths: { vs: "https://cdn.jsdelivr.net/npm/monaco-editor@0.52.0/min/vs" }
       });
       loader_default.init().then((monaco) => {
         monaco.editor.defineTheme("default", theme);
@@ -10824,7 +10860,7 @@ var BeaconLiveAdmin = (() => {
       disconnectedCallback() {
         this.$$cn = false;
         Promise.resolve().then(() => {
-          if (!this.$$cn) {
+          if (!this.$$cn && this.$$c) {
             this.$$c.$destroy();
             this.$$c = void 0;
           }
@@ -10962,7 +10998,7 @@ var BeaconLiveAdmin = (() => {
   };
 
   // node_modules/svelte/src/shared/version.js
-  var VERSION = "4.2.12";
+  var VERSION = "4.2.19";
   var PUBLIC_VERSION = "4";
 
   // node_modules/svelte/src/runtime/internal/dev.js
@@ -16955,7 +16991,7 @@ var BeaconLiveAdmin = (() => {
       module.exports = function(input) {
         var tokens = [];
         var value2 = input;
-        var next, quote, prev, token, escape2, escapePos, whitespacePos, parenthesesOpenPos;
+        var next, quote, prev, token, escape22, escapePos, whitespacePos, parenthesesOpenPos;
         var pos = 0;
         var code = value2.charCodeAt(pos);
         var max2 = value2.length;
@@ -16999,20 +17035,20 @@ var BeaconLiveAdmin = (() => {
               quote
             };
             do {
-              escape2 = false;
+              escape22 = false;
               next = value2.indexOf(quote, next + 1);
               if (~next) {
                 escapePos = next;
                 while (value2.charCodeAt(escapePos - 1) === backslash) {
                   escapePos -= 1;
-                  escape2 = !escape2;
+                  escape22 = !escape22;
                 }
               } else {
                 value2 += quote;
                 next = value2.length - 1;
                 token.unclosed = true;
               }
-            } while (escape2);
+            } while (escape22);
             token.value = value2.slice(pos + 1, next);
             token.sourceEndIndex = token.unclosed ? next : next + 1;
             tokens.push(token);
@@ -17074,20 +17110,20 @@ var BeaconLiveAdmin = (() => {
             if (name === "url" && code !== singleQuote && code !== doubleQuote) {
               next -= 1;
               do {
-                escape2 = false;
+                escape22 = false;
                 next = value2.indexOf(")", next + 1);
                 if (~next) {
                   escapePos = next;
                   while (value2.charCodeAt(escapePos - 1) === backslash) {
                     escapePos -= 1;
-                    escape2 = !escape2;
+                    escape22 = !escape22;
                   }
                 } else {
                   value2 += ")";
                   next = value2.length - 1;
                   token.unclosed = true;
                 }
-              } while (escape2);
+              } while (escape22);
               whitespacePos = next;
               do {
                 whitespacePos -= 1;
@@ -24411,7 +24447,7 @@ var BeaconLiveAdmin = (() => {
   function optional(source) {
     return `(?:${toSource(source)})?`;
   }
-  function escape(string) {
+  function escape2(string) {
     return string && REGEX_HAS_SPECIAL.test(string) ? string.replace(REGEX_SPECIAL, "\\$&") : string || "";
   }
   function defaultExtractor(context) {
@@ -24428,7 +24464,7 @@ var BeaconLiveAdmin = (() => {
   }
   function* buildRegExps(context) {
     let separator = context.tailwindConfig.separator;
-    let prefix3 = context.tailwindConfig.prefix !== "" ? optional(pattern([/-?/, escape(context.tailwindConfig.prefix)])) : "";
+    let prefix3 = context.tailwindConfig.prefix !== "" ? optional(pattern([/-?/, escape2(context.tailwindConfig.prefix)])) : "";
     let utility = any([
       /\[[^\s:'"`]+:[^\s\[\]]+\]/,
       /\[[^\s:'"`\]]+:[^\s]+?\[[^\s]+\][^\s]+?\]/,
