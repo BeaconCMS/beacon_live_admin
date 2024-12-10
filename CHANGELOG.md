@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Fixes
+  - Fix "new meta tag" modal close event being sent to wrong target
+
 ## 0.3.0 (2024-12-05)
 
 ### Enhancements
