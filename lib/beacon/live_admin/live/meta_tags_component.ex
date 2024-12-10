@@ -151,7 +151,7 @@ defmodule Beacon.LiveAdmin.MetaTagsComponent do
           </.form>
         </div>
 
-        <.modal :if={@new_attribute_modal_visible?} id="new-attribute-modal" show={true} on_cancel={JS.push("hide-new-attribute-modal")}>
+        <.modal :if={@new_attribute_modal_visible?} id="new-attribute-modal" show={true} on_cancel={JS.push("hide-new-attribute-modal", target: @myself)}>
           <.header>New meta tag attribute</.header>
 
           <.simple_form :let={f} for={%{}} as={:attribute} phx-target={@myself} phx-submit="save-new-attribute">
