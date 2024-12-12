@@ -30,7 +30,7 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.Revisions do
     <div>
       <Beacon.LiveAdmin.AdminComponents.layout_header socket={@socket} flash={@flash} beacon_layout={@beacon_layout} live_action={@live_action} />
       <.header>
-        {@page_title}
+        <%= @page_title %>
       </.header>
       <.main_content class="h-auto">
         <ol class="relative mt-4 ml-4 border-l border-gray-200">
@@ -58,14 +58,14 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.Revisions do
       </div>
 
       <h3 class="flex items-center pt-2 mb-1 text-lg font-semibold text-gray-900">
-        {Phoenix.Naming.humanize(@event.event)} <span class="ml-2 text-sm text-gray-500">{format_datetime(@event.inserted_at)}</span>
+        <%= Phoenix.Naming.humanize(@event.event) %> <span class="ml-2 text-sm text-gray-500"><%= format_datetime(@event.inserted_at) %></span>
         <span class="hidden group-first:block bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded ml-3">Latest</span>
       </h3>
 
       <ol :if={@event.snapshot} class="space-y-4">
         <li>
           <h4 class="text-gray-600">Title</h4>
-          {@event.snapshot.layout.title}
+          <%= @event.snapshot.layout.title %>
         </li>
         <li>
           <h4 class="text-gray-600">Template</h4>
@@ -119,7 +119,7 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.Revisions do
     ~H"""
     <.table id="meta_tags" rows={@meta_tags}>
       <:col :let={meta_tag} :for={attr <- @attributes} label={attr}>
-        {meta_tag[attr]}
+        <%= meta_tag[attr] %>
       </:col>
     </.table>
     """
@@ -149,7 +149,7 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.Revisions do
     ~H"""
     <.table id="resource_links" rows={@resource_links}>
       <:col :let={resource_link} :for={attr <- @attributes} label={attr}>
-        {resource_link[attr]}
+        <%= resource_link[attr] %>
       </:col>
     </.table>
     """

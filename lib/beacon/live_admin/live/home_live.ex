@@ -31,7 +31,7 @@ defmodule Beacon.LiveAdmin.HomeLive do
             <h2 id="admin-sites" class="text-xl font-semibold leading-6 text-gray-900 col-span-full">Sites</h2>
             <%= for site <- @running_sites do %>
               <div class="p-6 rounded-[20px] bg-white border border-gray-200 hover:border-white hover:ring-2 hover:ring-gray-200 hover:ring-offset-8 hover:ring-offset-white transition">
-                <h3 class="mb-2 text-sm font-semibold leading-8 tracking-wider text-gray-600 uppercase">{site}</h3>
+                <h3 class="mb-2 text-sm font-semibold leading-8 tracking-wider text-gray-600 uppercase"><%= site %></h3>
                 <div class="flex flex-col flex-wrap gap-2 mt-10 md:flex-row">
                   <.link href={Router.beacon_live_admin_path(@socket, site, "/media_library")} class={nav_class()}>
                     Media Library
