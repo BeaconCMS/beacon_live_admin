@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.3.1 (2024-12-12)
+
 ### Fixes
   - Support LiveView 0.20
   - Fix "new meta tag" modal close event being sent to wrong target
