@@ -100,15 +100,15 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.FormComponent do
       <Beacon.LiveAdmin.AdminComponents.layout_header socket={@socket} flash={@flash} beacon_layout={@beacon_layout} live_action={@live_action} />
 
       <.header>
-        {layout_name(@form.source)}
+        <%= layout_name(@form.source) %>
 
         <div class="text-sm text-gray-500">
           <.link patch={beacon_live_admin_path(@socket, @site, "/layouts/#{@beacon_layout.id}/revisions")}>
             <span :if={@status == :created}>
-              <.icon name="hero-document-plus-solid" class="w-5 h-5" /> {display_status(@status)}
+              <.icon name="hero-document-plus-solid" class="w-5 h-5" /> <%= display_status(@status) %>
             </span>
             <span :if={@status == :published}>
-              <.icon name="hero-eye-solid" class="w-5 h-5" /> {display_status(@status)}
+              <.icon name="hero-eye-solid" class="w-5 h-5" /> <%= display_status(@status) %>
             </span>
           </.link>
         </div>
@@ -154,7 +154,7 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.FormComponent do
           </.form>
         </div>
         <div class="col-span-full lg:col-span-2">
-          {template_error(@form[:template])}
+          <%= template_error(@form[:template]) %>
           <div class="py-6 w-full rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
             <LiveMonacoEditor.code_editor
               path="template"

@@ -64,14 +64,14 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Schema do
       <Beacon.LiveAdmin.AdminComponents.page_header socket={@socket} flash={@flash} page={@page} live_action={@live_action} />
 
       <.header>
-        {@page_title}
+        <%= @page_title %>
         <:actions>
           <.button phx-disable-with="Saving..." phx-click="save" class="uppercase">Save Changes</.button>
         </:actions>
       </.header>
 
       <div class="w-full mt-4 space-y-8">
-        {template_error(@form[:raw_schema])}
+        <%= template_error(@form[:raw_schema]) %>
         <div class="py-6 rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
           <LiveMonacoEditor.code_editor
             path="raw_schema"

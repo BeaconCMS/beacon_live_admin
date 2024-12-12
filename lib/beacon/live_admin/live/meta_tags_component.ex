@@ -104,7 +104,7 @@ defmodule Beacon.LiveAdmin.MetaTagsComponent do
     ~H"""
     <div>
       <.header>
-        {@page_title}
+        <%= @page_title %>
         <:actions>
           <.button phx-disable-with="Saving..." form="meta-tags-form" class="uppercase">Save Changes</.button>
         </:actions>
@@ -157,7 +157,7 @@ defmodule Beacon.LiveAdmin.MetaTagsComponent do
           <.simple_form :let={f} for={%{}} as={:attribute} phx-target={@myself} phx-submit="save-new-attribute">
             <div class="flex items-center gap-2">
               <%= for preset <- ~w(http-equiv charset itemprop) do %>
-                <.button phx-click={JS.set_attribute({"value", preset}, to: "#attribute_name")}>{preset}</.button>
+                <.button phx-click={JS.set_attribute({"value", preset}, to: "#attribute_name")}><%= preset %></.button>
               <% end %>
             </div>
 

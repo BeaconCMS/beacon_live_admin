@@ -70,9 +70,9 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.Index do
 
     <.main_content>
       <.table id="components" rows={@streams.components} row_click={fn {_dom_id, component} -> JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/components/#{component.id}")) end}>
-        <:col :let={{_, component}} label="Name">{component.name}</:col>
-        <:col :let={{_, component}} label="Category">{component.category}</:col>
-        <:col :let={{_, component}} label="Body">{excerpt(component.body)}</:col>
+        <:col :let={{_, component}} label="Name"><%= component.name %></:col>
+        <:col :let={{_, component}} label="Category"><%= component.category %></:col>
+        <:col :let={{_, component}} label="Body"><%= excerpt(component.body) %></:col>
         <:action :let={{_, component}}>
           <div class="sr-only">
             <.link navigate={beacon_live_admin_path(@socket, @beacon_page.site, "/components/#{component.id}")}>Show</.link>

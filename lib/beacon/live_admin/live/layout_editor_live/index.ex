@@ -66,8 +66,8 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.Index do
 
     <.main_content>
       <.table id="layouts" rows={@streams.beacon_layouts} row_click={fn {_dom_id, layout} -> JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/layouts/#{layout.id}")) end}>
-        <:col :let={{_, layout}} label="Title">{layout.title}</:col>
-        <:col :let={{_, layout}} label="Status">{display_status(layout.status)}</:col>
+        <:col :let={{_, layout}} label="Title"><%= layout.title %></:col>
+        <:col :let={{_, layout}} label="Status"><%= display_status(layout.status) %></:col>
         <:action :let={{_, layout}}>
           <div class="sr-only">
             <.link navigate={beacon_live_admin_path(@socket, @beacon_page.site, "/layouts/#{layout.id}")}>Edit</.link>
