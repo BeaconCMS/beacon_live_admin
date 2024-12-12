@@ -202,7 +202,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.SlotAttr do
   def render(assigns) do
     ~H"""
     <.modal id="edit-attr-modal" on_cancel={JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/components/#{@component.id}/slots/#{@slot_id}"))} show>
-      <p class="text-2xl font-bold mb-12">{@page_title}</p>
+      <p class="text-2xl font-bold mb-12"><%= @page_title %></p>
       <.form :let={f} id="new-path-form" for={@form} phx-change="validate" phx-submit="save" class="space-y-8">
         <.input type="hidden" name={f[:slot_id].name} value={f[:slot_id].value} />
         <.input field={f[:name]} type="text" phx-debounce="100" label="Attr Name" />

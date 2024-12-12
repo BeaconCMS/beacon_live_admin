@@ -46,7 +46,7 @@ defmodule Beacon.LiveAdminTest.E2E.Layout do
     <style>
       * { font-size: 1.1em; }
     </style>
-    {@inner_content}
+    <%= @inner_content %>
     """
   end
 end

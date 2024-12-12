@@ -141,7 +141,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
       <Beacon.LiveAdmin.AdminComponents.page_header socket={@socket} flash={@flash} page={@page} live_action={@live_action} />
 
       <.header>
-        {@page_title}
+        <%= @page_title %>
         <:actions>
           <.button type="button" phx-click="create_new">New Variant</.button>
         </:actions>
@@ -175,7 +175,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
           <div class="h-full lg:overflow-y-auto pb-4 lg:h-[calc(100vh_-_239px)]">
             <.table :if={@selected} id="variants" rows={@page.variants} row_click={fn row -> "select-#{row.id}" end}>
               <:col :let={variant} :for={{attr, suffix} <- [{:name, ""}, {:weight, " (%)"}]} label={"#{attr}#{suffix}"}>
-                {Map.fetch!(variant, attr)}
+                <%= Map.fetch!(variant, attr) %>
               </:col>
             </.table>
           </div>
@@ -189,7 +189,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
               <.button phx-disable-with="Saving..." class="ml-auto">Save Changes</.button>
               <.button type="button" phx-click="delete" class="">Delete</.button>
             </.form>
-            {template_error(@form[:template])}
+            <%= template_error(@form[:template]) %>
             <div class="w-full mt-10 space-y-8">
               <div class="py-6 rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
                 <LiveMonacoEditor.code_editor

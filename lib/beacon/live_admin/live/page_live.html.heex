@@ -20,7 +20,7 @@
       <ul role="list" class="flex flex-1 flex-col gap-0.5 mt-2">
         <%= for link <- @__beacon_menu__.links, link != :skip do %>
           <li>
-            {maybe_link(@socket, @beacon_page, link)}
+            <%= maybe_link(@socket, @beacon_page, link) %>
           </li>
         <% end %>
       </ul>
@@ -30,5 +30,5 @@
 </aside>
 
 <main class="w-full px-4 pt-4 sm:px-6 lg:px-6">
-  {render_page(@beacon_page.module, assigns)}
+  <%= render_page(@beacon_page.module, assigns) %>
 </main>

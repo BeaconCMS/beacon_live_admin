@@ -4,14 +4,14 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="csrf-token" content={get_csrf_token()} />
-    <title>{assigns[:page_title] || "Beacon LiveAdmin"}</title>
+    <title><%= assigns[:page_title] || "Beacon LiveAdmin" %></title>
     <link rel="stylesheet" href={asset_path(@conn, :css)} />
     <script defer src={asset_path(@conn, :js)}>
     </script>
   </head>
   <body class="h-full antialiased bg-[#F0F5F9]">
     <div class="flex h-full min-h-screen [&>div]:contents">
-      {@inner_content}
+      <%= @inner_content %>
     </div>
   </body>
 </html>

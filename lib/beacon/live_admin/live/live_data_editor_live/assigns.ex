@@ -173,7 +173,7 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Assigns do
     ~H"""
     <div>
       <.header>
-        {@page_title}
+        <%= @page_title %>
         <:actions>
           <.button type="button" phx-click="show_create_modal">New Live Data Assign</.button>
         </:actions>
@@ -217,11 +217,11 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Assigns do
           <div class="h-full lg:overflow-y-auto pb-4 lg:h-[calc(100vh_-_239px)]">
             <div class="text-xl flex gap-x-6">
               <div>Path:</div>
-              <div>{@live_data.path}</div>
+              <div><%= @live_data.path %></div>
             </div>
             <.table :if={@selected} id="assigns" rows={@live_data.assigns} row_click={fn assign -> "select-#{assign.id}" end}>
               <:col :let={assign} label="assign">
-                @{assign.key}
+                @<%= assign.key %>
               </:col>
             </.table>
           </div>
@@ -237,9 +237,9 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Assigns do
             </.form>
             <div :if={@form[:format].value in [:elixir, "elixir"]} class="mt-4 flex gap-x-4">
               <div>Variables available:</div>
-              <div>{variables_available(@live_data.path)}</div>
+              <div><%= variables_available(@live_data.path) %></div>
             </div>
-            {template_error(@form[:value])}
+            <%= template_error(@form[:value]) %>
             <div class="w-full mt-10 space-y-8">
               <div class="py-6 rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
                 <LiveMonacoEditor.code_editor

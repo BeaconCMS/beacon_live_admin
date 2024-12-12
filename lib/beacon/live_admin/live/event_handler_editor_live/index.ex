@@ -182,7 +182,7 @@ defmodule Beacon.LiveAdmin.EventHandlerEditorLive.Index do
     ~H"""
     <div>
       <.header>
-        {@page_title}
+        <%= @page_title %>
         <:actions>
           <.button type="button" id="new-event-handler-button" phx-click="create_new" class="uppercase">
             New Event Handler
@@ -225,7 +225,7 @@ defmodule Beacon.LiveAdmin.EventHandlerEditorLive.Index do
           <div class="h-full lg:overflow-y-auto pb-4 lg:h-[calc(100vh_-_239px)]">
             <.table id="event-handlers" rows={@event_handlers} row_click={fn row -> "select-#{row.id}" end}>
               <:col :let={event_handler} label="name">
-                {Map.fetch!(event_handler, :name)}
+                <%= Map.fetch!(event_handler, :name) %>
               </:col>
             </.table>
           </div>
@@ -242,7 +242,7 @@ defmodule Beacon.LiveAdmin.EventHandlerEditorLive.Index do
               <div>Variables available:</div>
               <div>params socket</div>
             </div>
-            {template_error(@form[:code])}
+            <%= template_error(@form[:code]) %>
             <div class="w-full mt-10 space-y-8">
               <div class="py-6 rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
                 <LiveMonacoEditor.code_editor
