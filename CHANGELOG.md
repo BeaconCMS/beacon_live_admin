@@ -1,7 +1,5 @@
 # Changelog
 
-## Unreleased
-
 ## 0.3.1 (2024-12-12)
 
 ### Fixes
