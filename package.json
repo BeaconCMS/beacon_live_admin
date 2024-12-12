@@ -1,6 +1,6 @@
 {
   "name": "beacon_live_admin",
-  "version": "0.2.0",
+  "version": "0.3.1",
   "description": "LiveView Admin for Beacon",
   "license": "MIT",
   "repository": {
