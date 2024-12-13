@@ -122,21 +122,29 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
      |> assign_extra_fields(changeset)}
   end
 
-  def handle_event("save", %{"page" => page_params}, socket) do
-    page_params = Map.merge(page_params, %{"site" => socket.assigns.site, "template" => socket.assigns.template})
-    save_page(socket, socket.assigns.live_action, page_params)
+  def handle_event("save", %{"save" => "save", "page" => page_params}, socket) do
+    %{site: site, template: template, live_action: live_action} = socket.assigns
+    page_params = Map.merge(page_params, %{"site" => site, "template" => template})
+
+    save_page(socket, live_action, page_params)
   end
 
-  def handle_event("publish", %{"id" => id}, socket) do
-    case Content.publish_page(socket.assigns.site, id) do
-      {:ok, _} ->
-        to = beacon_live_admin_path(socket, socket.assigns.site, "/pages")
+  def handle_event("save", %{"save" => "publish", "page" => page_params}, socket) do
+    %{site: site, page: page, live_action: live_action} = socket.assigns
 
-        {:noreply,
-         socket
-         |> put_flash(:info, "Page published successfully")
-         |> push_navigate(to: to, replace: true)}
+    save_result =
+      case live_action do
+        :new -> Content.create_page(site, page_params)
+        :edit -> Content.update_page(site, page, page_params)
+      end
 
+    with {:ok, page} <- save_result,
+         {:ok, _} <- Content.publish_page(site, page.id) do
+      {:noreply,
+       socket
+       |> put_flash(:info, "Page published successfully")
+       |> push_navigate(to: beacon_live_admin_path(socket, site, "/pages"), replace: true)}
+    else
       {:error, changeset} ->
         changeset = Map.put(changeset, :action, :publish)
         {:noreply, assign_form(socket, changeset)}
@@ -255,7 +263,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
           </.button>
           <.button :if={@live_action in [:new, :edit] && @editor == "visual"} type="button" phx-click="enable_editor" phx-value-editor="code" class="uppercase">Code Editor</.button>
           <.button :if={@live_action == :new} phx-disable-with="Saving..." form="page-form" class="uppercase">Create Draft Page</.button>
-          <.button :if={@live_action == :edit} phx-disable-with="Saving..." form="page-form" class="uppercase">Save Changes</.button>
+          <.button :if={@live_action == :edit} phx-disable-with="Saving..." form="page-form" name="save" value="save" class="uppercase">Save Changes</.button>
           <.button :if={@live_action == :edit} phx-click={show_modal("publish-confirm-modal")} phx-target={@myself} class="uppercase">Publish</.button>
         </:actions>
       </.header>
@@ -263,7 +271,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
       <.modal id="publish-confirm-modal">
         <h3 class="text-base font-semibold leading-6 text-gray-900" id="modal-title">Publish Page</h3>
         <div class="mt-2">
-          <p class="text-sm text-gray-500">Are you sure you want to publish this page and make it public? Please make sure all changes were saved before publishing it.</p>
+          <p class="text-sm text-gray-500">Are you sure you want to publish this page and make it public? Any unsaved changes on this page will also be saved and published.</p>
         </div>
         <div class="py-4">
           <button
@@ -274,11 +282,11 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
             Cancel
           </button>
           <button
-            type="button"
+            type="submit"
+            form="page-form"
             class="inline-flex justify-center w-full px-3 py-2 text-sm font-semibold text-white bg-blue-600 rounded-md shadow-sm hover:bg-blue-500 sm:w-auto"
-            phx-click="publish"
-            phx-value-id={@page.id}
-            phx-target={@myself}
+            name="save"
+            value="publish"
           >
             Confirm
           </button>
