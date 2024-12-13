@@ -2,7 +2,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
   @moduledoc false
   require Logger
   use Beacon.LiveAdmin.PageBuilder
-  use Beacon.LiveAdmin.PageEditorLive.ElementSelection
+  alias Beacon.LiveAdmin.PageEditorLive
   alias Beacon.LiveAdmin.Client.Content
   alias Beacon.LiveAdmin.WebAPI
 
@@ -72,10 +72,13 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
     {:reply, %{"ast" => ast}, socket}
   end
 
+  def handle_event("select_element", %{"path" => path}, socket) do
+    ElementSelection.select_element(path, socket)
+  end
+
   @impl true
   def handle_info({:element_changed, {path, payload}}, socket) do
-    send_update(Beacon.LiveAdmin.PageEditorLive.FormComponent, id: "page-editor-form", path: path, payload: payload)
-    {:noreply, socket}
+    ElementSelection.handle_element_changed({path, payload}, socket)
   end
 
   @impl true
