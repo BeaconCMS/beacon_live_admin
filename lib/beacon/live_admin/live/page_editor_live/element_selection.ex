@@ -1,7 +1,7 @@
 defmodule Beacon.LiveAdmin.PageEditorLive.ElementSelection do
   @moduledoc false
   import Phoenix.Component, only: [assign: 2]
-  import Phoenix.LiveView, only: [send_update: 3]
+  import Phoenix.LiveView, only: [send_update: 2]
 
   def select_element(path, socket) do
     {:noreply, assign(socket, selected_element_path: path)}
