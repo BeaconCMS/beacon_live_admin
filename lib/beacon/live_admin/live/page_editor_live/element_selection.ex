@@ -1,5 +1,6 @@
 defmodule Beacon.LiveAdmin.PageEditorLive.ElementSelection do
   @moduledoc false
+  use Beacon.LiveAdmin.PageBuilder
 
   def select_element(path, socket) do
     {:noreply, assign(socket, selected_element_path: path)}
