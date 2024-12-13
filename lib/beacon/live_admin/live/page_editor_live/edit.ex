@@ -2,6 +2,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
   @moduledoc false
   require Logger
   use Beacon.LiveAdmin.PageBuilder
+  use Beacon.LiveAdmin.PageEditorLive.ElementSelection
   alias Beacon.LiveAdmin.Client.Content
   alias Beacon.LiveAdmin.WebAPI
 
@@ -38,7 +39,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
   @impl true
   def handle_event("set_template", %{"value" => value}, socket) do
     send_update(Beacon.LiveAdmin.PageEditorLive.FormComponent,
-      id: "page-editor-form-edit",
+      id: "page-editor-form",
       template: value
     )
 
@@ -71,18 +72,9 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
     {:reply, %{"ast" => ast}, socket}
   end
 
-  def handle_event("update_page_ast", %{"ast" => ast}, socket) do
-    send_update(Beacon.LiveAdmin.PageEditorLive.FormComponent, id: "page-editor-form-edit", ast: ast)
-    {:noreply, socket}
-  end
-
-  def handle_event("select_element", %{"path" => path}, socket) do
-    {:noreply, assign(socket, selected_element_path: path)}
-  end
-
   @impl true
   def handle_info({:element_changed, {path, payload}}, socket) do
-    send_update(Beacon.LiveAdmin.PageEditorLive.FormComponent, id: "page-editor-form-edit", path: path, payload: payload)
+    send_update(Beacon.LiveAdmin.PageEditorLive.FormComponent, id: "page-editor-form", path: path, payload: payload)
     {:noreply, socket}
   end
 
@@ -91,7 +83,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
     ~H"""
     <.live_component
       module={Beacon.LiveAdmin.PageEditorLive.FormComponent}
-      id="page-editor-form-edit"
+      id="page-editor-form"
       live_action={@live_action}
       page_title={@page_title}
       site={@beacon_page.site}
