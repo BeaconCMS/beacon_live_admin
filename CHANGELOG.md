@@ -2,7 +2,16 @@
 
 ## Unreleased
 
+## 0.3.1 (2024-12-12)
+
+### Fixes
+  - Support LiveView 0.20
+  - Fix "new meta tag" modal close event being sent to wrong target
+
+## 0.3.0 (2024-12-05)
+
 ### Enhancements
+  - Support Phoenix LiveView 1.0
   - Introduce `Beacon.LiveAdmin.Config`
 
 ### Fixes
