@@ -86,13 +86,7 @@ defmodule Beacon.LiveAdmin.StationUI.HTML.Pagination do
   def render(assigns) do
     ~H"""
     <nav class={@class} aria-label={@label} role="navigation">
-      <.link
-        :for={first_slot <- @first}
-        patch={link_to_page(@params, 1, @link_fn)}
-        class={item_classes(first_slot)}
-        aria-disabled={@current_page == 1 && "true"}
-        tabindex={@current_page == 1 && "-1"}
-      >
+      <.link :for={first_slot <- @first} patch={link_to_page(@params, 1, @link_fn)} class={item_classes(first_slot)} aria-disabled={@current_page == 1 && "true"} tabindex={@current_page == 1 && "-1"}>
         <%= if first_slot.inner_block, do: render_slot(first_slot), else: "First" %>
       </.link>
 

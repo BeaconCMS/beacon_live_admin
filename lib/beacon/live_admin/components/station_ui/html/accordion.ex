@@ -100,10 +100,7 @@ defmodule Beacon.LiveAdmin.StationUI.HTML.Accordion do
 
           <span><%= render_slot(header) %></span>
 
-          <span
-            aria-hidden="true"
-            class="flex justify-center items-center ml-auto [&_path]:transition-transform h-6 w-6 sm:h-[34px] sm:w-[34px] md:h-10 md:w-10"
-          >
+          <span aria-hidden="true" class="flex justify-center items-center ml-auto [&_path]:transition-transform h-6 w-6 sm:h-[34px] sm:w-[34px] md:h-10 md:w-10">
             <svg
               id={"accordion-chevron-#{@id}-#{index}"}
               xmlns="http://www.w3.org/2000/svg"

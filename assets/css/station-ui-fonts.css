@@ -4,11 +4,10 @@
   font-weight: 100;
   font-style: normal;
   font-display: swap;
-  src: url("/fonts/inter/Inter-Thin.woff2"),
-    /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
-      url("/fonts/inter/Inter-Thin.woff"),
-    /* Chrome 5+, Firefox 3.6+, IE 9+, Safari 5.1+, iOS 5+ */
-      url("/fonts/inter/Inter-Thin.ttf");
+  src:
+    url("/fonts/inter/Inter-Thin.woff2"),
+    /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */ url("/fonts/inter/Inter-Thin.woff"),
+    /* Chrome 5+, Firefox 3.6+, IE 9+, Safari 5.1+, iOS 5+ */ url("/fonts/inter/Inter-Thin.ttf");
   /* Chrome 4+, Firefox 3.5+, IE 9+, Safari 3.1+, iOS 4.2+, Android Browser 2.2+ */
 }
 
@@ -18,11 +17,10 @@
   font-weight: 200;
   font-style: normal;
   font-display: swap;
-  src: url("/fonts/inter/Inter-ExtraLight.woff2"),
-    /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
-      url("/fonts/inter/Inter-ExtraLight.woff"),
-    /* Chrome 5+, Firefox 3.6+, IE 9+, Safari 5.1+, iOS 5+ */
-      url("/fonts/inter/Inter-ExtraLight.ttf");
+  src:
+    url("/fonts/inter/Inter-ExtraLight.woff2"),
+    /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */ url("/fonts/inter/Inter-ExtraLight.woff"),
+    /* Chrome 5+, Firefox 3.6+, IE 9+, Safari 5.1+, iOS 5+ */ url("/fonts/inter/Inter-ExtraLight.ttf");
   /* Chrome 4+, Firefox 3.5+, IE 9+, Safari 3.1+, iOS 4.2+, Android Browser 2.2+ */
 }
 
@@ -32,11 +30,10 @@
   font-weight: 300;
   font-style: normal;
   font-display: swap;
-  src: url("/fonts/inter/Inter-Light.woff2"),
-    /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
-      url("/fonts/inter/Inter-Light.woff"),
-    /* Chrome 5+, Firefox 3.6+, IE 9+, Safari 5.1+, iOS 5+ */
-      url("/fonts/inter/Inter-Light.ttf");
+  src:
+    url("/fonts/inter/Inter-Light.woff2"),
+    /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */ url("/fonts/inter/Inter-Light.woff"),
+    /* Chrome 5+, Firefox 3.6+, IE 9+, Safari 5.1+, iOS 5+ */ url("/fonts/inter/Inter-Light.ttf");
   /* Chrome 4+, Firefox 3.5+, IE 9+, Safari 3.1+, iOS 4.2+, Android Browser 2.2+ */
 }
 
@@ -46,11 +43,10 @@
   font-weight: 400;
   font-style: normal;
   font-display: swap;
-  src: url("/fonts/inter/Inter-Regular.woff2"),
-    /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
-      url("/fonts/inter/Inter-Regular.woff"),
-    /* Chrome 5+, Firefox 3.6+, IE 9+, Safari 5.1+, iOS 5+ */
-      url("/fonts/inter/Inter-Regular.ttf");
+  src:
+    url("/fonts/inter/Inter-Regular.woff2"),
+    /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */ url("/fonts/inter/Inter-Regular.woff"),
+    /* Chrome 5+, Firefox 3.6+, IE 9+, Safari 5.1+, iOS 5+ */ url("/fonts/inter/Inter-Regular.ttf");
   /* Chrome 4+, Firefox 3.5+, IE 9+, Safari 3.1+, iOS 4.2+, Android Browser 2.2+ */
 }
 
@@ -60,11 +56,10 @@
   font-weight: 500;
   font-style: normal;
   font-display: swap;
-  src: url("/fonts/inter/Inter-Medium.woff2"),
-    /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
-      url("/fonts/inter/Inter-Medium.woff"),
-    /* Chrome 5+, Firefox 3.6+, IE 9+, Safari 5.1+, iOS 5+ */
-      url("/fonts/inter/Inter-Medium.ttf");
+  src:
+    url("/fonts/inter/Inter-Medium.woff2"),
+    /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */ url("/fonts/inter/Inter-Medium.woff"),
+    /* Chrome 5+, Firefox 3.6+, IE 9+, Safari 5.1+, iOS 5+ */ url("/fonts/inter/Inter-Medium.ttf");
   /* Chrome 4+, Firefox 3.5+, IE 9+, Safari 3.1+, iOS 4.2+, Android Browser 2.2+ */
 }
 
@@ -74,11 +69,10 @@
   font-weight: 600;
   font-style: normal;
   font-display: swap;
-  src: url("/fonts/inter/Inter-SemiBold.woff2"),
-    /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
-      url("/fonts/inter/Inter-SemiBold.woff"),
-    /* Chrome 5+, Firefox 3.6+, IE 9+, Safari 5.1+, iOS 5+ */
-      url("/fonts/inter/Inter-SemiBold.ttf");
+  src:
+    url("/fonts/inter/Inter-SemiBold.woff2"),
+    /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */ url("/fonts/inter/Inter-SemiBold.woff"),
+    /* Chrome 5+, Firefox 3.6+, IE 9+, Safari 5.1+, iOS 5+ */ url("/fonts/inter/Inter-SemiBold.ttf");
   /* Chrome 4+, Firefox 3.5+, IE 9+, Safari 3.1+, iOS 4.2+, Android Browser 2.2+ */
 }
 
@@ -88,11 +82,10 @@
   font-weight: 700;
   font-style: normal;
   font-display: swap;
-  src: url("/fonts/inter/Inter-Bold.woff2"),
-    /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
-      url("/fonts/inter/Inter-Bold.woff"),
-    /* Chrome 5+, Firefox 3.6+, IE 9+, Safari 5.1+, iOS 5+ */
-      url("/fonts/inter/Inter-Bold.ttf");
+  src:
+    url("/fonts/inter/Inter-Bold.woff2"),
+    /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */ url("/fonts/inter/Inter-Bold.woff"),
+    /* Chrome 5+, Firefox 3.6+, IE 9+, Safari 5.1+, iOS 5+ */ url("/fonts/inter/Inter-Bold.ttf");
   /* Chrome 4+, Firefox 3.5+, IE 9+, Safari 3.1+, iOS 4.2+, Android Browser 2.2+ */
 }
 
@@ -102,11 +95,10 @@
   font-weight: 800;
   font-style: normal;
   font-display: swap;
-  src: url("/fonts/inter/Inter-ExtraBold.woff2"),
-    /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
-      url("/fonts/inter/Inter-ExtraBold.woff"),
-    /* Chrome 5+, Firefox 3.6+, IE 9+, Safari 5.1+, iOS 5+ */
-      url("/fonts/inter/Inter-ExtraBold.ttf");
+  src:
+    url("/fonts/inter/Inter-ExtraBold.woff2"),
+    /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */ url("/fonts/inter/Inter-ExtraBold.woff"),
+    /* Chrome 5+, Firefox 3.6+, IE 9+, Safari 5.1+, iOS 5+ */ url("/fonts/inter/Inter-ExtraBold.ttf");
   /* Chrome 4+, Firefox 3.5+, IE 9+, Safari 3.1+, iOS 4.2+, Android Browser 2.2+ */
 }
 
@@ -116,11 +108,10 @@
   font-weight: 900;
   font-style: normal;
   font-display: swap;
-  src: url("/fonts/inter/Inter-Black.woff2"),
-    /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
-      url("/fonts/inter/Inter-Black.woff"),
-    /* Chrome 5+, Firefox 3.6+, IE 9+, Safari 5.1+, iOS 5+ */
-      url("/fonts/inter/Inter-Black.ttf");
+  src:
+    url("/fonts/inter/Inter-Black.woff2"),
+    /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */ url("/fonts/inter/Inter-Black.woff"),
+    /* Chrome 5+, Firefox 3.6+, IE 9+, Safari 5.1+, iOS 5+ */ url("/fonts/inter/Inter-Black.ttf");
   /* Chrome 4+, Firefox 3.5+, IE 9+, Safari 3.1+, iOS 4.2+, Android Browser 2.2+ */
 }
 
@@ -130,7 +121,8 @@
   font-weight: 300;
   font-style: normal;
   font-display: swap;
-  src: url("/fonts/roboto-mono/roboto-mono-v23-latin_latin-ext-300.woff2"),
+  src:
+    url("/fonts/roboto-mono/roboto-mono-v23-latin_latin-ext-300.woff2"),
     /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
       url("/fonts/roboto-mono/roboto-mono-v23-latin_latin-ext-300.woff"),
     /* Chrome 5+, Firefox 3.6+, IE 9+, Safari 5.1+, iOS 5+ */
@@ -144,7 +136,8 @@
   font-weight: 500;
   font-style: normal;
   font-display: swap;
-  src: url("/fonts/roboto-mono/roboto-mono-v23-latin_latin-ext-500.woff2"),
+  src:
+    url("/fonts/roboto-mono/roboto-mono-v23-latin_latin-ext-500.woff2"),
     /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
       url("/fonts/roboto-mono/roboto-mono-v23-latin_latin-ext-500.woff"),
     /* Chrome 5+, Firefox 3.6+, IE 9+, Safari 5.1+, iOS 5+ */
