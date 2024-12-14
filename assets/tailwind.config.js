@@ -12,6 +12,9 @@ const fs = require("fs")
 const path = require("path")
 
 module.exports = {
+  presets: [
+    require('./js/station-ui.js'),
+  ],
   content: ["./js/**/*.js", "../lib/beacon/live_admin/**/*.*ex", "./svelte/**/*.svelte"],
   theme: {
     extend: {

@@ -62,6 +62,7 @@ defmodule Beacon.LiveAdmin.Web do
 
   defp html_helpers do
     quote do
+      use Beacon.LiveAdmin.StationUI.HTML
       import Phoenix.HTML
       import Beacon.LiveAdmin.AdminComponents
       import Beacon.LiveAdmin.Components, only: [template_error: 1]
