@@ -87,6 +87,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.KeyValueControl do
 
   def handle_event("save", %{"form_data" => params}, socket) do
     existing_attrs = socket.assigns.element["attrs"] || %{}
+
     changeset =
       changeset(%{name: params["name"], value: params["value"]}, existing_attrs)
       |> Map.put(:action, :insert)
@@ -102,9 +103,9 @@ defmodule Beacon.LiveAdmin.VisualEditor.KeyValueControl do
           changes
         end
 
-        send(self(), {:element_changed, {socket.assigns.element["path"], changes}})
-        {:noreply, assign(socket, editing: false, name: name, value: value, changeset: changeset)}
-      else
+      send(self(), {:element_changed, {socket.assigns.element["path"], changes}})
+      {:noreply, assign(socket, editing: false, name: name, value: value, changeset: changeset)}
+    else
       {:noreply, assign(socket, changeset: changeset)}
     end
   end
