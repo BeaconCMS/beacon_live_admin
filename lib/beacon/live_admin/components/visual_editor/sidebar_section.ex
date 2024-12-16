@@ -1,4 +1,4 @@
-defmodule Beacon.LiveAdmin.VisualEditor.ControlSection do
+defmodule Beacon.LiveAdmin.VisualEditor.SidebarSection do
   @moduledoc false
 
   use Beacon.LiveAdmin.Web, :live_component

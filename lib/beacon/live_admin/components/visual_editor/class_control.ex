@@ -3,13 +3,13 @@ defmodule Beacon.LiveAdmin.VisualEditor.ClassControl do
 
   use Beacon.LiveAdmin.Web, :live_component
   alias Beacon.LiveAdmin.VisualEditor
-  alias Beacon.LiveAdmin.VisualEditor.ControlSection
+  alias Beacon.LiveAdmin.VisualEditor.SidebarSection
 
   # FIXME: create functions components to reuse shared styles (currently defined in PropertiesSidebarSectionComponent)
   def render(assigns) do
     ~H"""
     <div id={@id} class="contents">
-      <.live_component module={ControlSection} label="Classes" id={"#{@id}-section"}>
+      <.live_component module={SidebarSection} label="Classes" id={"#{@id}-section"}>
         <input type="text" class="w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm" id={"#{@id}-input"} phx-hook="ClassControlAddClassAndClear" />
         <div class="pt-3">
           <%= for css_class <- @classes do %>

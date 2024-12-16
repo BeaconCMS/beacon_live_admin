@@ -1,9 +1,8 @@
 defmodule Beacon.LiveAdmin.VisualEditor.KeyValueControl do
   @moduledoc false
 
-  require IEx
   use Beacon.LiveAdmin.Web, :live_component
-  alias Beacon.LiveAdmin.VisualEditor.ControlSection
+  alias Beacon.LiveAdmin.VisualEditor.SidebarSection
 
   defmodule FormData do
     use Ecto.Schema
@@ -17,7 +16,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.KeyValueControl do
   def render(assigns) do
     ~H"""
     <div id={@id}>
-      <.live_component module={ControlSection} label={if !@editing && @name !== "", do: @name} name={@name} path={@element["path"]} id={"#{@id}-section"}>
+      <.live_component module={SidebarSection} label={if !@editing && @name !== "", do: @name} name={@name} path={@element["path"]} id={"#{@id}-section"}>
         <:header_buttons>
           <button
             type="button"
@@ -31,22 +30,11 @@ defmodule Beacon.LiveAdmin.VisualEditor.KeyValueControl do
         </:header_buttons>
         <%= if @editing do %>
           <.form :let={f} for={@changeset} phx-submit="save" phx-change="handle_change" phx-target={@myself}>
-            <%!-- <form phx-submit="save" phx-change="handle_change" phx-target={@myself}> --%>
             <.input field={f[:name]} placeholder="Name" class="w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm" />
-            <%!-- <%= inspect(f[:value]) %> --%>
             <.input field={f[:value]} errors={["error 1", "error 2"]} placeholder="Value" class="mt-3 w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm" />
-            <div class="error-messages">
-              <%= for {field, {message, _}} <- @changeset.errors do %>
-                <p><%= field %> <%= message %></p>
-              <% end %>
-            </div>
-            <%!-- <input class="w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm" placeholder="Name" name="name" value={@name} /> --%>
-            <%!-- <input class="mt-3 w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm" placeholder="Value" name="value" value={@value} /> --%>
             <div class="mt-3 grid grid-cols-2 gap-x-2">
               <.button type="submit" class="bg-blue-500 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-2 px-4 rounded outline-2">Save</.button>
               <.button type="reset" name="cancel" class="bg-red-500 hover:bg-red-700 active:bg-red-800 text-white font-bold py-2 px-4 rounded outline-2">Cancel</.button>
-              <%!-- <button type="submit" class="bg-blue-500 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-2 px-4 rounded outline-2">Save</button> --%>
-              <%!-- <button type="reset" name="cancel" class="bg-red-500 hover:bg-red-700 active:bg-red-800 text-white font-bold py-2 px-4 rounded outline-2">Cancel</button> --%>
             </div>
           </.form>
         <% else %>
@@ -65,18 +53,20 @@ defmodule Beacon.LiveAdmin.VisualEditor.KeyValueControl do
   end
 
   def mount(socket) do
-    {:ok, assign(socket, editing: false)}
+    {:ok, assign(socket, editing: false, name: "", value: "")}
   end
 
   def update(assigns, socket) do
-    name = Map.get(assigns, :name, "")
-    value = Map.get(assigns, :value, "")
-    form_data = %FormData{name: name, value: value}
-    changeset = changeset(Ecto.Changeset.change(form_data), %{})
+    socket = socket |> assign(assigns) |> maybe_update_changeset()
+    {:ok, socket}
+  end
 
-    {:ok,
-     assign(socket, assigns)
-     |> assign(changeset: changeset, name: name, value: value)}
+  defp maybe_update_changeset(socket) do
+    if changed?(socket, :name) or changed?(socket, :value) do
+      assign(socket, changeset: changeset(%{"name" => socket.assigns.name, "value" => socket.assigns.value}))
+    else
+      socket
+    end
   end
 
   def handle_event("add_new_attribute", _params, socket) do
@@ -97,7 +87,9 @@ defmodule Beacon.LiveAdmin.VisualEditor.KeyValueControl do
 
   def handle_event("save", %{"form_data" => params}, socket) do
     existing_attrs = socket.assigns.element["attrs"] || %{}
-    changeset = changeset(socket.assigns.changeset, %{name: params["name"], value: params["value"]}, existing_attrs)
+    changeset =
+      changeset(%{name: params["name"], value: params["value"]}, existing_attrs)
+      |> Map.put(:action, :insert)
 
     if changeset.valid? do
       %{name: name, value: value} = changeset.data
@@ -110,19 +102,19 @@ defmodule Beacon.LiveAdmin.VisualEditor.KeyValueControl do
           changes
         end
 
-      send(self(), {:element_changed, {socket.assigns.element["path"], changes}})
-      {:noreply, assign(socket, editing: false, name: name, value: value, changeset: changeset)}
-    else
+        send(self(), {:element_changed, {socket.assigns.element["path"], changes}})
+        {:noreply, assign(socket, editing: false, name: name, value: value, changeset: changeset)}
+      else
       {:noreply, assign(socket, changeset: changeset)}
     end
   end
 
-  defp changeset(changeset, params, existing_attrs \\ %{}) do
+  defp changeset(params, existing_attrs \\ %{}) do
     %FormData{}
     |> Ecto.Changeset.cast(params, [:name, :value])
     |> Ecto.Changeset.validate_required([:name, :value])
     |> Ecto.Changeset.validate_change(:name, fn :name, name ->
-      if Map.has_key?(existing_attrs, name) && name != changeset.data.name do
+      if Map.has_key?(existing_attrs, name) && name != params["name"] do
         [name: "Attribute name already exists"]
       else
         []

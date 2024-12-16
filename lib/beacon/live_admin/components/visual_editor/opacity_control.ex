@@ -4,13 +4,13 @@ defmodule Beacon.LiveAdmin.VisualEditor.OpacityControl do
 
   use Beacon.LiveAdmin.Web, :live_component
   alias Beacon.LiveAdmin.VisualEditor
-  alias Beacon.LiveAdmin.VisualEditor.ControlSection
+  alias Beacon.LiveAdmin.VisualEditor.SidebarSection
 
   # FIXME: create functions components to reuse shared styles (currently defined in PropertiesSidebarSectionComponent)
   def render(assigns) do
     ~H"""
     <div id={@id} class="contents">
-      <.live_component module={ControlSection} label="Opacity" id={"#{@id}-section"}>
+      <.live_component module={SidebarSection} label="Opacity" id={"#{@id}-section"}>
         <.form for={@form} phx-target={@myself} phx-change="update" phx-throttle="1000">
           <.input field={@form[:value]} type="range" min="0" max="100" step="5" />
         </.form>
