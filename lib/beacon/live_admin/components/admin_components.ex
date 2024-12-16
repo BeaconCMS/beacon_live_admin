@@ -35,7 +35,6 @@ defmodule Beacon.LiveAdmin.AdminComponents do
 
   def layout_header(assigns) do
     ~H"""
-    <.flash_group flash={@flash} />
     <Beacon.LiveAdmin.AdminComponents.layout_menu socket={@socket} site={@beacon_layout.site} current_action={@live_action} layout_id={@beacon_layout.id} />
     """
   end
@@ -95,7 +94,6 @@ defmodule Beacon.LiveAdmin.AdminComponents do
 
   def page_header(assigns) do
     ~H"""
-    <.flash_group flash={@flash} />
     <Beacon.LiveAdmin.AdminComponents.page_menu socket={@socket} site={@page.site} current_action={@live_action} page_id={@page.id} />
     """
   end
@@ -156,7 +154,6 @@ defmodule Beacon.LiveAdmin.AdminComponents do
 
   def component_header(assigns) do
     ~H"""
-    <.flash_group flash={@flash} />
     <Beacon.LiveAdmin.AdminComponents.component_menu socket={@socket} site={@component.site} current_action={@live_action} component_id={@component.id} />
     """
   end

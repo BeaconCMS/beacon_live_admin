@@ -121,25 +121,6 @@ defmodule Beacon.LiveAdmin.CoreComponents do
   end
 
   @doc """
-  Shows the flash group with standard titles and content.
-
-  ## Examples
-
-      <.flash_group flash={@flash} />
-  """
-  attr :flash, :map, required: true, doc: "the map of flash messages"
-
-  def flash_group(assigns) do
-    ~H"""
-    <.flash kind={:info} title="Success!" flash={@flash} />
-    <.flash kind={:error} title="Error!" flash={@flash} />
-    <.flash id="disconnected" kind={:error} title="We can't find the internet" phx-disconnected={show("#disconnected")} phx-connected={hide("#disconnected")} hidden>
-      Attempting to reconnect <.icon name="hero-arrow-path" class="w-3 h-3 ml-1 animate-spin" />
-    </.flash>
-    """
-  end
-
-  @doc """
   Renders a simple form.
 
   ## Examples
