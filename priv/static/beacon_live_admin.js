@@ -9360,14 +9360,15 @@ var BeaconLiveAdmin = (() => {
     };
   }
 
-  // ../lib/beacon/live_admin/components/visual_editor/class_control.js
-  var class_control_default = {
-    ClassControlAddClassAndClear: {
+  // ../lib/beacon/live_admin/components/visual_editor/hooks.js
+  var hooks_default = {
+    VisualEditorClassInput: {
       mounted() {
         this.el.addEventListener("keydown", (event) => {
           if (event.key === "Enter") {
             event.preventDefault();
-            this.pushEventTo("#" + event.target.id.replace("-input", ""), "add_class", { value: this.el.value }, () => {
+            const target = "#" + this.el.dataset.target;
+            this.pushEventTo(target, "add_class", { value: this.el.value }, () => {
               this.el.value = "";
             });
           }
@@ -33347,7 +33348,7 @@ var BeaconLiveAdmin = (() => {
   var socketPath = document.querySelector("html").getAttribute("phx-socket") || "/live";
   var csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content");
   var liveSocket = new LiveView.LiveSocket(socketPath, Phoenix.Socket, {
-    hooks: { ...getHooks(__exports), ...class_control_default, ...Hooks },
+    hooks: { ...getHooks(__exports), ...hooks_default, ...Hooks },
     params: { _csrf_token: csrfToken }
   });
   liveSocket.connect();

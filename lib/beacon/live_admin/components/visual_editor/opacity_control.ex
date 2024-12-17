@@ -3,18 +3,17 @@ defmodule Beacon.LiveAdmin.VisualEditor.OpacityControl do
   # https://tailwindcss.com/docs/opacity
 
   use Beacon.LiveAdmin.Web, :live_component
+  import Beacon.LiveAdmin.VisualEditor.Components
   alias Beacon.LiveAdmin.VisualEditor
-  alias Beacon.LiveAdmin.VisualEditor.SidebarSection
 
-  # FIXME: create functions components to reuse shared styles (currently defined in PropertiesSidebarSectionComponent)
   def render(assigns) do
     ~H"""
-    <div id={@id} class="contents">
-      <.live_component module={SidebarSection} label="Opacity" id={"#{@id}-section"}>
+    <div id={@id}>
+      <.control_section label="Opacity">
         <.form for={@form} phx-target={@myself} phx-change="update" phx-throttle="1000">
           <.input field={@form[:value]} type="range" min="0" max="100" step="5" />
         </.form>
-      </.live_component>
+      </.control_section>
     </div>
     """
   end
@@ -33,11 +32,21 @@ defmodule Beacon.LiveAdmin.VisualEditor.OpacityControl do
      |> assign_form(opacity)}
   end
 
-  # TODO: validate opacity value is valid is valid
   def handle_event("update", %{"value" => opacity}, socket) do
-    class = VisualEditor.merge_class(socket.assigns.element, "opacity-#{opacity}")
-    send(self(), {:element_changed, {socket.assigns.element["path"], %{updated: %{"attrs" => %{"class" => class}}}}})
-    {:noreply, assign_form(socket, opacity)}
+    if validate(opacity) == :ok do
+      class = VisualEditor.merge_class(socket.assigns.element, "opacity-#{opacity}")
+      send(self(), {:element_changed, {socket.assigns.element["path"], %{updated: %{"attrs" => %{"class" => class}}}}})
+      {:noreply, assign_form(socket, opacity)}
+    else
+      {:noreply, socket}
+    end
+  end
+
+  defp validate(opacity) do
+    opacity = String.to_integer(opacity)
+    if opacity >= 0 and opacity <= 100, do: :ok, else: :error
+  rescue
+    _ -> :error
   end
 
   defp assign_form(socket, value) do

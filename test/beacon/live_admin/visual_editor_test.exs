@@ -74,4 +74,11 @@ defmodule Beacon.LiveAdmin.VisualEditorTest do
     refute VisualEditor.extract_utility_class_value(%{"attrs" => %{"class" => "opacity-"}}, "opacity")
     refute VisualEditor.extract_utility_class_value(%{"attrs" => %{"class" => "opacity"}}, "opacity")
   end
+
+  describe "merge_class" do
+    test "do not add duplicates" do
+      element = %{"attrs" => %{"class" => "foo"}}
+      assert VisualEditor.merge_class(element, "foo") == "foo"
+    end
+  end
 end

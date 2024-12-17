@@ -1,4 +1,6 @@
 defmodule Beacon.LiveAdmin.VisualEditor do
+  @moduledoc false
+
   @type page :: [element()]
   @type element :: map()
 
@@ -109,6 +111,11 @@ defmodule Beacon.LiveAdmin.VisualEditor do
 
   def merge_class(element, new) do
     current = get_in(element, ["attrs", "class"]) || ""
-    Turboprop.Merge.merge([current, new])
+
+    if Enum.member?(String.split(current, " "), new) do
+      current
+    else
+      Turboprop.Merge.merge([current, new])
+    end
   end
 end

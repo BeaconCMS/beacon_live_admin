@@ -3,7 +3,6 @@ defmodule Beacon.LiveAdmin.PropertiesSidebarSectionComponent do
   use Beacon.LiveAdmin.Web, :live_component
 
   def update(assigns, socket) do
-    # dbg(assigns)
     {:ok, assign(socket, assigns) |> assign(:form, to_form(assigns.attribute_changeset))}
   end
 

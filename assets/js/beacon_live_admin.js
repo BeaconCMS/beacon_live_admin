@@ -1,7 +1,7 @@
 import topbar from "../vendor/topbar"
 import { CodeEditorHook } from "../../deps/live_monaco_editor/priv/static/live_monaco_editor.esm"
 import { getHooks } from "live_svelte"
-import classControlHooks from "../../lib/beacon/live_admin/components/visual_editor/class_control"
+import visualEditorHooks from "../../lib/beacon/live_admin/components/visual_editor/hooks"
 import * as Components from "../svelte/**/*.svelte"
 
 let Hooks = {}
@@ -52,7 +52,7 @@ window.addEventListener("beacon_admin:clipcopy", (event) => {
 let socketPath = document.querySelector("html").getAttribute("phx-socket") || "/live"
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 let liveSocket = new LiveView.LiveSocket(socketPath, Phoenix.Socket, {
-  hooks: { ...getHooks(Components), ...classControlHooks, ...Hooks },
+  hooks: { ...getHooks(Components), ...visualEditorHooks, ...Hooks },
   params: { _csrf_token: csrfToken },
 })
 liveSocket.connect()
