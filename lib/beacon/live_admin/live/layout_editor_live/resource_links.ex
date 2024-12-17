@@ -115,8 +115,8 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.ResourceLinks do
 
       <.main_content>
         <div class="flex gap-4">
-          <.button type="button" phx-click="add" class="sui-tertiary">New Resource Link</.button>
-          <.button type="button" phx-click="show-new-attribute-modal" class="sui-tertiary">New Attribute</.button>
+          <.button type="button" phx-click="add" class="sui-primary">New Resource Link</.button>
+          <.button type="button" phx-click="show-new-attribute-modal" class="sui-primary">New Attribute</.button>
         </div>
 
         <div class="mt-8 overflow-x-auto">

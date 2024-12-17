@@ -489,19 +489,19 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
       </div>
 
       <.modal :if={@show_attr_modal} id="attr-modal" on_cancel={JS.push("close_modal", target: @myself)} show>
-        <p class="text-2xl font-bold mb-12"><%= @modal_title %></p>
-        <.form :let={f} id="new-path-form" for={@attr_form} phx-change="validate_attr" phx-submit="add_attr" phx-target={@myself} class="space-y-8">
+        <:title><%= @modal_title %></:title>
+        <.form :let={f} id="new-path-form" for={@attr_form} phx-change="validate_attr" phx-submit="add_attr" phx-target={@myself} class="space-y-4 text-sm px-4">
           <.input type="hidden" name={f[:component_id].name} value={f[:component_id].value} />
-          <.input field={f[:name]} type="text" phx-debounce="100" label="Attr Name" />
-          <.input field={f[:type]} type="select" options={types_to_options()} label="Type" />
-          <.input :if={f[:type].value == "struct"} field={f[:struct_name]} type="text" phx-debounce="100" placeholder="MyApp.Users.User" label="Struct Name" />
+          <.input field={f[:name]} type="text" phx-debounce="123" label="Attr Name" class="text-sm p-1 m-2 focus:ring-2" />
+          <.input field={f[:type]} type="select" options={types_to_options()} label="Type" class="text-sm p-1 m-2 focus:ring-2" />
+          <.input :if={f[:type].value == "struct"} field={f[:struct_name]} type="text" phx-debounce="100" placeholder="MyApp.Users.User" label="Struct Name" class="text-sm p-1 m-2 focus:ring-2" />
 
           <legend class="text-sm font-bold tracking-widest text-[#445668] uppercase">Options</legend>
-          <.input field={f[:opts_required]} type="select" options={["false", "true"]} value={opts_required_value(f)} label="Required" />
-          <.input field={f[:opts_default]} type="text" phx-debounce="100" value={opts_default_value(f)} label="Default" />
-          <.input field={f[:opts_values]} type="text" phx-debounce="100" value={opts_values_value(f)} label="Accepted values" placeholder='["string 1", :atom_2, 123, %{}, [], ...]' />
-          <.input field={f[:opts_doc]} type="text" phx-debounce="100" value={opts_doc_value(f)} label="Attribute doc" />
-          <.input field={f[:opts_examples]} type="text" phx-debounce="500" value={opts_examples_value(f)} label="Examples" />
+          <.input field={f[:opts_required]} type="select" options={["false", "true"]} value={opts_required_value(f)} label="Required" class="text-sm p-1 m-2 focus:ring-2" />
+          <.input field={f[:opts_default]} type="text" phx-debounce="100" value={opts_default_value(f)} label="Default" class="text-sm p-1 m-2 focus:ring-2" />
+          <.input field={f[:opts_values]} type="text" phx-debounce="100" value={opts_values_value(f)} label="Accepted values" placeholder={"[\"string 1\", :atom_2, 123, %{}, [], ...]"} class="text-sm p-1 m-2 focus:ring-2" />
+          <.input field={f[:opts_doc]} type="text" phx-debounce="100" value={opts_doc_value(f)} label="Attribute doc" class="text-sm p-1 m-2 focus:ring-2" />
+          <.input field={f[:opts_examples]} type="text" phx-debounce="500" value={opts_examples_value(f)} label="Examples" class="text-sm p-1 m-2 focus:ring-2" />
 
           <div class="flex mt-8 gap-x-[20px]">
             <.button type="submit">Ok</.button>
