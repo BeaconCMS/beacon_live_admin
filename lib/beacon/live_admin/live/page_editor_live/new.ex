@@ -17,6 +17,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.New do
 
     socket =
       socket
+      |> assign_new(:selected_element_path, fn -> nil end)
       |> assign_new(:layouts, fn -> Content.list_layouts(site) end)
       |> assign_new(:components, fn ->
         components = Content.list_components(site, per_page: :infinity)
@@ -119,6 +120,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.New do
       site={@beacon_page.site}
       layouts={@layouts}
       page={@page}
+      selected_element_path={@selected_element_path}
       components={@components}
       editor={@editor}
       patch="/pages"

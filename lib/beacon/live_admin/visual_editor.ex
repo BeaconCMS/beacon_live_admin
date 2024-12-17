@@ -53,7 +53,7 @@ defmodule Beacon.LiveAdmin.VisualEditor do
     end
   end
 
-  # FIXME: update "root" node
+  # FIXME: update "root" node - it will crash if any property is updated on the root node (choose Up one level up to root)
   def update_node(nodes, path, attrs, deleted_attrs) do
     path = resolve_path(path)
     update_node_recursive(nodes, path, attrs, deleted_attrs)
