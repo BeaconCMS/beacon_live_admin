@@ -48,8 +48,9 @@ defmodule Beacon.LiveAdmin.InfoHandlerEditorLive.Index do
     {:noreply, assign(socket, show_create_modal: false)}
   end
 
-  def handle_event("save_new", %{"msg" => msg}, socket) do
+  def handle_event("save_new", params, socket) do
     %{beacon_page: %{site: site}} = socket.assigns
+    %{"info_handler" => %{"msg" => msg}} = params
 
     attrs = %{
       "msg" => msg,

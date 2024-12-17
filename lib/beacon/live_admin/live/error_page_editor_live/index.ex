@@ -64,8 +64,9 @@ defmodule Beacon.LiveAdmin.ErrorPageEditorLive.Index do
     {:noreply, assign(socket, show_status_change_field: true)}
   end
 
-  def handle_event("save_new", %{"status" => status}, socket) do
+  def handle_event("save_new", params, socket) do
     %{beacon_page: %{site: site}, layouts: layouts} = socket.assigns
+    %{"error_page" => %{"status" => status}} = params
 
     attrs = %{
       "status" => status,

@@ -47,7 +47,7 @@ defmodule Beacon.LiveAdmin.InfoHandlerEditorLive.IndexTest do
     view =
       {:error, {:live_redirect, %{to: path}}} =
       view
-      |> form("#create-form", %{msg: "{:assign_email, email}"})
+      |> form("#create-form", %{info_handler: %{msg: "{:assign_email, email}"}})
       |> render_submit()
 
     {:ok, view, _html} =
