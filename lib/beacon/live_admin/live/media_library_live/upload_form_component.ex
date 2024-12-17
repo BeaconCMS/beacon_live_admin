@@ -75,7 +75,7 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.UploadFormComponent do
               <%= Phoenix.Naming.humanize(err) %>
             </p>
           <% end %>
-          <.button phx-click="cancel-upload" phx-value-ref={entry.ref}>Cancel</.button>
+          <.button phx-click="cancel-upload" phx-value-ref={entry.ref} class="sui-primary-destructive">Cancel</.button>
         <% end %>
       </.form>
 

@@ -218,7 +218,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.SlotAttr do
 
         <div class="flex mt-8 gap-x-[20px]">
           <.button type="submit">Save</.button>
-          <.button type="button" phx-click={JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/components/#{@component.id}/slots/#{@slot_id}"))}>Cancel</.button>
+          <.button type="button" class="sui-secondary" phx-click={JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/components/#{@component.id}/slots/#{@slot_id}"))}>Cancel</.button>
         </div>
       </.form>
     </.modal>

@@ -157,10 +157,10 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.Slots do
         <.modal :if={@show_nav_modal} id="confirm-nav" on_cancel={JS.push("stay_here")} show>
           <p>You've made unsaved changes to this slot!</p>
           <p>Navigating to another slot without saving will cause these changes to be lost.</p>
-          <.button type="button" phx-click="stay_here">
+          <.button type="button" class="sui-secondary" phx-click="stay_here">
             Stay here
           </.button>
-          <.button type="button" phx-click="discard_changes">
+          <.button type="button" class="sui-primary-destructive" phx-click="discard_changes">
             Discard changes
           </.button>
         </.modal>
@@ -168,10 +168,10 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.Slots do
         <.modal :if={@show_delete_modal} id="confirm-delete" on_cancel={JS.push("delete_cancel")} show>
           <p class="mb-2">Are you sure you want to delete this slot?</p>
           <div class="flex justify-end w-full gap-4 mt-10">
-            <.button type="button" phx-click="delete_confirm">
+            <.button type="button" class="sui-primary-destructive" phx-click="delete_confirm">
               Delete
             </.button>
-            <.button type="button" phx-click="delete_cancel">
+            <.button type="button" class="sui-secondary" phx-click="delete_cancel">
               Cancel
             </.button>
           </div>
@@ -194,7 +194,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.Slots do
               <.input label="Doc" field={f[:opts_doc]} type="text" phx-debounce="100" value={opts_doc_value(f)} />
 
               <.button phx-disable-with="Saving..." class="sui-primary ml-auto">Save Changes</.button>
-              <.button type="button" phx-click="delete">Delete</.button>
+              <.button type="button" class="sui-primary-destructive" phx-click="delete">Delete</.button>
             </.form>
 
             <.table
@@ -227,7 +227,9 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.Slots do
               </:action>
             </.table>
 
-            <.button class="sui-primary mt-4" phx-click={JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/components/#{@component.id}/slots/#{@selected.id}/attrs/new"))}>Add new Attribute</.button>
+            <.button class="sui-primary mt-4" phx-click={JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/components/#{@component.id}/slots/#{@selected.id}/attrs/new"))}>
+              Add new Attribute
+            </.button>
           </div>
         </div>
       </.main_content>

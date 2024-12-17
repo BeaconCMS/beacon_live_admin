@@ -150,10 +150,10 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
         <.modal :if={@show_nav_modal} id="confirm-nav" on_cancel={JS.push("stay_here")} show>
           <p>You've made unsaved changes to this variant!</p>
           <p>Navigating to another variant without saving will cause these changes to be lost.</p>
-          <.button type="button" phx-click="stay_here">
+          <.button type="button" phx-click="stay_here" class="sui-secondary">
             Stay here
           </.button>
-          <.button type="button" phx-click="discard_changes">
+          <.button type="button" phx-click="discard_changes" class="sui-primary-destructive">
             Discard changes
           </.button>
         </.modal>
@@ -162,10 +162,10 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
           <p class="mb-2">Are you sure you want to delete this variant?</p>
           <p class="mb-2"><b>Note:</b> deleted variants will still be active until the page is re-published!</p>
           <div class="flex justify-end w-full gap-4 mt-10">
-            <.button type="button" phx-click="delete_confirm">
+            <.button type="button" phx-click="delete_confirm" class="sui-primary-destructive">
               Delete
             </.button>
-            <.button type="button" phx-click="delete_cancel">
+            <.button type="button" phx-click="delete_cancel" class="sui-secondary">
               Cancel
             </.button>
           </div>
@@ -187,7 +187,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
               <input type="hidden" name="page_variant[template]" id="page_variant-form_template" value={Phoenix.HTML.Form.input_value(f, :template)} />
 
               <.button phx-disable-with="Saving..." class="sui-primary ml-auto">Save Changes</.button>
-              <.button type="button" phx-click="delete">Delete</.button>
+              <.button type="button" phx-click="delete" class="sui-primary-destructive">Delete</.button>
             </.form>
             <%= template_error(@form[:template]) %>
             <div class="w-full mt-10 space-y-8">

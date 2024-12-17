@@ -210,10 +210,10 @@ defmodule Beacon.LiveAdmin.ErrorPageEditorLive.Index do
         <.modal :if={@show_nav_modal} id="confirm-nav" on_cancel={JS.push("stay_here")} show>
           <p>You've made unsaved changes to this error page!</p>
           <p>Navigating to another error page without saving will cause these changes to be lost.</p>
-          <.button type="button" phx-click="stay_here">
+          <.button type="button" class="sui-secondary" phx-click="stay_here">
             Stay here
           </.button>
-          <.button type="button" phx-click="discard_changes">
+          <.button type="button" class="sui-primary-destructive" phx-click="discard_changes">
             Discard changes
           </.button>
         </.modal>
@@ -229,10 +229,10 @@ defmodule Beacon.LiveAdmin.ErrorPageEditorLive.Index do
 
         <.modal :if={@show_delete_modal} id="delete-modal" on_cancel={JS.push("delete_cancel")} show>
           <p>Are you sure you want to delete this error page?</p>
-          <.button type="button" id="confirm-delete-button" phx-click="delete_confirm">
+          <.button type="button" id="confirm-delete-button" phx-click="delete_confirm" class="sui-primary-destructive">
             Delete
           </.button>
-          <.button type="button" phx-click="delete_cancel">
+          <.button type="button" phx-click="delete_cancel" class="sui-secondary">
             Cancel
           </.button>
         </.modal>
@@ -253,7 +253,7 @@ defmodule Beacon.LiveAdmin.ErrorPageEditorLive.Index do
               <.input type="hidden" field={f[:template]} name="error_page[template]" id="error_page-form_template" value={Phoenix.HTML.Form.input_value(f, :template)} />
 
               <.button phx-disable-with="Saving..." class="sui-primary ml-auto">Save Changes</.button>
-              <.button id="delete-error-page-button" type="button" phx-click="delete">Delete</.button>
+              <.button id="delete-error-page-button" type="button" phx-click="delete" class="sui-primary-destructive">Delete</.button>
             </.form>
 
             <div class="w-full mt-10 space-y-8">

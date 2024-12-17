@@ -505,7 +505,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
 
           <div class="flex mt-8 gap-x-[20px]">
             <.button type="submit">Ok</.button>
-            <.button type="button" phx-click={JS.push("close_modal", target: @myself)}>Cancel</.button>
+            <.button type="button" phx-click={JS.push("close_modal", target: @myself)} class="sui-secondary">Cancel</.button>
           </div>
         </.form>
       </.modal>

@@ -138,7 +138,7 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Index do
         <.input type="text" name="path" placeholder="/project/:project_id/comments" value="" />
         <div class="flex mt-8 gap-x-[20px]">
           <.button type="submit">Create</.button>
-          <.button type="button" phx-click={JS.push("close_modal")}>Cancel</.button>
+          <.button type="button" phx-click={JS.push("close_modal")} class="sui-secondary">Cancel</.button>
         </div>
       </.form>
     </.modal>
@@ -149,8 +149,8 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Index do
         <.input field={@edit_path_form[:path]} type="text" />
         <div class="flex mt-8 gap-x-[20px]">
           <.button type="submit">Update</.button>
-          <.button type="button" phx-click={JS.push("close_modal")}>Cancel</.button>
-          <.button type="button" phx-click="delete_path">Delete</.button>
+          <.button type="button" phx-click={JS.push("close_modal")} class="sui-secondary">Cancel</.button>
+          <.button type="button" phx-click="delete_path" class="sui-primary-destructive">Delete</.button>
         </div>
       </.form>
     </.modal>
