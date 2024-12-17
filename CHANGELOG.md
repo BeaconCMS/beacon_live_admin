@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Enhancements
+  - Unsaved changes will now be saved when publishing, instead of discarded
+
 ## 0.3.1 (2024-12-12)
 
 ### Fixes
