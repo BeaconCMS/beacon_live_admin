@@ -232,8 +232,8 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Assigns do
               <.input label="Format" field={f[:format]} type="select" options={["elixir", "text"]} />
               <input type="hidden" name="live_data_assign[value]" id="live_data_assign-form_value" value={Phoenix.HTML.Form.input_value(f, :value)} />
 
-              <.button phx-disable-with="Saving..." class="ml-auto">Save Changes</.button>
-              <.button type="button" phx-click="delete" class="">Delete</.button>
+              <.button phx-disable-with="Saving..." class="sui-primary ml-auto">Save Changes</.button>
+              <.button type="button" phx-click="delete">Delete</.button>
             </.form>
             <div :if={@form[:format].value in [:elixir, "elixir"]} class="mt-4 flex gap-x-4">
               <div>Variables available:</div>

@@ -186,8 +186,8 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
               <.input label="weight" field={f[:weight]} type="number" min="0" max="100" />
               <input type="hidden" name="page_variant[template]" id="page_variant-form_template" value={Phoenix.HTML.Form.input_value(f, :template)} />
 
-              <.button phx-disable-with="Saving..." class="ml-auto">Save Changes</.button>
-              <.button type="button" phx-click="delete" class="">Delete</.button>
+              <.button phx-disable-with="Saving..." class="sui-primary ml-auto">Save Changes</.button>
+              <.button type="button" phx-click="delete">Delete</.button>
             </.form>
             <%= template_error(@form[:template]) %>
             <div class="w-full mt-10 space-y-8">

@@ -384,7 +384,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
       <.header>
         <%= @page_title %>
         <:actions>
-          <.button phx-disable-with="Saving..." form="component-form" class="uppercase">Save Changes</.button>
+          <.button phx-disable-with="Saving..." form="component-form" class="sui-primary uppercase">Save Changes</.button>
         </:actions>
       </.header>
 

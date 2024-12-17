@@ -102,7 +102,7 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Index do
       <p id="header-page-title">Live Data</p>
       <:actions>
         <.link id="header-new-path-button" patch={beacon_live_admin_path(@socket, @beacon_page.site, "/live_data/new")}>
-          <.button class="uppercase">New Path</.button>
+          <.button class="sui-primary uppercase">New Path</.button>
         </.link>
       </:actions>
     </.header>
@@ -150,7 +150,7 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Index do
         <div class="flex mt-8 gap-x-[20px]">
           <.button type="submit">Update</.button>
           <.button type="button" phx-click={JS.push("close_modal")}>Cancel</.button>
-          <.button type="button" class="!bg-red-600" phx-click="delete_path">Delete</.button>
+          <.button type="button" phx-click="delete_path">Delete</.button>
         </div>
       </.form>
     </.modal>

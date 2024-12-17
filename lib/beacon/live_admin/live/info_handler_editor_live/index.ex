@@ -187,7 +187,7 @@ defmodule Beacon.LiveAdmin.InfoHandlerEditorLive.Index do
       <.header>
         <%= @page_title %>
         <:actions>
-          <.button type="button" id="new-info-handler-button" phx-click="create_new" class="uppercase">
+          <.button type="button" id="new-info-handler-button" phx-click="create_new" class="sui-primary uppercase">
             New Handle Info Callback
           </.button>
         </:actions>
@@ -238,7 +238,7 @@ defmodule Beacon.LiveAdmin.InfoHandlerEditorLive.Index do
               <.input label="Message Argument" field={f[:msg]} type="text" />
               <.input type="hidden" field={f[:code]} name="info_handler[code]" id="info_handler-form_code" value={Phoenix.HTML.Form.input_value(f, :code)} />
 
-              <.button phx-disable-with="Saving..." class="ml-auto">Save Changes</.button>
+              <.button phx-disable-with="Saving..." class="sui-primary ml-auto">Save Changes</.button>
               <.button id="delete-info-handler-button" type="button" phx-click="delete">Delete</.button>
             </.form>
 

@@ -193,8 +193,8 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.Slots do
               <.input label="Validate Attrs" field={f[:opts_validate]} type="select" options={["true", "false"]} value={opts_validate_value(f)} />
               <.input label="Doc" field={f[:opts_doc]} type="text" phx-debounce="100" value={opts_doc_value(f)} />
 
-              <.button phx-disable-with="Saving..." class="ml-auto">Save Changes</.button>
-              <.button type="button" phx-click="delete" class="">Delete</.button>
+              <.button phx-disable-with="Saving..." class="sui-primary ml-auto">Save Changes</.button>
+              <.button type="button" phx-click="delete">Delete</.button>
             </.form>
 
             <.table
@@ -227,7 +227,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.Slots do
               </:action>
             </.table>
 
-            <.button class="mt-4" phx-click={JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/components/#{@component.id}/slots/#{@selected.id}/attrs/new"))}>Add new Attribute</.button>
+            <.button class="sui-primary mt-4" phx-click={JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/components/#{@component.id}/slots/#{@selected.id}/attrs/new"))}>Add new Attribute</.button>
           </div>
         </div>
       </.main_content>

@@ -100,7 +100,7 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.Index do
       Media Library
       <:actions>
         <.link patch={beacon_live_admin_path(@socket, @beacon_page.site, "/media_library/upload")}>
-          <.button class="uppercase">Upload new media</.button>
+          <.button class="sui-primary uppercase">Upload new media</.button>
         </.link>
       </:actions>
     </.header>

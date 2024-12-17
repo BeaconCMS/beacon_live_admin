@@ -184,7 +184,7 @@ defmodule Beacon.LiveAdmin.EventHandlerEditorLive.Index do
       <.header>
         <%= @page_title %>
         <:actions>
-          <.button type="button" id="new-event-handler-button" phx-click="create_new" class="uppercase">
+          <.button type="button" id="new-event-handler-button" phx-click="create_new" class="sui-primary uppercase">
             New Event Handler
           </.button>
         </:actions>
@@ -235,8 +235,8 @@ defmodule Beacon.LiveAdmin.EventHandlerEditorLive.Index do
               <.input label="Name" field={f[:name]} type="text" />
               <input type="hidden" name="event_handler[code]" id="event_handler-form_code" value={Phoenix.HTML.Form.input_value(f, :code)} />
 
-              <.button phx-disable-with="Saving..." class="ml-auto">Save Changes</.button>
-              <.button id="delete-event-handler-button" type="button" phx-click="delete" class="">Delete</.button>
+              <.button phx-disable-with="Saving..." class="sui-primary ml-auto">Save Changes</.button>
+              <.button id="delete-event-handler-button" type="button" phx-click="delete">Delete</.button>
             </.form>
             <div class="mt-4 flex gap-x-4">
               <div>Variables available:</div>

@@ -200,7 +200,7 @@ defmodule Beacon.LiveAdmin.ErrorPageEditorLive.Index do
       <.header>
         <%= @page_title %>
         <:actions>
-          <.button type="button" id="new-error-page-button" phx-click="create_new" class="uppercase">
+          <.button type="button" id="new-error-page-button" phx-click="create_new" class="sui-primary uppercase">
             New Error Page
           </.button>
         </:actions>
@@ -252,8 +252,8 @@ defmodule Beacon.LiveAdmin.ErrorPageEditorLive.Index do
               <.input label="Layout" field={f[:layout_id]} options={Enum.map(@layouts, &{&1.title, &1.id})} value={@selected.layout_id} type="select" />
               <.input type="hidden" field={f[:template]} name="error_page[template]" id="error_page-form_template" value={Phoenix.HTML.Form.input_value(f, :template)} />
 
-              <.button phx-disable-with="Saving..." class="ml-auto">Save Changes</.button>
-              <.button id="delete-error-page-button" type="button" phx-click="delete" class="">Delete</.button>
+              <.button phx-disable-with="Saving..." class="sui-primary ml-auto">Save Changes</.button>
+              <.button id="delete-error-page-button" type="button" phx-click="delete">Delete</.button>
             </.form>
 
             <div class="w-full mt-10 space-y-8">
