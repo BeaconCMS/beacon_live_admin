@@ -203,12 +203,11 @@ defmodule Beacon.LiveAdmin.EventHandlerEditorLive.Index do
         </.modal>
 
         <.modal :if={@show_create_modal} id="create-modal" on_cancel={JS.push("cancel_create")} show>
-          <.simple_form :let={f} for={@create_form} id="create-form" phx-submit="save_new">
+          <:title>New Event Handler</:title>
+          <.form :let={f} for={@create_form} id="create-form" phx-submit="save_new" class="px-4">
             <.input field={f[:name]} type="text" label="Event name:" />
-            <:actions>
-              <.button>Save</.button>
-            </:actions>
-          </.simple_form>
+            <.button class="sui-primary mt-4">Save</.button>
+          </.form>
         </.modal>
 
         <.modal :if={@show_delete_modal} id="delete-modal" on_cancel={JS.push("delete_cancel")} show>

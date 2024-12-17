@@ -227,7 +227,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.Slots do
               </:action>
             </.table>
 
-            <.button class="sui-primary mt-4" phx-click={JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/components/#{@component.id}/slots/#{@selected.id}/attrs/new"))}>
+            <.button class="sui-tertiary mt-4" phx-click={JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/components/#{@component.id}/slots/#{@selected.id}/attrs/new"))}>
               Add new Attribute
             </.button>
           </div>

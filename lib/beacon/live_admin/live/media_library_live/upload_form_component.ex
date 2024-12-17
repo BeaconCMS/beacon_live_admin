@@ -54,8 +54,6 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.UploadFormComponent do
   def render(assigns) do
     ~H"""
     <div>
-      <.header>Upload</.header>
-
       <section phx-drop-target={@uploads.asset.ref}>
         <%= for entry <- @uploads.asset.entries do %>
           <article class="upload-entry">

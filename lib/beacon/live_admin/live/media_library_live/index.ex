@@ -149,6 +149,7 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.Index do
         </:action>
       </.table>
       <.modal :if={@live_action in [:upload]} id="asset-modal" show on_cancel={JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/media_library"))}>
+        <:title>Upload</:title>
         <.live_component
           module={Beacon.LiveAdmin.MediaLibraryLive.UploadFormComponent}
           site={@beacon_page.site}
@@ -161,6 +162,7 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.Index do
       </.modal>
 
       <.modal :if={@live_action in [:show]} id="asset-modal" show on_cancel={JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/media_library"))}>
+        <:title><%= @asset.file_name %></:title>
         <.live_component
           module={Beacon.LiveAdmin.MediaLibraryLive.ShowComponent}
           id={@asset.id}

@@ -441,7 +441,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
             </:action>
           </.table>
 
-          <.button class="mt-4" phx-click={JS.push("show_attr_modal", target: @myself)}>Add new Attribute</.button>
+          <.button class="sui-tertiary mt-4" phx-click={JS.push("show_attr_modal", target: @myself)}>Add new Attribute</.button>
         </div>
         <div class="col-span-full lg:col-span-2 space-y-6">
           <div>
@@ -499,7 +499,15 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
           <legend class="text-sm font-bold tracking-widest text-[#445668] uppercase">Options</legend>
           <.input field={f[:opts_required]} type="select" options={["false", "true"]} value={opts_required_value(f)} label="Required" class="text-sm p-1 m-2 focus:ring-2" />
           <.input field={f[:opts_default]} type="text" phx-debounce="100" value={opts_default_value(f)} label="Default" class="text-sm p-1 m-2 focus:ring-2" />
-          <.input field={f[:opts_values]} type="text" phx-debounce="100" value={opts_values_value(f)} label="Accepted values" placeholder={"[\"string 1\", :atom_2, 123, %{}, [], ...]"} class="text-sm p-1 m-2 focus:ring-2" />
+          <.input
+            field={f[:opts_values]}
+            type="text"
+            phx-debounce="100"
+            value={opts_values_value(f)}
+            label="Accepted values"
+            placeholder={"[\"string 1\", :atom_2, 123, %{}, [], ...]"}
+            class="text-sm p-1 m-2 focus:ring-2"
+          />
           <.input field={f[:opts_doc]} type="text" phx-debounce="100" value={opts_doc_value(f)} label="Attribute doc" class="text-sm p-1 m-2 focus:ring-2" />
           <.input field={f[:opts_examples]} type="text" phx-debounce="500" value={opts_examples_value(f)} label="Examples" class="text-sm p-1 m-2 focus:ring-2" />
 

@@ -938,7 +938,7 @@ defmodule Beacon.LiveAdmin.StationUI.HTML.Input do
           value={Form.normalize_value(@type, @value)}
           disabled={@disabled}
           class={[
-            IO.inspect(@class, label: "textfield class"),
+            @class,
             @errors == [] && "border border-gray-400",
             @errors != [] && "border-2 phx-no-feedback:border-gray-400 border-rose-500",
             input_base_classes()
