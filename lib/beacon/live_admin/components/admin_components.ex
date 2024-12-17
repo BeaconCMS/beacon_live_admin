@@ -14,6 +14,9 @@ defmodule Beacon.LiveAdmin.AdminComponents do
   import Beacon.LiveAdmin.Router, only: [beacon_live_admin_path: 3]
 
   defdelegate header(assigns), to: CoreComponents
+  defdelegate icon(assigns), to: CoreComponents
+  defdelegate flash_group(assigns), to: CoreComponents
+  defdelegate show_modal(assigns), to: CoreComponents
   defdelegate hide_modal(assigns), to: CoreComponents
   defdelegate show(selector), to: CoreComponents
   defdelegate show(js, selector), to: CoreComponents
@@ -35,7 +38,6 @@ defmodule Beacon.LiveAdmin.AdminComponents do
 
   def layout_header(assigns) do
     ~H"""
-    <.flash_group flash={@flash} />
     <Beacon.LiveAdmin.AdminComponents.layout_menu socket={@socket} site={@beacon_layout.site} current_action={@live_action} layout_id={@beacon_layout.id} />
     """
   end
@@ -95,7 +97,6 @@ defmodule Beacon.LiveAdmin.AdminComponents do
 
   def page_header(assigns) do
     ~H"""
-    <.flash_group flash={@flash} />
     <Beacon.LiveAdmin.AdminComponents.page_menu socket={@socket} site={@page.site} current_action={@live_action} page_id={@page.id} />
     """
   end
@@ -156,7 +157,6 @@ defmodule Beacon.LiveAdmin.AdminComponents do
 
   def component_header(assigns) do
     ~H"""
-    <.flash_group flash={@flash} />
     <Beacon.LiveAdmin.AdminComponents.component_menu socket={@socket} site={@component.site} current_action={@live_action} component_id={@component.id} />
     """
   end
@@ -251,25 +251,6 @@ defmodule Beacon.LiveAdmin.AdminComponents do
         <.icon name="hero-x-mark-solid" class="w-5 h-5 opacity-40 group-hover:opacity-70" />
       </button>
     </div>
-    """
-  end
-
-  @doc """
-  Shows the flash group with standard titles and content.
-
-  ## Examples
-
-      <.flash_group flash={@flash} />
-  """
-  attr :flash, :map, required: true, doc: "the map of flash messages"
-
-  def flash_group(assigns) do
-    ~H"""
-    <.flash kind={:info} title="Success!" flash={@flash} />
-    <.flash kind={:error} title="Error!" flash={@flash} />
-    <.flash id="disconnected" kind={:error} title="We can't find the internet" phx-disconnected={show("#disconnected")} phx-connected={hide("#disconnected")} hidden>
-      Attempting to reconnect <.icon name="hero-arrow-path" class="w-3 h-3 ml-1 animate-spin" />
-    </.flash>
     """
   end
 

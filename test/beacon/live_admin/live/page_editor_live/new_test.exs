@@ -19,7 +19,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.NewTest do
     assert {:ok, live, _html} =
              live
              |> form("#page-form", page: %{path: "/my/page", title: "My Page", format: "heex"})
-             |> render_submit(%{page: %{"template" => "<div>test</div>"}})
+             |> render_submit(%{page: %{"template" => "<div>test</div>"}, save: "save"})
              |> follow_redirect(conn)
 
     assert has_element?(live, "h1", "Edit Page")
