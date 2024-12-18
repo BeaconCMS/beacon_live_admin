@@ -4,6 +4,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
   use Beacon.LiveAdmin.PageBuilder, table: [sort_by: "path"]
 
   alias Beacon.LiveAdmin.Client.Content
+  alias Beacon.LiveAdmin.PageBuilder.Table
 
   @impl true
   def menu_link(_, :index), do: {:root, "Pages"}
@@ -15,18 +16,21 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
 
   @impl true
   def handle_params(params, _uri, socket) do
-    socket =
-      Table.handle_params(socket, params, &Content.count_pages(&1.site, query: params["query"]))
+    socket = Table.handle_params(socket, params, &Content.count_pages(&1.site, query: params["query"]))
 
-    %{site: site, table: %{per_page: per_page, current_page: page, query: query, sort_by: sort_by}} = socket.assigns.beacon_page
+    %{site: site, table: table} = socket.assigns.beacon_page
 
     pages =
-      list_pages(site,
-        per_page: per_page,
-        page: page,
-        query: query,
-        sort: sort_by
-      )
+      if table do
+        list_pages(site,
+          per_page: table.per_page,
+          page: table.current_page,
+          query: table.query,
+          sort: table.sort_by
+        )
+      else
+        []
+      end
 
     {:noreply, stream(socket, :pages, pages, reset: true)}
   end
@@ -45,10 +49,10 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
 
     <div class="flex justify-between">
       <div class="basis-8/12">
-        <.table_search table={@beacon_page.table} placeholder="Search by path or title (showing up to 15 results)" />
+        <.table_search table={@beacon_page.table || %Table{query: ""}} placeholder="Search by path or title (showing up to 15 results)" />
       </div>
       <div class="basis-2/12">
-        <.table_sort table={@beacon_page.table} options={[{"Title", "title"}, {"Path", "path"}]} />
+        <.table_sort table={@beacon_page.table || %Table{sort_by: "title"}} options={[{"Title", "title"}, {"Path", "path"}]} />
       </div>
     </div>
 
@@ -80,7 +84,6 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
     end)
   end
 
-  defp display_status(:unpublished), do: "Unpublished"
   defp display_status(:published), do: "Published"
-  defp display_status(:created), do: "Draft"
+  defp display_status(_), do: "Draft"
 end
