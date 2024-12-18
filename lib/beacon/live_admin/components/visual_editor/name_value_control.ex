@@ -10,13 +10,15 @@ defmodule Beacon.LiveAdmin.VisualEditor.NameValueControl do
     ~H"""
     <div id={@id}>
       <.control_section>
-        <button :if={!@attribute.editing} type="button" phx-target={@myself} phx-click="edit">
-          <.icon name="hero-pencil-square" class="w-5 h-5" />
-        </button>
+        <:header>
+          <button :if={!@attribute.editing} type="button" phx-target={@myself} phx-click="edit">
+            <.icon name="hero-pencil-square" class="w-5 h-5 text-blue-500" />
+          </button>
 
-        <button type="button" phx-target={@myself} phx-click="remove">
-          <.icon name="hero-trash" class="w-5 h-5" />
-        </button>
+          <button type="button" phx-target={@myself} phx-click="remove">
+            <.icon name="hero-trash" class="w-5 h-5 text-red-500" />
+          </button>
+        </:header>
 
         <.form :let={f} for={@form} id={@id <> "-form"} phx-target={@myself} phx-submit="save" phx-change="validate">
           <.input :if={@attribute.editing} field={f[:name]} placeholder="Name" class="w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm" />
