@@ -2208,6 +2208,10 @@ select{
   flex-shrink: 0;
 }
 
+.flex-grow{
+  flex-grow: 1;
+}
+
 .grow{
   flex-grow: 1;
 }
@@ -2266,6 +2270,10 @@ select{
 
 .cursor-default{
   cursor: default;
+}
+
+.cursor-not-allowed{
+  cursor: not-allowed;
 }
 
 .cursor-pointer{
@@ -3334,6 +3342,11 @@ select{
 }
 
 .text-sm{
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.text-sm\/5{
   font-size: 0.875rem;
   line-height: 1.25rem;
 }
