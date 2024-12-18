@@ -28,6 +28,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
      |> maybe_assign_builder_page(changeset)
      |> assign(:language, language(page.format))
      |> assign_extra_fields(changeset)
+     |> assign_new(:show_modal, fn -> nil end)
      |> assign_new(:tailwind_config, fn -> RuntimeCSS.asset_url(site) end)
      |> assign_new(:tailwind_input, fn ->
        tailwind = [
@@ -107,6 +108,14 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
      socket
      |> assign_form(changeset)
      |> maybe_assign_builder_page(changeset)}
+  end
+
+  def handle_event("show_modal", %{"confirm" => action} = _params, socket) do
+    {:noreply, assign(socket, show_modal: String.to_existing_atom("#{action}_confirm"))}
+  end
+
+  def handle_event("close_modal", _params, socket) do
+    {:noreply, assign(socket, show_modal: nil)}
   end
 
   def handle_event("validate", %{"page" => page_params}, socket) do
@@ -264,12 +273,12 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
           <.button :if={@live_action in [:new, :edit] && @editor == "visual"} type="button" phx-click="enable_editor" phx-value-editor="code" class="sui-primary uppercase">Code Editor</.button>
           <.button :if={@live_action == :new} phx-disable-with="Saving..." form="page-form" class="sui-primary uppercase">Create Draft Page</.button>
           <.button :if={@live_action == :edit} phx-disable-with="Saving..." form="page-form" name="save" value="save" class="sui-primary uppercase">Save Changes</.button>
-          <.button :if={@live_action == :edit} phx-click={show_modal("publish-confirm-modal")} phx-target={@myself} class="sui-primary uppercase">Publish</.button>
+          <.button :if={@live_action == :edit} phx-click="show_modal" phx-value-confirm="publish" phx-target={@myself} class="sui-primary uppercase">Publish</.button>
         </:actions>
       </.header>
 
-      <.modal id="publish-confirm-modal">
-        <h3 class="text-base font-semibold leading-6 text-gray-900" id="modal-title">Publish Page</h3>
+      <.modal :if={@show_modal == :publish_confirm} id="publish-confirm-modal" on_cancel={JS.push("close_modal", target: @myself)} show>
+        <:title>Publish Page</:title>
         <div class="mt-2">
           <p class="text-sm text-gray-500">Are you sure you want to publish this page and make it public? Any unsaved changes on this page will also be saved and published.</p>
         </div>
@@ -277,7 +286,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
           <button
             type="button"
             class="inline-flex justify-center w-full px-3 py-2 mt-3 text-sm font-semibold text-gray-900 bg-white rounded-md shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
-            phx-click={JS.exec("data-cancel", to: "#publish-confirm-modal")}
+            phx-click={JS.push("close_modal", target: @myself)}
           >
             Cancel
           </button>
