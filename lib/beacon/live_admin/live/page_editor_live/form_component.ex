@@ -21,7 +21,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
       end
 
     page_status =
-      case Content.get_latest_page_event(site, page.id) do
+      case page.id && Content.get_latest_page_event(site, page.id) do
         nil -> nil
         %{event: event} -> event
       end
