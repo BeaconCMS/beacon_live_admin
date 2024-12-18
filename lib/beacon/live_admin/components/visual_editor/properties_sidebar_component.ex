@@ -1,5 +1,5 @@
 # FIXME: move to Beacon.LiveAdmin.VisualEditor.PropertiesSidebarComponent
-defmodule Beacon.LiveAdmin.PropertiesSidebarComponent do
+defmodule Beacon.LiveAdmin.VisualEditor.PropertiesSidebarComponent do
   use Beacon.LiveAdmin.Web, :live_component
   alias Beacon.LiveAdmin.VisualEditor
 

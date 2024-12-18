@@ -11,7 +11,6 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
   alias Beacon.LiveAdmin.RuntimeCSS
   alias Beacon.LiveAdmin.WebAPI
   alias Beacon.LiveAdmin.VisualEditor
-  alias Beacon.LiveAdmin.PropertiesSidebarComponent
 
   @impl true
   def update(%{site: site, page: page} = assigns, socket) do
@@ -343,7 +342,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
             }
             socket={@socket}
           />
-          <.live_component module={PropertiesSidebarComponent} id="properties_sidebar" page={@builder_page} selected_element_path={@selected_element_path} />
+          <.live_component module={VisualEditor.PropertiesSidebarComponent} id="properties_sidebar" page={@builder_page} selected_element_path={@selected_element_path} />
         </div>
       <% end %>
 
