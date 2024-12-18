@@ -39,7 +39,7 @@ defmodule Beacon.LiveAdmin.ErrorPageEditorLive.IndexTest do
 
     {:ok, view, _html} =
       view
-      |> form("#create-form", %{status: 400})
+      |> form("#create-form", %{error_page: %{status: 400}})
       |> render_submit()
       |> follow_redirect(conn, "/admin/site_a/error_pages/400")
 

@@ -31,7 +31,6 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.ShowComponent do
   def render(assigns) do
     ~H"""
     <div>
-      <.header class="mb-8"><%= @asset.file_name %></.header>
       <Beacon.LiveAdmin.Components.image_set :if={@is_image?} site={@asset.site} env={__ENV__} asset={@asset} class="mb-8" />
       <ul>
         <%= for {{key, url}, index} <- @urls do %>
@@ -40,7 +39,7 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.ShowComponent do
               <label class="block text-sm font-semibold leading-6 text-zinc-800 capitalize">
                 <%= key %>
               </label>
-              <input type="text" id={"url-#{index}"} value={url} readonly class="flex  mt-2 block w-full rounded-lg text-zinc-900 focus:ring-0 sm:text-sm sm:leading-6" />
+              <input type="text" id={"url-#{index}"} value={url} readonly class="flex mt-2 w-full rounded-lg text-zinc-900 focus:ring-0 sm:text-sm sm:leading-6" />
             </div>
             <div class="flex">
               <button phx-click={JS.dispatch("beacon_admin:clipcopy", to: "#url-#{index}")}>

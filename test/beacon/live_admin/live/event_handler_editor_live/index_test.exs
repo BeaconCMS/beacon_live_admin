@@ -32,7 +32,7 @@ defmodule Beacon.LiveAdmin.EventHandlerEditorLive.IndexTest do
 
     {:ok, view, _html} =
       view
-      |> form("#create-form", %{name: "my_test"})
+      |> form("#create-form", %{event_handler: %{name: "my_test"}})
       |> render_submit()
       |> follow_redirect(conn)
 
