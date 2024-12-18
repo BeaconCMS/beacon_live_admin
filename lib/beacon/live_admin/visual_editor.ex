@@ -79,7 +79,7 @@ defmodule Beacon.LiveAdmin.VisualEditor do
   end
 
   def element_editable?(%{"tag" => tag}) when not is_nil(tag) do
-    tag not in ["eex", "eex_block"]
+    tag not in ["eex", "eex_block", "root"]
   end
 
   def element_editable?(_element), do: false
