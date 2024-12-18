@@ -184,6 +184,12 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
     end
   end
 
+  # TODO: make the test work with the previous function
+  def handle_event("save", %{"page" => page_params}, socket) do
+    %{live_action: live_action} = socket.assigns
+    save_page(socket, live_action, page_params)
+  end
+
   defp save_page(socket, :new, page_params) do
     case Content.create_page(socket.assigns.site, page_params) do
       {:ok, page} ->
