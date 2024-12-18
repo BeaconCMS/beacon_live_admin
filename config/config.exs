@@ -7,10 +7,10 @@ config :logger, :console,
 config :phoenix, :json_library, Jason
 
 if Mix.env() in [:dev, :e2e] do
-  config :tailwind, version: "3.4.4"
+  config :tailwind, version: "3.4.13"
 
   config :tailwind,
-    version: "3.4.4",
+    version: "3.4.13",
     beacon_live_admin: [
       args: ~w(---config=tailwind.config.js --input=css/beacon_live_admin.css --output=../priv/static/beacon_live_admin.css ),
       cd: Path.expand("../assets", __DIR__)
