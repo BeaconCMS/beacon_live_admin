@@ -55,7 +55,7 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.Index do
       Layouts
       <:actions>
         <.link patch={beacon_live_admin_path(@socket, @beacon_page.site, "/layouts/new")} phx-click={JS.push_focus()}>
-          <.button class="uppercase">Create New Layout</.button>
+          <.button class="sui-primary uppercase">Create New Layout</.button>
         </.link>
       </:actions>
     </.header>

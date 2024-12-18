@@ -16,7 +16,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.EditTest do
 
     live
     |> form("#page-form", page: %{title: "site_a_other_page"})
-    |> render_submit()
+    |> render_submit(%{save: "save"})
 
     {:ok, _live, html} = live(conn, "/admin/site_a/pages")
 
@@ -30,8 +30,8 @@ defmodule Beacon.LiveAdmin.PageEditorLive.EditTest do
     {:ok, live, _html} = live(conn, "/admin/site_a/pages/#{page.id}")
 
     live
-    |> element("button", "Confirm")
-    |> render_click()
+    |> form("#page-form")
+    |> render_submit(%{save: "publish"})
 
     {:ok, _live, html} = live(conn, "/admin/site_a/pages")
 

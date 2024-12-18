@@ -59,7 +59,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.Index do
       Components
       <:actions>
         <.link patch={beacon_live_admin_path(@socket, @beacon_page.site, "/components/new")} phx-click={JS.push_focus()}>
-          <.button class="uppercase">Create New Component</.button>
+          <.button class="sui-primary uppercase">Create New Component</.button>
         </.link>
       </:actions>
     </.header>

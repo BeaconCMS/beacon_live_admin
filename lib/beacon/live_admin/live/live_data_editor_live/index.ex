@@ -102,7 +102,7 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Index do
       <p id="header-page-title">Live Data</p>
       <:actions>
         <.link id="header-new-path-button" patch={beacon_live_admin_path(@socket, @beacon_page.site, "/live_data/new")}>
-          <.button class="uppercase">New Path</.button>
+          <.button class="sui-primary uppercase">New Path</.button>
         </.link>
       </:actions>
     </.header>
@@ -133,24 +133,24 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Index do
     </.main_content>
 
     <.modal :if={@show_new_path_modal} id="new-path-modal" on_cancel={JS.push("close_modal")} show>
-      <p class="text-2xl font-bold mb-12">New Path</p>
-      <.form id="new-path-form" for={%{}} phx-submit="submit_path">
+      <:title>New Path</:title>
+      <.form id="new-path-form" for={%{}} phx-submit="submit_path" class="px-4 pt-4">
         <.input type="text" name="path" placeholder="/project/:project_id/comments" value="" />
         <div class="flex mt-8 gap-x-[20px]">
           <.button type="submit">Create</.button>
-          <.button type="button" phx-click={JS.push("close_modal")}>Cancel</.button>
+          <.button type="button" phx-click={JS.push("close_modal")} class="sui-secondary">Cancel</.button>
         </div>
       </.form>
     </.modal>
 
     <.modal :if={@show_edit_path_modal} id="edit-path-modal" on_cancel={JS.push("close_modal")} show>
-      <p class="text-2xl font-bold mb-12">Edit Path</p>
-      <.form id="edit-path-form" for={@edit_path_form} phx-submit="edit_path">
+      <:title>Edit Path</:title>
+      <.form id="edit-path-form" for={@edit_path_form} phx-submit="edit_path" class="px-4 pt-4">
         <.input field={@edit_path_form[:path]} type="text" />
         <div class="flex mt-8 gap-x-[20px]">
           <.button type="submit">Update</.button>
-          <.button type="button" phx-click={JS.push("close_modal")}>Cancel</.button>
-          <.button type="button" class="!bg-red-600" phx-click="delete_path">Delete</.button>
+          <.button type="button" phx-click={JS.push("close_modal")} class="sui-secondary">Cancel</.button>
+          <.button type="button" phx-click="delete_path" class="sui-primary-destructive">Delete</.button>
         </div>
       </.form>
     </.modal>
