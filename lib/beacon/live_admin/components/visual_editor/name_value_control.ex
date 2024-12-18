@@ -21,11 +21,18 @@ defmodule Beacon.LiveAdmin.VisualEditor.NameValueControl do
         </:header>
 
         <.form :let={f} for={@form} id={@id <> "-form"} phx-target={@myself} phx-submit="save" phx-change="validate">
-          <.input :if={@attribute.editing} field={f[:name]} placeholder="Name" class="w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm" />
-          <.input :if={@attribute.editing} field={f[:value]} placeholder="Value" class="w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm" />
-
-          <.input :if={!@attribute.editing} field={f[:name]} placeholder="Name" class="w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm cursor-not-allowed" disabled />
-          <.input :if={!@attribute.editing} field={f[:value]} placeholder="Value" class="w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm cursor-not-allowed" disabled />
+          <.input
+            field={f[:name]}
+            placeholder="Name"
+            class={"w-full mb-2 py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm #{if !@attribute.editing, do: "cursor-not-allowed"}"}
+            disabled={!@attribute.editing}
+          />
+          <.input
+            field={f[:value]}
+            placeholder="Value"
+            class={"w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm #{if !@attribute.editing, do: "cursor-not-allowed"}"}
+            disabled={!@attribute.editing}
+          />
 
           <.button :if={@attribute.editing} phx-disable-with="Saving..." class="">Save</.button>
           <.button :if={@attribute.editing} type="button" phx-target={@myself} phx-click="discard">Discard</.button>

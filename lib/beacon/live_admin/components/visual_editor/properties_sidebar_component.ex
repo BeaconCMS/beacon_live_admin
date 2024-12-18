@@ -106,16 +106,17 @@ defmodule Beacon.LiveAdmin.VisualEditor.PropertiesSidebarComponent do
           <%= for attribute <- @other_attributes do %>
             <.live_component module={VisualEditor.NameValueControl} id={attribute.id} path={@selected_element["path"]} parent={@myself} attribute={attribute} />
           <% end %>
-
-          <button
-            :if={!@editing}
-            type="button"
-            class="bg-blue-500 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-2 px-4 rounded outline-2 w-full"
-            phx-click="add_attribute"
-            phx-target={@myself}
-          >
-            + Add attribute
-          </button>
+          <div class="p-4">
+            <button
+              :if={!@editing}
+              type="button"
+              class="bg-blue-500 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-2 px-4 rounded outline-2 w-full"
+              phx-click="add_attribute"
+              phx-target={@myself}
+            >
+              + Add attribute
+            </button>
+          </div>
         <% end %>
       </div>
     </div>
