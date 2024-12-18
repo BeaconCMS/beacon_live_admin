@@ -13,11 +13,8 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
   def update(%{site: site, page: page} = assigns, socket) do
     changeset =
       case socket.assigns do
-        %{form: form} ->
-          Content.change_page(site, page, form.params)
-
-        _ ->
-          Content.change_page(site, page)
+        %{form: form} -> Content.change_page(site, page, form.params)
+        _ -> Content.change_page(site, page)
       end
 
     page_status =
@@ -156,15 +153,9 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
      |> assign_extra_fields(changeset)}
   end
 
-  def handle_event("save", %{"save" => "save", "page" => page_params}, socket) do
-    %{site: site, template: template, live_action: live_action} = socket.assigns
+  def handle_event("save", %{"save" => user_action, "page" => page_params}, socket) do
+    %{site: site, template: template, page: page, live_action: live_action} = socket.assigns
     page_params = Map.merge(page_params, %{"site" => site, "template" => template})
-
-    save_page(socket, live_action, page_params)
-  end
-
-  def handle_event("save", %{"save" => "publish", "page" => page_params}, socket) do
-    %{site: site, page: page, live_action: live_action} = socket.assigns
 
     save_result =
       case live_action do
@@ -172,49 +163,23 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
         :edit -> Content.update_page(site, page, page_params)
       end
 
+    maybe_publish_fn =
+      case user_action do
+        "save" -> fn _, _ -> {:ok, []} end
+        "publish" -> &Content.publish_page/2
+      end
+
     with {:ok, page} <- save_result,
-         {:ok, _} <- Content.publish_page(site, page.id) do
+         {:ok, _} <- maybe_publish_fn.(site, page.id) do
       {:noreply,
        socket
-       |> put_flash(:info, "Page published successfully")
-       |> push_navigate(to: beacon_live_admin_path(socket, site, "/pages"), replace: true)}
+       |> assign(page: page, show_modal: nil)
+       |> update(:page_status, &if(user_action == "publish", do: :published, else: &1))
+       |> put_flash(:info, "Page #{String.trim_trailing(user_action, "e")}ed successfully")
+       |> push_patch(to: beacon_live_admin_path(socket, site, "/pages/#{page.id}"))}
     else
       {:error, changeset} ->
-        changeset = Map.put(changeset, :action, :publish)
-        {:noreply, assign_form(socket, changeset)}
-    end
-  end
-
-  defp save_page(socket, :new, page_params) do
-    case Content.create_page(socket.assigns.site, page_params) do
-      {:ok, page} ->
-        to = beacon_live_admin_path(socket, socket.assigns.site, "/pages/#{page.id}")
-
-        {:noreply,
-         socket
-         |> put_flash(:info, "Page created successfully")
-         |> push_navigate(to: to)}
-
-      {:error, changeset} ->
-        changeset = Map.put(changeset, :action, :insert)
-        {:noreply, assign_form(socket, changeset)}
-    end
-  end
-
-  defp save_page(socket, :edit, page_params) do
-    case Content.update_page(socket.assigns.site, socket.assigns.page, page_params) do
-      {:ok, page} ->
-        changeset = Content.change_page(socket.assigns.site, page)
-
-        {:noreply,
-         socket
-         |> assign(:page, page)
-         |> assign_form(changeset)
-         |> assign_extra_fields(changeset)
-         |> put_flash(:info, "Page updated successfully")}
-
-      {:error, changeset} ->
-        changeset = Map.put(changeset, :action, :update)
+        changeset = Map.put(changeset, :action, :save)
         {:noreply, assign_form(socket, changeset)}
     end
   end
@@ -299,7 +264,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
             Visual Editor
           </.button>
           <.button :if={@live_action in [:new, :edit] && @editor == "visual"} type="button" phx-click="enable_editor" phx-value-editor="code" class="sui-primary uppercase">Code Editor</.button>
-          <.button :if={@live_action == :new} phx-disable-with="Saving..." form="page-form" class="sui-primary uppercase">Create Draft Page</.button>
+          <.button :if={@live_action == :new} phx-disable-with="Saving..." form="page-form" name="save" value="save" class="sui-primary uppercase">Create Draft Page</.button>
           <.button :if={@live_action == :edit} phx-disable-with="Saving..." form="page-form" name="save" value="save" class="sui-primary uppercase">Save Changes</.button>
           <.button :if={@live_action == :edit} phx-click="show_modal" phx-value-confirm="publish" phx-target={@myself} class="sui-primary uppercase">Publish</.button>
           <.button :if={@live_action == :edit} phx-click="show_modal" phx-value-confirm="unpublish" phx-target={@myself} class="sui-primary-destructive uppercase">Unpublish</.button>
