@@ -20,6 +20,12 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
           Content.change_page(site, page)
       end
 
+    page_status =
+      case Content.get_latest_page_event(site, page.id) do
+        nil -> nil
+        %{event: event} -> event
+      end
+
     {:ok,
      socket
      |> assign(assigns)
@@ -27,6 +33,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
      |> assign_template(Changeset.get_field(changeset, :template))
      |> maybe_assign_builder_page(changeset)
      |> assign(:language, language(page.format))
+     |> assign(:page_status, page_status)
      |> assign_extra_fields(changeset)
      |> assign_new(:show_modal, fn -> nil end)
      |> assign_new(:tailwind_config, fn -> RuntimeCSS.asset_url(site) end)
@@ -116,6 +123,24 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
 
   def handle_event("close_modal", _params, socket) do
     {:noreply, assign(socket, show_modal: nil)}
+  end
+
+  def handle_event("unpublish", _params, socket) do
+    %{site: site, page: page} = socket.assigns
+
+    socket =
+      case Content.unpublish_page(page) do
+        {:ok, _page} -> put_flash(socket, :info, "Page unpublished successfully")
+        {:error, _changeset} -> put_flash(socket, :error, "Something went wrong")
+      end
+
+    socket =
+      socket
+      |> assign(show_modal: nil)
+      |> assign(page_status: :unpublished)
+      |> push_patch(to: beacon_live_admin_path(socket, site, "/pages/#{page.id}"))
+
+    {:noreply, socket}
   end
 
   def handle_event("validate", %{"page" => page_params}, socket) do
@@ -265,7 +290,10 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
       <Beacon.LiveAdmin.AdminComponents.page_header socket={@socket} flash={@flash} page={@page} live_action={@live_action} />
 
       <.header>
-        <%= @page_title %>
+        <div class="flex gap-x-4">
+          <div><%= @page_title %></div>
+          <.page_status status={@page_status} />
+        </div>
         <:actions>
           <.button :if={@live_action in [:new, :edit] && @editor == "code" && @page.format == :heex} type="button" phx-click="enable_editor" phx-value-editor="visual" class="sui-primary uppercase">
             Visual Editor
@@ -274,6 +302,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
           <.button :if={@live_action == :new} phx-disable-with="Saving..." form="page-form" class="sui-primary uppercase">Create Draft Page</.button>
           <.button :if={@live_action == :edit} phx-disable-with="Saving..." form="page-form" name="save" value="save" class="sui-primary uppercase">Save Changes</.button>
           <.button :if={@live_action == :edit} phx-click="show_modal" phx-value-confirm="publish" phx-target={@myself} class="sui-primary uppercase">Publish</.button>
+          <.button :if={@live_action == :edit} phx-click="show_modal" phx-value-confirm="unpublish" phx-target={@myself} class="sui-primary-destructive uppercase">Unpublish</.button>
         </:actions>
       </.header>
 
@@ -299,6 +328,30 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
           >
             Confirm
           </button>
+        </div>
+      </.modal>
+
+      <.modal :if={@show_modal == :unpublish_confirm} id="unpublish-confirm-modal" on_cancel={JS.push("close_modal", target: @myself)} show>
+        <:title>Unpublish Page</:title>
+        <div class="mt-2">
+          <p class="text-sm text-gray-500">Are you sure you want to unpublish this page?  Requests to this path will show your site's 404 Error Page.</p>
+        </div>
+        <div class="py-4">
+          <.button
+            type="button"
+            class="sui-secondary inline-flex justify-center w-full px-3 py-2 mt-3 text-sm font-semibold text-gray-900 bg-white rounded-md shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+            phx-click={JS.push("close_modal", target: @myself)}
+          >
+            Cancel
+          </.button>
+          <.button
+            type="button"
+            class="sui-primary-destructive inline-flex justify-center w-full px-3 py-2 text-sm font-semibold text-white bg-blue-600 rounded-md shadow-sm hover:bg-blue-500 sm:w-auto"
+            phx-click="unpublish"
+            phx-target={@myself}
+          >
+            Confirm
+          </.button>
         </div>
       </.modal>
 
@@ -350,6 +403,18 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
         </div>
       </div>
     </div>
+    """
+  end
+
+  defp page_status(%{status: :published} = assigns) do
+    ~H"""
+    <div class="border border-black rounded-xl bg-lime-400 text-sm px-4 py-1">Status: Published</div>
+    """
+  end
+
+  defp page_status(assigns) do
+    ~H"""
+    <div class="border border-black rounded-xl bg-yellow-300 text-sm px-4 py-1">Status: Draft</div>
     """
   end
 end
