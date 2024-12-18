@@ -279,7 +279,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
   end
 
   defp svelte_page_builder_class("code" = _editor), do: "hidden"
-  defp svelte_page_builder_class("visual" = _editor), do: "mt-4 relative"
+  defp svelte_page_builder_class("visual" = _editor), do: "mt-4 relative flex-1"
 
   @impl true
   @spec render(any()) :: Phoenix.LiveView.Rendered.t()
