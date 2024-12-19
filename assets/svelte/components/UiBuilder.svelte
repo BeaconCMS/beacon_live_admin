@@ -16,6 +16,7 @@
   export let tailwindConfig: string
   export let tailwindInput: string
   export let live
+
   $: $pageStore = page
   $: $tailwindConfigStore = tailwindConfig
   $: $tailwindInputStore = tailwindInput
@@ -24,22 +25,15 @@
   onDestroy(() => {
     resetStores()
   })
-
-  function addBasicComponentToTarget(e: CustomEvent) {
-    // This method is in PagePreview.
-  }
 </script>
 
-<Backdrop />
 <div class="flex min-h-screen bg-gray-100" id="ui-builder-app-container" data-testid="app-container">
+  <Backdrop />
   <!-- Left sidebar -->
   <ComponentsSidebar {components} />
 
   <!-- Main -->
   <PagePreview />
-
-  <!-- Right sidebar -->
-  <PropertiesSidebar on:droppedIntoTarget={(e) => addBasicComponentToTarget(e.detail)} />
 
   <SelectedElementFloatingMenu />
 </div>

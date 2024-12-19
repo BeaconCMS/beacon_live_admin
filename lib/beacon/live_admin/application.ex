@@ -8,7 +8,8 @@ defmodule Beacon.LiveAdmin.Application do
     children = [
       Beacon.LiveAdmin.Registry,
       {Phoenix.PubSub, name: Beacon.LiveAdmin.PubSub},
-      Beacon.LiveAdmin.Cluster
+      Beacon.LiveAdmin.Cluster,
+      Turboprop.Cache
     ]
 
     Supervisor.start_link(children, strategy: :one_for_one, name: Beacon.LiveAdmin.Supervisor)

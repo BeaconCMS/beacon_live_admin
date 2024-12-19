@@ -71,10 +71,12 @@ defmodule Beacon.LiveAdmin.StationUI.HTML.Form do
     """
   end
 
+  # FIXME: install StationUI to make use of StationUI.Gettext
   @doc """
   Translates an error message using gettext.
   """
-  def translate_error({msg, opts}) do
+  def translate_error({msg, _opts}) do
+    msg
     # When using gettext, we typically pass the strings we want
     # to translate as a static argument:
     #
@@ -85,11 +87,11 @@ defmodule Beacon.LiveAdmin.StationUI.HTML.Form do
     # dynamically, so we need to translate them by calling Gettext
     # with our gettext backend as first argument. Translations are
     # available in the errors.po file (as we use the "errors" domain).
-    if count = opts[:count] do
-      Gettext.dngettext(StationUI.Gettext, "errors", msg, msg, count, opts)
-    else
-      Gettext.dgettext(StationUI.Gettext, "errors", msg, opts)
-    end
+    # if count = opts[:count] do
+    #   Gettext.dngettext(StationUI.Gettext, "errors", msg, msg, count, opts)
+    # else
+    #   Gettext.dgettext(StationUI.Gettext, "errors", msg, opts)
+    # end
   end
 
   @doc """
