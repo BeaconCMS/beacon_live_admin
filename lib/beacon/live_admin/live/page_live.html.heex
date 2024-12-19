@@ -1,4 +1,4 @@
-<aside id="sidebar" class="@container w-full max-w-[76px] sm:max-w-[180px]">
+<%!-- <aside id="sidebar" class="@container w-full max-w-[76px] sm:max-w-[180px]">
   <div class="flex flex-col h-full min-h-screen px-1 py-2 bg-white shadow-xl @[180px]:pr-0 @[180px]:pl-2 @[240px]:pl-3 @[350px]:pl-6">
     <header class="p-2 @[240px]:py-2.5 @[300px]:py-3.5 @[350px]:py-4.5">
       <div class="flex items-center justify-center @[180px]:justify-start gap-0 @[180px]:gap-1.5 @[240px]:gap-2.5 @[300px]:gap-3.5 @[350px]:gap-4">
@@ -30,5 +30,38 @@
 </aside>
 
 <main class="w-full px-4 pt-4 sm:px-6 lg:px-6">
+  <%= render_page(@beacon_page.module, assigns) %>
+</main> --%>
+
+<div class="bg-white">
+  <div class="max-w-screen-xl mx-auto w-full">
+    <.navbar aria_label="Main navigation" class="sticky top-0 border-transparent bg-white">
+      <span class="hidden text-lg font-light antialiased min-[1800px]:text-4xl lg:block xl:text-xl 2xl:text-3xl">
+        Dockyard
+      </span>
+      <.navbar_left>
+        <:item>
+          <.link navigate={beacon_live_admin_path(@socket, @beacon_page.site, "/pages")} class="text-lg font-bold">Pages</.link>
+        </:item>
+        <:item>
+          <.link navigate={beacon_live_admin_path(@socket, @beacon_page.site, "/media_library")} class="text-lg font-bold">Media Library</.link>
+        </:item>
+        <:item>
+          <.link navigate={beacon_live_admin_path(@socket, @beacon_page.site, "/employees")} class="text-lg font-bold">Employees</.link>
+        </:item>
+        <:item>
+          <.button class="text-lg font-bold">Developer</.button>
+        </:item>    
+      </.navbar_left>
+      <.navbar_right>
+        <:item>
+          <.site_selector selected_site={@beacon_page.site} options={@__beacon_sites__} />
+        </:item>       
+      </.navbar_right>
+    </.navbar>
+  </div>
+</div>
+
+<main class="max-w-screen-xl mx-auto w-full py-6">
   <%= render_page(@beacon_page.module, assigns) %>
 </main>
