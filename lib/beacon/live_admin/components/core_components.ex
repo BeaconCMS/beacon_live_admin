@@ -360,9 +360,9 @@ defmodule Beacon.LiveAdmin.CoreComponents do
 
   def header(assigns) do
     ~H"""
-    <header class={[@actions != [] && "flex items-center justify-between gap-6", @class]}>
+    <header class={[@actions != [] && "flex items-center justify-between gap-6 py-6", @class]}>
       <div>
-        <h1 class="font-medium text-[#030913] text-lg/6 md:text-2xl/8">
+        <h1 class="font-black text-[#030913] text-6xl">
           <%= render_slot(@inner_block) %>
         </h1>
         <p :if={@subtitle != []} class="mt-2 text-sm leading-6 text-zinc-600">

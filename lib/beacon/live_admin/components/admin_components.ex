@@ -426,9 +426,9 @@ defmodule Beacon.LiveAdmin.AdminComponents do
 
   def table_search(assigns) do
     ~H"""
-    <.simple_form :let={f} for={%{}} as={:search} phx-change="beacon:table-search">
+    <.form :let={f} for={%{}} as={:search} phx-change="beacon:table-search">
       <.input type="search" field={f[:query]} value={@table.query} autofocus={true} placeholder={@placeholder || "Search"} phx-debounce={200} />
-    </.simple_form>
+    </.form>
     """
   end
 
@@ -440,12 +440,12 @@ defmodule Beacon.LiveAdmin.AdminComponents do
 
   def table_sort(assigns) do
     ~H"""
-    <.simple_form :let={f} for={%{}} as={:sort} phx-change="beacon:table-sort">
+    <.form :let={f} for={%{}} as={:sort} phx-change="beacon:table-sort">
       <div class="flex items-center gap-2 justify-end">
         <label for="sort_sort_by" class="text-sm font-medium text-gray-900">Sort by</label>
         <.input type="select" field={f[:sort_by]} value={@table.sort_by} options={@options} />
       </div>
-    </.simple_form>
+    </.form>
     """
   end
 

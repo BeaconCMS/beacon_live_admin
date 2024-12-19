@@ -10,6 +10,7 @@ const esbuild = require("esbuild")
 const sveltePlugin = require("esbuild-svelte")
 const importGlobPlugin = require("esbuild-plugin-import-glob").default
 const sveltePreprocess = require("svelte-preprocess")
+const copyStaticFiles = require('esbuild-copy-static-files');
 
 const args = process.argv.slice(2)
 const watch = args.includes("--watch")
@@ -40,6 +41,10 @@ let clientOpts = {
         customElement: true,
       },
     }),
+    copyStaticFiles({
+      src: './images',
+      dest: '../priv/static/images',
+    }),    
   ],
 }
 

@@ -21,6 +21,7 @@
     "esbuild": "^0.20",
     "esbuild-plugin-import-glob": "^0.1",
     "esbuild-svelte": "^0.8",
+    "esbuild-copy-static-files": "^0.1.0",
     "postcss": "^8.4.44",
     "svelte": "^4.2",
     "svelte-preprocess": "^5.1",
