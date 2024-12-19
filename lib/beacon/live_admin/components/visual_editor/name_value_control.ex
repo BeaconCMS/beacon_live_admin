@@ -34,8 +34,10 @@ defmodule Beacon.LiveAdmin.VisualEditor.NameValueControl do
             disabled={!@attribute.editing}
           />
 
-          <.button :if={@attribute.editing} phx-disable-with="Saving..." class="">Save</.button>
-          <.button :if={@attribute.editing} type="button" phx-target={@myself} phx-click="discard">Discard</.button>
+          <div class="mt-2">
+            <.button :if={@attribute.editing} phx-disable-with="Saving..." class="">Save</.button>
+            <.button :if={@attribute.editing} type="button" phx-target={@myself} phx-click="discard">Discard</.button>
+          </div>
         </.form>
       </.control_section>
     </div>
