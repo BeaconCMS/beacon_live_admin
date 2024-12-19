@@ -45,18 +45,9 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
 
     <div class="flex justify-between">
       <div class="flex items-center gap-2 w-full">
-        <div class="flex flex-1 items-center gap-2 bg-white">
-          <.icon name="hero-magnifying-glass" />
-          <%!-- <.table_search table={@beacon_page.table} placeholder="Search by path or title (showing up to 15 results)" /> --%>
-          <input name="query" value="" class="flex-1 border-0 outline-0" placeholder="Search by path or title (showing up to 15 results)" />
-        </div>
-        <div>
-          <.table_sort table={@beacon_page.table} options={[{"Title", "title"}, {"Path", "path"}]} />
-        </div>
-      </div>
-      <%!-- <div class="basis-2/12">
+        <.table_search table={@beacon_page.table} placeholder="Search by path or title (showing up to 15 results)" />
         <.table_sort table={@beacon_page.table} options={[{"Title", "title"}, {"Path", "path"}]} />
-      </div> --%>
+      </div>
     </div>
 
     <.main_content>

@@ -106,10 +106,8 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.Index do
     </.header>
 
     <div class="flex justify-between">
-      <div class="basis-8/12">
-        <.table_search table={@beacon_page.table} placeholder="Search by file name (showing up to 15 results)" />
-      </div>
-      <div class="basis-2/12">
+      <div class="flex items-center gap-2 w-full">
+        <.table_search table={@beacon_page.table} placeholder="Search by path or title (showing up to 15 results)" />
         <.table_sort table={@beacon_page.table} options={[{"File Name", "file_name"}, {"Type", "media_type"}]} />
       </div>
     </div>
@@ -118,7 +116,7 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.Index do
       <.table id="assets" rows={@streams.assets} row_click={fn {_dom_id, asset} -> JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/media_library/#{asset.id}")) end}>
         <:col :let={{_, asset}} label=""><Beacon.LiveAdmin.AdminComponents.thumbnail source={MediaLibrary.url_for(asset.site, asset.thumbnail)} /></:col>
         <:col :let={{_, asset}} label="File Name"><%= asset.file_name %></:col>
-        <:col :let={{_, asset}} label="type"><%= asset.media_type %></:col>
+        <:col :let={{_, asset}} label="Type"><%= asset.media_type %></:col>
         <:action :let={{_, asset}}>
           <.link aria-label="View asset" title="View asset" class="flex items-center justify-center w-10 h-10" patch={beacon_live_admin_path(@socket, @beacon_page.site, "/media_library/#{asset.id}")}>
             <.icon name="hero-eye text-[#61758A] hover:text-[#304254]" />

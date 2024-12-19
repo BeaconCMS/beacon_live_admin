@@ -268,9 +268,11 @@ defmodule Beacon.LiveAdmin.CoreComponents do
   def input(%{type: "select"} = assigns) do
     ~H"""
     <div phx-feedback-for={@name}>
+      <%= if @label do %>
       <.label for={@id}><%= @label %></.label>
+      <% end %>
       <select id={@id} name={@name} class="block w-full mt-1 bg-white border border-gray-300 rounded-md shadow-sm focus:border-zinc-400 focus:ring-0 sm:text-sm" multiple={@multiple} {@rest}>
-        <option :if={@prompt} value=""><%= @prompt %></option>
+        <option disabled :if={@prompt} value=""><%= @prompt %></option>
         <%= Phoenix.HTML.Form.options_for_select(@options, @value) %>
       </select>
       <.error :for={msg <- @errors}><%= msg %></.error>

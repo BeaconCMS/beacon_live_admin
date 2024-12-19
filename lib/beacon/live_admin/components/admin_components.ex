@@ -9,7 +9,8 @@ defmodule Beacon.LiveAdmin.AdminComponents do
   alias Phoenix.LiveView.JS
   alias Beacon.LiveAdmin.CoreComponents
   alias Beacon.LiveAdmin.PageBuilder.Table
-
+  import Beacon.LiveAdmin.StationUI.HTML.TableHeader
+  import Beacon.LiveAdmin.StationUI.HTML.TableCell
   use Gettext, backend: Beacon.LiveAdmin.Gettext
   import Beacon.LiveAdmin.Router, only: [beacon_live_admin_path: 3]
 
@@ -322,9 +323,9 @@ defmodule Beacon.LiveAdmin.AdminComponents do
     ~H"""
     <div class="px-4 overflow-y-auto sm:overflow-visible sm:px-0">
       <table class="w-[40rem] mt-6 sm:w-full">
-        <thead class="text-sm leading-6 text-left text-zinc-500">
+        <thead class="font-sans font-black text-xl leading-6 text-left text-zinc-500">
           <tr>
-            <th :for={col <- @col} class="pt-0 pb-4 pl-0 pr-6 font-sans font-semibold uppercase text-sm tracking-[1.68px]"><%= col[:label] %></th>
+            <th :for={col <- @col} class="pt-0 pb-4 pl-0 pr-6"><%= col[:label] %></th>
             <th class="relative p-0 pb-4"><span class="sr-only"><%= gettext("Actions") %></span></th>
           </tr>
         </thead>
@@ -332,7 +333,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
           <tr :for={row <- @rows} id={@row_id && @row_id.(row)} class="group hover:bg-[#F0F5F9]">
             <td :for={{col, i} <- Enum.with_index(@col)} phx-click={@row_click && @row_click.(row)} class={["relative p-0", @row_click && "hover:cursor-pointer"]}>
               <div class="block py-4 pr-6">
-                <span class="absolute right-0 -inset-y-px -left-3 group-hover:bg-[#F0F5F9] sm:rounded-l-xl" />
+                <span class="absolute right-0 -inset-y-px -left-3 group-hover:bg-[#F0F5F9]" />
                 <span class={["relative", i == 0 && "font-semibold text-zinc-900"]}>
                   <%= render_slot(col, @row_item.(row)) %>
                 </span>
@@ -341,7 +342,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
             <td :if={@action != []} class="relative p-0 w-14">
               <div class="block py-4 pl-6">
                 <div class="flex justify-end">
-                  <span class="absolute left-0 -inset-y-px -right-3 group-hover:bg-[#F0F5F9] sm:rounded-r-xl" />
+                  <span class="absolute left-0 -inset-y-px -right-3 group-hover:bg-[#F0F5F9]" />
                   <span :for={action <- @action} class="relative text-sm font-medium font-semibold text-right text-zinc-900 hover:text-zinc-700 whitespace-nowrap">
                     <%= render_slot(action, @row_item.(row)) %>
                   </span>
@@ -412,7 +413,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
 
   def main_content(assigns) do
     ~H"""
-    <div class={"#{@class} px-4 py-2 mt-6 bg-white col-span-full rounded-[1.1rem]"}>
+    <div class={"#{@class} px-4 py-2 mt-6 bg-white col-span-full"}>
       <%= render_slot(@inner_block) %>
     </div>
     """
@@ -426,8 +427,9 @@ defmodule Beacon.LiveAdmin.AdminComponents do
 
   def table_search(assigns) do
     ~H"""
-    <.form :let={f} for={%{}} as={:search} phx-change="beacon:table-search">
-      <.input type="search" field={f[:query]} value={@table.query} autofocus={true} placeholder={@placeholder || "Search"} phx-debounce={200} />
+    <.form for={%{}} as={:search} phx-change="beacon:table-search" class="flex flex-1 items-center gap-2 bg-white">
+      <label for="search[query]" class="px-2"><.icon name="hero-magnifying-glass" /></label>
+      <input type="search" name="search[query]" value={@table.query} class="py-4 w-full border-0 outline-0" autofocus={true} placeholder={@placeholder || "Search"} phx-debounce={200} />
     </.form>
     """
   end
@@ -442,8 +444,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
     ~H"""
     <.form :let={f} for={%{}} as={:sort} phx-change="beacon:table-sort">
       <div class="flex items-center gap-2 justify-end">
-        <label for="sort_sort_by" class="text-sm font-medium text-gray-900">Sort by</label>
-        <.input type="select" field={f[:sort_by]} value={@table.sort_by} options={@options} />
+        <.input type="select" prompt="Sort by" field={f[:sort_by]} value={@table.sort_by} options={@options} />
       </div>
     </.form>
     """
