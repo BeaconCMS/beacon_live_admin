@@ -2208,6 +2208,10 @@ select{
   flex-shrink: 0;
 }
 
+.flex-grow{
+  flex-grow: 1;
+}
+
 .grow{
   flex-grow: 1;
 }
@@ -2266,6 +2270,10 @@ select{
 
 .cursor-default{
   cursor: default;
+}
+
+.cursor-not-allowed{
+  cursor: not-allowed;
 }
 
 .cursor-pointer{
@@ -3338,6 +3346,11 @@ select{
   line-height: 1.25rem;
 }
 
+.text-sm\/5{
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
 .text-sm\/\[21px\]{
   font-size: 0.875rem;
   line-height: 21px;
@@ -3496,6 +3509,11 @@ select{
 .text-blue-100{
   --tw-text-opacity: 1;
   color: rgb(219 234 254 / var(--tw-text-opacity));
+}
+
+.text-blue-500{
+  --tw-text-opacity: 1;
+  color: rgb(59 130 246 / var(--tw-text-opacity));
 }
 
 .text-blue-600{
