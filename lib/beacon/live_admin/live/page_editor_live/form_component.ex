@@ -255,7 +255,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
       <Beacon.LiveAdmin.AdminComponents.page_header socket={@socket} flash={@flash} page={@page} live_action={@live_action} />
 
       <.header>
-        <div class="flex gap-x-4">
+        <div class="flex gap-x-6">
           <div><%= @page_title %></div>
           <.page_status status={@page_status} />
         </div>
@@ -373,13 +373,17 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
 
   defp page_status(%{status: :published} = assigns) do
     ~H"""
-    <div class="border border-black rounded-xl bg-lime-400 text-sm px-4 py-1">Status: Published</div>
+    <div class="rounded-md bg-lime-400 text-sm px-4 py-1 flex items-center">
+      <div>Published</div>
+    </div>
     """
   end
 
   defp page_status(assigns) do
     ~H"""
-    <div class="border border-black rounded-xl bg-yellow-300 text-sm px-4 py-1">Status: Draft</div>
+    <div class="rounded-md bg-yellow-300 text-sm px-4 py-1 flex items-center">
+      <div>Draft</div>
+    </div>
     """
   end
 end
