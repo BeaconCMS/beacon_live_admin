@@ -75,6 +75,10 @@ defmodule Beacon.LiveAdmin.Client.Content do
     call(site, Beacon.Content, :publish_page, [site, id])
   end
 
+  def unpublish_page(page) do
+    call(page.site, Beacon.Content, :unpublish_page, [page])
+  end
+
   def get_page(site, id) do
     call(site, Beacon.Content, :get_page, [site, id])
   end
