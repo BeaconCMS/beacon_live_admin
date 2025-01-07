@@ -56,7 +56,7 @@ defmodule Beacon.LiveAdmin.MixProject do
       # Overridable
       override_dep(:phoenix, "~> 1.7", "PHOENIX_VERSION", "PHOENIX_PATH"),
       override_dep(:phoenix_live_view, "~> 0.20 or ~> 1.0", "PHOENIX_LIVE_VIEW_VERSION", "PHOENIX_LIVE_VIEW_PATH"),
-      override_dep(:live_monaco_editor, "~> 0.1", "LIVE_MONACO_EDITOR_VERSION", "LIVE_MONACO_EDITOR_PATH"),
+      override_dep(:live_monaco_editor, "~> 0.2", "LIVE_MONACO_EDITOR_VERSION", "LIVE_MONACO_EDITOR_PATH"),
       beacon_dep(),
 
       # Runtime

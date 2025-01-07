@@ -79,10 +79,10 @@ defmodule Beacon.LiveAdmin.JSHookEditorLive.Index do
     {:noreply, socket}
   end
 
-  def handle_event("save_changes", %{"js_hook" => params} = p, socket) do
+  def handle_event("save_changes", %{"js_hook" => params}, socket) do
     %{selected: selected, beacon_page: %{site: site}} = socket.assigns
 
-    # attrs = %{code: params["code"], name: params["name"]}
+    # TODO: validate js code
 
     socket =
       case Content.update_js_hook(site, selected, params) do
@@ -230,7 +230,7 @@ defmodule Beacon.LiveAdmin.JSHookEditorLive.Index do
           </div>
 
           <div :if={@form} class="w-full col-span-2">
-            <.form :let={f} for={@form} id="js-hook-form" class="flex items-end gap-4" phx-submit="save_changes">
+            <.form :let={f} for={@form} id="js-hook-form" class="flex items-end gap-4 mb-2" phx-submit="save_changes">
               <.input label="Name" field={f[:name]} type="text" />
               <input type="hidden" name="js_hook[mounted]" id="js_hook-form_mounted" value={Phoenix.HTML.Form.input_value(f, :mounted)} />
               <input type="hidden" name="js_hook[beforeUpdate]" id="js_hook-form_mounted" value={Phoenix.HTML.Form.input_value(f, :beforeUpdate)} />
@@ -243,9 +243,9 @@ defmodule Beacon.LiveAdmin.JSHookEditorLive.Index do
               <.button id="delete-js-hook-button" type="button" phx-click="delete" class="sui-primary-destructive">Delete</.button>
             </.form>
 
-            <p>mounted()</p>
+            <p class="text-xl font-bold pt-2">mounted()</p>
             <%= template_error(@form[:mounted]) %>
-            <div class="w-full mt-10 space-y-8">
+            <div class="w-full mt-2 space-y-8">
               <div class="py-6 rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
                 <LiveMonacoEditor.code_editor
                   path="js_hook_mounted"
@@ -257,9 +257,9 @@ defmodule Beacon.LiveAdmin.JSHookEditorLive.Index do
               </div>
             </div>
 
-            <p>beforeUpdate()</p>
+            <p class="text-xl font-bold pt-2">beforeUpdate()</p>
             <%= template_error(@form[:beforeUpdate]) %>
-            <div class="w-full mt-10 space-y-8">
+            <div class="w-full mt-2 space-y-8">
               <div class="py-6 rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
                 <LiveMonacoEditor.code_editor
                   path="js_hook_beforeUpdate"
@@ -271,9 +271,9 @@ defmodule Beacon.LiveAdmin.JSHookEditorLive.Index do
               </div>
             </div>
 
-            <p>updated()</p>
+            <p class="text-xl font-bold pt-2">updated()</p>
             <%= template_error(@form[:updated]) %>
-            <div class="w-full mt-10 space-y-8">
+            <div class="w-full mt-2 space-y-8">
               <div class="py-6 rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
                 <LiveMonacoEditor.code_editor
                   path="js_hook_updated"
@@ -285,9 +285,9 @@ defmodule Beacon.LiveAdmin.JSHookEditorLive.Index do
               </div>
             </div>
 
-            <p>destroyed()</p>
+            <p class="text-xl font-bold pt-2">destroyed()</p>
             <%= template_error(@form[:destroyed]) %>
-            <div class="w-full mt-10 space-y-8">
+            <div class="w-full mt-2 space-y-8">
               <div class="py-6 rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
                 <LiveMonacoEditor.code_editor
                   path="js_hook_destroyed"
@@ -299,9 +299,9 @@ defmodule Beacon.LiveAdmin.JSHookEditorLive.Index do
               </div>
             </div>
 
-            <p>disconnected()</p>
+            <p class="text-xl font-bold pt-2">disconnected()</p>
             <%= template_error(@form[:disconnected]) %>
-            <div class="w-full mt-10 space-y-8">
+            <div class="w-full mt-2 space-y-8">
               <div class="py-6 rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
                 <LiveMonacoEditor.code_editor
                   path="js_hook_disconnected"
@@ -313,9 +313,9 @@ defmodule Beacon.LiveAdmin.JSHookEditorLive.Index do
               </div>
             </div>
 
-            <p>reconnected()</p>
+            <p class="text-xl font-bold pt-2">reconnected()</p>
             <%= template_error(@form[:reconnected]) %>
-            <div class="w-full mt-10 space-y-8">
+            <div class="w-full mt-2 space-y-8">
               <div class="py-6 rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
                 <LiveMonacoEditor.code_editor
                   path="js_hook_reconnected"
@@ -326,7 +326,6 @@ defmodule Beacon.LiveAdmin.JSHookEditorLive.Index do
                 />
               </div>
             </div>
-
           </div>
         </div>
       </.main_content>
