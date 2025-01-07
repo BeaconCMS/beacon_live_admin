@@ -3,6 +3,7 @@
 ## Unreleased
 
 ### Enhancements
+  - Adds page to define custom JS Hooks
   - Updated UI styling with StationUI
   - Unsaved changes will now be saved when publishing, instead of discarded
   - Adds Unpublish button to Page editor
