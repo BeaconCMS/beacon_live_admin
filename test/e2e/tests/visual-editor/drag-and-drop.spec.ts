@@ -1,6 +1,6 @@
 import { test, expect } from "../../test-fixtures"
 import { syncLV } from "../../utils"
-import { dragTo, startDragging, verifyOrder } from "./helpers"
+import { dragTo, getDragButton, startDragging, verifyOrder } from "./helpers"
 
 const siteName = "site_a"
 const pagePath = "/drag-n-drop"
@@ -25,12 +25,11 @@ test.beforeEach(async ({ page }) => {
 
 // Note: while dragging, only the element clones are visible.
 // On drop, the clones get removed and the original elements will be visible again
-// FIXME: review test
-test.skip("It shows clones and placeholder for initiated drop location", async ({ page }) => {
+test("It shows clones and placeholder for initiated drop location", async ({ page }) => {
   await syncLV(page)
 
   const firstItem = page.getByTestId("margin-row-item-1")
-  const dragButton = page.getByTestId("drag-button")
+  const dragButton = getDragButton(page)
 
   await firstItem.click()
   await expect(firstItem).toHaveAttribute("data-selected", "true")
@@ -60,7 +59,7 @@ test.skip("Reordering", async ({ page }) => {
   await syncLV(page)
 
   const source = page.getByTestId("margin-row-item-1")
-  const dragButton = page.getByTestId("drag-button")
+  const dragButton = getDragButton(page)
 
   await verifyOrder(page, "[data-testid^=margin-row-item-]", [
     "margin-row-item-1",
@@ -92,7 +91,7 @@ test.skip("Persistence on save", async ({ page }) => {
   await syncLV(page)
 
   const source = page.getByTestId("margin-row-item-1")
-  const dragButton = page.getByTestId("drag-button")
+  const dragButton = getDragButton(page)
 
   await verifyOrder(page, "[data-testid^=margin-row-item-]", [
     "margin-row-item-1",
