@@ -57,8 +57,7 @@ defmodule Beacon.LiveAdmin.MixProject do
       override_dep(:phoenix, "~> 1.7", "PHOENIX_VERSION", "PHOENIX_PATH"),
       override_dep(:phoenix_live_view, "~> 0.20 or ~> 1.0", "PHOENIX_LIVE_VIEW_VERSION", "PHOENIX_LIVE_VIEW_PATH"),
       override_dep(:live_monaco_editor, "~> 0.1", "LIVE_MONACO_EDITOR_VERSION", "LIVE_MONACO_EDITOR_PATH"),
-      # beacon_dep(),
-      {:beacon, github: "BeaconCMS/beacon", runtime: false},
+      beacon_dep(),
 
       # Runtime
       {:ecto, "~> 3.6"},
@@ -90,18 +89,18 @@ defmodule Beacon.LiveAdmin.MixProject do
     end
   end
 
-  # defp beacon_dep do
-  #   cond do
-  #     path = System.get_env("BEACON_PATH") ->
-  #       {:beacon, path: path, runtime: false}
+  defp beacon_dep do
+    cond do
+      path = System.get_env("BEACON_PATH") ->
+        {:beacon, path: path, runtime: false}
 
-  #     @dev? ->
-  #       {:beacon, github: "BeaconCMS/beacon", runtime: false}
+      @dev? ->
+        {:beacon, github: "BeaconCMS/beacon", runtime: false}
 
-  #     :else ->
-  #       {:beacon, ">= 0.0.0 and < 1.0.0", runtime: false}
-  #   end
-  # end
+      :else ->
+        {:beacon, ">= 0.0.0 and < 1.0.0", runtime: false}
+    end
+  end
 
   defp aliases do
     [
