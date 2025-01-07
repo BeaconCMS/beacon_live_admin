@@ -1,5 +1,10 @@
 # Beacon LiveAdmin
 
+[![GitHub Release](https://img.shields.io/github/v/release/beaconCMS/beacon_live_admin?color=blue)](https://hex.pm/packages/beacon_live_admin)
+[![GitHub Release Date](https://img.shields.io/github/release-date/beaconCMS/beacon_live_admin)](https://github.com/BeaconCMS/beacon_live_admin/releases)
+[![GitHub License](https://img.shields.io/github/license/beaconCMS/beacon_live_admin?color=orange)](https://github.com/BeaconCMS/beacon_live_admin/blob/main/LICENSE.md)
+[![Documentation](https://img.shields.io/badge/documentation-555555)](https://hexdocs.pm/beacon_live_admin)
+
 Phoenix LiveView web interface to manage content for sites built by [Beacon](https://github.com/BeaconCMS/beacon).
 
 ## Status

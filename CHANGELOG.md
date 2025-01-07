@@ -5,6 +5,8 @@
 ### Enhancements
   - Updated UI styling with StationUI
   - Unsaved changes will now be saved when publishing, instead of discarded
+  - Adds Unpublish button to Page editor
+  - Page editor now shows draft/published status
 
 ### Fixes
 
