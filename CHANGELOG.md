@@ -9,6 +9,10 @@
   - Adds Unpublish button to Page editor
   - Page editor now shows draft/published status
 
+### Fixes
+
+  - Fixed a bug where MediaLibrary could check for file contents on the wrong node in multi-node deployments
+
 ## 0.3.1 (2024-12-12)
 
 ### Fixes
