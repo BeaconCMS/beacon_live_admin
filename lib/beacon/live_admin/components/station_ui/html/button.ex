@@ -30,10 +30,10 @@ defmodule Beacon.LiveAdmin.StationUI.HTML.Button do
     lg: text-2xl lg:text-3xl
     sm: text-sm lg:text-base
   """
-  attr(:class, :string, default: "sui-primary")
-  attr(:rest, :global, include: ~w(disabled form formaction formmethod))
+  attr :class, :string, default: "sui-primary"
+  attr :rest, :global, include: ~w(disabled form formaction formmethod)
 
-  slot(:inner_block)
+  slot :inner_block
 
   def button(assigns) do
     ~H"""
