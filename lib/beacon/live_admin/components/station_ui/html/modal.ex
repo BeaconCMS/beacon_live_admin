@@ -7,8 +7,8 @@ defmodule Beacon.LiveAdmin.StationUI.HTML.Modal do
   alias Phoenix.LiveView.JS
 
   @doc """
-  The modals component renders a block of content that displays on top of the page.
-  The modal can be dismissed by clicking on the close button or hitting ESC on the keyboard.
+  The modals component renders a block of content that displays on top of the page. The modal can be dismissed by clicking on the close button or hitting ESC on the keyboard.
+
   """
 
   attr :id, :string, required: true

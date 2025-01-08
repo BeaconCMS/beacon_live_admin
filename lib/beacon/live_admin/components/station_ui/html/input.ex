@@ -561,7 +561,12 @@ defmodule Beacon.LiveAdmin.StationUI.HTML.Input do
           />
         </div>
 
-        <.focus_wrap class="relative z-10 pt-0.5" id={"#{@option_list_id}-wrapper"} phx-key="escape" phx-window-keydown={JS.exec("data-close-select", to: "##{@wrapper_id}")}>
+        <.focus_wrap
+          class="relative z-10 pt-0.5"
+          id={"#{@option_list_id}-wrapper"}
+          phx-key="escape"
+          phx-window-keydown={JS.exec("data-close-select", to: "##{@wrapper_id}")}
+        >
           <ul
             id={@option_list_id}
             aria-hidden="true"

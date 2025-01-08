@@ -189,7 +189,16 @@ defmodule Beacon.LiveAdmin.StationUI.HTML.Avatar do
 
   def default_avatar_placeholder_icon(assigns) do
     ~H"""
-    <svg class="h-auto self-end" role="img" width="32" height="52" viewBox="0 0 32 52" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label={@name || "Avatar Image"}>
+    <svg
+      class="h-auto self-end"
+      role="img"
+      width="32"
+      height="52"
+      viewBox="0 0 32 52"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-label={@name || "Avatar Image"}
+    >
       <title :if={@name}><%= @name %></title>
       <circle class="fill-gray-300" cx="16" cy="16" r="16" />
       <path class="fill-gray-400" opacity="0.6" d="M16 0C7.16344 0 0 7.16344 0 16C4 16 6 14 8 12C11.2 20 30 20 32 16C32 7.16344 24.8366 0 16 0Z" />
