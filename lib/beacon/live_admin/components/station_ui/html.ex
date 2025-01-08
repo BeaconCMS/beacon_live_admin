@@ -1,3 +1,6 @@
+# TODO: Upgrade to latest when we require LiveView ~> 1.0
+# Locked in to https://github.com/DockYard/station-ui/tree/fd45707002b972f93518063f53fc268d8d98cdfb
+
 defmodule Beacon.LiveAdmin.StationUI.HTML do
   defmacro __using__(_) do
     quote do
