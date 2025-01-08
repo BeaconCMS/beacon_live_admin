@@ -31,7 +31,7 @@ defmodule Beacon.LiveAdmin.StationUI.HTML.Button do
     sm: text-sm lg:text-base
   """
   attr :class, :string, default: "sui-primary"
-  attr :rest, :global, include: ~w(disabled form formaction formmethod)
+  attr :rest, :global, include: ~w(disabled form formaction formmethod name value)
 
   slot :inner_block
 
