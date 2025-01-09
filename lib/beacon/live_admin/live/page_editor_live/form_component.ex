@@ -3,24 +3,24 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
 
   use Beacon.LiveAdmin.Web, :live_component
 
-  require Logger
-
-  alias Ecto.Changeset
   alias Beacon.LiveAdmin.Client.Config
   alias Beacon.LiveAdmin.Client.Content
   alias Beacon.LiveAdmin.RuntimeCSS
   alias Beacon.LiveAdmin.WebAPI
-  alias Beacon.LiveAdmin.VisualEditor
+  alias Ecto.Changeset
 
   @impl true
   def update(%{site: site, page: page} = assigns, socket) do
     changeset =
       case socket.assigns do
-        %{form: form} ->
-          Content.change_page(site, page, form.params)
+        %{form: form} -> Content.change_page(site, page, form.params)
+        _ -> Content.change_page(site, page)
+      end
 
-        _ ->
-          Content.change_page(site, page)
+    page_status =
+      case page.id && Content.get_latest_page_event(site, page.id) do
+        nil -> nil
+        %{event: event} -> event
       end
 
     {:ok,
@@ -30,6 +30,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
      |> assign_template(Changeset.get_field(changeset, :template))
      |> maybe_assign_builder_page(changeset)
      |> assign(:language, language(page.format))
+     |> assign(:page_status, page_status)
      |> assign_extra_fields(changeset)
      |> assign_new(:show_modal, fn -> nil end)
      |> assign_new(:tailwind_config, fn -> RuntimeCSS.asset_url(site) end)
@@ -54,7 +55,10 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
      end)}
   end
 
-  # updated template from code editor
+  def update(%{template: _template}, %{assigns: %{editor: "visual"}} = socket) do
+    {:ok, socket}
+  end
+
   def update(%{template: template}, %{assigns: %{editor: "code"}} = socket) do
     params = Map.merge(socket.assigns.form.params, %{"template" => template})
     changeset = Content.change_page(socket.assigns.site, socket.assigns.page, params)
@@ -65,7 +69,10 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
      |> assign_template(template)}
   end
 
-  # updated ast from visual editor
+  def update(%{ast: _ast}, %{assigns: %{editor: "code"}} = socket) do
+    {:ok, socket}
+  end
+
   def update(%{ast: ast}, %{assigns: %{editor: "visual"}} = socket) do
     template = Beacon.Template.HEEx.HEExDecoder.decode(ast)
     params = Map.merge(socket.assigns.form.params, %{"template" => template})
@@ -79,33 +86,6 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
       |> maybe_assign_builder_page(changeset)
       |> assign(:template, template)
 
-    {:ok, socket}
-  end
-
-  # changed element from visual editor control
-  def update(%{path: path, payload: payload}, %{assigns: %{editor: "visual"}} = socket) do
-    updated = Map.get(payload, :updated, %{})
-    attrs = Map.get(updated, "attrs", %{})
-    deleted_attrs = Map.get(payload, :deleted, [])
-    ast = VisualEditor.update_node(socket.assigns.builder_page.ast, path, attrs, deleted_attrs)
-
-    # TODO: Don't save immediately. Debounce serializing this to a template
-    template = Beacon.Template.HEEx.HEExDecoder.decode(ast)
-    params = Map.merge(socket.assigns.form.params, %{"template" => template})
-    changeset = Content.change_page(socket.assigns.site, socket.assigns.page, params)
-
-    socket =
-      socket
-      |> LiveMonacoEditor.set_value(template, to: "template")
-      |> assign_form(changeset)
-      |> assign_template(template)
-      |> maybe_assign_builder_page(changeset)
-      |> assign(:template, template)
-
-    {:ok, socket}
-  end
-
-  def update(_, socket) do
     {:ok, socket}
   end
 
@@ -142,6 +122,24 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
     {:noreply, assign(socket, show_modal: nil)}
   end
 
+  def handle_event("unpublish", _params, socket) do
+    %{site: site, page: page} = socket.assigns
+
+    socket =
+      case Content.unpublish_page(page) do
+        {:ok, _page} -> put_flash(socket, :info, "Page unpublished successfully")
+        {:error, _changeset} -> put_flash(socket, :error, "Something went wrong")
+      end
+
+    socket =
+      socket
+      |> assign(show_modal: nil)
+      |> assign(page_status: :unpublished)
+      |> push_patch(to: beacon_live_admin_path(socket, site, "/pages/#{page.id}"))
+
+    {:noreply, socket}
+  end
+
   def handle_event("validate", %{"page" => page_params}, socket) do
     changeset =
       socket.assigns.site
@@ -155,15 +153,9 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
      |> assign_extra_fields(changeset)}
   end
 
-  def handle_event("save", %{"save" => "save", "page" => page_params}, socket) do
-    %{site: site, template: template, live_action: live_action} = socket.assigns
+  def handle_event("save", %{"save" => user_action, "page" => page_params}, socket) do
+    %{site: site, template: template, page: page, live_action: live_action} = socket.assigns
     page_params = Map.merge(page_params, %{"site" => site, "template" => template})
-
-    save_page(socket, live_action, page_params)
-  end
-
-  def handle_event("save", %{"save" => "publish", "page" => page_params}, socket) do
-    %{site: site, page: page, live_action: live_action} = socket.assigns
 
     save_result =
       case live_action do
@@ -171,55 +163,23 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
         :edit -> Content.update_page(site, page, page_params)
       end
 
+    maybe_publish_fn =
+      case user_action do
+        "save" -> fn _, _ -> {:ok, []} end
+        "publish" -> &Content.publish_page/2
+      end
+
     with {:ok, page} <- save_result,
-         {:ok, _} <- Content.publish_page(site, page.id) do
+         {:ok, _} <- maybe_publish_fn.(site, page.id) do
       {:noreply,
        socket
-       |> put_flash(:info, "Page published successfully")
-       |> push_navigate(to: beacon_live_admin_path(socket, site, "/pages"), replace: true)}
+       |> assign(page: page, show_modal: nil)
+       |> update(:page_status, &if(user_action == "publish", do: :published, else: &1))
+       |> put_flash(:info, "Page #{String.trim_trailing(user_action, "e")}ed successfully")
+       |> push_patch(to: beacon_live_admin_path(socket, site, "/pages/#{page.id}"))}
     else
       {:error, changeset} ->
-        changeset = Map.put(changeset, :action, :publish)
-        {:noreply, assign_form(socket, changeset)}
-    end
-  end
-
-  # TODO: make the test work with the previous function
-  def handle_event("save", %{"page" => page_params}, socket) do
-    %{live_action: live_action} = socket.assigns
-    save_page(socket, live_action, page_params)
-  end
-
-  defp save_page(socket, :new, page_params) do
-    case Content.create_page(socket.assigns.site, page_params) do
-      {:ok, page} ->
-        to = beacon_live_admin_path(socket, socket.assigns.site, "/pages/#{page.id}")
-
-        {:noreply,
-         socket
-         |> put_flash(:info, "Page created successfully")
-         |> push_navigate(to: to)}
-
-      {:error, changeset} ->
-        changeset = Map.put(changeset, :action, :insert)
-        {:noreply, assign_form(socket, changeset)}
-    end
-  end
-
-  defp save_page(socket, :edit, page_params) do
-    case Content.update_page(socket.assigns.site, socket.assigns.page, page_params) do
-      {:ok, page} ->
-        changeset = Content.change_page(socket.assigns.site, page)
-
-        {:noreply,
-         socket
-         |> assign(:page, page)
-         |> assign_form(changeset)
-         |> assign_extra_fields(changeset)
-         |> put_flash(:info, "Page updated successfully")}
-
-      {:error, changeset} ->
-        changeset = Map.put(changeset, :action, :update)
+        changeset = Map.put(changeset, :action, :save)
         {:noreply, assign_form(socket, changeset)}
     end
   end
@@ -285,7 +245,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
   end
 
   defp svelte_page_builder_class("code" = _editor), do: "hidden"
-  defp svelte_page_builder_class("visual" = _editor), do: "mt-4 relative flex-1"
+  defp svelte_page_builder_class("visual" = _editor), do: "mt-4 relative"
 
   @impl true
   @spec render(any()) :: Phoenix.LiveView.Rendered.t()
@@ -295,15 +255,21 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
       <Beacon.LiveAdmin.AdminComponents.page_header socket={@socket} flash={@flash} page={@page} live_action={@live_action} />
 
       <.header>
-        <%= @page_title %>
+        <div class="flex gap-x-6">
+          <div><%= @page_title %></div>
+          <.page_status status={@page_status} />
+        </div>
         <:actions>
           <.button :if={@live_action in [:new, :edit] && @editor == "code" && @page.format == :heex} type="button" phx-click="enable_editor" phx-value-editor="visual" class="sui-primary uppercase">
             Visual Editor
           </.button>
           <.button :if={@live_action in [:new, :edit] && @editor == "visual"} type="button" phx-click="enable_editor" phx-value-editor="code" class="sui-primary uppercase">Code Editor</.button>
-          <.button :if={@live_action == :new} phx-disable-with="Saving..." form="page-form" class="sui-primary uppercase">Create Draft Page</.button>
+          <.button :if={@live_action == :new} phx-disable-with="Saving..." form="page-form" name="save" value="save" class="sui-primary uppercase">Create Draft Page</.button>
           <.button :if={@live_action == :edit} phx-disable-with="Saving..." form="page-form" name="save" value="save" class="sui-primary uppercase">Save Changes</.button>
           <.button :if={@live_action == :edit} phx-click="show_modal" phx-value-confirm="publish" phx-target={@myself} class="sui-primary uppercase">Publish</.button>
+          <.button :if={@live_action == :edit and @page_status == :published} phx-click="show_modal" phx-value-confirm="unpublish" phx-target={@myself} class="sui-primary-destructive uppercase">
+            Unpublish
+          </.button>
         </:actions>
       </.header>
 
@@ -332,25 +298,44 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
         </div>
       </.modal>
 
-      <%= if @editor == "visual" do %>
-        <div class="flex">
-          <.svelte
-            name="components/UiBuilder"
-            class={svelte_page_builder_class(@editor)}
-            props={
-              %{
-                components: @components,
-                page: @builder_page,
-                tailwindConfig: @tailwind_config,
-                tailwindInput: @tailwind_input,
-                selectedAstElementId: @selected_element_path
-              }
-            }
-            socket={@socket}
-          />
-          <.live_component module={VisualEditor.PropertiesSidebarComponent} id="properties_sidebar" page={@builder_page} selected_element_path={@selected_element_path} />
+      <.modal :if={@show_modal == :unpublish_confirm} id="unpublish-confirm-modal" on_cancel={JS.push("close_modal", target: @myself)} show>
+        <:title>Unpublish Page</:title>
+        <div class="mt-2">
+          <p class="text-sm text-gray-500">Are you sure you want to unpublish this page?  Requests to this path will show your site's 404 Error Page.</p>
         </div>
-      <% end %>
+        <div class="py-4">
+          <.button
+            type="button"
+            class="sui-secondary inline-flex justify-center w-full px-3 py-2 mt-3 text-sm font-semibold text-gray-900 bg-white rounded-md shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+            phx-click={JS.push("close_modal", target: @myself)}
+          >
+            Cancel
+          </.button>
+          <.button
+            type="button"
+            class="sui-primary-destructive inline-flex justify-center w-full px-3 py-2 text-sm font-semibold text-white bg-blue-600 rounded-md shadow-sm hover:bg-blue-500 sm:w-auto"
+            phx-click="unpublish"
+            phx-target={@myself}
+          >
+            Confirm
+          </.button>
+        </div>
+      </.modal>
+
+      <.svelte
+        :if={@editor == "visual"}
+        name="components/UiBuilder"
+        class={svelte_page_builder_class(@editor)}
+        props={
+          %{
+            components: @components,
+            page: @builder_page,
+            tailwindConfig: @tailwind_config,
+            tailwindInput: @tailwind_input
+          }
+        }
+        socket={@socket}
+      />
 
       <div class={[
         "grid items-start grid-cols-1 mx-auto mt-4 gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3 h-auto",
@@ -384,6 +369,22 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
           </div>
         </div>
       </div>
+    </div>
+    """
+  end
+
+  defp page_status(%{status: :published} = assigns) do
+    ~H"""
+    <div class="rounded-md bg-lime-400 text-sm px-4 py-1 flex items-center">
+      <div>Published</div>
+    </div>
+    """
+  end
+
+  defp page_status(assigns) do
+    ~H"""
+    <div class="rounded-md bg-yellow-300 text-sm px-4 py-1 flex items-center">
+      <div>Draft</div>
     </div>
     """
   end

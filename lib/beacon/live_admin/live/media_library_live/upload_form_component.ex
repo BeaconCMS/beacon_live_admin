@@ -34,6 +34,7 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.UploadFormComponent do
             MediaLibrary.new_upload_metadata(
               socket.assigns.site,
               path,
+              Node.self(),
               name: entry.client_name,
               media_type: entry.client_type,
               size: entry.client_size

@@ -10,7 +10,6 @@ defmodule Beacon.LiveAdmin.StationUI.HTML.Form do
   attr :name, :any
   attr :label, :string, default: nil
   attr :value, :any
-  attr :class, :string, default: "default"
 
   attr :type, :string,
     default: "text",
