@@ -109,14 +109,14 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.ResourceLinks do
       <.header>
         <%= @page_title %>
         <:actions>
-          <.button phx-disable-with="Saving..." form="resource-links-form" class="uppercase">Save Changes</.button>
+          <.button phx-disable-with="Saving..." form="resource-links-form" class="sui-primary uppercase">Save Changes</.button>
         </:actions>
       </.header>
 
       <.main_content>
         <div class="flex gap-4">
-          <.button type="button" phx-click="add">New Resource Link</.button>
-          <.button type="button" phx-click="show-new-attribute-modal">New Attribute</.button>
+          <.button type="button" phx-click="add" class="sui-primary">New Resource Link</.button>
+          <.button type="button" phx-click="show-new-attribute-modal" class="sui-primary">New Attribute</.button>
         </div>
 
         <div class="mt-8 overflow-x-auto">
@@ -158,7 +158,7 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.ResourceLinks do
 
             <div>
               <.input type="text" field={f[:name]} placeholder="Custom" label="Custom attribute" />
-              <.button class="mt-2">Add custom attribute</.button>
+              <.button class="sui-primary mt-2">Add custom attribute</.button>
             </div>
           </.simple_form>
         </.modal>

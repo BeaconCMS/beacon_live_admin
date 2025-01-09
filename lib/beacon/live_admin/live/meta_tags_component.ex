@@ -106,7 +106,7 @@ defmodule Beacon.LiveAdmin.MetaTagsComponent do
       <.header>
         <%= @page_title %>
         <:actions>
-          <.button phx-disable-with="Saving..." form="meta-tags-form" class="uppercase">Save Changes</.button>
+          <.button phx-disable-with="Saving..." form="meta-tags-form" class="sui-primary uppercase">Save Changes</.button>
         </:actions>
       </.header>
       <.main_content>

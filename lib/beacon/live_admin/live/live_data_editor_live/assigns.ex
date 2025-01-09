@@ -182,10 +182,10 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Assigns do
         <.modal :if={@show_nav_modal} id="confirm-nav" on_cancel={JS.push("stay_here")} show>
           <p>You've made unsaved changes to this assign!</p>
           <p>Navigating to another assign without saving will cause these changes to be lost.</p>
-          <.button type="button" phx-click="stay_here">
+          <.button type="button" phx-click="stay_here" class="sui-secondary">
             Stay here
           </.button>
-          <.button type="button" phx-click="discard_changes">
+          <.button type="button" phx-click="discard_changes" class="sui-primary-destructive">
             Discard changes
           </.button>
         </.modal>
@@ -193,22 +193,22 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Assigns do
         <.modal :if={@show_delete_modal} id="confirm-delete" on_cancel={JS.push("delete_cancel")} show>
           <p class="mb-2">Are you sure you want to delete this assign?</p>
           <div class="flex justify-end w-full gap-4 mt-10">
-            <.button id="delete-confirm" type="button" phx-click="delete_confirm">
+            <.button id="delete-confirm" type="button" phx-click="delete_confirm" class="sui-primary-destructive">
               Delete
             </.button>
-            <.button type="button" phx-click="delete_cancel">
+            <.button type="button" phx-click="delete_cancel" class="sui-secondary">
               Cancel
             </.button>
           </div>
         </.modal>
 
         <.modal :if={@show_create_modal} id="create-modal" on_cancel={JS.push("create_cancel")} show>
-          <p class="text-2xl font-bold mb-12">New Assign</p>
-          <.form id="new-assign-form" for={@new_assign_form} phx-submit="submit_new">
+          <:title>New Assign</:title>
+          <.form id="new-assign-form" for={@new_assign_form} phx-submit="submit_new" class="px-4 pt-4">
             <.input type="text" field={@new_assign_form[:key]} placeholder="assign_key" />
             <div class="flex mt-8 gap-x-[20px]">
               <.button type="submit">Create</.button>
-              <.button type="button" phx-click={JS.push("create_cancel")}>Cancel</.button>
+              <.button type="button" phx-click={JS.push("create_cancel")} class="sui-secondary">Cancel</.button>
             </div>
           </.form>
         </.modal>
@@ -232,8 +232,8 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Assigns do
               <.input label="Format" field={f[:format]} type="select" options={["elixir", "text"]} />
               <input type="hidden" name="live_data_assign[value]" id="live_data_assign-form_value" value={Phoenix.HTML.Form.input_value(f, :value)} />
 
-              <.button phx-disable-with="Saving..." class="ml-auto">Save Changes</.button>
-              <.button type="button" phx-click="delete" class="">Delete</.button>
+              <.button phx-disable-with="Saving..." class="sui-primary ml-auto">Save Changes</.button>
+              <.button type="button" phx-click="delete" class="sui-primary-destructive">Delete</.button>
             </.form>
             <div :if={@form[:format].value in [:elixir, "elixir"]} class="mt-4 flex gap-x-4">
               <div>Variables available:</div>

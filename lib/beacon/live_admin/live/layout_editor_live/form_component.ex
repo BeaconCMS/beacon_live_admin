@@ -114,9 +114,9 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.FormComponent do
         </div>
 
         <:actions>
-          <.button :if={@live_action == :new} phx-disable-with="Saving..." form="layout-form" class="uppercase">Create Draft Layout</.button>
-          <.button :if={@live_action == :edit} phx-disable-with="Saving..." form="layout-form" class="uppercase">Save Changes</.button>
-          <.button :if={@live_action == :edit} phx-click={show_modal("publish-confirm-modal")} phx-target={@myself} class="uppercase">Publish</.button>
+          <.button :if={@live_action == :new} phx-disable-with="Saving..." form="layout-form" class="sui-primary uppercase">Create Draft Layout</.button>
+          <.button :if={@live_action == :edit} phx-disable-with="Saving..." form="layout-form" class="sui-primary uppercase">Save Changes</.button>
+          <.button :if={@live_action == :edit} phx-click={show_modal("publish-confirm-modal")} phx-target={@myself} class="sui-primary uppercase">Publish</.button>
         </:actions>
       </.header>
 

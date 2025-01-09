@@ -1,0 +1,111 @@
+@layer base {
+  :root {
+    /* primary */
+    --sui-brand-primary: theme("colors.indigo.700");
+    --sui-brand-primary-bg: theme("colors.indigo.600");
+    --sui-brand-primary-bg-disabled: theme("colors.slate.50");
+    --sui-brand-primary-muted: theme("colors.indigo.500");
+    --sui-brand-primary-shadow: theme("colors.slate.100");
+    --sui-brand-primary-text: theme("colors.slate.800");
+    --sui-brand-primary-text-inverted: theme("colors.white");
+    --sui-brand-primary-text-disabled: theme("colors.slate.300");
+    --sui-brand-primary-border: theme("colors.slate.300");
+    --sui-brand-primary-border-inverted: theme("colors.slate.600");
+    --sui-brand-primary-focus: theme("colors.purple.500");
+    --sui-brand-primary-error: theme("colors.rose.500");
+    --sui-brand-primary-success: theme("colors.emerald.500");
+    --sui-brand-primary-icon: theme("colors.slate.500");
+    --sui-brand-primary-icon-inverted: theme("colors.slate.400");
+
+    /* secondary */
+    --sui-brand-secondary-bg: theme("colors.white");
+    --sui-brand-secondary-bg-inverted: theme("colors.black");
+    --sui-brand-secondary-text: theme("colors.slate.600");
+    --sui-brand-secondary-text-muted: theme("colors.gray.500");
+    --sui-brand-secondary-text-inverted: theme("colors.slate.400");
+
+    /* buttons */
+    --sui-text-btn-disabled: theme("colors.slate.300");
+    --sui-bg-btn-disabled: theme("colors.slate.50");
+    --sui-border-btn-disabled: theme("colors.slate.50");
+
+    /* forms */
+    --sui-form-bg-slider-progress: theme("colors.indigo.600");
+    --sui-form-bg-slider-progress-disabled: theme("colors.zinc.300");
+    --sui-form-bg-slider-thumb: theme("colors.indigo.600");
+    --sui-form-bg-slider-thumb-active: theme("colors.indigo.800");
+    --sui-form-bg-slider-thumb-disabled: theme("colors.slate.100");
+    --sui-form-bg-slider-thumb-hover: theme("colors.indigo.500");
+    --sui-form-bg-slider-track: theme("colors.white");
+    --sui-form-bg-slider-track-disabled: theme("colors.slate.50");
+    --sui-form-border-slider-thumb: theme("colors.indigo.500");
+    --sui-form-border-slider-thumb-active: theme("colors.indigo.700");
+    --sui-form-border-slider-thumb-disabled: theme("colors.zinc.300");
+    --sui-form-border-slider-thumb-hover: theme("colors.indigo.400");
+    --sui-form-border-slider-track: theme("colors.gray.400");
+    --sui-form-border-slider-track-disabled: theme("colors.zinc.300");
+    --sui-form-text: var(--sui-brand-primary-text);
+    --sui-form-text-disabled: theme("colors.gray.500");
+    --sui-form-text-error: theme("colors.rose.700");
+  }
+
+  .sui-primary {
+    --sui-text-btn: theme("colors.white");
+    --sui-text-btn-hover: theme("colors.white");
+    --sui-text-btn-active: theme("colors.white");
+    --sui-bg-btn: theme("colors.indigo.700");
+    --sui-bg-btn-hover: theme("colors.indigo.600");
+    --sui-bg-btn-active: theme("colors.indigo.800");
+    --sui-border-btn: theme("colors.indigo.700");
+    --sui-border-btn-hover: theme("colors.indigo.600");
+    --sui-border-btn-active: theme("colors.indigo.800");
+  }
+
+  .sui-secondary {
+    --sui-text-btn: theme("colors.slate.800");
+    --sui-text-btn-hover: theme("colors.slate.800");
+    --sui-text-btn-active: theme("colors.slate.800");
+    --sui-bg-btn: theme("colors.white");
+    --sui-bg-btn-hover: theme("colors.slate.50");
+    --sui-bg-btn-active: theme("colors.slate.200");
+    --sui-border-btn: theme("colors.slate.800");
+    --sui-border-btn-hover: theme("colors.slate.800");
+    --sui-border-btn-active: theme("colors.slate.800");
+  }
+
+  .sui-tertiary {
+    --sui-text-btn: theme("colors.white");
+    --sui-text-btn-hover: theme("colors.white");
+    --sui-text-btn-active: theme("colors.white");
+    --sui-bg-btn: theme("colors.slate.800");
+    --sui-bg-btn-hover: theme("colors.slate.700");
+    --sui-bg-btn-active: theme("colors.slate.900");
+    --sui-border-btn: theme("colors.slate.800");
+    --sui-border-btn-hover: theme("colors.slate.700");
+    --sui-border-btn-active: theme("colors.slate.900");
+  }
+
+  .sui-primary-destructive {
+    --sui-text-btn: theme("colors.white");
+    --sui-text-btn-hover: theme("colors.white");
+    --sui-text-btn-active: theme("colors.white");
+    --sui-bg-btn: theme("colors.rose.700");
+    --sui-bg-btn-hover: theme("colors.rose.600");
+    --sui-bg-btn-active: theme("colors.rose.800");
+    --sui-border-btn: theme("colors.rose.700");
+    --sui-border-btn-hover: theme("colors.rose.600");
+    --sui-border-btn-active: theme("colors.rose.800");
+  }
+
+  .sui-secondary-destructive {
+    --sui-text-btn: theme("colors.rose.700");
+    --sui-text-btn-hover: theme("colors.rose.600");
+    --sui-text-btn-active: theme("colors.rose.800");
+    --sui-bg-btn: theme("colors.white");
+    --sui-bg-btn-hover: theme("colors.white");
+    --sui-bg-btn-active: theme("colors.white");
+    --sui-border-btn: theme("colors.rose.700");
+    --sui-border-btn-hover: theme("colors.rose.600");
+    --sui-border-btn-active: theme("colors.rose.800");
+  }
+}

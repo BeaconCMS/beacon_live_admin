@@ -34,6 +34,7 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.UploadFormComponent do
             MediaLibrary.new_upload_metadata(
               socket.assigns.site,
               path,
+              Node.self(),
               name: entry.client_name,
               media_type: entry.client_type,
               size: entry.client_size
@@ -54,8 +55,6 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.UploadFormComponent do
   def render(assigns) do
     ~H"""
     <div>
-      <.header>Upload</.header>
-
       <section phx-drop-target={@uploads.asset.ref}>
         <%= for entry <- @uploads.asset.entries do %>
           <article class="upload-entry">
@@ -75,7 +74,7 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.UploadFormComponent do
               <%= Phoenix.Naming.humanize(err) %>
             </p>
           <% end %>
-          <.button phx-click="cancel-upload" phx-value-ref={entry.ref}>Cancel</.button>
+          <.button phx-click="cancel-upload" phx-value-ref={entry.ref} class="sui-primary-destructive">Cancel</.button>
         <% end %>
       </.form>
 

@@ -54,8 +54,9 @@ defmodule Beacon.LiveAdmin.EventHandlerEditorLive.Index do
     {:noreply, assign(socket, show_create_modal: true)}
   end
 
-  def handle_event("save_new", %{"name" => name}, socket) do
+  def handle_event("save_new", params, socket) do
     %{beacon_page: %{site: site}} = socket.assigns
+    %{"event_handler" => %{"name" => name}} = params
 
     attrs = %{
       "name" => name,
@@ -184,7 +185,7 @@ defmodule Beacon.LiveAdmin.EventHandlerEditorLive.Index do
       <.header>
         <%= @page_title %>
         <:actions>
-          <.button type="button" id="new-event-handler-button" phx-click="create_new" class="uppercase">
+          <.button type="button" id="new-event-handler-button" phx-click="create_new" class="sui-primary uppercase">
             New Event Handler
           </.button>
         </:actions>
@@ -194,29 +195,28 @@ defmodule Beacon.LiveAdmin.EventHandlerEditorLive.Index do
         <.modal :if={@show_nav_modal} id="confirm-nav" on_cancel={JS.push("stay_here")} show>
           <p>You've made unsaved changes to this event handler!</p>
           <p>Navigating to another event handler without saving will cause these changes to be lost.</p>
-          <.button type="button" phx-click="stay_here">
+          <.button type="button" phx-click="stay_here" class="sui-secondary">
             Stay here
           </.button>
-          <.button type="button" phx-click="discard_changes">
+          <.button type="button" phx-click="discard_changes" class="sui-primary-destructive">
             Discard changes
           </.button>
         </.modal>
 
         <.modal :if={@show_create_modal} id="create-modal" on_cancel={JS.push("cancel_create")} show>
-          <.simple_form :let={f} for={@create_form} id="create-form" phx-submit="save_new">
+          <:title>New Event Handler</:title>
+          <.form :let={f} for={@create_form} id="create-form" phx-submit="save_new" class="px-4">
             <.input field={f[:name]} type="text" label="Event name:" />
-            <:actions>
-              <.button>Save</.button>
-            </:actions>
-          </.simple_form>
+            <.button class="sui-primary mt-4">Save</.button>
+          </.form>
         </.modal>
 
         <.modal :if={@show_delete_modal} id="delete-modal" on_cancel={JS.push("delete_cancel")} show>
           <p>Are you sure you want to delete this event handler?</p>
-          <.button type="button" id="confirm-delete-button" phx-click="delete_confirm">
+          <.button type="button" id="confirm-delete-button" phx-click="delete_confirm" class="sui-primary-destructive">
             Delete
           </.button>
-          <.button type="button" phx-click="delete_cancel">
+          <.button type="button" phx-click="delete_cancel" class="sui-secondary">
             Cancel
           </.button>
         </.modal>
@@ -235,8 +235,8 @@ defmodule Beacon.LiveAdmin.EventHandlerEditorLive.Index do
               <.input label="Name" field={f[:name]} type="text" />
               <input type="hidden" name="event_handler[code]" id="event_handler-form_code" value={Phoenix.HTML.Form.input_value(f, :code)} />
 
-              <.button phx-disable-with="Saving..." class="ml-auto">Save Changes</.button>
-              <.button id="delete-event-handler-button" type="button" phx-click="delete" class="">Delete</.button>
+              <.button phx-disable-with="Saving..." class="sui-primary ml-auto">Save Changes</.button>
+              <.button id="delete-event-handler-button" type="button" phx-click="delete" class="sui-primary-destructive">Delete</.button>
             </.form>
             <div class="mt-4 flex gap-x-4">
               <div>Variables available:</div>

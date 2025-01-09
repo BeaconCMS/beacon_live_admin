@@ -72,11 +72,7 @@ defmodule Beacon.LiveAdmin.Cluster do
   end
 
   defp do_call(site, node, mod, fun, args) do
-    if node == Node.self() do
-      apply(mod, fun, args)
-    else
-      :erpc.call(node, mod, fun, args)
-    end
+    :erpc.call(node, mod, fun, args)
   rescue
     exception ->
       Logger.debug("failed to call #{Exception.format_mfa(mod, fun, args)} for site #{inspect(site)} on node #{inspect(node)}")

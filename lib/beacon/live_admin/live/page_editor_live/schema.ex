@@ -66,7 +66,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Schema do
       <.header>
         <%= @page_title %>
         <:actions>
-          <.button phx-disable-with="Saving..." phx-click="save" class="uppercase">Save Changes</.button>
+          <.button phx-disable-with="Saving..." phx-click="save" class="sui-primary uppercase">Save Changes</.button>
         </:actions>
       </.header>
 
