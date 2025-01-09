@@ -65,6 +65,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.New do
     {:noreply, socket}
   end
 
+  # FIXME: enable_editor sync template
   def handle_event("enable_editor", %{"editor" => editor}, socket) do
     path =
       Beacon.LiveAdmin.Router.beacon_live_admin_path(

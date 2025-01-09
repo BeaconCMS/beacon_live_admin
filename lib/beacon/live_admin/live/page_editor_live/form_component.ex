@@ -90,21 +90,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
     attrs = Map.get(updated, "attrs", %{})
     deleted_attrs = Map.get(payload, :deleted, [])
     ast = VisualEditor.update_node(socket.assigns.builder_page.ast, path, attrs, deleted_attrs)
-
-    # TODO: Don't save immediately. Debounce serializing this to a template
-    template = Beacon.Template.HEEx.HEExDecoder.decode(ast)
-    params = Map.merge(socket.assigns.form.params, %{"template" => template})
-    changeset = Content.change_page(socket.assigns.site, socket.assigns.page, params)
-
-    socket =
-      socket
-      |> LiveMonacoEditor.set_value(template, to: "template")
-      |> assign_form(changeset)
-      |> assign_template(template)
-      |> maybe_assign_builder_page(changeset)
-      |> assign(:template, template)
-
-    {:ok, socket}
+    {:ok, update_builder_page(socket, :ast, ast)}
   end
 
   def update(_, socket) do
@@ -183,6 +169,39 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
     save(page_params, "save", socket)
   end
 
+  def handle_event("enable_editor", %{"editor" => "code"}, socket) do
+    template = Beacon.Template.HEEx.HEExDecoder.decode(socket.assigns.builder_page.ast)
+    params = Map.merge(socket.assigns.form.params, %{"template" => template})
+    changeset = Content.change_page(socket.assigns.site, socket.assigns.page, params)
+
+    socket =
+      socket
+      |> LiveMonacoEditor.set_value(template, to: "template")
+      |> assign_form(changeset)
+
+    path =
+      Beacon.LiveAdmin.Router.beacon_live_admin_path(
+        socket,
+        socket.assigns.site,
+        "/pages/#{socket.assigns.page.id}",
+        %{editor: "code"}
+      )
+
+    {:noreply, push_patch(socket, to: path)}
+  end
+
+  def handle_event("enable_editor", %{"editor" => "visual"}, socket) do
+    path =
+      Beacon.LiveAdmin.Router.beacon_live_admin_path(
+        socket,
+        socket.assigns.site,
+        "/pages/#{socket.assigns.page.id}",
+        %{editor: "visual"}
+      )
+
+    {:noreply, push_patch(socket, to: path)}
+  end
+
   defp save(page_params, user_action, socket) do
     %{site: site, template: template, page: page, live_action: live_action} = socket.assigns
     page_params = Map.merge(page_params, %{"site" => site, "template" => template})
@@ -206,7 +225,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
        |> assign(page: page, show_modal: nil)
        |> update(:page_status, &if(user_action == "publish", do: :published, else: &1))
        |> put_flash(:info, "Page #{String.trim_trailing(user_action, "e")}ed successfully")
-       |> push_patch(to: beacon_live_admin_path(socket, site, "/pages/#{page.id}"))}
+       |> push_patch(to: beacon_live_admin_path(socket, site, "/pages/#{page.id}", %{editor: socket.assigns.editor}))}
     else
       {:error, changeset} ->
         changeset = Map.put(changeset, :action, :save)
@@ -235,6 +254,12 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
   end
 
   defp maybe_assign_builder_page(socket, _changeset), do: assign(socket, :builder_page, nil)
+
+  defp update_builder_page(socket, key, value) do
+    update(socket, :builder_page, fn builder_page ->
+      Map.put(builder_page, key, value)
+    end)
+  end
 
   defp assign_extra_fields(socket, changeset) do
     params = Ecto.Changeset.get_field(changeset, :extra)
@@ -290,10 +315,19 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
           <.page_status status={@page_status} />
         </div>
         <:actions>
-          <.button :if={@live_action in [:new, :edit] && @editor == "code" && @page.format == :heex} type="button" phx-click="enable_editor" phx-value-editor="visual" class="sui-primary uppercase">
+          <.button
+            :if={@live_action in [:new, :edit] && @editor == "code" && @page.format == :heex}
+            type="button"
+            phx-click="enable_editor"
+            phx-value-editor="visual"
+            phx-target={@myself}
+            class="sui-primary uppercase"
+          >
             Visual Editor
           </.button>
-          <.button :if={@live_action in [:new, :edit] && @editor == "visual"} type="button" phx-click="enable_editor" phx-value-editor="code" class="sui-primary uppercase">Code Editor</.button>
+          <.button :if={@live_action in [:new, :edit] && @editor == "visual"} type="button" phx-click="enable_editor" phx-value-editor="code" phx-target={@myself} class="sui-primary uppercase">
+            Code Editor
+          </.button>
           <.button :if={@live_action == :new} phx-disable-with="Saving..." form="page-form" name="save" value="save" class="sui-primary uppercase">Create Draft Page</.button>
           <.button :if={@live_action == :edit} phx-disable-with="Saving..." form="page-form" name="save" value="save" class="sui-primary uppercase">Save Changes</.button>
           <.button :if={@live_action == :edit} phx-click="show_modal" phx-value-confirm="publish" phx-target={@myself} class="sui-primary uppercase">Publish</.button>
