@@ -13506,7 +13506,9 @@ var BeaconLiveAdmin = (() => {
   var live = writable();
 
   // svelte/stores/page.ts
-  var page = writable();
+  var pageAst = writable();
+  var pageInfo = writable();
+  var page = derived([pageAst, pageInfo], ([$pageAst, $pageInfo]) => ({ ast: $pageAst, ...$pageInfo }));
   var selectedAstElementId = writable();
   var highlightedAstElement = writable();
   var slotTargetElement = writable();
@@ -14906,11 +14908,10 @@ var BeaconLiveAdmin = (() => {
     live2.pushEvent("update_page_ast", { id: currentPage.id, ast: currentPage.ast });
   }
   function deleteAstNode(astElementId) {
-    let currentPage = get_store_value(page);
-    let live2 = get_store_value(live);
-    let astElement = findAstElement(currentPage.ast, astElementId);
+    let ast = get_store_value(pageAst);
+    let astElement = findAstElement(ast, astElementId);
     let parentId = getParentNodeId(astElementId);
-    let content = parentId && parentId !== "root" ? findAstElement(currentPage.ast, parentId)?.content : currentPage.ast;
+    let content = parentId && parentId !== "root" ? findAstElement(ast, parentId)?.content : ast;
     if (content) {
       let targetIndex = content.indexOf(astElement);
       content.splice(targetIndex, 1);
@@ -31882,7 +31883,7 @@ var BeaconLiveAdmin = (() => {
           /*dragDirection*/
           ctx[3] === "both"
         );
-        add_location(span, file14, 362, 4, 13353);
+        add_location(span, file14, 363, 4, 13359);
         attr_dev(button, "class", "rounded-full w-6 h-6 flex justify-center items-center absolute bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 active:bg-blue-800 transform");
         attr_dev(
           button,
@@ -31891,7 +31892,7 @@ var BeaconLiveAdmin = (() => {
           ctx[1]
         );
         attr_dev(button, "data-testid", "drag-button");
-        add_location(button, file14, 355, 2, 12997);
+        add_location(button, file14, 356, 2, 13003);
       },
       m: function mount(target, anchor) {
         if (if_block)
@@ -32010,7 +32011,7 @@ var BeaconLiveAdmin = (() => {
         attr_dev(div, "style", div_style_value = "background-color:aqua; opacity: 0.5; " + /*placeholderStyle*/
         ctx[2]);
         attr_dev(div, "data-testid", "drag-placeholder");
-        add_location(div, file14, 349, 4, 12825);
+        add_location(div, file14, 350, 4, 12831);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, div, anchor);
@@ -32123,6 +32124,7 @@ var BeaconLiveAdmin = (() => {
     let canBeDragged;
     let dragDirection;
     let $isDragging, $$unsubscribe_isDragging = noop2, $$subscribe_isDragging = () => ($$unsubscribe_isDragging(), $$unsubscribe_isDragging = subscribe(isDragging, ($$value) => $$invalidate(15, $isDragging = $$value)), isDragging);
+    let $pageAst;
     let $page;
     let $live;
     let $selectedAstElementId;
@@ -32130,16 +32132,18 @@ var BeaconLiveAdmin = (() => {
     let $grandParentOfSelectedAstElement;
     validate_store(isDragging, "isDragging");
     component_subscribe($$self, isDragging, ($$value) => $$invalidate(15, $isDragging = $$value));
+    validate_store(pageAst, "pageAst");
+    component_subscribe($$self, pageAst, ($$value) => $$invalidate(16, $pageAst = $$value));
     validate_store(page, "page");
-    component_subscribe($$self, page, ($$value) => $$invalidate(16, $page = $$value));
+    component_subscribe($$self, page, ($$value) => $$invalidate(17, $page = $$value));
     validate_store(live, "live");
-    component_subscribe($$self, live, ($$value) => $$invalidate(17, $live = $$value));
+    component_subscribe($$self, live, ($$value) => $$invalidate(18, $live = $$value));
     validate_store(selectedAstElementId, "selectedAstElementId");
-    component_subscribe($$self, selectedAstElementId, ($$value) => $$invalidate(18, $selectedAstElementId = $$value));
+    component_subscribe($$self, selectedAstElementId, ($$value) => $$invalidate(19, $selectedAstElementId = $$value));
     validate_store(parentOfSelectedAstElement, "parentOfSelectedAstElement");
-    component_subscribe($$self, parentOfSelectedAstElement, ($$value) => $$invalidate(19, $parentOfSelectedAstElement = $$value));
+    component_subscribe($$self, parentOfSelectedAstElement, ($$value) => $$invalidate(20, $parentOfSelectedAstElement = $$value));
     validate_store(grandParentOfSelectedAstElement, "grandParentOfSelectedAstElement");
-    component_subscribe($$self, grandParentOfSelectedAstElement, ($$value) => $$invalidate(20, $grandParentOfSelectedAstElement = $$value));
+    component_subscribe($$self, grandParentOfSelectedAstElement, ($$value) => $$invalidate(21, $grandParentOfSelectedAstElement = $$value));
     $$self.$$.on_destroy.push(() => $$unsubscribe_isDragging());
     let { $$slots: slots = {}, $$scope } = $$props;
     validate_slots("DragMenuOption", slots, []);
@@ -32254,8 +32258,8 @@ var BeaconLiveAdmin = (() => {
           parts[parts.length - 1] = newSelectedIndex.toString();
           set_store_value(selectedAstElementId, $selectedAstElementId = parts.join("."), $selectedAstElementId);
         }
-        set_store_value(page, $page.ast = [...$page.ast], $page);
-        $live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast });
+        set_store_value(pageAst, $pageAst = [...$pageAst], $pageAst);
+        $live.pushEvent("update_page_ast", { id: $page.id, ast: $pageAst });
       }
     }
     function resetDragElementHandle() {
@@ -32399,6 +32403,7 @@ var BeaconLiveAdmin = (() => {
     $$self.$capture_state = () => ({
       writable,
       page,
+      pageAst,
       selectedAstElementId,
       parentOfSelectedAstElement,
       grandParentOfSelectedAstElement,
@@ -32443,6 +32448,7 @@ var BeaconLiveAdmin = (() => {
       dragDirection,
       canBeDragged,
       $isDragging,
+      $pageAst,
       $page,
       $live,
       $selectedAstElementId,
@@ -33079,7 +33085,7 @@ var BeaconLiveAdmin = (() => {
         attr_dev(div, "class", "flex min-h-screen bg-gray-100");
         attr_dev(div, "id", "ui-builder-app-container");
         attr_dev(div, "data-testid", "app-container");
-        add_location(div, file16, 29, 0, 858);
+        add_location(div, file16, 30, 0, 951);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, div, anchor);
@@ -33139,19 +33145,23 @@ var BeaconLiveAdmin = (() => {
     let $liveStore;
     let $tailwindInputStore;
     let $tailwindConfigStore;
-    let $pageStore;
+    let $pageInfoStore;
+    let $pageAstStore;
     validate_store(live, "liveStore");
-    component_subscribe($$self, live, ($$value) => $$invalidate(5, $liveStore = $$value));
+    component_subscribe($$self, live, ($$value) => $$invalidate(6, $liveStore = $$value));
     validate_store(tailwindInput, "tailwindInputStore");
-    component_subscribe($$self, tailwindInput, ($$value) => $$invalidate(6, $tailwindInputStore = $$value));
+    component_subscribe($$self, tailwindInput, ($$value) => $$invalidate(7, $tailwindInputStore = $$value));
     validate_store(tailwindConfig, "tailwindConfigStore");
-    component_subscribe($$self, tailwindConfig, ($$value) => $$invalidate(7, $tailwindConfigStore = $$value));
-    validate_store(page, "pageStore");
-    component_subscribe($$self, page, ($$value) => $$invalidate(8, $pageStore = $$value));
+    component_subscribe($$self, tailwindConfig, ($$value) => $$invalidate(8, $tailwindConfigStore = $$value));
+    validate_store(pageInfo, "pageInfoStore");
+    component_subscribe($$self, pageInfo, ($$value) => $$invalidate(9, $pageInfoStore = $$value));
+    validate_store(pageAst, "pageAstStore");
+    component_subscribe($$self, pageAst, ($$value) => $$invalidate(10, $pageAstStore = $$value));
     let { $$slots: slots = {}, $$scope } = $$props;
     validate_slots("UiBuilder", slots, []);
     let { components } = $$props;
-    let { page: page2 } = $$props;
+    let { pageInfo: pageInfo2 } = $$props;
+    let { pageAst: pageAst2 } = $$props;
     let { tailwindConfig: tailwindConfig2 } = $$props;
     let { tailwindInput: tailwindInput2 } = $$props;
     let { live: live2 } = $$props;
@@ -33162,8 +33172,11 @@ var BeaconLiveAdmin = (() => {
       if (components === void 0 && !("components" in $$props || $$self.$$.bound[$$self.$$.props["components"]])) {
         console.warn("<UiBuilder> was created without expected prop 'components'");
       }
-      if (page2 === void 0 && !("page" in $$props || $$self.$$.bound[$$self.$$.props["page"]])) {
-        console.warn("<UiBuilder> was created without expected prop 'page'");
+      if (pageInfo2 === void 0 && !("pageInfo" in $$props || $$self.$$.bound[$$self.$$.props["pageInfo"]])) {
+        console.warn("<UiBuilder> was created without expected prop 'pageInfo'");
+      }
+      if (pageAst2 === void 0 && !("pageAst" in $$props || $$self.$$.bound[$$self.$$.props["pageAst"]])) {
+        console.warn("<UiBuilder> was created without expected prop 'pageAst'");
       }
       if (tailwindConfig2 === void 0 && !("tailwindConfig" in $$props || $$self.$$.bound[$$self.$$.props["tailwindConfig"]])) {
         console.warn("<UiBuilder> was created without expected prop 'tailwindConfig'");
@@ -33175,7 +33188,7 @@ var BeaconLiveAdmin = (() => {
         console.warn("<UiBuilder> was created without expected prop 'live'");
       }
     });
-    const writable_props = ["components", "page", "tailwindConfig", "tailwindInput", "live"];
+    const writable_props = ["components", "pageInfo", "pageAst", "tailwindConfig", "tailwindInput", "live"];
     Object.keys($$props).forEach((key) => {
       if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$" && key !== "slot")
         console.warn(`<UiBuilder> was created with unknown prop '${key}'`);
@@ -33183,14 +33196,16 @@ var BeaconLiveAdmin = (() => {
     $$self.$$set = ($$props2) => {
       if ("components" in $$props2)
         $$invalidate(0, components = $$props2.components);
-      if ("page" in $$props2)
-        $$invalidate(1, page2 = $$props2.page);
+      if ("pageInfo" in $$props2)
+        $$invalidate(1, pageInfo2 = $$props2.pageInfo);
+      if ("pageAst" in $$props2)
+        $$invalidate(2, pageAst2 = $$props2.pageAst);
       if ("tailwindConfig" in $$props2)
-        $$invalidate(2, tailwindConfig2 = $$props2.tailwindConfig);
+        $$invalidate(3, tailwindConfig2 = $$props2.tailwindConfig);
       if ("tailwindInput" in $$props2)
-        $$invalidate(3, tailwindInput2 = $$props2.tailwindInput);
+        $$invalidate(4, tailwindInput2 = $$props2.tailwindInput);
       if ("live" in $$props2)
-        $$invalidate(4, live2 = $$props2.live);
+        $$invalidate(5, live2 = $$props2.live);
     };
     $$self.$capture_state = () => ({
       onDestroy,
@@ -33198,69 +33213,80 @@ var BeaconLiveAdmin = (() => {
       Backdrop: Backdrop_default,
       PagePreview: PagePreview_default,
       SelectedElementFloatingMenu: SelectedElementFloatingMenu_default,
-      pageStore: page,
+      pageAstStore: pageAst,
+      pageInfoStore: pageInfo,
       resetStores,
       liveStore: live,
       tailwindConfigStore: tailwindConfig,
       tailwindInputStore: tailwindInput,
       components,
-      page: page2,
+      pageInfo: pageInfo2,
+      pageAst: pageAst2,
       tailwindConfig: tailwindConfig2,
       tailwindInput: tailwindInput2,
       live: live2,
       $liveStore,
       $tailwindInputStore,
       $tailwindConfigStore,
-      $pageStore
+      $pageInfoStore,
+      $pageAstStore
     });
     $$self.$inject_state = ($$props2) => {
       if ("components" in $$props2)
         $$invalidate(0, components = $$props2.components);
-      if ("page" in $$props2)
-        $$invalidate(1, page2 = $$props2.page);
+      if ("pageInfo" in $$props2)
+        $$invalidate(1, pageInfo2 = $$props2.pageInfo);
+      if ("pageAst" in $$props2)
+        $$invalidate(2, pageAst2 = $$props2.pageAst);
       if ("tailwindConfig" in $$props2)
-        $$invalidate(2, tailwindConfig2 = $$props2.tailwindConfig);
+        $$invalidate(3, tailwindConfig2 = $$props2.tailwindConfig);
       if ("tailwindInput" in $$props2)
-        $$invalidate(3, tailwindInput2 = $$props2.tailwindInput);
+        $$invalidate(4, tailwindInput2 = $$props2.tailwindInput);
       if ("live" in $$props2)
-        $$invalidate(4, live2 = $$props2.live);
+        $$invalidate(5, live2 = $$props2.live);
     };
     if ($$props && "$$inject" in $$props) {
       $$self.$inject_state($$props.$$inject);
     }
     $$self.$$.update = () => {
-      if ($$self.$$.dirty & /*page*/
+      if ($$self.$$.dirty & /*pageAst*/
+      4) {
+        $:
+          set_store_value(pageAst, $pageAstStore = pageAst2, $pageAstStore);
+      }
+      if ($$self.$$.dirty & /*pageInfo*/
       2) {
         $:
-          set_store_value(page, $pageStore = page2, $pageStore);
+          set_store_value(pageInfo, $pageInfoStore = pageInfo2, $pageInfoStore);
       }
       if ($$self.$$.dirty & /*tailwindConfig*/
-      4) {
+      8) {
         $:
           set_store_value(tailwindConfig, $tailwindConfigStore = tailwindConfig2, $tailwindConfigStore);
       }
       if ($$self.$$.dirty & /*tailwindInput*/
-      8) {
+      16) {
         $:
           set_store_value(tailwindInput, $tailwindInputStore = tailwindInput2, $tailwindInputStore);
       }
       if ($$self.$$.dirty & /*live*/
-      16) {
+      32) {
         $:
           set_store_value(live, $liveStore = live2, $liveStore);
       }
     };
-    return [components, page2, tailwindConfig2, tailwindInput2, live2];
+    return [components, pageInfo2, pageAst2, tailwindConfig2, tailwindInput2, live2];
   }
   var UiBuilder = class extends SvelteComponentDev {
     constructor(options) {
       super(options);
       init2(this, options, instance16, create_fragment16, safe_not_equal, {
         components: 0,
-        page: 1,
-        tailwindConfig: 2,
-        tailwindInput: 3,
-        live: 4
+        pageInfo: 1,
+        pageAst: 2,
+        tailwindConfig: 3,
+        tailwindInput: 4,
+        live: 5
       });
       dispatch_dev("SvelteRegisterComponent", {
         component: this,
@@ -33276,36 +33302,43 @@ var BeaconLiveAdmin = (() => {
       this.$$set({ components });
       flush();
     }
-    get page() {
+    get pageInfo() {
       return this.$$.ctx[1];
     }
-    set page(page2) {
-      this.$$set({ page: page2 });
+    set pageInfo(pageInfo2) {
+      this.$$set({ pageInfo: pageInfo2 });
+      flush();
+    }
+    get pageAst() {
+      return this.$$.ctx[2];
+    }
+    set pageAst(pageAst2) {
+      this.$$set({ pageAst: pageAst2 });
       flush();
     }
     get tailwindConfig() {
-      return this.$$.ctx[2];
+      return this.$$.ctx[3];
     }
     set tailwindConfig(tailwindConfig2) {
       this.$$set({ tailwindConfig: tailwindConfig2 });
       flush();
     }
     get tailwindInput() {
-      return this.$$.ctx[3];
+      return this.$$.ctx[4];
     }
     set tailwindInput(tailwindInput2) {
       this.$$set({ tailwindInput: tailwindInput2 });
       flush();
     }
     get live() {
-      return this.$$.ctx[4];
+      return this.$$.ctx[5];
     }
     set live(live2) {
       this.$$set({ live: live2 });
       flush();
     }
   };
-  create_custom_element(UiBuilder, { "components": {}, "page": {}, "tailwindConfig": {}, "tailwindInput": {}, "live": {} }, [], [], true);
+  create_custom_element(UiBuilder, { "components": {}, "pageInfo": {}, "pageAst": {}, "tailwindConfig": {}, "tailwindInput": {}, "live": {} }, [], [], true);
   var UiBuilder_default = UiBuilder;
 
   // import-glob:../svelte/**/*.svelte

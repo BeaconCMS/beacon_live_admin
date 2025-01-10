@@ -80,13 +80,14 @@ export interface RootComponent extends Component {
 export interface Layout {
   ast: AstNode[]
 }
-export interface Page {
+export interface PageInfo {
   id: string
   path: string
-  template: string
   site: string
   layoutId: string
   layout: Layout
   components: RootComponent[]
+}
+export interface Page extends PageInfo{
   ast: AstNode[]
 }

@@ -389,7 +389,8 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
             props={
               %{
                 components: @components,
-                page: @builder_page,
+                pageInfo: @builder_page,
+                pageAst: @builder_page_ast,
                 tailwindConfig: @tailwind_config,
                 tailwindInput: @tailwind_input,
                 selectedAstElementId: @selected_element_path
@@ -397,7 +398,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
             }
             socket={@socket}
           />
-          <.live_component module={VisualEditor.PropertiesSidebarComponent} id="properties_sidebar" page={@builder_page} selected_element_path={@selected_element_path} />
+          <.live_component module={VisualEditor.PropertiesSidebarComponent} id="properties_sidebar" page={@builder_page} ast={@builder_page_ast} selected_element_path={@selected_element_path} />
         </div>
       <% end %>
 
