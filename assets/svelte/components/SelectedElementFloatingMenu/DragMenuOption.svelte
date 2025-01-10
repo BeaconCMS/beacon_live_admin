@@ -1,7 +1,6 @@
 <script lang="ts" context="module">
   import { writable, type Writable } from "svelte/store"
   import {
-    page,
     pageAst,
     selectedAstElementId,
     parentOfSelectedAstElement,
