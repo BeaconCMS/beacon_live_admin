@@ -6,7 +6,8 @@
   import { draggedComponentDefinition } from "$lib/stores/dragAndDrop"
   import { live } from "$lib/stores/live"
   import {
-    page,
+    pageInfo,
+    pageAst,
     selectedAstElement,
     selectedAstElementId,
     isAstElement,
@@ -44,7 +45,7 @@
       let node = $selectedAstElement
       if (node && isAstElement(node)) {
         node.attrs[attribute.name] = attribute.value
-        $live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast })
+        $live.pushEvent("update_page_ast", { id: $pageInfo.id, ast: $pageAst })
         arbitraryAttributes = arbitraryAttributes.filter((_, i) => i !== index)
       }
     }
@@ -54,7 +55,7 @@
     let node = $selectedAstElement
     if (node && isAstElement(node)) {
       delete node.attrs[name]
-      $live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast })
+      $live.pushEvent("update_page_ast", { id: $pageInfo.id, ast: $pageAst })
     }
   }
 
@@ -62,9 +63,8 @@
     let node = $selectedAstElement
     if (node) {
       let classes = newClasses.split(" ").map((c) => c.trim())
-      // $live.pushEvent("classes_added", { id: $page.id, classes })
       node.attrs.class = node.attrs.class ? `${node.attrs.class} ${classes.join(" ")}` : classes.join(" ")
-      $live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast })
+      $live.pushEvent("update_page_ast", { id: $pageInfo.id, ast: $pageAst })
     }
   }
 
@@ -81,7 +81,7 @@
         .filter((c) => c !== className)
         .join(" ")
       node.attrs.class = newClass
-      $live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast })
+      $live.pushEvent("update_page_ast", { id: $pageInfo.id, ast: $pageAst })
     }
   }
 
@@ -93,7 +93,7 @@
     let node = $selectedAstElement
     if (node && isAstElement(node)) {
       node.arg = e.detail
-      $live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast })
+      $live.pushEvent("update_page_ast", { id: $pageInfo.id, ast: $pageAst })
     }
   }
 
@@ -101,7 +101,7 @@
     let node = $selectedAstElement
     if (node && isAstElement(node)) {
       node.attrs[attrName] = e.detail
-      $live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast })
+      $live.pushEvent("update_page_ast", { id: $pageInfo.id, ast: $pageAst })
     }
   }
 
@@ -129,14 +129,13 @@
 
   async function changeNodes({ detail: nodes }: CustomEvent<AstNode[]>) {
     if ($selectedAstElementId === "root") {
-      let selectedElement = $page
-      selectedElement.ast = nodes
+      $pageAst = nodes
     } else {
       let selectedElement = $selectedAstElement
       if (!selectedElement) return
       selectedElement.content = nodes
     }
-    $live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast })
+    $live.pushEvent("update_page_ast", { id: $pageInfo.id, ast: $pageAst })
   }
 </script>
 

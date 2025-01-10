@@ -1,10 +1,11 @@
 <script lang="ts">
-  import type { Page } from "$lib/types"
+  import type { AstNode, PageInfo } from "$lib/types"
 
-  export let page: Page
+  export let pageInfo: PageInfo
+  export let pageAst: AstNode[]
 
-  function getPageName(page: Page): string {
-    return !page.path || page.path === "" ? "index" : page.path
+  function getPageName(pageInfo: PageInfo): string {
+    return !pageInfo.path || pageInfo.path === "" ? "index" : pageInfo.path
   }
 </script>
 
@@ -17,7 +18,7 @@
     </div>
     <div class="flex-1 py-2.5 overflow-visible">
       <div class="rounded bg-gray-50 border-b border-gray-200 shadow max-w-xs mx-auto text-center py-0.5 relative">
-        <span data-testid="url-box">{getPageName(page)}</span>
+        <span data-testid="url-box">{getPageName(pageInfo)}</span>
       </div>
     </div>
     <div class="py-3">

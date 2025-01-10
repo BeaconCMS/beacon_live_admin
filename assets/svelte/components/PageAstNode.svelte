@@ -73,11 +73,15 @@
   }
 
   function handleClick({ currentTarget }: Event) {
-    setSelection(nodeId)
-    setSelectedDom(currentTarget)
+    if (currentTarget instanceof Element) {
+      setSelection(nodeId)
+      setSelectedDom(currentTarget)
+    }
   }
 
   function handleContentEdited({ target }: Event) {
+    if (!(target instanceof HTMLElement)) return
+    
     let children = target.children
     if (!isAstElement(node)) {
       return
@@ -87,17 +91,15 @@
         updateNodeContent(node, target.innerText)
       }
     } else {
-      let tmpClone = target.cloneNode(true)
+      let tmpClone = target.cloneNode(true) as HTMLElement
       Array.from(tmpClone.children).forEach((c) => tmpClone.removeChild(c))
       let stringChildIndex = node.content.findIndex((e) => typeof e === "string")
-      let newText = tmpClone.textContent.trim()
+      let newText = tmpClone.textContent?.trim() || ""
       if (node.content[stringChildIndex] !== newText) {
         node.content[stringChildIndex] = newText
         updateAst()
       }
     }
-    // There isn't a way (for now) of editing an element that has more than one text node
-    // because there's no easy way ot telling which one was edited.
   }
 
   // When rendering raw html, we can't add the usual classes to the wrapper.

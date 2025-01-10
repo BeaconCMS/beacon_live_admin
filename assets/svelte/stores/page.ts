@@ -6,24 +6,21 @@ import { live } from "$lib/stores/live"
 // export const page: Writable<Page> = writable()
 export const pageAst: Writable<AstNode[]> = writable()
 export const pageInfo: Writable<PageInfo> = writable()
-export const page = derived([pageAst, pageInfo], ([$pageAst, $pageInfo]) => {
-  return ($pageAst && $pageInfo) ? { ast: $pageAst, ...$pageInfo } : null;
-})
 export const selectedAstElementId: Writable<string | undefined> = writable()
 export const highlightedAstElement: Writable<AstElement | undefined> = writable()
 export const slotTargetElement: Writable<AstElement | undefined> = writable()
-export const rootAstElement: Readable<AstElement | undefined> = derived([page], ([$page]) => {
+export const rootAstElement: Readable<AstElement | undefined> = derived([pageAst], ([$pageAst]) => {
   // This is a virtual AstElement intended to simulate the page itself to reorder the components at the first level.
-  if ($page) {
-    return { tag: "root", attrs: {}, content: $page.ast }
+  if ($pageAst) {
+    return { tag: "root", attrs: {}, content: $pageAst }
   }
 })
 
 export const selectedAstElement: Readable<AstElement | undefined> = derived(
-  [page, selectedAstElementId],
-  ([$page, $selectedAstElementId]) => {
-    if ($page && $selectedAstElementId) {
-      const element = findAstElement($page.ast, $selectedAstElementId)
+  [pageAst, selectedAstElementId],
+  ([$pageAst, $selectedAstElementId]) => {
+    if ($pageAst && $selectedAstElementId) {
+      const element = findAstElement($pageAst, $selectedAstElementId)
       get(live).pushEvent("select_element", { path: $selectedAstElementId })
       return element
     } else {
@@ -55,13 +52,13 @@ export const grandParentSelectedAstElementId: Readable<string> = derived(
 )
 
 export const parentOfSelectedAstElement: Readable<AstElement | undefined> = derived(
-  [page, parentSelectedAstElementId],
-  ([$page, $parentSelectedAstElementId]) => findAstElement($page.ast, $parentSelectedAstElementId),
+  [pageAst, parentSelectedAstElementId],
+  ([$pageAst, $parentSelectedAstElementId]) => findAstElement($pageAst, $parentSelectedAstElementId),
 )
 
 export const grandParentOfSelectedAstElement: Readable<AstElement | undefined> = derived(
-  [page, grandParentSelectedAstElementId],
-  ([$page, $grandParentSelectedAstElementId]) => findAstElement($page.ast, $grandParentSelectedAstElementId),
+  [pageAst, grandParentSelectedAstElementId],
+  ([$pageAst, $grandParentSelectedAstElementId]) => findAstElement($pageAst, $grandParentSelectedAstElementId),
 )
 
 export const selectedDomElement: Writable<Element | null> = writable(null)
@@ -96,8 +93,8 @@ export function findAstElement(ast: AstNode[], id: string): AstElement {
   return node
 }
 export function findAstElementId(astNode: AstNode): string | undefined {
-  let $page = get(page)
-  return _findAstElementId($page.ast, astNode, "")
+  let ast = get(pageAst)
+  return _findAstElementId(ast, astNode, "")
 }
 
 export function _findAstElementId(ast: AstNode[], astNode: AstNode, id: string): string | undefined {

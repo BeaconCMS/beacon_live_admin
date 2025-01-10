@@ -398,7 +398,13 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
             }
             socket={@socket}
           />
-          <.live_component module={VisualEditor.PropertiesSidebarComponent} id="properties_sidebar" page={@builder_page} ast={@builder_page_ast} selected_element_path={@selected_element_path} />
+          <.live_component 
+            module={VisualEditor.PropertiesSidebarComponent} 
+            id="properties_sidebar" 
+            page={@builder_page}
+            ast={@builder_page_ast}
+            selected_element_path={@selected_element_path} 
+          />
         </div>
       <% end %>
 
