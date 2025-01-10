@@ -89,8 +89,8 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
     updated = Map.get(payload, :updated, %{})
     attrs = Map.get(updated, "attrs", %{})
     deleted_attrs = Map.get(payload, :deleted, [])
-    ast = VisualEditor.update_node(socket.assigns.builder_page.ast, path, attrs, deleted_attrs)
-    {:ok, update_builder_page(socket, :ast, ast)}
+    ast = VisualEditor.update_node(socket.assigns.builder_page_ast, path, attrs, deleted_attrs)
+    {:ok, assign(socket, :builder_page_ast, ast)}
   end
 
   def update(_, socket) do
@@ -170,7 +170,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
   end
 
   def handle_event("enable_editor", %{"editor" => "code"}, socket) do
-    template = Beacon.Template.HEEx.HEExDecoder.decode(socket.assigns.builder_page.ast)
+    template = Beacon.Template.HEEx.HEExDecoder.decode(socket.assigns.builder_page_ast)
     params = Map.merge(socket.assigns.form.params, %{"template" => template})
     changeset = Content.change_page(socket.assigns.site, socket.assigns.page, params)
 
@@ -245,21 +245,16 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
     with :heex <- Changeset.get_field(changeset, :format),
          {:ok, page} <- Changeset.apply_action(changeset, :update),
          %{data: builder_page} <- WebAPI.Page.show(page.site, page) do
-      assign(socket, :builder_page, builder_page)
+      {ast, builder_page} = Map.pop(builder_page, :ast)
+      assign(socket, builder_page: builder_page, builder_page_ast: ast)
     else
       # TODO: handle errors
       _ ->
-        assign(socket, :builder_page, nil)
+        assign(socket, builder_page: nil, builder_page_ast: nil)
     end
   end
 
   defp maybe_assign_builder_page(socket, _changeset), do: assign(socket, :builder_page, nil)
-
-  defp update_builder_page(socket, key, value) do
-    update(socket, :builder_page, fn builder_page ->
-      Map.put(builder_page, key, value)
-    end)
-  end
 
   defp assign_extra_fields(socket, changeset) do
     params = Ecto.Changeset.get_field(changeset, :extra)
