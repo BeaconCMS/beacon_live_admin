@@ -6,7 +6,9 @@ import { live } from "$lib/stores/live"
 // export const page: Writable<Page> = writable()
 export const pageAst: Writable<AstNode[]> = writable()
 export const pageInfo: Writable<PageInfo> = writable()
-export const page = derived([pageAst, pageInfo], ([$pageAst, $pageInfo]) => ({ ast: $pageAst, ...$pageInfo }))
+export const page = derived([pageAst, pageInfo], ([$pageAst, $pageInfo]) => {
+  return ($pageAst && $pageInfo) ? { ast: $pageAst, ...$pageInfo } : null;
+})
 export const selectedAstElementId: Writable<string | undefined> = writable()
 export const highlightedAstElement: Writable<AstElement | undefined> = writable()
 export const slotTargetElement: Writable<AstElement | undefined> = writable()
@@ -113,7 +115,8 @@ export function _findAstElementId(ast: AstNode[], astNode: AstNode, id: string):
 }
 
 export function resetStores() {
-  page.set(null)
+  pageAst.set(null)
+  pageInfo.set(null)
   selectedAstElementId.set(null)
   highlightedAstElement.set(null)
   slotTargetElement.set(null)
