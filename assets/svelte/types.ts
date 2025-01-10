@@ -88,6 +88,6 @@ export interface PageInfo {
   layout: Layout
   components: RootComponent[]
 }
-export interface Page extends PageInfo{
+export interface Page extends PageInfo {
   ast: AstNode[]
 }
