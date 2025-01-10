@@ -54,6 +54,12 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
 
     {:noreply, socket}
   end
+  
+  def handle_event("update_page_node", %{"node_id" => node_id, "node" => node}, socket) do
+    # TODO: update the ast node
+
+    {:noreply, socket}
+  end
 
   def handle_event(
         "render_component_in_page",
