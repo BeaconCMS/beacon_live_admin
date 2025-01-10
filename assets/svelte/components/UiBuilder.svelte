@@ -17,8 +17,8 @@
   export let tailwindInput: string
   export let live
 
-  $: $pageAstStore = pageAst;
-  $: $pageInfoStore = pageInfo;
+  $: $pageAstStore = pageAst
+  $: $pageInfoStore = pageInfo
   $: $tailwindConfigStore = tailwindConfig
   $: $tailwindInputStore = tailwindInput
   $: $liveStore = live
