@@ -10,7 +10,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.PropertiesSidebarComponent do
      |> assign_new(:add_new_attribute, fn -> false end)}
   end
 
-  def update(%{page: page, ast: ast, selected_element_path: selected_element_path} = assigns, socket) do
+  def update(%{ast: ast, selected_element_path: selected_element_path} = assigns, socket) do
     selected_element =
       case VisualEditor.find_element(ast, selected_element_path) do
         nil ->

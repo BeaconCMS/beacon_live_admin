@@ -75,11 +75,12 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
 
     socket =
       socket
-      |> LiveMonacoEditor.set_value(template, to: "template")
+      # |> LiveMonacoEditor.set_value(template, to: "template")
       |> assign_form(changeset)
-      |> assign_template(template)
+      # |> assign_template(template)
       |> maybe_assign_builder_page(changeset)
-      |> assign(:template, template)
+
+    # |> assign(:template, template)
 
     {:ok, socket}
   end
@@ -93,9 +94,9 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
     {:ok, assign(socket, :builder_page_ast, ast)}
   end
 
-  def update(_, socket) do
-    {:ok, socket}
-  end
+  # def update(_, socket) do
+  #   {:ok, socket}
+  # end
 
   @impl true
   # ignore change events from the editor field
@@ -116,10 +117,25 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
       |> Content.validate_page(socket.assigns.page, page_params)
       |> Map.put(:action, :validate)
 
+    {
+      :noreply,
+      socket
+      |> assign_form(changeset)
+      # |> maybe_assign_builder_page(changeset)}
+    }
+  end
+
+  def handle_event("validate", %{"page" => page_params}, socket) do
+    changeset =
+      socket.assigns.site
+      |> Content.validate_page(socket.assigns.page, page_params)
+      |> Map.put(:action, :validate)
+
     {:noreply,
      socket
      |> assign_form(changeset)
-     |> maybe_assign_builder_page(changeset)}
+     # |> maybe_assign_builder_page(changeset)
+     |> assign_extra_fields(changeset)}
   end
 
   def handle_event("show_modal", %{"confirm" => action} = _params, socket) do
@@ -146,19 +162,6 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
       |> push_patch(to: beacon_live_admin_path(socket, site, "/pages/#{page.id}"))
 
     {:noreply, socket}
-  end
-
-  def handle_event("validate", %{"page" => page_params}, socket) do
-    changeset =
-      socket.assigns.site
-      |> Content.validate_page(socket.assigns.page, page_params)
-      |> Map.put(:action, :validate)
-
-    {:noreply,
-     socket
-     |> assign_form(changeset)
-     |> maybe_assign_builder_page(changeset)
-     |> assign_extra_fields(changeset)}
   end
 
   def handle_event("save", %{"save" => user_action, "page" => page_params}, socket) do
@@ -245,8 +248,8 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
     with :heex <- Changeset.get_field(changeset, :format),
          {:ok, page} <- Changeset.apply_action(changeset, :update),
          %{data: builder_page} <- WebAPI.Page.show(page.site, page) do
-      {ast, builder_page} = Map.pop(builder_page, :ast)
-      assign(socket, builder_page: builder_page, builder_page_ast: ast)
+      {builder_page_ast, builder_page} = Map.pop(builder_page, :ast)
+      assign(socket, builder_page: builder_page, builder_page_ast: builder_page_ast)
     else
       # TODO: handle errors
       _ ->
@@ -254,7 +257,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
     end
   end
 
-  defp maybe_assign_builder_page(socket, _changeset), do: assign(socket, :builder_page, nil)
+  defp maybe_assign_builder_page(socket, _changeset), do: assign(socket, builder_page: nil, builder_page_ast: nil)
 
   defp assign_extra_fields(socket, changeset) do
     params = Ecto.Changeset.get_field(changeset, :extra)
@@ -380,7 +383,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
           </.button>
         </div>
       </.modal>
-      />
+
       <%= if @editor == "visual" do %>
         <div class="flex">
           <.svelte
@@ -398,13 +401,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
             }
             socket={@socket}
           />
-          <.live_component 
-            module={VisualEditor.PropertiesSidebarComponent} 
-            id="properties_sidebar" 
-            page={@builder_page}
-            ast={@builder_page_ast}
-            selected_element_path={@selected_element_path} 
-          />
+          <.live_component module={VisualEditor.PropertiesSidebarComponent} id="properties_sidebar" page={@builder_page} ast={@builder_page_ast} selected_element_path={@selected_element_path} />
         </div>
       <% end %>
 
