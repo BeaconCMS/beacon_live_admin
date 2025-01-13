@@ -12,12 +12,12 @@
 
   async function handleDragDrop(e: DragEvent) {
     const target = e.target as HTMLElement
-    const layoutZone = e.dataTransfer?.getData('layoutZone')
-    
+    const layoutZone = e.dataTransfer?.getData("layoutZone")
+
     $currentComponentCategory = null
     if (!$draggedComponentDefinition) return
     let draggedObj = $draggedComponentDefinition
-    
+
     if (layoutZone) {
       $live.pushEvent(
         "render_component_in_page",

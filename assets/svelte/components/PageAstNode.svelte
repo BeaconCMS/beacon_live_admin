@@ -81,7 +81,7 @@
 
   function handleContentEdited({ target }: Event) {
     if (!(target instanceof HTMLElement)) return
-    
+
     let children = target.children
     if (!isAstElement(node)) {
       return
