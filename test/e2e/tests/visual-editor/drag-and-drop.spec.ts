@@ -129,6 +129,47 @@ test("Reordering (vertically with margin)", async ({ page }) => {
   ])
 })
 
+test("Reordering (grid, horizontally and vertically)", async ({ page }) => {
+  await syncLV(page)
+
+  const source = page.getByTestId("grid-item-1")
+  const dragButton = getDragButton(page)
+
+  await verifyOrder(page, "[data-testid^=grid-item-]", [
+    "grid-item-1",
+    "grid-item-2",
+    "grid-item-3",
+    "grid-item-4",
+    "grid-item-5",
+    "grid-item-6",
+  ])
+
+  await source.click()
+  await expect(source).toHaveAttribute("data-selected", "true")
+  await expect(dragButton).toBeVisible()
+  await expect(dragButton.locator("span")).toHaveClass("hero-arrows-pointing-out")
+
+  await startDragging(page)
+  await dragTo(
+    page,
+    "grid-item-4",
+    // xPosition in target, use default
+    undefined,
+    // yPosition in target, add button position threshold
+    (y, targetHeight) => y + targetHeight / 2 + dragButtonBottomPosition
+  )
+  await page.mouse.up()
+
+  await verifyOrder(page, "[data-testid^=grid-item-]", [
+    "grid-item-2",
+    "grid-item-3",
+    "grid-item-4",
+    "grid-item-1",
+    "grid-item-5",
+    "grid-item-6",
+  ])
+})
+
 test("Persistence on save", async ({ page }) => {
   await syncLV(page)
 

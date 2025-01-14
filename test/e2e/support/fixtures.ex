@@ -47,45 +47,45 @@ defmodule Beacon.LiveAdminTest.E2E.Fixtures do
       <div class="mb-8">
         <h2 class="text-lg font-semibold mb-4">4. Vertical using Flexbox</h2>
         <div class="flex flex-col space-y-4">
-          <div class="p-2 border rounded">Item 1<br />Small text.</div>
-          <div class="p-2 border rounded">Item 2<br />Small text.</div>
-          <div class="p-2 border rounded">Item 3<br />Small text. <br /> But taller</div>
-          <div class="p-2 border rounded">Item 4<br />Small text.</div>
-          <div class="p-2 border rounded">Item 5<br />Small text.</div>
+          <div class="p-2 border rounded" data-testid="flex-col-item-1">Item 1<br />Small text.</div>
+          <div class="p-2 border rounded" data-testid="flex-col-item-2">Item 2<br />Small text.</div>
+          <div class="p-2 border rounded" data-testid="flex-col-item-3">Item 3<br />Small text. <br /> But taller</div>
+          <div class="p-2 border rounded" data-testid="flex-col-item-4">Item 4<br />Small text.</div>
+          <div class="p-2 border rounded" data-testid="flex-col-item-5">Item 5<br />Small text.</div>
         </div>
       </div>
       <!-- 5. Row using CSS Grid -->
       <div class="mb-8">
         <h2 class="text-lg font-semibold mb-4">5. Row using CSS Grid (Single Row)</h2>
         <div class="grid grid-cols-6 gap-4">
-          <div class="p-2 border rounded">Item 1<br />Small text.</div>
-          <div class="p-2 border rounded">Item 2<br />Small text.</div>
-          <div class="p-2 border rounded col-span-2">Item 3<br />Wider element text.</div>
-          <div class="p-2 border rounded">Item 4<br />Small text.</div>
-          <div class="p-2 border rounded">Item 5<br />Small text.</div>
+          <div class="p-2 border rounded" data-testid="css-row-item-1">Item 1<br />Small text.</div>
+          <div class="p-2 border rounded" data-testid="css-row-item-2">Item 2<br />Small text.</div>
+          <div class="p-2 border rounded col-span-2" data-testid="css-row-item-3">Item 3<br />Wider element text.</div>
+          <div class="p-2 border rounded" data-testid="css-row-item-4">Item 4<br />Small text.</div>
+          <div class="p-2 border rounded" data-testid="css-row-item-5">Item 5<br />Small text.</div>
         </div>
       </div>
       <!-- 6. Vertical using CSS Grid -->
       <div class="mb-8">
         <h2 class="text-lg font-semibold mb-4">6. Vertical using CSS Grid</h2>
         <div class="grid gap-4 grid-rows-6">
-          <div class="p-2 border rounded">Item 1<br />Small text.</div>
-          <div class="p-2 border rounded">Item 2<br />Small text.</div>
-          <div class="p-2 border rounded row-span-2">Item 3<br />Small text. <br /> But taller</div>
-          <div class="p-2 border rounded">Item 4<br />Small text.</div>
-          <div class="p-2 border rounded">Item 5<br />Small text.</div>
+          <div class="p-2 border rounded" data-testid="css-col-item-1">Item 1<br />Small text.</div>
+          <div class="p-2 border rounded" data-testid="css-col-item-2">Item 2<br />Small text.</div>
+          <div class="p-2 border rounded row-span-2" data-testid="css-col-item-3">Item 3<br />Small text. <br /> But taller</div>
+          <div class="p-2 border rounded" data-testid="css-col-item-4">Item 4<br />Small text.</div>
+          <div class="p-2 border rounded" data-testid="css-col-item-5">Item 5<br />Small text.</div>
         </div>
       </div>
       <!-- 7. 2x3 Grid of Elements -->
       <div class="mb-8">
         <h2 class="text-lg font-semibold mb-4">7. 2x3 Grid of Elements</h2>
         <div class="grid grid-cols-2 gap-4">
-          <div class="p-2 border rounded">Item 1<br />Small text.</div>
-          <div class="p-2 border rounded">Item 2<br />Small text.<br /> But taller</div>
-          <div class="p-2 border rounded">Item 3<br />Small text.</div>
-          <div class="p-2 border rounded">Item 4<br />Small text.</div>
-          <div class="p-2 border rounded">Item 5<br />Small text.</div>
-          <div class="p-2 border rounded">Item 6<br />Small text.</div>
+          <div class="p-2 border rounded" data-testid="grid-item-1">Item 1<br />Small text.</div>
+          <div class="p-2 border rounded" data-testid="grid-item-2">Item 2<br />Small text.<br /> But taller</div>
+          <div class="p-2 border rounded" data-testid="grid-item-3">Item 3<br />Small text.</div>
+          <div class="p-2 border rounded" data-testid="grid-item-4">Item 4<br />Small text.</div>
+          <div class="p-2 border rounded" data-testid="grid-item-5">Item 5<br />Small text.</div>
+          <div class="p-2 border rounded" data-testid="grid-item-6">Item 6<br />Small text.</div>
         </div>
       </div>
       """
