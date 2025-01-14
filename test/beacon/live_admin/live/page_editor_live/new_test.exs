@@ -16,11 +16,12 @@ defmodule Beacon.LiveAdmin.PageEditorLive.NewTest do
   test "create new page and patch to edit page", %{conn: conn} do
     {:ok, live, _html} = live(conn, "/admin/site_a/pages/new")
 
-    live
-    |> form("#page-form", page: %{path: "/my/page", title: "My Page", format: "heex"})
-    |> render_submit(%{page: %{"template" => "<div>test</div>"}, save: "save"})
+    {:ok, live, _html} =
+      live
+      |> form("#page-form", page: %{path: "/my/page", title: "My Page", format: "heex"})
+      |> render_submit(%{page: %{"template" => "<div>test</div>"}, save: "save"})
+      |> follow_redirect(conn)
 
-    assert_patch(live)
     assert has_element?(live, "#flash", "Page saved successfully")
     assert has_element?(live, "h1", "Edit Page")
     assert has_element?(live, "button", "Save Changes")
