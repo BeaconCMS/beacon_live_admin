@@ -75,12 +75,8 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
 
     socket =
       socket
-      # |> LiveMonacoEditor.set_value(template, to: "template")
       |> assign_form(changeset)
-      # |> assign_template(template)
       |> maybe_assign_builder_page(changeset)
-
-    # |> assign(:template, template)
 
     {:ok, socket}
   end
@@ -104,10 +100,6 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
      |> assign(builder_page_ast: ast)}
   end
 
-  # def update(_, socket) do
-  #   {:ok, socket}
-  # end
-
   @impl true
   # ignore change events from the editor field
   def handle_event("validate", %{"_target" => ["live_monaco_editor", "template"]}, socket) do
@@ -127,12 +119,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
       |> Content.validate_page(socket.assigns.page, page_params)
       |> Map.put(:action, :validate)
 
-    {
-      :noreply,
-      socket
-      |> assign_form(changeset)
-      # |> maybe_assign_builder_page(changeset)}
-    }
+    {:noreply, assign_form(socket, changeset)}
   end
 
   def handle_event("validate", %{"page" => page_params}, socket) do
@@ -144,7 +131,6 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
     {:noreply,
      socket
      |> assign_form(changeset)
-     # |> maybe_assign_builder_page(changeset)
      |> assign_extra_fields(changeset)}
   end
 
