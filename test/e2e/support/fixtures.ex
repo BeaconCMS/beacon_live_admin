@@ -25,22 +25,22 @@ defmodule Beacon.LiveAdminTest.E2E.Fixtures do
       <div class="mb-8">
         <h2 class="text-lg font-semibold mb-4">2. Vertical using Margins</h2>
         <div>
-          <div class="mb-4 p-2 border rounded">Item 1<br />Small text.</div>
-          <div class="mb-4 p-2 border rounded">Item 2<br />Small text.</div>
-          <div class="mb-4 p-2 border rounded">Item 4<br />Small text.</div>
-          <div class="mb-4 p-2 border rounded">Item 3<br />Small text. <br /> But taller</div>
-          <div class="mb-4 p-2 border rounded">Item 5<br />Small text.</div>
+          <div class="mb-4 p-2 border rounded" data-testid="margin-col-item-1">Item 1<br />Small text.</div>
+          <div class="mb-4 p-2 border rounded" data-testid="margin-col-item-2">Item 2<br />Small text.</div>
+          <div class="mb-4 p-2 border rounded" data-testid="margin-col-item-3">Item 3<br />Small text.</div>
+          <div class="mb-4 p-2 border rounded" data-testid="margin-col-item-4">Item 4<br />Small text. <br /> But taller</div>
+          <div class="mb-4 p-2 border rounded" data-testid="margin-col-item-5">Item 5<br />Small text.</div>
         </div>
       </div>
       <!-- 3. Row using Flexbox -->
       <div class="mb-8">
         <h2 class="text-lg font-semibold mb-4">3. Row using Flexbox</h2>
         <div class="flex space-x-4">
-          <div class="p-2 border rounded">Item 1<br />Small text.</div>
-          <div class="p-2 border rounded">Item 2<br />Small text.</div>
-          <div class="p-2 border rounded">Item 4<br />Small text.</div>
-          <div class="p-2 border rounded flex-grow">Item 3<br />Wider element text.</div>
-          <div class="p-2 border rounded">Item 5<br />Small text.</div>
+          <div class="p-2 border rounded" data-testid="flex-row-item-1">Item 1<br />Small text.</div>
+          <div class="p-2 border rounded" data-testid="flex-row-item-2">Item 2<br />Small text.</div>
+          <div class="p-2 border rounded" data-testid="flex-row-item-3">Item 3<br />Small text.</div>
+          <div class="p-2 border rounded flex-grow" data-testid="flex-row-item-4">Item 4<br />Wider element text.</div>
+          <div class="p-2 border rounded" data-testid="flex-row-item-5">Item 5<br />Small text.</div>
         </div>
       </div>
       <!-- 4. Vertical using Flexbox -->

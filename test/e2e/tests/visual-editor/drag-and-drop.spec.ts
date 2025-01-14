@@ -5,6 +5,10 @@ import { dragTo, getDragButton, startDragging, verifyOrder } from "./helpers"
 const siteName = "site_a"
 const pagePath = "/drag-n-drop"
 
+// The drag button is below the dragged element, so when dragging vertically,
+// it means the cursor will be lower than the expected drop position
+const dragButtonBottomPosition = 50
+
 test.use({ scenario: "drag_n_drop" })
 
 /*
@@ -54,8 +58,7 @@ test("It shows clones and placeholder for initiated drop location", async ({ pag
   await page.mouse.up()
 })
 
-// FIXME: review test
-test.skip("Reordering", async ({ page }) => {
+test("Reordering (horizontally with margin)", async ({ page }) => {
   await syncLV(page)
 
   const source = page.getByTestId("margin-row-item-1")
@@ -72,6 +75,7 @@ test.skip("Reordering", async ({ page }) => {
   await source.click()
   await expect(source).toHaveAttribute("data-selected", "true")
   await expect(dragButton).toBeVisible()
+  await expect(dragButton.locator("span")).toHaveClass("hero-arrows-right-left")
 
   await startDragging(page)
   await dragTo(page, "margin-row-item-3")
@@ -86,8 +90,46 @@ test.skip("Reordering", async ({ page }) => {
   ])
 })
 
-// FIXME: review test
-test.skip("Persistence on save", async ({ page }) => {
+test("Reordering (vertically with margin)", async ({ page }) => {
+  await syncLV(page)
+
+  const source = page.getByTestId("margin-col-item-1")
+  const dragButton = getDragButton(page)
+
+  await verifyOrder(page, "[data-testid^=margin-col-item-]", [
+    "margin-col-item-1",
+    "margin-col-item-2",
+    "margin-col-item-3",
+    "margin-col-item-4",
+    "margin-col-item-5",
+  ])
+
+  await source.click()
+  await expect(source).toHaveAttribute("data-selected", "true")
+  await expect(dragButton).toBeVisible()
+  await expect(dragButton.locator("span")).toHaveClass("hero-arrows-up-down")
+
+  await startDragging(page)
+  await dragTo(
+    page,
+    "margin-col-item-3",
+    // xPosition in target, use default
+    undefined,
+    // yPosition in target, add button position threshold
+    (y, targetHeight) => y + targetHeight / 2 + dragButtonBottomPosition
+  )
+  await page.mouse.up()
+
+  await verifyOrder(page, "[data-testid^=margin-col-item-]", [
+    "margin-col-item-2",
+    "margin-col-item-3",
+    "margin-col-item-1",
+    "margin-col-item-4",
+    "margin-col-item-5",
+  ])
+})
+
+test("Persistence on save", async ({ page }) => {
   await syncLV(page)
 
   const source = page.getByTestId("margin-row-item-1")
@@ -120,8 +162,12 @@ test.skip("Persistence on save", async ({ page }) => {
   await verifyOrder(page, "[data-testid^=margin-row-item-]", newOrder)
 
   await page.getByRole("button", { name: "Save Changes" }).click()
-  await expect(page.locator('[id="flash"]')).toContainText("Page updated successfully")
+  await expect(page.locator('[id="flash"]')).toContainText("Page saved successfully")
+
+  // Reload page and switch back to visual editor
   await page.reload()
+  await syncLV(page)
+  await page.getByRole("button", { name: "Visual Editor" }).click()
 
   await verifyOrder(page, "[data-testid^=margin-row-item-]", newOrder)
 })
