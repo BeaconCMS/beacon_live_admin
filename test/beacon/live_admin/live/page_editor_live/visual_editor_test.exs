@@ -11,11 +11,10 @@ defmodule Beacon.LiveAdmin.PageEditorLive.VisualEditorTest do
     [page: page_fixture()]
   end
 
-  test "change id", %{conn: conn, page: page} do
+  test "change id value using the id control", %{conn: conn, page: page} do
     {:ok, view, _html} = live(conn, "/admin/site_a/pages/#{page.id}?editor=visual")
 
-    path = "0.0"
-    render_click(view, "select_element", %{"path" => path})
+    render_click(view, "select_element", %{"path" => "0.0"})
 
     view
     |> element("#control-id-form")
