@@ -20,10 +20,10 @@ defmodule Beacon.LiveAdmin.PageEditorLive.NewTest do
     |> form("#page-form", page: %{path: "/my/page", title: "My Page", format: "heex"})
     |> render_submit(%{page: %{"template" => "<div>test</div>"}, save: "save"})
 
-    assert_patch(live)
-    assert has_element?(live, "#flash", "Page saved successfully")
-    assert has_element?(live, "h1", "Edit Page")
-    assert has_element?(live, "button", "Save Changes")
+    {path, flash} = assert_redirect(live)
+
+    assert path =~ ~r"^/admin/site_a/pages/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    assert flash["info"] == "Page saved successfully"
   end
 
   describe "extra page fields" do
