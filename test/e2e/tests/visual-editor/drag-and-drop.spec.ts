@@ -116,7 +116,7 @@ test("Reordering (vertically with margin)", async ({ page }) => {
     // xPosition in target, use default
     undefined,
     // yPosition in target, add button position threshold
-    (y, targetHeight) => y + targetHeight / 2 + dragButtonBottomPosition
+    (y, targetHeight) => y + targetHeight / 2 + dragButtonBottomPosition,
   )
   await page.mouse.up()
 
@@ -156,7 +156,7 @@ test("Reordering (grid, horizontally and vertically)", async ({ page }) => {
     // xPosition in target, use default
     undefined,
     // yPosition in target, add button position threshold
-    (y, targetHeight) => y + targetHeight / 2 + dragButtonBottomPosition
+    (y, targetHeight) => y + targetHeight / 2 + dragButtonBottomPosition,
   )
   await page.mouse.up()
 

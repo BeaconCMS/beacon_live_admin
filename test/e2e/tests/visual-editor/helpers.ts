@@ -1,13 +1,13 @@
 import { expect, type Page as PlayWrightPage } from "@playwright/test"
 
-type DragTargetType = 'parent' | 'selected'
+type DragTargetType = "parent" | "selected"
 
-export function getDragButton(page: PlayWrightPage, dragTarget: DragTargetType = 'selected') {
-  const testId = dragTarget === 'parent' ? "drag-button-parent" : "drag-button"
+export function getDragButton(page: PlayWrightPage, dragTarget: DragTargetType = "selected") {
+  const testId = dragTarget === "parent" ? "drag-button-parent" : "drag-button"
   return page.getByTestId(testId)
 }
 
-export async function startDragging(page: PlayWrightPage, dragTarget: DragTargetType = 'selected') {
+export async function startDragging(page: PlayWrightPage, dragTarget: DragTargetType = "selected") {
   const dragButton = getDragButton(page, dragTarget)
 
   await dragButton.waitFor()
