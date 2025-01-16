@@ -224,7 +224,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
        |> assign(page: page, show_modal: nil)
        |> update(:page_status, &if(user_action == "publish", do: :published, else: &1))
        |> put_flash(:info, "Page #{String.trim_trailing(user_action, "e")}ed successfully")
-       |> push_patch(to: beacon_live_admin_path(socket, site, "/pages/#{page.id}", %{editor: socket.assigns.editor}))}
+       |> push_navigate(to: beacon_live_admin_path(socket, site, "/pages/#{page.id}", %{editor: socket.assigns.editor}))}
     else
       {:error, changeset} ->
         changeset = Map.put(changeset, :action, :save)
