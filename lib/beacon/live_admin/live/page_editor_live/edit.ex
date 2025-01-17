@@ -62,6 +62,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
       path: path,
       node: node
     )
+
     {:noreply, socket}
   end
 

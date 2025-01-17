@@ -170,7 +170,9 @@
   }
 
   function applyNewOrder() {
-    let [parent, parentId] = isParent ? [$grandParentOfSelectedAstElement, $grandParentSelectedAstElementId] : [$parentOfSelectedAstElement, $parentSelectedAstElementId]
+    let [parent, parentId] = isParent
+      ? [$grandParentOfSelectedAstElement, $grandParentSelectedAstElementId]
+      : [$parentOfSelectedAstElement, $parentSelectedAstElementId]
 
     if (newIndex !== null && newIndex !== dragElementInfo.selectedIndex && !!parent) {
       // Reordering happened, apply new order
