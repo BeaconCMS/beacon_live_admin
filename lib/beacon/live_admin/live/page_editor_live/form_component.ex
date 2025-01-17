@@ -108,8 +108,6 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
      |> assign_form(changeset)
      |> assign_template(template)
      |> assign(builder_page_ast: ast)}
-
-    {:ok, socket}
   end
 
   @impl true
