@@ -179,10 +179,16 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
       |> assign_form(changeset)
 
     path =
+      case socket.assigns.live_action do
+        :new -> "/pages/new"
+        :edit -> "/pages/#{socket.assigns.page.id}"
+      end
+
+    path =
       Beacon.LiveAdmin.Router.beacon_live_admin_path(
         socket,
         socket.assigns.site,
-        "/pages/#{socket.assigns.page.id}",
+        path,
         %{editor: "code"}
       )
 
@@ -191,10 +197,16 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
 
   def handle_event("enable_editor", %{"editor" => "visual"}, socket) do
     path =
+      case socket.assigns.live_action do
+        :new -> "/pages/new"
+        :edit -> "/pages/#{socket.assigns.page.id}"
+      end
+
+    path =
       Beacon.LiveAdmin.Router.beacon_live_admin_path(
         socket,
         socket.assigns.site,
-        "/pages/#{socket.assigns.page.id}",
+        path,
         %{editor: "visual"}
       )
 

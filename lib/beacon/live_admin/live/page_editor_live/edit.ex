@@ -55,18 +55,6 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
     {:noreply, socket}
   end
 
-  def handle_event("enable_editor", %{"editor" => editor}, socket) do
-    path =
-      Beacon.LiveAdmin.Router.beacon_live_admin_path(
-        socket,
-        socket.assigns.beacon_page.site,
-        "/pages/#{socket.assigns.page.id}",
-        %{editor: editor}
-      )
-
-    {:noreply, push_patch(socket, to: path)}
-  end
-
   def handle_event(
         "render_component_in_page",
         %{"component_id" => component_id, "page_id" => page_id},
