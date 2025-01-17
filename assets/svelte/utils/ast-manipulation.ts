@@ -4,10 +4,10 @@ import { get } from "svelte/store"
 import type { AstNode, Page, PageInfo } from "$lib/types"
 import { getParentNodeId } from "./ast-helpers"
 
-export function updateNodeContent(node, text) {
+export function updateNodeContent(path, node, text) {
   if (node && isAstElement(node)) {
     node.content = [text]
-    updateAst()
+    updateNode(path, node)
   }
 }
 
@@ -16,6 +16,11 @@ export function updateAst() {
   let ast: AstNode[] = get(pageAst)
   let live = get(liveStore)
   live.pushEvent("update_page_ast", { id: info.id, ast })
+}
+export function updateNode(path, node) {
+  let live = get(liveStore)
+  let info: PageInfo = get(pageInfo)
+  live.pushEvent("update_page_node", { id: info.id, node_id: path, node: node })
 }
 
 export function deleteAstNode(astElementId: string) {

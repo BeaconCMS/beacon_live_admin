@@ -1,5 +1,6 @@
 <script lang="ts">
   import {
+    selectedAstElementId,
     selectedAstElement,
     slotTargetElement,
     highlightedAstElement,
@@ -8,7 +9,7 @@
     setSelectedDom,
   } from "$lib/stores/page"
   import { draggedComponentDefinition } from "$lib/stores/dragAndDrop"
-  import { updateNodeContent, updateAst } from "$lib/utils/ast-manipulation"
+  import { updateNodeContent, updateNode } from "$lib/utils/ast-manipulation"
   import { elementCanBeDroppedInTarget } from "$lib/utils/drag-helpers"
   import type { AstNode } from "$lib/types"
   export let node: AstNode
@@ -88,7 +89,7 @@
     }
     if (children.length === 0) {
       if (target.innerText !== node.content) {
-        updateNodeContent(node, target.innerText)
+        updateNodeContent($selectedAstElementId, node, target.innerText)
       }
     } else {
       let tmpClone = target.cloneNode(true) as HTMLElement
@@ -97,7 +98,7 @@
       let newText = tmpClone.textContent?.trim() || ""
       if (node.content[stringChildIndex] !== newText) {
         node.content[stringChildIndex] = newText
-        updateAst()
+        updateNode($selectedAstElementId, node);
       }
     }
   }
