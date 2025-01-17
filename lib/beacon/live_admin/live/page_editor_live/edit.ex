@@ -56,7 +56,6 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
   end
 
   def handle_event("update_page_node", %{"node_id" => path, "node" => node}, socket) do
-    # TODO: update the ast node
     send_update(Beacon.LiveAdmin.PageEditorLive.FormComponent,
       id: "page-editor-form",
       path: path,
