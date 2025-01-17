@@ -68,6 +68,7 @@ defmodule Beacon.LiveAdmin.MixProject do
       {:gettext, "~> 0.26"},
       {:jason, "~> 1.0"},
       {:igniter, "~> 0.5"},
+      {:turboprop, "~> 0.1"},
 
       # Dev, Test, Docs
       {:bandit, "~> 1.0", only: [:dev, :e2e], optional: true},

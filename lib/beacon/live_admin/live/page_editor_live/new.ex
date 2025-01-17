@@ -2,6 +2,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.New do
   @moduledoc false
 
   use Beacon.LiveAdmin.PageBuilder
+  alias Beacon.LiveAdmin.PageEditorLive.ElementSelection
   alias Beacon.LiveAdmin.Client.Content
   alias Beacon.LiveAdmin.WebAPI
 
@@ -16,6 +17,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.New do
 
     socket =
       socket
+      |> assign_new(:selected_element_path, fn -> nil end)
       |> assign_new(:layouts, fn -> Content.list_layouts(site) end)
       |> assign_new(:components, fn ->
         components = Content.list_components(site, per_page: :infinity)
@@ -56,23 +58,11 @@ defmodule Beacon.LiveAdmin.PageEditorLive.New do
   @impl true
   def handle_event("set_template", %{"value" => value}, socket) do
     send_update(Beacon.LiveAdmin.PageEditorLive.FormComponent,
-      id: "page-editor-form-new",
+      id: "page-editor-form",
       template: value
     )
 
     {:noreply, socket}
-  end
-
-  def handle_event("enable_editor", %{"editor" => editor}, socket) do
-    path =
-      Beacon.LiveAdmin.Router.beacon_live_admin_path(
-        socket,
-        socket.assigns.beacon_page.site,
-        "/pages/new",
-        %{editor: editor}
-      )
-
-    {:noreply, push_patch(socket, to: path)}
   end
 
   @impl true
@@ -91,11 +81,20 @@ defmodule Beacon.LiveAdmin.PageEditorLive.New do
 
   def handle_event("update_page_ast", %{"ast" => ast}, socket) do
     send_update(Beacon.LiveAdmin.PageEditorLive.FormComponent,
-      id: "page-editor-form-new",
+      id: "page-editor-form",
       ast: ast
     )
 
     {:noreply, socket}
+  end
+
+  def handle_event("select_element", %{"path" => path}, socket) do
+    ElementSelection.select_element(path, socket)
+  end
+
+  @impl true
+  def handle_info({:element_changed, {path, payload}}, socket) do
+    ElementSelection.handle_element_changed({path, payload}, socket)
   end
 
   @impl true
@@ -103,12 +102,13 @@ defmodule Beacon.LiveAdmin.PageEditorLive.New do
     ~H"""
     <.live_component
       module={Beacon.LiveAdmin.PageEditorLive.FormComponent}
-      id="page-editor-form-new"
+      id="page-editor-form"
       live_action={@live_action}
       page_title={@page_title}
       site={@beacon_page.site}
       layouts={@layouts}
       page={@page}
+      selected_element_path={@selected_element_path}
       components={@components}
       editor={@editor}
       patch="/pages"

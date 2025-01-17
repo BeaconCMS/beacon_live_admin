@@ -1,7 +1,8 @@
 <script lang="ts" context="module">
   import { writable, type Writable } from "svelte/store"
   import {
-    page,
+    pageInfo,
+    pageAst,
     selectedAstElementId,
     parentOfSelectedAstElement,
     grandParentOfSelectedAstElement,
@@ -187,9 +188,9 @@
         parts[parts.length - 1] = newSelectedIndex.toString()
         $selectedAstElementId = parts.join(".")
       }
-      $page.ast = [...$page.ast]
+      $pageAst = [...$pageAst]
       // Update in the server
-      $live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast })
+      $live.pushEvent("update_page_ast", { id: $pageInfo.id, ast: $pageAst })
     }
   }
 

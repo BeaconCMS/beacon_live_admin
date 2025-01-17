@@ -22,7 +22,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.NewTest do
 
     {path, flash} = assert_redirect(live)
 
-    assert path =~ ~r"^/admin/site_a/pages/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    assert path =~ ~r"^/admin/site_a/pages/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\?editor=code$"
     assert flash["info"] == "Page saved successfully"
   end
 

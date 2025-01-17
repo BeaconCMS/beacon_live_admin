@@ -3,7 +3,7 @@
 <script lang="ts">
   import LayoutAstNode from "./LayoutAstNode.svelte"
   import PageAstNode from "./PageAstNode.svelte"
-  import { page } from "$lib/stores/page"
+  import { pageInfo, pageAst } from "$lib/stores/page"
   import { tailwindConfig } from "$lib/stores/tailwindConfig"
   import { tailwindInput } from "$lib/stores/tailwindInput"
   import { createTailwindcss } from "@mhsdesign/jit-browser-tailwindcss"
@@ -31,7 +31,7 @@
     window.reloadStylesheet = reloadStylesheet
     reloadStylesheet()
   })
-  page.subscribe(async () => {
+  pageInfo.subscribe(async () => {
     await tick()
     window.reloadStylesheet && window.reloadStylesheet()
   })
@@ -58,11 +58,11 @@
 
 <span bind:this={styleWrapper}></span>
 <div bind:this={wrapper} on:click={preventLinkNavigation} on:drop={handleDragDrop}>
-  {#each $page.layout.ast as layoutAstNode}
+  {#each $pageInfo.layout.ast as layoutAstNode}
     <LayoutAstNode node={layoutAstNode}>
       <!-- This seemingly useless wrapper is here just so we are sure that the layout and the page don't share the same parent, which screws the position calculations -->
       <div class="contents" bind:this={contentWrapper}>
-        {#each $page.ast as astNode, index}
+        {#each $pageAst as astNode, index}
           <PageAstNode node={astNode} nodeId={String(index)} />
         {/each}
       </div>

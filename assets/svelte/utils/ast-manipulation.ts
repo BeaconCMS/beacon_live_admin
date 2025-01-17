@@ -1,7 +1,7 @@
-import { page, isAstElement, findAstElement } from "$lib/stores/page"
+import { pageInfo, pageAst, isAstElement, findAstElement } from "$lib/stores/page"
 import { live as liveStore } from "$lib/stores/live"
 import { get } from "svelte/store"
-import type { Page } from "$lib/types"
+import type { AstNode, Page, PageInfo } from "$lib/types"
 import { getParentNodeId } from "./ast-helpers"
 
 export function updateNodeContent(node, text) {
@@ -12,18 +12,18 @@ export function updateNodeContent(node, text) {
 }
 
 export function updateAst() {
-  let currentPage: Page = get(page)
+  let info: PageInfo = get(pageInfo)
+  let ast: AstNode[] = get(pageAst)
   let live = get(liveStore)
-  live.pushEvent("update_page_ast", { id: currentPage.id, ast: currentPage.ast })
+  live.pushEvent("update_page_ast", { id: info.id, ast })
 }
 
 export function deleteAstNode(astElementId: string) {
-  let currentPage: Page = get(page)
-  let live = get(liveStore)
+  let ast: AstNode[] = get(pageAst)
 
-  let astElement = findAstElement(currentPage.ast, astElementId)
+  let astElement = findAstElement(ast, astElementId)
   let parentId = getParentNodeId(astElementId)
-  let content = parentId && parentId !== "root" ? findAstElement(currentPage.ast, parentId)?.content : currentPage.ast
+  let content = parentId && parentId !== "root" ? findAstElement(ast, parentId)?.content : ast
   if (content) {
     let targetIndex = (content as unknown[]).indexOf(astElement)
     content.splice(targetIndex, 1)
