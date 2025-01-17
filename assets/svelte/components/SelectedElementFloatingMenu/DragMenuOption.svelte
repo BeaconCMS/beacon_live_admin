@@ -192,10 +192,8 @@
         parts[parts.length - 1] = newSelectedIndex.toString()
         $selectedAstElementId = parts.join(".")
       }
-      // $pageAst = [...$pageAst]
       // Update in the server
       $live.pushEvent("update_page_node", { id: $pageInfo.id, node_id: parentId, node: parent })
-      // $live.pushEvent("update_page_ast", { id: $pageInfo.id, ast: $pageAst })
     }
   }
 
