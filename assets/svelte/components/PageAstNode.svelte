@@ -98,7 +98,7 @@
       let newText = tmpClone.textContent?.trim() || ""
       if (node.content[stringChildIndex] !== newText) {
         node.content[stringChildIndex] = newText
-        updateNode($selectedAstElementId, node);
+        updateNode($selectedAstElementId, node)
       }
     }
   }
