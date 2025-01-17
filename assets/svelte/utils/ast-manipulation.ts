@@ -17,6 +17,7 @@ export function updateAst() {
   let live = get(liveStore)
   live.pushEvent("update_page_ast", { id: info.id, ast })
 }
+
 export function updateNode(path, node) {
   let live = get(liveStore)
   let info: PageInfo = get(pageInfo)
@@ -28,10 +29,21 @@ export function deleteAstNode(astElementId: string) {
 
   let astElement = findAstElement(ast, astElementId)
   let parentId = getParentNodeId(astElementId)
-  let content = parentId && parentId !== "root" ? findAstElement(ast, parentId)?.content : ast
+  let content;
+  let parentNode;
+  if (parentId && parentId !== "root") {
+    parentNode = findAstElement(ast, parentId);
+    content = parentNode.content;
+  } else {
+    content = ast
+  }
   if (content) {
     let targetIndex = (content as unknown[]).indexOf(astElement)
-    content.splice(targetIndex, 1)
-    updateAst()
+    content.splice(targetIndex, 1);
+    if (parentNode) {
+      updateNode(parentId, parentNode)
+    } else {
+      updateAst()
+    }
   }
 }
