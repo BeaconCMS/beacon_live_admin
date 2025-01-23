@@ -70,7 +70,7 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.ResourceLinks do
   end
 
   def handle_event("save", params, socket) do
-    %{beacon_layout: beacon_layout} = socket.assigns
+    %{beacon_layout: layout, __beacon_actor__: actor} = socket.assigns
 
     resource_links =
       case params do
@@ -79,15 +79,18 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.ResourceLinks do
       end
 
     socket =
-      case Content.update_layout(beacon_layout.site, beacon_layout, resource_links) do
-        {:ok, layout} ->
-          changeset = Content.change_layout(layout.site, layout)
+      case Content.update_layout(layout.site, actor, layout, resource_links) do
+        {:ok, updated_layout} ->
+          changeset = Content.change_layout(updated_layout.site, updated_layout)
 
           socket
-          |> assign(:beacon_layout, layout)
+          |> assign(:beacon_layout, updated_layout)
           |> assign_field(changeset)
           |> assign_attributes()
           |> put_flash(:info, "Layout updated successfully")
+
+        {:error, :not_authorized} ->
+          {:noreply, put_flash(socket, :error, "Not authorized to update Layout")}
 
         {:error, changeset} ->
           assign_field(socket, changeset)

@@ -11,16 +11,16 @@ defmodule Beacon.LiveAdmin.Client.Content do
     call(site, Beacon.Content, :change_layout, [layout, attrs])
   end
 
-  def create_layout(site, attrs) do
-    call(site, Beacon.Content, :create_layout, [attrs])
+  def create_layout(site, actor, attrs) do
+    call(site, Beacon.Content, :create_layout, [attrs, [actor: actor]])
   end
 
-  def update_layout(site, layout, attrs) do
-    call(site, Beacon.Content, :update_layout, [layout, attrs])
+  def update_layout(site, actor, layout, attrs) do
+    call(site, Beacon.Content, :update_layout, [layout, attrs, [actor: actor]])
   end
 
-  def publish_layout(site, id) do
-    call(site, Beacon.Content, :publish_layout, [site, id])
+  def publish_layout(site, actor, id) do
+    call(site, Beacon.Content, :publish_layout, [site, id, [actor: actor]])
   end
 
   def get_layout(site, id) do
@@ -63,20 +63,20 @@ defmodule Beacon.LiveAdmin.Client.Content do
     call(site, Beacon.Content, :validate_page, [site, page, attrs])
   end
 
-  def create_page(site, attrs) do
-    call(site, Beacon.Content, :create_page, [attrs])
+  def create_page(site, actor, attrs) do
+    call(site, Beacon.Content, :create_page, [attrs, [actor: actor]])
   end
 
-  def update_page(site, page, attrs) do
-    call(site, Beacon.Content, :update_page, [page, attrs])
+  def update_page(site, actor, page, attrs) do
+    call(site, Beacon.Content, :update_page, [page, attrs, [actor: actor]])
   end
 
-  def publish_page(site, id) do
-    call(site, Beacon.Content, :publish_page, [site, id])
+  def publish_page(site, actor, id) do
+    call(site, Beacon.Content, :publish_page, [site, id, [actor: actor]])
   end
 
-  def unpublish_page(page) do
-    call(page.site, Beacon.Content, :unpublish_page, [page])
+  def unpublish_page(site, actor, page) do
+    call(site, Beacon.Content, :unpublish_page, [page, [actor: actor]])
   end
 
   def get_page(site, id) do
@@ -107,16 +107,16 @@ defmodule Beacon.LiveAdmin.Client.Content do
     call(site, Beacon.Content, :change_page_variant, [variant, attrs])
   end
 
-  def create_variant_for_page(site, page, attrs) do
-    call(site, Beacon.Content, :create_variant_for_page, [page, attrs])
+  def create_variant_for_page(site, actor, page, attrs) do
+    call(site, Beacon.Content, :create_variant_for_page, [page, attrs, [actor: actor]])
   end
 
-  def update_variant_for_page(site, page, variant, attrs) do
-    call(site, Beacon.Content, :update_variant_for_page, [page, variant, attrs])
+  def update_variant_for_page(site, actor, page, variant, attrs) do
+    call(site, Beacon.Content, :update_variant_for_page, [page, variant, attrs, [actor: actor]])
   end
 
-  def delete_variant_from_page(site, page, variant) do
-    call(site, Beacon.Content, :delete_variant_from_page, [page, variant])
+  def delete_variant_from_page(site, actor, page, variant) do
+    call(site, Beacon.Content, :delete_variant_from_page, [page, variant, [actor: actor]])
   end
 
   def change_event_handler(site, event_handler, attrs \\ %{}) do
@@ -127,8 +127,8 @@ defmodule Beacon.LiveAdmin.Client.Content do
     call(site, Beacon.Content, :list_event_handlers, [site])
   end
 
-  def create_event_handler(site, attrs) do
-    call(site, Beacon.Content, :create_event_handler, [attrs])
+  def create_event_handler(site, actor, attrs) do
+    call(site, Beacon.Content, :create_event_handler, [attrs, [actor: actor]])
   end
 
   def update_event_handler(site, event_handler, attrs) do

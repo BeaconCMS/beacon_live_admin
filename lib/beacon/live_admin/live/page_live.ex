@@ -2,12 +2,14 @@ defmodule Beacon.LiveAdmin.PageLive do
   @moduledoc false
 
   use Beacon.LiveAdmin.Web, :live_view
-  require Logger
+
   alias Beacon.LiveAdmin.PageBuilder.Menu
   alias Beacon.LiveAdmin.PageBuilder.Page
   alias Beacon.LiveAdmin.PageBuilder.Table
   alias Beacon.LiveAdmin.Private
   alias Phoenix.LiveView.Socket
+
+  require Logger
 
   @impl true
   def mount(%{"site" => site} = params, session, socket) do
@@ -21,6 +23,8 @@ defmodule Beacon.LiveAdmin.PageLive do
     sites = Beacon.LiveAdmin.Cluster.running_sites()
 
     %{"pages" => pages} = session
+
+    actor = Beacon.Client.Auth.get_actor(site, session)
 
     current_url =
       Map.get(session, "beacon_live_admin_page_url") ||
@@ -38,6 +42,7 @@ defmodule Beacon.LiveAdmin.PageLive do
         __beacon_sites__: sites,
         __beacon_pages__: pages,
         __beacon_menu__: %Menu{},
+        __beacon_actor__: actor,
         beacon_page: %Page{}
       )
       |> Private.build_on_mount_lifecycle(page.module)
