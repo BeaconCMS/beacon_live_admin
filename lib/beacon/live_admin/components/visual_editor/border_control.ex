@@ -1,6 +1,6 @@
 defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
   @moduledoc false
-
+  require Logger
   use Beacon.LiveAdmin.Web, :live_component
   import Beacon.LiveAdmin.VisualEditor.Components
   alias Beacon.LiveAdmin.VisualEditor
@@ -20,7 +20,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
                 :for={{style, label} <- @border_styles}
                 class={[
                   "flex-1 text-center px-2 py-1 text-sm rounded cursor-pointer",
-                  @form[:style].value == style && "bg-blue-500 text-white",
+                  @form[:style].value == style && "bg-blue-500 text-white ring-2 ring-blue-500 ring-offset-2",
                   @form[:style].value != style && "bg-gray-100 hover:bg-gray-200"
                 ]}
               >
@@ -35,6 +35,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
                   phx-target={@myself}
                 />
                 <%= label %>
+                <div class="text-xs"><%= inspect({@form[:style], style}) %></div>
               </label>
             </div>
           </div>
@@ -81,15 +82,6 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
       </.control_section>
     </div>
     """
-  end
-
-  def mount(socket) do
-    {:ok, assign_form(socket, %{
-      style: "none",
-      color: "gray-500",
-      width: "0",
-      radius: "0"
-    })}
   end
 
   def update(%{element: element} = assigns, socket) do
@@ -147,13 +139,23 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
   end
 
   defp extract_border_style(element) do
-    classes = VisualEditor.element_class(element)
-    cond do
-      String.contains?(classes, "border-solid") -> "solid"
-      String.contains?(classes, "border-dashed") -> "dashed"
-      String.contains?(classes, "border-dotted") -> "dotted"
-      String.contains?(classes, "border-double") -> "double"
-      true -> "none"
+    classes = VisualEditor.element_class(element) |> String.split(" ")
+    
+    border_class_map = %{
+      "border" => "solid",
+      "border-solid" => "solid",
+      "border-dashed" => "dashed",
+      "border-dotted" => "dotted",
+      "border-double" => "double",
+      "border-t" => "solid",
+      "border-r" => "solid",
+      "border-b" => "solid",
+      "border-l" => "solid"
+    }
+    
+    case Enum.find(Map.keys(border_class_map), fn class -> class in classes end) do
+      nil -> "none"
+      class -> border_class_map[class]
     end
   end
 
@@ -179,6 +181,11 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
   end
 
   defp assign_form(socket, values) do
+    Logger.debug("###############################")
+    Logger.debug("###############################")
+    Logger.debug("###### #{inspect(values)} #####")
+    Logger.debug("###############################")
+    Logger.debug("###############################")
     form = to_form(values)
     assign(socket, form: form)
   end
