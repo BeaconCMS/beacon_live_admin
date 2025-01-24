@@ -24,16 +24,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
                   @form[:style].value != style && "bg-gray-100 hover:bg-gray-200"
                 ]}
               >
-                <input
-                  type="radio"
-                  name="border_style"
-                  value={style}
-                  class="hidden"
-                  checked={@form[:style].value == style}
-                  phx-click="update_style"
-                  phx-value-style={style}
-                  phx-target={@myself}
-                />
+                <input type="radio" name="border_style" value={style} class="hidden" checked={@form[:style].value == style} phx-click="update_style" phx-value-style={style} phx-target={@myself} />
                 <%= label %>
                 <div class="text-xs"><%= inspect({@form[:style], style}) %></div>
               </label>
@@ -42,11 +33,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
 
           <div class="flex items-center gap-4">
             <label class="block text-sm font-medium text-gray-700 w-24">Color</label>
-            <select
-              class="flex-1 py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm"
-              phx-change="update_color"
-              phx-target={@myself}
-            >
+            <select class="flex-1 py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm" phx-change="update_color" phx-target={@myself}>
               <option :for={color <- @border_colors} value={color} selected={@form[:color].value == color}>
                 <%= String.replace(color, "-", " ") |> String.capitalize() %>
               </option>
@@ -123,9 +110,9 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
       width: socket.assigns.form[:width].value,
       radius: socket.assigns.form[:radius].value
     }
-    
+
     values = Map.merge(current_values, changes)
-    
+
     classes = []
     classes = if values.style != "none", do: ["border-#{values.style}" | classes], else: classes
     classes = if values.style != "none", do: ["border-#{values.color}" | classes], else: classes
@@ -140,7 +127,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
 
   defp extract_border_style(element) do
     classes = VisualEditor.element_class(element) |> String.split(" ")
-    
+
     border_class_map = %{
       "border" => "solid",
       "border-solid" => "solid",
@@ -152,7 +139,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
       "border-b" => "solid",
       "border-l" => "solid"
     }
-    
+
     case Enum.find(Map.keys(border_class_map), fn class -> class in classes end) do
       nil -> "none"
       class -> border_class_map[class]
@@ -161,6 +148,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
 
   defp extract_border_color(element) do
     classes = VisualEditor.element_class(element)
+
     Enum.find(@border_colors, "gray-500", fn color ->
       String.contains?(classes, "border-#{color}")
     end)
@@ -168,6 +156,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
 
   defp extract_border_width(element) do
     classes = VisualEditor.element_class(element)
+
     Enum.find_value(0..16, "0", fn width ->
       if String.contains?(classes, "border-#{width}"), do: "#{width}"
     end)
@@ -175,6 +164,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
 
   defp extract_border_radius(element) do
     classes = VisualEditor.element_class(element)
+
     Enum.find_value(0..32, "0", fn radius ->
       if String.contains?(classes, "rounded-#{radius}"), do: "#{radius}"
     end)
@@ -189,4 +179,4 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
     form = to_form(values)
     assign(socket, form: form)
   end
-end 
+end
