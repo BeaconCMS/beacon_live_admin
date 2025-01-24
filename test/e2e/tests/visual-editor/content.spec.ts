@@ -38,8 +38,7 @@ test("shows fake browser with rendered content", async ({ page }) => {
   await expect(firstItem).toBeVisible()
 })
 
-// FIXME: review this test
-test.skip("selection states", async ({ page }) => {
+test("selection states", async ({ page }) => {
   await syncLV(page)
 
   const browserContent = page.getByTestId("browser-content")
@@ -63,12 +62,11 @@ test.skip("selection states", async ({ page }) => {
   expect(firstItem).toHaveAttribute("data-selected", "true")
   await expect(selectedItems).toHaveCount(1)
 
-  // Interactive menu's visible for selected element
+  // Interactive menus visible for selected element
   await expect(page.getByTestId("right-sidebar")).toBeVisible()
   await expect(page.getByTestId("drag-button")).toBeVisible()
-
-  // FIXME
-  // await expect(page.getByTestId("element-delete-button")).toBeVisible()
+  await expect(page.getByTestId("drag-button-parent")).toBeVisible()
+  await expect(page.getByTestId("element-delete-button")).toBeVisible()
 
   // Hover other items while in selection state
   /* TODO: improve selection and hover states while dragging.

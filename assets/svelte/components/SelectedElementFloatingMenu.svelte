@@ -48,6 +48,7 @@
         class="absolute top-0 -m-3 w-6 h-6 rounded-full flex justify-center items-center bg-red-500 text-white hover:bg-red-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 active:bg-red-800"
         style={`left: ${menuPosition.width}px;`}
         aria-label="Delete component"
+        data-testid="element-delete-button"
       >
         <span class="hero-trash"></span>
       </button>
