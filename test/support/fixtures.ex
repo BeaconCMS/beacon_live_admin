@@ -19,7 +19,7 @@ defmodule Beacon.LiveAdmin.Fixtures do
         """
       })
 
-    rpc(node, Beacon.Content, :create_layout!, [attrs])
+    rpc(node, Beacon.Content, :create_layout!, [attrs, [auth: false]])
   end
 
   def page_fixture(node \\ node1(), attrs \\ %{}) do
@@ -39,7 +39,7 @@ defmodule Beacon.LiveAdmin.Fixtures do
         """
       })
 
-    rpc(node, Beacon.Content, :create_page!, [attrs])
+    rpc(node, Beacon.Content, :create_page!, [attrs, [auth: false]])
   end
 
   def error_page_fixture(node \\ node1(), attrs \\ %{}) do
@@ -53,7 +53,7 @@ defmodule Beacon.LiveAdmin.Fixtures do
         template: "Oops"
       })
 
-    rpc(node, Beacon.Content, :create_error_page!, [attrs])
+    rpc(node, Beacon.Content, :create_error_page!, [attrs, [auth: false]])
   end
 
   def event_handler_fixture(node \\ node1(), attrs \\ %{}) do
@@ -64,7 +64,7 @@ defmodule Beacon.LiveAdmin.Fixtures do
         code: "{:noreply, socket}"
       })
 
-    {:ok, event_handler} = rpc(node, Beacon.Content, :create_event_handler, [attrs])
+    {:ok, event_handler} = rpc(node, Beacon.Content, :create_event_handler, [attrs, [auth: false]])
     event_handler
   end
 
@@ -106,7 +106,7 @@ defmodule Beacon.LiveAdmin.Fixtures do
         format: :elixir
       })
 
-    rpc(node, Beacon.Content, :create_live_data!, [attrs])
+    rpc(node, Beacon.Content, :create_live_data!, [attrs, [auth: false]])
   end
 
   def live_data_assign_fixture(node \\ node1(), attrs \\ %{}) do
@@ -119,7 +119,7 @@ defmodule Beacon.LiveAdmin.Fixtures do
         value: "1 + 1"
       })
 
-    {:ok, live_data} = rpc(node, Beacon.Content, :create_assign_for_live_data, [live_data, attrs])
+    {:ok, live_data} = rpc(node, Beacon.Content, :create_assign_for_live_data, [live_data, attrs, [auth: false]])
 
     Enum.find(live_data.assigns, &(&1.key == attrs.key))
   end
@@ -132,6 +132,6 @@ defmodule Beacon.LiveAdmin.Fixtures do
         code: "{:noreply, socket}"
       })
 
-    rpc(node, Beacon.Content, :create_info_handler!, [attrs])
+    rpc(node, Beacon.Content, :create_info_handler!, [attrs, [auth: false]])
   end
 end

@@ -24,7 +24,7 @@ defmodule Beacon.LiveAdmin.PageLive do
 
     %{"pages" => pages} = session
 
-    actor = Beacon.Client.Auth.get_actor(site, session)
+    actor = Beacon.LiveAdmin.Client.Auth.get_actor(site, session)
 
     current_url =
       Map.get(session, "beacon_live_admin_page_url") ||

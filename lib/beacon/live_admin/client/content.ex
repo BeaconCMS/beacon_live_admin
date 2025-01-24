@@ -131,12 +131,12 @@ defmodule Beacon.LiveAdmin.Client.Content do
     call(site, Beacon.Content, :create_event_handler, [attrs, [actor: actor]])
   end
 
-  def update_event_handler(site, event_handler, attrs) do
-    call(site, Beacon.Content, :update_event_handler, [event_handler, attrs])
+  def update_event_handler(site, actor, event_handler, attrs) do
+    call(site, Beacon.Content, :update_event_handler, [event_handler, attrs, [actor: actor]])
   end
 
-  def delete_event_handler(site, event_handler) do
-    call(site, Beacon.Content, :delete_event_handler, [event_handler])
+  def delete_event_handler(site, actor, event_handler) do
+    call(site, Beacon.Content, :delete_event_handler, [event_handler, [actor: actor]])
   end
 
   def component_categories(site) do
@@ -159,12 +159,12 @@ defmodule Beacon.LiveAdmin.Client.Content do
     call(site, Beacon.Content, :get_component_by, [site, [id: id], opts])
   end
 
-  def create_component(site, attrs) do
-    call(site, Beacon.Content, :create_component, [attrs])
+  def create_component(site, actor, attrs) do
+    call(site, Beacon.Content, :create_component, [attrs, [actor: actor]])
   end
 
-  def update_component(site, component, attrs) do
-    call(site, Beacon.Content, :update_component, [component, attrs])
+  def update_component(site, actor, component, attrs) do
+    call(site, Beacon.Content, :update_component, [component, attrs, [actor: actor]])
   end
 
   def change_component_attr(site, component_attr, attrs, component_attr_names) do
@@ -175,52 +175,52 @@ defmodule Beacon.LiveAdmin.Client.Content do
     call(site, Beacon.Content, :change_component_slot, [slot, attrs, component_slots_names])
   end
 
-  def create_slot_for_component(site, component, attrs) do
-    call(site, Beacon.Content, :create_slot_for_component, [component, attrs])
+  def create_slot_for_component(site, actor, component, attrs) do
+    call(site, Beacon.Content, :create_slot_for_component, [component, attrs, [actor: actor]])
   end
 
-  def update_slot_for_component(site, component, slot, attrs, component_slots_names) do
-    call(site, Beacon.Content, :update_slot_for_component, [component, slot, attrs, component_slots_names])
+  def update_slot_for_component(site, actor, component, slot, attrs, component_slots_names) do
+    call(site, Beacon.Content, :update_slot_for_component, [component, slot, attrs, component_slots_names, [actor: actor]])
   end
 
-  def delete_slot_from_component(site, component, slot) do
-    call(site, Beacon.Content, :delete_slot_from_component, [component, slot])
+  def delete_slot_from_component(site, actor, component, slot) do
+    call(site, Beacon.Content, :delete_slot_from_component, [component, slot, [actor: actor]])
   end
 
   def change_slot_attr(site, slot_attr, attrs, slot_attr_names) do
     call(site, Beacon.Content, :change_slot_attr, [slot_attr, attrs, slot_attr_names])
   end
 
-  def create_slot_attr(site, attrs, slot_attr_names) do
-    call(site, Beacon.Content, :create_slot_attr, [site, attrs, slot_attr_names])
+  def create_slot_attr(site, actor, attrs, slot_attr_names) do
+    call(site, Beacon.Content, :create_slot_attr, [site, attrs, slot_attr_names, [actor: actor]])
   end
 
-  def update_slot_attr(site, slot_attr, attrs, slot_attr_names) do
-    call(site, Beacon.Content, :update_slot_attr, [site, slot_attr, attrs, slot_attr_names])
+  def update_slot_attr(site, actor, slot_attr, attrs, slot_attr_names) do
+    call(site, Beacon.Content, :update_slot_attr, [site, slot_attr, attrs, slot_attr_names, [actor: actor]])
   end
 
-  def delete_slot_attr(site, slot_attr) do
-    call(site, Beacon.Content, :delete_slot_attr, [site, slot_attr])
+  def delete_slot_attr(site, actor, slot_attr) do
+    call(site, Beacon.Content, :delete_slot_attr, [site, slot_attr, [actor: actor]])
   end
 
   def change_error_page(site, error_page, attrs \\ %{}) do
     call(site, Beacon.Content, :change_error_page, [error_page, attrs])
   end
 
-  def create_error_page(site, attrs) do
-    call(site, Beacon.Content, :create_error_page, [attrs])
+  def create_error_page(site, actor, attrs) do
+    call(site, Beacon.Content, :create_error_page, [attrs, [actor: actor]])
   end
 
   def list_error_pages(site) do
     call(site, Beacon.Content, :list_error_pages, [site])
   end
 
-  def update_error_page(site, error_page, attrs) do
-    call(site, Beacon.Content, :update_error_page, [error_page, attrs])
+  def update_error_page(site, actor, error_page, attrs) do
+    call(site, Beacon.Content, :update_error_page, [error_page, attrs, [actor: actor]])
   end
 
-  def delete_error_page(site, error_page) do
-    call(site, Beacon.Content, :delete_error_page, [error_page])
+  def delete_error_page(site, actor, error_page) do
+    call(site, Beacon.Content, :delete_error_page, [error_page, [actor: actor]])
   end
 
   def valid_error_statuses(site) do
@@ -239,12 +239,12 @@ defmodule Beacon.LiveAdmin.Client.Content do
     call(site, Beacon.Content, :change_live_data_assign, [live_data_assign, attrs])
   end
 
-  def create_live_data(site, attrs) do
-    call(site, Beacon.Content, :create_live_data, [attrs])
+  def create_live_data(site, actor, attrs) do
+    call(site, Beacon.Content, :create_live_data, [attrs, [actor: actor]])
   end
 
-  def create_assign_for_live_data(site, live_data, attrs) do
-    call(site, Beacon.Content, :create_assign_for_live_data, [live_data, attrs])
+  def create_assign_for_live_data(site, actor, live_data, attrs) do
+    call(site, Beacon.Content, :create_assign_for_live_data, [live_data, attrs, [actor: actor]])
   end
 
   def get_live_data_by(site, clauses) do
@@ -255,24 +255,24 @@ defmodule Beacon.LiveAdmin.Client.Content do
     call(site, Beacon.Content, :live_data_for_site, [site, opts])
   end
 
-  def update_live_data_path(site, live_data, attrs) do
-    call(site, Beacon.Content, :update_live_data_path, [live_data, attrs])
+  def update_live_data_path(site, actor, live_data, attrs) do
+    call(site, Beacon.Content, :update_live_data_path, [live_data, attrs, [actor: actor]])
   end
 
-  def update_live_data_assign(site, live_data_assign, attrs) do
-    call(site, Beacon.Content, :update_live_data_assign, [live_data_assign, site, attrs])
+  def update_live_data_assign(site, actor, live_data_assign, attrs) do
+    call(site, Beacon.Content, :update_live_data_assign, [live_data_assign, site, attrs, [actor: actor]])
   end
 
-  def delete_live_data(site, live_data) do
-    call(site, Beacon.Content, :delete_live_data, [live_data, site])
+  def delete_live_data(site, actor, live_data) do
+    call(site, Beacon.Content, :delete_live_data, [live_data, site, [actor: actor]])
   end
 
-  def delete_live_data_assign(site, live_data_assign) do
-    call(site, Beacon.Content, :delete_live_data_assign, [live_data_assign, site])
+  def delete_live_data_assign(site, actor, live_data_assign) do
+    call(site, Beacon.Content, :delete_live_data_assign, [live_data_assign, site, [actor: actor]])
   end
 
-  def create_info_handler(site, attrs) do
-    call(site, Beacon.Content, :create_info_handler, [attrs])
+  def create_info_handler(site, actor, attrs) do
+    call(site, Beacon.Content, :create_info_handler, [attrs, [actor: actor]])
   end
 
   def change_info_handler(site, info_handler, attrs \\ %{}) do
@@ -283,11 +283,11 @@ defmodule Beacon.LiveAdmin.Client.Content do
     call(site, Beacon.Content, :list_info_handlers, [site])
   end
 
-  def update_info_handler(site, info_handler, attrs) do
-    call(site, Beacon.Content, :update_info_handler, [info_handler, attrs])
+  def update_info_handler(site, actor, info_handler, attrs) do
+    call(site, Beacon.Content, :update_info_handler, [info_handler, attrs, [actor: actor]])
   end
 
-  def delete_info_handler(site, info_handler) do
-    call(site, Beacon.Content, :delete_info_handler, [info_handler])
+  def delete_info_handler(site, actor, info_handler) do
+    call(site, Beacon.Content, :delete_info_handler, [info_handler, [actor: actor]])
   end
 end

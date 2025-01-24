@@ -55,7 +55,7 @@ defmodule Beacon.LiveAdmin.EventHandlerEditorLive.Index do
   end
 
   def handle_event("save_new", params, socket) do
-    %{beacon_page: %{site: site}} = socket.assigns
+    %{beacon_page: %{site: site}, __beacon_actor__: actor} = socket.assigns
     %{"event_handler" => %{"name" => name}} = params
 
     attrs = %{
@@ -65,7 +65,7 @@ defmodule Beacon.LiveAdmin.EventHandlerEditorLive.Index do
     }
 
     socket =
-      case Content.create_event_handler(site, attrs) do
+      case Content.create_event_handler(site, actor, attrs) do
         {:ok, %{id: event_handler_id}} ->
           socket
           |> assign(event_handlers: Content.list_event_handlers(site))
@@ -81,12 +81,12 @@ defmodule Beacon.LiveAdmin.EventHandlerEditorLive.Index do
   end
 
   def handle_event("save_changes", %{"event_handler" => params}, socket) do
-    %{selected: selected, beacon_page: %{site: site}} = socket.assigns
+    %{selected: selected, beacon_page: %{site: site}, __beacon_actor__: actor} = socket.assigns
 
     attrs = %{code: params["code"], name: params["name"]}
 
     socket =
-      case Content.update_event_handler(site, selected, attrs) do
+      case Content.update_event_handler(site, actor, selected, attrs) do
         {:ok, updated_event_handler} ->
           socket
           |> assign_event_handler_update(updated_event_handler)
@@ -108,9 +108,9 @@ defmodule Beacon.LiveAdmin.EventHandlerEditorLive.Index do
   end
 
   def handle_event("delete_confirm", _, socket) do
-    %{selected: event_handler, beacon_page: %{site: site}} = socket.assigns
+    %{selected: event_handler, beacon_page: %{site: site}, __beacon_actor__: actor} = socket.assigns
 
-    {:ok, _} = Content.delete_event_handler(site, event_handler)
+    {:ok, _} = Content.delete_event_handler(site, actor, event_handler)
 
     socket =
       socket
