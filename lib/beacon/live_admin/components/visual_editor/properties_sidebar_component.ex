@@ -102,6 +102,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.PropertiesSidebarComponent do
           <.live_component module={VisualEditor.IdControl} id="control-id" element={@selected_element} />
           <.live_component module={VisualEditor.ClassControl} id="control-class" element={@selected_element} />
           <.live_component module={VisualEditor.OpacityControl} id="control-opacity" element={@selected_element} />
+          <.live_component module={VisualEditor.BorderControl} id="control-border" element={@selected_element} />
           <%= for attribute <- @other_attributes do %>
             <.live_component module={VisualEditor.NameValueControl} id={attribute.id} path={@selected_element["path"]} parent={@myself} attribute={attribute} />
           <% end %>
