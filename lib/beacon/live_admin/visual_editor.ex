@@ -88,6 +88,11 @@ defmodule Beacon.LiveAdmin.VisualEditor do
     get_in(element, ["attrs", "class"]) || default
   end
 
+  def element_classes(element) do
+    element_class(element)
+    |> String.split(" ", trim: true)
+  end
+
   def find_utility_class(element, class) when is_map(element) and is_binary(class) do
     classes = get_in(element, ["attrs", "class"]) || ""
     class = class <> "-"
