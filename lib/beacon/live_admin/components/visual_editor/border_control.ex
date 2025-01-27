@@ -5,71 +5,81 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
   import Beacon.LiveAdmin.VisualEditor.Components
   alias Beacon.LiveAdmin.VisualEditor
 
-  @border_styles [{"none", ""}, {"solid", "—"}, {"dashed", "---"}, {"dotted", "..."}]
+  @border_styles [{"none", ""}, {"solid", "—"}, {"dashed", "--"}, {"dotted", "..."}]
   @border_colors ~w(gray-500 red-500 blue-500 green-500 yellow-500 purple-500)
 
   def render(assigns) do
     ~H"""
     <div id={@id}>
       <.control_section label="Border">
-        <form phx-change="update_border" phx-target={@myself} class="space-y-4">
-          <div class="flex items-center gap-4">
-            <label class="block text-sm font-medium text-gray-700 w-24">Style</label>
-            <div class="flex gap-1 flex-1">
-              <label
-                :for={{style, label} <- @border_styles}
-                class={[
-                  "flex-1 text-center px-2 py-1 text-sm rounded cursor-pointer",
-                  @form.params["style"] == style && "bg-blue-500 text-white ring-2 ring-blue-500 ring-offset-2",
-                  @form.params["style"] != style && "bg-gray-100 hover:bg-gray-200"
-                ]}
-              >
-                <input
-                  type="radio"
-                  name="border_style"
-                  value={style}
-                  class="hidden"
-                  checked={@form.params["style"] == style}
-                />
-                <%= label %>
-              </label>
+        <form phx-change="update_border" phx-target={@myself} class="space-y-2">
+          <div class="flex items-center">
+            <label class="shrink-0 text-xs">Style</label>
+            <div class="grow flex justify-end">
+              <div class="inline-flex h-fit">
+                <label
+                  :for={{style, label} <- @border_styles}
+                  class={[
+                    "text-center px-2 py-1 text-sm cursor-pointer w-8",
+                    "first:rounded-l last:rounded-r",
+                    "border-y border-r border-gray-300 first:border-l",
+                    @form.params["style"] == style && "bg-blue-500 text-white relative z-10",
+                    @form.params["style"] != style && "bg-gray-100 hover:bg-gray-200"
+                  ]}
+                >
+                  <input
+                    type="radio"
+                    name="border_style"
+                    value={style}
+                    class="hidden"
+                    checked={@form.params["style"] == style}
+                  />
+                  <%= label %>
+                </label>
+              </div>
             </div>
           </div>
 
           <div class="flex items-center gap-4">
-            <label class="block text-sm font-medium text-gray-700 w-24">Color</label>
-            <select
-              name="border_color"
-              class="flex-1 py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm"
-            >
-              <option :for={color <- @border_colors} value={color} selected={@form.params["color"] == color}>
-                <%= String.replace(color, "-", " ") |> String.capitalize() %>
-              </option>
-            </select>
+            <label class="shrink-0 text-xs">Color</label>
+            <div class="grow flex justify-end">
+              <select
+                name="border_color"
+                class="flex-1 py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm"
+              >
+                <option :for={color <- @border_colors} value={color} selected={@form.params["color"] == color}>
+                  <%= String.replace(color, "-", " ") |> String.capitalize() %>
+                </option>
+              </select>
+            </div>
           </div>
 
           <div class="flex items-center gap-4">
-            <label class="block text-sm font-medium text-gray-700 w-24">Width (px)</label>
-            <input
-              type="number"
-              name="border_width"
-              value={@form.params["width"]}
-              class="flex-1 py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm"
-              min="0"
-              max="16"
-            />
+            <label class="shrink-0 text-xs">Width</label>
+            <div class="grow flex justify-end">
+              <input
+                type="number"
+                name="border_width"
+                value={@form.params["width"]}
+                class="flex-1 py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm"
+                min="0"
+                max="16"
+              />
+            </div>
           </div>
 
           <div class="flex items-center gap-4">
-            <label class="block text-sm font-medium text-gray-700 w-24">Radius (px)</label>
-            <input
-              type="number"
-              name="border_radius"
-              value={@form.params["radius"]}
-              class="flex-1 py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm"
-              min="0"
-              max="32"
-            />
+            <label class="shrink-0 text-xs">Radius</label>
+            <div class="grow flex justify-end">
+              <input
+                type="number"
+                name="border_radius"
+                value={@form.params["radius"]}
+                class="flex-1 py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm"
+                min="0"
+                max="32"
+              />
+            </div>
           </div>
         </form>
       </.control_section>
