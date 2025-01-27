@@ -29,7 +29,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
                 >
                   <input
                     type="radio"
-                    name="border_style"
+                    name="style"
                     value={style}
                     class="hidden"
                     checked={@form.params["style"] == style}
@@ -44,7 +44,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
             <label class="shrink-0 text-xs">Color</label>
             <div class="grow flex justify-end">
               <select
-                name="border_color"
+                name="color"
                 class="flex-1 py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm"
               >
                 <option :for={color <- @border_colors} value={color} selected={@form.params["color"] == color}>
@@ -59,7 +59,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
             <div class="grow flex justify-end">
               <input
                 type="number"
-                name="border_width"
+                name="width"
                 value={@form.params["width"]}
                 class="flex-1 py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm"
                 min="0"
@@ -73,7 +73,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
             <div class="grow flex justify-end">
               <input
                 type="number"
-                name="border_radius"
+                name="radius"
                 value={@form.params["radius"]}
                 class="flex-1 py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm"
                 min="0"
@@ -103,30 +103,9 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
      |> assign_form(values)}
   end
 
-  def handle_event("update_border", %{"border_style" => style, "border_color" => color, "border_width" => width, "border_radius" => radius} = attrs, socket) do
-    Logger.debug("###############################")
-    Logger.debug("###############################")
-    Logger.debug("###### attrs: #{inspect(attrs)} #####")
-    Logger.debug("###############################")
-    Logger.debug("###############################")
+  def handle_event("update_border", %{"style" => style, "color" => color, "width" => width, "radius" => radius}, socket) do
     update_border_classes(socket, %{style: style, color: color, width: width, radius: radius})
   end
-
-  # def handle_event("update_style", %{"style" => style}, socket) do
-  #   update_border_classes(socket, %{style: style})
-  # end
-
-  # def handle_event("update_color", %{"value" => color}, socket) do
-  #   update_border_classes(socket, %{color: color})
-  # end
-
-  # def handle_event("update_width", %{"value" => width}, socket) do
-  #   update_border_classes(socket, %{width: width})
-  # end
-
-  # def handle_event("update_radius", %{"value" => radius}, socket) do
-  #   update_border_classes(socket, %{radius: radius})
-  # end
 
   defp update_border_classes(socket, changes) do
     current_values = %{
