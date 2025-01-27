@@ -114,9 +114,9 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
       width: socket.assigns.form[:width].value,
       radius: socket.assigns.form[:radius].value
     }
-    
+
     values = Map.merge(current_values, changes)
-    
+
     classes = []
     classes = if values.style != "none", do: ["border-#{values.style}" | classes], else: classes
     classes = if values.style != "none", do: ["border-#{values.color}" | classes], else: classes
@@ -158,6 +158,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
 
   defp extract_border_color(element) do
     classes = VisualEditor.element_class(element)
+
     Enum.find(@border_colors, "gray-500", fn color ->
       String.contains?(classes, "border-#{color}")
     end)
@@ -189,18 +190,14 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
 
   defp extract_border_radius(element) do
     classes = VisualEditor.element_class(element)
+
     Enum.find_value(0..32, "0", fn radius ->
       if String.contains?(classes, "rounded-#{radius}"), do: "#{radius}"
     end)
   end
 
   defp assign_form(socket, values) do
-    Logger.debug("###############################")
-    Logger.debug("###############################")
-    Logger.debug("###### #{inspect(values)} #####")
-    Logger.debug("###############################")
-    Logger.debug("###############################")
     form = to_form(values)
     assign(socket, form: form)
   end
-end 
+end
