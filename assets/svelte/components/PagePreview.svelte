@@ -3,7 +3,7 @@
   import BrowserFrame from "./BrowserFrame.svelte"
   import { selectedAstElementId } from "$lib/stores/page"
   import { currentComponentCategory } from "$lib/stores/currentComponentCategory"
-  import { page, slotTargetElement } from "$lib/stores/page"
+  import { pageAst, pageInfo, slotTargetElement } from "$lib/stores/page"
   import { draggedComponentDefinition, resetDrag } from "$lib/stores/dragAndDrop"
   import { live } from "$lib/stores/live"
   import { elementCanBeDroppedInTarget } from "$lib/utils/drag-helpers"
@@ -11,22 +11,22 @@
   let isDraggingOver = false
 
   async function handleDragDrop(e: DragEvent) {
-    let {
-      target,
-      dataTransfer: { layoutZone },
-    } = e
+    const target = e.target as HTMLElement
+    const layoutZone = e.dataTransfer?.getData("layoutZone")
+
     $currentComponentCategory = null
     if (!$draggedComponentDefinition) return
     let draggedObj = $draggedComponentDefinition
+
     if (layoutZone) {
       $live.pushEvent(
         "render_component_in_page",
-        { component_id: draggedObj.id, page_id: $page.id },
+        { component_id: draggedObj.id, page_id: $pageInfo.id },
         ({ ast }: { ast: AstNode[] }) => {
           // If the element was dropped before the main content, it appends it at the top of the page
           // otherwise it appends it at the bottom of the page
-          const newAst = layoutZone === "preamble" ? [...ast, ...$page.ast] : [...$page.ast, ...ast]
-          $live.pushEvent("update_page_ast", { id: $page.id, ast: newAst })
+          const newAst = layoutZone === "preamble" ? [...ast, ...$pageAst] : [...$pageAst, ...ast]
+          $live.pushEvent("update_page_ast", { id: $pageInfo.id, ast: newAst })
         },
       )
     } else if (target.id !== "fake-browser-content" && elementCanBeDroppedInTarget(draggedObj)) {
@@ -39,10 +39,10 @@
     } else {
       $live.pushEvent(
         "render_component_in_page",
-        { component_id: draggedObj.id, page_id: $page.id },
+        { component_id: draggedObj.id, page_id: $pageInfo.id },
         ({ ast }: { ast: AstNode[] }) => {
           // This appends at the end. We might want at the beginning, or in a specific position
-          $live.pushEvent("update_page_ast", { id: $page.id, ast: [...$page.ast, ...ast] })
+          $live.pushEvent("update_page_ast", { id: $pageInfo.id, ast: [...$pageAst, ...ast] })
         },
       )
     }
@@ -56,11 +56,11 @@
     let targetNode = astElement
     $live.pushEvent(
       "render_component_in_page",
-      { component_id: componentDefinition.id, page_id: $page.id },
+      { component_id: componentDefinition.id, page_id: $pageInfo.id },
       ({ ast }: { ast: AstNode[] }) => {
         targetNode?.content.push(...ast)
         $slotTargetElement = undefined
-        $live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast })
+        $live.pushEvent("update_page_ast", { id: $pageInfo.id, ast: $pageAst })
       },
     )
   }
@@ -76,8 +76,8 @@
 </script>
 
 <div class="flex-1 px-8 pb-4 flex max-h-full" data-testid="main">
-  {#if $page}
-    <BrowserFrame page={$page}>
+  {#if $pageInfo && $pageAst}
+    <BrowserFrame pageInfo={$pageInfo} pageAst={$pageAst}>
       <div
         on:drop|preventDefault={handleDragDrop}
         on:dragover|preventDefault={dragOver}

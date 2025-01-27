@@ -1,7 +1,7 @@
 defmodule Beacon.LiveAdmin.MixProject do
   use Mix.Project
 
-  @version "0.3.1"
+  @version "0.3.2-dev"
   @dev? String.ends_with?(@version, "-dev")
   @source_url "https://github.com/BeaconCMS/beacon_live_admin"
   @homepage_url "https://beaconcms.org"
@@ -68,6 +68,7 @@ defmodule Beacon.LiveAdmin.MixProject do
       {:gettext, "~> 0.26"},
       {:jason, "~> 1.0"},
       {:igniter, "~> 0.5"},
+      {:turboprop, "~> 0.1"},
 
       # Dev, Test, Docs
       {:bandit, "~> 1.0", only: [:dev, :e2e], optional: true},

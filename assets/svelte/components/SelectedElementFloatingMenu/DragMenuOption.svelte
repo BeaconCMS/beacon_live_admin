@@ -1,7 +1,8 @@
 <script lang="ts" context="module">
   import { writable, type Writable } from "svelte/store"
   import {
-    page,
+    pageInfo,
+    pageAst,
     selectedAstElementId,
     parentOfSelectedAstElement,
     grandParentOfSelectedAstElement,
@@ -40,7 +41,7 @@
   import { tick } from "svelte"
 
   export let element: Element
-  export let isParent = false // TODO: Not in use yet
+  export let isParent = false // TODO: Not in use yet other than for testing purposes
 
   let originalSiblings: Element[]
   let dragHandleElement: HTMLButtonElement
@@ -187,9 +188,9 @@
         parts[parts.length - 1] = newSelectedIndex.toString()
         $selectedAstElementId = parts.join(".")
       }
-      $page.ast = [...$page.ast]
+      $pageAst = [...$pageAst]
       // Update in the server
-      $live.pushEvent("update_page_ast", { id: $page.id, ast: $page.ast })
+      $live.pushEvent("update_page_ast", { id: $pageInfo.id, ast: $pageAst })
     }
   }
 
@@ -358,7 +359,7 @@
     on:mousedown={handleMousedown}
     class="rounded-full w-6 h-6 flex justify-center items-center absolute bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 active:bg-blue-800 transform"
     style={dragHandleStyle}
-    data-testid="drag-button"
+    data-testid="drag-button{isParent ? '-parent' : ''}"
   >
     <span
       class:hero-arrows-right-left={dragDirection === "horizontal"}

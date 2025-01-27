@@ -27,7 +27,7 @@ test("shows the list of available pages", async ({ page }) => {
   await syncLV(page)
 
   // FIXME: write a proper assert
-  await expect(page.locator("span").filter({ hasText: "/home" })).toHaveCount(1)
+  await expect(page.locator("tr").filter({ hasText: "/home" })).toHaveCount(1)
 })
 ;[
   { name: "Media Library", path: "media_library" },
@@ -39,7 +39,6 @@ test("shows the list of available pages", async ({ page }) => {
   { name: "Info Handlers", path: "info_handlers" },
   { name: "Error Pages", path: "error_pages" },
 ].forEach(({ name, path }, index) => {
-  // TODO: Update for using a test site
   const siteName = "site_a"
 
   test(`shows link for ${name}`, async ({ page, baseURL }) => {
