@@ -299,8 +299,8 @@ defmodule Beacon.LiveAdmin.Client.Content do
     call(site, Beacon.Content, :list_js_hooks, [site])
   end
 
-  def create_js_hook(site, attrs) do
-    call(site, Beacon.Content, :create_js_hook, [attrs])
+  def create_js_hook(site, name) do
+    call(site, Beacon.Content, :create_js_hook, [site, name])
   end
 
   def update_js_hook(site, js_hook, attrs) do

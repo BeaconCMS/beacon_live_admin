@@ -39,8 +39,8 @@ defmodule Beacon.LiveAdmin.JSHookEditorLive.Index do
   def handle_event("set_" <> key, %{"value" => code}, socket) do
     %{selected: selected, beacon_page: %{site: site}, form: form} = socket.assigns
 
-    params = Map.merge(form.params, %{key => code}) |> IO.inspect(label: "params")
-    changeset = Content.change_js_hook(site, selected, params) |> IO.inspect(label: "changeset")
+    params = Map.merge(form.params, %{key => code})
+    changeset = Content.change_js_hook(site, selected, params)
 
     socket =
       socket
@@ -58,13 +58,8 @@ defmodule Beacon.LiveAdmin.JSHookEditorLive.Index do
     %{beacon_page: %{site: site}} = socket.assigns
     %{"js_hook" => %{"name" => name}} = params
 
-    attrs = %{
-      "name" => name,
-      "site" => site
-    }
-
     socket =
-      case Content.create_js_hook(site, attrs) do
+      case Content.create_js_hook(site, name) do
         {:ok, %{id: js_hook_id}} ->
           socket
           |> assign(js_hooks: Content.list_js_hooks(site))
@@ -232,96 +227,21 @@ defmodule Beacon.LiveAdmin.JSHookEditorLive.Index do
           <div :if={@form} class="w-full col-span-2">
             <.form :let={f} for={@form} id="js-hook-form" class="flex items-end gap-4 mb-2" phx-submit="save_changes">
               <.input label="Name" field={f[:name]} type="text" />
-              <input type="hidden" name="js_hook[mounted]" id="js_hook-form_mounted" value={Phoenix.HTML.Form.input_value(f, :mounted)} />
-              <input type="hidden" name="js_hook[beforeUpdate]" id="js_hook-form_mounted" value={Phoenix.HTML.Form.input_value(f, :beforeUpdate)} />
-              <input type="hidden" name="js_hook[updated]" id="js_hook-form_mounted" value={Phoenix.HTML.Form.input_value(f, :updated)} />
-              <input type="hidden" name="js_hook[destroyed]" id="js_hook-form_mounted" value={Phoenix.HTML.Form.input_value(f, :destroyed)} />
-              <input type="hidden" name="js_hook[disconnected]" id="js_hook-form_mounted" value={Phoenix.HTML.Form.input_value(f, :disconnected)} />
-              <input type="hidden" name="js_hook[reconnected]" id="js_hook-form_mounted" value={Phoenix.HTML.Form.input_value(f, :reconnected)} />
+              <input type="hidden" name="js_hook[code]" id="js_hook-form_code" value={Phoenix.HTML.Form.input_value(f, :code)} />
 
               <.button phx-disable-with="Saving..." class="sui-primary ml-auto">Save Changes</.button>
               <.button id="delete-js-hook-button" type="button" phx-click="delete" class="sui-primary-destructive">Delete</.button>
             </.form>
 
-            <p class="text-xl font-bold pt-2">mounted()</p>
-            <%= template_error(@form[:mounted]) %>
+            <p class="text-xl font-bold pt-2">JavaScript Hook definition</p>
+            <%= template_error(@form[:code]) %>
             <div class="w-full mt-2 space-y-8">
               <div class="py-6 rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
                 <LiveMonacoEditor.code_editor
-                  path="js_hook_mounted"
+                  path="js_hook_code"
                   class="col-span-full lg:col-span-2"
-                  value={@selected.mounted}
-                  change="set_mounted"
-                  opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => "javascript"})}
-                />
-              </div>
-            </div>
-
-            <p class="text-xl font-bold pt-2">beforeUpdate()</p>
-            <%= template_error(@form[:beforeUpdate]) %>
-            <div class="w-full mt-2 space-y-8">
-              <div class="py-6 rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
-                <LiveMonacoEditor.code_editor
-                  path="js_hook_beforeUpdate"
-                  class="col-span-full lg:col-span-2"
-                  value={@selected.beforeUpdate}
-                  change="set_beforeUpdate"
-                  opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => "javascript"})}
-                />
-              </div>
-            </div>
-
-            <p class="text-xl font-bold pt-2">updated()</p>
-            <%= template_error(@form[:updated]) %>
-            <div class="w-full mt-2 space-y-8">
-              <div class="py-6 rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
-                <LiveMonacoEditor.code_editor
-                  path="js_hook_updated"
-                  class="col-span-full lg:col-span-2"
-                  value={@selected.updated}
-                  change="set_updated"
-                  opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => "javascript"})}
-                />
-              </div>
-            </div>
-
-            <p class="text-xl font-bold pt-2">destroyed()</p>
-            <%= template_error(@form[:destroyed]) %>
-            <div class="w-full mt-2 space-y-8">
-              <div class="py-6 rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
-                <LiveMonacoEditor.code_editor
-                  path="js_hook_destroyed"
-                  class="col-span-full lg:col-span-2"
-                  value={@selected.destroyed}
-                  change="set_destroyed"
-                  opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => "javascript"})}
-                />
-              </div>
-            </div>
-
-            <p class="text-xl font-bold pt-2">disconnected()</p>
-            <%= template_error(@form[:disconnected]) %>
-            <div class="w-full mt-2 space-y-8">
-              <div class="py-6 rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
-                <LiveMonacoEditor.code_editor
-                  path="js_hook_disconnected"
-                  class="col-span-full lg:col-span-2"
-                  value={@selected.disconnected}
-                  change="set_disconnected"
-                  opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => "javascript"})}
-                />
-              </div>
-            </div>
-
-            <p class="text-xl font-bold pt-2">reconnected()</p>
-            <%= template_error(@form[:reconnected]) %>
-            <div class="w-full mt-2 space-y-8">
-              <div class="py-6 rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
-                <LiveMonacoEditor.code_editor
-                  path="js_hook_reconnected"
-                  class="col-span-full lg:col-span-2"
-                  value={@selected.reconnected}
-                  change="set_reconnected"
+                  value={@selected.code}
+                  change="set_code"
                   opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => "javascript"})}
                 />
               </div>
