@@ -58,8 +58,14 @@ defmodule Beacon.LiveAdmin.JSHookEditorLive.Index do
     %{beacon_page: %{site: site}} = socket.assigns
     %{"js_hook" => %{"name" => name}} = params
 
+    attrs = %{
+      site: site,
+      name: name,
+      code: Content.default_hook_code(site, name)
+    }
+
     socket =
-      case Content.create_js_hook(site, name) do
+      case Content.create_js_hook(site, attrs) do
         {:ok, %{id: js_hook_id}} ->
           socket
           |> assign(js_hooks: Content.list_js_hooks(site))
@@ -226,14 +232,12 @@ defmodule Beacon.LiveAdmin.JSHookEditorLive.Index do
 
           <div :if={@form} class="w-full col-span-2">
             <.form :let={f} for={@form} id="js-hook-form" class="flex items-end gap-4 mb-2" phx-submit="save_changes">
-              <.input label="Name" field={f[:name]} type="text" />
               <input type="hidden" name="js_hook[code]" id="js_hook-form_code" value={Phoenix.HTML.Form.input_value(f, :code)} />
-
+              <p class="text-xl font-bold pt-2">JavaScript Hook definition</p>
               <.button phx-disable-with="Saving..." class="sui-primary ml-auto">Save Changes</.button>
               <.button id="delete-js-hook-button" type="button" phx-click="delete" class="sui-primary-destructive">Delete</.button>
             </.form>
 
-            <p class="text-xl font-bold pt-2">JavaScript Hook definition</p>
             <%= template_error(@form[:code]) %>
             <div class="w-full mt-2 space-y-8">
               <div class="py-6 rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
