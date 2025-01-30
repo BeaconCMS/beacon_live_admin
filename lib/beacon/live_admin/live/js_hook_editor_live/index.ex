@@ -36,11 +36,15 @@ defmodule Beacon.LiveAdmin.JSHookEditorLive.Index do
     end
   end
 
-  def handle_event("set_" <> key, %{"value" => code}, socket) do
+  def handle_event("set_code", %{"value" => code}, socket) do
     %{selected: selected, beacon_page: %{site: site}, form: form} = socket.assigns
 
-    params = Map.merge(form.params, %{key => code})
-    changeset = Content.change_js_hook(site, selected, params)
+    params = Map.put(form.params, "code", code)
+
+    changeset =
+      site
+      |> Content.change_js_hook(selected, params)
+      |> Map.put(:action, :validate)
 
     socket =
       socket
@@ -48,6 +52,17 @@ defmodule Beacon.LiveAdmin.JSHookEditorLive.Index do
       |> assign(unsaved_changes: !(changeset.changes == %{}))
 
     {:noreply, socket}
+  end
+
+  def handle_event("validate", params, socket) do
+    %{beacon_page: %{site: site}, form: form} = socket.assigns
+
+    changeset =
+      site
+      |> Content.change_js_hook(form.source.data, params["js_hook"])
+      |> Map.put(:action, :validate)
+
+    {:noreply, assign_form(socket, changeset)}
   end
 
   def handle_event("create_new", _, socket) do
@@ -229,7 +244,7 @@ defmodule Beacon.LiveAdmin.JSHookEditorLive.Index do
           </div>
 
           <div :if={@form} class="w-full col-span-2">
-            <.form :let={f} for={@form} id="js-hook-form" class="flex items-start gap-4 mb-2" phx-submit="save_changes">
+            <.form :let={f} for={@form} id="js-hook-form" class="flex items-start gap-4 mb-2" phx-change="validate" phx-submit="save_changes">
               <.input label="Name" field={f[:name]} type="text" />
               <input type="hidden" name="js_hook[code]" id="js_hook-form_code" value={Phoenix.HTML.Form.input_value(f, :code)} />
               <.button phx-disable-with="Saving..." class="sui-primary ml-auto">Save Changes</.button>
