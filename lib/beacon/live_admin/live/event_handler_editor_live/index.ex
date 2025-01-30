@@ -40,7 +40,11 @@ defmodule Beacon.LiveAdmin.EventHandlerEditorLive.Index do
     %{selected: selected, beacon_page: %{site: site}, form: form} = socket.assigns
 
     params = Map.merge(form.params, %{"code" => code})
-    changeset = Content.change_event_handler(site, selected, params)
+
+    changeset =
+      site
+      |> Content.change_event_handler(selected, params)
+      |> Map.put(:action, :validate)
 
     socket =
       socket
@@ -48,6 +52,17 @@ defmodule Beacon.LiveAdmin.EventHandlerEditorLive.Index do
       |> assign(unsaved_changes: !(changeset.changes == %{}))
 
     {:noreply, socket}
+  end
+
+  def handle_event("validate", params, socket) do
+    %{beacon_page: %{site: site}, form: form} = socket.assigns
+
+    changeset =
+      site
+      |> Content.change_event_handler(form.source.data, params["event_handler"])
+      |> Map.put(:action, :validate)
+
+    {:noreply, assign_form(socket, changeset)}
   end
 
   def handle_event("create_new", _, socket) do
@@ -231,7 +246,7 @@ defmodule Beacon.LiveAdmin.EventHandlerEditorLive.Index do
           </div>
 
           <div :if={@form} class="w-full col-span-2">
-            <.form :let={f} for={@form} id="event-handler-form" class="flex items-end gap-4" phx-submit="save_changes">
+            <.form :let={f} for={@form} id="event-handler-form" class="flex items-end gap-4" phx-change="validate" phx-submit="save_changes">
               <.input label="Name" field={f[:name]} type="text" />
               <input type="hidden" name="event_handler[code]" id="event_handler-form_code" value={Phoenix.HTML.Form.input_value(f, :code)} />
 
