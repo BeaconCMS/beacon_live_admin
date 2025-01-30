@@ -12,6 +12,7 @@
 ### Fixes
 
   - Fixed a bug where MediaLibrary could check for file contents on the wrong node in multi-node deployments
+  - Fixed a bug where using the code editor could reset other form fields on the page
 
 ## 0.3.1 (2024-12-12)
 

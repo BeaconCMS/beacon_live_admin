@@ -47,7 +47,7 @@ defmodule Beacon.LiveAdmin.JSHookEditorLive.IndexTest do
 
     view
     |> form("#js-hook-form", js_hook: %{name: "ChangedHook"})
-    |> render_submit()
+    |> render_submit(%{js_hook: %{code: "export const ChangedHook = {mounted() {}}"}})
 
     assert has_element?(view, "p", "JS Hook updated successfully")
 
