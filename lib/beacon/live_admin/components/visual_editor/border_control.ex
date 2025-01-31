@@ -62,29 +62,29 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
             </div>
             <div class="w-2/3 flex justify-end">
               <div class={["grow flex", @expanded_width_controls && "hidden"]}>
-                <.input_with_units name="width" value={@form.params["width"]} />
+                <.input_with_units name="width" value={@form.params["width"]}/>
               </div>
-              <.toggle_expand control="width" />
+              <.toggle_expand control="width" expanded={@expanded_width_controls} />
             </div>
           </div>
-            <div id="border-width-expanded-inputs" class={["w-full grid grid-cols-2 gap-1", not @expanded_width_controls && "hidden"]}>
-              <div class="flex items-center gap-1">
-                <span><.icon name="hero-arrow-long-up"/></span>
-                <.input_with_units name="top_width" value={@form.params["top_width"]} />
-              </div>
-              <div class="flex items-center gap-1">
-                <span><.icon name="hero-arrow-long-right"/></span>
-                <.input_with_units name="right_width" value={@form.params["right_width"]} />
-              </div>
-              <div class="flex items-center gap-1">
-                <span><.icon name="hero-arrow-long-down"/></span>
-                <.input_with_units name="bottom_width" value={@form.params["bottom_width"]} />
-              </div>
-              <div class="flex items-center gap-1">
-                <span><.icon name="hero-arrow-long-left"/></span>
-                <.input_with_units name="left_width" value={@form.params["left_width"]} />
-              </div>
+          <div id="border-width-expanded-inputs" class={["w-full grid grid-cols-2 gap-1", not @expanded_width_controls && "hidden"]}>
+            <div class="flex items-center gap-1">
+              <span><.icon name="hero-arrow-long-up"/></span>
+              <.input_with_units name="top_width" value={@form.params["top_width"]} />
             </div>
+            <div class="flex items-center gap-1">
+              <span><.icon name="hero-arrow-long-right"/></span>
+              <.input_with_units name="right_width" value={@form.params["right_width"]} />
+            </div>
+            <div class="flex items-center gap-1">
+              <span><.icon name="hero-arrow-long-down"/></span>
+              <.input_with_units name="bottom_width" value={@form.params["bottom_width"]} />
+            </div>
+            <div class="flex items-center gap-1">
+              <span><.icon name="hero-arrow-long-left"/></span>
+              <.input_with_units name="left_width" value={@form.params["left_width"]} />
+            </div>
+          </div>
 
           <div class="flex gap-2">
             <div class="w-1/3">
@@ -94,27 +94,27 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
               <div class={["grow flex", @expanded_radius_controls && "hidden"]}>
                 <.input_with_units name="radius" value={@form.params["radius"]} />
               </div>
-              <.toggle_expand control="radius" />
+              <.toggle_expand control="radius" expanded={@expanded_radius_controls} />
             </div>
           </div>
-            <div id="border-radius-expanded-inputs" class={["w-full grid grid-cols-2 gap-1", not @expanded_radius_controls && "hidden"]}>
-              <div class="flex items-center gap-1">
-                <span><.icon name="hero-arrow-up-left"/></span>
-                <.input_with_units name="top_left_radius" value={@form.params["top_left_radius"]} />
-              </div>
-              <div class="flex items-center gap-1">
-                <span><.icon name="hero-arrow-up-right"/></span>
-                <.input_with_units name="top_right_radius" value={@form.params["top_right_radius"]} />
-              </div>
-              <div class="flex items-center gap-1">
-                <span><.icon name="hero-arrow-down-right"/></span>
-                <.input_with_units name="bottom_right_radius" value={@form.params["bottom_right_radius"]} />
-              </div>
-              <div class="flex items-center gap-1">
-                <span><.icon name="hero-arrow-down-left"/></span>
-                <.input_with_units name="bottom_left_radius" value={@form.params["bottom_left_radius"]} />
-              </div>
+          <div id="border-radius-expanded-inputs" class={["w-full grid grid-cols-2 gap-1", not @expanded_radius_controls && "hidden"]}>
+            <div class="flex items-center gap-1">
+              <span><.icon name="hero-arrow-up-left"/></span>
+              <.input_with_units name="top_left_radius" value={@form.params["top_left_radius"]} />
             </div>
+            <div class="flex items-center gap-1">
+              <span><.icon name="hero-arrow-up-right"/></span>
+              <.input_with_units name="top_right_radius" value={@form.params["top_right_radius"]} />
+            </div>
+            <div class="flex items-center gap-1">
+              <span><.icon name="hero-arrow-down-right"/></span>
+              <.input_with_units name="bottom_right_radius" value={@form.params["bottom_right_radius"]} />
+            </div>
+            <div class="flex items-center gap-1">
+              <span><.icon name="hero-arrow-down-left"/></span>
+              <.input_with_units name="bottom_left_radius" value={@form.params["bottom_left_radius"]} />
+            </div>
+          </div>
         </form>
       </.control_section>
     </div>
@@ -266,7 +266,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
   defp toggle_expand(assigns) do
     ~H"""
     <button type="button" class="sui-secondary !px-2" phx-click="toggle_expand" phx-target="#control-border" phx-value-control={@control}>
-      <.icon name="hero-arrows-pointing-out"  class="w-4 h-4" />
+      <.icon name={if(@expanded, do: "hero-arrows-pointing-in", else: "hero-arrows-pointing-out")} class="w-4 h-4" />
     </button>
     """
   end
