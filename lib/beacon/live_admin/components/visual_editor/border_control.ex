@@ -8,6 +8,13 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
   @border_styles [{"none", ""}, {"solid", "—"}, {"dashed", "--"}, {"dotted", "..."}]
   @border_colors ~w(gray-500 red-500 blue-500 green-500 yellow-500 purple-500)
 
+  def mount(socket) do
+    {:ok, assign(socket,
+      expanded_width_controls: false,
+      expanded_radius_controls: false
+    )}
+  end
+
   def render(assigns) do
     ~H"""
     <div id={@id}>
@@ -57,9 +64,29 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
               <div class="grow flex justify-end">
                 <.input_with_units name="width" value={@form.params["width"]} />
               </div>
-              <.toggle_expand />
+              <.toggle_expand control="width" />
             </div>
           </div>
+          <%= if @expanded_width_controls do %>
+            <div id="border-width-expanded-inputs" class="w-full grid grid-cols-2 gap-1">
+              <div class="flex items-center gap-1">
+                <span><.icon name="hero-arrow-long-up"/></span>
+                <input type="text" class="w-full px-2 py-1 text-sm border rounded" />
+              </div>
+              <div class="flex items-center gap-1">
+                <span><.icon name="hero-arrow-long-right"/></span>
+                <input type="text" class="w-full px-2 py-1 text-sm border rounded" />
+              </div>
+              <div class="flex items-center gap-1">
+                <span><.icon name="hero-arrow-long-down"/></span>
+                <input type="text" class="w-full px-2 py-1 text-sm border rounded" />
+              </div>
+              <div class="flex items-center gap-1">
+                <span><.icon name="hero-arrow-long-left"/></span>
+                <input type="text" class="w-full px-2 py-1 text-sm border rounded" />
+              </div>
+            </div>
+          <% end %>
 
           <div class="flex gap-2">
             <div class="w-1/3">
@@ -69,9 +96,29 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
               <div class="grow flex justify-end">
                 <.input_with_units name="radius" value={@form.params["radius"]} />
               </div>
-              <.toggle_expand />
+              <.toggle_expand control="radius" />
             </div>
           </div>
+          <%= if @expanded_radius_controls do %>
+            <div id="border-radius-expanded-inputs" class="w-full grid grid-cols-2 gap-1">
+              <div class="flex items-center gap-1">
+                <span><.icon name="hero-arrow-up-left"/></span>
+                <input type="text" class="w-full px-2 py-1 text-sm border rounded" />
+              </div>
+              <div class="flex items-center gap-1">
+                <span><.icon name="hero-arrow-up-right"/></span>
+                <input type="text" class="w-full px-2 py-1 text-sm border rounded" />
+              </div>
+              <div class="flex items-center gap-1">
+                <span><.icon name="hero-arrow-down-right"/></span>
+                <input type="text" class="w-full px-2 py-1 text-sm border rounded" />
+              </div>
+              <div class="flex items-center gap-1">
+                <span><.icon name="hero-arrow-down-left"/></span>
+                <input type="text" class="w-full px-2 py-1 text-sm border rounded" />
+              </div>
+            </div>
+          <% end %>
         </form>
       </.control_section>
     </div>
@@ -197,6 +244,13 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
     assign(socket, form: form)
   end
 
+  def handle_event("toggle_expand", %{"control" => control}, socket) do
+    case control do
+      "width" -> {:noreply, update(socket, :expanded_width_controls, &(!&1))}
+      "radius" -> {:noreply, update(socket, :expanded_radius_controls, &(!&1))}
+    end
+  end
+
   defp input_with_units(assigns) do
     ~H"""
     <div class="relative w-full flex bg-gray-100 border rounded focus-within:ring-2 focus-within:ring-blue-500">
@@ -215,7 +269,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
 
   defp toggle_expand(assigns) do
     ~H"""
-    <button class="sui-secondary !px-2">
+    <button type="button" class="sui-secondary !px-2" phx-click="toggle_expand" phx-target="#control-border" phx-value-control={@control}>
       <.icon name="hero-arrows-pointing-out" class="w-4 h-4" />
     </button>
     """
