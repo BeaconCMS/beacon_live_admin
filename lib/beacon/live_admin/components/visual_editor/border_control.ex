@@ -49,26 +49,8 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
             <label class="shrink-0 text-xs">Width</label>
             <div class="grow flex justify-end">
               <.input_with_units name="width" value={@form.params["width"]} />
-              <%!-- <div class="relative w-full flex bg-gray-100 border rounded focus-within:ring-2 focus-within:ring-blue-500">
-                <input
-                  type="text"
-                  name="width"
-                  value={@form.params["width"]}
-                  class="rounded w-full px-2 py-1 text-sm text-left outline-none focus:outline-none bg-transparent border-none focus:ring-0"
-                />
-                <select name="width_unit" class="rounded appearance-none bg-none bg-transparent border-none pr-1 pl-2 text-sm focus:ring-0">
-                  <option selected>px</option>
-                  <option>em</option>
-                  <option>rem</option>
-                  <option>%</option>
-                  <option>vh</option>
-                  <option>vw</option>
-                </select>
-              </div> --%>
             </div>
-            <.button class="sui-secondary !px-2">
-              <.icon name="hero-arrows-pointing-out" class="w-4 h-4" />
-            </.button>
+            <.toggle_expand />
           </div>
 
           <div class="flex items-center gap-2">
@@ -76,9 +58,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
             <div class="grow flex justify-end">
               <.input_with_units name="radius" value={@form.params["radius"]} />
             </div>
-            <.button class="sui-secondary !px-2">
-              <.icon name="hero-arrows-pointing-out" class="w-4 h-4" />
-            </.button>
+            <.toggle_expand />
           </div>
         </form>
       </.control_section>
@@ -205,7 +185,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
     assign(socket, form: form)
   end
 
-  def input_with_units(assigns) do
+  defp input_with_units(assigns) do
     ~H"""
     <div class="relative w-full flex bg-gray-100 border rounded focus-within:ring-2 focus-within:ring-blue-500">
       <input type="text" name={@name} value={@value} class="w-full px-2 py-1 text-sm text-left outline-none focus:outline-none bg-transparent border-none focus:ring-0" />
@@ -218,6 +198,14 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
         <option>vw</option>
       </select>
     </div>
+    """
+  end
+
+  defp toggle_expand(assigns) do
+    ~H"""
+    <button class="sui-secondary !px-2">
+      <.icon name="hero-arrows-pointing-out" class="w-4 h-4" />
+    </button>
     """
   end
 end
