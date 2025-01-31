@@ -7,6 +7,54 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
 
   @border_styles [{"none", ""}, {"solid", "—"}, {"dashed", "--"}, {"dotted", "..."}]
   @border_colors ~w(gray-500 red-500 blue-500 green-500 yellow-500 purple-500)
+  @border_radius_units ~w(px em rem % vh vw)
+  @tailwind_border_rems %{
+    0 => "none",
+    0.125 => "sm",
+    0.25 => "DEFAULT",
+    0.375 => "md",
+    0.5 => "lg",
+    0.75 => "xl",
+    1 => "2xl",
+    1.5 => "3xl",
+  }
+  @tailwind_border_pixels %{
+    0 => "none",
+    2 => "sm",
+    4 => "DEFAULT",
+    6 => "md",
+    8 => "lg",
+    12 => "xl",
+    16 => "2xl",
+    24 => "3xl",
+  }
+
+  @type border_params :: %{
+    required(String.t()) => String.t(),
+    optional(:top_width) => String.t(),
+    optional(:top_width_unit) => String.t(),
+    optional(:right_width) => String.t(),
+    optional(:right_width_unit) => String.t(),
+    optional(:bottom_width) => String.t(),
+    optional(:bottom_width_unit) => String.t(),
+    optional(:left_width) => String.t(),
+    optional(:left_width_unit) => String.t(),
+    optional(:top_left_radius) => String.t(),
+    optional(:top_left_radius_unit) => String.t(),
+    optional(:top_right_radius) => String.t(),
+    optional(:top_right_radius_unit) => String.t(),
+    optional(:bottom_right_radius) => String.t(),
+    optional(:bottom_right_radius_unit) => String.t(),
+    optional(:bottom_left_radius) => String.t(),
+    optional(:bottom_left_radius_unit) => String.t(),
+    style: String.t(),
+    color: String.t(),
+    width: String.t(),
+    width_unit: String.t(),
+    radius: String.t(),
+    radius_unit: String.t()
+  }
+
 
   def mount(socket) do
     {:ok, assign(socket,
@@ -62,7 +110,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
             </div>
             <div class="w-2/3 flex justify-end">
               <div class={["grow flex", @expanded_width_controls && "hidden"]}>
-                <.input_with_units name="width" value={@form.params["width"]}/>
+                <.input_with_units name="width" value={@form.params["width"]} value_unit={@form.params["width_unit"]}/>
               </div>
               <.toggle_expand control="width" expanded={@expanded_width_controls} />
             </div>
@@ -70,19 +118,19 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
           <div id="border-width-expanded-inputs" class={["w-full grid grid-cols-2 gap-1", not @expanded_width_controls && "hidden"]}>
             <div class="flex items-center gap-1">
               <span><.icon name="hero-arrow-long-up"/></span>
-              <.input_with_units name="top_width" value={@form.params["top_width"]} />
+              <.input_with_units name="top_width" value={@form.params["top_width"]} value_unit={@form.params["top_width_unit"]} />
             </div>
             <div class="flex items-center gap-1">
               <span><.icon name="hero-arrow-long-right"/></span>
-              <.input_with_units name="right_width" value={@form.params["right_width"]} />
+              <.input_with_units name="right_width" value={@form.params["right_width"]} value_unit={@form.params["right_width_unit"]} />
             </div>
             <div class="flex items-center gap-1">
               <span><.icon name="hero-arrow-long-down"/></span>
-              <.input_with_units name="bottom_width" value={@form.params["bottom_width"]} />
+              <.input_with_units name="bottom_width" value={@form.params["bottom_width"]} value_unit={@form.params["bottom_width_unit"]} />
             </div>
             <div class="flex items-center gap-1">
               <span><.icon name="hero-arrow-long-left"/></span>
-              <.input_with_units name="left_width" value={@form.params["left_width"]} />
+              <.input_with_units name="left_width" value={@form.params["left_width"]} value_unit={@form.params["left_width_unit"]} />
             </div>
           </div>
 
@@ -92,7 +140,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
             </div>
             <div class="w-2/3 flex justify-end">
               <div class={["grow flex", @expanded_radius_controls && "hidden"]}>
-                <.input_with_units name="radius" value={@form.params["radius"]} />
+                <.input_with_units name="radius" value={@form.params["radius"]} value_unit={@form.params["radius_unit"]}/>
               </div>
               <.toggle_expand control="radius" expanded={@expanded_radius_controls} />
             </div>
@@ -100,19 +148,19 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
           <div id="border-radius-expanded-inputs" class={["w-full grid grid-cols-2 gap-1", not @expanded_radius_controls && "hidden"]}>
             <div class="flex items-center gap-1">
               <span><.icon name="hero-arrow-up-left"/></span>
-              <.input_with_units name="top_left_radius" value={@form.params["top_left_radius"]} />
+              <.input_with_units name="top_left_radius" value={@form.params["top_left_radius"]} value_unit={@form.params["top_left_radius_unit"]} />
             </div>
             <div class="flex items-center gap-1">
               <span><.icon name="hero-arrow-up-right"/></span>
-              <.input_with_units name="top_right_radius" value={@form.params["top_right_radius"]} />
+              <.input_with_units name="top_right_radius" value={@form.params["top_right_radius"]} value_unit={@form.params["top_right_radius_unit"]} />
             </div>
             <div class="flex items-center gap-1">
               <span><.icon name="hero-arrow-down-right"/></span>
-              <.input_with_units name="bottom_right_radius" value={@form.params["bottom_right_radius"]} />
+              <.input_with_units name="bottom_right_radius" value={@form.params["bottom_right_radius"]} value_unit={@form.params["bottom_right_radius_unit"]} />
             </div>
             <div class="flex items-center gap-1">
               <span><.icon name="hero-arrow-down-left"/></span>
-              <.input_with_units name="bottom_left_radius" value={@form.params["bottom_left_radius"]} />
+              <.input_with_units name="bottom_left_radius" value={@form.params["bottom_left_radius"]} value_unit={@form.params["bottom_left_radius_unit"]} />
             </div>
           </div>
         </form>
@@ -126,7 +174,25 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
       "style" => extract_border_style(element),
       "color" => extract_border_color(element),
       "width" => extract_border_width(element),
-      "radius" => extract_border_radius(element)
+      "width_unit" => extract_border_width_unit(element),
+      "radius" => extract_border_radius(element),
+      "radius_unit" => extract_border_radius_unit(element),
+      "top_width" => extract_border_width(element, "top"),
+      "top_width_unit" => extract_border_width_unit(element, "top"),
+      "right_width" => extract_border_width(element, "right"),
+      "right_width_unit" => extract_border_width_unit(element, "right"),
+      "bottom_width" => extract_border_width(element, "bottom"),
+      "bottom_width_unit" => extract_border_width_unit(element, "bottom"),
+      "left_width" => extract_border_width(element, "left"),
+      "left_width_unit" => extract_border_width_unit(element, "left"),
+      "top_left_radius" => extract_border_radius(element, "top-left"),
+      "top_left_radius_unit" => extract_border_radius_unit(element, "top-left"),
+      "top_right_radius" => extract_border_radius(element, "top-right"),
+      "top_right_radius_unit" => extract_border_radius_unit(element, "top-right"),
+      "bottom_right_radius" => extract_border_radius(element, "bottom-right"),
+      "bottom_right_radius_unit" => extract_border_radius_unit(element, "bottom-right"),
+      "bottom_left_radius" => extract_border_radius(element, "bottom-left"),
+      "bottom_left_radius_unit" => extract_border_radius_unit(element, "bottom-left")
     }
 
     {:ok,
@@ -137,31 +203,66 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
      |> assign_form(values)}
   end
 
-  def handle_event("update_border", %{"style" => style, "color" => color, "width" => width, "radius" => radius}, socket) do
-    update_border_classes(socket, %{style: style, color: color, width: width, radius: radius})
+  @spec handle_event(:update_border, border_params(), Phoenix.LiveView.Socket.t()) :: {:noreply, Phoenix.LiveView.Socket.t()}
+  def handle_event("update_border", params, socket) do
+    Logger.debug("#########################")
+    Logger.debug("update_border: #{inspect(params)}")
+    generate_border_classes(params, socket)
+    {:noreply, socket}
+    # update_border_classes(socket, %{style: style, color: color, width: width, radius: radius})
   end
 
-  defp update_border_classes(socket, changes) do
-    current_values = %{
-      style: socket.assigns.form[:style].value,
-      color: socket.assigns.form[:color].value,
-      width: socket.assigns.form[:width].value,
-      radius: socket.assigns.form[:radius].value
-    }
-
-    values = Map.merge(current_values, changes)
-
-    classes = []
-    classes = if values.style != "none", do: ["border-#{values.style}" | classes], else: classes
-    classes = if values.style != "none", do: ["border-#{values.color}" | classes], else: classes
-    classes = if values.width != "0", do: ["border-#{values.width}" | classes], else: classes
-    classes = if values.radius != "0", do: ["rounded-#{values.radius}" | classes], else: classes
-
-    class = VisualEditor.merge_class(socket.assigns.element, Enum.join(classes, " "))
-    send(self(), {:element_changed, {socket.assigns.element["path"], %{updated: %{"attrs" => %{"class" => class}}}}})
-
-    {:noreply, assign_form(socket, values)}
+  defp generate_border_classes(params, socket) do
+      []
+      |> generate_border_classes(params, socket)
+      |> generate_border_radius_classes(params, socket)
   end
+
+  defp generate_border_radius_classes(classes, params, socket) do
+    Logger.debug("#########################")
+    Logger.debug("generate_border_radius_classes: #{inspect(socket.assigns)}")
+    case {socket.assigns.expanded_radius_controls, params} do
+      {true, %{"top_left_radius" => tlr, "top_left_radius_unit" => tlr_unit, "top_right_radius" => trr, "top_right_radius_unit" => trr_unit, "bottom_right_radius" => brr, "bottom_right_radius_unit" => brr_unit, "bottom_left_radius" => blr, "bottom_left_radius_unit" => blr_unit }} ->
+        classes
+      {_, %{ "radius" => radius, "radius_unit" => radius_unit } } ->
+        [ generate_border_radius_class(radius, radius_unit) | classes]
+    end
+  end
+
+  defp generate_border_radius_class(radius, radius_unit) do
+    case radius_unit do
+      "rem" -> @tailwind_border_rems[radius] || "rounded-[#{radius}rem]"
+      "px" -> @tailwind_border_pixels[radius] || "rounded-[#{radius}px]"
+      _ -> "rounded-[#{radius}#{radius_unit}]"
+    end
+  end
+
+  defp generate_border_classes(classes, _params, _socket) do
+    classes
+  end
+
+
+  # defp update_border_classes(socket, changes) do
+  #   current_values = %{
+  #     style: socket.assigns.form[:style].value,
+  #     color: socket.assigns.form[:color].value,
+  #     width: socket.assigns.form[:width].value,
+  #     radius: socket.assigns.form[:radius].value
+  #   }
+
+  #   values = Map.merge(current_values, changes)
+
+  #   classes = []
+  #   classes = if values.style != "none", do: ["border-#{values.style}" | classes], else: classes
+  #   classes = if values.style != "none", do: ["border-#{values.color}" | classes], else: classes
+  #   classes = if values.width != "0", do: ["border-#{values.width}" | classes], else: classes
+  #   classes = if values.radius != "0", do: ["rounded-#{values.radius}" | classes], else: classes
+
+  #   class = VisualEditor.merge_class(socket.assigns.element, Enum.join(classes, " "))
+  #   send(self(), {:element_changed, {socket.assigns.element["path"], %{updated: %{"attrs" => %{"class" => class}}}}})
+
+  #   {:noreply, assign_form(socket, values)}
+  # end
 
   defp extract_border_style(element) do
     classes = VisualEditor.element_classes(element)
@@ -200,7 +301,9 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
     end)
   end
 
-  defp extract_border_width(element) do
+  defp extract_border_width(element, _side \\ nil) do
+    # TODO: Implement this for when side is provided
+
     classes = VisualEditor.element_classes(element)
 
     # First check for specific width classes (0-16)
@@ -227,12 +330,23 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
     end
   end
 
-  defp extract_border_radius(element) do
+  defp extract_border_radius(element, _corner \\ nil) do
+    # TODO: Implement this for when corner is provided
     classes = VisualEditor.element_class(element)
 
     Enum.find_value(0..32, "0", fn radius ->
       if String.contains?(classes, "rounded-#{radius}"), do: "#{radius}"
     end)
+  end
+
+  defp extract_border_radius_unit(element, _corner \\ nil) do
+    # TODO: Implement this
+    "px"
+  end
+
+  defp extract_border_width_unit(element, _side \\ nil) do
+    # TODO: Implement this
+    "px"
   end
 
   defp assign_form(socket, values) do
@@ -248,16 +362,14 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
   end
 
   defp input_with_units(assigns) do
+    assigns =assigns |> assign(:border_radius_units, @border_radius_units)
     ~H"""
     <div class="relative w-full flex bg-gray-100 border rounded focus-within:ring-2 focus-within:ring-blue-500">
       <input type="text" name={@name} value={@value} class="w-full px-2 py-1 text-sm text-left outline-none focus:outline-none bg-transparent border-none focus:ring-0" />
       <select name={@name <> "_unit"} class="appearance-none bg-none bg-transparent border-none pr-1 pl-2 text-sm focus:ring-0">
-        <option selected>px</option>
-        <option>em</option>
-        <option>rem</option>
-        <option>%</option>
-        <option>vh</option>
-        <option>vw</option>
+        <option :for={unit <- @border_radius_units} value={unit} selected={@value_unit == unit}>
+          <%= unit %>
+        </option>
       </select>
     </div>
     """
