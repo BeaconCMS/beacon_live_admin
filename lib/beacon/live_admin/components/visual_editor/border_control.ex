@@ -13,14 +13,16 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
     <div id={@id}>
       <.control_section label="Border">
         <form phx-change="update_border" phx-target={@myself} class="space-y-2">
-          <div class="flex items-center">
-            <label class="shrink-0 text-xs">Style</label>
-            <div class="grow flex justify-end">
-              <div class="inline-flex h-fit">
+          <div class="flex gap-2">
+            <div class="w-1/3">
+              <label class="text-xs">Style</label>
+            </div>
+            <div class="w-2/3">
+              <div class="flex h-fit">
                 <label
                   :for={{style, label} <- @border_styles}
                   class={[
-                    "text-center px-2 py-1 text-sm cursor-pointer w-8",
+                    "text-center px-2 py-1 text-sm cursor-pointer flex-1",
                     "first:rounded-l last:rounded-r",
                     "border-y border-r border-gray-300 first:border-l",
                     @form.params["style"] == style && "bg-blue-500 text-white relative z-10",
@@ -34,9 +36,11 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
             </div>
           </div>
 
-          <div class="flex items-center gap-4">
-            <label class="shrink-0 text-xs">Color</label>
-            <div class="grow flex justify-end">
+          <div class="flex gap-2">
+            <div class="w-1/3">
+              <label class="text-xs">Color</label>
+            </div>
+            <div class="w-2/3 flex">
               <select name="color" class="flex-1 py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm">
                 <option :for={color <- @border_colors} value={color} selected={@form.params["color"] == color}>
                   <%= String.replace(color, "-", " ") |> String.capitalize() %>
@@ -45,20 +49,28 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
             </div>
           </div>
 
-          <div class="flex items-center gap-2">
-            <label class="shrink-0 text-xs">Width</label>
-            <div class="grow flex justify-end">
-              <.input_with_units name="width" value={@form.params["width"]} />
+          <div class="flex gap-2">
+            <div class="w-1/3">
+              <label class="text-xs">Width</label>
             </div>
-            <.toggle_expand />
+            <div class="w-2/3 flex">
+              <div class="grow flex justify-end">
+                <.input_with_units name="width" value={@form.params["width"]} />
+              </div>
+              <.toggle_expand />
+            </div>
           </div>
 
-          <div class="flex items-center gap-2">
-            <label class="shrink-0 text-xs">Radius</label>
-            <div class="grow flex justify-end">
-              <.input_with_units name="radius" value={@form.params["radius"]} />
+          <div class="flex gap-2">
+            <div class="w-1/3">
+              <label class="text-xs">Radius</label>
             </div>
-            <.toggle_expand />
+            <div class="w-2/3 flex">
+              <div class="grow flex justify-end">
+                <.input_with_units name="radius" value={@form.params["radius"]} />
+              </div>
+              <.toggle_expand />
+            </div>
           </div>
         </form>
       </.control_section>
