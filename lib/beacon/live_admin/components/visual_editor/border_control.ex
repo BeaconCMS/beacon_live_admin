@@ -45,18 +45,40 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
             </div>
           </div>
 
-          <div class="flex items-center gap-4">
+          <div class="flex items-center gap-2">
             <label class="shrink-0 text-xs">Width</label>
             <div class="grow flex justify-end">
-              <input type="number" name="width" value={@form.params["width"]} class="flex-1 py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm" min="0" max="16" />
+              <.input_with_units name="width" value={@form.params["width"]} />
+              <%!-- <div class="relative w-full flex bg-gray-100 border rounded focus-within:ring-2 focus-within:ring-blue-500">
+                <input
+                  type="text"
+                  name="width"
+                  value={@form.params["width"]}
+                  class="rounded w-full px-2 py-1 text-sm text-left outline-none focus:outline-none bg-transparent border-none focus:ring-0"
+                />
+                <select name="width_unit" class="rounded appearance-none bg-none bg-transparent border-none pr-1 pl-2 text-sm focus:ring-0">
+                  <option selected>px</option>
+                  <option>em</option>
+                  <option>rem</option>
+                  <option>%</option>
+                  <option>vh</option>
+                  <option>vw</option>
+                </select>
+              </div> --%>
             </div>
+            <.button class="sui-secondary !px-2">
+              <.icon name="hero-arrows-pointing-out" class="w-4 h-4" />
+            </.button>
           </div>
 
-          <div class="flex items-center gap-4">
+          <div class="flex items-center gap-2">
             <label class="shrink-0 text-xs">Radius</label>
             <div class="grow flex justify-end">
-              <input type="number" name="radius" value={@form.params["radius"]} class="flex-1 py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm" min="0" max="32" />
+              <.input_with_units name="radius" value={@form.params["radius"]} />
             </div>
+            <.button class="sui-secondary !px-2">
+              <.icon name="hero-arrows-pointing-out" class="w-4 h-4" />
+            </.button>
           </div>
         </form>
       </.control_section>
@@ -181,5 +203,21 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
   defp assign_form(socket, values) do
     form = to_form(values)
     assign(socket, form: form)
+  end
+
+  def input_with_units(assigns) do
+    ~H"""
+    <div class="relative w-full flex bg-gray-100 border rounded focus-within:ring-2 focus-within:ring-blue-500">
+      <input type="text" name={@name} value={@value} class="w-full px-2 py-1 text-sm text-left outline-none focus:outline-none bg-transparent border-none focus:ring-0" />
+      <select name={@name <> "_unit"} class="appearance-none bg-none bg-transparent border-none pr-1 pl-2 text-sm focus:ring-0">
+        <option selected>px</option>
+        <option>em</option>
+        <option>rem</option>
+        <option>%</option>
+        <option>vh</option>
+        <option>vw</option>
+      </select>
+    </div>
+    """
   end
 end
