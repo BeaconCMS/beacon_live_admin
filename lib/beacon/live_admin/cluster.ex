@@ -18,7 +18,7 @@ defmodule Beacon.LiveAdmin.Cluster do
   @doc false
   @impl true
   def init(opts) do
-    {:ok, _} = :pg.start_link(@scope)
+    :pg.start_link(@scope)
     :pg.monitor_scope(@scope)
     :ok = :net_kernel.monitor_nodes(true, node_type: :all)
     {:ok, opts}
