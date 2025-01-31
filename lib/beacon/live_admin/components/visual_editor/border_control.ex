@@ -4,29 +4,48 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
   use Beacon.LiveAdmin.Web, :live_component
   import Beacon.LiveAdmin.VisualEditor.Components
   alias Beacon.LiveAdmin.VisualEditor
+  alias Beacon.LiveAdmin.VisualEditor.Utils
 
   @border_styles [{"none", ""}, {"solid", "—"}, {"dashed", "--"}, {"dotted", "..."}]
   @border_colors ~w(gray-500 red-500 blue-500 green-500 yellow-500 purple-500)
   @border_radius_units ~w(px em rem % vh vw)
-  @tailwind_border_rems %{
+  @tailwind_border_radius_rems %{
     0 => "none",
+    "none" => 0,
     0.125 => "sm",
+    "sm" => 0.125,
     0.25 => "DEFAULT",
+    "DEFAULT" => 0.25,
     0.375 => "md",
+    "md" => 0.375,
     0.5 => "lg",
+    "lg" => 0.5,
     0.75 => "xl",
+    "xl" => 0.75,
     1 => "2xl",
+    "2xl" => 1,
     1.5 => "3xl",
+    "3xl" => 1.5,
+    9999 => "full"
   }
-  @tailwind_border_pixels %{
+  @tailwind_border_radius_pixels %{
     0 => "none",
+    "none" => 0,
     2 => "sm",
+    "sm" => 2,
     4 => "DEFAULT",
+    "DEFAULT" => 4,
     6 => "md",
+    "md" => 6,
     8 => "lg",
+    "lg" => 8,
     12 => "xl",
+    "xl" => 12,
     16 => "2xl",
+    "2xl" => 16,
     24 => "3xl",
+    "full" => 9999,
+    9999 => "full"
   }
 
   @type border_params :: %{
@@ -205,8 +224,6 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
 
   @spec handle_event(:update_border, border_params(), Phoenix.LiveView.Socket.t()) :: {:noreply, Phoenix.LiveView.Socket.t()}
   def handle_event("update_border", params, socket) do
-    Logger.debug("#########################")
-    Logger.debug("update_border: #{inspect(params)}")
     generate_border_classes(params, socket)
     {:noreply, socket}
     # update_border_classes(socket, %{style: style, color: color, width: width, radius: radius})
@@ -219,8 +236,8 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
   end
 
   defp generate_border_radius_classes(classes, params, socket) do
-    Logger.debug("#########################")
-    Logger.debug("generate_border_radius_classes: #{inspect(socket.assigns)}")
+    # Logger.debug("#########################")
+    # Logger.debug("generate_border_radius_classes: #{inspect(socket.assigns)}")
     case {socket.assigns.expanded_radius_controls, params} do
       {true, %{"top_left_radius" => tlr, "top_left_radius_unit" => tlr_unit, "top_right_radius" => trr, "top_right_radius_unit" => trr_unit, "bottom_right_radius" => brr, "bottom_right_radius_unit" => brr_unit, "bottom_left_radius" => blr, "bottom_left_radius_unit" => blr_unit }} ->
         classes
@@ -332,16 +349,51 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
 
   defp extract_border_radius(element, _corner \\ nil) do
     # TODO: Implement this for when corner is provided
-    classes = VisualEditor.element_class(element)
+    radius_class =
+      VisualEditor.element_classes(element)
+      |> Enum.find(fn class -> String.contains?(class, "rounded") end)
 
-    Enum.find_value(0..32, "0", fn radius ->
-      if String.contains?(classes, "rounded-#{radius}"), do: "#{radius}"
-    end)
+    case radius_class do
+      "rounded" ->
+        @tailwind_border_radius_rems["DEFAULT"]
+
+      class when is_binary(class) ->
+        case Regex.run(~r/^rounded-\[(.+)\]$/, class) do
+          [_, name] ->
+            Utils.parse_number_and_unit(name) |> elem(0)
+          _ ->
+            case Regex.run(~r/^rounded-(.+)$/, class) do
+              [_, name] -> @tailwind_border_radius_rems[name]
+              _ -> nil
+            end
+        end
+
+      _ ->
+        nil
+    end
   end
 
   defp extract_border_radius_unit(element, _corner \\ nil) do
-    # TODO: Implement this
-    "px"
+    # TODO: Implement this for when corner is provided
+    radius_class =
+      VisualEditor.element_classes(element)
+      |> Enum.find(fn class -> String.contains?(class, "rounded") end)
+
+
+    case radius_class do
+      nil -> "rem"
+      "rounded" -> "rem"
+      "rounded-none" -> "px"
+      "rounded-full" -> "px"
+      class when is_binary(class) ->
+        case Regex.run(~r/^rounded-\[(.+)\]$/, class) do
+          [_, name] ->
+            Utils.parse_number_and_unit(name) |> elem(1)
+          _ -> "rem"
+        end
+      _ ->
+        nil
+    end
   end
 
   defp extract_border_width_unit(element, _side \\ nil) do
