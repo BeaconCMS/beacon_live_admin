@@ -86,8 +86,7 @@ defmodule Beacon.LiveAdmin.Fixtures do
     rpc(node, Beacon.MediaLibrary.UploadMetadata, :new, [
       attrs.site,
       attrs.file_path,
-      node,
-      [name: attrs.file_name, size: attrs.file_size]
+      [name: attrs.file_name, size: attrs.file_size, node: node]
     ])
   end
 
