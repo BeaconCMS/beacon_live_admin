@@ -10,42 +10,42 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
   @border_colors ~w(gray-500 red-500 blue-500 green-500 yellow-500 purple-500)
   @border_radius_units ~w(px em rem % vh vw)
   @tailwind_border_radius_rems %{
-    0 => "none",
+    "0" => "none",
     "none" => 0,
-    0.125 => "sm",
+    "0.125" => "sm",
     "sm" => 0.125,
-    0.25 => "DEFAULT",
+    "0.25" => "DEFAULT",
     "DEFAULT" => 0.25,
-    0.375 => "md",
+    "0.375" => "md",
     "md" => 0.375,
-    0.5 => "lg",
+    "0.5" => "lg",
     "lg" => 0.5,
-    0.75 => "xl",
+    "0.75" => "xl",
     "xl" => 0.75,
-    1 => "2xl",
+    "1" => "2xl",
     "2xl" => 1,
-    1.5 => "3xl",
+    "1.5" => "3xl",
     "3xl" => 1.5,
-    9999 => "full"
+    "9999" => "full"
   }
   @tailwind_border_radius_pixels %{
-    0 => "none",
+    "0" => "none",
     "none" => 0,
-    2 => "sm",
+    "2" => "sm",
     "sm" => 2,
-    4 => "DEFAULT",
+    "4" => "DEFAULT",
     "DEFAULT" => 4,
-    6 => "md",
+    "6" => "md",
     "md" => 6,
-    8 => "lg",
+    "8" => "lg",
     "lg" => 8,
-    12 => "xl",
+    "12" => "xl",
     "xl" => 12,
-    16 => "2xl",
+    "16" => "2xl",
     "2xl" => 16,
-    24 => "3xl",
+    "24" => "3xl",
     "full" => 9999,
-    9999 => "full"
+    "9999" => "full"
   }
 
   @type border_params :: %{
@@ -224,9 +224,12 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
 
   @spec handle_event(:update_border, border_params(), Phoenix.LiveView.Socket.t()) :: {:noreply, Phoenix.LiveView.Socket.t()}
   def handle_event("update_border", params, socket) do
-    generate_border_classes(params, socket)
+    classes = generate_border_classes(params, socket)
+    class = VisualEditor.merge_class(socket.assigns.element, Enum.join(classes, " "))
+    send(self(), {:element_changed, {socket.assigns.element["path"], %{updated: %{"attrs" => %{"class" => class}}}}})
+
     {:noreply, socket}
-    # update_border_classes(socket, %{style: style, color: color, width: width, radius: radius})
+    # {:noreply, assign_form(socket, values)}
   end
 
   defp generate_border_classes(params, socket) do
@@ -236,8 +239,6 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
   end
 
   defp generate_border_radius_classes(classes, params, socket) do
-    # Logger.debug("#########################")
-    # Logger.debug("generate_border_radius_classes: #{inspect(socket.assigns)}")
     case {socket.assigns.expanded_radius_controls, params} do
       {true, %{"top_left_radius" => tlr, "top_left_radius_unit" => tlr_unit, "top_right_radius" => trr, "top_right_radius_unit" => trr_unit, "bottom_right_radius" => brr, "bottom_right_radius_unit" => brr_unit, "bottom_left_radius" => blr, "bottom_left_radius_unit" => blr_unit }} ->
         classes
@@ -248,8 +249,18 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
 
   defp generate_border_radius_class(radius, radius_unit) do
     case radius_unit do
-      "rem" -> @tailwind_border_rems[radius] || "rounded-[#{radius}rem]"
-      "px" -> @tailwind_border_pixels[radius] || "rounded-[#{radius}px]"
+      "rem" ->
+        case @tailwind_border_radius_rems[radius] do
+          nil -> "rounded-[#{radius}rem]"
+          "DEFAULT" -> "rounded"
+          value -> "rounded-#{value}"
+        end
+      "px" ->
+        case @tailwind_border_radius_pixels[radius] do
+          nil -> "rounded-[#{radius}px]"
+          "DEFAULT" -> "rounded"
+          value -> "rounded-#{value}"
+        end
       _ -> "rounded-[#{radius}#{radius_unit}]"
     end
   end
