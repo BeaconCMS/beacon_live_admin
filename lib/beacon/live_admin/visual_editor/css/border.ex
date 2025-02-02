@@ -224,21 +224,21 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
   #
   # Generate tailwind classes from css properties
   #
-  @spec generate_border_classes([String.t()], border_params()) :: [String.t()]
-  def generate_border_classes(classes, _params) do
-    classes
+  @spec generate_border_classes(border_params()) :: [String.t()]
+  def generate_border_classes(_params) do
+    []
   end
 
-  def generate_border_radius_classes(classes, params, expanded_radius_controls) do
+  def generate_border_radius_classes(params, expanded_radius_controls) do
     case {expanded_radius_controls, params} do
       {true, %{"top_left_radius" => tlr, "top_left_radius_unit" => tlr_unit, "top_right_radius" => trr, "top_right_radius_unit" => trr_unit, "bottom_right_radius" => brr, "bottom_right_radius_unit" => brr_unit, "bottom_left_radius" => blr, "bottom_left_radius_unit" => blr_unit }} ->
-        classes
+        []
       {_, %{ "radius" => radius, "radius_unit" => radius_unit } } ->
-        [ generate_border_radius_class(radius, radius_unit) | classes]
+        [generate_simple_border_radius_class(radius, radius_unit)]
     end
   end
 
-  defp generate_border_radius_class(radius, radius_unit) do
+  defp generate_simple_border_radius_class(radius, radius_unit) do
     case radius_unit do
       "rem" ->
         case @tailwind_border_radius_rems[radius] do
@@ -255,5 +255,4 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
       _ -> "rounded-[#{radius}#{radius_unit}]"
     end
   end
-
 end

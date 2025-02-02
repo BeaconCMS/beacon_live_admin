@@ -178,9 +178,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
   end
 
   defp generate_classes(params, socket) do
-      []
-      |> Border.generate_border_classes(params)
-      |> Border.generate_border_radius_classes(params, socket.assigns.expanded_radius_controls)
+    Border.generate_border_classes(params) ++ Border.generate_border_radius_classes(params, socket.assigns.expanded_radius_controls)
   end
 
   defp assign_form(socket, values) do
@@ -189,7 +187,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
   end
 
   defp input_with_units(assigns) do
-    assigns =assigns |> assign(:border_radius_units, @border_radius_units)
+    assigns = assigns |> assign(:border_radius_units, @border_radius_units)
     ~H"""
     <div class="relative w-full flex bg-gray-100 border rounded focus-within:ring-2 focus-within:ring-blue-500">
       <input type="text" name={@name} value={@value} class="w-full px-2 py-1 text-sm text-left outline-none focus:outline-none bg-transparent border-none focus:ring-0" />
