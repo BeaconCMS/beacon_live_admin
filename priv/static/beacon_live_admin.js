@@ -27459,11 +27459,12 @@ var BeaconLiveAdmin = (() => {
     let t;
     let button;
     let span;
+    let button_data_testid_value;
     let mounted;
     let dispose;
     let if_block = (
       /*placeholderStyle*/
-      ctx[2] && create_if_block_14(ctx)
+      ctx[3] && create_if_block_14(ctx)
     );
     const block = {
       c: function create3() {
@@ -27494,30 +27495,31 @@ var BeaconLiveAdmin = (() => {
           span,
           "hero-arrows-right-left",
           /*dragDirection*/
-          ctx[3] === "horizontal"
+          ctx[4] === "horizontal"
         );
         toggle_class(
           span,
           "hero-arrows-up-down",
           /*dragDirection*/
-          ctx[3] === "vertical"
+          ctx[4] === "vertical"
         );
         toggle_class(
           span,
           "hero-arrows-pointing-out",
           /*dragDirection*/
-          ctx[3] === "both"
+          ctx[4] === "both"
         );
-        add_location(span, file12, 363, 4, 13367);
+        add_location(span, file12, 363, 4, 13426);
         attr_dev(button, "class", "rounded-full w-6 h-6 flex justify-center items-center absolute bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 active:bg-blue-800 transform");
         attr_dev(
           button,
           "style",
           /*dragHandleStyle*/
-          ctx[1]
+          ctx[2]
         );
-        attr_dev(button, "data-testid", "drag-button");
-        add_location(button, file12, 356, 2, 13011);
+        attr_dev(button, "data-testid", button_data_testid_value = "drag-button" + /*isParent*/
+        (ctx[0] ? "-parent" : ""));
+        add_location(button, file12, 356, 2, 13043);
       },
       m: function mount(target, anchor) {
         if (if_block)
@@ -27531,7 +27533,7 @@ var BeaconLiveAdmin = (() => {
             button,
             "mousedown",
             /*handleMousedown*/
-            ctx[5],
+            ctx[6],
             false,
             false,
             false,
@@ -27543,7 +27545,7 @@ var BeaconLiveAdmin = (() => {
       p: function update2(ctx2, dirty) {
         if (
           /*placeholderStyle*/
-          ctx2[2]
+          ctx2[3]
         ) {
           if (if_block) {
             if_block.p(ctx2, dirty);
@@ -27557,40 +27559,45 @@ var BeaconLiveAdmin = (() => {
           if_block = null;
         }
         if (dirty[0] & /*dragDirection*/
-        8) {
+        16) {
           toggle_class(
             span,
             "hero-arrows-right-left",
             /*dragDirection*/
-            ctx2[3] === "horizontal"
+            ctx2[4] === "horizontal"
           );
         }
         if (dirty[0] & /*dragDirection*/
-        8) {
+        16) {
           toggle_class(
             span,
             "hero-arrows-up-down",
             /*dragDirection*/
-            ctx2[3] === "vertical"
+            ctx2[4] === "vertical"
           );
         }
         if (dirty[0] & /*dragDirection*/
-        8) {
+        16) {
           toggle_class(
             span,
             "hero-arrows-pointing-out",
             /*dragDirection*/
-            ctx2[3] === "both"
+            ctx2[4] === "both"
           );
         }
         if (dirty[0] & /*dragHandleStyle*/
-        2) {
+        4) {
           attr_dev(
             button,
             "style",
             /*dragHandleStyle*/
-            ctx2[1]
+            ctx2[2]
           );
+        }
+        if (dirty[0] & /*isParent*/
+        1 && button_data_testid_value !== (button_data_testid_value = "drag-button" + /*isParent*/
+        (ctx2[0] ? "-parent" : ""))) {
+          attr_dev(button, "data-testid", button_data_testid_value);
         }
       },
       d: function destroy(detaching) {
@@ -27634,17 +27641,17 @@ var BeaconLiveAdmin = (() => {
       h: function hydrate() {
         attr_dev(div, "class", "absolute transition-all");
         attr_dev(div, "style", div_style_value = "background-color:aqua; opacity: 0.5; " + /*placeholderStyle*/
-        ctx[2]);
+        ctx[3]);
         attr_dev(div, "data-testid", "drag-placeholder");
-        add_location(div, file12, 350, 4, 12839);
+        add_location(div, file12, 350, 4, 12871);
       },
       m: function mount(target, anchor) {
         insert_hydration_dev(target, div, anchor);
       },
       p: function update2(ctx2, dirty) {
         if (dirty[0] & /*placeholderStyle*/
-        4 && div_style_value !== (div_style_value = "background-color:aqua; opacity: 0.5; " + /*placeholderStyle*/
-        ctx2[2])) {
+        8 && div_style_value !== (div_style_value = "background-color:aqua; opacity: 0.5; " + /*placeholderStyle*/
+        ctx2[3])) {
           attr_dev(div, "style", div_style_value);
         }
       },
@@ -27667,7 +27674,7 @@ var BeaconLiveAdmin = (() => {
     let if_block_anchor;
     let if_block = (
       /*canBeDragged*/
-      ctx[4] && create_if_block6(ctx)
+      ctx[5] && create_if_block6(ctx)
     );
     const block = {
       c: function create3() {
@@ -27688,7 +27695,7 @@ var BeaconLiveAdmin = (() => {
       p: function update2(ctx2, dirty) {
         if (
           /*canBeDragged*/
-          ctx2[4]
+          ctx2[5]
         ) {
           if (if_block) {
             if_block.p(ctx2, dirty);
@@ -27801,7 +27808,7 @@ var BeaconLiveAdmin = (() => {
       if (currentHandleCoords?.x) {
         styles.push(`left: ${currentHandleCoords.x}px`);
       }
-      $$invalidate(1, dragHandleStyle = styles.join(";"));
+      $$invalidate(2, dragHandleStyle = styles.join(";"));
     }
     function snapshotSelectedElementSiblings() {
       let siblings = Array.from(element2.parentElement.children);
@@ -27889,7 +27896,7 @@ var BeaconLiveAdmin = (() => {
     }
     function resetDragElementHandle() {
       if (dragHandleElement) {
-        $$invalidate(0, dragHandleElement.style.transform = null, dragHandleElement);
+        $$invalidate(1, dragHandleElement.style.transform = null, dragHandleElement);
         dragHandleElement.style.setProperty("--tw-translate-y", null);
         dragHandleElement.style.setProperty("--tw-translate-x", null);
       }
@@ -27899,7 +27906,7 @@ var BeaconLiveAdmin = (() => {
       document.removeEventListener("mouseup", handleMouseup);
       applyNewOrder();
       if (dragElementInfo) {
-        $$invalidate(6, element2.parentElement.style.display = null, element2);
+        $$invalidate(7, element2.parentElement.style.display = null, element2);
         dragElementInfo.parentElementClone.remove();
         dragElementInfo = null;
       }
@@ -27907,7 +27914,7 @@ var BeaconLiveAdmin = (() => {
       await tick();
       set_store_value(isDragging, $isDragging = false, $isDragging);
       resetDragElementHandle();
-      $$invalidate(2, placeholderStyle = null);
+      $$invalidate(3, placeholderStyle = null);
       originalSiblings = null;
     }
     function getGhostElement() {
@@ -27957,7 +27964,7 @@ var BeaconLiveAdmin = (() => {
     }
     function repositionPlaceholder(destinationIndex) {
       const currentRect = dragElementInfo.newSiblingRects[destinationIndex];
-      $$invalidate(2, placeholderStyle = `top: ${currentRect.top - relativeWrapperRect.top}px; left: ${currentRect.left - relativeWrapperRect.left}px; height: ${currentRect.height}px; width: ${currentRect.width}px;`);
+      $$invalidate(3, placeholderStyle = `top: ${currentRect.top - relativeWrapperRect.top}px; left: ${currentRect.left - relativeWrapperRect.left}px; height: ${currentRect.height}px; width: ${currentRect.width}px;`);
     }
     function repositionGhostElement(currentIndex, destinationIndex, mouseDiff) {
       const ghostElement = dragElementInfo.parentElementClone.children.item(destinationIndex);
@@ -28016,14 +28023,14 @@ var BeaconLiveAdmin = (() => {
     function button_binding($$value) {
       binding_callbacks[$$value ? "unshift" : "push"](() => {
         dragHandleElement = $$value;
-        $$invalidate(0, dragHandleElement);
+        $$invalidate(1, dragHandleElement);
       });
     }
     $$self.$$set = ($$props2) => {
       if ("element" in $$props2)
-        $$invalidate(6, element2 = $$props2.element);
+        $$invalidate(7, element2 = $$props2.element);
       if ("isParent" in $$props2)
-        $$invalidate(7, isParent = $$props2.isParent);
+        $$invalidate(0, isParent = $$props2.isParent);
     };
     $$self.$capture_state = () => ({
       writable,
@@ -28082,15 +28089,15 @@ var BeaconLiveAdmin = (() => {
     });
     $$self.$inject_state = ($$props2) => {
       if ("element" in $$props2)
-        $$invalidate(6, element2 = $$props2.element);
+        $$invalidate(7, element2 = $$props2.element);
       if ("isParent" in $$props2)
-        $$invalidate(7, isParent = $$props2.isParent);
+        $$invalidate(0, isParent = $$props2.isParent);
       if ("originalSiblings" in $$props2)
         originalSiblings = $$props2.originalSiblings;
       if ("dragHandleElement" in $$props2)
-        $$invalidate(0, dragHandleElement = $$props2.dragHandleElement);
+        $$invalidate(1, dragHandleElement = $$props2.dragHandleElement);
       if ("dragHandleStyle" in $$props2)
-        $$invalidate(1, dragHandleStyle = $$props2.dragHandleStyle);
+        $$invalidate(2, dragHandleStyle = $$props2.dragHandleStyle);
       if ("currentHandleCoords" in $$props2)
         currentHandleCoords = $$props2.currentHandleCoords;
       if ("relativeWrapperRect" in $$props2)
@@ -28100,36 +28107,37 @@ var BeaconLiveAdmin = (() => {
       if ("mouseDownEvent" in $$props2)
         mouseDownEvent = $$props2.mouseDownEvent;
       if ("placeholderStyle" in $$props2)
-        $$invalidate(2, placeholderStyle = $$props2.placeholderStyle);
+        $$invalidate(3, placeholderStyle = $$props2.placeholderStyle);
       if ("newIndex" in $$props2)
         newIndex = $$props2.newIndex;
       if ("dragDirection" in $$props2)
-        $$invalidate(3, dragDirection = $$props2.dragDirection);
+        $$invalidate(4, dragDirection = $$props2.dragDirection);
       if ("canBeDragged" in $$props2)
-        $$invalidate(4, canBeDragged = $$props2.canBeDragged);
+        $$invalidate(5, canBeDragged = $$props2.canBeDragged);
     };
     if ($$props && "$$inject" in $$props) {
       $$self.$inject_state($$props.$$inject);
     }
     $$self.$$.update = () => {
       if ($$self.$$.dirty[0] & /*element*/
-      64) {
+      128) {
         $:
-          $$invalidate(4, canBeDragged = element2?.parentElement?.children?.length > 1);
+          $$invalidate(5, canBeDragged = element2?.parentElement?.children?.length > 1);
       }
       if ($$self.$$.dirty[0] & /*element*/
-      64) {
+      128) {
         $:
-          $$invalidate(3, dragDirection = getDragDirection(element2));
+          $$invalidate(4, dragDirection = getDragDirection(element2));
       }
       if ($$self.$$.dirty[0] & /*element, isParent*/
-      192) {
+      129) {
         $: {
           !!element2 && initSelectedElementDragMenuPosition(element2, isParent);
         }
       }
     };
     return [
+      isParent,
       dragHandleElement,
       dragHandleStyle,
       placeholderStyle,
@@ -28137,14 +28145,13 @@ var BeaconLiveAdmin = (() => {
       canBeDragged,
       handleMousedown,
       element2,
-      isParent,
       button_binding
     ];
   }
   var DragMenuOption = class extends SvelteComponentDev {
     constructor(options) {
       super(options);
-      init2(this, options, instance12, create_fragment12, safe_not_equal, { element: 6, isParent: 7 }, null, [-1, -1]);
+      init2(this, options, instance12, create_fragment12, safe_not_equal, { element: 7, isParent: 0 }, null, [-1, -1]);
       dispatch_dev("SvelteRegisterComponent", {
         component: this,
         tagName: "DragMenuOption",
@@ -28153,14 +28160,14 @@ var BeaconLiveAdmin = (() => {
       });
     }
     get element() {
-      return this.$$.ctx[6];
+      return this.$$.ctx[7];
     }
     set element(element2) {
       this.$$set({ element: element2 });
       flush();
     }
     get isParent() {
-      return this.$$.ctx[7];
+      return this.$$.ctx[0];
     }
     set isParent(isParent) {
       this.$$set({ isParent });
@@ -28346,7 +28353,8 @@ var BeaconLiveAdmin = (() => {
         button = claim_element(nodes, "BUTTON", {
           class: true,
           style: true,
-          "aria-label": true
+          "aria-label": true,
+          "data-testid": true
         });
         var button_nodes = children(button);
         span = claim_element(button_nodes, "SPAN", { class: true });
@@ -28356,11 +28364,12 @@ var BeaconLiveAdmin = (() => {
       },
       h: function hydrate() {
         attr_dev(span, "class", "hero-trash");
-        add_location(span, file13, 51, 8, 1925);
+        add_location(span, file13, 52, 8, 1969);
         attr_dev(button, "class", "absolute top-0 -m-3 w-6 h-6 rounded-full flex justify-center items-center bg-red-500 text-white hover:bg-red-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 active:bg-red-800");
         attr_dev(button, "style", button_style_value = `left: ${/*menuPosition*/
         ctx[3].width}px;`);
         attr_dev(button, "aria-label", "Delete component");
+        attr_dev(button, "data-testid", "element-delete-button");
         add_location(button, file13, 45, 6, 1564);
       },
       m: function mount(target, anchor) {
@@ -28454,7 +28463,7 @@ var BeaconLiveAdmin = (() => {
       block,
       id: create_if_block_15.name,
       type: "if",
-      source: "(53:2) {#if $selectedDomElement?.parentElement}",
+      source: "(54:2) {#if $selectedDomElement?.parentElement}",
       ctx
     });
     return block;
