@@ -41,10 +41,7 @@ defmodule Beacon.LiveAdmin.JSHookEditorLive.Index do
 
     params = Map.put(form.params, "code", code)
 
-    changeset =
-      site
-      |> Content.change_js_hook(selected, params)
-      |> Map.put(:action, :validate)
+    changeset = Content.change_js_hook(site, selected, params)
 
     socket =
       socket
