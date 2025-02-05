@@ -119,15 +119,33 @@ defmodule Beacon.LiveAdminTest.Cluster do
 
     rpc(node, Application, :put_env, [
       :my_app,
-      MyAppWeb.Endpoint,
-      http: [ip: {127, 0, 0, 1}, port: Enum.random(4030..4099)],
+      MyAppWeb.ProxyEndpoint,
+      http: [ip: {127, 0, 0, 1}, port: Enum.random(4030..4050)],
       # adapter: Bandit.PhoenixAdapter,
       server: true,
       live_view: [signing_salt: "aaaaaaaa"],
       secret_key_base: String.duplicate("a", 64),
       render_errors: [
         formats: [
-          html: MyApp.ErrorHTML
+          html: Beacon.Web.ErrorHTML
+        ],
+        layout: false
+      ],
+      pubsub_server: MyApp.PubSub,
+      debug_errors: false
+    ])
+
+    rpc(node, Application, :put_env, [
+      :my_app,
+      MyAppWeb.Endpoint,
+      http: [ip: {127, 0, 0, 1}, port: Enum.random(4051..4099)],
+      # adapter: Bandit.PhoenixAdapter,
+      server: true,
+      live_view: [signing_salt: "aaaaaaaa"],
+      secret_key_base: String.duplicate("a", 64),
+      render_errors: [
+        formats: [
+          html: Beacon.Web.ErrorHTML
         ],
         layout: false
       ],
@@ -139,6 +157,7 @@ defmodule Beacon.LiveAdminTest.Cluster do
 
     children = [
       MyApp.Repo,
+      MyAppWeb.ProxyEndpoint,
       MyAppWeb.Endpoint,
       {Phoenix.PubSub, name: MyApp.PubSub},
       {Beacon, beacon_config}
