@@ -82,8 +82,6 @@ jobs:
 
       - run: mix tailwind.install --no-assets
 
-      - run: mix esbuild.install
-
       - name: Run tests
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:${{job.services.postgres.ports[5432]}}/beacon_live_admin_test
