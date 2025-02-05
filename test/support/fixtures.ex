@@ -133,4 +133,24 @@ defmodule Beacon.LiveAdmin.Fixtures do
 
     rpc(node, Beacon.Content, :create_info_handler!, [attrs])
   end
+
+  def js_hook_fixture(node \\ node1(), attrs \\ %{}) do
+    name = attrs[:name] || "FooHook"
+
+    attrs =
+      Enum.into(attrs, %{
+        site: "site_a",
+        name: name,
+        code: """
+        export const #{name} = {
+          mounted() {
+            console.log("mounted")
+          }
+        }
+        """
+      })
+
+    {:ok, js_hook} = rpc(node, Beacon.Content, :create_js_hook, [attrs])
+    js_hook
+  end
 end
