@@ -57,6 +57,9 @@ defmodule Beacon.LiveAdmin.HomeLive do
                   <.link href={Router.beacon_live_admin_path(@socket, site, "/error_pages")} class={nav_class()}>
                     Error Pages
                   </.link>
+                  <.link href={Router.beacon_live_admin_path(@socket, site, "/hooks")} class={nav_class()}>
+                    JS Hooks
+                  </.link>
                 </div>
               </div>
             <% end %>

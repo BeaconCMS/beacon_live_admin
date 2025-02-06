@@ -34,7 +34,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
      |> assign(:page_status, page_status)
      |> assign_extra_fields(changeset)
      |> assign_new(:show_modal, fn -> nil end)
-     |> assign_new(:tailwind_config, fn -> RuntimeCSS.asset_url(site) end)
+     |> assign_new(:tailwind_config, fn -> RuntimeCSS.css_config_url(site) end)
      |> assign_new(:tailwind_input, fn ->
        tailwind = [
          "@tailwind base;",

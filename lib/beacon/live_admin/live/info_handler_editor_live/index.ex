@@ -128,7 +128,11 @@ defmodule Beacon.LiveAdmin.InfoHandlerEditorLive.Index do
     %{selected: info_handler, beacon_page: %{site: site}, form: form} = socket.assigns
 
     attrs = Map.merge(form.params, %{"code" => code})
-    changeset = Content.change_info_handler(site, info_handler, attrs)
+
+    changeset =
+      site
+      |> Content.change_info_handler(info_handler, attrs)
+      |> Map.put(:action, :validate)
 
     socket =
       socket
@@ -136,6 +140,17 @@ defmodule Beacon.LiveAdmin.InfoHandlerEditorLive.Index do
       |> assign(unsaved_changes: !(changeset.changes == %{}))
 
     {:noreply, socket}
+  end
+
+  def handle_event("validate", params, socket) do
+    %{beacon_page: %{site: site}, form: form} = socket.assigns
+
+    changeset =
+      site
+      |> Content.change_info_handler(form.source.data, params["info_handler"])
+      |> Map.put(:action, :validate)
+
+    {:noreply, assign_form(socket, changeset)}
   end
 
   defp assign_selected(socket, nil) do
@@ -234,7 +249,7 @@ defmodule Beacon.LiveAdmin.InfoHandlerEditorLive.Index do
           </div>
 
           <div :if={@form} class="w-full col-span-2">
-            <.form :let={f} for={@form} id="info-handler-form" class="flex items-end gap-4" phx-submit="save_changes">
+            <.form :let={f} for={@form} id="info-handler-form" class="flex items-end gap-4" phx-change="validate" phx-submit="save_changes">
               <.input label="Message Argument" field={f[:msg]} type="text" />
               <.input type="hidden" field={f[:code]} name="info_handler[code]" id="info_handler-form_code" value={Phoenix.HTML.Form.input_value(f, :code)} />
 

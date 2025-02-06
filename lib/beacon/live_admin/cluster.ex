@@ -11,6 +11,9 @@ defmodule Beacon.LiveAdmin.Cluster do
   @scope :beacon_cluster
 
   @doc false
+  def scope, do: @scope
+
+  @doc false
   def start_link(opts) do
     GenServer.start_link(__MODULE__, opts, name: __MODULE__)
   end
@@ -18,7 +21,6 @@ defmodule Beacon.LiveAdmin.Cluster do
   @doc false
   @impl true
   def init(opts) do
-    {:ok, _} = :pg.start_link(@scope)
     :pg.monitor_scope(@scope)
     :ok = :net_kernel.monitor_nodes(true, node_type: :all)
     {:ok, opts}
