@@ -24,4 +24,14 @@ defmodule Beacon.LiveAdmin.VisualEditor.Utils do
     end
   end
 
+  def parse_integer_or_float(string) do
+    case Integer.parse(string) do
+      {int, ""} -> {:ok, int}
+      _ ->
+        case Float.parse(string) do
+          {float, ""} -> {:ok, float}
+          _ -> :error
+        end
+    end
+  end
 end

@@ -22,25 +22,6 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
     "3xl" => 1.5,
     "9999" => "full"
   }
-  @tailwind_border_radius_pixels %{
-    "0" => "none",
-    "none" => 0,
-    "2" => "sm",
-    "sm" => 2,
-    "4" => "DEFAULT",
-    "DEFAULT" => 4,
-    "6" => "md",
-    "md" => 6,
-    "8" => "lg",
-    "lg" => 8,
-    "12" => "xl",
-    "xl" => 12,
-    "16" => "2xl",
-    "2xl" => 16,
-    "24" => "3xl",
-    "full" => 9999,
-    "9999" => "full"
-  }
 
   @type border_params :: %{
     required(String.t()) => String.t(),
@@ -232,7 +213,16 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
     end
   end
 
-  defp generate_custom_border_radius_class(radius, radius_unit) when radius_unit in ~w(px rem em %) do
+  defp generate_custom_border_radius_class("", radius_unit) when radius_unit in ~w(px rem em %) do
+    nil
+  end
+  defp generate_custom_border_radius_class(radius, radius_unit) when radius_unit in ~w(px rem em %) and is_binary(radius) do
+    case Utils.parse_integer_or_float(radius) do
+      {:ok, radius_value} -> "rounded-[#{radius_value}#{radius_unit}]"
+      :error -> nil
+    end
+  end
+  defp generate_custom_border_radius_class(radius, radius_unit) when radius_unit in ~w(px rem em %) and is_integer(radius) do
     "rounded-[#{radius}#{radius_unit}]"
   end
 
