@@ -197,6 +197,8 @@ defmodule Beacon.LiveAdmin.PageLive do
           {_, "/error_pages"} -> false
           {"/hooks", _} -> true
           {_, "/hooks"} -> false
+          {"/roles", _} -> true
+          {_, "/roles"} -> false
           {a, b} -> a <= b
         end
       end)
