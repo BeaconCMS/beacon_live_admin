@@ -4,7 +4,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Utils do
     regex = ~r/^\s*(-?\d+(\.\d+)?)/
 
     case Regex.run(regex, string, return: :index) do
-      [{start, length}] ->
+      [{start, length} | _] ->
         # Extract the numeric part and the remaining text
         numeric_part = String.slice(string, start, length)
         remaining_text = String.slice(string, start + length..-1)

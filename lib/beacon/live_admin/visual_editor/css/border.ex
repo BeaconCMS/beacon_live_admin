@@ -1,7 +1,7 @@
 defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
   alias Beacon.LiveAdmin.VisualEditor
   alias Beacon.LiveAdmin.VisualEditor.Utils
-
+  require Logger
   @border_colors ~w(gray-500 red-500 blue-500 green-500 yellow-500 purple-500)
   @tailwind_border_radius_rems %{
     "0" => "none",
@@ -173,45 +173,34 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
       |> Enum.find(fn class -> String.contains?(class, "rounded") end)
 
     case radius_class do
-      "rounded" ->
-        @tailwind_border_radius_rems["DEFAULT"]
-
-      class when is_binary(class) ->
-        case Regex.run(~r/^rounded-\[(.+)\]$/, class) do
-          [_, name] ->
-            Utils.parse_number_and_unit(name) |> elem(0)
-          _ ->
-            case Regex.run(~r/^rounded-(.+)$/, class) do
-              [_, name] -> @tailwind_border_radius_rems[name]
-              _ -> nil
-            end
-        end
-
-      _ ->
-        nil
-    end
-  end
-
-  defp extract_border_radius_unit(element, _corner \\ nil) do
-    # TODO: Implement this for when corner is provided
-    radius_class =
-      VisualEditor.element_classes(element)
-      |> Enum.find(fn class -> String.contains?(class, "rounded") end)
-
-
-    case radius_class do
-      nil -> "rem"
-      "rounded" -> "rem"
-      "rounded-none" -> "px"
-      "rounded-full" -> "px"
       class when is_binary(class) ->
         case Regex.run(~r/^rounded-\[(.+)\]$/, class) do
           [_, name] ->
             Utils.parse_number_and_unit(name) |> elem(1)
-          _ -> "rem"
+          _ ->
+            nil
         end
-      _ ->
-        nil
+      _ -> nil
+    end
+  end
+
+  defp extract_border_radius_unit(element, _corner \\ nil) do
+    radius_class =
+      VisualEditor.element_classes(element)
+      |> Enum.find(fn class -> String.contains?(class, "rounded") end)
+
+    case radius_class do
+      class when is_binary(class) ->
+        case Regex.run(~r/^rounded-\[(.+)\]$/, class) do
+          [_, name] ->
+            case Utils.parse_number_and_unit(name) do
+              {:ok, _, unit} -> unit
+              {:error, _} -> nil
+            end
+          _ ->
+            nil
+        end
+      _ -> nil
     end
   end
 
@@ -230,29 +219,24 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
   end
 
   def generate_border_radius_classes(params, expanded_radius_controls) do
+    Logger.debug("##################")
+    Logger.debug("params: #{inspect(params)}")
+    Logger.debug("expanded_radius_controls: #{inspect(expanded_radius_controls)}")
     case {expanded_radius_controls, params} do
       {true, %{"top_left_radius" => tlr, "top_left_radius_unit" => tlr_unit, "top_right_radius" => trr, "top_right_radius_unit" => trr_unit, "bottom_right_radius" => brr, "bottom_right_radius_unit" => brr_unit, "bottom_left_radius" => blr, "bottom_left_radius_unit" => blr_unit }} ->
         []
       {_, %{ "radius" => radius, "radius_unit" => radius_unit } } ->
-        [generate_simple_border_radius_class(radius, radius_unit)]
+        [generate_custom_border_radius_class(radius, radius_unit)]
+      {_, %{ "radius_unit" => radius_unit } } ->
+        [generate_simple_border_radius_class(radius_unit)]
     end
   end
 
-  defp generate_simple_border_radius_class(radius, radius_unit) do
-    case radius_unit do
-      "rem" ->
-        case @tailwind_border_radius_rems[radius] do
-          nil -> "rounded-[#{radius}rem]"
-          "DEFAULT" -> "rounded"
-          value -> "rounded-#{value}"
-        end
-      "px" ->
-        case @tailwind_border_radius_pixels[radius] do
-          nil -> "rounded-[#{radius}px]"
-          "DEFAULT" -> "rounded"
-          value -> "rounded-#{value}"
-        end
-      _ -> "rounded-[#{radius}#{radius_unit}]"
-    end
+  defp generate_custom_border_radius_class(radius, radius_unit) when radius_unit in ~w(px rem em %) do
+    "rounded-[#{radius}#{radius_unit}]"
   end
+
+  defp generate_simple_border_radius_class(radius_unit) when radius_unit in ~w(px rem em %), do: generate_custom_border_radius_class(0, radius_unit)
+  defp generate_simple_border_radius_class("DEFAULT"), do: "rounded"
+  defp generate_simple_border_radius_class(radius_unit), do: "rounded-#{radius_unit}"
 end

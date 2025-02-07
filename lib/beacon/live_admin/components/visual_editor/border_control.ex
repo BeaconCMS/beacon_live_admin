@@ -8,7 +8,21 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
 
   @border_styles [{"none", ""}, {"solid", "—"}, {"dashed", "--"}, {"dotted", "..."}]
   @border_colors ~w(gray-500 red-500 blue-500 green-500 yellow-500 purple-500)
-  @border_radius_units ~w(px em rem % vh vw)
+
+  # Define Tailwind border radius sizes in order
+  @border_radius_sizes [
+    {"none", "none"},
+    {"sm", "sm"},
+    {"-", "DEFAULT"},
+    {"md", "md"},
+    {"lg", "lg"},
+    {"xl", "xl"},
+    {"2xl", "2xl"},
+    {"3xl", "3xl"},
+    {"full", "full"}
+  ]
+  # Units for custom sizes
+  @border_radius_units ~w(px rem em %)
 
   @type border_params :: %{
     required(String.t()) => String.t(),
@@ -152,7 +166,6 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
 
   def update(%{element: element} = assigns, socket) do
     values = Border.extract_border_properties(element)
-
     {:ok,
      socket
      |> assign(assigns)
@@ -187,14 +200,34 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
   end
 
   defp input_with_units(assigns) do
-    assigns = assigns |> assign(:border_radius_units, @border_radius_units)
+    assigns = assigns
+      |> assign(:border_radius_sizes, @border_radius_sizes)
+      |> assign(:border_radius_units, @border_radius_units)
+      |> assign(:is_custom_unit?, Enum.member?(@border_radius_units, assigns.value_unit))
+
     ~H"""
     <div class="relative w-full flex bg-gray-100 border rounded focus-within:ring-2 focus-within:ring-blue-500">
-      <input type="text" name={@name} value={@value} class="w-full px-2 py-1 text-sm text-left outline-none focus:outline-none bg-transparent border-none focus:ring-0" />
+      <input
+        type="text"
+        name={@name}
+        value={@value}
+        disabled={!@is_custom_unit?}
+        class={[
+          "w-full px-2 py-1 text-sm text-left outline-none focus:outline-none bg-transparent border-none focus:ring-0",
+          !@is_custom_unit? && "text-gray-500"
+        ]}
+      />
       <select name={@name <> "_unit"} class="appearance-none bg-none bg-transparent border-none pr-1 pl-2 text-sm focus:ring-0">
-        <option :for={unit <- @border_radius_units} value={unit} selected={@value_unit == unit}>
-          <%= unit %>
-        </option>
+        <optgroup label="Sizes">
+          <option :for={{label, value} <- @border_radius_sizes} value={value} selected={@value_unit == value}>
+            <%= label %>
+          </option>
+        </optgroup>
+        <optgroup label="Units">
+          <option :for={unit <- @border_radius_units} value={unit} selected={@value_unit == unit}>
+            <%= unit %>
+          </option>
+        </optgroup>
       </select>
     </div>
     """
