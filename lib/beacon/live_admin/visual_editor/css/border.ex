@@ -165,12 +165,21 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
     end
   end
 
-  defp extract_border_radius_unit(element, _corner \\ nil) do
+  defp extract_border_radius_unit(element) do
     radius_class =
       VisualEditor.element_classes(element)
       |> Enum.find(fn class -> String.contains?(class, "rounded") end)
 
     case radius_class do
+      # Case 1: basic "rounded" class
+      "rounded" ->
+        "DEFAULT"
+
+      # Case 2: predefined sizes like "rounded-sm" or "rounded-2xl"
+      "rounded-" <> size when size in ~w(none sm md lg xl 2xl 3xl full) ->
+        size
+
+      # Case 3: arbitrary values like "rounded-[10px]"
       class when is_binary(class) ->
         case Regex.run(~r/^rounded-\[(.+)\]$/, class) do
           [_, name] ->
@@ -181,7 +190,42 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
           _ ->
             nil
         end
+
       _ -> nil
+    end
+  end
+
+  defp extract_border_radius_unit(element, corner) do
+    # Convert corner format from "top-left" to "tl", etc.
+    corner_abbrev = case corner do
+      "top-left" -> "tl"
+      "top-right" -> "tr"
+      "bottom-right" -> "br"
+      "bottom-left" -> "bl"
+    end
+
+    classes = VisualEditor.element_classes(element)
+    corner_class = classes |> Enum.find(fn class ->
+      String.starts_with?(class, "rounded-#{corner_abbrev}")
+    end)
+
+    case corner_class do
+      # Handle arbitrary values like rounded-tl-[10px]
+      "rounded-" <> <<^corner_abbrev::binary, "-[", rest::binary>> ->
+        case Regex.run(~r/^(.+)\]$/, rest) do
+          [_, name] ->
+            case Utils.parse_number_and_unit(name) do
+              {:ok, _, unit} -> unit
+              {:error, _} -> nil
+            end
+          _ ->
+            extract_border_radius_unit(element)
+        end
+      # Handle predefined sizes like rounded-tl-md
+      "rounded-" <> <<^corner_abbrev::binary, "-", size::binary>> ->
+        size
+      _ ->
+        extract_border_radius_unit(element)
     end
   end
 

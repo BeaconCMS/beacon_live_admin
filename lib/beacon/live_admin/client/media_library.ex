@@ -35,8 +35,8 @@ defmodule Beacon.LiveAdmin.Client.MediaLibrary do
     call(site, Beacon.MediaLibrary, :is_image?, [asset])
   end
 
-  def new_upload_metadata(site, path, node, opts) do
-    call(site, Beacon.MediaLibrary.UploadMetadata, :new, [site, path, node, opts])
+  def new_upload_metadata(site, path, opts) do
+    call(site, Beacon.MediaLibrary.UploadMetadata, :new, [site, path, opts])
   end
 
   def upload(site, upload_metadata) do

@@ -166,11 +166,13 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
 
   def update(%{element: element} = assigns, socket) do
     values = Border.extract_border_properties(element)
+
     {:ok,
      socket
      |> assign(assigns)
      |> assign(:border_styles, @border_styles)
      |> assign(:border_colors, @border_colors)
+     |> assign(:expanded_radius_controls, should_expand_radius_controls?(values))
      |> assign_form(values)}
   end
 
@@ -239,6 +241,14 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
       <.icon name={if(@expanded, do: "hero-arrows-pointing-in", else: "hero-arrows-pointing-out")} class="w-4 h-4" />
     </button>
     """
+  end
+
+  defp should_expand_radius_controls?(values) do
+    corners = ["top_left", "top_right", "bottom_right", "bottom_left"]
+    [first_radius | other_radiuses] = Enum.map(corners, &values["#{&1}_radius"])
+    [first_unit | other_units] = Enum.map(corners, &values["#{&1}_radius_unit"])
+    Enum.any?(other_radiuses, &(&1 != first_radius)) or
+    Enum.any?(other_units, &(&1 != first_unit))
   end
 
   # defp update_border_classes(socket, changes) do
