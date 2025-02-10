@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.4.0 (2025-02-10)
 
 ### Enhancements
   - Adds page to define custom JS Hooks
@@ -10,9 +10,9 @@
   - Page editor now shows draft/published status
 
 ### Fixes
-
   - Fixed a bug where MediaLibrary could check for file contents on the wrong node in multi-node deployments
   - Fixed a bug where using the code editor could reset other form fields on the page
+  - Saving as draft no longer resets the form for new pages
 
 ## 0.3.1 (2024-12-12)
 
