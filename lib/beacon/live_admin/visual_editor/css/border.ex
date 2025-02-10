@@ -370,7 +370,74 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
     Logger.debug("##################")
     Logger.debug("params: #{inspect(params)}")
     Logger.debug("expanded_width_controls: #{inspect(expanded_width_controls)}")
-    []
+
+    # Extract all widths and units
+    widths = [
+      {params["width"], params["width_unit"]},
+      {params["top_width"], params["top_width_unit"]},
+      {params["right_width"], params["right_width_unit"]},
+      {params["bottom_width"], params["bottom_width_unit"]},
+      {params["left_width"], params["left_width_unit"]}
+    ]
+
+    # Check if all borders have the same width and unit
+    all_same? = case widths do
+      [{main_width, main_unit} | rest] when not is_nil(main_width) and not is_nil(main_unit) ->
+        Enum.all?(rest, fn
+          {nil, _} -> true
+          {w, u} -> w == main_width and u == main_unit
+        end)
+      _ -> false
+    end
+
+    cond do
+      # Case 1: All borders are the same or not using expanded controls
+      all_same? or not expanded_width_controls ->
+        generate_global_border_class(params)
+
+      # Case 2: Different borders with expanded controls
+      true ->
+        [
+          generate_border_class(params["top_width"], params["top_width_unit"], "top"),
+          generate_border_class(params["right_width"], params["right_width_unit"], "right"),
+          generate_border_class(params["bottom_width"], params["bottom_width_unit"], "bottom"),
+          generate_border_class(params["left_width"], params["left_width_unit"], "left")
+        ]
+        |> Enum.reject(&is_nil/1)
+    end
+  end
+
+  defp generate_global_border_class(params) do
+    case {params["width"], params["width_unit"]} do
+      {width, unit} when not is_nil(width) and not is_nil(unit) ->
+        [generate_border_class(width, unit)]
+      _ ->
+        []
+    end
+  end
+
+  defp generate_border_class(width, unit, side \\ nil)
+
+  # Handle nil cases
+  defp generate_border_class(nil, _unit, _side), do: nil
+  defp generate_border_class(_width, nil, _side), do: nil
+
+  # Handle standard pixel widths (1-8)
+  defp generate_border_class(width, "px", side) when width in ~w(1 2 3 4 5 6 7 8) do
+    case side do
+      nil -> "border-#{width}"
+      side -> "border-#{String.first(side)}-#{width}"
+    end
+  end
+
+  # Handle custom widths
+  defp generate_border_class(width, unit, side) do
+    prefix = case side do
+      nil -> "border"
+      side -> "border-#{String.first(side)}"
+    end
+
+    "#{prefix}-[#{width}#{unit}]"
   end
 
   def generate_border_radius_classes(params, expanded_radius_controls) do
