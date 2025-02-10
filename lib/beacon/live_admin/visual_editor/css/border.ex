@@ -60,29 +60,74 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
   #
 
   def extract_border_properties(element) do
+    radius_unit = extract_border_radius_unit(element)
+    radius = extract_border_radius(element, nil, radius_unit)
+    top_left_radius_unit = extract_border_radius_unit(element, "top-left")
+    top_left_radius = extract_border_radius(element, "top-left", top_left_radius_unit)
+    top_right_radius_unit = extract_border_radius_unit(element, "top-right")
+    top_right_radius = extract_border_radius(element, "top-right", top_right_radius_unit)
+    bottom_right_radius_unit = extract_border_radius_unit(element, "bottom-right")
+    bottom_right_radius = extract_border_radius(element, "bottom-right", bottom_right_radius_unit)
+    bottom_left_radius_unit = extract_border_radius_unit(element, "bottom-left")
+    bottom_left_radius = extract_border_radius(element, "bottom-left", bottom_left_radius_unit)
+
+    width_unit = extract_border_width_unit(element, nil)
+    width = extract_border_width(element, nil, width_unit)
+    top_width_unit = extract_border_width_unit(element, "top")
+    top_width = extract_border_width(element, "top", top_width_unit)
+    right_width_unit = extract_border_width_unit(element, "right")
+    right_width = extract_border_width(element, "right", right_width_unit)
+    bottom_width_unit = extract_border_width_unit(element, "bottom")
+    bottom_width = extract_border_width(element, "bottom", bottom_width_unit)
+    left_width_unit = extract_border_width_unit(element, "left")
+    left_width = extract_border_width(element, "left", left_width_unit)
+
+    Logger.debug("##################")
+    Logger.debug("radius: #{inspect(radius)}")
+    Logger.debug("radius_unit: #{inspect(radius_unit)}")
+    Logger.debug("top_left_radius: #{inspect(top_left_radius)}")
+    Logger.debug("top_left_radius_unit: #{inspect(top_left_radius_unit)}")
+    Logger.debug("top_right_radius: #{inspect(top_right_radius)}")
+    Logger.debug("top_right_radius_unit: #{inspect(top_right_radius_unit)}")
+    Logger.debug("bottom_right_radius: #{inspect(bottom_right_radius)}")
+    Logger.debug("bottom_right_radius_unit: #{inspect(bottom_right_radius_unit)}")
+    Logger.debug("bottom_left_radius: #{inspect(bottom_left_radius)}")
+    Logger.debug("bottom_left_radius_unit: #{inspect(bottom_left_radius_unit)}")
+
+    Logger.debug("width: #{inspect(width)}")
+    Logger.debug("width_unit: #{inspect(width_unit)}")
+    Logger.debug("top_width: #{inspect(top_width)}")
+    Logger.debug("top_width_unit: #{inspect(top_width_unit)}")
+    Logger.debug("right_width: #{inspect(right_width)}")
+    Logger.debug("right_width_unit: #{inspect(right_width_unit)}")
+    Logger.debug("bottom_width: #{inspect(bottom_width)}")
+    Logger.debug("bottom_width_unit: #{inspect(bottom_width_unit)}")
+    Logger.debug("left_width: #{inspect(left_width)}")
+    Logger.debug("left_width_unit: #{inspect(left_width_unit)}")
+
     %{
       "style" => extract_border_style(element),
       "color" => extract_border_color(element),
-      "width" => extract_border_width(element),
-      "width_unit" => extract_border_width_unit(element),
-      "radius" => extract_border_radius(element),
-      "radius_unit" => extract_border_radius_unit(element),
-      "top_width" => extract_border_width(element, "top"),
-      "top_width_unit" => extract_border_width_unit(element, "top"),
-      "right_width" => extract_border_width(element, "right"),
-      "right_width_unit" => extract_border_width_unit(element, "right"),
-      "bottom_width" => extract_border_width(element, "bottom"),
-      "bottom_width_unit" => extract_border_width_unit(element, "bottom"),
-      "left_width" => extract_border_width(element, "left"),
-      "left_width_unit" => extract_border_width_unit(element, "left"),
-      "top_left_radius" => extract_border_radius(element, "top-left"),
-      "top_left_radius_unit" => extract_border_radius_unit(element, "top-left"),
-      "top_right_radius" => extract_border_radius(element, "top-right"),
-      "top_right_radius_unit" => extract_border_radius_unit(element, "top-right"),
-      "bottom_right_radius" => extract_border_radius(element, "bottom-right"),
-      "bottom_right_radius_unit" => extract_border_radius_unit(element, "bottom-right"),
-      "bottom_left_radius" => extract_border_radius(element, "bottom-left"),
-      "bottom_left_radius_unit" => extract_border_radius_unit(element, "bottom-left")
+      "width" => width,
+      "width_unit" => width_unit,
+      "radius" => radius,
+      "radius_unit" => radius_unit,
+      "top_width" => top_width,
+      "top_width_unit" => top_width_unit,
+      "right_width" => right_width,
+      "right_width_unit" => right_width_unit,
+      "bottom_width" => bottom_width,
+      "bottom_width_unit" => bottom_width_unit,
+      "left_width" => left_width,
+      "left_width_unit" => left_width_unit,
+      "top_left_radius" => top_left_radius,
+      "top_left_radius_unit" => top_left_radius_unit,
+      "top_right_radius" => top_right_radius,
+      "top_right_radius_unit" => top_right_radius_unit,
+      "bottom_right_radius" => bottom_right_radius,
+      "bottom_right_radius_unit" => bottom_right_radius_unit,
+      "bottom_left_radius" => bottom_left_radius,
+      "bottom_left_radius_unit" => bottom_left_radius_unit
     }
   end
 
@@ -124,9 +169,8 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
     end)
   end
 
-  defp extract_border_width(element, _side \\ nil) do
-    # TODO: Implement this for when side is provided
-
+  defp extract_border_width(_element, _side, width_unit) when width_unit in ~w(1 2 3 4 5 6 7 8 %), do: nil
+  defp extract_border_width(element, nil, _width_unit) do
     classes = VisualEditor.element_classes(element)
 
     # First check for specific width classes (0-16)
@@ -153,19 +197,69 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
     end
   end
 
-  defp extract_border_radius(element, _corner \\ nil) do
-    # TODO: Implement this for when corner is provided
+  defp extract_border_width(element, corner, _width_unit) when corner in ~w(top right bottom left) do
+    classes = VisualEditor.element_classes(element)
+    side_abbrev = String.first(corner)
+
+    # First check for specific width classes (0-8)
+    specific_width =
+      Enum.find_value(0..8, fn width ->
+        if "border-#{side_abbrev}-#{width}" in classes, do: "#{width}"
+      end)
+
+    # Then check for combined classes (border-x, border-y)
+    combined_class = case corner do
+      side when side in ~w(left right) -> "border-x"
+      side when side in ~w(top bottom) -> "border-y"
+    end
+
+    # Then check for shorthand classes that imply width=1
+    shorthand_borders = ["border", "border-#{side_abbrev}", combined_class]
+
+    cond do
+      # First priority: specific width
+      specific_width ->
+        specific_width
+
+      # Second priority: shorthand implies width=1
+      Enum.any?(shorthand_borders, &(&1 in classes)) ->
+        "1"
+
+      # Default: no border
+      true ->
+        extract_border_width(element, nil, nil)
+    end
+  end
+
+  # For global border radius
+  defp extract_border_radius(_element, _corner, radius_unit) when radius_unit in ~w(px rem em %), do: nil
+  defp extract_border_radius(element, nil, _radius_unit) do
     radius_class =
       VisualEditor.element_classes(element)
-      |> Enum.find(fn class -> String.contains?(class, "rounded") end)
+      |> Enum.find(fn class -> String.starts_with?(class, "rounded-") end)
 
     case radius_class do
       class when is_binary(class) ->
-        case Regex.run(~r/^rounded-\[(.+)\]$/, class) do
-          [_, name] ->
-            Utils.parse_number_and_unit(name) |> elem(1)
-          _ ->
-            nil
+        case Regex.run(~r/\[(.+)\]$/, class) do
+          [_, value] -> Utils.parse_number_and_unit(value) |> elem(1)
+          _ -> nil
+        end
+      _ -> nil
+    end
+  end
+
+  # For corner-specific border radius
+  defp extract_border_radius(element, corner, _radius_unit) do
+    corner_abbrev = @corner_abbreviations[corner]
+    corner_class =
+      VisualEditor.element_classes(element)
+      |> Enum.find(fn class -> String.starts_with?(class, "rounded-#{corner_abbrev}-") end)
+
+    case corner_class do
+      class when is_binary(class) ->
+        case Regex.run(~r/\[(.+)\]$/, class) do
+          [_, value] -> Utils.parse_number_and_unit(value) |> elem(1)
+          _ -> nil
         end
       _ -> nil
     end
@@ -230,27 +324,58 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
     end
   end
 
-  defp extract_border_width_unit(element, _side \\ nil) do
+  defp extract_border_width_unit(element, side \\ nil) do
     # TODO: Implement this
-    "px"
+    Logger.debug("##################")
+    Logger.debug("element: #{inspect(element)}")
+    Logger.debug("side: #{inspect(side)}")
+    classes = VisualEditor.element_classes(element)
+
+    # Define which class prefixes to look for based on the side
+    prefixes = case side do
+      nil -> ["border-[", "border "]
+      "top" -> ["border-t-[", "border-t ", "border-y-[", "border-y "]
+      "bottom" -> ["border-b-[", "border-b ", "border-y-[", "border-y "]
+      "left" -> ["border-l-[", "border-l ", "border-x-[", "border-x "]
+      "right" -> ["border-r-[", "border-r ", "border-x-[", "border-x "]
+    end
+
+    # Find first matching class with arbitrary units
+    arbitrary_class = Enum.find(classes, fn class ->
+      Enum.any?(prefixes, &String.starts_with?(class, &1))
+    end)
+
+    case arbitrary_class do
+      nil ->
+        # Default Tailwind border classes use pixels
+        "px"
+      class ->
+        case Regex.run(~r/\[(.+)\]$/, class) do
+          [_, value] ->
+            case Utils.parse_number_and_unit(value) do
+              {:ok, _, unit} -> unit
+              {:error, _} -> "px"
+            end
+          _ -> "px"
+        end
+    end
   end
 
 
   #
   # Generate tailwind classes from css properties
   #
-  @spec generate_border_classes(border_params()) :: [String.t()]
-  def generate_border_classes(_params) do
+  @spec generate_border_classes(border_params(), expanded_width_controls :: boolean()) :: [String.t()]
+  def generate_border_classes(params, expanded_width_controls) do
+    Logger.debug("##################")
+    Logger.debug("params: #{inspect(params)}")
+    Logger.debug("expanded_width_controls: #{inspect(expanded_width_controls)}")
     []
   end
 
   def generate_border_radius_classes(params, expanded_radius_controls) do
-    Logger.debug("##################")
-    Logger.debug("params: #{inspect(params)}")
-    Logger.debug("expanded_radius_controls: #{inspect(expanded_radius_controls)}")
     case {expanded_radius_controls, params} do
       {true, %{"top_left_radius" => tlr, "top_left_radius_unit" => tlr_unit, "top_right_radius" => trr, "top_right_radius_unit" => trr_unit, "bottom_right_radius" => brr, "bottom_right_radius_unit" => brr_unit, "bottom_left_radius" => blr, "bottom_left_radius_unit" => blr_unit }} ->
-        Logger.debug("################## branch A")
         [
           generate_custom_border_radius_class(tlr, tlr_unit),
           generate_custom_border_radius_class(trr, trr_unit),
@@ -258,7 +383,6 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
           generate_custom_border_radius_class(blr, blr_unit)
         ]
       {true, %{"top_left_radius_unit" => tlr_unit, "top_right_radius_unit" => trr_unit, "bottom_right_radius_unit" => brr_unit, "bottom_left_radius_unit" => blr_unit }} ->
-        Logger.debug("################## branch A2")
         [
           generate_simple_border_radius_class(tlr_unit, "top-left"),
           generate_simple_border_radius_class(trr_unit, "top-right"),
@@ -266,10 +390,8 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
           generate_simple_border_radius_class(blr_unit, "bottom-left")
         ]
       {_, %{ "radius" => radius, "radius_unit" => radius_unit } } ->
-        Logger.debug("################## branch B #{inspect(params)}")
         [generate_custom_border_radius_class(radius, radius_unit)]
       {_, %{ "radius_unit" => radius_unit } } ->
-        Logger.debug("################## branch C #{inspect(params)}")
         [generate_simple_border_radius_class(radius_unit)]
     end
   end

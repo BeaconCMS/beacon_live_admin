@@ -21,8 +21,10 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
     {"3xl", "3xl"},
     {"full", "full"}
   ]
+  @border_width_sizes []
   # Units for custom sizes
   @border_radius_units ~w(px rem em %)
+  @border_width_units ~w(px rem em %)
 
   @type border_params :: %{
     required(String.t()) => String.t(),
@@ -54,7 +56,11 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
   def mount(socket) do
     {:ok, assign(socket,
       expanded_width_controls: false,
-      expanded_radius_controls: false
+      expanded_radius_controls: false,
+      border_width_sizes: @border_width_sizes,
+      border_width_units: @border_width_units,
+      border_radius_sizes: @border_radius_sizes,
+      border_radius_units: @border_radius_units
     )}
   end
 
@@ -105,7 +111,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
             </div>
             <div class="w-2/3 flex justify-end">
               <div class={["grow flex", @expanded_width_controls && "hidden"]}>
-                <.input_with_units name="width" value={@form.params["width"]} value_unit={@form.params["width_unit"]}/>
+                <.input_with_units name="width" value={@form.params["width"]} value_unit={@form.params["width_unit"]} sizes={@border_width_sizes} units={@border_width_units}/>
               </div>
               <.toggle_expand control="width" expanded={@expanded_width_controls} />
             </div>
@@ -113,19 +119,19 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
           <div id="border-width-expanded-inputs" class={["w-full grid grid-cols-2 gap-1", not @expanded_width_controls && "hidden"]}>
             <div class="flex items-center gap-1">
               <span><.icon name="hero-arrow-long-up"/></span>
-              <.input_with_units name="top_width" value={@form.params["top_width"]} value_unit={@form.params["top_width_unit"]} />
+              <.input_with_units name="top_width" value={@form.params["top_width"]} value_unit={@form.params["top_width_unit"]} sizes={@border_width_sizes} units={@border_width_units}/>
             </div>
             <div class="flex items-center gap-1">
               <span><.icon name="hero-arrow-long-right"/></span>
-              <.input_with_units name="right_width" value={@form.params["right_width"]} value_unit={@form.params["right_width_unit"]} />
+              <.input_with_units name="right_width" value={@form.params["right_width"]} value_unit={@form.params["right_width_unit"]} sizes={@border_width_sizes} units={@border_width_units}/>
             </div>
             <div class="flex items-center gap-1">
               <span><.icon name="hero-arrow-long-down"/></span>
-              <.input_with_units name="bottom_width" value={@form.params["bottom_width"]} value_unit={@form.params["bottom_width_unit"]} />
+              <.input_with_units name="bottom_width" value={@form.params["bottom_width"]} value_unit={@form.params["bottom_width_unit"]} sizes={@border_width_sizes} units={@border_width_units}/>
             </div>
             <div class="flex items-center gap-1">
               <span><.icon name="hero-arrow-long-left"/></span>
-              <.input_with_units name="left_width" value={@form.params["left_width"]} value_unit={@form.params["left_width_unit"]} />
+              <.input_with_units name="left_width" value={@form.params["left_width"]} value_unit={@form.params["left_width_unit"]} sizes={@border_width_sizes} units={@border_width_units}/>
             </div>
           </div>
 
@@ -135,7 +141,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
             </div>
             <div class="w-2/3 flex justify-end">
               <div class={["grow flex", @expanded_radius_controls && "hidden"]}>
-                <.input_with_units name="radius" value={@form.params["radius"]} value_unit={@form.params["radius_unit"]}/>
+                <.input_with_units name="radius" value={@form.params["radius"]} value_unit={@form.params["radius_unit"]} sizes={@border_radius_sizes} units={@border_radius_units}/>
               </div>
               <.toggle_expand control="radius" expanded={@expanded_radius_controls} />
             </div>
@@ -143,19 +149,19 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
           <div id="border-radius-expanded-inputs" class={["w-full grid grid-cols-2 gap-1", not @expanded_radius_controls && "hidden"]}>
             <div class="flex items-center gap-1">
               <span><.icon name="hero-arrow-up-left"/></span>
-              <.input_with_units name="top_left_radius" value={@form.params["top_left_radius"]} value_unit={@form.params["top_left_radius_unit"]} />
+              <.input_with_units name="top_left_radius" value={@form.params["top_left_radius"]} value_unit={@form.params["top_left_radius_unit"]} sizes={@border_radius_sizes} units={@border_radius_units}/>
             </div>
             <div class="flex items-center gap-1">
               <span><.icon name="hero-arrow-up-right"/></span>
-              <.input_with_units name="top_right_radius" value={@form.params["top_right_radius"]} value_unit={@form.params["top_right_radius_unit"]} />
+              <.input_with_units name="top_right_radius" value={@form.params["top_right_radius"]} value_unit={@form.params["top_right_radius_unit"]} sizes={@border_radius_sizes} units={@border_radius_units}/>
             </div>
             <div class="flex items-center gap-1">
               <span><.icon name="hero-arrow-down-right"/></span>
-              <.input_with_units name="bottom_right_radius" value={@form.params["bottom_right_radius"]} value_unit={@form.params["bottom_right_radius_unit"]} />
+              <.input_with_units name="bottom_right_radius" value={@form.params["bottom_right_radius"]} value_unit={@form.params["bottom_right_radius_unit"]} sizes={@border_radius_sizes} units={@border_radius_units}/>
             </div>
             <div class="flex items-center gap-1">
               <span><.icon name="hero-arrow-down-left"/></span>
-              <.input_with_units name="bottom_left_radius" value={@form.params["bottom_left_radius"]} value_unit={@form.params["bottom_left_radius_unit"]} />
+              <.input_with_units name="bottom_left_radius" value={@form.params["bottom_left_radius"]} value_unit={@form.params["bottom_left_radius_unit"]} sizes={@border_radius_sizes} units={@border_radius_units}/>
             </div>
           </div>
         </form>
@@ -196,7 +202,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
   end
 
   defp generate_classes(params, socket) do
-    Border.generate_border_classes(params) ++ Border.generate_border_radius_classes(params, socket.assigns.expanded_radius_controls)
+    Border.generate_border_classes(params, socket.assigns.expanded_width_controls) ++ Border.generate_border_radius_classes(params, socket.assigns.expanded_radius_controls)
   end
 
   defp assign_form(socket, values) do
@@ -206,9 +212,8 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
 
   defp input_with_units(assigns) do
     assigns = assigns
-      |> assign(:border_radius_sizes, @border_radius_sizes)
-      |> assign(:border_radius_units, @border_radius_units)
-      |> assign(:is_custom_unit?, Enum.member?(@border_radius_units, assigns.value_unit))
+      |> assign(:is_radius?, String.contains?(assigns.name, "radius"))
+      |> assign(:is_custom_unit?, Enum.member?(assigns.units, assigns.value_unit))
 
     ~H"""
     <div class="relative w-full flex bg-gray-100 border rounded focus-within:ring-2 focus-within:ring-blue-500">
@@ -223,16 +228,20 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
         ]}
       />
       <select name={@name <> "_unit"} class="appearance-none bg-none bg-transparent border-none pr-1 pl-2 text-sm focus:ring-0">
-        <optgroup label="Sizes">
-          <option :for={{label, value} <- @border_radius_sizes} value={value} selected={@value_unit == value}>
-            <%= label %>
-          </option>
-        </optgroup>
-        <optgroup label="Units">
-          <option :for={unit <- @border_radius_units} value={unit} selected={@value_unit == unit}>
-            <%= unit %>
-          </option>
-        </optgroup>
+        <%= if length(@sizes) > 0 do %>
+          <optgroup label="Sizes">
+            <option :for={{label, value} <- @sizes} value={value} selected={@value_unit == value}>
+              <%= label %>
+            </option>
+          </optgroup>
+        <% end %>
+        <%= if length(@units) > 0 do %>
+          <optgroup label="Units">
+            <option :for={unit <- @units} value={unit} selected={@value_unit == unit}>
+              <%= unit %>
+            </option>
+          </optgroup>
+        <% end %>
       </select>
     </div>
     """
