@@ -178,9 +178,11 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
 
   def handle_event("update_border", params, socket) do
     # TODO: Individual radius classes for corners should remove the global radius class
-    classes = generate_classes(params, socket)
-    class = VisualEditor.merge_class(socket.assigns.element, Enum.join(classes, " "))
-    send(self(), {:element_changed, {socket.assigns.element["path"], %{updated: %{"attrs" => %{"class" => class}}}}})
+    new_classes = generate_classes(params, socket)
+    classes = socket.assigns.element
+    |> VisualEditor.delete_classes(~r/^rounded(-[tlbr])?(-(?:none|sm|md|lg|xl|2xl|3xl|full))?$/)
+    |> VisualEditor.merge_class(Enum.join(new_classes, " "))
+    send(self(), {:element_changed, {socket.assigns.element["path"], %{updated: %{"attrs" => %{"class" => classes}}}}})
 
     {:noreply, socket}
     # {:noreply, assign_form(socket, values)}

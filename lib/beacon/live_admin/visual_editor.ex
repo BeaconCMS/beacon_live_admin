@@ -123,4 +123,16 @@ defmodule Beacon.LiveAdmin.VisualEditor do
       Turboprop.Merge.merge([current, new])
     end
   end
+
+  def delete_classes(element, class_regex) do
+    current = get_in(element, ["attrs", "class"]) || ""
+
+    new_classes =
+      current
+      |> String.split(" ", trim: true)
+      |> Enum.reject(&Regex.match?(class_regex, &1))
+      |> Enum.join(" ")
+
+    put_in(element, ["attrs", "class"], new_classes)
+  end
 end
