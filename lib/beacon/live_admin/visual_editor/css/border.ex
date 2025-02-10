@@ -463,4 +463,18 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
       radius_unit -> "rounded-#{corner_abbrev}-#{radius_unit}"
     end
   end
+
+  def generate_border_color_classes(params) do
+    case params["color"] do
+      nil -> []
+      color -> ["border-#{color}"]
+    end
+  end
+
+  def generate_border_style_classes(params) do
+    case params["style"] do
+      nil -> []
+      style -> ["border-#{style}"]
+    end
+  end
 end

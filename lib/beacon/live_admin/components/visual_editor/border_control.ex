@@ -203,7 +203,10 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
   end
 
   defp generate_classes(params, socket) do
-    Border.generate_border_classes(params, socket.assigns.expanded_width_controls) ++ Border.generate_border_radius_classes(params, socket.assigns.expanded_radius_controls)
+    Border.generate_border_classes(params, socket.assigns.expanded_width_controls)
+    ++ Border.generate_border_style_classes(params)
+    ++ Border.generate_border_color_classes(params)
+    ++ Border.generate_border_radius_classes(params, socket.assigns.expanded_radius_controls)
   end
 
   defp assign_form(socket, values) do
