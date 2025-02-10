@@ -58,7 +58,6 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
   #
   # Extract border properties from tailwind classes
   #
-
   def extract_border_properties(element) do
     radius_unit = extract_border_radius_unit(element)
     radius = extract_border_radius(element, nil, radius_unit)
