@@ -81,30 +81,6 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
     bottom_width = extract_border_width(element, "bottom", bottom_width_unit)
     left_width_unit = extract_border_width_unit(element, "left")
     left_width = extract_border_width(element, "left", left_width_unit)
-
-    Logger.debug("##################")
-    Logger.debug("radius: #{inspect(radius)}")
-    Logger.debug("radius_unit: #{inspect(radius_unit)}")
-    Logger.debug("top_left_radius: #{inspect(top_left_radius)}")
-    Logger.debug("top_left_radius_unit: #{inspect(top_left_radius_unit)}")
-    Logger.debug("top_right_radius: #{inspect(top_right_radius)}")
-    Logger.debug("top_right_radius_unit: #{inspect(top_right_radius_unit)}")
-    Logger.debug("bottom_right_radius: #{inspect(bottom_right_radius)}")
-    Logger.debug("bottom_right_radius_unit: #{inspect(bottom_right_radius_unit)}")
-    Logger.debug("bottom_left_radius: #{inspect(bottom_left_radius)}")
-    Logger.debug("bottom_left_radius_unit: #{inspect(bottom_left_radius_unit)}")
-
-    Logger.debug("width: #{inspect(width)}")
-    Logger.debug("width_unit: #{inspect(width_unit)}")
-    Logger.debug("top_width: #{inspect(top_width)}")
-    Logger.debug("top_width_unit: #{inspect(top_width_unit)}")
-    Logger.debug("right_width: #{inspect(right_width)}")
-    Logger.debug("right_width_unit: #{inspect(right_width_unit)}")
-    Logger.debug("bottom_width: #{inspect(bottom_width)}")
-    Logger.debug("bottom_width_unit: #{inspect(bottom_width_unit)}")
-    Logger.debug("left_width: #{inspect(left_width)}")
-    Logger.debug("left_width_unit: #{inspect(left_width_unit)}")
-
     %{
       "style" => extract_border_style(element),
       "color" => extract_border_color(element),
@@ -324,11 +300,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
     end
   end
 
-  defp extract_border_width_unit(element, side \\ nil) do
-    # TODO: Implement this
-    Logger.debug("##################")
-    Logger.debug("element: #{inspect(element)}")
-    Logger.debug("side: #{inspect(side)}")
+  defp extract_border_width_unit(element, side) do
     classes = VisualEditor.element_classes(element)
 
     # Define which class prefixes to look for based on the side
@@ -367,10 +339,6 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
   #
   @spec generate_border_classes(border_params(), expanded_width_controls :: boolean()) :: [String.t()]
   def generate_border_classes(params, expanded_width_controls) do
-    Logger.debug("##################")
-    Logger.debug("params: #{inspect(params)}")
-    Logger.debug("expanded_width_controls: #{inspect(expanded_width_controls)}")
-
     # Extract all widths and units
     widths = [
       {params["width"], params["width_unit"]},
