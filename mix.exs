@@ -67,7 +67,7 @@ defmodule Beacon.LiveAdmin.MixProject do
       {:tailwind, "~> 0.2"},
       {:gettext, "~> 0.26"},
       {:jason, "~> 1.0"},
-      {:igniter, "~> 0.5"},
+      {:igniter, "~> 0.5", optional: true},
       {:turboprop, "~> 0.1"},
 
       # Dev, Test, Docs
