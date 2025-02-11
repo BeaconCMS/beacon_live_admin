@@ -178,11 +178,24 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
      |> assign(assigns)
      |> assign(:border_styles, @border_styles)
      |> assign(:border_colors, @border_colors)
+     |> assign(:expanded_width_controls, should_expand_width_controls?(values))
      |> assign(:expanded_radius_controls, should_expand_radius_controls?(values))
      |> assign_form(values)}
   end
 
   def handle_event("update_border", params, socket) do
+    update_classes(socket, params)
+  end
+
+  def handle_event("toggle_expand", %{"control" => control}, socket) do
+    socket = case control do
+      "width" -> assign(socket, :expanded_width_controls, !socket.assigns.expanded_width_controls)
+      "radius" -> assign(socket, :expanded_radius_controls, !socket.assigns.expanded_radius_controls)
+    end
+    update_classes(socket, socket.assigns.form.params)
+  end
+
+  def update_classes(socket, params) do
     new_classes = generate_classes(params, socket)
     classes = socket.assigns.element
     |> VisualEditor.delete_classes(~r/^border-(solid|dashed|dotted|double|none)$/)
@@ -193,21 +206,11 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
     send(self(), {:element_changed, {socket.assigns.element["path"], %{updated: %{"attrs" => %{"class" => classes}}}}})
 
     {:noreply, socket}
-    # {:noreply, assign_form(socket, values)}
-  end
-
-  def handle_event("toggle_expand", %{"control" => control}, socket) do
-    case control do
-      "width" -> {:noreply, update(socket, :expanded_width_controls, &(!&1))}
-      "radius" -> {:noreply, update(socket, :expanded_radius_controls, &(!&1))}
-    end
   end
 
   defp generate_classes(params, socket) do
-    tmp = Border.generate_border_classes(params, socket.assigns.expanded_width_controls)
-    Logger.debug("############################################################")
-    Logger.debug("tmp: #{inspect(tmp)}")
-    tmp ++ Border.generate_border_style_classes(params)
+    Border.generate_border_classes(params, socket.assigns.expanded_width_controls)
+    ++ Border.generate_border_style_classes(params)
     ++ Border.generate_border_color_classes(params)
     ++ Border.generate_border_radius_classes(params, socket.assigns.expanded_radius_controls)
   end
@@ -270,26 +273,11 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
     Enum.any?(other_units, &(&1 != first_unit))
   end
 
-  # defp update_border_classes(socket, changes) do
-  #   current_values = %{
-  #     style: socket.assigns.form[:style].value,
-  #     color: socket.assigns.form[:color].value,
-  #     width: socket.assigns.form[:width].value,
-  #     radius: socket.assigns.form[:radius].value
-  #   }
-
-  #   values = Map.merge(current_values, changes)
-
-  #   classes = []
-  #   classes = if values.style != "none", do: ["border-#{values.style}" | classes], else: classes
-  #   classes = if values.style != "none", do: ["border-#{values.color}" | classes], else: classes
-  #   classes = if values.width != "0", do: ["border-#{values.width}" | classes], else: classes
-  #   classes = if values.radius != "0", do: ["rounded-#{values.radius}" | classes], else: classes
-
-  #   class = VisualEditor.merge_class(socket.assigns.element, Enum.join(classes, " "))
-  #   send(self(), {:element_changed, {socket.assigns.element["path"], %{updated: %{"attrs" => %{"class" => class}}}}})
-
-  #   {:noreply, assign_form(socket, values)}
-  # end
-
+  defp should_expand_width_controls?(values) do
+    sides = ["top", "right", "bottom", "left"]
+    [first_width | other_widths] = Enum.map(sides, &values["#{&1}_width"])
+    [first_unit | other_units] = Enum.map(sides, &values["#{&1}_width_unit"])
+    Enum.any?(other_widths, &(&1 != first_width)) or
+    Enum.any?(other_units, &(&1 != first_unit))
+  end
 end

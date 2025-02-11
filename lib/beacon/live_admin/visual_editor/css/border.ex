@@ -135,8 +135,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
         "solid"
 
       # Default: no border
-      true ->
-        "none"
+      true -> nil
     end
   end
 
@@ -380,35 +379,35 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
 
   defp generate_global_border_class(params) do
     case {params["width"], params["width_unit"]} do
+      {"0", unit} when not is_nil(unit) ->
+        []
       {width, unit} when not is_nil(width) and not is_nil(unit) ->
-        [generate_border_class(width, unit)]
+        [generate_border_class(width, unit, nil)] |> Enum.reject(&is_nil/1)
       _ ->
         []
     end
   end
 
-  defp generate_border_class(width, unit, side \\ nil)
-
   # Handle nil cases
   defp generate_border_class(nil, _unit, _side), do: nil
   defp generate_border_class(_width, nil, _side), do: nil
-
-  # Handle standard pixel widths (1-8)
-  defp generate_border_class(width, "px", side) when width in ~w(1 2 3 4 5 6 7 8) do
-    case side do
-      nil -> "border-#{width}"
-      side -> "border-#{String.first(side)}-#{width}"
-    end
-  end
-
   # Handle custom widths
   defp generate_border_class(width, unit, side) do
-    prefix = case side do
-      nil -> "border"
-      side -> "border-#{String.first(side)}"
-    end
+    case Utils.parse_integer_or_float(width) do
+      {:ok, 0} -> nil
+      {:ok, _} ->
+        prefix = case side do
+          nil -> "border"
+          side -> "border-#{String.first(side)}"
+        end
 
-    "#{prefix}-[#{width}#{unit}]"
+        if unit == "px" and width in ~w(1 2 3 4 5 6 7 8) do
+          "#{prefix}-#{width}"
+        else
+          "#{prefix}-[#{width}#{unit}]"
+        end
+      :error -> nil
+    end
   end
 
   def generate_border_radius_classes(params, expanded_radius_controls) do
@@ -443,6 +442,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
       :error -> nil
     end
   end
+  defp generate_custom_border_radius_class(_, "DEFAULT"), do: "rounded"
 
   defp generate_custom_border_radius_class(radius, radius_unit, corner \\ nil) when radius_unit in ~w(px rem em %) and is_integer(radius) do
     case corner do
