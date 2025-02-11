@@ -20,6 +20,7 @@
 ### Chores
   - Remove unnecessary node check on RPC calls
   - [Visual Editor] Migrate the sidebar from Svelte to LiveView
+  - Make `:igniter` optional
 
 ### Breaking Changes
   - Require minimum `:igniter` v0.5
