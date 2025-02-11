@@ -8,11 +8,21 @@
   - Unsaved changes will now be saved when publishing, instead of discarded
   - Adds Unpublish button to Page editor
   - Page editor now shows draft/published status
+  - [Visual Editor] Add Opacity property control
 
 ### Fixes
   - Fixed a bug where MediaLibrary could check for file contents on the wrong node in multi-node deployments
   - Fixed a bug where using the code editor could reset other form fields on the page
   - Saving as draft no longer resets the form for new pages
+  - Pin Tailwind v3 to avoid errors with the unsupported v4
+  - Properly start `:pg` in the supervision tree to avoid init errors
+
+### Chores
+  - Remove unnecessary node check on RPC calls
+  - [Visual Editor] Migrate the sidebar from Svelte to LiveView
+
+### Breaking Changes
+  - Require minimum `:igniter` v0.5
 
 ## 0.3.1 (2024-12-12)
 
