@@ -7,7 +7,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
   alias Beacon.LiveAdmin.VisualEditor.Css.Border
 
   @border_styles [{"none", ""}, {"solid", "—"}, {"dashed", "--"}, {"dotted", "..."}]
-  @border_colors ~w(gray-500 red-500 blue-500 green-500 yellow-500 purple-500)
+  @border_colors ~w(Default gray-200 red-200 blue-200 green-200 yellow-200 purple-200)
 
   # Define Tailwind border radius sizes in order
   @border_radius_sizes [
@@ -183,9 +183,10 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
   end
 
   def handle_event("update_border", params, socket) do
-    # TODO: Individual radius classes for corners should remove the global radius class
     new_classes = generate_classes(params, socket)
     classes = socket.assigns.element
+    |> VisualEditor.delete_classes(~r/^border-(solid|dashed|dotted|double|none)$/)
+    |> VisualEditor.delete_classes(~r/^border-(transparent|current|black|white|[-a-z]+(?:-\d+)?(?:\/\d+)?)$/)
     |> VisualEditor.delete_classes(~r/^border(-[xytrbl])?(-\[[\d.]+[a-z%]+\]|-[0-9]+)?$/)
     |> VisualEditor.delete_classes(~r/^rounded(-[tlbr])?(-(?:none|sm|md|lg|xl|2xl|3xl|full))?$/)
     |> VisualEditor.merge_class(Enum.join(new_classes, " "))
@@ -203,8 +204,10 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
   end
 
   defp generate_classes(params, socket) do
-    Border.generate_border_classes(params, socket.assigns.expanded_width_controls)
-    ++ Border.generate_border_style_classes(params)
+    tmp = Border.generate_border_classes(params, socket.assigns.expanded_width_controls)
+    Logger.debug("############################################################")
+    Logger.debug("tmp: #{inspect(tmp)}")
+    tmp ++ Border.generate_border_style_classes(params)
     ++ Border.generate_border_color_classes(params)
     ++ Border.generate_border_radius_classes(params, socket.assigns.expanded_radius_controls)
   end

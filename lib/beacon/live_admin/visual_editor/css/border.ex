@@ -110,24 +110,28 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
   defp extract_border_style(element) do
     classes = VisualEditor.element_classes(element)
 
-    # First check for specific border style classes
+    # First check for explicit border style classes
     specific_styles = %{
-      "border-solid" => "solid",
       "border-dashed" => "dashed",
       "border-dotted" => "dotted",
-      "border-double" => "double"
+      "border-double" => "double",
+      "border-none" => "none"
     }
 
-    # Then check for shorthand border classes that imply "solid"
-    shorthand_borders = ["border", "border-t", "border-r", "border-b", "border-l"]
+    # Check for any class that sets a border width
+    has_border_width? = Enum.any?(classes, fn class ->
+      # Match basic border classes like "border", "border-2", "border-t", etc.
+      String.starts_with?(class, "border") and not String.contains?(class, "style") and
+        (class == "border" or String.contains?(class, "-") or String.contains?(class, "["))
+    end)
 
     cond do
-      # First priority: specific border style
+      # First priority: explicit border style
       class = Enum.find(Map.keys(specific_styles), &(&1 in classes)) ->
         specific_styles[class]
 
-      # Second priority: any shorthand border class implies "solid"
-      Enum.any?(shorthand_borders, &(&1 in classes)) ->
+      # Second priority: if any border width is set, style is implicitly "solid"
+      has_border_width? ->
         "solid"
 
       # Default: no border
@@ -139,7 +143,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
   defp extract_border_color(element) do
     classes = VisualEditor.element_class(element)
 
-    Enum.find(@border_colors, "gray-500", fn color ->
+    Enum.find(@border_colors, "Default", fn color ->
       String.contains?(classes, "border-#{color}")
     end)
   end
@@ -467,6 +471,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
   def generate_border_color_classes(params) do
     case params["color"] do
       nil -> []
+      "Default" -> []
       color -> ["border-#{color}"]
     end
   end
@@ -474,6 +479,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
   def generate_border_style_classes(params) do
     case params["style"] do
       nil -> []
+      "solid" -> []
       style -> ["border-#{style}"]
     end
   end
