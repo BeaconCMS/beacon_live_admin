@@ -20,7 +20,7 @@ if Code.ensure_loaded?(Igniter) do
 
     ## Options
 
-    * `--path` or `-p` (optional, defaults to "/") - Where admin will be mounted. Follows the same convention as Phoenix route prefixes.
+    * `--path` (optional, defaults to "/admin") - Where admin will be mounted. Follows the same convention as Phoenix route prefixes.
 
     """
 
@@ -30,7 +30,6 @@ if Code.ensure_loaded?(Igniter) do
         group: :beacon_live_admin,
         example: @example,
         schema: [path: :string],
-        aliases: [p: :path],
         defaults: [path: "/admin"],
         required: [:path]
       }
@@ -64,7 +63,7 @@ if Code.ensure_loaded?(Igniter) do
 
       mix beacon_live_admin.install expects a valid path, for example:
 
-          mix beacon_live_admin.install ----path /admin
+          mix beacon_live_admin.install --path /admin
 
       Got:
 

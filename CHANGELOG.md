@@ -24,6 +24,7 @@
 
 ### Breaking Changes
   - Require minimum `:igniter` v0.5
+  - `beacon_live_admin.install` - removed command alias `-p`
 
 ## 0.3.1 (2024-12-12)
 
