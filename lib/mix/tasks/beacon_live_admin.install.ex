@@ -1,21 +1,26 @@
-if Code.ensure_loaded?(Igniter) do
-  defmodule Mix.Tasks.BeaconLiveAdmin.Install do
-    use Igniter.Mix.Task
+defmodule Mix.Tasks.BeaconLiveAdmin.Install.Docs do
+  @moduledoc false
 
-    @example "mix beacon_live_admin.install"
-    @shortdoc "Installs Beacon LiveAdmin in a Phoenix LiveView app."
+  def short_doc do
+    "Installs Beacon LiveAdmin in a Phoenix LiveView app."
+  end
 
-    @moduledoc """
-    #{@shortdoc}
+  def example do
+    "mix beacon_live_admin.install"
+  end
+
+  def long_doc do
+    """
+    #{short_doc()}
 
     ## Examples
 
     ```bash
-    mix beacon_live_admin.install
+    #{example()}
     ```
 
     ```bash
-    mix beacon_live_admin.install --path /admin
+    mix beacon_live_admin.install --path /cms_admin
     ```
 
     ## Options
@@ -23,20 +28,40 @@ if Code.ensure_loaded?(Igniter) do
     * `--path` (optional, defaults to "/admin") - Where admin will be mounted. Follows the same convention as Phoenix route prefixes.
 
     """
+  end
+end
 
-    @doc false
+if Code.ensure_loaded?(Igniter) do
+  defmodule Mix.Tasks.BeaconLiveAdmin.Install do
+    use Igniter.Mix.Task
+
+    @shortdoc "#{__MODULE__.Docs.short_doc()}"
+
+    @moduledoc __MODULE__.Docs.long_doc()
+
+    @impl Igniter.Mix.Task
     def info(_argv, _composing_task) do
       %Igniter.Mix.Task.Info{
         group: :beacon_live_admin,
-        example: @example,
+        example: __MODULE__.Docs.example(),
         schema: [path: :string],
         defaults: [path: "/admin"],
         required: [:path]
       }
     end
 
-    @doc false
+    @impl Igniter.Mix.Task
     def igniter(igniter) do
+      if Mix.Project.umbrella?() do
+        Mix.shell().error("""
+        Running 'mix beacon_live_admin.install' in the root of Umbrella apps is not supported.
+
+        Please execute that task inside a child app.
+        """)
+
+        exit({:shutdown, 1})
+      end
+
       options = igniter.args.options
       path = Keyword.fetch!(options, :path)
       validate_options!(path)
@@ -105,6 +130,24 @@ if Code.ensure_loaded?(Igniter) do
         with_pipelines: [:browser, :beacon_admin],
         router: router
       )
+    end
+  end
+else
+  defmodule Mix.Tasks.BeaconLiveAdmin.Install do
+    @shortdoc "Install `igniter` in order to run Beacon generators."
+
+    @moduledoc __MODULE__.Docs.long_doc()
+
+    use Mix.Task
+
+    def run(_argv) do
+      Mix.shell().error("""
+      The task 'beacon_live_admin.install' requires igniter. Please install igniter and try again.
+
+      For more information, see: https://hexdocs.pm/igniter/readme.html#installation
+      """)
+
+      exit({:shutdown, 1})
     end
   end
 end
