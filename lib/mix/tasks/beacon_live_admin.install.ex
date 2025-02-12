@@ -59,7 +59,7 @@ if Code.ensure_loaded?(Igniter) do
     def igniter(igniter) do
       if Mix.Project.umbrella?() do
         Mix.shell().error("""
-        Running 'mix beacon_live_admin.install' in the root of Umbrella apps is not supported.
+        Running 'mix beacon_live_admin.install' in the root of Umbrella apps is not supported yet.
 
         Please execute that task inside a child app.
         """)
