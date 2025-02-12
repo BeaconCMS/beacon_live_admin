@@ -39,6 +39,11 @@ if Code.ensure_loaded?(Igniter) do
 
     @moduledoc __MODULE__.Docs.long_doc()
 
+    # Enable it to execute the task
+    # so we can check and display a custom message
+    @impl Igniter.Mix.Task
+    def supports_umbrella?, do: true
+
     @impl Igniter.Mix.Task
     def info(_argv, _composing_task) do
       %Igniter.Mix.Task.Info{
