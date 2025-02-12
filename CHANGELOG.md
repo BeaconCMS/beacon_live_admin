@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.4.0-dev
+## 0.4.0 (2025-02-12)
 
 ### Enhancements
   - Adds page to define custom JS Hooks
