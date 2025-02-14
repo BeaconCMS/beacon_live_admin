@@ -299,6 +299,8 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
       # Handle predefined sizes like rounded-tl-md
       "rounded-" <> <<^corner_abbrev::binary, "-", size::binary>> ->
         size
+      "rounded-" <> <<^corner_abbrev::binary>> ->
+        "DEFAULT"
       _ ->
         extract_border_radius_unit(element)
     end
