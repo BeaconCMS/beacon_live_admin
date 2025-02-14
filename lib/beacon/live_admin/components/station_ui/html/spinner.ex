@@ -33,7 +33,6 @@ defmodule Beacon.LiveAdmin.StationUI.HTML.Spinner do
   # sm: "h-5 w-5"
   # xs: "h-4 w-4"
 
-
   # ## Double Spinner:
 
   # The Double Spinner is used primarily when a page needs to load before displaying new content.
