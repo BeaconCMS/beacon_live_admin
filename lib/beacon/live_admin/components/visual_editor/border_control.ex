@@ -77,6 +77,9 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
   end
 
   def render(assigns) do
+    assigns = assigns
+      |> assign(:style, assigns.form.params["style"] || "none")
+
     ~H"""
     <div id={@id}>
       <.control_section label="Border">
@@ -93,8 +96,8 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
                     "text-center px-2 py-1 text-sm cursor-pointer flex-1",
                     "first:rounded-l last:rounded-r",
                     "border-y border-r border-gray-300 first:border-l",
-                    @form.params["style"] == style && "bg-blue-500 text-white relative z-10",
-                    @form.params["style"] != style && "bg-gray-100 hover:bg-gray-200"
+                    @style == style && "bg-blue-500 text-white relative z-10",
+                    @style != style && "bg-gray-100 hover:bg-gray-200"
                   ]}
                 >
                   <input type="radio" name="style" value={style} class="hidden" checked={@form.params["style"] == style} />
@@ -260,10 +263,14 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
   end
 
   defp generate_classes(params, socket) do
-    Border.generate_border_classes(params, socket.assigns.expanded_width_controls)
-    ++ Border.generate_border_style_classes(params)
-    ++ Border.generate_border_color_classes(params)
-    ++ Border.generate_border_radius_classes(params, socket.assigns.expanded_radius_controls)
+    classes = if params["style"] != "none" do
+      Border.generate_border_classes(params, socket.assigns.expanded_width_controls)
+      ++ Border.generate_border_style_classes(params)
+      ++ Border.generate_border_color_classes(params)
+    else
+      []
+    end
+    classes ++ Border.generate_border_radius_classes(params, socket.assigns.expanded_radius_controls)
   end
 
   defp assign_form(socket, values) do

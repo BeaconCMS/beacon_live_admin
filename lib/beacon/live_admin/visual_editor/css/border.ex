@@ -345,7 +345,13 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
   #
   @spec generate_border_classes(border_params(), expanded_width_controls :: boolean()) :: [String.t()]
   def generate_border_classes(params, false) do
-    generate_global_border_class(params["width"], params["width_unit"])
+    case {params["style"], params["width"]} do
+      {style, "0"} when style != "none" ->
+        # If the border is explicitly set to a value other than none, default to a width of 1
+        generate_global_border_class("1", params["width_unit"])
+      _ ->
+        generate_global_border_class(params["width"], params["width_unit"])
+    end
   end
   def generate_border_classes(params, true) do
     # Extract all corner widths and units
