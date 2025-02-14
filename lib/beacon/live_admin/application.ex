@@ -8,6 +8,7 @@ defmodule Beacon.LiveAdmin.Application do
     children = [
       Beacon.LiveAdmin.Registry,
       {Phoenix.PubSub, name: Beacon.LiveAdmin.PubSub},
+      %{id: :pg, start: {:pg, :start_link, [Beacon.LiveAdmin.Cluster.scope()]}},
       Beacon.LiveAdmin.Cluster,
       Turboprop.Cache
     ]

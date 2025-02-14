@@ -26,8 +26,17 @@ defmodule MyApp.Router do
   end
 end
 
+defmodule MyAppWeb.ProxyEndpoint do
+  use Beacon.ProxyEndpoint,
+    otp_app: :my_app,
+    session_options: [store: :cookie, key: "_live_view_key", signing_salt: "/VEDsdfsffMnp5"],
+    fallback: MyAppWeb.Endpoint
+end
+
 defmodule MyAppWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :my_app
+
+  def proxy_endpoint, do: MyAppWeb.ProxyEndpoint
 
   plug Plug.Session,
     store: :cookie,
