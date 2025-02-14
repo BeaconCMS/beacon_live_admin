@@ -103,11 +103,11 @@ defmodule Beacon.LiveAdmin.VisualEditor.SpaceControl do
   end
 
   def handle_event("update_margin", params, socket) do
-    update_classes(socket, params, :margin)
+    update_classes(socket, params, "margin")
   end
 
   def handle_event("update_padding", params, socket) do
-    update_classes(socket, params, :padding)
+    update_classes(socket, params, "padding")
   end
 
   defp update_classes(socket, params, type) do

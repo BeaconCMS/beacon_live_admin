@@ -27,33 +27,6 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
   @border_radius_units ~w(px rem em %)
   @border_width_units ~w(px rem em %)
 
-  @type border_params :: %{
-    required(String.t()) => String.t(),
-    optional(:top_width) => String.t(),
-    optional(:top_width_unit) => String.t(),
-    optional(:right_width) => String.t(),
-    optional(:right_width_unit) => String.t(),
-    optional(:bottom_width) => String.t(),
-    optional(:bottom_width_unit) => String.t(),
-    optional(:left_width) => String.t(),
-    optional(:left_width_unit) => String.t(),
-    optional(:top_left_radius) => String.t(),
-    optional(:top_left_radius_unit) => String.t(),
-    optional(:top_right_radius) => String.t(),
-    optional(:top_right_radius_unit) => String.t(),
-    optional(:bottom_right_radius) => String.t(),
-    optional(:bottom_right_radius_unit) => String.t(),
-    optional(:bottom_left_radius) => String.t(),
-    optional(:bottom_left_radius_unit) => String.t(),
-    style: String.t(),
-    color: String.t(),
-    width: String.t(),
-    width_unit: String.t(),
-    radius: String.t(),
-    radius_unit: String.t()
-  }
-
-
   def mount(socket) do
     {:ok, assign(socket,
       expanded_width_controls: false,
