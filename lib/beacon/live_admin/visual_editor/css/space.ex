@@ -46,14 +46,93 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Space do
 
   def generate_space_classes(params, type) do
     sides = ["top", "right", "bottom", "left"]
+    type_abbrev = String.first(type)
 
-    Enum.map(sides, fn side ->
+    # Get all values and units for the given type (padding or margin)
+    values_and_units = Enum.map(sides, fn side ->
       value = params["#{type}_#{side}"]
       unit = params["#{type}_#{side}_unit"]
-
-      generate_space_class(value, unit, type, side)
+      {side, value, unit}
     end)
-    |> Enum.reject(&is_nil/1)
+
+    simplify_classes(values_and_units, type, type_abbrev)
+  end
+
+  defp simplify_classes(values_and_units, type, type_abbrev) do
+    # Group by value and unit to check if we can coalesce
+    grouped = Enum.group_by(values_and_units, fn {_side, value, unit} -> {value, unit} end)
+
+    cond do
+      # All sides are the same
+      map_size(grouped) == 1 ->
+        [{_side, value, unit} | _] = hd(Map.values(grouped))
+        [generate_space_class(value, unit, type, nil)]
+
+      # Check if we can use axis-based classes
+      map_size(grouped) in 2..3 ->
+        {x_axis, y_axis} = axis_values(values_and_units)
+
+        axis_classes = []
+        |> maybe_add_axis_class(x_axis, type_abbrev, "x")
+        |> maybe_add_axis_class(y_axis, type_abbrev, "y")
+        |> then(fn classes ->
+          remaining = values_and_units
+          |> Enum.reject(fn {side, value, unit} ->
+            axis_covered?(side, value, unit, x_axis, y_axis)
+          end)
+          |> Enum.map(fn {side, value, unit} ->
+            generate_space_class(value, unit, type, side)
+          end)
+
+          classes ++ remaining
+        end)
+        |> Enum.reject(&is_nil/1)
+
+      # Default to individual sides
+      true ->
+        values_and_units
+        |> Enum.map(fn {side, value, unit} ->
+          generate_space_class(value, unit, type, side)
+        end)
+        |> Enum.reject(&is_nil/1)
+    end
+  end
+
+  defp axis_values(values_and_units) do
+    {left, right} = get_axis_pair(values_and_units, ["left", "right"])
+    {top, bottom} = get_axis_pair(values_and_units, ["top", "bottom"])
+
+    {
+      if(left == right, do: left, else: nil),
+      if(top == bottom, do: top, else: nil)
+    }
+  end
+
+  defp get_axis_pair(values_and_units, [side1, side2]) do
+    side1_data = Enum.find(values_and_units, fn {side, _, _} -> side == side1 end)
+    side2_data = Enum.find(values_and_units, fn {side, _, _} -> side == side2 end)
+
+    {
+      if(side1_data, do: {elem(side1_data, 1), elem(side1_data, 2)}),
+      if(side2_data, do: {elem(side2_data, 1), elem(side2_data, 2)})
+    }
+  end
+
+  defp maybe_add_axis_class(classes, nil, _type_abbrev, _axis), do: classes
+  defp maybe_add_axis_class(classes, {value, unit}, type_abbrev, axis) do
+    case generate_space_class(value, unit, type_abbrev, axis) do
+      nil -> classes
+      class -> [class | classes]
+    end
+  end
+
+  defp axis_covered?(side, value, unit, x_axis, y_axis) do
+    case side do
+      "left" -> x_axis == {value, unit}
+      "right" -> x_axis == {value, unit}
+      "top" -> y_axis == {value, unit}
+      "bottom" -> y_axis == {value, unit}
+    end
   end
 
   defp extract_space_value(element, type, side) do
