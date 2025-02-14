@@ -28,6 +28,8 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
     "3xl" => 1.5,
     "9999" => "full"
   }
+  @tailwind_sizes ~w(0 1 2 3 4 5 6 7 8)
+  @css_units ~w(px rem em %)
 
   @type border_params :: %{
     required(String.t()) => String.t(),
@@ -340,10 +342,12 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
   # Generate tailwind classes from css properties
   #
   @spec generate_border_classes(border_params(), expanded_width_controls :: boolean()) :: [String.t()]
-  def generate_border_classes(params, expanded_width_controls) do
-    # Extract all widths and units
+  def generate_border_classes(params, false) do
+    generate_global_border_class(params["width"], params["width_unit"])
+  end
+  def generate_border_classes(params, true) do
+    # Extract all corner widths and units
     widths = [
-      {params["width"], params["width_unit"]},
       {params["top_width"], params["top_width_unit"]},
       {params["right_width"], params["right_width_unit"]},
       {params["bottom_width"], params["bottom_width_unit"]},
@@ -361,9 +365,9 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
     end
 
     cond do
-      # Case 1: All borders are the same or not using expanded controls
-      all_same? or not expanded_width_controls ->
-        generate_global_border_class(params)
+      # Case 1: All borders are the same width and unit
+      all_same? ->
+        generate_global_border_class(params["top_width"], params["top_width_unit"])
 
       # Case 2: Different borders with expanded controls
       true ->
@@ -377,14 +381,21 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
     end
   end
 
-  defp generate_global_border_class(params) do
-    case {params["width"], params["width_unit"]} do
-      {"0", unit} when not is_nil(unit) ->
-        []
-      {width, unit} when not is_nil(width) and not is_nil(unit) ->
-        [generate_border_class(width, unit, nil)] |> Enum.reject(&is_nil/1)
-      _ ->
-        []
+  defp generate_global_border_class(width, unit) do
+    case {width, unit} do
+      {nil, _} -> []
+      {_, nil} -> []
+      {"0", _} -> []
+      {width, "px"} ->
+        # For pixel units, use standard Tailwind classes when possible
+        if width in @tailwind_sizes do
+          ["border-#{width}"]
+        else
+          ["border-[#{width}px]"]
+        end
+      {width, unit} ->
+        # For other units, always use arbitrary values
+        ["border-[#{width}#{unit}]"]
     end
   end
 
@@ -396,11 +407,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
     case Utils.parse_integer_or_float(width) do
       {:ok, 0} -> nil
       {:ok, _} ->
-        prefix = case side do
-          nil -> "border"
-          side -> "border-#{String.first(side)}"
-        end
-
+        prefix =  "border-#{String.first(side)}"
         if unit == "px" and width in ~w(1 2 3 4 5 6 7 8) do
           "#{prefix}-#{width}"
         else

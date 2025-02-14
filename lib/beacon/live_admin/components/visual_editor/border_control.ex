@@ -64,6 +64,18 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
     )}
   end
 
+  def update(%{element: element} = assigns, socket) do
+    values = Border.extract_border_properties(element)
+
+    {:ok,
+     socket
+     |> assign(assigns)
+     |> assign(:border_styles, @border_styles)
+     |> assign(:border_colors, @border_colors)
+     |> maybe_expand_controls(values)
+     |> assign_form(values)}
+  end
+
   def render(assigns) do
     ~H"""
     <div id={@id}>
@@ -170,19 +182,58 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
     """
   end
 
-  def update(%{element: element} = assigns, socket) do
-    values = Border.extract_border_properties(element)
-
-    {:ok,
-     socket
-     |> assign(assigns)
-     |> assign(:border_styles, @border_styles)
-     |> assign(:border_colors, @border_colors)
-     |> assign(:expanded_width_controls, should_expand_width_controls?(values))
-     |> assign(:expanded_radius_controls, should_expand_radius_controls?(values))
-     |> assign_form(values)}
+  defp maybe_expand_controls(socket, values) do
+    socket
+    |> maybe_expand_width_controls(values)
+    |> maybe_expand_radius_controls(values)
   end
 
+  defp maybe_expand_width_controls(socket, values) do
+    if !socket.assigns.expanded_width_controls && should_expand_width_controls?(values) do
+      assign(socket, :expanded_width_controls, true)
+    else
+      socket
+    end
+  end
+
+  defp maybe_expand_radius_controls(socket, values) do
+    if !socket.assigns.expanded_radius_controls && should_expand_radius_controls?(values) do
+      assign(socket, :expanded_radius_controls, true)
+    else
+      socket
+    end
+  end
+
+  defp should_expand_radius_controls?(values) do
+    corners = ["top_left", "top_right", "bottom_right", "bottom_left"]
+    [first_radius | other_radiuses] = Enum.map(corners, &values["#{&1}_radius"])
+    [first_unit | other_units] = Enum.map(corners, &values["#{&1}_radius_unit"])
+    Enum.any?(other_radiuses, &(&1 != first_radius)) or
+    Enum.any?(other_units, &(&1 != first_unit))
+  end
+
+  defp should_expand_width_controls?(values) do
+    sides = ["top", "right", "bottom", "left"]
+    [first_width | other_widths] = Enum.map(sides, &values["#{&1}_width"])
+    [first_unit | other_units] = Enum.map(sides, &values["#{&1}_width_unit"])
+    Enum.any?(other_widths, &(&1 != first_width)) or
+    Enum.any?(other_units, &(&1 != first_unit))
+  end
+
+  @spec handle_event(<<_::104>>, map(), atom() | %{:assigns => atom() | map(), optional(any()) => any()}) ::
+          {:noreply,
+           atom()
+           | %{
+               :assigns =>
+                 atom()
+                 | %{
+                     :element => nil | maybe_improper_list() | map(),
+                     :expanded_radius_controls => any(),
+                     :expanded_width_controls => boolean(),
+                     optional(any()) => any()
+                   },
+               optional(any()) => any()
+             }}
   def handle_event("update_border", params, socket) do
     update_classes(socket, params)
   end
@@ -263,21 +314,5 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
       <.icon name={if(@expanded, do: "hero-arrows-pointing-in", else: "hero-arrows-pointing-out")} class="w-4 h-4" />
     </button>
     """
-  end
-
-  defp should_expand_radius_controls?(values) do
-    corners = ["top_left", "top_right", "bottom_right", "bottom_left"]
-    [first_radius | other_radiuses] = Enum.map(corners, &values["#{&1}_radius"])
-    [first_unit | other_units] = Enum.map(corners, &values["#{&1}_radius_unit"])
-    Enum.any?(other_radiuses, &(&1 != first_radius)) or
-    Enum.any?(other_units, &(&1 != first_unit))
-  end
-
-  defp should_expand_width_controls?(values) do
-    sides = ["top", "right", "bottom", "left"]
-    [first_width | other_widths] = Enum.map(sides, &values["#{&1}_width"])
-    [first_unit | other_units] = Enum.map(sides, &values["#{&1}_width_unit"])
-    Enum.any?(other_widths, &(&1 != first_width)) or
-    Enum.any?(other_units, &(&1 != first_unit))
   end
 end
