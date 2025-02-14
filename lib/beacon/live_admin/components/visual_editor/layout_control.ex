@@ -106,9 +106,9 @@ defmodule Beacon.LiveAdmin.VisualEditor.LayoutControl do
     <div id={@id}>
       <.control_section label="Layout">
         <form phx-change="update_layout" phx-target={@myself} class="space-y-4">
-          <div class="flex items-center gap-x-2">
-            <label class="text-xs w-[100px] flex-none">Display</label>
-            <select name="display" class="flex-1 py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm">
+          <div class="grid grid-cols-2 items-center gap-x-2">
+            <label class="text-xs">Display</label>
+            <select name="display" class="w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm">
               <option :for={{label, value} <- @display_options} value={value} selected={@form.params["display"] == value}>
                 <%= label %>
               </option>
@@ -116,45 +116,45 @@ defmodule Beacon.LiveAdmin.VisualEditor.LayoutControl do
           </div>
 
           <%= if @is_flex? do %>
-            <div class="flex items-center gap-x-2">
-              <label class="text-xs w-[100px] flex-none">Flex Direction</label>
-              <select name="flex_direction" class="flex-1 py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm">
+            <div class="grid grid-cols-2 items-center gap-x-2">
+              <label class="text-xs">Flex Direction</label>
+              <select name="flex_direction" class="w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm">
                 <option :for={{label, value} <- @flex_direction_options} value={value} selected={@form.params["flex_direction"] == value}>
                   <%= label %>
                 </option>
               </select>
             </div>
 
-            <div class="flex items-center gap-x-2">
-              <label class="text-xs w-[100px] flex-none">Flex Wrap</label>
-              <select name="flex_wrap" class="flex-1 py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm">
+            <div class="grid grid-cols-2 items-center gap-x-2">
+              <label class="text-xs">Flex Wrap</label>
+              <select name="flex_wrap" class="w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm">
                 <option :for={{label, value} <- @flex_wrap_options} value={value} selected={@form.params["flex_wrap"] == value}>
                   <%= label %>
                 </option>
               </select>
             </div>
 
-            <div class="flex items-center gap-x-2">
-              <label class="text-xs w-[100px] flex-none">Align Items</label>
-              <select name="align_items" class="flex-1 py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm">
+            <div class="grid grid-cols-2 items-center gap-x-2">
+              <label class="text-xs">Align Items</label>
+              <select name="align_items" class="w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm">
                 <option :for={{label, value} <- @align_items_options} value={value} selected={@form.params["align_items"] == value}>
                   <%= label %>
                 </option>
               </select>
             </div>
 
-            <div class="flex items-center gap-x-2">
-              <label class="text-xs w-[100px] flex-none">Justify Content</label>
-              <select name="justify_content" class="flex-1 py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm">
+            <div class="grid grid-cols-2 items-center gap-x-2">
+              <label class="text-xs">Justify Content</label>
+              <select name="justify_content" class="w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm">
                 <option :for={{label, value} <- @justify_content_options} value={value} selected={@form.params["justify_content"] == value}>
                   <%= label %>
                 </option>
               </select>
             </div>
 
-            <div class="flex items-center gap-x-2">
-              <label class="text-xs w-[100px] flex-none">Align Content</label>
-              <select name="align_content" class="flex-1 py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm">
+            <div class="grid grid-cols-2 items-center gap-x-2">
+              <label class="text-xs">Align Content</label>
+              <select name="align_content" class="w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm">
                 <option :for={{label, value} <- @align_content_options} value={value} selected={@form.params["align_content"] == value}>
                   <%= label %>
                 </option>
@@ -162,13 +162,13 @@ defmodule Beacon.LiveAdmin.VisualEditor.LayoutControl do
             </div>
 
             <div class="space-y-4">
-              <div class="flex items-center gap-x-2">
-                <label class="text-xs w-[100px] flex-none">Row Gap</label>
+              <div class="grid grid-cols-2 items-center gap-x-2">
+                <label class="text-xs">Row Gap</label>
                 <.input_with_units name="row_gap" value={@form.params["row_gap"]} value_unit={@form.params["row_gap_unit"]} sizes={@gap_sizes} units={@gap_units}/>
               </div>
 
-              <div class="flex items-center gap-x-2">
-                <label class="text-xs w-[100px] flex-none">Column Gap</label>
+              <div class="grid grid-cols-2 items-center gap-x-2">
+                <label class="text-xs">Column Gap</label>
                 <.input_with_units name="column_gap" value={@form.params["column_gap"]} value_unit={@form.params["column_gap_unit"]} sizes={@gap_sizes} units={@gap_units}/>
               </div>
             </div>
