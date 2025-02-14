@@ -1,4 +1,5 @@
 defmodule Beacon.LiveAdmin.StationUI.HTML.StatusBadge do
+  @moduledoc false
   use Phoenix.Component
 
   @status_badge_base_classes "aspect-square flex items-center justify-center rounded-full"

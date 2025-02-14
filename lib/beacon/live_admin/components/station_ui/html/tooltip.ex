@@ -1,4 +1,5 @@
 defmodule Beacon.LiveAdmin.StationUI.HTML.Tooltip do
+  @moduledoc false
   use Phoenix.Component
 
   import Beacon.LiveAdmin.StationUI.HTML.Icon

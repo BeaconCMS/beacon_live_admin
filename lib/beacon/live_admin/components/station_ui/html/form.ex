@@ -1,8 +1,8 @@
 defmodule Beacon.LiveAdmin.StationUI.HTML.Form do
-  @moduledoc """
-  This module exists to provide the same API as the Phoenix Core Components so as to support
-  generators that target the Core Components (`mix phx.gen.live`, `mix phx.gen.auth`, etc...)
-  """
+  @moduledoc false
+  # This module exists to provide the same API as the Phoenix Core Components so as to support
+  # generators that target the Core Components (`mix phx.gen.live`, `mix phx.gen.auth`, etc...)
+
   use Phoenix.Component
   alias Beacon.LiveAdmin.StationUI.HTML.Input
 

@@ -1,4 +1,5 @@
 defmodule Beacon.LiveAdmin.StationUI.HTML.Navbar do
+  @moduledoc false
   use Phoenix.Component
 
   @doc """
