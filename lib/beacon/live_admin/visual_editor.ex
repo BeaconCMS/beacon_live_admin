@@ -89,7 +89,8 @@ defmodule Beacon.LiveAdmin.VisualEditor do
   end
 
   def element_classes(element) do
-    element_class(element)
+    element
+    |> element_class()
     |> String.split(" ", trim: true)
   end
 
