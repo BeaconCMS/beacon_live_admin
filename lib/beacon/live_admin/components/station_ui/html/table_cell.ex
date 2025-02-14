@@ -1,4 +1,5 @@
 defmodule Beacon.LiveAdmin.StationUI.HTML.TableCell do
+  @moduledoc false
   use Phoenix.Component
 
   attr :class, :string, default: ""

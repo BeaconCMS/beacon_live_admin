@@ -1,7 +1,8 @@
 defmodule Beacon.LiveAdmin.StationUI.HTML.Footer do
+  @moduledoc false
   use Phoenix.Component
 
-  @moduledoc """
+  @doc """
   The Footer component includes "simple" (default), and "columns" variant.
   The default variant will list any footer_link slotted in horizontally, while
   the columns variant will loop over a grouped list of links under a heading.

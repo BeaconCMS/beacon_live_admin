@@ -1,4 +1,5 @@
 defmodule Beacon.LiveAdmin.StationUI.HTML.Pagination do
+  @moduledoc false
   use Phoenix.Component
 
   @doc ~S"""
