@@ -2,7 +2,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
   @moduledoc false
   require Logger
   use Beacon.LiveAdmin.Web, :live_component
-  import Beacon.LiveAdmin.VisualEditor.Components
+  alias Beacon.LiveAdmin.VisualEditor.Components.ControlSection
   import Beacon.LiveAdmin.VisualEditor.Components.InputWithUnits
   alias Beacon.LiveAdmin.VisualEditor
   alias Beacon.LiveAdmin.VisualEditor.Css.Border
@@ -56,7 +56,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
 
     ~H"""
     <div id={@id}>
-      <.control_section label="Border">
+      <.live_component module={ControlSection} id={@id <> "-section"} label="Border">
         <form phx-change="update_border" phx-target={@myself} class="space-y-2">
           <div class="flex gap-2">
             <div class="w-1/3">
@@ -154,7 +154,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
             </div>
           </div>
         </form>
-      </.control_section>
+      </.live_component>
     </div>
     """
   end

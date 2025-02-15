@@ -1,7 +1,7 @@
 defmodule Beacon.LiveAdmin.VisualEditor.LayoutControl do
   @moduledoc false
   use Beacon.LiveAdmin.Web, :live_component
-  import Beacon.LiveAdmin.VisualEditor.Components
+  alias Beacon.LiveAdmin.VisualEditor.Components.ControlSection
   import Beacon.LiveAdmin.VisualEditor.Components.InputWithUnits
   alias Beacon.LiveAdmin.VisualEditor
   alias Beacon.LiveAdmin.VisualEditor.Css.Layout
@@ -104,7 +104,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.LayoutControl do
 
     ~H"""
     <div id={@id}>
-      <.control_section label="Layout">
+      <.live_component module={ControlSection} id={@id <> "-section"} label="Layout">
         <form phx-change="update_layout" phx-target={@myself} class="space-y-4">
           <div class="grid grid-cols-2 items-center gap-x-2">
             <label class="text-xs">Display</label>
@@ -174,7 +174,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.LayoutControl do
             </div>
           <% end %>
         </form>
-      </.control_section>
+      </.live_component>
     </div>
     """
   end

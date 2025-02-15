@@ -1,7 +1,7 @@
 defmodule Beacon.LiveAdmin.VisualEditor.SpaceControl do
   @moduledoc false
   use Beacon.LiveAdmin.Web, :live_component
-  import Beacon.LiveAdmin.VisualEditor.Components
+  alias Beacon.LiveAdmin.VisualEditor.Components.ControlSection
   import Beacon.LiveAdmin.VisualEditor.Components.InputWithUnits
   alias Beacon.LiveAdmin.VisualEditor
   alias Beacon.LiveAdmin.VisualEditor.Css.Space
@@ -47,7 +47,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.SpaceControl do
   def render(assigns) do
     ~H"""
     <div id={@id}>
-      <.control_section label="Space">
+      <.live_component module={ControlSection} id={@id <> "-section"} label="Space">
         <div class="space-y-4">
           <div>
             <label class="text-xs">Margin</label>
@@ -97,7 +97,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.SpaceControl do
             </form>
           </div>
         </div>
-      </.control_section>
+      </.live_component>
     </div>
     """
   end
