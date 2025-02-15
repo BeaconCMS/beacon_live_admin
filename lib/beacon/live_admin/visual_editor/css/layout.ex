@@ -35,7 +35,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Layout do
 
   defp extract_display(classes) do
     display_classes = ~w(block inline inline-block hidden flex inline-flex)
-    Enum.find(display_classes, fn class -> class in classes end) || "block"
+    Enum.find(display_classes, fn class -> class in classes end) || ""
   end
 
   defp extract_flex_property(classes, prefix, values) do
@@ -112,7 +112,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Layout do
   defp generate_display_class(display) when is_binary(display), do: display
   defp generate_display_class(_), do: "block"
 
-  defp generate_flex_class(_prefix, nil), do: nil
+  defp generate_flex_class(_prefix, value) when value in [nil, ""], do: nil
   defp generate_flex_class(prefix, value), do: "#{prefix}-#{value}"
 
   defp generate_gap_class(nil, _unit, _type), do: nil

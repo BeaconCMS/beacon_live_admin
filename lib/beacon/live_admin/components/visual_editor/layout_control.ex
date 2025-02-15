@@ -109,6 +109,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.LayoutControl do
           <div class="grid grid-cols-2 items-center gap-x-2">
             <label class="text-xs">Display</label>
             <select name="display" class="w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm">
+              <option value=""></option>
               <option :for={{label, value} <- @display_options} value={value} selected={@form.params["display"] == value}>
                 <%= label %>
               </option>
@@ -119,6 +120,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.LayoutControl do
             <div class="grid grid-cols-2 items-center gap-x-2">
               <label class="text-xs">Flex Direction</label>
               <select name="flex_direction" class="w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm">
+                <option value=""></option>
                 <option :for={{label, value} <- @flex_direction_options} value={value} selected={@form.params["flex_direction"] == value}>
                   <%= label %>
                 </option>
@@ -128,6 +130,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.LayoutControl do
             <div class="grid grid-cols-2 items-center gap-x-2">
               <label class="text-xs">Flex Wrap</label>
               <select name="flex_wrap" class="w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm">
+                <option value=""></option>
                 <option :for={{label, value} <- @flex_wrap_options} value={value} selected={@form.params["flex_wrap"] == value}>
                   <%= label %>
                 </option>
@@ -137,6 +140,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.LayoutControl do
             <div class="grid grid-cols-2 items-center gap-x-2">
               <label class="text-xs">Align Items</label>
               <select name="align_items" class="w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm">
+                <option value=""></option>
                 <option :for={{label, value} <- @align_items_options} value={value} selected={@form.params["align_items"] == value}>
                   <%= label %>
                 </option>
@@ -146,6 +150,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.LayoutControl do
             <div class="grid grid-cols-2 items-center gap-x-2">
               <label class="text-xs">Justify Content</label>
               <select name="justify_content" class="w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm">
+                <option value=""></option>
                 <option :for={{label, value} <- @justify_content_options} value={value} selected={@form.params["justify_content"] == value}>
                   <%= label %>
                 </option>
@@ -155,6 +160,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.LayoutControl do
             <div class="grid grid-cols-2 items-center gap-x-2">
               <label class="text-xs">Align Content</label>
               <select name="align_content" class="w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm">
+                <option value=""></option>
                 <option :for={{label, value} <- @align_content_options} value={value} selected={@form.params["align_content"] == value}>
                   <%= label %>
                 </option>
