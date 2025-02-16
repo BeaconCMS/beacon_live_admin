@@ -100,8 +100,6 @@ defmodule Beacon.LiveAdmin.Router do
 
         {_instance_name, session_name, session_opts} = Beacon.LiveAdmin.Router.__options__(pages, opts)
 
-        dbg(session_opts)
-
         import Phoenix.Router, only: [get: 4]
         import Phoenix.LiveView.Router, only: [live: 4, live_session: 3]
 
@@ -298,6 +296,7 @@ defmodule Beacon.LiveAdmin.Router do
           %{}
       end
 
+    # TODO: renamte pages to __beacon_pages__ or something more unique to avoid conflicts
     Map.merge(%{"pages" => pages}, extra_session)
   end
 
