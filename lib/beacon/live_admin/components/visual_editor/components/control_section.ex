@@ -1,7 +1,9 @@
 defmodule Beacon.LiveAdmin.VisualEditor.Components.ControlSection do
+  require Logger
   use Beacon.LiveAdmin.Web, :live_component
 
   attr :label, :string, required: false, default: nil
+  attr :id, :string, required: true
   slot :inner_block, required: true
   slot :header, required: false
 
@@ -11,7 +13,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Components.ControlSection do
 
   def render(assigns) do
     ~H"""
-    <section class="p-4 border-b border-b-gray-100 border-solid group">
+    <section class="p-4 border-b border-b-gray-100 border-solid group" id={@id} phx-hook="ControlSectionSaveExpandedState" data-section-id={@id}>
       <div class="mb-2 flex items-center justify-between">
         <div class="flex items-center gap-2">
           <button :if={@label} type="button" class="text-gray-400" phx-click="toggle" phx-target={@myself}>
@@ -32,7 +34,13 @@ defmodule Beacon.LiveAdmin.VisualEditor.Components.ControlSection do
     """
   end
 
+  def handle_event("set_expanded", %{"expanded" => expanded}, socket) do
+    {:noreply, assign(socket, :expanded, expanded)}
+  end
+
   def handle_event("toggle", _params, socket) do
-    {:noreply, update(socket, :expanded, &(!&1))}
+    expanded = !socket.assigns.expanded
+    socket = push_event(socket, "expanded_changed", %{expanded: expanded, sectionId: socket.assigns.id})
+    {:noreply, assign(socket, :expanded, expanded)}
   end
 end
