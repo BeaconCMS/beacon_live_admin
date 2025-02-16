@@ -3,7 +3,7 @@ defmodule Beacon.LiveAdmin.Router do
   Routing for Beacon LiveAdmin.
   """
 
-  # require Logger
+  require Logger
 
   @type conn_or_socket :: Phoenix.LiveView.Socket.t() | Plug.Conn.t()
 
@@ -296,8 +296,22 @@ defmodule Beacon.LiveAdmin.Router do
           %{}
       end
 
-    # TODO: renamte pages to __beacon_pages__ or something more unique to avoid conflicts
-    Map.merge(%{"pages" => pages}, extra_session)
+    if is_map(extra_session) do
+      # TODO: renamte pages to __beacon_pages__ or something more unique to avoid conflicts
+      Map.merge(%{"pages" => pages}, extra_session)
+    else
+      Logger.warning("""
+      expected either a map or a MFA that returns a map in :session opts
+
+      That value will be ignored and not included in the session.
+
+      Got:
+
+        #{inspect(extra_session)}
+      """)
+
+      %{"pages" => pages}
+    end
   end
 
   @doc false
