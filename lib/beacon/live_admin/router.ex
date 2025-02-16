@@ -1,3 +1,10 @@
+# TODO: delete this example
+defmodule MyApp.Session do
+  def generate_session(_conn) do
+    %{"tenant" => "foo"}
+  end
+end
+
 defmodule Beacon.LiveAdmin.Router do
   @moduledoc """
   Routing for Beacon LiveAdmin.
@@ -93,6 +100,8 @@ defmodule Beacon.LiveAdmin.Router do
         pages = Beacon.LiveAdmin.Router.__pages__(additional_pages)
 
         {_instance_name, session_name, session_opts} = Beacon.LiveAdmin.Router.__options__(pages, opts)
+
+        dbg(session_opts)
 
         import Phoenix.Router, only: [get: 4]
         import Phoenix.LiveView.Router, only: [live: 4, live_session: 3]
@@ -251,16 +260,17 @@ defmodule Beacon.LiveAdmin.Router do
 
     on_mounts = get_on_mount_list(Keyword.get(opts, :on_mount, []))
 
-    session_args = [
-      pages
-    ]
+    # just for reference: https://github.com/phoenixframework/phoenix_live_view/blob/main/lib/phoenix_live_view/plug.ex -- remove before merging
+    # TODO: fetch from opts
+    # session = Keyword.get(opts, :session)
+    extra_session = {MyApp.Session, :generate_session, []}
 
     {
       instance_name,
       opts[:live_session_name] || String.to_atom("beacon_live_admin_#{instance_name}"),
       [
         root_layout: {Beacon.LiveAdmin.Layouts, :admin},
-        session: {__MODULE__, :__session__, session_args},
+        session: {__MODULE__, :__session__, [pages, extra_session]},
         on_mount: on_mounts
       ]
     }
@@ -281,8 +291,20 @@ defmodule Beacon.LiveAdmin.Router do
   end
 
   @doc false
-  def __session__(_conn, pages) do
-    %{"pages" => pages}
+  def __session__(conn, pages, extra_session) do
+    extra_session =
+      case extra_session do
+        {mod, fun, args} when is_atom(mod) and is_atom(fun) and is_list(args) ->
+          apply(mod, fun, [conn | args])
+
+        %{} = session ->
+          session
+
+        nil ->
+          %{}
+      end
+
+    Map.merge(%{"pages" => pages}, extra_session)
   end
 
   @doc false
