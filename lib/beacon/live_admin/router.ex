@@ -1,10 +1,3 @@
-# TODO: delete this example
-defmodule MyApp.Session do
-  def generate_session(_conn) do
-    %{"tenant" => "foo"}
-  end
-end
-
 defmodule Beacon.LiveAdmin.Router do
   @moduledoc """
   Routing for Beacon LiveAdmin.
@@ -68,12 +61,18 @@ defmodule Beacon.LiveAdmin.Router do
         end
       end
 
+  Or using AshAuthentication to protect the admin pages:
+
+      beacon_live_admin "/admin", AshAuthentication.Phoenix.LiveSession.opts()
+
   ## Options
 
     * `:name` (required) `atom()` - register your instance with a unique name.
       Note that the name has to match the one used in your instance configuration.
     * `:on_mount` (optional) - an optional list of `on_mount` hooks passed to `live_session`.
       This will allow for authenticated routes, among other uses.
+    * `:session` (optional) - an optional extra session map or MFA tuple to be merged with the Beacon.LiveAdmin session.
+      Useful to authenticate the session using 3rd-party libs like AshAuthentication.
 
   """
   defmacro beacon_live_admin(prefix, opts \\ []) do
@@ -260,17 +259,12 @@ defmodule Beacon.LiveAdmin.Router do
 
     on_mounts = get_on_mount_list(Keyword.get(opts, :on_mount, []))
 
-    # just for reference: https://github.com/phoenixframework/phoenix_live_view/blob/main/lib/phoenix_live_view/plug.ex -- remove before merging
-    # TODO: fetch from opts
-    # session = Keyword.get(opts, :session)
-    extra_session = {MyApp.Session, :generate_session, []}
-
     {
       instance_name,
       opts[:live_session_name] || String.to_atom("beacon_live_admin_#{instance_name}"),
       [
         root_layout: {Beacon.LiveAdmin.Layouts, :admin},
-        session: {__MODULE__, :__session__, [pages, extra_session]},
+        session: {__MODULE__, :__session__, [pages, opts[:session]]},
         on_mount: on_mounts
       ]
     }
