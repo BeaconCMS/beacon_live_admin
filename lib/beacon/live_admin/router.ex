@@ -63,7 +63,7 @@ defmodule Beacon.LiveAdmin.Router do
 
   Or using AshAuthentication to protect the admin pages:
 
-      beacon_live_admin "/admin", AshAuthentication.Phoenix.LiveSession.opts()
+      beacon_live_admin "/admin", AshAuthentication.Phoenix.LiveSession.opts(on_mount: [{MyAppWeb.LiveUserAuth, :live_user_required}])
 
   ## Options
 
