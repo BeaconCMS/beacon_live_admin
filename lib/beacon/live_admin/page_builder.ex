@@ -90,9 +90,6 @@ defmodule Beacon.LiveAdmin.PageBuilder do
 
       @behaviour Beacon.LiveAdmin.PageBuilder
 
-      Beacon.LiveAdmin.Private.register_on_mount_lifecycle_attribute(__MODULE__)
-      @before_compile Beacon.LiveAdmin.PageBuilder
-
       @impl true
       def init(opts), do: {:ok, opts}
       defoverridable init: 1
@@ -114,17 +111,6 @@ defmodule Beacon.LiveAdmin.PageBuilder do
         unquote(opts)
         |> Keyword.get(:table)
         |> Table.build()
-      end
-    end
-  end
-
-  defmacro __before_compile__(env) do
-    phoenix_live_mount = Beacon.LiveAdmin.Private.get_on_mount_lifecycle_attribute(env.module)
-
-    quote do
-      @doc false
-      def on_mount do
-        unquote(Macro.escape(phoenix_live_mount))
       end
     end
   end

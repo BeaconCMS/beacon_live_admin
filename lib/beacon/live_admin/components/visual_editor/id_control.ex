@@ -61,6 +61,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.IdControl do
 end
 
 defmodule Beacon.LiveAdmin.VisualEditor.Id do
+  @moduledoc false
   use Ecto.Schema
   use Phoenix.Component
   import Ecto.Changeset

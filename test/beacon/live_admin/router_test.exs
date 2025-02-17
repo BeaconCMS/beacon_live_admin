@@ -67,7 +67,7 @@ defmodule Beacon.LiveAdmin.RouterTest do
       assert {:admin, :beacon_live_admin_admin,
               [
                 root_layout: {Beacon.LiveAdmin.Layouts, :admin},
-                session: {Beacon.LiveAdmin.Router, :__session__, [[]]},
+                session: {Beacon.LiveAdmin.Router, :__session__, [[], nil]},
                 on_mount: [SomeHook]
               ]} = Router.__options__([], on_mount: [SomeHook])
     end
@@ -76,7 +76,7 @@ defmodule Beacon.LiveAdmin.RouterTest do
       assert {:admin, :beacon_live_admin_admin,
               [
                 root_layout: {Beacon.LiveAdmin.Layouts, :admin},
-                session: {Beacon.LiveAdmin.Router, :__session__, [[]]},
+                session: {Beacon.LiveAdmin.Router, :__session__, [[], nil]},
                 on_mount: [AssignUser, Beacon.LiveAdmin.Hooks.AssignAgent, SomeHook]
               ]} =
                Router.__options__(

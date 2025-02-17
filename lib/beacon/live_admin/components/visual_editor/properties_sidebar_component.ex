@@ -1,4 +1,5 @@
 defmodule Beacon.LiveAdmin.VisualEditor.PropertiesSidebarComponent do
+  @moduledoc false
   use Beacon.LiveAdmin.Web, :live_component
   alias Beacon.LiveAdmin.VisualEditor
 
