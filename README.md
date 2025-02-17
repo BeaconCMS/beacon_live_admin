@@ -72,12 +72,13 @@ Next time you can skip step 5.
 
 ## Troubleshooting
 
-Running tests requires booting a VM to run Beacon sites, which may be blocked by the firewall in your environment.
+Running tests will boot a VM to simulate Beacon nodes and that operation requires that both services `epmd` and `beam.smp`
+are allowed to run in your environment, please review your firewall config and system config.
 
-Make sure both `epmd` and `beam.smp` processes are allowed and try running the application before running tests:
+If you're still getting a `:net_kernel` error, then execute `epmd -daemon` manually:
 
 ```shell
-iex --sname admin@localhost -S mix dev
+epmd -daemon
 ```
 
 ## Looking for help with your Elixir project?
