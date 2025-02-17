@@ -6,7 +6,7 @@ defmodule Beacon.LiveAdminTest.Cluster do
 
   def spawn(nodes) do
     # Turn node into a distributed node with the given long name
-    :net_kernel.start([:"primary@127.0.0.1"])
+    {:ok, _} = :net_kernel.start([:"primary@127.0.0.1"])
 
     # Allow spawned nodes to fetch all code from this node
     :erl_boot_server.start([])
