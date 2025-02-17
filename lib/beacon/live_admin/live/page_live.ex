@@ -30,7 +30,7 @@ defmodule Beacon.LiveAdmin.PageLive do
     assign_mount(socket, site, page, sites, pages, params)
   end
 
-  def mount(_params, _session, socket) do
+  def mount(_params, _session, _socket) do
     raise Beacon.LiveAdmin.PageNotFoundError, """
     failed to resolve Beacon.LiveAdmin page URL
 
