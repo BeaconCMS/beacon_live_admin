@@ -31,7 +31,7 @@ defmodule Beacon.LiveAdmin.PageLive do
 
     page = lookup_page!(socket, current_url)
 
-    assign_mount(socket, site, page, sites, pages, params)
+    assign_mount(socket, site, page, sites, pages, actor, params)
   end
 
   def mount(_params, _session, _socket) do
@@ -42,7 +42,7 @@ defmodule Beacon.LiveAdmin.PageLive do
     """
   end
 
-  defp assign_mount(socket, site, page, sites, pages, params) do
+  defp assign_mount(socket, site, page, sites, pages, actor, params) do
     page = %PageBuilder.Page{
       site: site,
       path: page.path,
