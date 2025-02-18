@@ -9,10 +9,11 @@ defmodule Beacon.LiveAdmin.VisualEditor.Components.InputWithUnits do
   attr :disabled, :boolean, default: false
 
   def input_with_units(assigns) do
-    assigns = assigns
+    assigns =
+      assigns
       |> assign(:is_custom_unit?, Enum.member?(assigns.units, assigns.value_unit) || assigns.value_unit == "")
 
-      ~H"""
+    ~H"""
     <div class="relative w-full flex bg-gray-100 border rounded focus-within:ring-2 focus-within:ring-blue-500">
       <input
         type="text"
