@@ -1,4 +1,5 @@
 defmodule Beacon.LiveAdmin.StationUI.HTML.TabGroup do
+  @moduledoc false
   use Phoenix.Component
 
   alias Phoenix.LiveView.JS

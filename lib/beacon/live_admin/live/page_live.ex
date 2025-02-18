@@ -3,32 +3,27 @@ defmodule Beacon.LiveAdmin.PageLive do
 
   use Beacon.LiveAdmin.Web, :live_view
 
-  alias Beacon.LiveAdmin.PageBuilder.Menu
-  alias Beacon.LiveAdmin.PageBuilder.Page
-  alias Beacon.LiveAdmin.PageBuilder.Table
-  alias Beacon.LiveAdmin.Private
+  alias Beacon.LiveAdmin.PageBuilder
   alias Phoenix.LiveView.Socket
 
   require Logger
 
   @impl true
-  def mount(%{"site" => site} = params, session, socket) do
+  def mount(%{"site" => site} = params, %{"pages" => pages} = session, socket) do
     site = String.to_existing_atom(site)
 
-    if connected?(socket) do
-      # TODO: pubsub cluster
-      # TODO: nodedow -> notify/alert user
-    end
+    # if connected?(socket) do
+    # TODO: pubsub cluster
+    # TODO: nodedow -> notify/alert user
+    # end
 
     sites = Beacon.LiveAdmin.Cluster.running_sites()
-
-    %{"pages" => pages} = session
 
     actor = Beacon.LiveAdmin.Client.Auth.get_actor(site, session)
 
     current_url =
       Map.get(session, "beacon_live_admin_page_url") ||
-        raise """
+        raise Beacon.LiveAdmin.PageNotFoundError, """
         failed to resolve Beacon.LiveAdmin page URL
 
         You must add Beacon.LiveAdmin.Plug to the :browser pipeline that beacon_live_admin is piped through.
@@ -36,48 +31,48 @@ defmodule Beacon.LiveAdmin.PageLive do
 
     page = lookup_page!(socket, current_url)
 
+    assign_mount(socket, site, page, sites, pages, params)
+  end
+
+  def mount(_params, _session, _socket) do
+    raise Beacon.LiveAdmin.PageNotFoundError, """
+    failed to resolve Beacon.LiveAdmin page URL
+
+    You must add Beacon.LiveAdmin.Plug to the :browser pipeline that beacon_live_admin is piped through.
+    """
+  end
+
+  defp assign_mount(socket, site, page, sites, pages, params) do
+    page = %PageBuilder.Page{
+      site: site,
+      path: page.path,
+      module: page.module,
+      table: page.module.__beacon_page_table__()
+    }
+
     socket =
-      socket
-      |> assign(
+      assign(socket,
         __beacon_sites__: sites,
         __beacon_pages__: pages,
-        __beacon_menu__: %Menu{},
+        __beacon_menu__: %PageBuilder.Menu{},
         __beacon_actor__: actor,
-        beacon_page: %Page{}
+        beacon_page: page
       )
-      |> Private.build_on_mount_lifecycle(page.module)
 
-    update_page = fn socket, site, page, params ->
-      update_page(socket,
-        site: site,
-        path: page.path,
-        module: page.module,
-        params: params,
-        table: page.module.__beacon_page_table__()
-      )
-    end
-
-    with {:cont, socket} <- Private.mount(params, session, socket),
-         %Socket{redirected: nil} = socket <- update_page.(socket, site, page, params),
+    with %Socket{redirected: nil} = socket <- assign_params(socket, params),
          %Socket{redirected: nil} = socket <- assign_menu_links(socket, pages) do
       maybe_apply_module(socket, :mount, [params, page.session], &{:ok, &1})
     else
-      %Socket{} = redirected_socket ->
-        {:ok, redirected_socket}
-
-      {:halt, socket} ->
-        {:ok, socket}
+      %Socket{} = redirected_socket -> {:ok, redirected_socket}
     end
   end
 
   @impl true
   def handle_params(params, url, socket) do
-    %{__beacon_pages__: pages} = socket.assigns
     page = lookup_page!(socket, url)
 
     with %Socket{redirected: nil} = socket <-
-           update_page(socket, path: page.path, module: page.module, params: params),
-         %Socket{redirected: nil} = socket <- assign_menu_links(socket, pages) do
+           update_page(socket, path: page.path, module: page.module, params: params) do
       maybe_apply_module(socket, :handle_params, [params, url], &{:noreply, &1})
     else
       %Socket{} = redirected_socket ->
@@ -92,7 +87,7 @@ defmodule Beacon.LiveAdmin.PageLive do
         socket,
         socket.assigns.beacon_page.site,
         socket.assigns.beacon_page.path,
-        Table.query_params(socket.assigns.beacon_page.table, page: 1, query: query)
+        PageBuilder.Table.query_params(socket.assigns.beacon_page.table, page: 1, query: query)
       )
 
     {:noreply, push_patch(socket, to: to)}
@@ -104,7 +99,7 @@ defmodule Beacon.LiveAdmin.PageLive do
         socket,
         socket.assigns.beacon_page.site,
         socket.assigns.beacon_page.path,
-        Table.query_params(socket.assigns.beacon_page.table, sort_by: sort_by)
+        PageBuilder.Table.query_params(socket.assigns.beacon_page.table, sort_by: sort_by)
       )
 
     {:noreply, push_patch(socket, to: to)}
@@ -132,13 +127,12 @@ defmodule Beacon.LiveAdmin.PageLive do
         page
 
       _ ->
-        msg = """
-        failed to find a page for URL #{url}
-        """
-
-        # TODO: custom exception 404
-        raise msg
+        raise Beacon.LiveAdmin.PageNotFoundError, "failed to find a Beacon.LiveAdmin page for URL #{url}"
     end
+  end
+
+  defp assign_params(socket, params) do
+    update_page(socket, params: params)
   end
 
   # TODO subpath /pages/:id -> Pages menu

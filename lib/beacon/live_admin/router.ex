@@ -3,7 +3,7 @@ defmodule Beacon.LiveAdmin.Router do
   Routing for Beacon LiveAdmin.
   """
 
-  # require Logger
+  require Logger
 
   @type conn_or_socket :: Phoenix.LiveView.Socket.t() | Plug.Conn.t()
 
@@ -61,12 +61,18 @@ defmodule Beacon.LiveAdmin.Router do
         end
       end
 
+  Or using AshAuthentication to protect the admin pages:
+
+      beacon_live_admin "/admin", AshAuthentication.Phoenix.LiveSession.opts(on_mount: [{MyAppWeb.LiveUserAuth, :live_user_required}])
+
   ## Options
 
     * `:name` (required) `atom()` - register your instance with a unique name.
       Note that the name has to match the one used in your instance configuration.
     * `:on_mount` (optional) - an optional list of `on_mount` hooks passed to `live_session`.
       This will allow for authenticated routes, among other uses.
+    * `:session` (optional) - an optional extra session map or MFA tuple to be merged with the Beacon.LiveAdmin session.
+      Useful to authenticate the session using 3rd-party libs like AshAuthentication.
 
   """
   defmacro beacon_live_admin(prefix, opts \\ []) do
@@ -254,16 +260,12 @@ defmodule Beacon.LiveAdmin.Router do
 
     on_mounts = get_on_mount_list(Keyword.get(opts, :on_mount, []))
 
-    session_args = [
-      pages
-    ]
-
     {
       instance_name,
       opts[:live_session_name] || String.to_atom("beacon_live_admin_#{instance_name}"),
       [
         root_layout: {Beacon.LiveAdmin.Layouts, :admin},
-        session: {__MODULE__, :__session__, session_args},
+        session: {__MODULE__, :__session__, [pages, opts[:session]]},
         on_mount: on_mounts
       ]
     }
@@ -284,8 +286,35 @@ defmodule Beacon.LiveAdmin.Router do
   end
 
   @doc false
-  def __session__(_conn, pages) do
-    %{"pages" => pages}
+  def __session__(conn, pages, extra_session) do
+    extra_session =
+      case extra_session do
+        {mod, fun, args} when is_atom(mod) and is_atom(fun) and is_list(args) ->
+          apply(mod, fun, [conn | args])
+
+        %{} = session ->
+          session
+
+        nil ->
+          %{}
+      end
+
+    if is_map(extra_session) do
+      # TODO: renamte pages to __beacon_pages__ or something more unique to avoid conflicts
+      Map.merge(%{"pages" => pages}, extra_session)
+    else
+      Logger.warning("""
+      expected either a map or a MFA that returns a map in :session opts
+
+      That value will be ignored and not included in the session.
+
+      Got:
+
+        #{inspect(extra_session)}
+      """)
+
+      %{"pages" => pages}
+    end
   end
 
   @doc false

@@ -1,4 +1,5 @@
 defmodule Beacon.LiveAdmin.StationUI.HTML.NotificationBadge do
+  @moduledoc false
   use Phoenix.Component
 
   attr :class, :any, default: "h-6 w-6 text-sm"

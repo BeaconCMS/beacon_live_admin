@@ -1,64 +1,61 @@
 defmodule Beacon.LiveAdmin.StationUI.HTML.Spinner do
+  @moduledoc false
   use Phoenix.Component
 
-  @moduledoc """
-  The spinner component offers two options (spinner and spinner_double) to render
-  an animated looping SVG to represent a loading state.
-  Spinners are used to notify users when something is in progress or fetching data.
-  When a page or element is updating, the loading animation appears and then resolves once that
-  action is complete.
-  Each spinner option has a default size but this can be overridden.
+  # The spinner component offers two options (spinner and spinner_double) to render
+  # an animated looping SVG to represent a loading state.
+  # Spinners are used to notify users when something is in progress or fetching data.
+  # When a page or element is updating, the loading animation appears and then resolves once that
+  # action is complete.
+  # Each spinner option has a default size but this can be overridden.
 
-  ## Spinner:
+  # ## Spinner:
 
-  The Spinner is used primarily within UI elements - such as file unloaders / drag and drops
-  - to indicate progress when updating content.
+  # The Spinner is used primarily within UI elements - such as file unloaders / drag and drops
+  # - to indicate progress when updating content.
 
-  This <span> element is not visible on screen but will still be announced by screen readers to notify
-  Assistive Technology users of the loading status.
+  # This <span> element is not visible on screen but will still be announced by screen readers to notify
+  # Assistive Technology users of the loading status.
 
-  Spinner options:
+  # Spinner options:
 
-  -- class: Add classes to spinner component in addition to the base defined classes.
-            default/medium size: "h-6 w-6" (overridden when specifying a class)
+  # -- class: Add classes to spinner component in addition to the base defined classes.
+  #           default/medium size: "h-6 w-6" (overridden when specifying a class)
 
-  ### Spinner Example
+  # ### Spinner Example
 
-  <.spinner class="h-11 w-11" />
+  # <.spinner class="h-11 w-11" />
 
-  Suggested size classes:
+  # Suggested size classes:
 
-  xl: "h-11 w-11"
-  lg: "h-8 w-8"
-  sm: "h-5 w-5"
-  xs: "h-4 w-4"
+  # xl: "h-11 w-11"
+  # lg: "h-8 w-8"
+  # sm: "h-5 w-5"
+  # xs: "h-4 w-4"
 
+  # ## Double Spinner:
 
-  ## Double Spinner:
+  # The Double Spinner is used primarily when a page needs to load before displaying new content.
+  # It is by default larger than the Spinner and has two rings instead of one.
 
-  The Double Spinner is used primarily when a page needs to load before displaying new content.
-  It is by default larger than the Spinner and has two rings instead of one.
+  # This <span> element is not visible on screen but will still be announced by screen readers to notify
+  # Assistive Technology users of the loading status.
 
-  This <span> element is not visible on screen but will still be announced by screen readers to notify
-  Assistive Technology users of the loading status.
+  # Double spinner options:
 
-  Double spinner options:
+  # -- class: Add classes to double spinner component in addition to the base defined classes.
+  #           default/medium size: h-[114px] w-[114px] (overridden when specifying a class)
 
-  -- class: Add classes to double spinner component in addition to the base defined classes.
-            default/medium size: h-[114px] w-[114px] (overridden when specifying a class)
+  # ### Double Spinner Example
 
-  ### Double Spinner Example
+  # <.spinner_double class="h-16 w-16" />
 
-  <.spinner_double class="h-16 w-16" />
+  # Suggested size classes:
 
-  Suggested size classes:
-
-  xl: "h-[244px] w-[244px]"
-  lg: "h-[184px] w-[184px]"
-  sm: "h-[84px] w-[84px]"
-  xs: "h-16 w-16"
-
-  """
+  # xl: "h-[244px] w-[244px]"
+  # lg: "h-[184px] w-[184px]"
+  # sm: "h-[84px] w-[84px]"
+  # xs: "h-16 w-16"
 
   @base_classes "[&>svg]:animate-spin [&>svg]:fill-[--sui-brand-primary]"
   def base_classes, do: @base_classes

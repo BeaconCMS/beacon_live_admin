@@ -29,7 +29,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.IndexTest do
   end
 
   test "raises when missing beacon_live_admin_page_url in the session" do
-    assert_raise RuntimeError, fn ->
+    assert_raise Beacon.LiveAdmin.PageNotFoundError, fn ->
       conn =
         Phoenix.ConnTest.dispatch(
           build_conn(:get, "/admin/site_a/pages"),
