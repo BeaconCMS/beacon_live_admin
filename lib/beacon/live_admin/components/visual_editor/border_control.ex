@@ -3,7 +3,6 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
 
   use Beacon.LiveAdmin.Web, :live_component
   import Beacon.LiveAdmin.VisualEditor.Components
-  import Beacon.LiveAdmin.VisualEditor.Components.InputWithUnits
   alias Beacon.LiveAdmin.VisualEditor
   alias Beacon.LiveAdmin.VisualEditor.Css.Border
 
