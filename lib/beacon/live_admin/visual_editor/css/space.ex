@@ -4,26 +4,6 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Space do
   require Logger
   alias Beacon.LiveAdmin.VisualEditor
 
-  @type space_params :: %{
-          required(String.t()) => String.t(),
-          optional(:margin_top) => String.t(),
-          optional(:margin_top_unit) => String.t(),
-          optional(:margin_right) => String.t(),
-          optional(:margin_right_unit) => String.t(),
-          optional(:margin_bottom) => String.t(),
-          optional(:margin_bottom_unit) => String.t(),
-          optional(:margin_left) => String.t(),
-          optional(:margin_left_unit) => String.t(),
-          optional(:padding_top) => String.t(),
-          optional(:padding_top_unit) => String.t(),
-          optional(:padding_right) => String.t(),
-          optional(:padding_right_unit) => String.t(),
-          optional(:padding_bottom) => String.t(),
-          optional(:padding_bottom_unit) => String.t(),
-          optional(:padding_left) => String.t(),
-          optional(:padding_left_unit) => String.t()
-        }
-
   def extract_space_properties(element) do
     # First get all units
     margin_top_unit = extract_space_unit(element, "margin", "top")
