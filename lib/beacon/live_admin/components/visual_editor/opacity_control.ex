@@ -1,6 +1,5 @@
 defmodule Beacon.LiveAdmin.VisualEditor.OpacityControl do
   @moduledoc false
-  # https://tailwindcss.com/docs/opacity
 
   use Beacon.LiveAdmin.Web, :live_component
   import Beacon.LiveAdmin.VisualEditor.Components

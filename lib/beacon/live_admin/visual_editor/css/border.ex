@@ -1,7 +1,9 @@
 defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
-  alias Beacon.LiveAdmin.VisualEditor
-  alias Beacon.LiveAdmin.VisualEditor.Utils
+  @moduledoc false
+
   require Logger
+  alias Beacon.LiveAdmin.VisualEditor
+
   @border_colors ~w(gray-500 red-500 blue-500 green-500 yellow-500 purple-500)
   @corner_abbreviations %{
     "top-left" => "tl",
@@ -9,27 +11,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
     "bottom-right" => "br",
     "bottom-left" => "bl"
   }
-  @tailwind_border_radius_rems %{
-    "0" => "none",
-    "none" => 0,
-    "0.125" => "sm",
-    "sm" => 0.125,
-    "0.25" => "DEFAULT",
-    "DEFAULT" => 0.25,
-    "0.375" => "md",
-    "md" => 0.375,
-    "0.5" => "lg",
-    "lg" => 0.5,
-    "0.75" => "xl",
-    "xl" => 0.75,
-    "1" => "2xl",
-    "2xl" => 1,
-    "1.5" => "3xl",
-    "3xl" => 1.5,
-    "9999" => "full"
-  }
   @tailwind_sizes ~w(0 1 2 3 4 5 6 7 8)
-  @css_units ~w(px rem em %)
 
   @type border_params :: %{
           required(String.t()) => String.t(),
@@ -226,7 +208,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
     case radius_class do
       class when is_binary(class) ->
         case Regex.run(~r/\[(.+)\]$/, class) do
-          [_, value] -> Utils.parse_number_and_unit(value) |> elem(1)
+          [_, value] -> VisualEditor.parse_number_and_unit(value) |> elem(1)
           _ -> nil
         end
 
@@ -246,7 +228,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
     case corner_class do
       class when is_binary(class) ->
         case Regex.run(~r/\[(.+)\]$/, class) do
-          [_, value] -> Utils.parse_number_and_unit(value) |> elem(1)
+          [_, value] -> VisualEditor.parse_number_and_unit(value) |> elem(1)
           _ -> nil
         end
 
@@ -273,7 +255,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
       class when is_binary(class) ->
         case Regex.run(~r/^rounded-\[(.+)\]$/, class) do
           [_, name] ->
-            case Utils.parse_number_and_unit(name) do
+            case VisualEditor.parse_number_and_unit(name) do
               {:ok, _, unit} -> unit
               {:error, _} -> nil
             end
@@ -304,7 +286,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
       "rounded-" <> <<^corner_abbrev::binary, "-[", rest::binary>> ->
         case Regex.run(~r/^(.+)\]$/, rest) do
           [_, name] ->
-            case Utils.parse_number_and_unit(name) do
+            case VisualEditor.parse_number_and_unit(name) do
               {:ok, _, unit} -> unit
               {:error, _} -> nil
             end
@@ -352,7 +334,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
       class ->
         case Regex.run(~r/\[(.+)\]$/, class) do
           [_, value] ->
-            case Utils.parse_number_and_unit(value) do
+            case VisualEditor.parse_number_and_unit(value) do
               {:ok, _, unit} -> unit
               {:error, _} -> "px"
             end
@@ -447,7 +429,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
   defp generate_border_class(_width, nil, _side), do: nil
   # Handle custom widths
   defp generate_border_class(width, unit, side) do
-    case Utils.parse_integer_or_float(width) do
+    case VisualEditor.parse_integer_or_float(width) do
       {:ok, 0} ->
         nil
 
@@ -512,7 +494,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
   end
 
   defp generate_custom_border_radius_class(radius, radius_unit) when radius_unit in ~w(px rem em %) and is_binary(radius) do
-    case Utils.parse_integer_or_float(radius) do
+    case VisualEditor.parse_integer_or_float(radius) do
       {:ok, radius_value} -> "rounded-[#{radius_value}#{radius_unit}]"
       :error -> nil
     end

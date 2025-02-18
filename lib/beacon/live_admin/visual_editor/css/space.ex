@@ -1,7 +1,8 @@
 defmodule Beacon.LiveAdmin.VisualEditor.Css.Space do
-  alias Beacon.LiveAdmin.VisualEditor
-  alias Beacon.LiveAdmin.VisualEditor.Utils
+  @moduledoc false
+
   require Logger
+  alias Beacon.LiveAdmin.VisualEditor
 
   @type space_params :: %{
           required(String.t()) => String.t(),
@@ -83,23 +84,22 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Space do
       map_size(grouped) in 2..3 ->
         {x_axis, y_axis} = axis_values(values_and_units)
 
-        axis_classes =
-          []
-          |> maybe_add_axis_class(x_axis, type_abbrev, "x")
-          |> maybe_add_axis_class(y_axis, type_abbrev, "y")
-          |> then(fn classes ->
-            remaining =
-              values_and_units
-              |> Enum.reject(fn {side, value, unit} ->
-                axis_covered?(side, value, unit, x_axis, y_axis)
-              end)
-              |> Enum.map(fn {side, value, unit} ->
-                generate_space_class(value, unit, type, side)
-              end)
+        []
+        |> maybe_add_axis_class(x_axis, type_abbrev, "x")
+        |> maybe_add_axis_class(y_axis, type_abbrev, "y")
+        |> then(fn classes ->
+          remaining =
+            values_and_units
+            |> Enum.reject(fn {side, value, unit} ->
+              axis_covered?(side, value, unit, x_axis, y_axis)
+            end)
+            |> Enum.map(fn {side, value, unit} ->
+              generate_space_class(value, unit, type, side)
+            end)
 
-            classes ++ remaining
-          end)
-          |> Enum.reject(&is_nil/1)
+          classes ++ remaining
+        end)
+        |> Enum.reject(&is_nil/1)
 
       # Default to individual sides
       true ->
@@ -218,7 +218,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Space do
   defp extract_unit_from_class(class) do
     case Regex.run(~r/\[(.+)\]$/, class) do
       [_, value] ->
-        case Utils.parse_number_and_unit(value) do
+        case VisualEditor.parse_number_and_unit(value) do
           {:ok, _, unit} -> unit
           _ -> "px"
         end
@@ -235,7 +235,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Space do
     type_abbrev = String.first(type)
     side_abbrev = String.first(side)
 
-    case Utils.parse_integer_or_float(value) do
+    case VisualEditor.parse_integer_or_float(value) do
       {:ok, 0} ->
         nil
 
@@ -255,7 +255,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Space do
     # Handle arbitrary values like [1rem] or [17px]
     case Regex.run(~r/\[(.+)\]$/, class) do
       [_, value] ->
-        case Utils.parse_number_and_unit(value) do
+        case VisualEditor.parse_number_and_unit(value) do
           {:ok, number, _} -> to_string(number)
           _ -> nil
         end

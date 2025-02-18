@@ -1,5 +1,6 @@
 defmodule Beacon.LiveAdmin.VisualEditor.SpaceControl do
   @moduledoc false
+
   use Beacon.LiveAdmin.Web, :live_component
   import Beacon.LiveAdmin.VisualEditor.Components
   import Beacon.LiveAdmin.VisualEditor.Components.InputWithUnits

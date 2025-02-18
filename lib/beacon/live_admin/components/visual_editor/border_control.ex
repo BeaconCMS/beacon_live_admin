@@ -1,6 +1,6 @@
 defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
   @moduledoc false
-  require Logger
+
   use Beacon.LiveAdmin.Web, :live_component
   import Beacon.LiveAdmin.VisualEditor.Components
   import Beacon.LiveAdmin.VisualEditor.Components.InputWithUnits
