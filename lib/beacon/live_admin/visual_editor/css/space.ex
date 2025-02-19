@@ -24,23 +24,33 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Space do
   }
 
   def extract_space_properties(element) do
+    # Extract all units first
+    margin_top_unit = extract_space_unit(element, "margin", "top")
+    margin_right_unit = extract_space_unit(element, "margin", "right")
+    margin_bottom_unit = extract_space_unit(element, "margin", "bottom")
+    margin_left_unit = extract_space_unit(element, "margin", "left")
+    padding_top_unit = extract_space_unit(element, "padding", "top")
+    padding_right_unit = extract_space_unit(element, "padding", "right")
+    padding_bottom_unit = extract_space_unit(element, "padding", "bottom")
+    padding_left_unit = extract_space_unit(element, "padding", "left")
+
     %{
-      "margin_top" => extract_space_value(element, "margin", "top"),
-      "margin_top_unit" => extract_space_unit(element, "margin", "top"),
-      "margin_right" => extract_space_value(element, "margin", "right"),
-      "margin_right_unit" => extract_space_unit(element, "margin", "right"),
-      "margin_bottom" => extract_space_value(element, "margin", "bottom"),
-      "margin_bottom_unit" => extract_space_unit(element, "margin", "bottom"),
-      "margin_left" => extract_space_value(element, "margin", "left"),
-      "margin_left_unit" => extract_space_unit(element, "margin", "left"),
-      "padding_top" => extract_space_value(element, "padding", "top"),
-      "padding_top_unit" => extract_space_unit(element, "padding", "top"),
-      "padding_right" => extract_space_value(element, "padding", "right"),
-      "padding_right_unit" => extract_space_unit(element, "padding", "right"),
-      "padding_bottom" => extract_space_value(element, "padding", "bottom"),
-      "padding_bottom_unit" => extract_space_unit(element, "padding", "bottom"),
-      "padding_left" => extract_space_value(element, "padding", "left"),
-      "padding_left_unit" => extract_space_unit(element, "padding", "left")
+      "margin_top" => extract_space_value(element, "margin", "top", margin_top_unit),
+      "margin_top_unit" => margin_top_unit,
+      "margin_right" => extract_space_value(element, "margin", "right", margin_right_unit),
+      "margin_right_unit" => margin_right_unit,
+      "margin_bottom" => extract_space_value(element, "margin", "bottom", margin_bottom_unit),
+      "margin_bottom_unit" => margin_bottom_unit,
+      "margin_left" => extract_space_value(element, "margin", "left", margin_left_unit),
+      "margin_left_unit" => margin_left_unit,
+      "padding_top" => extract_space_value(element, "padding", "top", padding_top_unit),
+      "padding_top_unit" => padding_top_unit,
+      "padding_right" => extract_space_value(element, "padding", "right", padding_right_unit),
+      "padding_right_unit" => padding_right_unit,
+      "padding_bottom" => extract_space_value(element, "padding", "bottom", padding_bottom_unit),
+      "padding_bottom_unit" => padding_bottom_unit,
+      "padding_left" => extract_space_value(element, "padding", "left", padding_left_unit),
+      "padding_left_unit" => padding_left_unit
     }
   end
 
@@ -135,7 +145,9 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Space do
     end
   end
 
-  defp extract_space_value(element, type, side) do
+  defp extract_space_value(_element, _type, _side, unit) when unit not in ["px", "rem", "em", "%"], do: nil
+  defp extract_space_value(element, type, side, _unit) do
+
     classes = VisualEditor.element_classes(element)
     side_abbrev = String.first(side)
     type_str = String.first(type)
@@ -155,6 +167,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Space do
 
     # Try to find all-sides class (e.g., p-2)
     all_sides_class = Enum.find(classes, &String.starts_with?(&1, "#{type_str}-"))
+
     # Use the most specific class available
     case {specific_class, axis_class, all_sides_class} do
       {nil, nil, nil} -> 0
@@ -187,7 +200,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Space do
 
     # Use the most specific class available to determine the unit
     case {specific_class, axis_class, all_sides_class} do
-      {nil, nil, nil} -> "px"
+      {nil, nil, nil} -> nil
       {specific, _, _} when not is_nil(specific) -> extract_unit_from_class(specific)
       {_, axis, _} when not is_nil(axis) -> extract_unit_from_class(axis)
       {_, _, all} when not is_nil(all) -> extract_unit_from_class(all)
@@ -195,13 +208,24 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Space do
   end
 
   defp extract_unit_from_class(class) do
-    case Regex.run(~r/\[(.+)\]$/, class) do
-      [_, value] ->
-        case Utils.parse_number_and_unit(value) do
-          {:ok, _, unit} -> unit
+    cond do
+      # For classes with arbitrary values like p-[2rem] or py-[1px]
+      String.contains?(class, "[") ->
+        case Regex.run(~r/\[(.+)\]$/, class) do
+          [_, value] ->
+            case Utils.parse_number_and_unit(value) do
+              {:ok, _, unit} -> unit
+              _ -> "px"
+            end
           _ -> "px"
         end
-      _ -> "px"
+
+      # For standard classes like pb-2, py-2, p-2
+      Regex.match?(~r/-\d+$/, class) ->
+        [_, value] = Regex.run(~r/-(\d+)$/, class)
+        value
+
+      true -> "px"
     end
   end
 
