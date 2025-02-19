@@ -7,26 +7,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.SpaceControl do
   alias Beacon.LiveAdmin.VisualEditor.Css.Space
 
   @space_units ~w(px rem em %)
-  @space_sizes [
-    {"0", "0"},
-    {"1", "1"},
-    {"2", "2"},
-    {"3", "3"},
-    {"4", "4"},
-    {"5", "5"},
-    {"6", "6"},
-    {"8", "8"},
-    {"10", "10"},
-    {"12", "12"},
-    {"16", "16"},
-    {"20", "20"},
-    {"24", "24"},
-    {"32", "32"},
-    {"40", "40"},
-    {"48", "48"},
-    {"56", "56"},
-    {"64", "64"}
-  ]
+  @space_sizes ~w(0 1 2 3 4 5 6 8 10 12 16 20 24 32 40 48 56 64)
 
   def mount(socket) do
     {:ok, assign(socket,

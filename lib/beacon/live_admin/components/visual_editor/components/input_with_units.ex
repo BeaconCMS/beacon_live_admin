@@ -27,8 +27,8 @@ defmodule Beacon.LiveAdmin.VisualEditor.Components.InputWithUnits do
       <select name={@name <> "_unit"} class="appearance-none bg-none bg-transparent border-none pr-1 pl-2 text-sm focus:ring-0">
         <%= if length(@sizes) > 0 do %>
           <optgroup label="Sizes">
-            <option :for={{label, value} <- @sizes} value={value} selected={@value_unit == value}>
-              <%= label %>
+            <option :for={size <- @sizes} value={get_value(size)} selected={@value_unit == get_value(size)}>
+              <%= get_label(size) %>
             </option>
           </optgroup>
         <% end %>
@@ -43,4 +43,9 @@ defmodule Beacon.LiveAdmin.VisualEditor.Components.InputWithUnits do
     </div>
     """
   end
+
+  defp get_value({_, value}), do: value
+  defp get_value(value), do: value
+  defp get_label({label, _}), do: label
+  defp get_label(label), do: label
 end

@@ -28,7 +28,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
     "3xl" => 1.5,
     "9999" => "full"
   }
-  @tailwind_sizes ~w(0 1 2 3 4 5 6 7 8)
+  @tailwind_sizes ~w(0 1 2 4 8)
   @css_units ~w(px rem em %)
 
   @type border_params :: %{
@@ -73,6 +73,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
     bottom_left_radius = extract_border_radius(element, "bottom-left", bottom_left_radius_unit)
 
     width_unit = extract_border_width_unit(element, nil)
+    Logger.info("########### extract_border_properties width_unit: #{inspect(width_unit)}")
     width = extract_border_width(element, nil, width_unit)
     top_width_unit = extract_border_width_unit(element, "top")
     top_width = extract_border_width(element, "top", top_width_unit)
@@ -149,8 +150,10 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
     end)
   end
 
-  defp extract_border_width(_element, _side, width_unit) when width_unit in ~w(1 2 3 4 5 6 7 8 %), do: nil
+  defp extract_border_width(_element, _side, width_unit) when width_unit in @tailwind_sizes, do: nil
   defp extract_border_width(element, nil, _width_unit) do
+    Logger.info("########### extract_border_width 1: #{inspect(element)}")
+    Logger.info("########### extract_border_width 2: #{inspect(_width_unit)}")
     classes = VisualEditor.element_classes(element)
 
     # First check for specific width classes (0-16)
@@ -311,30 +314,43 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
 
     # Define which class prefixes to look for based on the side
     prefixes = case side do
-      nil -> ["border-[", "border "]
-      "top" -> ["border-t-[", "border-t ", "border-y-[", "border-y "]
-      "bottom" -> ["border-b-[", "border-b ", "border-y-[", "border-y "]
-      "left" -> ["border-l-[", "border-l ", "border-x-[", "border-x "]
-      "right" -> ["border-r-[", "border-r ", "border-x-[", "border-x "]
+      nil -> ["border-"]
+      "top" -> ["border-t-", "border-y-"]
+      "bottom" -> ["border-b-", "border-y-"]
+      "left" -> ["border-l-", "border-x-"]
+      "right" -> ["border-r-", "border-x-"]
     end
 
-    # Find first matching class with arbitrary units
-    arbitrary_class = Enum.find(classes, fn class ->
+    # Find first matching class
+    matching_class = Enum.find(classes, fn class ->
       Enum.any?(prefixes, &String.starts_with?(class, &1))
     end)
 
-    case arbitrary_class do
-      nil ->
-        # Default Tailwind border classes use pixels
-        "px"
+    case matching_class do
+      nil -> "px"  # Default when no border class is found
       class ->
-        case Regex.run(~r/\[(.+)\]$/, class) do
-          [_, value] ->
-            case Utils.parse_number_and_unit(value) do
-              {:ok, _, unit} -> unit
-              {:error, _} -> "px"
+        cond do
+          # For classes with arbitrary values like border-[2rem]
+          String.contains?(class, "[") ->
+            case Regex.run(~r/\[(.+)\]$/, class) do
+              [_, value] ->
+                Logger.info("########### extract_border_width_unit 4: #{inspect(class)}")
+                case Utils.parse_number_and_unit(value) do
+                  {:ok, _, unit} ->
+                    Logger.info("########### extract_border_width_unit 5: #{inspect(class)}")
+                    unit
+                  _ -> "px"
+                end
+              _ -> "px"
             end
-          _ -> "px"
+
+          # For standard classes like border-2, border-y-4, etc.
+          Regex.match?(~r/-\d+$/, class) ->
+            Logger.info("########### extract_border_width_unit 6: #{inspect(class)}")
+            [_, value] = Regex.run(~r/-(\d+)$/, class)
+            value
+
+          true -> "px"
         end
     end
   end
@@ -390,21 +406,20 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
   end
 
   defp generate_global_border_class(width, unit) do
-    case {width, unit} do
+    tmp = case {width, unit} do
+      {_, unit} when unit in @tailwind_sizes ->
+        ["border-#{unit}"]
       {nil, _} -> []
       {_, nil} -> []
       {"0", _} -> []
       {width, "px"} ->
         # For pixel units, use standard Tailwind classes when possible
-        if width in @tailwind_sizes do
-          ["border-#{width}"]
-        else
-          ["border-[#{width}px]"]
-        end
+        ["border-[#{width}px]"]
       {width, unit} ->
         # For other units, always use arbitrary values
         ["border-[#{width}#{unit}]"]
     end
+    tmp
   end
 
   # Handle nil cases
@@ -416,7 +431,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
       {:ok, 0} -> nil
       {:ok, _} ->
         prefix =  "border-#{String.first(side)}"
-        if unit == "px" and width in ~w(1 2 3 4 5 6 7 8) do
+        if unit == "px" and width in @tailwind_sizes do
           "#{prefix}-#{width}"
         else
           "#{prefix}-[#{width}#{unit}]"

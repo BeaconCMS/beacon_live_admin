@@ -22,7 +22,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
     {"3xl", "3xl"},
     {"full", "full"}
   ]
-  @border_width_sizes []
+  @border_width_sizes ~w(0 1 2 4 8)
   # Units for custom sizes
   @border_radius_units ~w(px rem em %)
   @border_width_units ~w(px rem em %)
