@@ -39,6 +39,8 @@ defmodule Beacon.LiveAdmin.RolesLive.Index do
   def handle_event("validate", params, socket) do
     %{beacon_page: %{site: site}, form: form} = socket.assigns
 
+    params = format_capabilities_param(params)
+
     changeset =
       site
       |> Auth.change_role(form.source.data, params["role"])
@@ -58,11 +60,11 @@ defmodule Beacon.LiveAdmin.RolesLive.Index do
     attrs = %{
       site: site,
       name: name,
-      code: Auth.default_role_capabilities(site)
+      capabilities: Auth.default_role_capabilities(site)
     }
 
     socket =
-      case Auth.create_role(site, actor, attrs) |> IO.inspect() do
+      case Auth.create_role(site, actor, attrs) do
         {:ok, %{id: role_id}} ->
           socket
           |> assign(roles: Auth.list_roles(site))
@@ -77,11 +79,13 @@ defmodule Beacon.LiveAdmin.RolesLive.Index do
     {:noreply, socket}
   end
 
-  def handle_event("save_changes", %{"role" => params}, socket) do
+  def handle_event("save_changes", params, socket) do
     %{selected: selected, beacon_page: %{site: site}, __beacon_actor__: actor} = socket.assigns
 
+    params = format_capabilities_param(params)
+
     socket =
-      case Auth.update_role(site, actor, selected, params) do
+      case Auth.update_role(site, actor, selected, params["role"]) do
         {:ok, updated_role} ->
           socket
           |> assign_role_update(updated_role)
@@ -174,6 +178,15 @@ defmodule Beacon.LiveAdmin.RolesLive.Index do
     assign(socket, form: to_form(changeset))
   end
 
+  defp format_capabilities_param(params) do
+    capabilities =
+      params["role"]["capabilities"]
+      |> Enum.filter(fn {_k, v} -> v == "true" end)
+      |> Enum.map(fn {k, _v} -> k end)
+
+    put_in(params, ["role", "capabilities"], capabilities)
+  end
+
   def render(assigns) do
     ~H"""
     <div>
@@ -225,18 +238,39 @@ defmodule Beacon.LiveAdmin.RolesLive.Index do
             </.table>
           </div>
 
-          <div :if={@form} class="w-full col-span-2">
-            <.form :let={f} for={@form} id="role-form" class="flex items-start gap-4 mb-2" phx-change="validate" phx-submit="save_changes">
-              <.input label="Name" field={f[:name]} type="text" />
-              <.button phx-disable-with="Saving..." class="sui-primary ml-auto">Save Changes</.button>
-              <.button id="delete-role-button" type="button" phx-click="delete" class="sui-primary-destructive">Delete</.button>
-            </.form>
+          <div :if={@form} class="w-full col-span-2 mb-6">
+            <.form for={@form} id="role-form" phx-change="validate" phx-submit="save_changes">
+              <div class="flex items-start gap-4 mb-8">
+                <.input label="Name" field={@form[:name]} type="text" />
+                <.button phx-disable-with="Saving..." class="sui-primary ml-auto">Save Changes</.button>
+                <.button id="delete-role-button" type="button" phx-click="delete" class="sui-primary-destructive">Delete</.button>
+              </div>
 
-            <div class="w-full mt-2 space-y-8"></div>
+              <div class="text-xl font-bold">Capabilities</div>
+              <div class="mt-8 space-y-4">
+                <div :for={capability <- Beacon.Auth.list_capabilities()} class="w-1/3">
+                  <.checkbox id={"capability-checkbox-#{capability}"} name={"role[capabilities][#{capability}]"} value={to_string(capability) in @form[:capabilities].value}>
+                    <:label>{format_capability(capability)}</:label>
+                  </.checkbox>
+                </div>
+              </div>
+            </.form>
           </div>
         </div>
       </.main_content>
     </div>
     """
+  end
+
+  defp format_capability(a) when is_atom(a), do: format_capability(to_string(a))
+
+  defp format_capability(str) when is_binary(str) do
+    str
+    |> String.split("_")
+    |> Enum.map(fn
+      word when word in ~w(for from) -> word
+      other -> String.capitalize(other)
+    end)
+    |> Enum.intersperse(" ")
   end
 end
