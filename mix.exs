@@ -72,7 +72,10 @@ defmodule Beacon.LiveAdmin.MixProject do
       # Dev, Test, Docs
       {:bandit, "~> 1.0", only: [:dev, :e2e], optional: true},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
-      {:ex_doc, "~> 0.29", only: :dev, runtime: false}
+      {:ex_doc, "~> 0.29", only: :dev},
+      {:makeup_elixir, "~> 1.0.1 or ~> 1.1", only: :dev},
+      {:makeup_eex, "~> 2.0", only: :dev},
+      {:makeup_syntect, "~> 0.1", only: :dev}
     ]
   end
 
