@@ -6,7 +6,6 @@ defmodule Beacon.LiveAdmin.VisualEditor.OpacityControl do
   alias Beacon.LiveAdmin.VisualEditor
   alias Beacon.LiveAdmin.VisualEditor.Components.ControlSection
 
-
   def render(assigns) do
     ~H"""
     <div id={@id}>

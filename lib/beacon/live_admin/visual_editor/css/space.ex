@@ -2,26 +2,26 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Space do
   alias Beacon.LiveAdmin.VisualEditor
   alias Beacon.LiveAdmin.VisualEditor.Utils
   require Logger
-  @type space_params :: %{
-    required(String.t()) => String.t(),
-    optional(:margin_top) => String.t(),
-    optional(:margin_top_unit) => String.t(),
-    optional(:margin_right) => String.t(),
-    optional(:margin_right_unit) => String.t(),
-    optional(:margin_bottom) => String.t(),
-    optional(:margin_bottom_unit) => String.t(),
-    optional(:margin_left) => String.t(),
-    optional(:margin_left_unit) => String.t(),
 
-    optional(:padding_top) => String.t(),
-    optional(:padding_top_unit) => String.t(),
-    optional(:padding_right) => String.t(),
-    optional(:padding_right_unit) => String.t(),
-    optional(:padding_bottom) => String.t(),
-    optional(:padding_bottom_unit) => String.t(),
-    optional(:padding_left) => String.t(),
-    optional(:padding_left_unit) => String.t()
-  }
+  @type space_params :: %{
+          required(String.t()) => String.t(),
+          optional(:margin_top) => String.t(),
+          optional(:margin_top_unit) => String.t(),
+          optional(:margin_right) => String.t(),
+          optional(:margin_right_unit) => String.t(),
+          optional(:margin_bottom) => String.t(),
+          optional(:margin_bottom_unit) => String.t(),
+          optional(:margin_left) => String.t(),
+          optional(:margin_left_unit) => String.t(),
+          optional(:padding_top) => String.t(),
+          optional(:padding_top_unit) => String.t(),
+          optional(:padding_right) => String.t(),
+          optional(:padding_right_unit) => String.t(),
+          optional(:padding_bottom) => String.t(),
+          optional(:padding_bottom_unit) => String.t(),
+          optional(:padding_left) => String.t(),
+          optional(:padding_left_unit) => String.t()
+        }
 
   def extract_space_properties(element) do
     # Extract all units first
@@ -59,11 +59,12 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Space do
     type_abbrev = String.first(type)
 
     # Get all values and units for the given type (padding or margin)
-    values_and_units = Enum.map(sides, fn side ->
-      value = params["#{type}_#{side}"]
-      unit = params["#{type}_#{side}_unit"]
-      {side, value, unit}
-    end)
+    values_and_units =
+      Enum.map(sides, fn side ->
+        value = params["#{type}_#{side}"]
+        unit = params["#{type}_#{side}_unit"]
+        {side, value, unit}
+      end)
 
     simplify_classes(values_and_units, type, type_abbrev)
   end
@@ -82,17 +83,18 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Space do
       map_size(grouped) in 2..3 ->
         {x_axis, y_axis} = axis_values(values_and_units)
 
-        axis_classes = []
+        []
         |> maybe_add_axis_class(x_axis, type_abbrev, "x")
         |> maybe_add_axis_class(y_axis, type_abbrev, "y")
         |> then(fn classes ->
-          remaining = values_and_units
-          |> Enum.reject(fn {side, value, unit} ->
-            axis_covered?(side, value, unit, x_axis, y_axis)
-          end)
-          |> Enum.map(fn {side, value, unit} ->
-            generate_space_class(value, unit, type, side)
-          end)
+          remaining =
+            values_and_units
+            |> Enum.reject(fn {side, value, unit} ->
+              axis_covered?(side, value, unit, x_axis, y_axis)
+            end)
+            |> Enum.map(fn {side, value, unit} ->
+              generate_space_class(value, unit, type, side)
+            end)
 
           classes ++ remaining
         end)
@@ -129,6 +131,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Space do
   end
 
   defp maybe_add_axis_class(classes, nil, _type_abbrev, _axis), do: classes
+
   defp maybe_add_axis_class(classes, {value, unit}, type_abbrev, axis) do
     case generate_space_class(value, unit, type_abbrev, axis) do
       nil -> classes
@@ -146,24 +149,26 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Space do
   end
 
   defp extract_space_value(_element, _type, _side, unit) when unit not in ["px", "rem", "em", "%"], do: nil
-  defp extract_space_value(element, type, side, _unit) do
 
+  defp extract_space_value(element, type, side, _unit) do
     classes = VisualEditor.element_classes(element)
     side_abbrev = String.first(side)
     type_str = String.first(type)
 
     # Try to find the most specific class first (e.g., pt-2, pr-2)
-    specific_class = Enum.find(classes, fn class ->
-      String.starts_with?(class, "#{type_str}#{side_abbrev}-")
-    end)
+    specific_class =
+      Enum.find(classes, fn class ->
+        String.starts_with?(class, "#{type_str}#{side_abbrev}-")
+      end)
 
     # Try to find axis-based class (e.g., px-2, py-2)
-    axis_class = case side do
-      "left" -> Enum.find(classes, &String.starts_with?(&1, "#{type_str}x-"))
-      "right" -> Enum.find(classes, &String.starts_with?(&1, "#{type_str}x-"))
-      "top" -> Enum.find(classes, &String.starts_with?(&1, "#{type_str}y-"))
-      "bottom" -> Enum.find(classes, &String.starts_with?(&1, "#{type_str}y-"))
-    end
+    axis_class =
+      case side do
+        "left" -> Enum.find(classes, &String.starts_with?(&1, "#{type_str}x-"))
+        "right" -> Enum.find(classes, &String.starts_with?(&1, "#{type_str}x-"))
+        "top" -> Enum.find(classes, &String.starts_with?(&1, "#{type_str}y-"))
+        "bottom" -> Enum.find(classes, &String.starts_with?(&1, "#{type_str}y-"))
+      end
 
     # Try to find all-sides class (e.g., p-2)
     all_sides_class = Enum.find(classes, &String.starts_with?(&1, "#{type_str}-"))
@@ -183,17 +188,19 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Space do
     type_str = String.first(type)
 
     # Try to find the most specific class first (e.g., pt-2, pr-[1rem])
-    specific_class = Enum.find(classes, fn class ->
-      String.starts_with?(class, "#{type_str}#{side_abbrev}-")
-    end)
+    specific_class =
+      Enum.find(classes, fn class ->
+        String.starts_with?(class, "#{type_str}#{side_abbrev}-")
+      end)
 
     # Try to find axis-based class (e.g., px-2, py-[1rem])
-    axis_class = case side do
-      "left" -> Enum.find(classes, &String.starts_with?(&1, "#{type_str}x-"))
-      "right" -> Enum.find(classes, &String.starts_with?(&1, "#{type_str}x-"))
-      "top" -> Enum.find(classes, &String.starts_with?(&1, "#{type_str}y-"))
-      "bottom" -> Enum.find(classes, &String.starts_with?(&1, "#{type_str}y-"))
-    end
+    axis_class =
+      case side do
+        "left" -> Enum.find(classes, &String.starts_with?(&1, "#{type_str}x-"))
+        "right" -> Enum.find(classes, &String.starts_with?(&1, "#{type_str}x-"))
+        "top" -> Enum.find(classes, &String.starts_with?(&1, "#{type_str}y-"))
+        "bottom" -> Enum.find(classes, &String.starts_with?(&1, "#{type_str}y-"))
+      end
 
     # Try to find all-sides class (e.g., p-2, p-[1rem])
     all_sides_class = Enum.find(classes, &String.starts_with?(&1, "#{type_str}-"))
@@ -217,7 +224,9 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Space do
               {:ok, _, unit} -> unit
               _ -> "px"
             end
-          _ -> "px"
+
+          _ ->
+            "px"
         end
 
       # For standard classes like pb-2, py-2, p-2
@@ -225,25 +234,31 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Space do
         [_, value] = Regex.run(~r/-(\d+)$/, class)
         value
 
-      true -> "px"
+      true ->
+        "px"
     end
   end
 
   defp generate_space_class(nil, _unit, _type, _side), do: nil
   defp generate_space_class(_value, nil, _type, _side), do: nil
+
   defp generate_space_class(value, unit, type, side) do
     type_abbrev = String.first(type)
     side_abbrev = String.first(side)
 
     case Utils.parse_integer_or_float(value) do
-      {:ok, 0} -> nil
+      {:ok, 0} ->
+        nil
+
       {:ok, number} ->
         if unit == "px" and to_string(number) in ~w(0 1 2 3 4 5 6 8 10 12 16 20 24 32 40 48 56 64) do
           "#{type_abbrev}#{side_abbrev}-#{number}"
         else
           "#{type_abbrev}#{side_abbrev}-[#{number}#{unit}]"
         end
-      :error -> nil
+
+      :error ->
+        nil
     end
   end
 
@@ -255,6 +270,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Space do
           {:ok, number, _} -> to_string(number)
           _ -> nil
         end
+
       nil ->
         # Handle standard values like p-2, px-2, etc.
         case Regex.run(~r/-(\d+)$/, class) do

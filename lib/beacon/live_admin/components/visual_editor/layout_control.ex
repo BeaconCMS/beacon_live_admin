@@ -77,16 +77,17 @@ defmodule Beacon.LiveAdmin.VisualEditor.LayoutControl do
   ]
 
   def mount(socket) do
-    {:ok, assign(socket,
-      display_options: @display_options,
-      flex_direction_options: @flex_direction_options,
-      flex_wrap_options: @flex_wrap_options,
-      align_items_options: @align_items_options,
-      justify_content_options: @justify_content_options,
-      align_content_options: @align_content_options,
-      gap_sizes: @gap_sizes,
-      gap_units: @gap_units
-    )}
+    {:ok,
+     assign(socket,
+       display_options: @display_options,
+       flex_direction_options: @flex_direction_options,
+       flex_wrap_options: @flex_wrap_options,
+       align_items_options: @align_items_options,
+       justify_content_options: @justify_content_options,
+       align_content_options: @align_content_options,
+       gap_sizes: @gap_sizes,
+       gap_units: @gap_units
+     )}
   end
 
   def update(%{element: element} = assigns, socket) do
@@ -99,7 +100,8 @@ defmodule Beacon.LiveAdmin.VisualEditor.LayoutControl do
   end
 
   def render(assigns) do
-    assigns = assigns
+    assigns =
+      assigns
       |> assign(:is_flex?, assigns.form.params["display"] in ["flex", "inline-flex"])
 
     ~H"""
@@ -170,12 +172,12 @@ defmodule Beacon.LiveAdmin.VisualEditor.LayoutControl do
             <div class="space-y-4">
               <div class="grid grid-cols-2 items-center gap-x-2">
                 <label class="text-xs">Row Gap</label>
-                <.input_with_units name="row_gap" value={@form.params["row_gap"]} value_unit={@form.params["row_gap_unit"]} sizes={@gap_sizes} units={@gap_units}/>
+                <.input_with_units name="row_gap" value={@form.params["row_gap"]} value_unit={@form.params["row_gap_unit"]} sizes={@gap_sizes} units={@gap_units} />
               </div>
 
               <div class="grid grid-cols-2 items-center gap-x-2">
                 <label class="text-xs">Column Gap</label>
-                <.input_with_units name="column_gap" value={@form.params["column_gap"]} value_unit={@form.params["column_gap_unit"]} sizes={@gap_sizes} units={@gap_units}/>
+                <.input_with_units name="column_gap" value={@form.params["column_gap"]} value_unit={@form.params["column_gap_unit"]} sizes={@gap_sizes} units={@gap_units} />
               </div>
             </div>
           <% end %>
@@ -187,14 +189,16 @@ defmodule Beacon.LiveAdmin.VisualEditor.LayoutControl do
 
   def handle_event("update_layout", params, socket) do
     new_classes = Layout.generate_layout_classes(params)
-    classes = socket.assigns.element
-    |> VisualEditor.delete_classes(~r/^(block|inline|inline-block|hidden|flex|inline-flex)$/)
-    |> VisualEditor.delete_classes(~r/^flex-(row|row-reverse|col|col-reverse|wrap|wrap-reverse|nowrap)$/)
-    |> VisualEditor.delete_classes(~r/^items-(start|end|center|baseline|stretch)$/)
-    |> VisualEditor.delete_classes(~r/^justify-(start|end|center|between|around|evenly)$/)
-    |> VisualEditor.delete_classes(~r/^content-(start|end|center|between|around|evenly)$/)
-    |> VisualEditor.delete_classes(~r/^(row|col)-gap-(\d+|\[.+\])$/)
-    |> VisualEditor.merge_class(Enum.join(new_classes, " "))
+
+    classes =
+      socket.assigns.element
+      |> VisualEditor.delete_classes(~r/^(block|inline|inline-block|hidden|flex|inline-flex)$/)
+      |> VisualEditor.delete_classes(~r/^flex-(row|row-reverse|col|col-reverse|wrap|wrap-reverse|nowrap)$/)
+      |> VisualEditor.delete_classes(~r/^items-(start|end|center|baseline|stretch)$/)
+      |> VisualEditor.delete_classes(~r/^justify-(start|end|center|between|around|evenly)$/)
+      |> VisualEditor.delete_classes(~r/^content-(start|end|center|between|around|evenly)$/)
+      |> VisualEditor.delete_classes(~r/^(row|col)-gap-(\d+|\[.+\])$/)
+      |> VisualEditor.merge_class(Enum.join(new_classes, " "))
 
     send(self(), {:element_changed, {socket.assigns.element["path"], %{updated: %{"attrs" => %{"class" => classes}}}}})
 

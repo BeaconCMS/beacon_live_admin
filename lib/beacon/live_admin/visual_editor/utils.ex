@@ -7,11 +7,13 @@ defmodule Beacon.LiveAdmin.VisualEditor.Utils do
       [{start, length} | _] ->
         # Extract the numeric part and the remaining text
         numeric_part = String.slice(string, start, length)
-        remaining_text = String.slice(string, start + length..-1)
+        remaining_text = String.slice(string, (start + length)..-1)
 
         # Try parsing as integer first
         case Integer.parse(numeric_part) do
-          {int, ""} -> {:ok, int, remaining_text}
+          {int, ""} ->
+            {:ok, int, remaining_text}
+
           _ ->
             # If not an integer, parse as float
             case Float.parse(numeric_part) do
@@ -19,6 +21,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Utils do
               _ -> {:error, :not_a_number}
             end
         end
+
       _ ->
         {:error, :not_a_number}
     end
@@ -26,7 +29,9 @@ defmodule Beacon.LiveAdmin.VisualEditor.Utils do
 
   def parse_integer_or_float(string) do
     case Integer.parse(string) do
-      {int, ""} -> {:ok, int}
+      {int, ""} ->
+        {:ok, int}
+
       _ ->
         case Float.parse(string) do
           {float, ""} -> {:ok, float}
