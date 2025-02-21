@@ -11,7 +11,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Components do
     ~H"""
     <section class="p-4 border-b border-b-gray-100 border-solid group">
       <div class="mb-2 flex items-center justify-between">
-        <label :if={@label} class="block font-medium text-sm/5"><%= @label %></label>
+        <label :if={@label} class="block font-bold text-sm/5"><%= @label %></label>
         <div :if={@header != []} class="ml-auto opacity-0 group-hover:opacity-100 transition-opacity duration-300">
           <%= render_slot(@header) %>
         </div>
