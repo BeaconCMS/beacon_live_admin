@@ -7,6 +7,7 @@ defmodule Beacon.LiveAdmin.EventHandlerEditorLive.IndexTest do
     on_exit(fn ->
       rpc(node1(), MyApp.Repo, :delete_all, [Beacon.Content.ErrorPage, [log: false]])
       rpc(node1(), MyApp.Repo, :delete_all, [Beacon.Content.Layout, [log: false]])
+      rpc(node1(), MyApp.Repo, :delete_all, [Beacon.Content.EventHandler, [log: false]])
     end)
 
     :ok

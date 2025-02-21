@@ -116,6 +116,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.NameValueControl do
 end
 
 defmodule Beacon.LiveAdmin.VisualEditor.NameValue do
+  @moduledoc false
   use Ecto.Schema
   use Phoenix.Component
   import Ecto.Changeset

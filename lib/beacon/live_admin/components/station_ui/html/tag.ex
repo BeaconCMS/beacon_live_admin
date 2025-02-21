@@ -1,10 +1,7 @@
 defmodule Beacon.LiveAdmin.StationUI.HTML.Tag do
-  @moduledoc """
-
-  For bordered tags, add "border-2"
-
-  For rounded tags, add "rounded-full py-1"
-  """
+  @moduledoc false
+  # For bordered tags, add "border-2"
+  # For rounded tags, add "rounded-full py-1"
   use Phoenix.Component
 
   import Beacon.LiveAdmin.StationUI.HTML.Icon, only: [icon: 1]

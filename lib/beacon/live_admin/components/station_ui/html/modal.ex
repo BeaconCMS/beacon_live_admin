@@ -1,4 +1,5 @@
 defmodule Beacon.LiveAdmin.StationUI.HTML.Modal do
+  @moduledoc false
   use Phoenix.Component
 
   import Beacon.LiveAdmin.StationUI.HTML.Button

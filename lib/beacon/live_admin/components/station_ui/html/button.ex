@@ -1,7 +1,8 @@
 defmodule Beacon.LiveAdmin.StationUI.HTML.Button do
+  @moduledoc false
   use Phoenix.Component
 
-  @moduledoc """
+  @doc """
   The button component renders a <button> element with options for text-only, icon-only, or a combination of both.
 
   Use the default slot to pass in text or large icons for buttons.

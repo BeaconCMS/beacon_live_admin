@@ -1,32 +1,29 @@
 defmodule Beacon.LiveAdmin.StationUI.HTML.Avatar do
+  @moduledoc false
   use Phoenix.Component
 
   import Beacon.LiveAdmin.StationUI.HTML.StatusBadge, only: [status_badge: 1]
 
-  @moduledoc """
-  The avatar component renders initials, an SVG, or an image thumbnail to represent a user.
-  Avatars can be displayed as single items or combined into a horizontal stack.
+  # The avatar component renders initials, an SVG, or an image thumbnail to represent a user.
+  # Avatars can be displayed as single items or combined into a horizontal stack.
 
-  Sets up an avatar stack.
+  # ## Stack Example
 
-  ## Stack Example
+  #   <.avatar_stack overflow_link={~p"/avatars/link"} display_max={2}>
+  #     <:avatar>
+  #       <.avatar .../>
+  #     </:avatar>
+  #     <:avatar>
+  #       <.avatar .../>
+  #     </:avatar>
+  #     <:avatar>
+  #       <.avatar .../>
+  #     </:avatar>
+  #     <:avatar>
+  #       <.avatar .../>
+  #     </:avatar>
+  #   <.avatar_stack>
 
-    <.avatar_stack overflow_link={~p"/avatars/link"} display_max={2}>
-      <:avatar>
-        <.avatar .../>
-      </:avatar>
-      <:avatar>
-        <.avatar .../>
-      </:avatar>
-      <:avatar>
-        <.avatar .../>
-      </:avatar>
-      <:avatar>
-        <.avatar .../>
-      </:avatar>
-    <.avatar_stack>
-
-  """
   @stack_base_classes [
     "flex items-start [&_div]:flex [&_div]:flex-row-reverse",
     "[&>a]:z-20 [&>a]:hover:z-40 [&_div_a_figure]:z-10",

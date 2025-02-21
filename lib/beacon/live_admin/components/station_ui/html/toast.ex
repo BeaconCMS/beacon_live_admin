@@ -1,4 +1,5 @@
 defmodule Beacon.LiveAdmin.StationUI.HTML.Toast do
+  @moduledoc false
   use Phoenix.Component
 
   @base_classes ~w{
