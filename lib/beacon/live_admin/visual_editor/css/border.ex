@@ -9,25 +9,6 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
     "bottom-right" => "br",
     "bottom-left" => "bl"
   }
-  # @tailwind_border_radius_rems %{
-  #   "0" => "none",
-  #   "none" => 0,
-  #   "0.125" => "sm",
-  #   "sm" => 0.125,
-  #   "0.25" => "DEFAULT",
-  #   "DEFAULT" => 0.25,
-  #   "0.375" => "md",
-  #   "md" => 0.375,
-  #   "0.5" => "lg",
-  #   "lg" => 0.5,
-  #   "0.75" => "xl",
-  #   "xl" => 0.75,
-  #   "1" => "2xl",
-  #   "2xl" => 1,
-  #   "1.5" => "3xl",
-  #   "3xl" => 1.5,
-  #   "9999" => "full"
-  # }
   @tailwind_sizes ~w(0 1 2 4 8)
   @css_units ~w(px rem em %)
 
@@ -515,6 +496,20 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
 
   def generate_border_radius_classes(params, expanded_radius_controls) do
     case {expanded_radius_controls, params} do
+      {_,
+       %{
+         "top_left_radius" => radius,
+         "top_left_radius_unit" => unit,
+         "top_right_radius" => radius,
+         "top_right_radius_unit" => unit,
+         "bottom_right_radius" => radius,
+         "bottom_right_radius_unit" => unit,
+         "bottom_left_radius" => radius,
+         "bottom_left_radius_unit" => unit
+       }} ->
+        # All corners have the same radius and unit, so we can use the global class
+        [generate_custom_border_radius_class(radius, unit)]
+
       {true,
        %{
          "top_left_radius" => tlr,
@@ -527,10 +522,10 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
          "bottom_left_radius_unit" => blr_unit
        }} ->
         [
-          generate_custom_border_radius_class(tlr, tlr_unit),
-          generate_custom_border_radius_class(trr, trr_unit),
-          generate_custom_border_radius_class(brr, brr_unit),
-          generate_custom_border_radius_class(blr, blr_unit)
+          generate_custom_border_radius_class(tlr, tlr_unit, "top-left"),
+          generate_custom_border_radius_class(trr, trr_unit, "top-right"),
+          generate_custom_border_radius_class(brr, brr_unit, "bottom-right"),
+          generate_custom_border_radius_class(blr, blr_unit, "bottom-left")
         ]
 
       {true,
@@ -553,27 +548,15 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
       {_, %{"radius_unit" => radius_unit}} ->
         [generate_simple_border_radius_class(radius_unit)]
     end
+    |> Enum.reject(&is_nil/1)
   end
 
-  defp generate_custom_border_radius_class("", radius_unit) when radius_unit in ~w(px rem em %) do
-    nil
-  end
-
-  defp generate_custom_border_radius_class(radius, radius_unit) when radius_unit in ~w(px rem em %) and is_binary(radius) do
-    case Utils.parse_integer_or_float(radius) do
-      {:ok, radius_value} -> "rounded-[#{radius_value}#{radius_unit}]"
-      :error -> nil
-    end
-  end
-
+  defp generate_custom_border_radius_class(nil, nil), do: nil
   defp generate_custom_border_radius_class(_, "DEFAULT"), do: "rounded"
-
-  defp generate_custom_border_radius_class(radius, radius_unit, corner \\ nil) when radius_unit in ~w(px rem em %) and is_integer(radius) do
-    case corner do
-      nil -> "rounded-[#{radius}#{radius_unit}]"
-      corner -> "rounded-#{@corner_abbreviations[corner]}-[#{radius}#{radius_unit}]"
-    end
-  end
+  defp generate_custom_border_radius_class(radius, radius_unit, corner \\ nil)
+  defp generate_custom_border_radius_class(_, "DEFAULT", corner), do: "rounded-#{@corner_abbreviations[corner]}"
+  defp generate_custom_border_radius_class(_radius, radius_unit, nil), do: "rounded-#{radius_unit}"
+  defp generate_custom_border_radius_class(_radius, radius_unit, corner), do: "rounded-#{@corner_abbreviations[corner]}-#{radius_unit}"
 
   defp generate_simple_border_radius_class(radius_unit) do
     case radius_unit do
@@ -585,7 +568,6 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
 
   defp generate_simple_border_radius_class(radius_unit, corner) do
     corner_abbrev = @corner_abbreviations[corner]
-
     case radius_unit do
       "DEFAULT" -> "rounded-#{corner_abbrev}"
       radius_unit when radius_unit in ~w(px rem em %) -> generate_custom_border_radius_class(0, radius_unit, corner)
