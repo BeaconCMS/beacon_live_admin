@@ -40,7 +40,6 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
 
   def update(%{element: element} = assigns, socket) do
     values = Border.extract_border_properties(element)
-
     {:ok,
      socket
      |> assign(assigns)
