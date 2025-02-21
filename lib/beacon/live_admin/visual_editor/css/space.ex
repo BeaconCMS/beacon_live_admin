@@ -3,6 +3,8 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Space do
   alias Beacon.LiveAdmin.VisualEditor.Utils
   require Logger
 
+  @tailwind_sizes ~w(0 1 2 3 4 5 6 8 10 12 16 20 24 32 40 48 56 64)
+
   @type space_params :: %{
           required(String.t()) => String.t(),
           optional(:margin_top) => String.t(),
@@ -72,7 +74,6 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Space do
   defp simplify_classes(values_and_units, type, type_abbrev) do
     # Group by value and unit to check if we can coalesce
     grouped = Enum.group_by(values_and_units, fn {_side, value, unit} -> {value, unit} end)
-
     cond do
       # All sides are the same
       map_size(grouped) == 1 ->
@@ -95,13 +96,13 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Space do
             |> Enum.map(fn {side, value, unit} ->
               generate_space_class(value, unit, type, side)
             end)
-
           classes ++ remaining
         end)
         |> Enum.reject(&is_nil/1)
 
       # Default to individual sides
       true ->
+        Logger.info("DEFAULT condition")
         values_and_units
         |> Enum.map(fn {side, value, unit} ->
           generate_space_class(value, unit, type, side)
@@ -239,8 +240,18 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Space do
     end
   end
 
-  defp generate_space_class(nil, _unit, _type, _side), do: nil
   defp generate_space_class(_value, nil, _type, _side), do: nil
+  defp generate_space_class(nil, unit, type, side) do
+    type_abbrev = String.first(type)
+    side_abbrev = String.first(side)
+    prefix = "#{type_abbrev}#{side_abbrev}"
+    case unit do
+      nil -> nil
+      unit when unit == "0" -> nil
+      unit when unit in @tailwind_sizes -> "#{prefix}-#{unit}"
+      unit -> "#{prefix}-[0#{unit}]"
+    end
+  end
 
   defp generate_space_class(value, unit, type, side) do
     type_abbrev = String.first(type)
@@ -251,7 +262,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Space do
         nil
 
       {:ok, number} ->
-        if unit == "px" and to_string(number) in ~w(0 1 2 3 4 5 6 8 10 12 16 20 24 32 40 48 56 64) do
+        if unit == "px" and to_string(number) in @tailwind_sizes do
           "#{type_abbrev}#{side_abbrev}-#{number}"
         else
           "#{type_abbrev}#{side_abbrev}-[#{number}#{unit}]"
