@@ -179,7 +179,9 @@ defmodule Beacon.LiveAdmin.Router do
       {"/hooks/:id", Beacon.LiveAdmin.JSHookEditorLive.Index, :index, %{}},
       # auth
       {"/roles", Beacon.LiveAdmin.RolesLive.Index, :index, %{}},
-      {"/roles/:id", Beacon.LiveAdmin.RolesLive.Index, :index, %{}}
+      {"/roles/:id", Beacon.LiveAdmin.RolesLive.Index, :index, %{}},
+      {"/actors", Beacon.LiveAdmin.ActorsLive.Index, :index, %{}},
+      {"/actors/:id", Beacon.LiveAdmin.ActorsLive.Index, :index, %{}}
     ]
     |> Enum.concat(additional_pages)
     |> Enum.map(fn {path, module, live_action, opts} ->

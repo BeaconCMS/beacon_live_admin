@@ -19,7 +19,7 @@ defmodule Beacon.LiveAdmin.PageLive do
 
     sites = Beacon.LiveAdmin.Cluster.running_sites()
 
-    actor = Beacon.LiveAdmin.Client.Auth.get_actor(site, session)
+    actor = Beacon.LiveAdmin.Client.Auth.get_actor(site, session |> IO.inspect(label: "session")) |> IO.inspect(label: "actor")
 
     current_url =
       Map.get(session, "beacon_live_admin_page_url") ||
@@ -193,6 +193,8 @@ defmodule Beacon.LiveAdmin.PageLive do
           {_, "/hooks"} -> false
           {"/roles", _} -> true
           {_, "/roles"} -> false
+          {"/actors", _} -> true
+          {_, "/actors"} -> false
           {a, b} -> a <= b
         end
       end)
