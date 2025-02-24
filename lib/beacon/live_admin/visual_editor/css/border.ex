@@ -568,6 +568,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
 
   defp generate_simple_border_radius_class(radius_unit, corner) do
     corner_abbrev = @corner_abbreviations[corner]
+
     case radius_unit do
       "base" -> "rounded-#{corner_abbrev}"
       radius_unit when radius_unit in ~w(px rem em %) -> generate_custom_border_radius_class(0, radius_unit, corner)
