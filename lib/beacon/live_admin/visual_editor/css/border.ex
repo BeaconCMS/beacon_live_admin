@@ -273,7 +273,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
     case radius_class do
       # Case 1: basic "rounded" class
       "rounded" ->
-        "DEFAULT"
+        "base"
 
       # Case 2: predefined sizes like "rounded-sm" or "rounded-2xl"
       "rounded-" <> size when size in ~w(none sm md lg xl 2xl 3xl full) ->
@@ -328,7 +328,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
         size
 
       "rounded-" <> <<^corner_abbrev::binary>> ->
-        "DEFAULT"
+        "base"
 
       _ ->
         extract_border_radius_unit(element)
@@ -552,15 +552,15 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
   end
 
   defp generate_custom_border_radius_class(nil, nil), do: nil
-  defp generate_custom_border_radius_class(_, "DEFAULT"), do: "rounded"
+  defp generate_custom_border_radius_class(_, "base"), do: "rounded"
   defp generate_custom_border_radius_class(radius, radius_unit, corner \\ nil)
-  defp generate_custom_border_radius_class(_, "DEFAULT", corner), do: "rounded-#{@corner_abbreviations[corner]}"
+  defp generate_custom_border_radius_class(_, "base", corner), do: "rounded-#{@corner_abbreviations[corner]}"
   defp generate_custom_border_radius_class(_radius, radius_unit, nil), do: "rounded-#{radius_unit}"
   defp generate_custom_border_radius_class(_radius, radius_unit, corner), do: "rounded-#{@corner_abbreviations[corner]}-#{radius_unit}"
 
   defp generate_simple_border_radius_class(radius_unit) do
     case radius_unit do
-      "DEFAULT" -> "rounded"
+      "base" -> "rounded"
       radius_unit when radius_unit in ~w(px rem em %) -> generate_custom_border_radius_class(0, radius_unit)
       radius_unit -> "rounded-#{radius_unit}"
     end
@@ -569,7 +569,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
   defp generate_simple_border_radius_class(radius_unit, corner) do
     corner_abbrev = @corner_abbreviations[corner]
     case radius_unit do
-      "DEFAULT" -> "rounded-#{corner_abbrev}"
+      "base" -> "rounded-#{corner_abbrev}"
       radius_unit when radius_unit in ~w(px rem em %) -> generate_custom_border_radius_class(0, radius_unit, corner)
       radius_unit -> "rounded-#{corner_abbrev}-#{radius_unit}"
     end

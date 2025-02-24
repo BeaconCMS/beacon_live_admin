@@ -11,17 +11,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
   @border_colors ~w(Default gray-200 red-200 blue-200 green-200 yellow-200 purple-200)
 
   # Define Tailwind border radius sizes in order
-  @border_radius_sizes [
-    {"none", "none"},
-    {"sm", "sm"},
-    {"-", "DEFAULT"},
-    {"md", "md"},
-    {"lg", "lg"},
-    {"xl", "xl"},
-    {"2xl", "2xl"},
-    {"3xl", "3xl"},
-    {"full", "full"}
-  ]
+  @border_radius_sizes ~w(none sm base md lg xl 2xl 3xl full)
   @border_width_sizes ~w(0 1 2 4 8)
   # Units for custom sizes
   @border_radius_units ~w(px rem em %)
