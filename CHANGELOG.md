@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.4.1 (2025-02-20)
+
+### Enhancements
+  - Added `:session` option to `beacon_live_admin/2`
+
+### Fixes
+  - Properly forwards and execute `on_mount` hooks on pages
+  - Remove StationUI components from docs
+  - Remove VisualEditor components from docs
+  - Compiler warning for unreachable `cond` clause in dev env
+
 ## 0.4.0 (2025-02-12)
 
 ### Enhancements
