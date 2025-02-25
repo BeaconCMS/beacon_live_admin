@@ -496,6 +496,7 @@ defmodule Beacon.LiveAdmin.StationUI.HTML.Input do
     attr :class, :string, doc: @select_option_default_classes
     attr :disabled, :boolean
     attr :value, :string, required: true
+    attr :label, :string
   end
 
   def single_select(assigns) do
@@ -535,7 +536,7 @@ defmodule Beacon.LiveAdmin.StationUI.HTML.Input do
           <input
             readonly
             name={@name}
-            value={@value}
+            value={label_for_value(@value, @option)}
             aria-haspopup="listbox"
             aria-expanded="false"
             role="combobox"
@@ -586,7 +587,7 @@ defmodule Beacon.LiveAdmin.StationUI.HTML.Input do
                   |> JS.exec("data-close-select", to: "##{@wrapper_id}")
                 }
               >
-                <%= option[:value] %>
+                <%= option[:label] || option[:value] %>
               </button>
             </li>
           </ul>
@@ -598,6 +599,18 @@ defmodule Beacon.LiveAdmin.StationUI.HTML.Input do
       </:caption>
     </.input_wrapper>
     """
+  end
+
+  defp label_for_value(value, options) do
+    IO.inspect(value, label: "value")
+
+    case Enum.find(options, fn option ->
+           IO.inspect(option, label: "option")
+           option[:value] == value
+         end) do
+      nil -> value
+      option -> option[:label]
+    end
   end
 
   @doc """

@@ -23,6 +23,10 @@ defmodule Beacon.LiveAdmin.Client.Auth do
     call(site, Beacon.Auth, :get_actor_roles, [site, actor_ids, opts])
   end
 
+  def set_role_for_actor(site, actor_id, role, opts \\ []) do
+    call(site, Beacon.Auth, :set_role_for_actor, [actor_id, role, opts])
+  end
+
   def change_role(site, role, attrs \\ %{}) do
     call(site, Beacon.Auth, :change_role, [role, attrs])
   end
