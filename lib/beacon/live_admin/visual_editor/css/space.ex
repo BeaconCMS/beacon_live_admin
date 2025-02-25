@@ -1,29 +1,10 @@
 defmodule Beacon.LiveAdmin.VisualEditor.Css.Space do
-  alias Beacon.LiveAdmin.VisualEditor
-  alias Beacon.LiveAdmin.VisualEditor.Utils
+  @moduledoc false
+
   require Logger
+  alias Beacon.LiveAdmin.VisualEditor
 
   @tailwind_sizes ~w(0 1 2 3 4 5 6 8 10 12 16 20 24 32 40 48 56 64)
-
-  @type space_params :: %{
-          required(String.t()) => String.t(),
-          optional(:margin_top) => String.t(),
-          optional(:margin_top_unit) => String.t(),
-          optional(:margin_right) => String.t(),
-          optional(:margin_right_unit) => String.t(),
-          optional(:margin_bottom) => String.t(),
-          optional(:margin_bottom_unit) => String.t(),
-          optional(:margin_left) => String.t(),
-          optional(:margin_left_unit) => String.t(),
-          optional(:padding_top) => String.t(),
-          optional(:padding_top_unit) => String.t(),
-          optional(:padding_right) => String.t(),
-          optional(:padding_right_unit) => String.t(),
-          optional(:padding_bottom) => String.t(),
-          optional(:padding_bottom_unit) => String.t(),
-          optional(:padding_left) => String.t(),
-          optional(:padding_left_unit) => String.t()
-        }
 
   def extract_space_properties(element) do
     # Extract all units first
@@ -224,7 +205,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Space do
       String.contains?(class, "[") ->
         case Regex.run(~r/\[(.+)\]$/, class) do
           [_, value] ->
-            case Utils.parse_number_and_unit(value) do
+            case VisualEditor.parse_number_and_unit(value) do
               {:ok, _, unit} -> unit
               _ -> "px"
             end
@@ -262,7 +243,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Space do
     type_abbrev = String.first(type)
     side_abbrev = String.first(side)
 
-    case Utils.parse_integer_or_float(value) do
+    case VisualEditor.parse_integer_or_float(value) do
       {:ok, 0} ->
         nil
 
@@ -282,7 +263,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Space do
     # Handle arbitrary values like [1rem] or [17px]
     case Regex.run(~r/\[(.+)\]$/, class) do
       [_, value] ->
-        case Utils.parse_number_and_unit(value) do
+        case VisualEditor.parse_number_and_unit(value) do
           {:ok, number, _} -> to_string(number)
           _ -> nil
         end

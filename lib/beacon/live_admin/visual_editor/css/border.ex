@@ -1,46 +1,25 @@
 defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
-  alias Beacon.LiveAdmin.VisualEditor
-  alias Beacon.LiveAdmin.VisualEditor.Utils
+  @moduledoc false
+
   require Logger
+  alias Beacon.LiveAdmin.VisualEditor
+
   @border_colors ~w(gray-500 red-500 blue-500 green-500 yellow-500 purple-500)
+
   @corner_abbreviations %{
     "top-left" => "tl",
     "top-right" => "tr",
     "bottom-right" => "br",
     "bottom-left" => "bl"
   }
+
   @tailwind_sizes ~w(0 1 2 4 8)
+
   @css_units ~w(px rem em %)
 
-  @type border_params :: %{
-          required(String.t()) => String.t(),
-          optional(:top_width) => String.t(),
-          optional(:top_width_unit) => String.t(),
-          optional(:right_width) => String.t(),
-          optional(:right_width_unit) => String.t(),
-          optional(:bottom_width) => String.t(),
-          optional(:bottom_width_unit) => String.t(),
-          optional(:left_width) => String.t(),
-          optional(:left_width_unit) => String.t(),
-          optional(:top_left_radius) => String.t(),
-          optional(:top_left_radius_unit) => String.t(),
-          optional(:top_right_radius) => String.t(),
-          optional(:top_right_radius_unit) => String.t(),
-          optional(:bottom_right_radius) => String.t(),
-          optional(:bottom_right_radius_unit) => String.t(),
-          optional(:bottom_left_radius) => String.t(),
-          optional(:bottom_left_radius_unit) => String.t(),
-          style: String.t(),
-          color: String.t(),
-          width: String.t(),
-          width_unit: String.t(),
-          radius: String.t(),
-          radius_unit: String.t()
-        }
-
-  #
-  # Extract border properties from tailwind classes
-  #
+  @doc """
+  Extract border properties from tailwind classes
+  """
   def extract_border_properties(element) do
     radius_unit = extract_border_radius_unit(element)
     radius = extract_border_radius(element, nil, radius_unit)
@@ -185,7 +164,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
         pattern = ~r/^border-(?:#{side_abbrev}|[xy])-\[(\d+(?:\.\d+)?#{width_unit})\]$/
 
         case Regex.run(pattern, class) do
-          [_, value] -> Utils.parse_number_and_unit(value) |> elem(1)
+          [_, value] -> VisualEditor.parse_number_and_unit(value) |> elem(1)
           _ -> nil
         end
       end)
@@ -236,7 +215,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
     case radius_class do
       class when is_binary(class) ->
         case Regex.run(~r/\[(.+)\]$/, class) do
-          [_, value] -> Utils.parse_number_and_unit(value) |> elem(1)
+          [_, value] -> VisualEditor.parse_number_and_unit(value) |> elem(1)
           _ -> nil
         end
 
@@ -256,7 +235,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
     case corner_class do
       class when is_binary(class) ->
         case Regex.run(~r/\[(.+)\]$/, class) do
-          [_, value] -> Utils.parse_number_and_unit(value) |> elem(1)
+          [_, value] -> VisualEditor.parse_number_and_unit(value) |> elem(1)
           _ -> nil
         end
 
@@ -283,7 +262,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
       class when is_binary(class) ->
         case Regex.run(~r/^rounded-\[(.+)\]$/, class) do
           [_, name] ->
-            case Utils.parse_number_and_unit(name) do
+            case VisualEditor.parse_number_and_unit(name) do
               {:ok, _, unit} -> unit
               {:error, _} -> nil
             end
@@ -314,7 +293,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
       "rounded-" <> <<^corner_abbrev::binary, "-[", rest::binary>> ->
         case Regex.run(~r/^(.+)\]$/, rest) do
           [_, name] ->
-            case Utils.parse_number_and_unit(name) do
+            case VisualEditor.parse_number_and_unit(name) do
               {:ok, _, unit} -> unit
               {:error, _} -> nil
             end
@@ -365,7 +344,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
           String.contains?(class, "[") ->
             case Regex.run(~r/\[(.+)\]$/, class) do
               [_, value] ->
-                case Utils.parse_number_and_unit(value) do
+                case VisualEditor.parse_number_and_unit(value) do
                   {:ok, _, unit} ->
                     unit
 
@@ -388,9 +367,9 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
     end
   end
 
-  #
-  # Generate tailwind classes from css properties
-  #
+  @doc """
+  Generate tailwind classes from css properties
+  """
   def generate_border_classes(params, false) do
     case {params["style"], params["width"]} do
       {style, "0"} when style != "none" ->
@@ -477,7 +456,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
   defp generate_border_class(_width, nil, _side), do: nil
   # Handle custom widths
   defp generate_border_class(width, unit, side) do
-    case Utils.parse_integer_or_float(width) do
+    case VisualEditor.parse_integer_or_float(width) do
       {:ok, 0} ->
         nil
 

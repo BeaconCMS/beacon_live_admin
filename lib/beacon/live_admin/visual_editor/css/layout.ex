@@ -1,20 +1,7 @@
 defmodule Beacon.LiveAdmin.VisualEditor.Css.Layout do
-  alias Beacon.LiveAdmin.VisualEditor
-  alias Beacon.LiveAdmin.VisualEditor.Utils
+  @moduledoc false
 
-  @type layout_params :: %{
-          required(String.t()) => String.t(),
-          optional(:display) => String.t(),
-          optional(:flex_direction) => String.t(),
-          optional(:flex_wrap) => String.t(),
-          optional(:align_items) => String.t(),
-          optional(:justify_content) => String.t(),
-          optional(:align_content) => String.t(),
-          optional(:row_gap) => String.t(),
-          optional(:row_gap_unit) => String.t(),
-          optional(:column_gap) => String.t(),
-          optional(:column_gap_unit) => String.t()
-        }
+  alias Beacon.LiveAdmin.VisualEditor
 
   def extract_layout_properties(element) do
     classes = VisualEditor.element_classes(element)
@@ -57,7 +44,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Layout do
       class ->
         case Regex.run(~r/\[(.+)\]$/, class) do
           [_, value] ->
-            case Utils.parse_number_and_unit(value) do
+            case VisualEditor.parse_number_and_unit(value) do
               {:ok, number, _} -> to_string(number)
               _ -> nil
             end
@@ -85,7 +72,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Layout do
       class ->
         case Regex.run(~r/\[(.+)\]$/, class) do
           [_, value] ->
-            case Utils.parse_number_and_unit(value) do
+            case VisualEditor.parse_number_and_unit(value) do
               {:ok, _, unit} -> unit
               _ -> "px"
             end
@@ -129,7 +116,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Layout do
   defp generate_gap_class(_value, nil, _type), do: nil
 
   defp generate_gap_class(value, unit, type) do
-    case Utils.parse_integer_or_float(value) do
+    case VisualEditor.parse_integer_or_float(value) do
       {:ok, 0} ->
         nil
 

@@ -1,9 +1,10 @@
 defmodule Beacon.LiveAdmin.VisualEditor.SpaceControl do
   @moduledoc false
+
   use Beacon.LiveAdmin.Web, :live_component
-  alias Beacon.LiveAdmin.VisualEditor.Components.ControlSection
   import Beacon.LiveAdmin.VisualEditor.Components.InputWithUnits
   alias Beacon.LiveAdmin.VisualEditor
+  alias Beacon.LiveAdmin.VisualEditor.Components.ControlSection
   alias Beacon.LiveAdmin.VisualEditor.Css.Space
 
   @space_units ~w(px rem em %)

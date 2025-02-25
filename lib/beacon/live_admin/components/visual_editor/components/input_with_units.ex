@@ -1,4 +1,6 @@
 defmodule Beacon.LiveAdmin.VisualEditor.Components.InputWithUnits do
+  @moduledoc false
+
   use Phoenix.Component
 
   attr :name, :string, required: true
