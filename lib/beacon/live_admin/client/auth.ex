@@ -50,4 +50,8 @@ defmodule Beacon.LiveAdmin.Client.Auth do
   def delete_role(site, actor, role) do
     call(site, Beacon.Auth, :delete_role, [role, [actor: actor]])
   end
+
+  def list_capabilities(site) do
+    call(site, Beacon.Auth, :list_capabilities, [])
+  end
 end
