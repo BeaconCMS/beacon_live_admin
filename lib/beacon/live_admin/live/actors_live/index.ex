@@ -90,19 +90,6 @@ defmodule Beacon.LiveAdmin.ActorsLive.Index do
           <.form id={"actor-#{actor.id}-role-form"} for={@forms[actor.id]} phx-change="validate" phx-submit="update_role">
             <.input type="hidden" name="actor_id" value={actor.id} />
             <div class="flex gap-x-8">
-              <%!-- <.single_select
-                    id={"actor-#{actor.id}-role-select"}
-                    name="role_id"
-                    value={@forms[actor.id][:role_id].value}
-                    class="text-sm p-2 pr-[30px] focus:ring-2"
-                    error_class="mt-0 first-of-type:mt-1 text-xs"
-                    option_list_id={"actor-#{actor.id}-role-select-options"}
-                    option_list_class="text-xs"
-                    chevron_class="right-2 h-4 w-4"
-                  >
-                    <:label id={"actor-#{actor.id}-role-select-label"} class="mb-1 text-xs">Test Label</:label>
-                    <:option :for={role <- @roles} value={role.id} label={role.name} class="px-3 py-2" />
-                  </.single_select> --%>
               <select id={"actor-#{actor.id}-role-select"} name="role_id">
                 <option value=""></option>
                 <option :for={role <- @roles} value={role.id} selected={@forms[actor.id][:role_id].value == role.id}>
