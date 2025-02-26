@@ -72,13 +72,13 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.Slots do
   end
 
   def handle_event("save_changes", %{"component_slot" => params}, socket) do
-    %{component: component, selected: selected, beacon_page: %{site: site}} = socket.assigns
+    %{component: component, selected: selected, beacon_page: %{site: site}, __beacon_actor__: actor} = socket.assigns
 
     component_slots_names = component.slots |> Enum.reject(&(&1.id == selected.id)) |> Enum.map(& &1.name)
     params = format_options_input(params)
 
     socket =
-      case Content.update_slot_for_component(site, component, selected, params, component_slots_names) do
+      case Content.update_slot_for_component(site, actor, component, selected, params, component_slots_names) do
         {:ok, updated_component} ->
           path = beacon_live_admin_path(socket, site, "/components/#{updated_component.id}/slots/#{selected.id}")
           push_navigate(socket, to: path)
@@ -92,12 +92,12 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.Slots do
   end
 
   def handle_event("create_new", _params, socket) do
-    %{component: component, beacon_page: %{site: site}} = socket.assigns
+    %{component: component, beacon_page: %{site: site}, __beacon_actor__: actor} = socket.assigns
     selected = socket.assigns.selected || %{id: nil}
 
     random_string = Ecto.UUID.generate() |> String.slice(0..5)
     attrs = %{name: "new_slot_#{random_string}"}
-    {:ok, updated_component} = Content.create_slot_for_component(site, component, attrs)
+    {:ok, updated_component} = Content.create_slot_for_component(site, actor, component, attrs)
 
     path = beacon_live_admin_path(socket, site, "/components/#{updated_component.id}/slots/#{selected.id}")
     socket = push_navigate(socket, to: path)
@@ -106,10 +106,10 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.Slots do
   end
 
   def handle_event("delete_slot_attr", %{"attr_id" => slot_attr_id}, socket) do
-    %{component: component, selected: slot, beacon_page: %{site: site}} = socket.assigns
+    %{component: component, selected: slot, beacon_page: %{site: site}, __beacon_actor__: actor} = socket.assigns
     slot_attr = Enum.find(slot.attrs, &(&1.id == slot_attr_id))
 
-    {:ok, _slot_attr} = Content.delete_slot_attr(site, slot_attr)
+    {:ok, _slot_attr} = Content.delete_slot_attr(site, actor, slot_attr)
 
     path = beacon_live_admin_path(socket, site, "/components/#{component.id}/slots/#{slot.id}")
     socket = push_navigate(socket, to: path)
@@ -122,10 +122,10 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.Slots do
   end
 
   def handle_event("delete_confirm", _, socket) do
-    %{selected: slot, component: component, beacon_page: %{site: site}} = socket.assigns
+    %{selected: slot, component: component, beacon_page: %{site: site}, __beacon_actor__: actor} = socket.assigns
     path = beacon_live_admin_path(socket, site, "/components/#{component.id}/slots")
 
-    {:ok, _} = Content.delete_slot_from_component(site, component, slot)
+    {:ok, _} = Content.delete_slot_from_component(site, actor, component, slot)
 
     {:noreply, push_navigate(socket, to: path)}
   end

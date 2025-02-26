@@ -90,12 +90,12 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Assigns do
   end
 
   def handle_event("save_changes", %{"live_data_assign" => params}, socket) do
-    %{selected: selected, live_data: %{site: site} = live_data} = socket.assigns
+    %{selected: selected, live_data: %{site: site} = live_data, __beacon_actor__: actor} = socket.assigns
 
     attrs = %{key: params["key"], value: params["value"], format: params["format"]}
 
     socket =
-      case Content.update_live_data_assign(site, selected, attrs) do
+      case Content.update_live_data_assign(site, actor, selected, attrs) do
         {:ok, live_data_assign} ->
           path =
             beacon_live_admin_path(
@@ -123,12 +123,12 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Assigns do
   end
 
   def handle_event("submit_new", params, socket) do
-    %{live_data: %{site: site} = live_data, selected: selected} = socket.assigns
+    %{live_data: %{site: site} = live_data, selected: selected, __beacon_actor__: actor} = socket.assigns
     selected = selected || %{id: nil}
 
     attrs = %{key: params["key"], value: "Your value here", format: :text}
     # TODO: handle errors
-    {:ok, updated_live_data} = Content.create_assign_for_live_data(site, live_data, attrs)
+    {:ok, updated_live_data} = Content.create_assign_for_live_data(site, actor, live_data, attrs)
 
     socket =
       socket
@@ -143,9 +143,9 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Assigns do
   end
 
   def handle_event("delete_confirm", _, socket) do
-    %{selected: selected, live_data: %{site: site} = live_data} = socket.assigns
+    %{selected: selected, live_data: %{site: site} = live_data, __beacon_actor__: actor} = socket.assigns
 
-    {:ok, _} = Content.delete_live_data_assign(site, selected)
+    {:ok, _} = Content.delete_live_data_assign(site, actor, selected)
 
     {:noreply,
      push_navigate(socket,

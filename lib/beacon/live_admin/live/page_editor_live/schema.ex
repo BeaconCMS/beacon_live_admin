@@ -28,10 +28,10 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Schema do
   end
 
   def handle_event("save", _, socket) do
-    page = socket.assigns.page
+    %{page: page, __beacon_actor__: actor} = socket.assigns
     attrs = %{"raw_schema" => socket.assigns.raw_schema}
 
-    case Content.update_page(page.site, page, attrs) do
+    case Content.update_page(page.site, actor, page, attrs) do
       {:ok, page} ->
         changeset = Content.change_page(page.site, page)
 
@@ -39,6 +39,9 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Schema do
          socket
          |> assign_form(changeset)
          |> put_flash(:info, "Page updated successfully")}
+
+      {:error, :not_authorized} ->
+        {:noreply, put_flash(socket, :error, "Not authorized to update Page")}
 
       {:error, changeset} ->
         {message, _} = Keyword.fetch!(changeset.errors, :raw_schema)

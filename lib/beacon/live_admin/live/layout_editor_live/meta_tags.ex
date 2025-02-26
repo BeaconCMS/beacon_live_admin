@@ -33,7 +33,9 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.MetaTags do
   end
 
   def save(layout, meta_tags, socket) do
-    case Content.update_layout(layout.site, layout, meta_tags) do
+    %{__beacon_actor__: actor} = socket.assigns
+
+    case Content.update_layout(layout.site, actor, layout, meta_tags) do
       {:ok, layout} ->
         changeset = Content.change_layout(layout.site, layout)
 
@@ -42,6 +44,9 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.MetaTags do
          |> assign(:beacon_layout, layout)
          |> assign_field(changeset)
          |> put_flash(:info, "Layout updated successfully")}
+
+      {:error, :not_authorized} ->
+        {:noreply, put_flash(socket, :error, "Not authorized to update Layout")}
 
       {:error, changeset} ->
         {:noreply, assign_field(socket, changeset)}

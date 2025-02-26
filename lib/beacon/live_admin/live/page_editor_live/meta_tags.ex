@@ -33,7 +33,9 @@ defmodule Beacon.LiveAdmin.PageEditorLive.MetaTags do
   end
 
   def save(page, meta_tags, socket) do
-    case Content.update_page(page.site, page, meta_tags) do
+    %{__beacon_actor__: actor} = socket.assigns
+
+    case Content.update_page(page.site, actor, page, meta_tags) do
       {:ok, page} ->
         changeset = Content.change_page(page.site, page)
 
@@ -42,6 +44,9 @@ defmodule Beacon.LiveAdmin.PageEditorLive.MetaTags do
          |> assign(:page, page)
          |> assign_field(changeset)
          |> put_flash(:info, "Page updated successfully")}
+
+      {:error, :not_authorized} ->
+        {:noreply, put_flash(socket, :error, "Not authorized to update Page")}
 
       {:error, changeset} ->
         {:noreply, assign_field(socket, changeset)}

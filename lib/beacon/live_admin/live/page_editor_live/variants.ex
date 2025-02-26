@@ -74,12 +74,12 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
   end
 
   def handle_event("save_changes", %{"page_variant" => params}, socket) do
-    %{page: page, selected: selected, beacon_page: %{site: site}} = socket.assigns
+    %{page: page, selected: selected, beacon_page: %{site: site}, __beacon_actor__: actor} = socket.assigns
 
     attrs = %{name: params["name"], weight: params["weight"], template: params["template"]}
 
     socket =
-      case Content.update_variant_for_page(site, page, selected, attrs) do
+      case Content.update_variant_for_page(site, actor, page, selected, attrs) do
         {:ok, updated_page} ->
           socket
           |> assign(page: updated_page)
@@ -96,11 +96,11 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
   end
 
   def handle_event("create_new", _params, socket) do
-    %{page: page, beacon_page: %{site: site}} = socket.assigns
+    %{page: page, beacon_page: %{site: site}, __beacon_actor__: actor} = socket.assigns
     selected = socket.assigns.selected || %{id: nil}
 
     attrs = %{name: "New Variant", weight: 0, template: page.template}
-    {:ok, updated_page} = Content.create_variant_for_page(site, page, attrs)
+    {:ok, updated_page} = Content.create_variant_for_page(site, actor, page, attrs)
 
     socket =
       socket
@@ -115,10 +115,10 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Variants do
   end
 
   def handle_event("delete_confirm", _, socket) do
-    %{selected: variant, page: page, beacon_page: %{site: site}} = socket.assigns
+    %{selected: variant, page: page, beacon_page: %{site: site}, __beacon_actor__: actor} = socket.assigns
     path = beacon_live_admin_path(socket, site, "/pages/#{page.id}/variants")
 
-    {:ok, _} = Content.delete_variant_from_page(site, page, variant)
+    {:ok, _} = Content.delete_variant_from_page(site, actor, page, variant)
 
     {:noreply, push_navigate(socket, to: path)}
   end

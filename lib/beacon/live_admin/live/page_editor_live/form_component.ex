@@ -143,11 +143,12 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
   end
 
   def handle_event("unpublish", _params, socket) do
-    %{site: site, page: page} = socket.assigns
+    %{site: site, page: page, __beacon_actor__: actor} = socket.assigns
 
     socket =
-      case Content.unpublish_page(page) do
+      case Content.unpublish_page(site, actor, page) do
         {:ok, _page} -> put_flash(socket, :info, "Page unpublished successfully")
+        {:error, :not_authorized} -> put_flash(socket, :error, "Not authorized to unpublish Page")
         {:error, _changeset} -> put_flash(socket, :error, "Something went wrong")
       end
 
@@ -214,23 +215,23 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
   end
 
   defp save(page_params, user_action, socket) do
-    %{site: site, template: template, page: page, live_action: live_action} = socket.assigns
+    %{site: site, template: template, page: page, live_action: live_action, __beacon_actor__: actor} = socket.assigns
     page_params = Map.merge(page_params, %{"site" => site, "template" => template})
 
     save_result =
       case live_action do
-        :new -> Content.create_page(site, page_params)
-        :edit -> Content.update_page(site, page, page_params)
+        :new -> Content.create_page(site, actor, page_params)
+        :edit -> Content.update_page(site, actor, page, page_params)
       end
 
     maybe_publish_fn =
       case user_action do
-        "save" -> fn _, _ -> {:ok, []} end
-        "publish" -> &Content.publish_page/2
+        "save" -> fn _, _, _ -> {:ok, []} end
+        "publish" -> &Content.publish_page/3
       end
 
     with {:ok, page} <- save_result,
-         {:ok, _} <- maybe_publish_fn.(site, page.id) do
+         {:ok, _} <- maybe_publish_fn.(site, actor, page.id) do
       {:noreply,
        socket
        |> assign(page: page, show_modal: nil)
@@ -238,9 +239,8 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
        |> put_flash(:info, "Page #{String.trim_trailing(user_action, "e")}ed successfully")
        |> push_navigate(to: beacon_live_admin_path(socket, site, "/pages/#{page.id}", %{editor: socket.assigns.editor}))}
     else
-      {:error, changeset} ->
-        changeset = Map.put(changeset, :action, :save)
-        {:noreply, assign_form(socket, changeset)}
+      {:error, :not_authorized} -> {:noreply, put_flash(socket, :error, "Not authorized to #{user_action} Page")}
+      {:error, changeset} -> {:noreply, assign_form(socket, Map.put(changeset, :action, :save))}
     end
   end
 

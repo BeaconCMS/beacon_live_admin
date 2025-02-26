@@ -43,10 +43,10 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Index do
   end
 
   def handle_event("submit_path", %{"path" => path}, socket) do
-    %{beacon_page: %{site: site}} = socket.assigns
+    %{beacon_page: %{site: site}, __beacon_actor__: actor} = socket.assigns
 
     socket =
-      case Content.create_live_data(site, %{path: path, site: site}) do
+      case Content.create_live_data(site, actor, %{path: path, site: site}) do
         {:ok, live_data} ->
           socket
           |> assign(live_data_list: Content.live_data_for_site(site))
@@ -60,19 +60,19 @@ defmodule Beacon.LiveAdmin.LiveDataEditorLive.Index do
   end
 
   def handle_event("edit_path", params, socket) do
-    %{beacon_page: %{site: site}, selected: selected} = socket.assigns
+    %{beacon_page: %{site: site}, selected: selected, __beacon_actor__: actor} = socket.assigns
     %{"path" => path} = params
 
-    {:ok, _live_data} = Content.update_live_data_path(site, selected, path)
+    {:ok, _live_data} = Content.update_live_data_path(site, actor, selected, path)
 
     path = beacon_live_admin_path(socket, socket.assigns.beacon_page.site, "/live_data")
     {:noreply, push_navigate(socket, to: path, replace: true)}
   end
 
   def handle_event("delete_path", _params, socket) do
-    %{beacon_page: %{site: site}, selected: selected} = socket.assigns
+    %{beacon_page: %{site: site}, selected: selected, __beacon_actor__: actor} = socket.assigns
 
-    {:ok, _live_data} = Content.delete_live_data(site, selected)
+    {:ok, _live_data} = Content.delete_live_data(site, actor, selected)
 
     path = beacon_live_admin_path(socket, socket.assigns.beacon_page.site, "/live_data")
     {:noreply, push_navigate(socket, to: path, replace: true)}

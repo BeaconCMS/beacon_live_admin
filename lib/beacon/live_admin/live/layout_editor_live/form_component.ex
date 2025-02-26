@@ -31,19 +31,22 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.FormComponent do
   end
 
   def handle_event("publish", %{"id" => id}, socket) do
-    case Content.publish_layout(socket.assigns.site, id) do
+    %{site: site, __beacon_actor__: actor} = socket.assigns
+
+    case Content.publish_layout(site, actor, id) do
       {:ok, _} ->
-        to = beacon_live_admin_path(socket, socket.assigns.site, "/layouts")
+        to = beacon_live_admin_path(socket, site, "/layouts")
 
         {:noreply,
          socket
          |> put_flash(:info, "Layout published successfully")
          |> push_navigate(to: to, replace: true)}
 
+      {:error, :not_authorized} ->
+        {:noreply, put_flash(socket, :error, "Not authorized to publish Layout")}
+
       {:error, _} ->
-        {:noreply,
-         socket
-         |> put_flash(:error, "Failed to publish layout")}
+        {:noreply, put_flash(socket, :error, "Failed to publish layout")}
     end
   end
 
@@ -61,14 +64,19 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.FormComponent do
   end
 
   defp save_layout(socket, :new, layout_params) do
-    case Content.create_layout(socket.assigns.site, layout_params) do
+    %{site: site, __beacon_actor__: actor} = socket.assigns
+
+    case Content.create_layout(site, actor, layout_params) do
       {:ok, layout} ->
-        to = beacon_live_admin_path(socket, socket.assigns.site, "/layouts/#{layout.id}")
+        to = beacon_live_admin_path(socket, site, "/layouts/#{layout.id}")
 
         {:noreply,
          socket
          |> put_flash(:info, "Layout created successfully")
          |> push_patch(to: to)}
+
+      {:error, :not_authorized} ->
+        {:noreply, put_flash(socket, :error, "Not authorized to create Layout")}
 
       {:error, changeset} ->
         changeset = Map.put(changeset, :action, :insert)
@@ -77,15 +85,20 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.FormComponent do
   end
 
   defp save_layout(socket, :edit, layout_params) do
-    case Content.update_layout(socket.assigns.site, socket.assigns.beacon_layout, layout_params) do
-      {:ok, layout} ->
-        changeset = Content.change_layout(socket.assigns.site, layout)
+    %{site: site, __beacon_actor__: actor, beacon_layout: layout} = socket.assigns
+
+    case Content.update_layout(site, actor, layout, layout_params) do
+      {:ok, updated_layout} ->
+        changeset = Content.change_layout(site, updated_layout)
 
         {:noreply,
          socket
-         |> assign(:layout, layout)
+         |> assign(:layout, updated_layout)
          |> assign_form(changeset)
          |> put_flash(:info, "Layout updated successfully")}
+
+      {:error, :not_authorized} ->
+        {:noreply, put_flash(socket, :error, "Not authorized to update Layout")}
 
       {:error, changeset} ->
         changeset = Map.put(changeset, :action, :update)

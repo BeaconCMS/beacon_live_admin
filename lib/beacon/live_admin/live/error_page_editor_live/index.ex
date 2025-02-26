@@ -65,7 +65,7 @@ defmodule Beacon.LiveAdmin.ErrorPageEditorLive.Index do
   end
 
   def handle_event("save_new", params, socket) do
-    %{beacon_page: %{site: site}, layouts: layouts} = socket.assigns
+    %{beacon_page: %{site: site}, layouts: layouts, __beacon_actor__: actor} = socket.assigns
     %{"error_page" => %{"status" => status}} = params
 
     attrs = %{
@@ -76,7 +76,7 @@ defmodule Beacon.LiveAdmin.ErrorPageEditorLive.Index do
     }
 
     socket =
-      case Content.create_error_page(site, attrs) do
+      case Content.create_error_page(site, actor, attrs) do
         {:ok, _} ->
           socket
           |> assign(error_pages: Content.list_error_pages(site))
@@ -92,12 +92,12 @@ defmodule Beacon.LiveAdmin.ErrorPageEditorLive.Index do
   end
 
   def handle_event("save_changes", %{"error_page" => params}, socket) do
-    %{selected: selected, beacon_page: %{site: site}} = socket.assigns
+    %{selected: selected, beacon_page: %{site: site}, __beacon_actor__: actor} = socket.assigns
 
     attrs = %{layout_id: params["layout_id"], template: params["template"]}
 
     socket =
-      case Content.update_error_page(site, selected, attrs) do
+      case Content.update_error_page(site, actor, selected, attrs) do
         {:ok, updated_error_page} ->
           socket
           |> assign_error_page_update(updated_error_page)
@@ -119,9 +119,9 @@ defmodule Beacon.LiveAdmin.ErrorPageEditorLive.Index do
   end
 
   def handle_event("delete_confirm", _, socket) do
-    %{selected: error_page, beacon_page: %{site: site}} = socket.assigns
+    %{selected: error_page, beacon_page: %{site: site}, __beacon_actor__: actor} = socket.assigns
 
-    {:ok, _} = Content.delete_error_page(site, error_page)
+    {:ok, _} = Content.delete_error_page(site, actor, error_page)
 
     socket =
       socket
