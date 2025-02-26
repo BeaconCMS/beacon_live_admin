@@ -75,6 +75,30 @@ defmodule Beacon.LiveAdmin.ActorsLive.Index do
     {:noreply, socket}
   end
 
+  def handle_event("remove_role", params, socket) do
+    %{__beacon_actor__: remover, beacon_page: %{site: site}, forms: forms} = socket.assigns
+    actor_id = params["actor"]
+    form = forms[actor_id]
+
+    updated_form =
+      site
+      |> Auth.change_actor_role(Auth.new_actor_role(site))
+      |> to_form()
+
+    socket =
+      case Auth.remove_role_from_actor(site, remover, actor_id) do
+        :ok ->
+          socket
+          |> update(:forms, &Map.put(&1, actor_id, updated_form))
+          |> put_flash(:info, "Role removed successfully.")
+
+        {:error, _} ->
+          put_flash(socket, :error, "Role removal unsuccessful.")
+      end
+
+    {:noreply, socket}
+  end
+
   def render(assigns) do
     ~H"""
     <div>
@@ -97,6 +121,9 @@ defmodule Beacon.LiveAdmin.ActorsLive.Index do
                 </option>
               </select>
               <.button type="submit">Update</.button>
+              <.button type="button" phx-click="remove_role" phx-value-actor={actor.id} class="sui-primary-destructive">
+                Remove
+              </.button>
             </div>
           </.form>
         </div>
