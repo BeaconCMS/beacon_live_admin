@@ -248,7 +248,7 @@ defmodule Beacon.LiveAdmin.RolesLive.Index do
 
               <div class="text-xl font-bold">Capabilities</div>
               <div class="mt-8 space-y-4">
-                <div :for={capability <- Auth.list_capabilities()} class="w-1/3">
+                <div :for={capability <- Auth.list_capabilities(@beacon_page.site)} class="w-1/3">
                   <.checkbox id={"capability-checkbox-#{capability}"} name={"role[capabilities][#{capability}]"} value={to_string(capability) in @form[:capabilities].value}>
                     <:label>{format_capability(capability)}</:label>
                   </.checkbox>
