@@ -508,7 +508,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
 
   # Handle nil cases
   defp generate_border_class(nil, nil, _side), do: nil
-  defp generate_border_class(nil, unit, side) when unit in @tailwind_sizes, do: "border-#{String.first(side)}-#{unit}"
+  defp generate_border_class(_, unit, side) when unit in @tailwind_sizes, do: "border-#{String.first(side)}-#{unit}"
   defp generate_border_class(nil, unit, side), do: "border-#{String.first(side)}-[0#{unit}]"
   defp generate_border_class(_width, nil, _side), do: nil
   # Handle custom widths
