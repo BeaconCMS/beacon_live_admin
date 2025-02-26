@@ -76,9 +76,8 @@ defmodule Beacon.LiveAdmin.ActorsLive.Index do
   end
 
   def handle_event("remove_role", params, socket) do
-    %{__beacon_actor__: remover, beacon_page: %{site: site}, forms: forms} = socket.assigns
+    %{__beacon_actor__: remover, beacon_page: %{site: site}} = socket.assigns
     actor_id = params["actor"]
-    form = forms[actor_id]
 
     updated_form =
       site
@@ -108,7 +107,7 @@ defmodule Beacon.LiveAdmin.ActorsLive.Index do
 
       <div class="mt-6">
         <div :for={actor <- @actors} class="flex gap-x-8 py-2 even:bg-slate-50 odd:bg-slate-300">
-          <div class="font-bold w-1/4 py-2 pl-2">
+          <div id={"actor-#{actor.id}-label"} class="font-bold w-1/4 py-2 pl-2">
             <%= actor.label %>
           </div>
           <.form id={"actor-#{actor.id}-role-form"} for={@forms[actor.id]} phx-change="validate" phx-submit="update_role">
@@ -121,7 +120,7 @@ defmodule Beacon.LiveAdmin.ActorsLive.Index do
                 </option>
               </select>
               <.button type="submit">Update</.button>
-              <.button type="button" phx-click="remove_role" phx-value-actor={actor.id} class="sui-primary-destructive">
+              <.button id={"actor-#{actor.id}-remove-role-button"} type="button" phx-click="remove_role" phx-value-actor={actor.id} class="sui-primary-destructive">
                 Remove
               </.button>
             </div>

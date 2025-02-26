@@ -92,6 +92,7 @@ if Mix.env() == :test do
         repo: MyApp.Repo,
         endpoint: MyAppWeb.Endpoint,
         router: MyApp.Router,
+        auth_module: MyApp.BeaconAuth,
         extra_page_fields: [
           MyApp.PageField.Type
         ]

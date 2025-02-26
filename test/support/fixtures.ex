@@ -153,4 +153,22 @@ defmodule Beacon.LiveAdmin.Fixtures do
     {:ok, js_hook} = rpc(node, Beacon.Content, :create_js_hook, [attrs])
     js_hook
   end
+
+  def role_fixture(node \\ node1(), attrs \\ %{}) do
+    name = attrs[:name] || "Foo User"
+
+    attrs =
+      Enum.into(attrs, %{
+        site: "site_a",
+        name: name,
+        capabilities: []
+      })
+
+    rpc(node, Beacon.Auth, :create_role!, [attrs, [auth: false]])
+  end
+
+  def actor_role_fixture(node \\ node1(), actor_id, role) do
+    {:ok, actor_role} = rpc(node, Beacon.Auth, :set_role_for_actor, [actor_id, role, [auth: false]])
+    actor_role
+  end
 end

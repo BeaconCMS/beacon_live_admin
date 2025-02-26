@@ -46,6 +46,22 @@ defmodule MyAppWeb.Endpoint do
   plug MyApp.Router
 end
 
+defmodule MyApp.BeaconAuth do
+  @behaviour Beacon.Auth
+
+  def actor_from_session(_session) do
+    {"90909", "Owner"}
+  end
+
+  def list_actors do
+    [{"10203", "Test Actor"}, {"40506", "Another Actor"}]
+  end
+
+  def owners do
+    [{"90909", "Owner"}]
+  end
+end
+
 defmodule MyApp.PageField.Type do
   @moduledoc false
   @behaviour Beacon.Content.PageField
