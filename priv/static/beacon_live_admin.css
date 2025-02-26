@@ -1336,6 +1336,17 @@ select{
   height: 1.25rem;
 }
 
+.hero-chevron-right{
+  --hero-chevron-right: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">  <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>');
+  -webkit-mask: var(--hero-chevron-right);
+  mask: var(--hero-chevron-right);
+  background-color: currentColor;
+  vertical-align: middle;
+  display: inline-block;
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
 .hero-chevron-right-solid{
   --hero-chevron-right-solid: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">  <path fill-rule="evenodd" d="M16.28 11.47a.75.75 0 010 1.06l-7.5 7.5a.75.75 0 01-1.06-1.06L14.69 12 7.72 5.03a.75.75 0 011.06-1.06l7.5 7.5z" clip-rule="evenodd"/></svg>');
   -webkit-mask: var(--hero-chevron-right-solid);
@@ -2742,6 +2753,10 @@ select{
   border-radius: 1.25rem;
 }
 
+.rounded-\[10px\]{
+  border-radius: 10px;
+}
+
 .rounded-\[20px\]{
   border-radius: 20px;
 }
@@ -2758,16 +2773,12 @@ select{
   border-radius: 0.375rem;
 }
 
-.rounded-xl{
-  border-radius: 0.75rem;
-}
-
-.rounded-\[10px\]{
-  border-radius: 10px;
-}
-
 .rounded-sm{
   border-radius: 0.125rem;
+}
+
+.rounded-xl{
+  border-radius: 0.75rem;
 }
 
 .rounded-b-lg{
@@ -2813,6 +2824,19 @@ select{
 
 .border-2{
   border-width: 2px;
+}
+
+.border-\[2rem\]{
+  border-width: 2rem;
+}
+
+.border-\[3px\]{
+  border-width: 3px;
+}
+
+.border-x{
+  border-left-width: 1px;
+  border-right-width: 1px;
 }
 
 .border-y{
@@ -3217,6 +3241,10 @@ select{
   padding: 2rem;
 }
 
+.p-\[1rem\]{
+  padding: 1rem;
+}
+
 .p-\[22px\]{
   padding: 22px;
 }
@@ -3227,6 +3255,10 @@ select{
 
 .p-\[2px\]{
   padding: 2px;
+}
+
+.p-\[2rem\]{
+  padding: 2rem;
 }
 
 .p-\[3px\]{
@@ -3358,6 +3390,16 @@ select{
   padding-bottom: 0.625em;
 }
 
+.py-\[1px\]{
+  padding-top: 1px;
+  padding-bottom: 1px;
+}
+
+.py-\[1rem\]{
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
 .py-\[7px\]{
   padding-top: 7px;
   padding-bottom: 7px;
@@ -3433,6 +3475,10 @@ select{
 
 .pr-8{
   padding-right: 2rem;
+}
+
+.pr-\[1rem\]{
+  padding-right: 1rem;
 }
 
 .pr-\[30px\]{

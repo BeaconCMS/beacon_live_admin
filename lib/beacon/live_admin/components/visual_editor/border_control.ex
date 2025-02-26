@@ -1,18 +1,21 @@
 defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
   @moduledoc false
-  require Logger
+
   use Beacon.LiveAdmin.Web, :live_component
-  alias Beacon.LiveAdmin.VisualEditor.Components.ControlSection
+  require Logger
   import Beacon.LiveAdmin.VisualEditor.Components.InputWithUnits
   alias Beacon.LiveAdmin.VisualEditor
+  alias Beacon.LiveAdmin.VisualEditor.Components.ControlSection
   alias Beacon.LiveAdmin.VisualEditor.Css.Border
 
   @border_styles [{"none", ""}, {"solid", "—"}, {"dashed", "--"}, {"dotted", "..."}]
+
   @border_colors ~w(Default gray-200 red-200 blue-200 green-200 yellow-200 purple-200)
 
   # Define Tailwind border radius sizes in order
   @border_radius_sizes ~w(none sm base md lg xl 2xl 3xl full)
   @border_width_sizes ~w(0 1 2 4 8)
+
   # Units for custom sizes
   @border_radius_units ~w(px rem em %)
   @border_width_units ~w(px rem em %)
@@ -209,20 +212,6 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
       Enum.any?(other_units, &(&1 != first_unit))
   end
 
-  @spec handle_event(<<_::104>>, map(), atom() | %{:assigns => atom() | map(), optional(any()) => any()}) ::
-          {:noreply,
-           atom()
-           | %{
-               :assigns =>
-                 atom()
-                 | %{
-                     :element => nil | maybe_improper_list() | map(),
-                     :expanded_radius_controls => any(),
-                     :expanded_width_controls => boolean(),
-                     optional(any()) => any()
-                   },
-               optional(any()) => any()
-             }}
   def handle_event("update_border", params, socket) do
     update_classes(socket, params)
   end
@@ -237,7 +226,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
     update_classes(socket, socket.assigns.form.params)
   end
 
-  def update_classes(socket, params) do
+  defp update_classes(socket, params) do
     new_classes = generate_classes(params, socket)
 
     classes =

@@ -1,6 +1,8 @@
 defmodule Beacon.LiveAdmin.VisualEditor.Components.ControlSection do
-  require Logger
+  @moduledoc false
+
   use Beacon.LiveAdmin.Web, :live_component
+  require Logger
 
   attr :label, :string, required: false, default: nil
   attr :id, :string, required: true
