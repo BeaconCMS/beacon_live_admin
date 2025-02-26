@@ -2,14 +2,14 @@ defmodule Beacon.LiveAdmin.VisualEditor.NameValueControl do
   @moduledoc false
 
   use Beacon.LiveAdmin.Web, :live_component
-  import Beacon.LiveAdmin.VisualEditor.Components
+  alias Beacon.LiveAdmin.VisualEditor.Components.ControlSection
   alias Beacon.LiveAdmin.VisualEditor.NameValue
   alias Ecto.Changeset
 
   def render(assigns) do
     ~H"""
     <div id={@id}>
-      <.control_section>
+      <.live_component module={ControlSection} id={@id <> "-section"} label="Name Value">
         <:header>
           <button :if={!@attribute.editing} type="button" phx-target={@myself} phx-click="edit">
             <.icon name="hero-pencil-square" class="w-5 h-5 text-blue-500" />
@@ -39,7 +39,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.NameValueControl do
             <.button :if={@attribute.editing} type="button" phx-target={@myself} phx-click="discard">Discard</.button>
           </div>
         </.form>
-      </.control_section>
+      </.live_component>
     </div>
     """
   end

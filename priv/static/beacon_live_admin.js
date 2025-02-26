@@ -9380,6 +9380,25 @@ var BeaconLiveAdmin = (() => {
           }
         });
       }
+    },
+    // This hook is used to save the expanded state of a section
+    // That way if a user collapses, for instance, the opacity section,
+    // whenever the user reloads the page or chooses a different element that
+    // section remains.
+    // Persistence is done by saving the expanded state in localStorage.
+    ControlSectionSaveExpandedState: {
+      mounted() {
+        const sectionId = this.el.dataset.sectionId;
+        const expanded = localStorage.getItem(`section-${sectionId}-expanded`);
+        if (expanded !== null) {
+          this.pushEventTo(this.el, "set_expanded", { expanded: expanded === "true" });
+        }
+        this.handleEvent("expanded_changed", (data) => {
+          if (data.sectionId === sectionId) {
+            localStorage.setItem(`section-${sectionId}-expanded`, data.expanded);
+          }
+        });
+      }
     }
   };
 

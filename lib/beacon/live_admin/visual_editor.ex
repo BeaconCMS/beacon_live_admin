@@ -88,6 +88,12 @@ defmodule Beacon.LiveAdmin.VisualEditor do
     get_in(element, ["attrs", "class"]) || default
   end
 
+  def element_classes(element) do
+    element
+    |> element_class()
+    |> String.split(" ", trim: true)
+  end
+
   def find_utility_class(element, class) when is_map(element) and is_binary(class) do
     classes = get_in(element, ["attrs", "class"]) || ""
     class = class <> "-"
@@ -116,6 +122,59 @@ defmodule Beacon.LiveAdmin.VisualEditor do
       current
     else
       Turboprop.Merge.merge([current, new])
+    end
+  end
+
+  def delete_classes(element, class_regex) do
+    current = get_in(element, ["attrs", "class"]) || ""
+
+    new_classes =
+      current
+      |> String.split(" ", trim: true)
+      |> Enum.reject(&Regex.match?(class_regex, &1))
+      |> Enum.join(" ")
+
+    put_in(element, ["attrs", "class"], new_classes)
+  end
+
+  def parse_number_and_unit(string) do
+    # Regex to match integers or floats at the start of the string
+    regex = ~r/^\s*(-?\d+(\.\d+)?)/
+
+    case Regex.run(regex, string, return: :index) do
+      [{start, length} | _] ->
+        # Extract the numeric part and the remaining text
+        numeric_part = String.slice(string, start, length)
+        remaining_text = String.slice(string, (start + length)..-1)
+
+        # Try parsing as integer first
+        case Integer.parse(numeric_part) do
+          {int, ""} ->
+            {:ok, int, remaining_text}
+
+          _ ->
+            # If not an integer, parse as float
+            case Float.parse(numeric_part) do
+              {float, ""} -> {:ok, float, remaining_text}
+              _ -> {:error, :not_a_number}
+            end
+        end
+
+      _ ->
+        {:error, :not_a_number}
+    end
+  end
+
+  def parse_integer_or_float(string) do
+    case Integer.parse(string) do
+      {int, ""} ->
+        {:ok, int}
+
+      _ ->
+        case Float.parse(string) do
+          {float, ""} -> {:ok, float}
+          _ -> :error
+        end
     end
   end
 end

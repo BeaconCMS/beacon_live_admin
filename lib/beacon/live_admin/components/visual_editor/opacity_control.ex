@@ -3,17 +3,17 @@ defmodule Beacon.LiveAdmin.VisualEditor.OpacityControl do
   # https://tailwindcss.com/docs/opacity
 
   use Beacon.LiveAdmin.Web, :live_component
-  import Beacon.LiveAdmin.VisualEditor.Components
   alias Beacon.LiveAdmin.VisualEditor
+  alias Beacon.LiveAdmin.VisualEditor.Components.ControlSection
 
   def render(assigns) do
     ~H"""
     <div id={@id}>
-      <.control_section label="Opacity">
+      <.live_component module={ControlSection} id={@id <> "-section"} label="Opacity">
         <.form for={@form} phx-target={@myself} phx-change="update" phx-throttle="1000">
           <.input field={@form[:value]} type="range" min="0" max="100" step="5" />
         </.form>
-      </.control_section>
+      </.live_component>
     </div>
     """
   end
