@@ -392,18 +392,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
 
     # Check if all borders have the same width and unit
     all_nil? = Enum.all?(widths, fn {w, u} -> is_nil(w) and is_nil(u) end)
-
-    all_same? =
-      case widths do
-        [{main_width, main_unit} | rest] ->
-          Enum.all?(rest, fn
-            {nil, _} -> true
-            {w, u} -> w == main_width and u == main_unit
-          end)
-
-        _ ->
-          false
-      end
+    all_same? = all_widths_same?(widths)
 
     cond do
       # Case 1: All directional borders are nil, use global border
@@ -412,19 +401,76 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
 
       # Case 2: All directional borders are the same width and unit
       all_same? ->
-        tmp = generate_global_border_class(params["top_width"], params["top_width_unit"])
-        tmp
+        generate_global_border_class(params["top_width"], params["top_width_unit"])
 
-      # Case 3: Different borders with expanded controls
+      # Case 3: Check for x/y axis matches and generate appropriate classes
       true ->
-        [
-          generate_border_class(params["top_width"], params["top_width_unit"], "top"),
-          generate_border_class(params["right_width"], params["right_width_unit"], "right"),
-          generate_border_class(params["bottom_width"], params["bottom_width_unit"], "bottom"),
-          generate_border_class(params["left_width"], params["left_width_unit"], "left")
-        ]
-        |> Enum.reject(&is_nil/1)
+        generate_optimized_border_classes(params)
     end
+  end
+
+  defp all_widths_same?([{main_width, main_unit} | rest]) do
+    Enum.all?(rest, fn
+      {nil, u} -> u == main_unit
+      {w, u} -> w == main_width and u == main_unit
+    end)
+  end
+
+  defp all_widths_same?([]), do: false
+
+  defp generate_optimized_border_classes(params) do
+    require IEx
+    [
+      generate_vertical_border_classes(params),
+      generate_horizontal_border_classes(params),
+    ]
+    |> List.flatten()
+    |> Enum.reject(&is_nil/1)
+  end
+
+  defp generate_vertical_border_classes(%{
+    "top_width_unit" => unit,
+    "bottom_width_unit" => unit
+  } = params) do
+    case unit do
+      nil -> nil
+      unit when unit in @tailwind_sizes -> ["border-y-#{unit}"]
+      unit ->
+        width = Map.get(params, "width", "1")  # default to "1" if width not specified
+        ["border-y-[#{width}#{unit}]"]
+    end
+  end
+
+  # Fallback clause for when the units don't match
+  defp generate_vertical_border_classes(params) do
+    [
+      generate_border_class(Map.get(params, "top_width"), Map.get(params, "top_width_unit"), "top"),
+      generate_border_class(Map.get(params, "bottom_width"), Map.get(params, "bottom_width_unit"), "bottom")
+    ]
+    |> Enum.reject(&is_nil/1)
+  end
+
+  # Handle horizontal borders with matching units
+  defp generate_horizontal_border_classes(%{
+    "left_width_unit" => unit,
+    "right_width_unit" => unit
+  } = params) do
+    case unit do
+      nil -> nil
+      unit when unit in @tailwind_sizes -> ["border-x-#{unit}"]
+      unit ->
+        width = Map.get(params, "width", "1")  # default to "1" if width not specified
+        ["border-x-[#{width}#{unit}]"]
+    end
+  end
+
+  # Fallback clause for when the units don't match
+  defp generate_horizontal_border_classes(params) do
+    [
+      generate_border_class(Map.get(params, "left_width"), Map.get(params, "left_width_unit"), "left"),
+      generate_border_class(Map.get(params, "right_width"), Map.get(params, "right_width_unit"), "right")
+    ]
+    |> Enum.reject(&is_nil/1)
   end
 
   defp generate_global_border_class(width, unit) do
@@ -452,7 +498,9 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
   end
 
   # Handle nil cases
-  defp generate_border_class(nil, _unit, _side), do: nil
+  defp generate_border_class(nil, nil, _side), do: nil
+  defp generate_border_class(nil, unit, nil) when unit in @tailwind_sizes, do: "border-#{unit}"
+  defp generate_border_class(nil, unit, side) when unit in @tailwind_sizes, do: "border-#{String.first(side)}-#{unit}"
   defp generate_border_class(_width, nil, _side), do: nil
   # Handle custom widths
   defp generate_border_class(width, unit, side) do
