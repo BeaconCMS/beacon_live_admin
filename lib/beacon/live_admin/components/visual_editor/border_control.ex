@@ -233,7 +233,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
       socket.assigns.element
       |> VisualEditor.delete_classes(~r/^border-(solid|dashed|dotted|double|none)$/)
       |> VisualEditor.delete_classes(~r/^border-(transparent|current|black|white|[-a-z]+(?:-\d+)?(?:\/\d+)?)$/)
-      |> VisualEditor.delete_classes(~r/^border(-[xytrbl])?(-\[[\d.]+[a-z%]+\]|-[0-9]+)?$/)
+      |> VisualEditor.delete_classes(~r/^border(-[xytrbl])?(-\[[^\]]*[a-z%]+\]|-[0-9]+)?$/)
       |> VisualEditor.delete_classes(~r/^rounded(-(?:[tlbr][tlbr]|[tlbr])?)?(-(?:none|sm|md|lg|xl|2xl|3xl|full))?$/)
       |> VisualEditor.merge_class(Enum.join(new_classes, " "))
 
