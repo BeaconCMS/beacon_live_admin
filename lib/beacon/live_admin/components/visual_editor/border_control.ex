@@ -136,7 +136,6 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
               <.input_with_units name="top_left_radius" value={@form.params["top_left_radius"]} value_unit={@form.params["top_left_radius_unit"]} sizes={@border_radius_sizes} units={@border_radius_units} />
             </div>
             <div class="flex items-center gap-1">
-              <span><.icon name="hero-arrow-up-right" /></span>
               <.input_with_units
                 name="top_right_radius"
                 value={@form.params["top_right_radius"]}
@@ -144,16 +143,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
                 sizes={@border_radius_sizes}
                 units={@border_radius_units}
               />
-            </div>
-            <div class="flex items-center gap-1">
-              <span><.icon name="hero-arrow-down-right" /></span>
-              <.input_with_units
-                name="bottom_right_radius"
-                value={@form.params["bottom_right_radius"]}
-                value_unit={@form.params["bottom_right_radius_unit"]}
-                sizes={@border_radius_sizes}
-                units={@border_radius_units}
-              />
+              <span><.icon name="hero-arrow-up-right" /></span>
             </div>
             <div class="flex items-center gap-1">
               <span><.icon name="hero-arrow-down-left" /></span>
@@ -164,6 +154,16 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
                 sizes={@border_radius_sizes}
                 units={@border_radius_units}
               />
+            </div>
+            <div class="flex items-center gap-1">
+              <.input_with_units
+                name="bottom_right_radius"
+                value={@form.params["bottom_right_radius"]}
+                value_unit={@form.params["bottom_right_radius_unit"]}
+                sizes={@border_radius_sizes}
+                units={@border_radius_units}
+              />
+              <span><.icon name="hero-arrow-down-right" /></span>
             </div>
           </div>
         </form>

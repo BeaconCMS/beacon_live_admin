@@ -29,7 +29,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Components.InputWithUnits do
           !@is_custom_unit? && "text-gray-500"
         ]}
       />
-      <select name={@name <> "_unit"} class="appearance-none bg-none bg-transparent border-none pr-1 pl-2 text-sm focus:ring-0">
+      <select name={@name <> "_unit"} class="appearance-none bg-none bg-transparent border-none pr-1 pl-0 text-sm focus:ring-0">
         <%= if length(@sizes) > 0 do %>
           <optgroup label="Sizes">
             <option :for={size <- @sizes} value={get_value(size)} selected={@value_unit == get_value(size)}>

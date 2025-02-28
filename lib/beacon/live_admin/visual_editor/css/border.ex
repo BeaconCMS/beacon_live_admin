@@ -205,7 +205,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
   end
 
   # For global border radius
-  defp extract_border_radius(_element, _corner, radius_unit) when radius_unit in ~w(px rem em %), do: nil
+  defp extract_border_radius(_element, _corner, radius_unit) when radius_unit in @tailwind_sizes, do: nil
 
   defp extract_border_radius(element, nil, _radius_unit) do
     radius_class =
@@ -526,8 +526,6 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
   defp generate_border_class(_width, nil, _side), do: nil
   # Handle custom widths
   defp generate_border_class(width, unit, side) do
-    Logger.info("########### generate_border_class: #{inspect(width)} #{inspect(unit)} #{inspect(side)}")
-
     case VisualEditor.parse_integer_or_float(width) do
       {:ok, 0} ->
         nil
@@ -559,25 +557,10 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
          "bottom_left_radius_unit" => unit
        }} ->
         # All corners have the same radius and unit, so we can use the global class
-        [generate_custom_border_radius_class(radius, unit)]
-
-      {true,
-       %{
-         "top_left_radius" => tlr,
-         "top_left_radius_unit" => tlr_unit,
-         "top_right_radius" => trr,
-         "top_right_radius_unit" => trr_unit,
-         "bottom_right_radius" => brr,
-         "bottom_right_radius_unit" => brr_unit,
-         "bottom_left_radius" => blr,
-         "bottom_left_radius_unit" => blr_unit
-       }} ->
-        [
-          generate_custom_border_radius_class(tlr, tlr_unit, "top-left"),
-          generate_custom_border_radius_class(trr, trr_unit, "top-right"),
-          generate_custom_border_radius_class(brr, brr_unit, "bottom-right"),
-          generate_custom_border_radius_class(blr, blr_unit, "bottom-left")
-        ]
+        case radius do
+          nil -> [generate_custom_border_radius_class(params["radius"], unit)]
+          "" -> [generate_custom_border_radius_class(params["radius"], unit)]
+        end
 
       {true,
        %{
@@ -586,28 +569,24 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
          "bottom_right_radius_unit" => brr_unit,
          "bottom_left_radius_unit" => blr_unit
        }} ->
+        # Not all corners have the same radius and unit, so we need to generate the classes for each corner
         [
-          generate_simple_border_radius_class(tlr_unit, "top-left"),
-          generate_simple_border_radius_class(trr_unit, "top-right"),
-          generate_simple_border_radius_class(brr_unit, "bottom-right"),
-          generate_simple_border_radius_class(blr_unit, "bottom-left")
+          generate_custom_border_radius_class(params["top_left_radius"], tlr_unit, "top-left"),
+          generate_custom_border_radius_class(params["top_right_radius"], trr_unit, "top-right"),
+          generate_custom_border_radius_class(params["bottom_right_radius"], brr_unit, "bottom-right"),
+          generate_custom_border_radius_class(params["bottom_left_radius"], blr_unit, "bottom-left")
         ]
 
       {_, %{"radius" => radius, "radius_unit" => radius_unit}} ->
+        # Only the global radius and unit are set, so we can use the global class
         [generate_custom_border_radius_class(radius, radius_unit)]
 
       {_, %{"radius_unit" => radius_unit}} ->
+        # Only the global radius unit is set, so we can use the global class
         [generate_simple_border_radius_class(radius_unit)]
     end
     |> Enum.reject(&is_nil/1)
   end
-
-  defp generate_custom_border_radius_class(nil, nil), do: nil
-  defp generate_custom_border_radius_class(_, "base"), do: "rounded"
-  defp generate_custom_border_radius_class(radius, radius_unit, corner \\ nil)
-  defp generate_custom_border_radius_class(_, "base", corner), do: "rounded-#{@corner_abbreviations[corner]}"
-  defp generate_custom_border_radius_class(_radius, radius_unit, nil), do: "rounded-#{radius_unit}"
-  defp generate_custom_border_radius_class(_radius, radius_unit, corner), do: "rounded-#{@corner_abbreviations[corner]}-#{radius_unit}"
 
   defp generate_simple_border_radius_class(radius_unit) do
     case radius_unit do
@@ -616,16 +595,34 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
       radius_unit -> "rounded-#{radius_unit}"
     end
   end
-
-  defp generate_simple_border_radius_class(radius_unit, corner) do
-    corner_abbrev = @corner_abbreviations[corner]
-
-    case radius_unit do
-      "base" -> "rounded-#{corner_abbrev}"
-      radius_unit when radius_unit in ~w(px rem em %) -> generate_custom_border_radius_class(0, radius_unit, corner)
-      radius_unit -> "rounded-#{corner_abbrev}-#{radius_unit}"
-    end
+  defp generate_custom_border_radius_class(nil, nil), do: nil
+  defp generate_custom_border_radius_class(_, "base"), do: "rounded"
+  defp generate_custom_border_radius_class(_, radius_unit) when radius_unit not in @css_units, do: "rounded-#{radius_unit}"
+  defp generate_custom_border_radius_class("", radius_unit), do: "rounded-[0#{radius_unit}]"
+  defp generate_custom_border_radius_class(radius, radius_unit) do
+    "rounded-[#{radius || "0"}#{radius_unit}]"
   end
+  defp generate_custom_border_radius_class(_, "base", corner), do: "rounded-#{@corner_abbreviations[corner]}"
+  defp generate_custom_border_radius_class(_, radius_unit, corner) when radius_unit not in @css_units, do: "rounded-#{@corner_abbreviations[corner]}-#{radius_unit}"
+  defp generate_custom_border_radius_class("", radius_unit, corner), do: "rounded-#{@corner_abbreviations[corner]}-[0#{radius_unit}]"
+  defp generate_custom_border_radius_class(radius, radius_unit, corner) do
+    "rounded-#{@corner_abbreviations[corner]}-[#{radius || "0"}#{radius_unit}]"
+  end
+
+  # # defp generate_custom_border_radius_class(radius, radius_unit, corner \\ nil)
+  # defp generate_custom_border_radius_class(_radius, radius_unit, nil), do: "rounded-#{radius_unit}"
+  # defp generate_custom_border_radius_class(_radius, radius_unit, corner), do: "rounded-#{@corner_abbreviations[corner]}-#{radius_unit}"
+
+
+  # defp generate_simple_border_radius_class(radius_unit, corner) do
+  #   corner_abbrev = @corner_abbreviations[corner]
+
+  #   case radius_unit do
+  #     "base" -> "rounded-#{corner_abbrev}"
+  #     radius_unit when radius_unit in ~w(px rem em %) -> generate_custom_border_radius_class(0, radius_unit, corner)
+  #     radius_unit -> "rounded-#{corner_abbrev}-#{radius_unit}"
+  #   end
+  # end
 
   def generate_border_color_classes(params) do
     case params["color"] do
