@@ -60,6 +60,9 @@ defmodule Beacon.LiveAdmin.HomeLive do
                   <.link href={Router.beacon_live_admin_path(@socket, site, "/hooks")} class={nav_class()}>
                     JS Hooks
                   </.link>
+                  <.link href={Router.beacon_live_admin_path(@socket, site, "/actors")} class={nav_class()}>
+                    Actors
+                  </.link>
                   <.link href={Router.beacon_live_admin_path(@socket, site, "/roles")} class={nav_class()}>
                     Roles
                   </.link>
