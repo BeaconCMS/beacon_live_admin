@@ -63,13 +63,14 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Space do
         [generate_space_class(value, unit, type, nil)]
 
       # Check if we can use axis-based classes
-      map_size(grouped) in 2..3 ->
+      true ->
         {x_axis, y_axis} = axis_values(values_and_units)
 
         []
         |> maybe_add_axis_class(x_axis, type_abbrev, "x")
         |> maybe_add_axis_class(y_axis, type_abbrev, "y")
         |> then(fn classes ->
+          # Generate individual classes for sides not covered by axis classes
           remaining =
             values_and_units
             |> Enum.reject(fn {side, value, unit} ->
@@ -80,16 +81,6 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Space do
             end)
 
           classes ++ remaining
-        end)
-        |> Enum.reject(&is_nil/1)
-
-      # Default to individual sides
-      true ->
-        Logger.info("DEFAULT condition")
-
-        values_and_units
-        |> Enum.map(fn {side, value, unit} ->
-          generate_space_class(value, unit, type, side)
         end)
         |> Enum.reject(&is_nil/1)
     end
@@ -245,6 +236,9 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Space do
     end
   end
 
+  defp generate_space_class(_value, unit, type, side) when unit in @tailwind_sizes do
+    "#{String.first(type)}#{ String.first(side)}-#{unit}"
+  end
   defp generate_space_class(value, unit, type, side) do
     type_abbrev = String.first(type)
     side_abbrev = String.first(side)
@@ -254,11 +248,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Space do
         nil
 
       {:ok, number} ->
-        if unit == "px" and to_string(number) in @tailwind_sizes do
-          "#{type_abbrev}#{side_abbrev}-#{number}"
-        else
-          "#{type_abbrev}#{side_abbrev}-[#{number}#{unit}]"
-        end
+        "#{type_abbrev}#{side_abbrev}-[#{number}#{unit}]"
 
       :error ->
         nil
