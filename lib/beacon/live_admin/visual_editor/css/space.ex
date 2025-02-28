@@ -237,8 +237,9 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Space do
   end
 
   defp generate_space_class(_value, unit, type, side) when unit in @tailwind_sizes do
-    "#{String.first(type)}#{ String.first(side)}-#{unit}"
+    "#{String.first(type)}#{String.first(side)}-#{unit}"
   end
+
   defp generate_space_class(value, unit, type, side) do
     type_abbrev = String.first(type)
     side_abbrev = String.first(side)

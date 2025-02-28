@@ -409,7 +409,6 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
     end
   end
 
-  defp all_widths_same?([]), do: true
   defp all_widths_same?([{main_width, main_unit} | rest]) do
     Enum.all?(rest, fn
       {nil, u} -> u == main_unit
@@ -417,23 +416,31 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
     end)
   end
 
+  defp all_widths_same?(_), do: true
+
   defp generate_optimized_border_classes(params) do
     [
       generate_vertical_border_classes(params),
-      generate_horizontal_border_classes(params),
+      generate_horizontal_border_classes(params)
     ]
     |> List.flatten()
     |> Enum.reject(&is_nil/1)
   end
 
   # Handle vertical borders with matching units
-  defp generate_vertical_border_classes(%{
-    "top_width_unit" => unit,
-    "bottom_width_unit" => unit
-  } = params) do
+  defp generate_vertical_border_classes(
+         %{
+           "top_width_unit" => unit,
+           "bottom_width_unit" => unit
+         } = params
+       ) do
     case unit do
-      nil -> nil
-      unit when unit in @tailwind_sizes -> ["border-y-#{unit}"]
+      nil ->
+        nil
+
+      unit when unit in @tailwind_sizes ->
+        ["border-y-#{unit}"]
+
       unit ->
         case {Map.get(params, "top_width", "0"), Map.get(params, "bottom_width", "0")} do
           {width, width} -> ["border-y-[#{width}#{unit}]"]
@@ -455,13 +462,19 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
   end
 
   # Handle horizontal borders with matching units
-  defp generate_horizontal_border_classes(%{
-    "left_width_unit" => unit,
-    "right_width_unit" => unit
-  } = params) do
+  defp generate_horizontal_border_classes(
+         %{
+           "left_width_unit" => unit,
+           "right_width_unit" => unit
+         } = params
+       ) do
     case unit do
-      nil -> nil
-      unit when unit in @tailwind_sizes -> ["border-x-#{unit}"]
+      nil ->
+        nil
+
+      unit when unit in @tailwind_sizes ->
+        ["border-x-#{unit}"]
+
       unit ->
         case {Map.get(params, "left_width", "0"), Map.get(params, "right_width", "0")} do
           {width, width} -> ["border-x-[#{width}#{unit}]"]
@@ -514,6 +527,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
   # Handle custom widths
   defp generate_border_class(width, unit, side) do
     Logger.info("########### generate_border_class: #{inspect(width)} #{inspect(unit)} #{inspect(side)}")
+
     case VisualEditor.parse_integer_or_float(width) do
       {:ok, 0} ->
         nil
