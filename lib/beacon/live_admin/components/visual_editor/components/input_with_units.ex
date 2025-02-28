@@ -18,12 +18,12 @@ defmodule Beacon.LiveAdmin.VisualEditor.Components.InputWithUnits do
     ~H"""
     <div class="relative w-full flex bg-gray-100 border rounded focus-within:ring-2 focus-within:ring-blue-500">
       <input
-        type="text"
+        type="number"
         name={@name}
         value={@value}
         disabled={@disabled || !@is_custom_unit?}
         class={[
-          "w-full px-2 py-1 text-sm text-left outline-none focus:outline-none bg-transparent border-none focus:ring-0",
+          "w-full px-1 py-1 text-sm text-left outline-none focus:outline-none bg-transparent border-none focus:ring-0",
           !@is_custom_unit? && "text-gray-500"
         ]}
       />
