@@ -2,9 +2,11 @@ defmodule Beacon.LiveAdmin.PageLive do
   @moduledoc false
 
   use Beacon.LiveAdmin.Web, :live_view
-  require Logger
+
   alias Beacon.LiveAdmin.PageBuilder
   alias Phoenix.LiveView.Socket
+
+  require Logger
 
   @impl true
   def mount(%{"site" => site} = params, %{"pages" => pages} = session, socket) do
@@ -17,6 +19,8 @@ defmodule Beacon.LiveAdmin.PageLive do
 
     sites = Beacon.LiveAdmin.Cluster.running_sites()
 
+    actor = Beacon.LiveAdmin.Client.Auth.get_actor(site, session)
+
     current_url =
       Map.get(session, "beacon_live_admin_page_url") ||
         raise Beacon.LiveAdmin.PageNotFoundError, """
@@ -27,7 +31,7 @@ defmodule Beacon.LiveAdmin.PageLive do
 
     page = lookup_page!(socket, current_url)
 
-    assign_mount(socket, site, page, sites, pages, params)
+    assign_mount(socket, site, page, sites, pages, actor, params)
   end
 
   def mount(_params, _session, _socket) do
@@ -38,7 +42,7 @@ defmodule Beacon.LiveAdmin.PageLive do
     """
   end
 
-  defp assign_mount(socket, site, page, sites, pages, params) do
+  defp assign_mount(socket, site, page, sites, pages, actor, params) do
     page = %PageBuilder.Page{
       site: site,
       path: page.path,
@@ -51,6 +55,7 @@ defmodule Beacon.LiveAdmin.PageLive do
         __beacon_sites__: sites,
         __beacon_pages__: pages,
         __beacon_menu__: %PageBuilder.Menu{},
+        __beacon_actor__: actor,
         beacon_page: page
       )
 
@@ -186,6 +191,10 @@ defmodule Beacon.LiveAdmin.PageLive do
           {_, "/error_pages"} -> false
           {"/hooks", _} -> true
           {_, "/hooks"} -> false
+          {"/roles", _} -> true
+          {_, "/roles"} -> false
+          {"/actors", _} -> true
+          {_, "/actors"} -> false
           {a, b} -> a <= b
         end
       end)

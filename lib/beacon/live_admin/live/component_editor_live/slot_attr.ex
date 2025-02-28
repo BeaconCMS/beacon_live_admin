@@ -148,12 +148,12 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.SlotAttr do
   end
 
   defp save_component(socket, :new, slot_attr_params) do
-    %{beacon_page: %{site: site}, component: component, slot_id: slot_id} = socket.assigns
+    %{beacon_page: %{site: site}, component: component, slot_id: slot_id, __beacon_actor__: actor} = socket.assigns
 
     component_slot = Enum.find(component.slots, &(&1.id == slot_id))
     slot_attr_names = Enum.map(component_slot.attrs, & &1.name)
 
-    case Content.create_slot_attr(site, slot_attr_params, slot_attr_names) do
+    case Content.create_slot_attr(site, actor, slot_attr_params, slot_attr_names) do
       {:ok, _slot_attr} ->
         to = beacon_live_admin_path(socket, site, "/components/#{component.id}/slots/#{slot_id}")
 
@@ -171,6 +171,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.SlotAttr do
   defp save_component(socket, :edit, slot_attr_params) do
     %{
       beacon_page: %{site: site},
+      __beacon_actor__: actor,
       component: component,
       slot_id: slot_id,
       slot_attr: slot_attr
@@ -179,7 +180,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.SlotAttr do
     component_slot = Enum.find(component.slots, &(&1.id == slot_id))
     slot_attr_names = Enum.reject(component_slot.attrs, &(&1.id == slot_attr.id)) |> Enum.map(& &1.name)
 
-    case Content.update_slot_attr(site, slot_attr, slot_attr_params, slot_attr_names) do
+    case Content.update_slot_attr(site, actor, slot_attr, slot_attr_params, slot_attr_names) do
       {:ok, _slot_attr} ->
         to = beacon_live_admin_path(socket, site, "/components/#{component.id}/slots/#{slot_id}")
 

@@ -19,7 +19,7 @@ defmodule Beacon.LiveAdmin.Fixtures do
         """
       })
 
-    rpc(node, Beacon.Content, :create_layout!, [attrs])
+    rpc(node, Beacon.Content, :create_layout!, [attrs, [auth: false]])
   end
 
   def page_fixture(node \\ node1(), attrs \\ %{}) do
@@ -39,7 +39,7 @@ defmodule Beacon.LiveAdmin.Fixtures do
         """
       })
 
-    rpc(node, Beacon.Content, :create_page!, [attrs])
+    rpc(node, Beacon.Content, :create_page!, [attrs, [auth: false]])
   end
 
   def error_page_fixture(node \\ node1(), attrs \\ %{}) do
@@ -53,7 +53,7 @@ defmodule Beacon.LiveAdmin.Fixtures do
         template: "Oops"
       })
 
-    rpc(node, Beacon.Content, :create_error_page!, [attrs])
+    rpc(node, Beacon.Content, :create_error_page!, [attrs, [auth: false]])
   end
 
   def event_handler_fixture(node \\ node1(), attrs \\ %{}) do
@@ -64,7 +64,7 @@ defmodule Beacon.LiveAdmin.Fixtures do
         code: "{:noreply, socket}"
       })
 
-    {:ok, event_handler} = rpc(node, Beacon.Content, :create_event_handler, [attrs])
+    {:ok, event_handler} = rpc(node, Beacon.Content, :create_event_handler, [attrs, [auth: false]])
     event_handler
   end
 
@@ -105,7 +105,7 @@ defmodule Beacon.LiveAdmin.Fixtures do
         format: :elixir
       })
 
-    rpc(node, Beacon.Content, :create_live_data!, [attrs])
+    rpc(node, Beacon.Content, :create_live_data!, [attrs, [auth: false]])
   end
 
   def live_data_assign_fixture(node \\ node1(), attrs \\ %{}) do
@@ -118,7 +118,7 @@ defmodule Beacon.LiveAdmin.Fixtures do
         value: "1 + 1"
       })
 
-    {:ok, live_data} = rpc(node, Beacon.Content, :create_assign_for_live_data, [live_data, attrs])
+    {:ok, live_data} = rpc(node, Beacon.Content, :create_assign_for_live_data, [live_data, attrs, [auth: false]])
 
     Enum.find(live_data.assigns, &(&1.key == attrs.key))
   end
@@ -131,7 +131,7 @@ defmodule Beacon.LiveAdmin.Fixtures do
         code: "{:noreply, socket}"
       })
 
-    rpc(node, Beacon.Content, :create_info_handler!, [attrs])
+    rpc(node, Beacon.Content, :create_info_handler!, [attrs, [auth: false]])
   end
 
   def js_hook_fixture(node \\ node1(), attrs \\ %{}) do
@@ -152,5 +152,23 @@ defmodule Beacon.LiveAdmin.Fixtures do
 
     {:ok, js_hook} = rpc(node, Beacon.Content, :create_js_hook, [attrs])
     js_hook
+  end
+
+  def role_fixture(node \\ node1(), attrs \\ %{}) do
+    name = attrs[:name] || "Foo User"
+
+    attrs =
+      Enum.into(attrs, %{
+        site: "site_a",
+        name: name,
+        capabilities: []
+      })
+
+    rpc(node, Beacon.Auth, :create_role!, [attrs, [auth: false]])
+  end
+
+  def actor_role_fixture(node \\ node1(), actor_id, role) do
+    {:ok, actor_role} = rpc(node, Beacon.Auth, :set_role_for_actor, [actor_id, role, [auth: false]])
+    actor_role
   end
 end

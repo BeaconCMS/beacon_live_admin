@@ -44,9 +44,11 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
   end
 
   defp save_component(socket, :new, component_params) do
-    case Content.create_component(socket.assigns.site, component_params) do
+    %{site: site, __beacon_actor__: actor} = socket.assigns
+
+    case Content.create_component(site, actor, component_params) do
       {:ok, component} ->
-        to = beacon_live_admin_path(socket, socket.assigns.site, "/components/#{component.id}")
+        to = beacon_live_admin_path(socket, site, "/components/#{component.id}")
 
         {:noreply,
          socket
@@ -60,9 +62,11 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
   end
 
   defp save_component(socket, :edit, component_params) do
-    case Content.update_component(socket.assigns.site, socket.assigns.component, component_params) do
-      {:ok, component} ->
-        to = beacon_live_admin_path(socket, socket.assigns.site, "/components/#{component.id}")
+    %{component: component, site: site, __beacon_actor__: actor} = socket.assigns
+
+    case Content.update_component(site, actor, component, component_params) do
+      {:ok, updated_component} ->
+        to = beacon_live_admin_path(socket, site, "/components/#{updated_component.id}")
 
         {:noreply,
          socket
