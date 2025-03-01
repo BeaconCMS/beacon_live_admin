@@ -165,6 +165,10 @@ defmodule Beacon.LiveAdmin.VisualEditor do
     end
   end
 
+  def parse_integer_or_float(number) when is_number(number) do
+    {:ok, number}
+  end
+
   def parse_integer_or_float(string) do
     case Integer.parse(string) do
       {int, ""} ->
