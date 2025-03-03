@@ -241,8 +241,14 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Space do
   end
 
   defp generate_space_class(value, unit, type, side) do
+
     type_abbrev = String.first(type)
-    side_abbrev = String.first(side)
+
+    side_abbrev =
+      case side do
+        nil -> ""
+        s -> String.first(s)
+      end
 
     case VisualEditor.parse_integer_or_float(value) do
       {:ok, 0} ->
