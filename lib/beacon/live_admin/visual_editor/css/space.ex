@@ -241,7 +241,6 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Space do
   end
 
   defp generate_space_class(value, unit, type, side) do
-
     type_abbrev = String.first(type)
 
     side_abbrev =
