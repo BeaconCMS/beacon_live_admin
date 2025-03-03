@@ -276,41 +276,13 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
     end
   end
 
-  defp extract_border_radius_unit(element, corner) do
-    # Convert corner format from "top-left" to "tl", etc.
-    corner_abbrev = @corner_abbreviations[corner]
+  def extract_border_radius_unit(element, corner) do
+    class = "rounded-#{@corner_abbreviations[corner]}"
 
-    classes = VisualEditor.element_classes(element)
-
-    corner_class =
-      classes
-      |> Enum.find(fn class ->
-        String.starts_with?(class, "rounded-#{corner_abbrev}")
-      end)
-
-    case corner_class do
-      # Handle arbitrary values like rounded-tl-[10px]
-      "rounded-" <> <<^corner_abbrev::binary, "-[", rest::binary>> ->
-        case Regex.run(~r/^(.+)\]$/, rest) do
-          [_, name] ->
-            case VisualEditor.parse_number_and_unit(name) do
-              {:ok, _, unit} -> unit
-              {:error, _} -> nil
-            end
-
-          _ ->
-            extract_border_radius_unit(element)
-        end
-
-      # Handle predefined sizes like rounded-tl-md
-      "rounded-" <> <<^corner_abbrev::binary, "-", size::binary>> ->
-        size
-
-      "rounded-" <> <<^corner_abbrev::binary>> ->
-        "base"
-
-      _ ->
-        extract_border_radius_unit(element)
+    case VisualEditor.extract_utility_class_unit_value(element, class) do
+      nil -> extract_border_radius_unit(element)
+      {"base", base} -> base
+      {unit, _} -> unit
     end
   end
 

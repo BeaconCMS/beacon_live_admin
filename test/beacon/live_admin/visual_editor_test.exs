@@ -64,6 +64,7 @@ defmodule Beacon.LiveAdmin.VisualEditorTest do
 
   test "extract_utility_class_value" do
     assert VisualEditor.extract_utility_class_value(%{"attrs" => %{"class" => "opacity-100"}}, "opacity") == "100"
+    assert VisualEditor.extract_utility_class_value(%{"attrs" => %{"class" => "rounded-tl-[20px]"}}, "rounded") == "20px"
 
     refute VisualEditor.extract_utility_class_value(nil, "opacity")
     refute VisualEditor.extract_utility_class_value(%{}, "opacity")
@@ -73,6 +74,15 @@ defmodule Beacon.LiveAdmin.VisualEditorTest do
     refute VisualEditor.extract_utility_class_value(%{"attrs" => %{"class" => ""}}, "opacity")
     refute VisualEditor.extract_utility_class_value(%{"attrs" => %{"class" => "opacity-"}}, "opacity")
     refute VisualEditor.extract_utility_class_value(%{"attrs" => %{"class" => "opacity"}}, "opacity")
+  end
+
+  test "extract_utility_class_unit_value" do
+    assert VisualEditor.extract_utility_class_unit_value(%{"attrs" => %{"class" => "rounded-xl"}}, "rounded") == {"base", "xl"}
+    assert VisualEditor.extract_utility_class_unit_value(%{"attrs" => %{"class" => "rounded-tl-lg"}}, "rounded") == {"base", "lg"}
+    assert VisualEditor.extract_utility_class_unit_value(%{"attrs" => %{"class" => "opacity-100"}}, "opacity") == {"base", "100"}
+    assert VisualEditor.extract_utility_class_unit_value(%{"attrs" => %{"class" => "rounded-tl-[20px]"}}, "rounded") == {"px", "20"}
+
+    refute VisualEditor.extract_utility_class_unit_value(%{"attrs" => %{"class" => "opacity-100"}}, "border")
   end
 
   describe "merge_class" do
