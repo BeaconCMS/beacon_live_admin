@@ -9380,6 +9380,60 @@ var BeaconLiveAdmin = (() => {
           }
         });
       }
+    },
+    // This hook is used to save the expanded state of a section
+    // That way if a user collapses, for instance, the opacity section,
+    // whenever the user reloads the page or chooses a different element that
+    // section remains.
+    // Persistence is done by saving the expanded state in localStorage.
+    ControlSectionSaveExpandedState: {
+      mounted() {
+        const sectionId = this.el.dataset.sectionId;
+        const expanded = localStorage.getItem(`section-${sectionId}-expanded`);
+        if (expanded !== null) {
+          this.pushEventTo(this.el, "set_expanded", { expanded: expanded === "true" });
+        }
+        this.handleEvent("expanded_changed", (data) => {
+          if (data.sectionId === sectionId) {
+            localStorage.setItem(`section-${sectionId}-expanded`, data.expanded);
+          }
+        });
+      }
+    },
+    PreventEmptyChange: {
+      mounted() {
+        let currentValue = this.el.value;
+        let isCleared = false;
+        this.el.addEventListener("input", (e) => {
+          if (e.target.value === "") {
+            e.stopPropagation();
+            isCleared = true;
+          } else {
+            currentValue = e.target.value;
+            isCleared = false;
+          }
+        });
+        this.el.addEventListener("change", (e) => {
+          if (isCleared) {
+            e.stopPropagation();
+          }
+        });
+        const observer = new MutationObserver((mutations) => {
+          mutations.forEach((mutation) => {
+            if (mutation.type === "attributes" && mutation.attributeName === "value") {
+              currentValue = this.el.value;
+            }
+          });
+        });
+        observer.observe(this.el, { attributes: true });
+        this.el.addEventListener("blur", (e) => {
+          if (e.target.value === "") {
+            e.target.value = currentValue;
+            isCleared = false;
+          }
+        });
+        this.destroy = () => observer.disconnect();
+      }
     }
   };
 

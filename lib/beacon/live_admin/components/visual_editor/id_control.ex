@@ -2,18 +2,18 @@ defmodule Beacon.LiveAdmin.VisualEditor.IdControl do
   @moduledoc false
 
   use Beacon.LiveAdmin.Web, :live_component
-  import Beacon.LiveAdmin.VisualEditor.Components
+  alias Beacon.LiveAdmin.VisualEditor.Components.ControlSection
   alias Beacon.LiveAdmin.VisualEditor.Id
   alias Ecto.Changeset
 
   def render(assigns) do
     ~H"""
     <div id={@id}>
-      <.control_section label="ID">
+      <.live_component module={ControlSection} id={@id <> "-section"} label="ID">
         <.form :let={f} for={@form} id={@id <> "-form"} phx-target={@myself} phx-submit="save" phx-change="validate">
           <.input field={f[:value]} placeholder="ID" class="w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm" />
         </.form>
-      </.control_section>
+      </.live_component>
     </div>
     """
   end

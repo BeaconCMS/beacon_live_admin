@@ -2,13 +2,13 @@ defmodule Beacon.LiveAdmin.VisualEditor.ClassControl do
   @moduledoc false
 
   use Beacon.LiveAdmin.Web, :live_component
-  import Beacon.LiveAdmin.VisualEditor.Components
+  alias Beacon.LiveAdmin.VisualEditor.Components.ControlSection
   alias Beacon.LiveAdmin.VisualEditor
 
   def render(assigns) do
     ~H"""
     <div id={@id}>
-      <.control_section label="Classes">
+      <.live_component module={ControlSection} id={@id <> "-section"} label="Classes">
         <input type="text" class="w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm" id={"#{@id}-input"} phx-hook="VisualEditorClassInput" data-target={@id} />
         <div class="pt-3">
           <div :for={css_class <- @classes} class="inline-flex items-center rounded-full bg-slate-700 text-white text-xs px-3 pr-0 m-1 leading-4">
@@ -31,7 +31,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.ClassControl do
             </button>
           </div>
         </div>
-      </.control_section>
+      </.live_component>
     </div>
     """
   end
