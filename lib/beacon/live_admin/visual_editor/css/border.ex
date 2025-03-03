@@ -545,7 +545,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
 
   def generate_border_radius_classes(params, expanded_radius_controls) do
     case {expanded_radius_controls, params} do
-      {_,
+      {true,
        %{
          "top_left_radius" => radius,
          "top_left_radius_unit" => unit,
@@ -556,11 +556,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
          "bottom_left_radius" => radius,
          "bottom_left_radius_unit" => unit
        }} ->
-        # All corners have the same radius and unit, so we can use the global class
-        case radius do
-          nil -> [generate_custom_border_radius_class(params["radius"], unit)]
-          "" -> [generate_custom_border_radius_class(params["radius"], unit)]
-        end
+        [generate_custom_border_radius_class(radius, unit)]
 
       {true,
        %{
@@ -577,11 +573,11 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
           generate_custom_border_radius_class(params["bottom_left_radius"], blr_unit, "bottom-left")
         ]
 
-      {_, %{"radius" => radius, "radius_unit" => radius_unit}} ->
+      {false, %{"radius" => radius, "radius_unit" => radius_unit}} ->
         # Only the global radius and unit are set, so we can use the global class
         [generate_custom_border_radius_class(radius, radius_unit)]
 
-      {_, %{"radius_unit" => radius_unit}} ->
+      {false, %{"radius_unit" => radius_unit}} ->
         # Only the global radius unit is set, so we can use the global class
         [generate_simple_border_radius_class(radius_unit)]
     end
