@@ -45,16 +45,16 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
 
   @font_size_options [
     {"Default", "default"},
-    {"Extra Small", "xs"},
-    {"Small", "sm"},
-    {"Base", "base"},
-    {"Large", "lg"},
-    {"Extra Large", "xl"},
-    {"2XL", "2xl"},
-    {"3XL", "3xl"},
-    {"4XL", "4xl"},
-    {"5XL", "5xl"},
-    {"6XL", "6xl"}
+    {"xs", "xs"},
+    {"sm", "sm"},
+    {"base", "base"},
+    {"lg", "lg"},
+    {"xl", "xl"},
+    {"2xl", "2xl"},
+    {"3xl", "3xl"},
+    {"4xl", "4xl"},
+    {"5xl", "5xl"},
+    {"6xl", "6xl"}
   ]
 
   @line_height_options [
@@ -83,9 +83,9 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
 
   @text_align_options [
     {"Default", "default"},
-    {"Left", "left"},
+    {"Start", "start"},
     {"Center", "center"},
-    {"Right", "right"},
+    {"End", "end"},
     {"Justify", "justify"}
   ]
 
