@@ -215,6 +215,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
                   @form.params["text_align"] != value && "bg-gray-100 hover:bg-gray-200"
                 ]}
               >
+
                 <input type="radio" name="text_align" value={value} class="hidden" checked={@form.params["text_align"] == value} />
                 <.align_start_icon :if={value == "start"} class="mx-auto" />
                 <.align_center_icon :if={value == "center"} class="mx-auto" />
@@ -287,9 +288,8 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
   defp align_end_icon(assigns) do
     ~H"""
       <svg
+        class="w-4 h-4"
         xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"
@@ -308,9 +308,8 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
   defp align_start_icon(assigns) do
     ~H"""
       <svg
+        class="w-4 h-4"
         xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"
@@ -329,9 +328,8 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
   defp align_center_icon(assigns) do
     ~H"""
       <svg
+        class="w-4 h-4"
         xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"
@@ -350,9 +348,8 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
   defp align_justify_icon(assigns) do
     ~H"""
       <svg
+        class="w-4 h-4"
         xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"
