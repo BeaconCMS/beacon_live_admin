@@ -188,12 +188,25 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
           </div>
 
           <div class="grid grid-cols-2 items-center gap-x-2">
-            <label class="text-xs">Text Align</label>
-            <select name="text_align" class="w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm">
-              <option :for={{label, value} <- @text_align_options} value={value} selected={@form.params["text_align"] == value}>
-                <%= label %>
-              </option>
-            </select>
+            <div class="flex h-fit">
+              <label
+                :for={{label, value} <- @text_align_options}
+                class={[
+                  "text-center px-2 py-1 text-sm cursor-pointer flex-1",
+                  "first:rounded-l last:rounded-r",
+                  "border-y border-r border-gray-300 first:border-l",
+                  @form.params["text_align"] == value && "bg-blue-500 text-white relative z-10",
+                  @form.params["text_align"] != value && "bg-gray-100 hover:bg-gray-200"
+                ]}
+              >
+                <input type="radio" name="text_align" value={value} class="hidden" checked={@form.params["text_align"] == value} />
+                <.align_start_icon :if={value == "start"} class="mx-auto" />
+                <.align_center_icon :if={value == "center"} class="mx-auto" />
+                <.align_end_icon :if={value == "end"} class="mx-auto" />
+                <.align_justify_icon :if={value == "justify"} class="mx-auto" />
+                <.align_start_icon :if={value == "default"} class="mx-auto opacity-30" />
+              </label>
+            </div>
           </div>
 
           <div class="grid grid-cols-2 items-center gap-x-2">
@@ -255,7 +268,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
     assign(socket, form: form)
   end
 
-  defp align_right_icon(assigns) do
+  defp align_end_icon(assigns) do
     ~H"""
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -276,7 +289,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
     """
   end
 
-  defp align_left_icon(assigns) do
+  defp align_start_icon(assigns) do
     ~H"""
       <svg
         xmlns="http://www.w3.org/2000/svg"
