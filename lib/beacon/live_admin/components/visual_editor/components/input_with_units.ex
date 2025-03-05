@@ -9,6 +9,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Components.InputWithUnits do
   attr :sizes, :list, default: []
   attr :units, :list, default: []
   attr :disabled, :boolean, default: false
+  attr :size, :string, values: ["sm", "base"], default: "base"
 
   def input_with_units(assigns) do
     assigns =
@@ -25,11 +26,21 @@ defmodule Beacon.LiveAdmin.VisualEditor.Components.InputWithUnits do
         disabled={@disabled || !@is_custom_unit?}
         phx-hook="PreventEmptyChange"
         class={[
-          "w-full px-1 py-1 text-sm text-left outline-none focus:outline-none bg-transparent border-none focus:ring-0",
-          !@is_custom_unit? && "text-gray-500"
+          "w-full px-1 text-sm text-left outline-none focus:outline-none bg-transparent border-none focus:ring-0",
+          !@is_custom_unit? && "text-gray-500",
+          @size == "sm" && "py-0.5 leading-5",
+          @size == "base" && "py-1 leading-6"
         ]}
       />
-      <select name={@name <> "_unit"} class="appearance-none bg-none bg-transparent border-none pr-1 pl-0 text-sm focus:ring-0">
+
+      <select
+        name={@name <> "_unit"}
+        class={[
+          "appearance-none bg-none bg-transparent border-none pr-1 pl-0 text-sm focus:ring-0",
+          @size == "sm" && "py-0.5 leading-5",
+          @size == "base" && "py-1 leading-6"
+        ]}
+      >
         <%= if length(@sizes) > 0 do %>
           <optgroup label="Sizes">
             <option :for={size <- @sizes} value={get_value(size)} selected={@value_unit == get_value(size)}>

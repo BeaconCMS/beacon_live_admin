@@ -143,7 +143,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
         <form phx-change="update_typography" phx-target={@myself} class="space-y-4">
           <div class="grid grid-cols-2 items-center gap-x-2">
             <label class="text-xs">Font Family</label>
-            <select name="font_family" class="w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm">
+            <select name="font_family" class="w-full py-0.5 px-2 bg-gray-100 border-gray-100 rounded-md leading-5 text-sm">
               <option :for={{label, value} <- @font_family_options} value={value} selected={@form.params["font_family"] == value}>
                 <%= label %>
               </option>
@@ -152,7 +152,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
 
           <div class="grid grid-cols-2 items-center gap-x-2">
             <label class="text-xs">Font Weight</label>
-            <select name="font_weight" class="w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm">
+            <select name="font_weight" class="w-full py-0.5 px-2 bg-gray-100 border-gray-100 rounded-md leading-5 text-sm">
               <option :for={{label, value} <- @font_weight_options} value={value} selected={@form.params["font_weight"] == value}>
                 <%= label %>
               </option>
@@ -161,30 +161,46 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
 
           <div class="grid grid-cols-2 items-center gap-x-2">
             <label class="text-xs">Text Color</label>
-            <select name="text_color" class="w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm">
+            <select name="text_color" class="w-full py-0.5 px-2 bg-gray-100 border-gray-100 rounded-md leading-5 text-sm">
               <option :for={{label, value} <- @text_color_options} value={value} selected={@form.params["text_color"] == value}>
                 <%= label %>
               </option>
             </select>
           </div>
 
-          <div class="grid grid-cols-2 items-center gap-x-2">
-            <label class="text-xs">Font Size</label>
-            <select name="font_size" class="w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm">
-              <option :for={{label, value} <- @font_size_options} value={value} selected={@form.params["font_size"] == value}>
-                <%= label %>
-              </option>
-            </select>
-          </div>
+          <div class="flex gap-1">
+            <div class="flex-1 min-w-0">
+              <label class="text-xs block mb-1">Size</label>
+              <select name="font_size" class="w-full py-0.5 px-1 bg-gray-100 border-gray-100 rounded-md leading-5 text-xs">
+                <option :for={{label, value} <- @font_size_options} value={value} selected={@form.params["font_size"] == value}>
+                  <%= label %>
+                </option>
+              </select>
+            </div>
 
-          <div class="grid grid-cols-2 items-center gap-x-2">
-            <label class="text-xs">Line Height</label>
-            <.input_with_units name="line_height" value={@form.params["line_height"]} value_unit={@form.params["line_height_unit"]} sizes={@line_height_options} units={@line_height_units} />
-          </div>
+            <div class="flex-1 min-w-0">
+              <label class="text-xs block mb-1">Height</label>
+              <.input_with_units
+                name="line_height"
+                value={@form.params["line_height"]}
+                value_unit={@form.params["line_height_unit"]}
+                sizes={@line_height_options}
+                units={@line_height_units}
+                size="sm"
+              />
+            </div>
 
-          <div class="grid grid-cols-2 items-center gap-x-2">
-            <label class="text-xs">Letter Spacing</label>
-            <.input_with_units name="letter_spacing" value={@form.params["letter_spacing"]} value_unit={@form.params["letter_spacing_unit"]} sizes={@letter_spacing_options} units={@letter_spacing_units} />
+            <div class="flex-1 min-w-0">
+              <label class="text-xs block mb-1">Spacing</label>
+              <.input_with_units
+                name="letter_spacing"
+                value={@form.params["letter_spacing"]}
+                value_unit={@form.params["letter_spacing_unit"]}
+                sizes={@letter_spacing_options}
+                units={@letter_spacing_units}
+                size="sm"
+              />
+            </div>
           </div>
 
           <div class="grid grid-cols-2 items-center gap-x-2">
@@ -210,8 +226,8 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
           </div>
 
           <div class="grid grid-cols-2 items-center gap-x-2">
-            <label class="text-xs">Text Decoration</label>
-            <select name="text_decoration" class="w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm">
+            <label class="text-xs">Decoration</label>
+            <select name="text_decoration" class="w-full py-0.5 px-2 bg-gray-100 border-gray-100 rounded-md leading-5 text-sm">
               <option :for={{label, value} <- @text_decoration_options} value={value} selected={@form.params["text_decoration"] == value}>
                 <%= label %>
               </option>
@@ -219,8 +235,8 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
           </div>
 
           <div class="grid grid-cols-2 items-center gap-x-2">
-            <label class="text-xs">Text Transform</label>
-            <select name="text_transform" class="w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm">
+            <label class="text-xs">Transform</label>
+            <select name="text_transform" class="w-full py-0.5 px-2 bg-gray-100 border-gray-100 rounded-md leading-5 text-sm">
               <option :for={{label, value} <- @text_transform_options} value={value} selected={@form.params["text_transform"] == value}>
                 <%= label %>
               </option>
@@ -228,8 +244,8 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
           </div>
 
           <div class="grid grid-cols-2 items-center gap-x-2">
-            <label class="text-xs">Font Style</label>
-            <select name="font_style" class="w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm">
+            <label class="text-xs">Style</label>
+            <select name="font_style" class="w-full py-0.5 px-2 bg-gray-100 border-gray-100 rounded-md leading-5 text-sm">
               <option :for={{label, value} <- @font_style_options} value={value} selected={@form.params["font_style"] == value}>
                 <%= label %>
               </option>
