@@ -3,6 +3,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
 
   use Beacon.LiveAdmin.Web, :live_component
   import Beacon.LiveAdmin.VisualEditor.Components.InputWithUnits
+  import Beacon.LiveAdmin.VisualEditor.Components.ToggleGroup
   alias Beacon.LiveAdmin.VisualEditor
   alias Beacon.LiveAdmin.VisualEditor.Components.ControlSection
   alias Beacon.LiveAdmin.VisualEditor.Css.Typography
@@ -137,6 +138,22 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
   end
 
   def render(assigns) do
+    assigns =
+      assigns
+      |> assign(:align_options, Enum.map(@text_align_options, fn {label, value} ->
+        %{
+          value: value,
+          label: label,
+          icon: case value do
+            "start" -> :align_start
+            "center" -> :align_center
+            "end" -> :align_end
+            "justify" -> :align_justify
+            "default" -> {:align_start, class: "opacity-30"}
+          end
+        }
+      end))
+
     ~H"""
     <div id={@id}>
       <.live_component module={ControlSection} id={@id <> "-section"} label="Typography">
@@ -204,26 +221,15 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
           </div>
 
           <div class="grid grid-cols-2 items-center gap-x-2">
-            <div class="flex h-fit">
-              <label
-                :for={{label, value} <- @text_align_options}
-                class={[
-                  "text-center px-2 py-1 text-sm cursor-pointer flex-1",
-                  "first:rounded-l last:rounded-r",
-                  "border-y border-r border-gray-300 first:border-l",
-                  @form.params["text_align"] == value && "bg-blue-500 text-white relative z-10",
-                  @form.params["text_align"] != value && "bg-gray-100 hover:bg-gray-200"
-                ]}
-              >
-
-                <input type="radio" name="text_align" value={value} class="hidden" checked={@form.params["text_align"] == value} />
-                <.align_start_icon :if={value == "start"} class="mx-auto" />
-                <.align_center_icon :if={value == "center"} class="mx-auto" />
-                <.align_end_icon :if={value == "end"} class="mx-auto" />
-                <.align_justify_icon :if={value == "justify"} class="mx-auto" />
-                <.align_start_icon :if={value == "default"} class="mx-auto opacity-30" />
-              </label>
-            </div>
+            <.toggle_group name="text_align" options={@align_options} selected={@form.params["text_align"]}>
+              <:label :let={align}>
+                <%= if is_tuple(align.icon) do %>
+                  <.dynamic_icon name={elem(align.icon, 0)} class={["mx-auto", elem(align.icon, 1)[:class]]} />
+                <% else %>
+                  <.dynamic_icon name={align.icon} class="mx-auto" />
+                <% end %>
+              </:label>
+            </.toggle_group>
           </div>
 
           <div class="grid grid-cols-2 items-center gap-x-2">
@@ -285,7 +291,13 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
     assign(socket, form: form)
   end
 
-  defp align_end_icon(assigns) do
+  defp dynamic_icon(assigns) do
+    ~H"""
+    <%= apply(__MODULE__, :"#{@name}_icon", [assigns]) %>
+    """
+  end
+
+  def align_end_icon(assigns) do
     ~H"""
       <svg
         class="w-4 h-4"
@@ -305,7 +317,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
     """
   end
 
-  defp align_start_icon(assigns) do
+  def align_start_icon(assigns) do
     ~H"""
       <svg
         class="w-4 h-4"
@@ -325,7 +337,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
     """
   end
 
-  defp align_center_icon(assigns) do
+  def align_center_icon(assigns) do
     ~H"""
       <svg
         class="w-4 h-4"
@@ -345,7 +357,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
     """
   end
 
-  defp align_justify_icon(assigns) do
+  def align_justify_icon(assigns) do
     ~H"""
       <svg
         class="w-4 h-4"
