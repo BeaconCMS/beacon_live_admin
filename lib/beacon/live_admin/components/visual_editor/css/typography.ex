@@ -134,9 +134,9 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Typography do
 
   defp extract_text_align(classes) do
     case Enum.find(classes, &String.starts_with?(&1, "text-")) do
-      "text-left" -> "left"
+      "text-start" -> "start"
       "text-center" -> "center"
-      "text-right" -> "right"
+      "text-end" -> "end"
       "text-justify" -> "justify"
       _ -> nil
     end

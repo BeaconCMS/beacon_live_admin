@@ -828,10 +828,9 @@ var BeaconLiveAdmin = (() => {
           if (opts.index) {
             pos = this.positionInside(opts.index);
           } else if (opts.word) {
-            let inputString = "document" in this.source.input ? this.source.input.document : this.source.input.css;
-            let stringRepresentation = inputString.slice(
-              sourceOffset(inputString, this.source.start),
-              sourceOffset(inputString, this.source.end)
+            let stringRepresentation = this.source.input.css.slice(
+              sourceOffset(this.source.input.css, this.source.start),
+              sourceOffset(this.source.input.css, this.source.end)
             );
             let index4 = stringRepresentation.indexOf(opts.word);
             if (index4 !== -1)
@@ -842,11 +841,10 @@ var BeaconLiveAdmin = (() => {
         positionInside(index4) {
           let column = this.source.start.column;
           let line = this.source.start.line;
-          let inputString = "document" in this.source.input ? this.source.input.document : this.source.input.css;
-          let offset = sourceOffset(inputString, this.source.start);
+          let offset = sourceOffset(this.source.input.css, this.source.start);
           let end = offset + index4;
           for (let i = offset; i < end; i++) {
-            if (inputString[i] === "\n") {
+            if (this.source.input.css[i] === "\n") {
               column = 1;
               line += 1;
             } else {
@@ -874,10 +872,9 @@ var BeaconLiveAdmin = (() => {
             line: start.line
           };
           if (opts.word) {
-            let inputString = "document" in this.source.input ? this.source.input.document : this.source.input.css;
-            let stringRepresentation = inputString.slice(
-              sourceOffset(inputString, this.source.start),
-              sourceOffset(inputString, this.source.end)
+            let stringRepresentation = this.source.input.css.slice(
+              sourceOffset(this.source.input.css, this.source.start),
+              sourceOffset(this.source.input.css, this.source.end)
             );
             let index4 = stringRepresentation.indexOf(opts.word);
             if (index4 !== -1) {
@@ -1730,9 +1727,6 @@ var BeaconLiveAdmin = (() => {
           } else {
             this.hasBOM = false;
           }
-          this.document = this.css;
-          if (opts.document)
-            this.document = opts.document.toString();
           if (opts.from) {
             if (!pathAvailable || /^\w+:\/\//.test(opts.from) || isAbsolute(opts.from)) {
               this.file = opts.from;
@@ -3964,7 +3958,7 @@ var BeaconLiveAdmin = (() => {
       var Root2 = require_root();
       var Processor2 = class {
         constructor(plugins = []) {
-          this.version = "8.5.1";
+          this.version = "8.4.49";
           this.plugins = this.normalize(plugins);
         }
         normalize(plugins) {
@@ -26588,20 +26582,6 @@ var BeaconLiveAdmin = (() => {
     let [, ...defaultConfigs] = getAllConfigs(configs[0]);
     return resolveConfig([...configs, ...defaultConfigs]);
   }
-  function bigSign2(bigIntValue) {
-    return Number(bigIntValue > 0n) - Number(bigIntValue < 0n);
-  }
-  function defaultSort(arrayOfTuples) {
-    return arrayOfTuples.sort(([, a], [, z]) => {
-      if (a === z)
-        return 0;
-      if (a === null)
-        return -1;
-      if (z === null)
-        return 1;
-      return bigSign2(a - z);
-    }).map(([className]) => className);
-  }
   var createTailwindcss = ({ tailwindConfig: tailwindConfig2 } = {}) => {
     let currentTailwindConfig = tailwindConfig2;
     return {
@@ -26613,10 +26593,6 @@ var BeaconLiveAdmin = (() => {
         const processor = postcss_default([tailwindcssPlugin]);
         const result = await processor.process(css, { from: void 0 });
         return result.css;
-      },
-      getClassOrder: (classList) => {
-        const context = createContext(resolveConfig2(tailwindConfig2 ?? {}));
-        return defaultSort(context.getClassOrder(classList));
       }
     };
   };
