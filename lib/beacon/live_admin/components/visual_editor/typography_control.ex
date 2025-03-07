@@ -83,7 +83,6 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
   @letter_spacing_units ~w(px rem em %)
 
   @text_align_options [
-    {"Default", "default"},
     {"Start", "start"},
     {"Center", "center"},
     {"End", "end"},
@@ -275,7 +274,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
       |> VisualEditor.delete_classes(~r/^text-(xs|sm|base|lg|xl|2xl|3xl|4xl|5xl|6xl)$/)
       |> VisualEditor.delete_classes(~r/^leading-(none|tight|snug|normal|relaxed|loose|\[.+\])$/)
       |> VisualEditor.delete_classes(~r/^tracking-(tighter|tight|normal|wide|wider|widest|\[.+\])$/)
-      |> VisualEditor.delete_classes(~r/^text-(left|center|right|justify)$/)
+      |> VisualEditor.delete_classes(~r/^text-(start|center|end|justify)$/)
       |> VisualEditor.delete_classes(~r/^(underline|line-through|no-underline)$/)
       |> VisualEditor.delete_classes(~r/^(uppercase|lowercase|capitalize|normal-case)$/)
       |> VisualEditor.delete_classes(~r/^(italic|not-italic)$/)
@@ -300,7 +299,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
   def align_end_icon(assigns) do
     ~H"""
       <svg
-        class="w-4 h-4"
+        class="w-4 h-4 pointer-events-none"
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 24 24"
         fill="none"
@@ -320,7 +319,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
   def align_start_icon(assigns) do
     ~H"""
       <svg
-        class="w-4 h-4"
+        class="w-4 h-4 pointer-events-none"
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 24 24"
         fill="none"
@@ -340,7 +339,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
   def align_center_icon(assigns) do
     ~H"""
       <svg
-        class="w-4 h-4"
+        class="w-4 h-4 pointer-events-none"
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 24 24"
         fill="none"
@@ -360,7 +359,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
   def align_justify_icon(assigns) do
     ~H"""
       <svg
-        class="w-4 h-4"
+        class="w-4 h-4 pointer-events-none"
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 24 24"
         fill="none"

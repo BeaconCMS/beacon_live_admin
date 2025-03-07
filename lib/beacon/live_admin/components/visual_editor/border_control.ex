@@ -239,7 +239,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
 
   defp generate_classes(params, socket) do
     classes =
-      if params["style"] != "none" do
+      if params["style"] != "default" do
         Border.generate_border_classes(params, socket.assigns.expanded_width_controls) ++
           Border.generate_border_style_classes(params) ++
           Border.generate_border_color_classes(params)
