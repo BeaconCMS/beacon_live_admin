@@ -2806,12 +2806,8 @@ select{
   border-top-right-radius: 0.75rem;
 }
 
-.rounded-tl-\[10px\]{
-  border-top-left-radius: 10px;
-}
-
-.rounded-tl-md{
-  border-top-left-radius: 0.375rem;
+.rounded-tl-\[20px\]{
+  border-top-left-radius: 20px;
 }
 
 .border{
@@ -3925,6 +3921,10 @@ select{
 
 .opacity-40{
   opacity: 0.4;
+}
+
+.opacity-50{
+  opacity: 0.5;
 }
 
 .shadow{
