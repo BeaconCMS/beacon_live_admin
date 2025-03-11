@@ -20,7 +20,7 @@ defmodule Mix.Tasks.BeaconLiveAdmin.Install.Docs do
     ```
 
     ```bash
-    mix beacon_live_admin.install --path /cms_admin
+    mix beacon_live_admin.install --path /cms/admin
     ```
 
     ## Options
