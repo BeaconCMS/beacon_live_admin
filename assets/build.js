@@ -17,15 +17,17 @@ const watch = args.includes("--watch")
 let clientOpts = {
   entryPoints: ["js/beacon_live_admin.js"],
   globalName: "BeaconLiveAdmin",
+  bundle: true,
+  conditions: ["svelte", "browser", "development"],
+  alias: { svelte: "svelte" },
   format: "iife",
   loader: {
     ".ttf": "dataurl",
     ".woff": "dataurl",
     ".woff2": "dataurl",
   },
-  bundle: true,
   target: "es2020",
-  conditions: ["svelte", "browser"],
+  sourcemap: "inline",
   outfile: "../priv/static/beacon_live_admin.js",
   logLevel: "info",
   tsconfig: "./tsconfig.json",
@@ -38,14 +40,17 @@ let clientOpts = {
         hydratable: true,
         css: "injected",
         customElement: true,
+        generate: "client",
       },
     }),
   ],
 }
 
-let optimizedClientOpts = {
+let prodClientOpts = {
   ...clientOpts,
   minify: true,
+  conditions: ["svelte", "browser"],
+  sourcemap: false,
   outfile: "../priv/static/beacon_live_admin.min.js",
   plugins: [
     importGlobPlugin(),
@@ -56,6 +61,7 @@ let optimizedClientOpts = {
         hydratable: true,
         css: "injected",
         customElement: true,
+        generate: "client",
       },
     }),
   ],
@@ -68,9 +74,12 @@ let serverOpts = {
   bundle: true,
   minify: false,
   target: "node19.6.1",
+  conditions: ["svelte", "development"],
   conditions: ["svelte"],
+  alias: { svelte: "svelte" },
   outdir: "../priv/svelte",
   logLevel: "info",
+  sourcemap: "inline",
   tsconfig: "./tsconfig.json",
   plugins: [
     importGlobPlugin(),
@@ -98,6 +107,6 @@ if (watch) {
     })
 } else {
   esbuild.build(clientOpts)
-  esbuild.build(optimizedClientOpts)
+  esbuild.build(prodClientOpts)
   esbuild.build(serverOpts)
 }
