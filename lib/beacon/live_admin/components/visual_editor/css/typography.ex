@@ -7,6 +7,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Typography do
   def extract_typography_properties(element) do
     classes = VisualEditor.element_classes(element)
     {font_size, font_size_unit} = extract_font_size(classes)
+    {line_height, line_height_unit} = extract_line_height(classes)
 
     %{
       "font_family" => extract_font_family(classes),
@@ -14,7 +15,8 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Typography do
       "text_color" => extract_text_color(classes),
       "font_size" => font_size,
       "font_size_unit" => font_size_unit,
-      "line_height" => extract_line_height(classes),
+      "line_height" => line_height,
+      "line_height_unit" => line_height_unit,
       "letter_spacing" => extract_letter_spacing(classes),
       "text_align" => extract_text_align(classes),
       "text_decoration" => extract_text_decoration(classes),
@@ -149,14 +151,22 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Typography do
 
   defp extract_line_height(classes) do
     case Enum.find(classes, &String.starts_with?(&1, "leading-")) do
-      "leading-none" -> "none"
-      "leading-tight" -> "tight"
-      "leading-snug" -> "snug"
-      "leading-normal" -> "normal"
-      "leading-relaxed" -> "relaxed"
-      "leading-loose" -> "loose"
-      size when is_binary(size) -> String.replace(size, "leading-", "")
-      _ -> nil
+      # Tailwind preset values
+      "leading-none" -> {"none", "none"}
+      "leading-tight" -> {"tight", "tight"}
+      "leading-snug" -> {"snug", "snug"}
+      "leading-normal" -> {"normal", "normal"}
+      "leading-relaxed" -> {"relaxed", "relaxed"}
+      "leading-loose" -> {"loose", "loose"}
+      # Custom sizes with units
+      <<"leading-[", size::binary>> ->
+        size = String.trim_trailing(size, "]")
+        case Regex.run(~r/^(\d+(?:\.\d+)?)(px|rem|em|%)$/, size) do
+          [_, value, unit] -> {value, unit}
+          _ -> {nil, "default"}
+        end
+      # Default case
+      _ -> {nil, "default"}
     end
   end
 
