@@ -36,7 +36,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Components.InputWithUnits do
       <select
         name={@name <> "_unit"}
         class={[
-          "appearance-none bg-none bg-transparent border-none pr-1 pl-0 text-sm focus:ring-0",
+          "appearance-none bg-none text-right bg-transparent border-none px-0.5 text-sm focus:ring-0",
           @size == "sm" && "py-0.5 leading-5",
           @size == "base" && "py-1 leading-6"
         ]}

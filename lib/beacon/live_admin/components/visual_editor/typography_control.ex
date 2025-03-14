@@ -44,8 +44,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
     {"Gray 900", "gray-900"}
   ]
 
-  @font_size_options [
-    {"Default", "default"},
+  @font_sizes [
     {"xs", "xs"},
     {"sm", "sm"},
     {"base", "base"},
@@ -68,7 +67,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
     {"Loose", "loose"}
   ]
 
-  @line_height_units ~w(px rem em %)
+  @css_units ~w(px rem em %)
 
   @letter_spacing_options [
     {"Default", "default"},
@@ -80,8 +79,6 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
     {"Widest", "widest"}
   ]
 
-  @letter_spacing_units ~w(px rem em %)
-
   @text_align_options [
     {"Start", "start"},
     {"Center", "center"},
@@ -90,6 +87,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
   ]
 
   @text_decoration_options [
+    {"Default", "default"},
     {"None", "no-underline"},
     {"Underline", "underline"},
     {"Line Through", "line-through"}
@@ -115,11 +113,10 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
        font_family_options: @font_family_options,
        font_weight_options: @font_weight_options,
        text_color_options: @text_color_options,
-       font_size_options: @font_size_options,
+       font_sizes: @font_sizes,
        line_height_options: @line_height_options,
-       line_height_units: @line_height_units,
+       css_units: @css_units,
        letter_spacing_options: @letter_spacing_options,
-       letter_spacing_units: @letter_spacing_units,
        text_align_options: @text_align_options,
        text_decoration_options: @text_decoration_options,
        text_transform_options: @text_transform_options,
@@ -187,11 +184,14 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
           <div class="flex gap-1">
             <div class="flex-1 min-w-0">
               <label class="text-xs block mb-1">Size</label>
-              <select name="font_size" class="w-full py-0.5 px-1 bg-gray-100 border-gray-100 rounded-md leading-5 text-xs">
-                <option :for={{label, value} <- @font_size_options} value={value} selected={@form.params["font_size"] == value}>
-                  <%= label %>
-                </option>
-              </select>
+              <.input_with_units
+                name="font_size"
+                value={@form.params["font_size"]}
+                value_unit={@form.params["font_size_unit"]}
+                sizes={@font_sizes}
+                units={@css_units}
+                size="sm"
+              />
             </div>
 
             <div class="flex-1 min-w-0">
@@ -201,34 +201,36 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
                 value={@form.params["line_height"]}
                 value_unit={@form.params["line_height_unit"]}
                 sizes={@line_height_options}
-                units={@line_height_units}
+                units={@css_units}
                 size="sm"
               />
             </div>
+          </div>
 
-            <div class="flex-1 min-w-0">
+          <div class="flex items-start gap-x-2">
+            <div class="flex-1">
+              <label class="text-xs block mb-1">Align</label>
+              <.toggle_group name="text_align" options={@align_options} selected={@form.params["text_align"]}>
+                <:label :let={align}>
+                  <%= if is_tuple(align.icon) do %>
+                    <.dynamic_icon name={elem(align.icon, 0)} class={["mx-auto", elem(align.icon, 1)[:class]]} />
+                  <% else %>
+                    <.dynamic_icon name={align.icon} class="mx-auto" />
+                  <% end %>
+                </:label>
+              </.toggle_group>
+            </div>
+            <div>
               <label class="text-xs block mb-1">Spacing</label>
               <.input_with_units
                 name="letter_spacing"
                 value={@form.params["letter_spacing"]}
                 value_unit={@form.params["letter_spacing_unit"]}
                 sizes={@letter_spacing_options}
-                units={@letter_spacing_units}
+                units={@css_units}
                 size="sm"
               />
             </div>
-          </div>
-
-          <div class="grid grid-cols-2 items-center gap-x-2">
-            <.toggle_group name="text_align" options={@align_options} selected={@form.params["text_align"]}>
-              <:label :let={align}>
-                <%= if is_tuple(align.icon) do %>
-                  <.dynamic_icon name={elem(align.icon, 0)} class={["mx-auto", elem(align.icon, 1)[:class]]} />
-                <% else %>
-                  <.dynamic_icon name={align.icon} class="mx-auto" />
-                <% end %>
-              </:label>
-            </.toggle_group>
           </div>
 
           <div class="grid grid-cols-2 items-center gap-x-2">

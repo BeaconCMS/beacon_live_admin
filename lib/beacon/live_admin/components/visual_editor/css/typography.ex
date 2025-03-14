@@ -25,7 +25,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Typography do
     |> maybe_add_class("font", params["font_family"])
     |> maybe_add_class("font", params["font_weight"])
     |> maybe_add_class("text", params["text_color"])
-    |> maybe_add_class("text", params["font_size"])
+    |> maybe_add_font_size("text", params["font_size"], params["font_size_unit"])
     |> maybe_add_class("leading", params["line_height"])
     |> maybe_add_class("tracking", params["letter_spacing"])
     |> maybe_add_class("text", params["text_align"])
@@ -34,10 +34,10 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Typography do
     |> maybe_add_style(params["font_style"])
   end
 
+  defp maybe_add_class(classes, _prefix, nil), do: classes
   defp maybe_add_class(classes, _prefix, "default"), do: classes
-  defp maybe_add_class(classes, _prefix, ""), do: classes  # Handle empty string case
+  defp maybe_add_class(classes, _prefix, ""), do: classes
   defp maybe_add_class(classes, prefix, value) when is_binary(value), do: classes ++ ["#{prefix}-#{value}"]
-  defp maybe_add_class(classes, _prefix, _value), do: classes  # Handle any other case
 
   defp maybe_add_decoration(classes, "default"), do: classes
   defp maybe_add_decoration(classes, value), do: classes ++ [value]
@@ -47,6 +47,13 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Typography do
 
   defp maybe_add_style(classes, "default"), do: classes
   defp maybe_add_style(classes, value), do: classes ++ [value]
+
+  defp maybe_add_font_size(classes, _prefix, nil, _unit), do: classes
+  defp maybe_add_font_size(classes, _prefix, "", _unit), do: classes
+  defp maybe_add_font_size(classes, prefix, value, unit) when is_binary(unit) and unit != "",
+    do: classes ++ ["#{prefix}-[#{value}#{unit}]"]
+  defp maybe_add_font_size(classes, prefix, value, _unit) when is_binary(value),
+    do: classes ++ ["#{prefix}-#{value}"]
 
   defp extract_font_family(classes) do
     case Enum.find(classes, &String.starts_with?(&1, "font-")) do
