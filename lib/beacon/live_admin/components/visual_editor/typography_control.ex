@@ -58,7 +58,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
     {"6xl", "6xl"}
   ]
 
-  @line_height_options [
+  @line_height_sizes [
     {"Default", "default"},
     {"None", "none"},
     {"Tight", "tight"},
@@ -115,7 +115,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
        font_weight_options: @font_weight_options,
        text_color_options: @text_color_options,
        font_sizes: @font_sizes,
-       line_height_options: @line_height_options,
+       line_height_sizes: @line_height_sizes,
        css_units: @css_units,
        letter_spacing_sizes: @letter_spacing_sizes,
        text_align_options: @text_align_options,
@@ -201,7 +201,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
                 name="line_height"
                 value={@form.params["line_height"]}
                 value_unit={@form.params["line_height_unit"]}
-                sizes={@line_height_options}
+                sizes={@line_height_sizes}
                 units={@css_units}
                 size="sm"
               />

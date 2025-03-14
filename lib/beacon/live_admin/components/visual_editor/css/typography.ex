@@ -28,8 +28,8 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Typography do
     |> maybe_add_class("font", params["font_family"])
     |> maybe_add_class("font", params["font_weight"])
     |> maybe_add_class("text", params["text_color"])
-    |> maybe_add_font_size("text", params["font_size"], params["font_size_unit"])
-    |> maybe_add_class("leading", params["line_height"])
+    |> maybe_add_font_size(params["font_size"], params["font_size_unit"])
+    |> maybe_add_line_height(params["line_height"], params["line_height_unit"])
     |> maybe_add_class("tracking", params["letter_spacing"])
     |> maybe_add_class("text", params["text_align"])
     |> maybe_add_decoration(params["text_decoration"])
@@ -52,18 +52,34 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Typography do
   defp maybe_add_style(classes, value), do: classes ++ [value]
 
   # Special case for px, all other units default to 1
-  defp maybe_add_font_size(classes, prefix, value, "px") do
-    classes ++ ["#{prefix}-[#{value || "16"}px]"]
+  defp maybe_add_font_size(classes, value, "px") do
+    classes ++ ["text-[#{value || "16"}px]"]
   end
-  defp maybe_add_font_size(classes, prefix, value, unit) when is_binary(unit) and unit in @css_units do
-    classes ++ ["#{prefix}-[#{value || "1"}#{unit}]"]
+  defp maybe_add_font_size(classes, value, unit) when is_binary(unit) and unit in @css_units do
+    classes ++ ["text-[#{value || "1"}#{unit}]"]
   end
-  defp maybe_add_font_size(classes, prefix, value, _unit) when is_binary(value) do
-    classes ++ ["#{prefix}-#{value}"]
+  defp maybe_add_font_size(classes, value, _unit) when is_binary(value) do
+    classes ++ ["text-#{value}"]
   end
-  defp maybe_add_font_size(classes, _prefix, "", _unit), do: classes
-  defp maybe_add_font_size(classes, _prefix, nil, _unit), do: classes
-  defp maybe_add_font_size(classes, _prefix, "default", _unit), do: classes
+  defp maybe_add_font_size(classes, "", _unit), do: classes
+  defp maybe_add_font_size(classes, nil, _unit), do: classes
+  defp maybe_add_font_size(classes, "default", _unit), do: classes
+
+  defp maybe_add_line_height(classes, value, "px") do
+    Logger.info("maybe_add_line_height 1: leading-[#{value || "16"}px]")
+    classes ++ ["leading-[#{value || "16"}px]"]
+  end
+  defp maybe_add_line_height(classes, value, unit) when is_binary(unit) and unit in @css_units do
+    Logger.info("maybe_add_line_height 2: leading-[#{value || "1"}#{unit}]")
+    classes ++ ["leading-[#{value || "1"}#{unit}]"]
+  end
+  defp maybe_add_line_height(classes, value, _unit) when value in ~w(none tight snug normal relaxed loose) do
+    Logger.info("maybe_add_line_height 3: leading-#{value}")
+    classes ++ ["leading-#{value}"]
+  end
+  defp maybe_add_line_height(classes, "", _unit), do: classes
+  defp maybe_add_line_height(classes, nil, _unit), do: classes
+  defp maybe_add_line_height(classes, "default", _unit), do: classes
 
   defp extract_font_family(classes) do
     case Enum.find(classes, &String.starts_with?(&1, "font-")) do
