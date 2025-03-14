@@ -7,7 +7,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
   alias Beacon.LiveAdmin.VisualEditor
   alias Beacon.LiveAdmin.VisualEditor.Components.ControlSection
   alias Beacon.LiveAdmin.VisualEditor.Css.Typography
-
+  require Logger
   @font_family_options [
     {"Default", "default"},
     {"Sans", "sans"},
@@ -45,6 +45,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
   ]
 
   @font_sizes [
+    {"-", "default"},
     {"xs", "xs"},
     {"sm", "sm"},
     {"base", "base"},
@@ -69,7 +70,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
 
   @css_units ~w(px rem em %)
 
-  @letter_spacing_options [
+  @letter_spacing_sizes [
     {"Default", "default"},
     {"Tighter", "tighter"},
     {"Tight", "tight"},
@@ -116,7 +117,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
        font_sizes: @font_sizes,
        line_height_options: @line_height_options,
        css_units: @css_units,
-       letter_spacing_options: @letter_spacing_options,
+       letter_spacing_sizes: @letter_spacing_sizes,
        text_align_options: @text_align_options,
        text_decoration_options: @text_decoration_options,
        text_transform_options: @text_transform_options,
@@ -126,7 +127,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
 
   def update(%{element: element} = assigns, socket) do
     values = Typography.extract_typography_properties(element)
-
+    Logger.info("############## values: #{inspect(values)}")
     {:ok,
      socket
      |> assign(assigns)
@@ -226,7 +227,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
                 name="letter_spacing"
                 value={@form.params["letter_spacing"]}
                 value_unit={@form.params["letter_spacing_unit"]}
-                sizes={@letter_spacing_options}
+                sizes={@letter_spacing_sizes}
                 units={@css_units}
                 size="sm"
               />
@@ -267,13 +268,13 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
 
   def handle_event("update_typography", params, socket) do
     new_classes = Typography.generate_typography_classes(params)
-
+    Logger.info("############## new_classes: #{inspect(new_classes)}")
     classes =
       socket.assigns.element
       |> VisualEditor.delete_classes(~r/^font-(sans|serif|mono)$/)
       |> VisualEditor.delete_classes(~r/^font-(thin|extralight|light|normal|medium|semibold|bold|extrabold|black)$/)
       |> VisualEditor.delete_classes(~r/^text-(black|white|gray-\d+)$/)
-      |> VisualEditor.delete_classes(~r/^text-(xs|sm|base|lg|xl|2xl|3xl|4xl|5xl|6xl)$/)
+      |> VisualEditor.delete_classes(~r/^text-(xs|sm|base|lg|xl|2xl|3xl|4xl|5xl|6xl|\[.+?\])$/)
       |> VisualEditor.delete_classes(~r/^leading-(none|tight|snug|normal|relaxed|loose|\[.+\])$/)
       |> VisualEditor.delete_classes(~r/^tracking-(tighter|tight|normal|wide|wider|widest|\[.+\])$/)
       |> VisualEditor.delete_classes(~r/^text-(start|center|end|justify)$/)

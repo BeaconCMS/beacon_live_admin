@@ -2,15 +2,18 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Typography do
   @moduledoc false
 
   alias Beacon.LiveAdmin.VisualEditor
-
+  @css_units ~w(px rem em %)
+  require Logger
   def extract_typography_properties(element) do
     classes = VisualEditor.element_classes(element)
+    {font_size, font_size_unit} = extract_font_size(classes)
 
     %{
       "font_family" => extract_font_family(classes),
       "font_weight" => extract_font_weight(classes),
       "text_color" => extract_text_color(classes),
-      "font_size" => extract_font_size(classes),
+      "font_size" => font_size,
+      "font_size_unit" => font_size_unit,
       "line_height" => extract_line_height(classes),
       "letter_spacing" => extract_letter_spacing(classes),
       "text_align" => extract_text_align(classes),
@@ -48,12 +51,19 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Typography do
   defp maybe_add_style(classes, "default"), do: classes
   defp maybe_add_style(classes, value), do: classes ++ [value]
 
-  defp maybe_add_font_size(classes, _prefix, nil, _unit), do: classes
+  # Special case for px, all other units default to 1
+  defp maybe_add_font_size(classes, prefix, value, "px") do
+    classes ++ ["#{prefix}-[#{value || "16"}px]"]
+  end
+  defp maybe_add_font_size(classes, prefix, value, unit) when is_binary(unit) and unit in @css_units do
+    classes ++ ["#{prefix}-[#{value || "1"}#{unit}]"]
+  end
+  defp maybe_add_font_size(classes, prefix, value, _unit) when is_binary(value) do
+    classes ++ ["#{prefix}-#{value}"]
+  end
   defp maybe_add_font_size(classes, _prefix, "", _unit), do: classes
-  defp maybe_add_font_size(classes, prefix, value, unit) when is_binary(unit) and unit != "",
-    do: classes ++ ["#{prefix}-[#{value}#{unit}]"]
-  defp maybe_add_font_size(classes, prefix, value, _unit) when is_binary(value),
-    do: classes ++ ["#{prefix}-#{value}"]
+  defp maybe_add_font_size(classes, _prefix, nil, _unit), do: classes
+  defp maybe_add_font_size(classes, _prefix, "default", _unit), do: classes
 
   defp extract_font_family(classes) do
     case Enum.find(classes, &String.starts_with?(&1, "font-")) do
@@ -99,17 +109,26 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Typography do
 
   defp extract_font_size(classes) do
     case Enum.find(classes, &String.starts_with?(&1, "text-")) do
-      "text-xs" -> "xs"
-      "text-sm" -> "sm"
-      "text-base" -> "base"
-      "text-lg" -> "lg"
-      "text-xl" -> "xl"
-      "text-2xl" -> "2xl"
-      "text-3xl" -> "3xl"
-      "text-4xl" -> "4xl"
-      "text-5xl" -> "5xl"
-      "text-6xl" -> "6xl"
-      _ -> nil
+      # Tailwind preset sizes
+      "text-xs" -> {"xs", "xs"}
+      "text-sm" -> {"sm", "sm"}
+      "text-base" -> {"base", "base"}
+      "text-lg" -> {"lg", "lg"}
+      "text-xl" -> {"xl", "xl"}
+      "text-2xl" -> {"2xl", "2xl"}
+      "text-3xl" -> {"3xl", "3xl"}
+      "text-4xl" -> {"4xl", "4xl"}
+      "text-5xl" -> {"5xl", "5xl"}
+      "text-6xl" -> {"6xl", "6xl"}
+      # Custom sizes with units
+      <<"text-[", size::binary>> ->
+        size = String.trim_trailing(size, "]")
+        case Regex.run(~r/^(\d+(?:\.\d+)?)(px|rem|em|%)$/, size) do
+          [_, value, unit] -> {value, unit}
+          _ -> {nil, "default"}
+        end
+      # Default case
+      _ -> {nil, "default"}
     end
   end
 
