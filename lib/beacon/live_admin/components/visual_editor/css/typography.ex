@@ -62,6 +62,9 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Typography do
   defp maybe_add_font_size(classes, value, unit) when is_binary(unit) and unit in @css_units do
     classes ++ ["text-[#{value || "1"}#{unit}]"]
   end
+  defp maybe_add_font_size(classes, _value, unit) when unit in ~w(xs sm base lg xl 2xl 3xl 4xl 5xl 6xl) do
+    classes ++ ["text-#{unit}"]
+  end
   defp maybe_add_font_size(classes, value, _unit) when is_binary(value) do
     classes ++ ["text-#{value}"]
   end
