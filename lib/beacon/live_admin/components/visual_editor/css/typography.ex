@@ -8,6 +8,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Typography do
     classes = VisualEditor.element_classes(element)
     {font_size, font_size_unit} = extract_font_size(classes)
     {line_height, line_height_unit} = extract_line_height(classes)
+    {letter_spacing, letter_spacing_unit} = extract_letter_spacing(classes)
 
     %{
       "font_family" => extract_font_family(classes),
@@ -17,7 +18,8 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Typography do
       "font_size_unit" => font_size_unit,
       "line_height" => line_height,
       "line_height_unit" => line_height_unit,
-      "letter_spacing" => extract_letter_spacing(classes),
+      "letter_spacing" => letter_spacing,
+      "letter_spacing_unit" => letter_spacing_unit,
       "text_align" => extract_text_align(classes),
       "text_decoration" => extract_text_decoration(classes),
       "text_transform" => extract_text_transform(classes),
@@ -26,15 +28,13 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Typography do
   end
 
   def generate_typography_classes(params) do
-    Logger.info("line_height: #{inspect(params["line_height"])}")
-    Logger.info("line_height_unit: #{inspect(params["line_height_unit"])}")
     []
     |> maybe_add_class("font", params["font_family"])
     |> maybe_add_class("font", params["font_weight"])
     |> maybe_add_class("text", params["text_color"])
     |> maybe_add_font_size(params["font_size"], params["font_size_unit"])
     |> maybe_add_line_height(params["line_height"], params["line_height_unit"])
-    |> maybe_add_class("tracking", params["letter_spacing"])
+    |> maybe_add_letter_spacing(params["letter_spacing"], params["letter_spacing_unit"])
     |> maybe_add_class("text", params["text_align"])
     |> maybe_add_decoration(params["text_decoration"])
     |> maybe_add_transform(params["text_transform"])
@@ -172,16 +172,37 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Typography do
 
   defp extract_letter_spacing(classes) do
     case Enum.find(classes, &String.starts_with?(&1, "tracking-")) do
-      "tracking-tighter" -> "tighter"
-      "tracking-tight" -> "tight"
-      "tracking-normal" -> "normal"
-      "tracking-wide" -> "wide"
-      "tracking-wider" -> "wider"
-      "tracking-widest" -> "widest"
-      size when is_binary(size) -> String.replace(size, "tracking-", "")
-      _ -> nil
+      # Tailwind preset values - value is nil, unit is the preset
+      "tracking-tighter" -> {nil, "tighter"}
+      "tracking-tight" -> {nil, "tight"}
+      "tracking-normal" -> {nil, "normal"}
+      "tracking-wide" -> {nil, "wide"}
+      "tracking-wider" -> {nil, "wider"}
+      "tracking-widest" -> {nil, "widest"}
+      # Custom sizes with units - value is the number, unit is the CSS unit
+      <<"tracking-[", size::binary>> ->
+        size = String.trim_trailing(size, "]")
+        case Regex.run(~r/^(\d+(?:\.\d+)?)(px|rem|em|%)$/, size) do
+          [_, value, unit] -> {value, unit}
+          _ -> {nil, "default"}
+        end
+      # Default case
+      _ -> {nil, "default"}
     end
   end
+
+  defp maybe_add_letter_spacing(classes, value, unit) when unit in ~w(tighter tight normal wide wider widest) do
+    classes ++ ["tracking-#{unit}"]
+  end
+  defp maybe_add_letter_spacing(classes, value, "px") do
+    classes ++ ["tracking-[#{value || "1"}px]"]
+  end
+  defp maybe_add_letter_spacing(classes, value, unit) when is_binary(unit) and unit in @css_units do
+    classes ++ ["tracking-[#{value || "1"}#{unit}]"]
+  end
+  defp maybe_add_letter_spacing(classes, _, ""), do: classes
+  defp maybe_add_letter_spacing(classes, _, nil), do: classes
+  defp maybe_add_letter_spacing(classes, _, "default"), do: classes
 
   defp extract_text_align(classes) do
     case Enum.find(classes, &String.starts_with?(&1, "text-")) do

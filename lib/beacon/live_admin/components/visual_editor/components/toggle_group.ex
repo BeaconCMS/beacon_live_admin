@@ -40,7 +40,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Components.ToggleGroup do
         <label
           :for={option <- @options}
           class={[
-            "text-center px-2 py-1 text-sm cursor-pointer flex-1",
+            "text-center px-1.5 py-1 text-sm cursor-pointer flex-1",
             "first:rounded-l last:rounded-r",
             "border-y border-r border-gray-300 first:border-l",
             @selected == option.value && "bg-blue-500 text-white relative z-10",
