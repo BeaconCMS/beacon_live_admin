@@ -88,22 +88,18 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
   ]
 
   @text_decoration_options [
-    {"Default", "default"},
     {"None", "no-underline"},
     {"Underline", "underline"},
-    {"Line Through", "line-through"}
+    {"Strike", "line-through"}
   ]
 
   @text_transform_options [
-    {"Default", "default"},
-    {"Uppercase", "uppercase"},
-    {"Lowercase", "lowercase"},
-    {"Capitalize", "capitalize"},
-    {"None", "normal-case"}
+    {"Upper", "uppercase"},
+    {"Cap", "capitalize"},
+    {"Lower", "lowercase"}
   ]
 
   @font_style_options [
-    {"Default", "default"},
     {"Normal", "not-italic"},
     {"Italic", "italic"}
   ]
@@ -156,7 +152,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
       <.live_component module={ControlSection} id={@id <> "-section"} label="Typography">
         <form phx-change="update_typography" phx-target={@myself} class="space-y-4">
           <div class="grid grid-cols-2 items-center gap-x-2">
-            <label class="text-xs">Font Family</label>
+            <label class="text-xs">Family</label>
             <select name="font_family" class="w-full py-0.5 px-2 bg-gray-100 border-gray-100 rounded-md leading-5 text-sm">
               <option :for={{label, value} <- @font_family_options} value={value} selected={@form.params["font_family"] == value}>
                 <%= label %>
@@ -165,7 +161,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
           </div>
 
           <div class="grid grid-cols-2 items-center gap-x-2">
-            <label class="text-xs">Font Weight</label>
+            <label class="text-xs">Weight</label>
             <select name="font_weight" class="w-full py-0.5 px-2 bg-gray-100 border-gray-100 rounded-md leading-5 text-sm">
               <option :for={{label, value} <- @font_weight_options} value={value} selected={@form.params["font_weight"] == value}>
                 <%= label %>
@@ -174,7 +170,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
           </div>
 
           <div class="grid grid-cols-2 items-center gap-x-2">
-            <label class="text-xs">Text Color</label>
+            <label class="text-xs">Color</label>
             <select name="text_color" class="w-full py-0.5 px-2 bg-gray-100 border-gray-100 rounded-md leading-5 text-sm">
               <option :for={{label, value} <- @text_color_options} value={value} selected={@form.params["text_color"] == value}>
                 <%= label %>
@@ -234,31 +230,24 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
             </div>
           </div>
 
-          <div class="grid grid-cols-2 items-center gap-x-2">
-            <label class="text-xs">Decoration</label>
-            <select name="text_decoration" class="w-full py-0.5 px-2 bg-gray-100 border-gray-100 rounded-md leading-5 text-sm">
-              <option :for={{label, value} <- @text_decoration_options} value={value} selected={@form.params["text_decoration"] == value}>
-                <%= label %>
-              </option>
-            </select>
-          </div>
+          <div class="flex gap-x-2">
+            <.toggle_group name="text_decoration" options={decoration_options(@text_decoration_options)} selected={@form.params["text_decoration"]}>
+              <:label :let={decoration}>
+                <.icon name={decoration.icon} class="w-3 h-3" />
+              </:label>
+            </.toggle_group>
 
-          <div class="grid grid-cols-2 items-center gap-x-2">
-            <label class="text-xs">Transform</label>
-            <select name="text_transform" class="w-full py-0.5 px-2 bg-gray-100 border-gray-100 rounded-md leading-5 text-sm">
-              <option :for={{label, value} <- @text_transform_options} value={value} selected={@form.params["text_transform"] == value}>
-                <%= label %>
-              </option>
-            </select>
-          </div>
+            <.toggle_group name="text_transform" options={transform_options(@text_transform_options)} selected={@form.params["text_transform"]}>
+              <:label :let={transform}>
+                <.dynamic_icon name={transform.icon} class="w-3 h-3" />
+              </:label>
+            </.toggle_group>
 
-          <div class="grid grid-cols-2 items-center gap-x-2">
-            <label class="text-xs">Style</label>
-            <select name="font_style" class="w-full py-0.5 px-2 bg-gray-100 border-gray-100 rounded-md leading-5 text-sm">
-              <option :for={{label, value} <- @font_style_options} value={value} selected={@form.params["font_style"] == value}>
-                <%= label %>
-              </option>
-            </select>
+            <.toggle_group name="font_style" options={font_style_options(@font_style_options)} selected={@form.params["font_style"]}>
+              <:label :let={style}>
+                <.icon name={style.icon} class="w-3 h-3" />
+              </:label>
+            </.toggle_group>
           </div>
         </form>
       </.live_component>
@@ -377,5 +366,82 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
         <line x1="21" y1="18" x2="3" y2="18" />
       </svg>
     """
+  end
+
+  defp transform_options(options) do
+    Enum.map(options, fn {label, value} ->
+      %{
+        value: value,
+        label: label,
+        icon: case value do
+          "uppercase" -> :transform_uppercase
+          "lowercase" -> :transform_lowercase
+          "capitalize" -> :transform_capitalize
+        end
+      }
+    end)
+  end
+
+  def transform_uppercase_icon(assigns) do
+    ~H"""
+      <svg
+        class="w-4 h-5 pointer-events-none"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 16 16"
+        fill="none">
+        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" d="M1.5 10.811 4.31 5.19l2.812 5.622M2.202 9.406h4.217M9.933 8h3.162a1.406 1.406 0 1 1 0 2.811H9.933V5.19h2.81a1.406 1.406 0 1 1 0 2.811"></path>
+      </svg>
+    """
+  end
+
+  def transform_lowercase_icon(assigns) do
+    ~H"""
+      <svg
+        class="w-4 h-5 pointer-events-none"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 16 16"
+        fill="none">
+        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" d="M3.937 11.25a2.437 2.437 0 1 0 0-4.875 2.437 2.437 0 0 0 0 4.875ZM6.375 6.375v4.875M12.063 11.25a2.437 2.437 0 1 0 0-4.875 2.437 2.437 0 0 0 0 4.875ZM9.625 4.75v6.5"></path>
+      </svg>
+    """
+  end
+
+  def transform_capitalize_icon(assigns) do
+    ~H"""
+      <svg
+        class="w-4 h-5 pointer-events-none"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 16 16"
+        fill="none">
+        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" d="M1.5 10.889 4.389 5.11l2.889 5.778M2.222 9.444h4.334M12.333 10.889a2.167 2.167 0 1 0 0-4.334 2.167 2.167 0 0 0 0 4.334ZM14.5 6.556v4.333"></path>
+      </svg>
+    """
+  end
+
+  defp font_style_options(options) do
+    Enum.map(options, fn {label, value} ->
+      %{
+        value: value,
+        label: label,
+        icon: case value do
+          "italic" -> "hero-italic"
+          "not-italic" -> "hero-x-mark"
+        end
+      }
+    end)
+  end
+
+  defp decoration_options(options) do
+    Enum.map(options, fn {label, value} ->
+      %{
+        value: value,
+        label: label,
+        icon: case value do
+          "underline" -> "hero-underline"
+          "line-through" -> "hero-strikethrough"
+          "no-underline" -> "hero-x-mark"
+        end
+      }
+    end)
   end
 end
