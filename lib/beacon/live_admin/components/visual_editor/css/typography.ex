@@ -24,6 +24,8 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Typography do
   end
 
   def generate_typography_classes(params) do
+    Logger.info("line_height: #{inspect(params["line_height"])}")
+    Logger.info("line_height_unit: #{inspect(params["line_height_unit"])}")
     []
     |> maybe_add_class("font", params["font_family"])
     |> maybe_add_class("font", params["font_weight"])
@@ -66,20 +68,17 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Typography do
   defp maybe_add_font_size(classes, "default", _unit), do: classes
 
   defp maybe_add_line_height(classes, value, "px") do
-    Logger.info("maybe_add_line_height 1: leading-[#{value || "16"}px]")
     classes ++ ["leading-[#{value || "16"}px]"]
   end
   defp maybe_add_line_height(classes, value, unit) when is_binary(unit) and unit in @css_units do
-    Logger.info("maybe_add_line_height 2: leading-[#{value || "1"}#{unit}]")
     classes ++ ["leading-[#{value || "1"}#{unit}]"]
   end
-  defp maybe_add_line_height(classes, value, _unit) when value in ~w(none tight snug normal relaxed loose) do
-    Logger.info("maybe_add_line_height 3: leading-#{value}")
-    classes ++ ["leading-#{value}"]
+  defp maybe_add_line_height(classes, nil, unit) when unit in ~w(none tight snug normal relaxed loose) do
+    classes ++ ["leading-#{unit}"]
   end
-  defp maybe_add_line_height(classes, "", _unit), do: classes
-  defp maybe_add_line_height(classes, nil, _unit), do: classes
-  defp maybe_add_line_height(classes, "default", _unit), do: classes
+  defp maybe_add_line_height(classes, _, ""), do: classes
+  defp maybe_add_line_height(classes, _, nil), do: classes
+  defp maybe_add_line_height(classes, _, "default"), do: classes
 
   defp extract_font_family(classes) do
     case Enum.find(classes, &String.starts_with?(&1, "font-")) do
