@@ -1,7 +1,7 @@
 defmodule Beacon.LiveAdmin.MixProject do
   use Mix.Project
 
-  @version "0.4.1"
+  @version "0.4.2-dev"
   @source_url "https://github.com/BeaconCMS/beacon_live_admin"
   @homepage_url "https://beaconcms.org"
 
@@ -61,7 +61,7 @@ defmodule Beacon.LiveAdmin.MixProject do
       # Runtime
       {:ecto, "~> 3.6"},
       {:phoenix_html, "~> 4.0"},
-      {:live_svelte, "~> 0.15"},
+      {:live_svelte, "~> 0.12 and < 0.15.0"},
       {:floki, ">= 0.30.0"},
       {:tailwind, "~> 0.2"},
       {:gettext, "~> 0.26"},
