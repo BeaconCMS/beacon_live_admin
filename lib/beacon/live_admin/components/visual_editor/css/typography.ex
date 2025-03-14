@@ -3,7 +3,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Typography do
 
   alias Beacon.LiveAdmin.VisualEditor
   @css_units ~w(px rem em %)
-  require Logger
+
   def extract_typography_properties(element) do
     classes = VisualEditor.element_classes(element)
     {font_size, font_size_unit} = extract_font_size(classes)
@@ -208,7 +208,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Typography do
   defp maybe_add_letter_spacing(classes, _, "default"), do: classes
 
   defp extract_text_align(classes) do
-    case Enum.find(classes, &String.starts_with?(&1, "text-")) do
+    case Enum.find(classes, &(&1 in ["text-start", "text-center", "text-end", "text-justify"])) do
       "text-start" -> "start"
       "text-center" -> "center"
       "text-end" -> "end"

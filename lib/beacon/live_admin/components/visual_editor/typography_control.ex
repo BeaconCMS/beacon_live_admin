@@ -7,7 +7,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
   alias Beacon.LiveAdmin.VisualEditor
   alias Beacon.LiveAdmin.VisualEditor.Components.ControlSection
   alias Beacon.LiveAdmin.VisualEditor.Css.Typography
-  require Logger
+
   @font_family_options [
     {"Default", "default"},
     {"Sans", "sans"},
@@ -123,7 +123,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
 
   def update(%{element: element} = assigns, socket) do
     values = Typography.extract_typography_properties(element)
-    Logger.info("############## values: #{inspect(values)}")
+
     {:ok,
      socket
      |> assign(assigns)
@@ -131,22 +131,6 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
   end
 
   def render(assigns) do
-    assigns =
-      assigns
-      |> assign(:align_options, Enum.map(@text_align_options, fn {label, value} ->
-        %{
-          value: value,
-          label: label,
-          icon: case value do
-            "start" -> :align_start
-            "center" -> :align_center
-            "end" -> :align_end
-            "justify" -> :align_justify
-            "default" -> {:align_start, class: "opacity-30"}
-          end
-        }
-      end))
-
     ~H"""
     <div id={@id}>
       <.live_component module={ControlSection} id={@id <> "-section"} label="Typography">
@@ -207,13 +191,9 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
           <div class="flex items-start gap-x-2">
             <div class="flex-1">
               <label class="text-xs block mb-1">Align</label>
-              <.toggle_group name="text_align" options={@align_options} selected={@form.params["text_align"]}>
+              <.toggle_group name="text_align" options={align_options(@text_align_options)} selected={@form.params["text_align"]}>
                 <:label :let={align}>
-                  <%= if is_tuple(align.icon) do %>
-                    <.dynamic_icon name={elem(align.icon, 0)} class={["mx-auto", elem(align.icon, 1)[:class]]} />
-                  <% else %>
-                    <.dynamic_icon name={align.icon} class="mx-auto" />
-                  <% end %>
+                  <.dynamic_icon name={align.icon} class="mx-auto" />
                 </:label>
               </.toggle_group>
             </div>
@@ -257,7 +237,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
 
   def handle_event("update_typography", params, socket) do
     new_classes = Typography.generate_typography_classes(params)
-    Logger.info("############## new_classes: #{inspect(new_classes)}")
+
     classes =
       socket.assigns.element
       |> VisualEditor.delete_classes(~r/^font-(sans|serif|mono)$/)
@@ -440,6 +420,21 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
           "underline" -> "hero-underline"
           "line-through" -> "hero-strikethrough"
           "no-underline" -> "hero-x-mark"
+        end
+      }
+    end)
+  end
+
+  defp align_options(options) do
+    Enum.map(options, fn {label, value} ->
+      %{
+        value: value,
+        label: label,
+        icon: case value do
+          "start" -> :align_start
+          "center" -> :align_center
+          "end" -> :align_end
+          "justify" -> :align_justify
         end
       }
     end)
