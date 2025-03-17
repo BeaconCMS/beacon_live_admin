@@ -4,10 +4,10 @@ import { get } from "svelte/store"
 import type { AstNode, Page, PageInfo } from "$lib/types"
 import { getParentNodeId } from "./ast-helpers"
 
-export function updateNodeContent(node, text) {
+export function updateNodeContent(path, node, text) {
   if (node && isAstElement(node)) {
     node.content = [text]
-    updateAst()
+    updateNode(path, node)
   }
 }
 
@@ -18,15 +18,32 @@ export function updateAst() {
   live.pushEvent("update_page_ast", { id: info.id, ast })
 }
 
+export function updateNode(path, node) {
+  let live = get(liveStore)
+  let info: PageInfo = get(pageInfo)
+  live.pushEvent("update_page_node", { id: info.id, node_id: path, node: node })
+}
+
 export function deleteAstNode(astElementId: string) {
   let ast: AstNode[] = get(pageAst)
 
   let astElement = findAstElement(ast, astElementId)
   let parentId = getParentNodeId(astElementId)
-  let content = parentId && parentId !== "root" ? findAstElement(ast, parentId)?.content : ast
+  let content
+  let parentNode
+  if (parentId && parentId !== "root") {
+    parentNode = findAstElement(ast, parentId)
+    content = parentNode.content
+  } else {
+    content = ast
+  }
   if (content) {
     let targetIndex = (content as unknown[]).indexOf(astElement)
     content.splice(targetIndex, 1)
-    updateAst()
+    if (parentNode) {
+      updateNode(parentId, parentNode)
+    } else {
+      updateAst()
+    }
   }
 }

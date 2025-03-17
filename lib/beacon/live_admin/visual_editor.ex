@@ -55,6 +55,21 @@ defmodule Beacon.LiveAdmin.VisualEditor do
     end
   end
 
+  def replace_node(nodes, path, new_node) do
+    path = resolve_path(path)
+    replace_node_recursive(nodes, path, new_node)
+  end
+
+  defp replace_node_recursive(nodes, [index], new_node) do
+    List.update_at(nodes, index, fn _ -> new_node end)
+  end
+
+  defp replace_node_recursive(nodes, [index | rest], new_node) do
+    List.update_at(nodes, index, fn node ->
+      %{node | "content" => replace_node_recursive(node["content"], rest, new_node)}
+    end)
+  end
+
   # FIXME: update "root" node - it will crash if any property is updated on the root node (choose Up one level up to root)
   def update_node(nodes, path, attrs, deleted_attrs) do
     path = resolve_path(path)
