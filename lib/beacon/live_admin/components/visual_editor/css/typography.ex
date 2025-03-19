@@ -196,7 +196,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Typography do
     end
   end
 
-  defp maybe_add_letter_spacing(classes, value, unit) when unit in ~w(tighter tight normal wide wider widest) do
+  defp maybe_add_letter_spacing(classes, _value, unit) when unit in ~w(tighter tight normal wide wider widest) do
     classes ++ ["tracking-#{unit}"]
   end
   defp maybe_add_letter_spacing(classes, value, "px") do
