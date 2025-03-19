@@ -1,22 +1,21 @@
 defmodule Beacon.LiveAdmin.VisualEditor.Components.ToggleGroup do
-  @moduledoc """
-  A reusable toggle group component that allows for customizable label content.
-
-  Example usage:
-  ```heex
-  <.toggle_group name="style" options={@style_options} selected={@selected_style}>
-    <:label :let={style}>
-      <%= style.label %>
-    </:label>
-  </.toggle_group>
-
-  <.toggle_group name="alignment" options={@align_options} selected={@selected_align}>
-    <:label :let={align}>
-      <.icon name={align.icon} class="mx-auto" />
-    </:label>
-  </.toggle_group>
-  ```
-  """
+  @moduledoc false
+  # A reusable toggle group component that allows for customizable label content.
+  #
+  # Example usage:
+  # ```heex
+  # <.toggle_group name="style" options={@style_options} selected={@selected_style}>
+  #   <:label :let={style}>
+  #     <%= style.label %>
+  #   </:label>
+  # </.toggle_group>
+  #
+  # <.toggle_group name="alignment" options={@align_options} selected={@selected_align}>
+  #   <:label :let={align}>
+  #     <.icon name={align.icon} class="mx-auto" />
+  #   </:label>
+  # </.toggle_group>
+  # ```
 
   use Phoenix.Component
 

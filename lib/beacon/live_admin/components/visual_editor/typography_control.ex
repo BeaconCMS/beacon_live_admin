@@ -7,7 +7,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
   alias Beacon.LiveAdmin.VisualEditor
   alias Beacon.LiveAdmin.VisualEditor.Components.ControlSection
   alias Beacon.LiveAdmin.VisualEditor.Css.Typography
-  require Logger
+
   @font_family_options [
     {"Default", "default"},
     {"Sans", "sans"},
@@ -123,7 +123,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
 
   def update(%{element: element} = assigns, socket) do
     values = Typography.extract_typography_properties(element)
-    Logger.info("############## values: #{inspect(values)}")
+
     {:ok,
      socket
      |> assign(assigns)
@@ -257,7 +257,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
 
   def handle_event("update_typography", params, socket) do
     new_classes = Typography.generate_typography_classes(params)
-    Logger.info("############## new_classes: #{inspect(new_classes)}")
+
     classes =
       socket.assigns.element
       |> VisualEditor.delete_classes(~r/^font-(sans|serif|mono)$/)

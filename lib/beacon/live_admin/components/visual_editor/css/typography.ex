@@ -1,9 +1,11 @@
 defmodule Beacon.LiveAdmin.VisualEditor.Css.Typography do
   @moduledoc false
 
-  alias Beacon.LiveAdmin.VisualEditor
-  @css_units ~w(px rem em %)
   require Logger
+  alias Beacon.LiveAdmin.VisualEditor
+
+  @css_units ~w(px rem em %)
+
   def extract_typography_properties(element) do
     classes = VisualEditor.element_classes(element)
     {font_size, font_size_unit} = extract_font_size(classes)
