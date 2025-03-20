@@ -1,7 +1,7 @@
 import topbar from "../vendor/topbar"
 import { CodeEditorHook } from "../../deps/live_monaco_editor/priv/static/live_monaco_editor.esm"
-import { getHooks } from "live_svelte"
 import visualEditorHooks from "../../lib/beacon/live_admin/components/visual_editor/hooks"
+import { getHooks } from "live_svelte"
 import * as Components from "../svelte/**/*.svelte"
 
 let Hooks = {}

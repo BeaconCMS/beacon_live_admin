@@ -108,7 +108,7 @@ defmodule Beacon.LiveAdmin.MixProject do
 
   defp aliases do
     [
-      setup: ["deps.get", "assets.setup", "assets.build"],
+      setup: ["deps.get", "assets.setup"],
       dev: "run --no-halt dev.exs",
       "format.all": ["format", "cmd npm run format"],
       "format.all.check": [
@@ -120,10 +120,14 @@ defmodule Beacon.LiveAdmin.MixProject do
         "cmd npm install",
         "cmd npm install --prefix assets"
       ],
+      "assets.watch": [
+        "tailwind beacon_live_admin",
+        "cmd --cd assets node build.js --watch"
+      ],
       "assets.build": [
         "tailwind beacon_live_admin",
         "tailwind beacon_live_admin_min",
-        "cmd --cd assets node build.js"
+        "cmd --cd assets node build.js --deploy"
       ]
     ]
   end
