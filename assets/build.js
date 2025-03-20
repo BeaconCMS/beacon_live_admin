@@ -39,7 +39,7 @@ let optsClient = {
   alias: { svelte: "svelte" },
   outfile: watch ? "../priv/static/beacon_live_admin.js" : "../priv/static/beacon_live_admin.min.js",
   logLevel: "info",
-  sourcemap: watch ? "inline" : false,
+  sourcemap: watch ? "external" : false,
   tsconfig: "./tsconfig.json",
   plugins: [
     importGlobPlugin(),
@@ -65,7 +65,7 @@ let optsServer = {
   alias: { svelte: "svelte" },
   outdir: "../priv/svelte",
   logLevel: "info",
-  sourcemap: watch ? "inline" : false,
+  sourcemap: watch ? "external" : false,
   tsconfig: "./tsconfig.json",
   plugins: [
     importGlobPlugin(),
