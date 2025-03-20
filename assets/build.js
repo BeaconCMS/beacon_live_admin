@@ -37,7 +37,7 @@ let optsClient = {
   minify: deploy,
   conditions: clientConditions,
   alias: { svelte: "svelte" },
-  outfile: "../priv/static/beacon_live_admin.js",
+  outfile: watch ? "../priv/static/beacon_live_admin.js" : "../priv/static/beacon_live_admin.min.js",
   logLevel: "info",
   sourcemap: watch ? "inline" : false,
   tsconfig: "./tsconfig.json",
