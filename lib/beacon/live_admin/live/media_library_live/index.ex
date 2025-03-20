@@ -43,11 +43,11 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.Index do
      |> apply_action(assigns.live_action, params)}
   end
 
-  defp apply_action(socket, :index, %{"search" => search}) when search not in ["", nil] do
-    assets = MediaLibrary.search(socket.assigns.beacon_page.site, search)
+  defp apply_action(socket, :index, %{"search" => %{"query" => query}}) when query not in ["", nil] do
+    assets = MediaLibrary.search(socket.assigns.beacon_page.site, query)
 
     socket
-    |> assign(assets: assets, search: search, page_title: search)
+    |> assign(assets: assets, query: query, page_title: query)
     |> assign(:asset, nil)
   end
 
@@ -79,17 +79,9 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.Index do
     asset = MediaLibrary.get_asset_by(site, id: id)
     {:ok, _} = MediaLibrary.soft_delete(site, asset)
 
-    path = beacon_live_admin_path(socket, site, "/media_library", search: socket.assigns.search)
+    path = beacon_live_admin_path(socket, site, "/media_library", query: socket.assigns.query)
     socket = push_patch(socket, to: path)
 
-    {:noreply, socket}
-  end
-
-  def handle_event("search", %{"search" => search}, %{assigns: assigns} = socket) do
-    path =
-      beacon_live_admin_path(socket, assigns.beacon_page.site, "/media_library", search: search)
-
-    socket = push_patch(socket, to: path)
     {:noreply, socket}
   end
 
