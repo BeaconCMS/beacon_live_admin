@@ -47,7 +47,6 @@ let optsClient = {
       preprocess: sveltePreprocess(),
       compilerOptions: {
         dev: !deploy,
-        hydratable: true,
         css: "injected",
         generate: "client",
         customElement: true,
@@ -76,6 +75,7 @@ let optsServer = {
         dev: !deploy,
         css: "injected",
         generate: "server",
+        customElement: true,
       },
     }),
   ],
