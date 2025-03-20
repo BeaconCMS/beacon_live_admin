@@ -13,8 +13,17 @@ const sveltePreprocess = require("svelte-preprocess")
 
 const args = process.argv.slice(2)
 const watch = args.includes("--watch")
+const deploy = args.includes("--deploy")
 
-let clientOpts = {
+let clientConditions = ["svelte", "browser"]
+let serverConditions = ["svelte"]
+
+if (!deploy) {
+  clientConditions.push("development")
+  serverConditions.push("development")
+}
+
+let optsClient = {
   entryPoints: ["js/beacon_live_admin.js"],
   globalName: "BeaconLiveAdmin",
   format: "iife",
@@ -25,61 +34,47 @@ let clientOpts = {
   },
   bundle: true,
   target: "es2020",
-  conditions: ["svelte", "browser"],
-  outfile: "../priv/static/beacon_live_admin.js",
+  minify: deploy,
+  conditions: clientConditions,
+  alias: { svelte: "svelte" },
+  outfile: watch ? "../priv/static/beacon_live_admin.js" : "../priv/static/beacon_live_admin.min.js",
   logLevel: "info",
+  sourcemap: watch ? "inline" : false,
   tsconfig: "./tsconfig.json",
   plugins: [
     importGlobPlugin(),
     sveltePlugin({
       preprocess: sveltePreprocess(),
       compilerOptions: {
-        dev: true,
-        hydratable: true,
+        dev: !deploy,
         css: "injected",
+        generate: "client",
         customElement: true,
       },
     }),
   ],
 }
 
-let optimizedClientOpts = {
-  ...clientOpts,
-  minify: true,
-  outfile: "../priv/static/beacon_live_admin.min.js",
-  plugins: [
-    importGlobPlugin(),
-    sveltePlugin({
-      preprocess: sveltePreprocess(),
-      compilerOptions: {
-        dev: false,
-        hydratable: true,
-        css: "injected",
-        customElement: true,
-      },
-    }),
-  ],
-}
-
-// priv/svelte/server.js is not distributed
-let serverOpts = {
+let optsServer = {
   entryPoints: ["js/server.js"],
   platform: "node",
   bundle: true,
   minify: false,
-  target: "node19.6.1",
-  conditions: ["svelte"],
+  target: "node22",
+  conditions: serverConditions,
+  alias: { svelte: "svelte" },
   outdir: "../priv/svelte",
   logLevel: "info",
+  sourcemap: watch ? "inline" : false,
   tsconfig: "./tsconfig.json",
   plugins: [
     importGlobPlugin(),
     sveltePlugin({
       preprocess: sveltePreprocess(),
       compilerOptions: {
-        dev: true,
-        hydratable: true,
-        generate: "ssr",
+        dev: !deploy,
+        css: "injected",
+        generate: "server",
         customElement: true,
       },
     }),
@@ -88,16 +83,15 @@ let serverOpts = {
 
 if (watch) {
   esbuild
-    .context(clientOpts)
-    .then((ctx) => {
-      ctx.watch()
-    })
-    .catch((error) => {
-      console.log(error)
-      process.exit(1)
-    })
+    .context(optsClient)
+    .then((ctx) => ctx.watch())
+    .catch((_error) => process.exit(1))
+
+  esbuild
+    .context(optsServer)
+    .then((ctx) => ctx.watch())
+    .catch((_error) => process.exit(1))
 } else {
-  esbuild.build(clientOpts)
-  esbuild.build(optimizedClientOpts)
-  esbuild.build(serverOpts)
+  esbuild.build(optsClient)
+  esbuild.build(optsServer)
 }
