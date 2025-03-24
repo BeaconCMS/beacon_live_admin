@@ -94,12 +94,15 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Typography do
   defp maybe_add_line_height(classes, _, "default"), do: classes
 
   defp extract_font_family(classes) do
-    case Enum.find(classes, &String.starts_with?(&1, "font-")) do
-      "font-sans" -> "sans"
-      "font-serif" -> "serif"
-      "font-mono" -> "mono"
-      _ -> nil
-    end
+    font_classes = Enum.filter(classes, &String.starts_with?(&1, "font-"))
+    Enum.find_value(font_classes, fn class ->
+      case class do
+        "font-sans" -> "sans"
+        "font-serif" -> "serif"
+        "font-mono" -> "mono"
+        _ -> nil
+      end
+    end)
   end
 
   defp extract_font_weight(classes) do
