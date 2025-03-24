@@ -68,7 +68,6 @@ defmodule Beacon.LiveAdmin.MixProject do
       {:jason, "~> 1.0"},
       {:igniter, "~> 0.5", optional: true},
       {:turboprop, "~> 0.1"},
-      {:heroicons_vendor, github: "tailwindlabs/heroicons", tag: "v2.2.0", sparse: "optimized", app: false, compile: false, depth: 1},
 
       # Dev, Test, Docs
       {:bandit, "~> 1.0", only: [:dev, :e2e], optional: true},

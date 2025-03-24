@@ -33,7 +33,7 @@ module.exports = {
     //
     //
     plugin(function ({ matchComponents, theme }) {
-      let iconsDir = path.join(__dirname, "../deps/heroicons_vendor/optimized")
+      let iconsDir = path.join(__dirname, "../assets/node_modules/heroicons")
       let values = {}
       let icons = [
         ["", "/24/outline"],
