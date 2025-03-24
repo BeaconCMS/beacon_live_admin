@@ -103,36 +103,42 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Typography do
   end
 
   defp extract_font_weight(classes) do
-    case Enum.find(classes, &String.starts_with?(&1, "font-")) do
-      "font-thin" -> "thin"
-      "font-extralight" -> "extralight"
-      "font-light" -> "light"
-      "font-normal" -> "normal"
-      "font-medium" -> "medium"
-      "font-semibold" -> "semibold"
-      "font-bold" -> "bold"
-      "font-extrabold" -> "extrabold"
-      "font-black" -> "black"
-      _ -> nil
-    end
+    font_classes = Enum.filter(classes, &String.starts_with?(&1, "font-"))
+    Enum.find_value(font_classes, fn class ->
+      case class do
+        "font-thin" -> "thin"
+        "font-extralight" -> "extralight"
+        "font-light" -> "light"
+        "font-normal" -> "normal"
+        "font-medium" -> "medium"
+        "font-semibold" -> "semibold"
+        "font-bold" -> "bold"
+        "font-extrabold" -> "extrabold"
+        "font-black" -> "black"
+        _ -> nil
+      end
+    end)
   end
 
   defp extract_text_color(classes) do
-    case Enum.find(classes, &String.starts_with?(&1, "text-")) do
-      "text-black" -> "black"
-      "text-white" -> "white"
-      "text-gray-50" -> "gray-50"
-      "text-gray-100" -> "gray-100"
-      "text-gray-200" -> "gray-200"
-      "text-gray-300" -> "gray-300"
-      "text-gray-400" -> "gray-400"
-      "text-gray-500" -> "gray-500"
-      "text-gray-600" -> "gray-600"
-      "text-gray-700" -> "gray-700"
-      "text-gray-800" -> "gray-800"
-      "text-gray-900" -> "gray-900"
-      _ -> nil
-    end
+    text_classes = Enum.filter(classes, &String.starts_with?(&1, "text-"))
+    Enum.find_value(text_classes, fn class ->
+      case class do
+        "text-black" -> "black"
+        "text-white" -> "white"
+        "text-gray-50" -> "gray-50"
+        "text-gray-100" -> "gray-100"
+        "text-gray-200" -> "gray-200"
+        "text-gray-300" -> "gray-300"
+        "text-gray-400" -> "gray-400"
+        "text-gray-500" -> "gray-500"
+        "text-gray-600" -> "gray-600"
+        "text-gray-700" -> "gray-700"
+        "text-gray-800" -> "gray-800"
+        "text-gray-900" -> "gray-900"
+        _ -> nil
+      end
+    end)
   end
 
   defp extract_font_size(classes) do
