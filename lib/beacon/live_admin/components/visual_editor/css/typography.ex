@@ -2,6 +2,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Typography do
   @moduledoc false
 
   alias Beacon.LiveAdmin.VisualEditor
+
   @css_units ~w(px rem em %)
 
   def extract_typography_properties(element) do
@@ -59,15 +60,19 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Typography do
   defp maybe_add_font_size(classes, value, "px") do
     classes ++ ["text-[#{value || "16"}px]"]
   end
+
   defp maybe_add_font_size(classes, value, unit) when is_binary(unit) and unit in @css_units do
     classes ++ ["text-[#{value || "1"}#{unit}]"]
   end
+
   defp maybe_add_font_size(classes, _value, unit) when unit in ~w(xs sm base lg xl 2xl 3xl 4xl 5xl 6xl) do
     classes ++ ["text-#{unit}"]
   end
+
   defp maybe_add_font_size(classes, value, _unit) when is_binary(value) do
     classes ++ ["text-#{value}"]
   end
+
   defp maybe_add_font_size(classes, "", _unit), do: classes
   defp maybe_add_font_size(classes, nil, _unit), do: classes
   defp maybe_add_font_size(classes, "default", _unit), do: classes
@@ -75,12 +80,15 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Typography do
   defp maybe_add_line_height(classes, value, "px") do
     classes ++ ["leading-[#{value || "16"}px]"]
   end
+
   defp maybe_add_line_height(classes, value, unit) when is_binary(unit) and unit in @css_units do
     classes ++ ["leading-[#{value || "1"}#{unit}]"]
   end
+
   defp maybe_add_line_height(classes, nil, unit) when unit in ~w(none tight snug normal relaxed loose) do
     classes ++ ["leading-#{unit}"]
   end
+
   defp maybe_add_line_height(classes, _, ""), do: classes
   defp maybe_add_line_height(classes, _, nil), do: classes
   defp maybe_add_line_height(classes, _, "default"), do: classes
@@ -133,79 +141,135 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Typography do
       class in tailwind_sizes or String.starts_with?(class, "text-[")
     end) do
       # Tailwind preset sizes
-      "text-xs" -> {"xs", "xs"}
-      "text-sm" -> {"sm", "sm"}
-      "text-base" -> {"base", "base"}
-      "text-lg" -> {"lg", "lg"}
-      "text-xl" -> {"xl", "xl"}
-      "text-2xl" -> {"2xl", "2xl"}
-      "text-3xl" -> {"3xl", "3xl"}
-      "text-4xl" -> {"4xl", "4xl"}
-      "text-5xl" -> {"5xl", "5xl"}
-      "text-6xl" -> {"6xl", "6xl"}
+      "text-xs" ->
+        {"xs", "xs"}
+
+      "text-sm" ->
+        {"sm", "sm"}
+
+      "text-base" ->
+        {"base", "base"}
+
+      "text-lg" ->
+        {"lg", "lg"}
+
+      "text-xl" ->
+        {"xl", "xl"}
+
+      "text-2xl" ->
+        {"2xl", "2xl"}
+
+      "text-3xl" ->
+        {"3xl", "3xl"}
+
+      "text-4xl" ->
+        {"4xl", "4xl"}
+
+      "text-5xl" ->
+        {"5xl", "5xl"}
+
+      "text-6xl" ->
+        {"6xl", "6xl"}
+
       # Custom sizes with units
       <<"text-[", size::binary>> ->
         size = String.trim_trailing(size, "]")
+
         case Regex.run(~r/^(\d+(?:\.\d+)?)(px|rem|em|%)$/, size) do
           [_, value, unit] -> {value, unit}
           _ -> {nil, "default"}
         end
+
       # Default case
-      _ -> {nil, "default"}
+      _ ->
+        {nil, "default"}
     end
   end
 
   defp extract_line_height(classes) do
     case Enum.find(classes, &String.starts_with?(&1, "leading-")) do
       # Tailwind preset values
-      "leading-none" -> {"none", "none"}
-      "leading-tight" -> {"tight", "tight"}
-      "leading-snug" -> {"snug", "snug"}
-      "leading-normal" -> {"normal", "normal"}
-      "leading-relaxed" -> {"relaxed", "relaxed"}
-      "leading-loose" -> {"loose", "loose"}
+      "leading-none" ->
+        {"none", "none"}
+
+      "leading-tight" ->
+        {"tight", "tight"}
+
+      "leading-snug" ->
+        {"snug", "snug"}
+
+      "leading-normal" ->
+        {"normal", "normal"}
+
+      "leading-relaxed" ->
+        {"relaxed", "relaxed"}
+
+      "leading-loose" ->
+        {"loose", "loose"}
+
       # Custom sizes with units
       <<"leading-[", size::binary>> ->
         size = String.trim_trailing(size, "]")
+
         case Regex.run(~r/^(\d+(?:\.\d+)?)(px|rem|em|%)$/, size) do
           [_, value, unit] -> {value, unit}
           _ -> {nil, "default"}
         end
+
       # Default case
-      _ -> {nil, "default"}
+      _ ->
+        {nil, "default"}
     end
   end
 
   defp extract_letter_spacing(classes) do
     case Enum.find(classes, &String.starts_with?(&1, "tracking-")) do
       # Tailwind preset values - value is nil, unit is the preset
-      "tracking-tighter" -> {nil, "tighter"}
-      "tracking-tight" -> {nil, "tight"}
-      "tracking-normal" -> {nil, "normal"}
-      "tracking-wide" -> {nil, "wide"}
-      "tracking-wider" -> {nil, "wider"}
-      "tracking-widest" -> {nil, "widest"}
+      "tracking-tighter" ->
+        {nil, "tighter"}
+
+      "tracking-tight" ->
+        {nil, "tight"}
+
+      "tracking-normal" ->
+        {nil, "normal"}
+
+      "tracking-wide" ->
+        {nil, "wide"}
+
+      "tracking-wider" ->
+        {nil, "wider"}
+
+      "tracking-widest" ->
+        {nil, "widest"}
+
       # Custom sizes with units - value is the number, unit is the CSS unit
       <<"tracking-[", size::binary>> ->
         size = String.trim_trailing(size, "]")
+
         case Regex.run(~r/^(\d+(?:\.\d+)?)(px|rem|em|%)$/, size) do
           [_, value, unit] -> {value, unit}
           _ -> {nil, "default"}
         end
+
       # Default case
-      _ -> {nil, "default"}
+      _ ->
+        {nil, "default"}
     end
   end
 
-  defp maybe_add_letter_spacing(classes, value, unit) when unit in ~w(tighter tight normal wide wider widest) do
+  defp maybe_add_letter_spacing(classes, _value, unit) when unit in ~w(tighter tight normal wide wider widest) do
     classes ++ ["tracking-#{unit}"]
   end
+
   defp maybe_add_letter_spacing(classes, value, "px") do
     classes ++ ["tracking-[#{value || "1"}px]"]
   end
+
   defp maybe_add_letter_spacing(classes, value, unit) when is_binary(unit) and unit in @css_units do
     classes ++ ["tracking-[#{value || "1"}#{unit}]"]
   end
+
   defp maybe_add_letter_spacing(classes, _, ""), do: classes
   defp maybe_add_letter_spacing(classes, _, nil), do: classes
   defp maybe_add_letter_spacing(classes, _, "default"), do: classes

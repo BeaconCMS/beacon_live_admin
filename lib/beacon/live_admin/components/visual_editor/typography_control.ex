@@ -165,26 +165,12 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
           <div class="flex gap-1">
             <div class="flex-1 min-w-0">
               <label class="text-xs block mb-1">Size</label>
-              <.input_with_units
-                name="font_size"
-                value={@form.params["font_size"]}
-                value_unit={@form.params["font_size_unit"]}
-                sizes={@font_sizes}
-                units={@css_units}
-                size="sm"
-              />
+              <.input_with_units name="font_size" value={@form.params["font_size"]} value_unit={@form.params["font_size_unit"]} sizes={@font_sizes} units={@css_units} size="sm" />
             </div>
 
             <div class="flex-1 min-w-0">
               <label class="text-xs block mb-1">Height</label>
-              <.input_with_units
-                name="line_height"
-                value={@form.params["line_height"]}
-                value_unit={@form.params["line_height_unit"]}
-                sizes={@line_height_sizes}
-                units={@css_units}
-                size="sm"
-              />
+              <.input_with_units name="line_height" value={@form.params["line_height"]} value_unit={@form.params["line_height_unit"]} sizes={@line_height_sizes} units={@css_units} size="sm" />
             </div>
           </div>
 
@@ -199,14 +185,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
             </div>
             <div>
               <label class="text-xs block mb-1">Spacing</label>
-              <.input_with_units
-                name="letter_spacing"
-                value={@form.params["letter_spacing"]}
-                value_unit={@form.params["letter_spacing_unit"]}
-                sizes={@letter_spacing_sizes}
-                units={@css_units}
-                size="sm"
-              />
+              <.input_with_units name="letter_spacing" value={@form.params["letter_spacing"]} value_unit={@form.params["letter_spacing_unit"]} sizes={@letter_spacing_sizes} units={@css_units} size="sm" />
             </div>
           </div>
 
@@ -270,81 +249,45 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
 
   def align_end_icon(assigns) do
     ~H"""
-      <svg
-        class="w-4 h-4 pointer-events-none"
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      >
-        <line x1="21" y1="6" x2="3" y2="6" />
-        <line x1="21" y1="10" x2="6" y2="10" />
-        <line x1="21" y1="14" x2="3" y2="14" />
-        <line x1="21" y1="18" x2="6" y2="18" />
-      </svg>
+    <svg class="w-4 h-4 pointer-events-none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="21" y1="6" x2="3" y2="6" />
+      <line x1="21" y1="10" x2="6" y2="10" />
+      <line x1="21" y1="14" x2="3" y2="14" />
+      <line x1="21" y1="18" x2="6" y2="18" />
+    </svg>
     """
   end
 
   def align_start_icon(assigns) do
     ~H"""
-      <svg
-        class="w-4 h-4 pointer-events-none"
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      >
-        <line x1="21" y1="6" x2="3" y2="6" />
-        <line x1="17" y1="10" x2="3" y2="10" />
-        <line x1="21" y1="14" x2="3" y2="14" />
-        <line x1="17" y1="18" x2="3" y2="18" />
-      </svg>
+    <svg class="w-4 h-4 pointer-events-none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="21" y1="6" x2="3" y2="6" />
+      <line x1="17" y1="10" x2="3" y2="10" />
+      <line x1="21" y1="14" x2="3" y2="14" />
+      <line x1="17" y1="18" x2="3" y2="18" />
+    </svg>
     """
   end
 
   def align_center_icon(assigns) do
     ~H"""
-      <svg
-        class="w-4 h-4 pointer-events-none"
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      >
-        <line x1="21" y1="6" x2="3" y2="6" />
-        <line x1="18" y1="10" x2="6" y2="10" />
-        <line x1="21" y1="14" x2="3" y2="14" />
-        <line x1="18" y1="18" x2="6" y2="18" />
-      </svg>
+    <svg class="w-4 h-4 pointer-events-none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="21" y1="6" x2="3" y2="6" />
+      <line x1="18" y1="10" x2="6" y2="10" />
+      <line x1="21" y1="14" x2="3" y2="14" />
+      <line x1="18" y1="18" x2="6" y2="18" />
+    </svg>
     """
   end
 
   def align_justify_icon(assigns) do
     ~H"""
-      <svg
-        class="w-4 h-4 pointer-events-none"
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      >
-        <line x1="21" y1="6" x2="3" y2="6" />
-        <line x1="21" y1="10" x2="3" y2="10" />
-        <line x1="21" y1="14" x2="3" y2="14" />
-        <line x1="21" y1="18" x2="3" y2="18" />
-      </svg>
+    <svg class="w-4 h-4 pointer-events-none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="21" y1="6" x2="3" y2="6" />
+      <line x1="21" y1="10" x2="3" y2="10" />
+      <line x1="21" y1="14" x2="3" y2="14" />
+      <line x1="21" y1="18" x2="3" y2="18" />
+    </svg>
     """
   end
 
@@ -353,48 +296,55 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
       %{
         value: value,
         label: label,
-        icon: case value do
-          "uppercase" -> :transform_uppercase
-          "lowercase" -> :transform_lowercase
-          "capitalize" -> :transform_capitalize
-        end
+        icon:
+          case value do
+            "uppercase" -> :transform_uppercase
+            "lowercase" -> :transform_lowercase
+            "capitalize" -> :transform_capitalize
+          end
       }
     end)
   end
 
   def transform_uppercase_icon(assigns) do
     ~H"""
-      <svg
-        class="w-4 h-5 pointer-events-none"
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 16 16"
-        fill="none">
-        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" d="M1.5 10.811 4.31 5.19l2.812 5.622M2.202 9.406h4.217M9.933 8h3.162a1.406 1.406 0 1 1 0 2.811H9.933V5.19h2.81a1.406 1.406 0 1 1 0 2.811"></path>
-      </svg>
+    <svg class="w-4 h-5 pointer-events-none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none">
+      <path
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M1.5 10.811 4.31 5.19l2.812 5.622M2.202 9.406h4.217M9.933 8h3.162a1.406 1.406 0 1 1 0 2.811H9.933V5.19h2.81a1.406 1.406 0 1 1 0 2.811"
+      >
+      </path>
+    </svg>
     """
   end
 
   def transform_lowercase_icon(assigns) do
     ~H"""
-      <svg
-        class="w-4 h-5 pointer-events-none"
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 16 16"
-        fill="none">
-        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" d="M3.937 11.25a2.437 2.437 0 1 0 0-4.875 2.437 2.437 0 0 0 0 4.875ZM6.375 6.375v4.875M12.063 11.25a2.437 2.437 0 1 0 0-4.875 2.437 2.437 0 0 0 0 4.875ZM9.625 4.75v6.5"></path>
-      </svg>
+    <svg class="w-4 h-5 pointer-events-none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none">
+      <path
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M3.937 11.25a2.437 2.437 0 1 0 0-4.875 2.437 2.437 0 0 0 0 4.875ZM6.375 6.375v4.875M12.063 11.25a2.437 2.437 0 1 0 0-4.875 2.437 2.437 0 0 0 0 4.875ZM9.625 4.75v6.5"
+      >
+      </path>
+    </svg>
     """
   end
 
   def transform_capitalize_icon(assigns) do
     ~H"""
-      <svg
-        class="w-4 h-5 pointer-events-none"
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 16 16"
-        fill="none">
-        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" d="M1.5 10.889 4.389 5.11l2.889 5.778M2.222 9.444h4.334M12.333 10.889a2.167 2.167 0 1 0 0-4.334 2.167 2.167 0 0 0 0 4.334ZM14.5 6.556v4.333"></path>
-      </svg>
+    <svg class="w-4 h-5 pointer-events-none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none">
+      <path
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M1.5 10.889 4.389 5.11l2.889 5.778M2.222 9.444h4.334M12.333 10.889a2.167 2.167 0 1 0 0-4.334 2.167 2.167 0 0 0 0 4.334ZM14.5 6.556v4.333"
+      >
+      </path>
+    </svg>
     """
   end
 
@@ -403,10 +353,11 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
       %{
         value: value,
         label: label,
-        icon: case value do
-          "italic" -> "hero-italic"
-          "not-italic" -> "hero-x-mark"
-        end
+        icon:
+          case value do
+            "italic" -> "hero-italic"
+            "not-italic" -> "hero-x-mark"
+          end
       }
     end)
   end
@@ -416,11 +367,12 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
       %{
         value: value,
         label: label,
-        icon: case value do
-          "underline" -> "hero-underline"
-          "line-through" -> "hero-strikethrough"
-          "no-underline" -> "hero-x-mark"
-        end
+        icon:
+          case value do
+            "underline" -> "hero-underline"
+            "line-through" -> "hero-strikethrough"
+            "no-underline" -> "hero-x-mark"
+          end
       }
     end)
   end

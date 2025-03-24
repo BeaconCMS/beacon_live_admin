@@ -61,13 +61,14 @@ defmodule Beacon.LiveAdmin.MixProject do
       # Runtime
       {:ecto, "~> 3.6"},
       {:phoenix_html, "~> 4.0"},
-      {:live_svelte, "~> 0.12 and < 0.15.0"},
+      {:live_svelte, "~> 0.12"},
       {:floki, ">= 0.30.0"},
       {:tailwind, "~> 0.2"},
       {:gettext, "~> 0.26"},
       {:jason, "~> 1.0"},
       {:igniter, "~> 0.5", optional: true},
       {:turboprop, "~> 0.1"},
+      {:heroicons, github: "tailwindlabs/heroicons", tag: "v2.2.0", sparse: "optimized", app: false, compile: false, depth: 1},
 
       # Dev, Test, Docs
       {:bandit, "~> 1.0", only: [:dev, :e2e], optional: true},
@@ -107,7 +108,7 @@ defmodule Beacon.LiveAdmin.MixProject do
 
   defp aliases do
     [
-      setup: ["deps.get", "assets.setup", "assets.build"],
+      setup: ["deps.get", "assets.setup"],
       dev: "run --no-halt dev.exs",
       "format.all": ["format", "cmd npm run format"],
       "format.all.check": [
@@ -119,10 +120,14 @@ defmodule Beacon.LiveAdmin.MixProject do
         "cmd npm install",
         "cmd npm install --prefix assets"
       ],
+      "assets.watch": [
+        "tailwind beacon_live_admin",
+        "cmd --cd assets node build.js --watch"
+      ],
       "assets.build": [
         "tailwind beacon_live_admin",
         "tailwind beacon_live_admin_min",
-        "cmd --cd assets node build.js"
+        "cmd --cd assets node build.js --deploy"
       ]
     ]
   end

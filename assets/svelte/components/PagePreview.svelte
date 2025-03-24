@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { AstElement, AstNode } from "$lib/types"
+  import type { AstElement, AstNode } from "$lib/types"
   import BrowserFrame from "./BrowserFrame.svelte"
   import { selectedAstElementId } from "$lib/stores/page"
   import { currentComponentCategory } from "$lib/stores/currentComponentCategory"

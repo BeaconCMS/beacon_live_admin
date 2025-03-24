@@ -2,7 +2,6 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
   @moduledoc false
 
   use Beacon.LiveAdmin.Web, :live_component
-  require Logger
   import Beacon.LiveAdmin.VisualEditor.Components.InputWithUnits
   import Beacon.LiveAdmin.VisualEditor.Components.ToggleGroup
   alias Beacon.LiveAdmin.VisualEditor
@@ -87,7 +86,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
             </div>
             <div class="w-2/3 flex justify-end">
               <div class={["grow flex", @expanded_width_controls && "hidden"]}>
-                <.input_with_units name="width" value={@form.params["width"]} value_unit={@form.params["width_unit"]} sizes={@border_width_sizes} units={@border_width_units} size="sm"/>
+                <.input_with_units name="width" value={@form.params["width"]} value_unit={@form.params["width_unit"]} sizes={@border_width_sizes} units={@border_width_units} size="sm" />
               </div>
               <.toggle_expand control="width" expanded={@expanded_width_controls} />
             </div>
@@ -95,19 +94,19 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
           <div id="border-width-expanded-inputs" class={["w-full grid grid-cols-2 gap-1", not @expanded_width_controls && "hidden"]}>
             <div class="flex items-center gap-1">
               <span><.icon name="hero-arrow-long-up" /></span>
-              <.input_with_units name="top_width" value={@form.params["top_width"]} value_unit={@form.params["top_width_unit"]} sizes={@border_width_sizes} units={@border_width_units} size="sm"/>
+              <.input_with_units name="top_width" value={@form.params["top_width"]} value_unit={@form.params["top_width_unit"]} sizes={@border_width_sizes} units={@border_width_units} size="sm" />
             </div>
             <div class="flex items-center gap-1">
               <span><.icon name="hero-arrow-long-right" /></span>
-              <.input_with_units name="right_width" value={@form.params["right_width"]} value_unit={@form.params["right_width_unit"]} sizes={@border_width_sizes} units={@border_width_units} size="sm"/>
+              <.input_with_units name="right_width" value={@form.params["right_width"]} value_unit={@form.params["right_width_unit"]} sizes={@border_width_sizes} units={@border_width_units} size="sm" />
             </div>
             <div class="flex items-center gap-1">
               <span><.icon name="hero-arrow-long-down" /></span>
-              <.input_with_units name="bottom_width" value={@form.params["bottom_width"]} value_unit={@form.params["bottom_width_unit"]} sizes={@border_width_sizes} units={@border_width_units} size="sm"/>
+              <.input_with_units name="bottom_width" value={@form.params["bottom_width"]} value_unit={@form.params["bottom_width_unit"]} sizes={@border_width_sizes} units={@border_width_units} size="sm" />
             </div>
             <div class="flex items-center gap-1">
               <span><.icon name="hero-arrow-long-left" /></span>
-              <.input_with_units name="left_width" value={@form.params["left_width"]} value_unit={@form.params["left_width_unit"]} sizes={@border_width_sizes} units={@border_width_units} size="sm"/>
+              <.input_with_units name="left_width" value={@form.params["left_width"]} value_unit={@form.params["left_width_unit"]} sizes={@border_width_sizes} units={@border_width_units} size="sm" />
             </div>
           </div>
 
@@ -117,7 +116,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
             </div>
             <div class="w-2/3 flex justify-end">
               <div class={["grow flex", @expanded_radius_controls && "hidden"]}>
-                <.input_with_units name="radius" value={@form.params["radius"]} value_unit={@form.params["radius_unit"]} sizes={@border_radius_sizes} units={@border_radius_units} size="sm"/>
+                <.input_with_units name="radius" value={@form.params["radius"]} value_unit={@form.params["radius_unit"]} sizes={@border_radius_sizes} units={@border_radius_units} size="sm" />
               </div>
               <.toggle_expand control="radius" expanded={@expanded_radius_controls} />
             </div>
@@ -125,7 +124,14 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
           <div id="border-radius-expanded-inputs" class={["w-full grid grid-cols-2 gap-1", not @expanded_radius_controls && "hidden"]}>
             <div class="flex items-center gap-1">
               <span><.icon name="hero-arrow-up-left" /></span>
-              <.input_with_units name="top_left_radius" value={@form.params["top_left_radius"]} value_unit={@form.params["top_left_radius_unit"]} sizes={@border_radius_sizes} units={@border_radius_units} size="sm"/>
+              <.input_with_units
+                name="top_left_radius"
+                value={@form.params["top_left_radius"]}
+                value_unit={@form.params["top_left_radius_unit"]}
+                sizes={@border_radius_sizes}
+                units={@border_radius_units}
+                size="sm"
+              />
             </div>
             <div class="flex items-center gap-1">
               <.input_with_units

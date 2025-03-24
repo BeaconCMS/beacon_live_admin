@@ -8,12 +8,12 @@
     "url": "git://github.com/BeaconCMS/beacon_live_admin.git"
   },
   "devDependencies": {
-    "eslint": "^8.57",
-    "eslint-config-prettier": "^9.1",
-    "prettier": "^3.2",
-    "prettier-plugin-svelte": "^3.2",
-    "@playwright/test": "^1.47.1",
-    "@types/node": "^22.5.5"
+    "eslint": "^9",
+    "eslint-config-prettier": "^10",
+    "prettier": "^3",
+    "prettier-plugin-svelte": "^3",
+    "@playwright/test": "^1.51",
+    "@types/node": "^22"
   },
   "scripts": {
     "format": "prettier --write .",

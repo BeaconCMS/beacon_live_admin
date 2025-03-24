@@ -173,12 +173,12 @@ defmodule Beacon.LiveAdmin.VisualEditor.LayoutControl do
             <div class="space-y-4">
               <div class="grid grid-cols-2 items-center gap-x-2">
                 <label class="text-xs">Row Gap</label>
-                <.input_with_units name="row_gap" value={@form.params["row_gap"]} value_unit={@form.params["row_gap_unit"]} sizes={@gap_sizes} units={@gap_units} size="sm"/>
+                <.input_with_units name="row_gap" value={@form.params["row_gap"]} value_unit={@form.params["row_gap_unit"]} sizes={@gap_sizes} units={@gap_units} size="sm" />
               </div>
 
               <div class="grid grid-cols-2 items-center gap-x-2">
                 <label class="text-xs">Column Gap</label>
-                <.input_with_units name="column_gap" value={@form.params["column_gap"]} value_unit={@form.params["column_gap_unit"]} sizes={@gap_sizes} units={@gap_units} size="sm"/>
+                <.input_with_units name="column_gap" value={@form.params["column_gap"]} value_unit={@form.params["column_gap_unit"]} sizes={@gap_sizes} units={@gap_units} size="sm" />
               </div>
             </div>
           <% end %>
