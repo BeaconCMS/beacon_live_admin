@@ -95,6 +95,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Typography do
 
   defp extract_font_family(classes) do
     font_classes = Enum.filter(classes, &String.starts_with?(&1, "font-"))
+
     Enum.find_value(font_classes, fn class ->
       case class do
         "font-sans" -> "sans"
@@ -107,6 +108,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Typography do
 
   defp extract_font_weight(classes) do
     font_classes = Enum.filter(classes, &String.starts_with?(&1, "font-"))
+
     Enum.find_value(font_classes, fn class ->
       case class do
         "font-thin" -> "thin"
@@ -125,6 +127,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Typography do
 
   defp extract_text_color(classes) do
     text_classes = Enum.filter(classes, &String.starts_with?(&1, "text-"))
+
     Enum.find_value(text_classes, fn class ->
       case class do
         "text-black" -> "black"
