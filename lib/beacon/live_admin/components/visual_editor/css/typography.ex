@@ -137,9 +137,10 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Typography do
 
   defp extract_font_size(classes) do
     tailwind_sizes = ~w(text-xs text-sm text-base text-lg text-xl text-2xl text-3xl text-4xl text-5xl text-6xl)
+
     case Enum.find(classes, fn class ->
-      class in tailwind_sizes or String.starts_with?(class, "text-[")
-    end) do
+           class in tailwind_sizes or String.starts_with?(class, "text-[")
+         end) do
       # Tailwind preset sizes
       "text-xs" ->
         {"xs", "xs"}
