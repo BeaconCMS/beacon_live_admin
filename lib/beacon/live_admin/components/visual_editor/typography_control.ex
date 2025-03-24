@@ -382,12 +382,13 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
       %{
         value: value,
         label: label,
-        icon: case value do
-          "start" -> :align_start
-          "center" -> :align_center
-          "end" -> :align_end
-          "justify" -> :align_justify
-        end
+        icon:
+          case value do
+            "start" -> :align_start
+            "center" -> :align_center
+            "end" -> :align_end
+            "justify" -> :align_justify
+          end
       }
     end)
   end
