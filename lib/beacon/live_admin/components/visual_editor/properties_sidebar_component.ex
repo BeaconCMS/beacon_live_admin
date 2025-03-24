@@ -1,5 +1,6 @@
 defmodule Beacon.LiveAdmin.VisualEditor.PropertiesSidebarComponent do
   @moduledoc false
+
   use Beacon.LiveAdmin.Web, :live_component
   alias Beacon.LiveAdmin.VisualEditor
 
@@ -101,6 +102,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.PropertiesSidebarComponent do
 
         <%= if VisualEditor.element_editable?(@selected_element) do %>
           <.live_component module={VisualEditor.LayoutControl} id="control-layout" element={@selected_element} />
+          <.live_component module={VisualEditor.TypographyControl} id="control-typography" element={@selected_element} />
           <.live_component module={VisualEditor.SpaceControl} id="control-space" element={@selected_element} />
           <.live_component module={VisualEditor.BorderControl} id="control-border" element={@selected_element} />
           <.live_component module={VisualEditor.OpacityControl} id="control-opacity" element={@selected_element} />

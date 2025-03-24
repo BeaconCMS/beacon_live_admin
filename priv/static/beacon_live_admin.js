@@ -9072,6 +9072,28 @@ var BeaconLiveAdmin = (() => {
         });
       }
     },
+    ToggleGroup: {
+      mounted() {
+        this.el.addEventListener("click", (e) => {
+          if (e.target.tagName !== "LABEL") {
+            console.log("not a label", e.target);
+            return;
+          }
+          console.log("clicked on label", e.target);
+          const input = e.target.querySelector("input");
+          if (input?.checked) {
+            console.log("input checked", input);
+            e.preventDefault();
+            e.stopPropagation();
+            const defaultInput = this.el.querySelector('input[value="default"]');
+            console.log("default input", defaultInput);
+            defaultInput.click();
+          } else {
+            console.log("input not checked", input);
+          }
+        });
+      }
+    },
     PreventEmptyChange: {
       mounted() {
         let currentValue = this.el.value;

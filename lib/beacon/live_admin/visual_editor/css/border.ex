@@ -99,7 +99,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
 
       # Default: no border
       true ->
-        nil
+        "default"
     end
   end
 

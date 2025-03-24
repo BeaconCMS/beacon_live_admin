@@ -15,7 +15,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Components.ControlSection do
 
   def render(assigns) do
     ~H"""
-    <section class="p-4 border-b border-b-gray-100 border-solid group" id={@id} phx-hook="ControlSectionSaveExpandedState" data-section-id={@id}>
+    <section class="px-3 py-4 border-b border-b-gray-100 border-solid group" id={@id} phx-hook="ControlSectionSaveExpandedState" data-section-id={@id}>
       <div class="mb-2 flex items-center justify-between">
         <div class="flex items-center gap-2">
           <button :if={@label} type="button" class="text-gray-400" phx-click="toggle" phx-target={@myself}>
