@@ -63,7 +63,8 @@ defmodule Beacon.LiveAdmin.MixProject do
       {:phoenix_html, "~> 4.0"},
       {:live_svelte, "~> 0.12"},
       {:floki, ">= 0.30.0"},
-      {:tailwind, "~> 0.2.0"},
+      # TODO: tailwind v4 needs more testing
+      {:tailwind, "~> 0.2"},
       {:gettext, "~> 0.26"},
       {:jason, "~> 1.0"},
       {:igniter, "~> 0.5", optional: true},
