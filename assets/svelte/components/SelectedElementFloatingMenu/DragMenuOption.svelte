@@ -6,6 +6,8 @@
     selectedAstElementId,
     parentOfSelectedAstElement,
     grandParentOfSelectedAstElement,
+    parentSelectedAstElementId,
+    grandParentSelectedAstElementId,
   } from "$lib/stores/page"
   import { findHoveredSiblingIndex, getBoundingRect, getDragDirection, type Coords } from "$lib/utils/drag-helpers"
   import { live } from "$lib/stores/live"
@@ -168,7 +170,9 @@
   }
 
   function applyNewOrder() {
-    let parent = isParent ? $grandParentOfSelectedAstElement : $parentOfSelectedAstElement
+    let [parent, parentId] = isParent
+      ? [$grandParentOfSelectedAstElement, $grandParentSelectedAstElementId]
+      : [$parentOfSelectedAstElement, $parentSelectedAstElementId]
 
     if (newIndex !== null && newIndex !== dragElementInfo.selectedIndex && !!parent) {
       // Reordering happened, apply new order
@@ -188,9 +192,8 @@
         parts[parts.length - 1] = newSelectedIndex.toString()
         $selectedAstElementId = parts.join(".")
       }
-      $pageAst = [...$pageAst]
       // Update in the server
-      $live.pushEvent("update_page_ast", { id: $pageInfo.id, ast: $pageAst })
+      $live.pushEvent("update_page_node", { id: $pageInfo.id, node_id: parentId, node: parent })
     }
   }
 

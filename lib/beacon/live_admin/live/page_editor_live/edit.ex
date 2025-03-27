@@ -55,6 +55,16 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
     {:noreply, socket}
   end
 
+  def handle_event("update_page_node", %{"node_id" => path, "node" => node}, socket) do
+    send_update(Beacon.LiveAdmin.PageEditorLive.FormComponent,
+      id: "page-editor-form",
+      path: path,
+      node: node
+    )
+
+    {:noreply, socket}
+  end
+
   def handle_event(
         "render_component_in_page",
         %{"component_id" => component_id, "page_id" => page_id},
