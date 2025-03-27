@@ -81,24 +81,34 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
     {:ok, socket}
   end
 
-  # changed element from visual editor control
-  def update(%{path: path, payload: payload}, %{assigns: %{editor: "visual"}} = socket) do
-    updated = Map.get(payload, :updated, %{})
-    attrs = Map.get(updated, "attrs", %{})
-    deleted_attrs = Map.get(payload, :deleted, [])
-    ast = VisualEditor.update_node(socket.assigns.builder_page_ast, path, attrs, deleted_attrs)
-
-    # TODO: Don't save immediately. Debounce serializing this to a template
-    template = Beacon.Template.HEEx.HEExDecoder.decode(ast)
+  def update(%{event: :template_changed, template: template}, socket) do
     params = Map.merge(socket.assigns.form.params, %{"template" => template})
     changeset = Content.change_page(socket.assigns.site, socket.assigns.page, params)
 
     {:ok,
      socket
      |> assign_form(changeset)
-     |> assign_template(template)
-     |> assign(builder_page_ast: ast)}
+     |> assign_template(template)}
   end
+
+  # # changed element from visual editor control
+  # def update(%{path: path, payload: payload}, %{assigns: %{editor: "visual"}} = socket) do
+  #   updated = Map.get(payload, :updated, %{})
+  #   attrs = Map.get(updated, "attrs", %{})
+  #   deleted_attrs = Map.get(payload, :deleted, [])
+  #   ast = VisualEditor.update_node(socket.assigns.builder_page_ast, path, attrs, deleted_attrs)
+  #
+  #   # TODO: Don't save immediately. Debounce serializing this to a template
+  #   template = Beacon.Template.HEEx.HEExDecoder.decode(ast)
+  #   params = Map.merge(socket.assigns.form.params, %{"template" => template})
+  #   changeset = Content.change_page(socket.assigns.site, socket.assigns.page, params)
+  #
+  #   {:ok,
+  #    socket
+  #    |> assign_form(changeset)
+  #    |> assign_template(template)
+  #    |> assign(builder_page_ast: ast)}
+  # end
 
   @impl true
   # ignore change events from the editor field
@@ -393,24 +403,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
       </.modal>
 
       <%= if @editor == "visual" do %>
-        <div class="flex">
-          <.svelte
-            name="components/UiBuilder"
-            class={svelte_page_builder_class(@editor)}
-            props={
-              %{
-                components: @components,
-                pageInfo: @builder_page,
-                pageAst: @builder_page_ast,
-                tailwindConfig: @tailwind_config,
-                tailwindInput: @tailwind_input,
-                selectedAstElementId: @selected_element_path
-              }
-            }
-            socket={@socket}
-          />
-          <.live_component module={VisualEditor.PropertiesSidebarComponent} id="properties_sidebar" page={@builder_page} ast={@builder_page_ast} selected_element_path={@selected_element_path} />
-        </div>
+        <.heex_visual_editor components={@components} template="<div><p>hello</p></div>" on_template_change={&send_update(@myself, event: :template_changed, template: &1)} /> />
       <% end %>
 
       <div class={[

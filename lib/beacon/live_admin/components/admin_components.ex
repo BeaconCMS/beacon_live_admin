@@ -26,7 +26,21 @@ defmodule Beacon.LiveAdmin.AdminComponents do
   defp input(assigns), do: Beacon.LiveAdmin.CoreComponents.input(assigns)
 
   @menu_link_active_class "inline-block p-4 text-blue-600 border-b-2 border-blue-600 rounded-t-lg active"
+
   @menu_link_regular_class "inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300"
+
+  @doc false
+  attr :id, :string, default: "heex-visual-editor"
+  attr :components, :list
+  attr :template, :string, required: true
+  # TODO: doc https://hexdocs.pm/phoenix_live_view/Phoenix.LiveComponent.html#module-unifying-liveview-and-livecomponent-communication
+  attr :on_template_change, {:fun, 1}, default: nil
+
+  def heex_visual_editor(assigns) do
+    ~H"""
+    <.live_component module={Beacon.LiveAdmin.VisualEditor.Components.HEExEditor} id={@id} components={@components} template={@template} on_template_change={@on_template_change} />
+    """
+  end
 
   @doc false
   attr :socket, :map
@@ -450,7 +464,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
   end
 
   @doc """
-  Renders pagination to nagivate table results.
+  Renders pagination to navigate table results.
   """
   attr :socket, Phoenix.LiveView.Socket, required: true
   attr :page, Beacon.LiveAdmin.PageBuilder.Page, required: true

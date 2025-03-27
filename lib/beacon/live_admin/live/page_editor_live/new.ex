@@ -88,14 +88,14 @@ defmodule Beacon.LiveAdmin.PageEditorLive.New do
     {:noreply, socket}
   end
 
-  def handle_event("select_element", %{"path" => path}, socket) do
-    ElementSelection.select_element(path, socket)
-  end
-
-  @impl true
-  def handle_info({:element_changed, {path, payload}}, socket) do
-    ElementSelection.handle_element_changed({path, payload}, socket)
-  end
+  # def handle_event("select_element", %{"path" => path}, socket) do
+  #   ElementSelection.select_element(path, socket)
+  # end
+  #
+  # @impl true
+  # def handle_info({:element_changed, {path, payload}}, socket) do
+  #   ElementSelection.handle_element_changed({path, payload}, socket)
+  # end
 
   @impl true
   def render(assigns) do
