@@ -1,7 +1,7 @@
 defmodule Beacon.LiveAdmin.MixProject do
   use Mix.Project
 
-  @version "0.4.2-dev"
+  @version "0.4.2"
   @source_url "https://github.com/BeaconCMS/beacon_live_admin"
   @homepage_url "https://beaconcms.org"
 
@@ -63,12 +63,12 @@ defmodule Beacon.LiveAdmin.MixProject do
       {:phoenix_html, "~> 4.0"},
       {:live_svelte, "~> 0.12"},
       {:floki, ">= 0.30.0"},
+      # TODO: tailwind v4 needs more testing
       {:tailwind, "~> 0.2"},
       {:gettext, "~> 0.26"},
       {:jason, "~> 1.0"},
       {:igniter, "~> 0.5", optional: true},
       {:turboprop, "~> 0.1"},
-      {:heroicons_vendor, github: "tailwindlabs/heroicons", tag: "v2.2.0", sparse: "optimized", app: false, compile: false, depth: 1},
 
       # Dev, Test, Docs
       {:bandit, "~> 1.0", only: [:dev, :e2e], optional: true},

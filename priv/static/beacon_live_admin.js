@@ -8205,30 +8205,7 @@ var BeaconLiveAdmin = (() => {
       var numeric_unicode_map_1 = require_numeric_unicode_map();
       var surrogate_pairs_1 = require_surrogate_pairs();
       var allNamedReferences = __assign(__assign({}, named_references_1.namedReferences), { all: named_references_1.namedReferences.html5 });
-      function replaceUsingRegExp(macroText, macroRegExp, macroReplacer) {
-        macroRegExp.lastIndex = 0;
-        var replaceMatch = macroRegExp.exec(macroText);
-        var replaceResult;
-        if (replaceMatch) {
-          replaceResult = "";
-          var replaceLastIndex = 0;
-          do {
-            if (replaceLastIndex !== replaceMatch.index) {
-              replaceResult += macroText.substring(replaceLastIndex, replaceMatch.index);
-            }
-            var replaceInput = replaceMatch[0];
-            replaceResult += macroReplacer(replaceInput);
-            replaceLastIndex = replaceMatch.index + replaceInput.length;
-          } while (replaceMatch = macroRegExp.exec(macroText));
-          if (replaceLastIndex !== macroText.length) {
-            replaceResult += macroText.substring(replaceLastIndex);
-          }
-        } else {
-          replaceResult = macroText;
-        }
-        return replaceResult;
-      }
-      var encodeRegExps = { specialChars: /[<>'"&]/g, nonAscii: /[<>'"&\u0080-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF]/g, nonAsciiPrintable: /[<>'"&\x01-\x08\x11-\x15\x17-\x1F\x7f-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF]/g, nonAsciiPrintableOnly: /[\x01-\x08\x11-\x15\x17-\x1F\x7f-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF]/g, extensive: /[\x01-\x0c\x0e-\x1f\x21-\x2c\x2e-\x2f\x3a-\x40\x5b-\x60\x7b-\x7d\x7f-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF]/g };
+      var encodeRegExps = { specialChars: /[<>'"&]/g, nonAscii: /[<>'"&\u0080-\uD7FF\uE000-\uFFFF\uDC00-\uDFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]?/g, nonAsciiPrintable: /[<>'"&\x01-\x08\x11-\x15\x17-\x1F\x7f-\uD7FF\uE000-\uFFFF\uDC00-\uDFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]?/g, nonAsciiPrintableOnly: /[\x01-\x08\x11-\x15\x17-\x1F\x7f-\uD7FF\uE000-\uFFFF\uDC00-\uDFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]?/g, extensive: /[\x01-\x0c\x0e-\x1f\x21-\x2c\x2e-\x2f\x3a-\x40\x5b-\x60\x7b-\x7d\x7f-\uD7FF\uE000-\uFFFF\uDC00-\uDFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]?/g };
       var defaultEncodeOptions = { mode: "specialChars", level: "all", numeric: "decimal" };
       function encode(text2, _a2) {
         var _b = _a2 === void 0 ? defaultEncodeOptions : _a2, _c = _b.mode, mode = _c === void 0 ? "specialChars" : _c, _d = _b.numeric, numeric = _d === void 0 ? "decimal" : _d, _e = _b.level, level = _e === void 0 ? "all" : _e;
@@ -8238,7 +8215,7 @@ var BeaconLiveAdmin = (() => {
         var encodeRegExp = encodeRegExps[mode];
         var references = allNamedReferences[level].characters;
         var isHex = numeric === "hexadecimal";
-        return replaceUsingRegExp(text2, encodeRegExp, function(input) {
+        return text2.replace(encodeRegExp, function(input) {
           var result = references[input];
           if (!result) {
             var code = input.length > 1 ? surrogate_pairs_1.getCodePoint(input, 0) : input.charCodeAt(0);
@@ -8292,7 +8269,7 @@ var BeaconLiveAdmin = (() => {
         var references = allNamedReferences[level].entities;
         var isAttribute = scope === "attribute";
         var isStrict = scope === "strict";
-        return replaceUsingRegExp(text2, decodeRegExp, function(entity) {
+        return text2.replace(decodeRegExp, function(entity) {
           return getDecodedEntity(entity, references, isAttribute, isStrict);
         });
       }
@@ -9076,20 +9053,14 @@ var BeaconLiveAdmin = (() => {
       mounted() {
         this.el.addEventListener("click", (e) => {
           if (e.target.tagName !== "LABEL") {
-            console.log("not a label", e.target);
             return;
           }
-          console.log("clicked on label", e.target);
           const input = e.target.querySelector("input");
           if (input?.checked) {
-            console.log("input checked", input);
             e.preventDefault();
             e.stopPropagation();
             const defaultInput = this.el.querySelector('input[value="default"]');
-            console.log("default input", defaultInput);
             defaultInput.click();
-          } else {
-            console.log("input not checked", input);
           }
         });
       }
@@ -9312,6 +9283,7 @@ var BeaconLiveAdmin = (() => {
   var object_prototype = Object.prototype;
   var array_prototype = Array.prototype;
   var get_prototype_of = Object.getPrototypeOf;
+  var is_extensible = Object.isExtensible;
   function is_function(thing) {
     return typeof thing === "function";
   }
@@ -9350,6 +9322,7 @@ var BeaconLiveAdmin = (() => {
   var INSPECT_EFFECT = 1 << 18;
   var HEAD_EFFECT = 1 << 19;
   var EFFECT_HAS_DERIVED = 1 << 20;
+  var EFFECT_IS_UPDATING = 1 << 21;
   var STATE_SYMBOL = Symbol("$state");
   var STATE_SYMBOL_METADATA = Symbol("$state metadata");
   var LEGACY_PROPS = Symbol("legacy props");
@@ -9497,17 +9470,6 @@ https://svelte.dev/e/state_prototype_fixed`);
       throw error;
     } else {
       throw new Error(`https://svelte.dev/e/state_prototype_fixed`);
-    }
-  }
-  function state_unsafe_local_read() {
-    if (true_default) {
-      const error = new Error(`state_unsafe_local_read
-Reading state that was created inside the same derived is forbidden. Consider using \`untrack\` to read locally created state
-https://svelte.dev/e/state_unsafe_local_read`);
-      error.name = "Svelte error";
-      throw error;
-    } else {
-      throw new Error(`https://svelte.dev/e/state_unsafe_local_read`);
     }
   }
   function state_unsafe_mutation() {
@@ -9880,6 +9842,255 @@ https://svelte.dev/e/svelte_element_invalid_this_value`);
     return !legacy_mode_flag || component_context !== null && component_context.l === null;
   }
 
+  // node_modules/svelte/src/internal/client/proxy.js
+  var parent_metadata = null;
+  function proxy(value2, prev) {
+    if (typeof value2 !== "object" || value2 === null || STATE_SYMBOL in value2) {
+      return value2;
+    }
+    const prototype = get_prototype_of(value2);
+    if (prototype !== object_prototype && prototype !== array_prototype) {
+      return value2;
+    }
+    var sources = /* @__PURE__ */ new Map();
+    var is_proxied_array = is_array(value2);
+    var version2 = state(0);
+    var stack2 = true_default && tracing_mode_flag ? get_stack("CreatedAt") : null;
+    var reaction = active_reaction;
+    var with_parent = (fn) => {
+      var previous_reaction = active_reaction;
+      set_active_reaction(reaction);
+      var result;
+      if (true_default) {
+        var previous_metadata = parent_metadata;
+        parent_metadata = metadata;
+        result = fn();
+        parent_metadata = previous_metadata;
+      } else {
+        result = fn();
+      }
+      set_active_reaction(previous_reaction);
+      return result;
+    };
+    if (is_proxied_array) {
+      sources.set("length", state(
+        /** @type {any[]} */
+        value2.length,
+        stack2
+      ));
+    }
+    var metadata;
+    if (true_default) {
+      metadata = {
+        parent: parent_metadata,
+        owners: null
+      };
+      if (prev) {
+        const prev_owners = prev.v?.[STATE_SYMBOL_METADATA]?.owners;
+        metadata.owners = prev_owners ? new Set(prev_owners) : null;
+      } else {
+        metadata.owners = parent_metadata === null ? component_context !== null ? /* @__PURE__ */ new Set([component_context.function]) : null : /* @__PURE__ */ new Set();
+      }
+    }
+    return new Proxy(
+      /** @type {any} */
+      value2,
+      {
+        defineProperty(_, prop2, descriptor) {
+          if (!("value" in descriptor) || descriptor.configurable === false || descriptor.enumerable === false || descriptor.writable === false) {
+            state_descriptors_fixed();
+          }
+          var s = sources.get(prop2);
+          if (s === void 0) {
+            s = with_parent(() => state(descriptor.value, stack2));
+            sources.set(prop2, s);
+          } else {
+            set(
+              s,
+              with_parent(() => proxy(descriptor.value))
+            );
+          }
+          return true;
+        },
+        deleteProperty(target, prop2) {
+          var s = sources.get(prop2);
+          if (s === void 0) {
+            if (prop2 in target) {
+              sources.set(
+                prop2,
+                with_parent(() => state(UNINITIALIZED, stack2))
+              );
+            }
+          } else {
+            if (is_proxied_array && typeof prop2 === "string") {
+              var ls = (
+                /** @type {Source<number>} */
+                sources.get("length")
+              );
+              var n = Number(prop2);
+              if (Number.isInteger(n) && n < ls.v) {
+                set(ls, n);
+              }
+            }
+            set(s, UNINITIALIZED);
+            update_version(version2);
+          }
+          return true;
+        },
+        get(target, prop2, receiver) {
+          if (true_default && prop2 === STATE_SYMBOL_METADATA) {
+            return metadata;
+          }
+          if (prop2 === STATE_SYMBOL) {
+            return value2;
+          }
+          var s = sources.get(prop2);
+          var exists = prop2 in target;
+          if (s === void 0 && (!exists || get_descriptor(target, prop2)?.writable)) {
+            s = with_parent(() => state(proxy(exists ? target[prop2] : UNINITIALIZED), stack2));
+            sources.set(prop2, s);
+          }
+          if (s !== void 0) {
+            var v = get(s);
+            if (true_default) {
+              var prop_metadata = v?.[STATE_SYMBOL_METADATA];
+              if (prop_metadata && prop_metadata?.parent !== metadata) {
+                widen_ownership(metadata, prop_metadata);
+              }
+            }
+            return v === UNINITIALIZED ? void 0 : v;
+          }
+          return Reflect.get(target, prop2, receiver);
+        },
+        getOwnPropertyDescriptor(target, prop2) {
+          var descriptor = Reflect.getOwnPropertyDescriptor(target, prop2);
+          if (descriptor && "value" in descriptor) {
+            var s = sources.get(prop2);
+            if (s) descriptor.value = get(s);
+          } else if (descriptor === void 0) {
+            var source2 = sources.get(prop2);
+            var value3 = source2?.v;
+            if (source2 !== void 0 && value3 !== UNINITIALIZED) {
+              return {
+                enumerable: true,
+                configurable: true,
+                value: value3,
+                writable: true
+              };
+            }
+          }
+          return descriptor;
+        },
+        has(target, prop2) {
+          if (true_default && prop2 === STATE_SYMBOL_METADATA) {
+            return true;
+          }
+          if (prop2 === STATE_SYMBOL) {
+            return true;
+          }
+          var s = sources.get(prop2);
+          var has = s !== void 0 && s.v !== UNINITIALIZED || Reflect.has(target, prop2);
+          if (s !== void 0 || active_effect !== null && (!has || get_descriptor(target, prop2)?.writable)) {
+            if (s === void 0) {
+              s = with_parent(() => state(has ? proxy(target[prop2]) : UNINITIALIZED, stack2));
+              sources.set(prop2, s);
+            }
+            var value3 = get(s);
+            if (value3 === UNINITIALIZED) {
+              return false;
+            }
+          }
+          return has;
+        },
+        set(target, prop2, value3, receiver) {
+          var s = sources.get(prop2);
+          var has = prop2 in target;
+          if (is_proxied_array && prop2 === "length") {
+            for (var i = value3; i < /** @type {Source<number>} */
+            s.v; i += 1) {
+              var other_s = sources.get(i + "");
+              if (other_s !== void 0) {
+                set(other_s, UNINITIALIZED);
+              } else if (i in target) {
+                other_s = with_parent(() => state(UNINITIALIZED, stack2));
+                sources.set(i + "", other_s);
+              }
+            }
+          }
+          if (s === void 0) {
+            if (!has || get_descriptor(target, prop2)?.writable) {
+              s = with_parent(() => state(void 0, stack2));
+              set(
+                s,
+                with_parent(() => proxy(value3))
+              );
+              sources.set(prop2, s);
+            }
+          } else {
+            has = s.v !== UNINITIALIZED;
+            set(
+              s,
+              with_parent(() => proxy(value3))
+            );
+          }
+          if (true_default) {
+            var prop_metadata = value3?.[STATE_SYMBOL_METADATA];
+            if (prop_metadata && prop_metadata?.parent !== metadata) {
+              widen_ownership(metadata, prop_metadata);
+            }
+            check_ownership(metadata);
+          }
+          var descriptor = Reflect.getOwnPropertyDescriptor(target, prop2);
+          if (descriptor?.set) {
+            descriptor.set.call(receiver, value3);
+          }
+          if (!has) {
+            if (is_proxied_array && typeof prop2 === "string") {
+              var ls = (
+                /** @type {Source<number>} */
+                sources.get("length")
+              );
+              var n = Number(prop2);
+              if (Number.isInteger(n) && n >= ls.v) {
+                set(ls, n + 1);
+              }
+            }
+            update_version(version2);
+          }
+          return true;
+        },
+        ownKeys(target) {
+          get(version2);
+          var own_keys = Reflect.ownKeys(target).filter((key2) => {
+            var source3 = sources.get(key2);
+            return source3 === void 0 || source3.v !== UNINITIALIZED;
+          });
+          for (var [key, source2] of sources) {
+            if (source2.v !== UNINITIALIZED && !(key in target)) {
+              own_keys.push(key);
+            }
+          }
+          return own_keys;
+        },
+        setPrototypeOf() {
+          state_prototype_fixed();
+        }
+      }
+    );
+  }
+  function update_version(signal, d = 1) {
+    set(signal, signal.v + d);
+  }
+  function get_proxied_value(value2) {
+    try {
+      if (value2 !== null && typeof value2 === "object" && STATE_SYMBOL in value2) {
+        return value2[STATE_SYMBOL];
+      }
+    } catch {
+    }
+    return value2;
+  }
+
   // node_modules/svelte/src/internal/client/reactivity/sources.js
   var inspect_effects = /* @__PURE__ */ new Set();
   var old_values = /* @__PURE__ */ new Map();
@@ -9902,6 +10113,11 @@ https://svelte.dev/e/svelte_element_invalid_this_value`);
     }
     return signal;
   }
+  function state(v, stack2) {
+    const s = source(v, stack2);
+    push_reaction_value(s);
+    return s;
+  }
   // @__NO_SIDE_EFFECTS__
   function mutable_source(initial_value, immutable = false) {
     var _a2;
@@ -9914,20 +10130,6 @@ https://svelte.dev/e/svelte_element_invalid_this_value`);
     }
     return s;
   }
-  function mutable_state(v, immutable = false) {
-    return /* @__PURE__ */ push_derived_source(/* @__PURE__ */ mutable_source(v, immutable));
-  }
-  // @__NO_SIDE_EFFECTS__
-  function push_derived_source(source2) {
-    if (active_reaction !== null && !untracking && (active_reaction.f & DERIVED) !== 0) {
-      if (derived_sources === null) {
-        set_derived_sources([source2]);
-      } else {
-        derived_sources.push(source2);
-      }
-    }
-    return source2;
-  }
   function mutate(source2, value2) {
     set(
       source2,
@@ -9935,13 +10137,12 @@ https://svelte.dev/e/svelte_element_invalid_this_value`);
     );
     return value2;
   }
-  function set(source2, value2) {
-    if (active_reaction !== null && !untracking && is_runes() && (active_reaction.f & (DERIVED | BLOCK_EFFECT)) !== 0 && // If the source was created locally within the current derived, then
-    // we allow the mutation.
-    (derived_sources === null || !derived_sources.includes(source2))) {
+  function set(source2, value2, should_proxy = false) {
+    if (active_reaction !== null && !untracking && is_runes() && (active_reaction.f & (DERIVED | BLOCK_EFFECT)) !== 0 && !reaction_sources?.includes(source2)) {
       state_unsafe_mutation();
     }
-    return internal_set(source2, value2);
+    let new_value = should_proxy ? proxy(value2, source2) : value2;
+    return internal_set(source2, new_value);
   }
   function internal_set(source2, value2) {
     if (!source2.equals(value2)) {
@@ -10078,226 +10279,6 @@ https://svelte.dev/e/svelte_element_invalid_this_value`);
     }
   }
 
-  // node_modules/svelte/src/internal/client/proxy.js
-  function proxy(value2, parent = null, prev) {
-    var stack2 = null;
-    if (true_default && tracing_mode_flag) {
-      stack2 = get_stack("CreatedAt");
-    }
-    if (typeof value2 !== "object" || value2 === null || STATE_SYMBOL in value2) {
-      return value2;
-    }
-    const prototype = get_prototype_of(value2);
-    if (prototype !== object_prototype && prototype !== array_prototype) {
-      return value2;
-    }
-    var sources = /* @__PURE__ */ new Map();
-    var is_proxied_array = is_array(value2);
-    var version2 = source(0);
-    if (is_proxied_array) {
-      sources.set("length", source(
-        /** @type {any[]} */
-        value2.length,
-        stack2
-      ));
-    }
-    var metadata;
-    if (true_default) {
-      metadata = {
-        parent,
-        owners: null
-      };
-      if (prev) {
-        const prev_owners = prev.v?.[STATE_SYMBOL_METADATA]?.owners;
-        metadata.owners = prev_owners ? new Set(prev_owners) : null;
-      } else {
-        metadata.owners = parent === null ? component_context !== null ? /* @__PURE__ */ new Set([component_context.function]) : null : /* @__PURE__ */ new Set();
-      }
-    }
-    return new Proxy(
-      /** @type {any} */
-      value2,
-      {
-        defineProperty(_, prop2, descriptor) {
-          if (!("value" in descriptor) || descriptor.configurable === false || descriptor.enumerable === false || descriptor.writable === false) {
-            state_descriptors_fixed();
-          }
-          var s = sources.get(prop2);
-          if (s === void 0) {
-            s = source(descriptor.value, stack2);
-            sources.set(prop2, s);
-          } else {
-            set(s, proxy(descriptor.value, metadata));
-          }
-          return true;
-        },
-        deleteProperty(target, prop2) {
-          var s = sources.get(prop2);
-          if (s === void 0) {
-            if (prop2 in target) {
-              sources.set(prop2, source(UNINITIALIZED, stack2));
-            }
-          } else {
-            if (is_proxied_array && typeof prop2 === "string") {
-              var ls = (
-                /** @type {Source<number>} */
-                sources.get("length")
-              );
-              var n = Number(prop2);
-              if (Number.isInteger(n) && n < ls.v) {
-                set(ls, n);
-              }
-            }
-            set(s, UNINITIALIZED);
-            update_version(version2);
-          }
-          return true;
-        },
-        get(target, prop2, receiver) {
-          if (true_default && prop2 === STATE_SYMBOL_METADATA) {
-            return metadata;
-          }
-          if (prop2 === STATE_SYMBOL) {
-            return value2;
-          }
-          var s = sources.get(prop2);
-          var exists = prop2 in target;
-          if (s === void 0 && (!exists || get_descriptor(target, prop2)?.writable)) {
-            s = source(proxy(exists ? target[prop2] : UNINITIALIZED, metadata), stack2);
-            sources.set(prop2, s);
-          }
-          if (s !== void 0) {
-            var v = get(s);
-            if (true_default) {
-              var prop_metadata = v?.[STATE_SYMBOL_METADATA];
-              if (prop_metadata && prop_metadata?.parent !== metadata) {
-                widen_ownership(metadata, prop_metadata);
-              }
-            }
-            return v === UNINITIALIZED ? void 0 : v;
-          }
-          return Reflect.get(target, prop2, receiver);
-        },
-        getOwnPropertyDescriptor(target, prop2) {
-          var descriptor = Reflect.getOwnPropertyDescriptor(target, prop2);
-          if (descriptor && "value" in descriptor) {
-            var s = sources.get(prop2);
-            if (s) descriptor.value = get(s);
-          } else if (descriptor === void 0) {
-            var source2 = sources.get(prop2);
-            var value3 = source2?.v;
-            if (source2 !== void 0 && value3 !== UNINITIALIZED) {
-              return {
-                enumerable: true,
-                configurable: true,
-                value: value3,
-                writable: true
-              };
-            }
-          }
-          return descriptor;
-        },
-        has(target, prop2) {
-          if (true_default && prop2 === STATE_SYMBOL_METADATA) {
-            return true;
-          }
-          if (prop2 === STATE_SYMBOL) {
-            return true;
-          }
-          var s = sources.get(prop2);
-          var has = s !== void 0 && s.v !== UNINITIALIZED || Reflect.has(target, prop2);
-          if (s !== void 0 || active_effect !== null && (!has || get_descriptor(target, prop2)?.writable)) {
-            if (s === void 0) {
-              s = source(has ? proxy(target[prop2], metadata) : UNINITIALIZED, stack2);
-              sources.set(prop2, s);
-            }
-            var value3 = get(s);
-            if (value3 === UNINITIALIZED) {
-              return false;
-            }
-          }
-          return has;
-        },
-        set(target, prop2, value3, receiver) {
-          var s = sources.get(prop2);
-          var has = prop2 in target;
-          if (is_proxied_array && prop2 === "length") {
-            for (var i = value3; i < /** @type {Source<number>} */
-            s.v; i += 1) {
-              var other_s = sources.get(i + "");
-              if (other_s !== void 0) {
-                set(other_s, UNINITIALIZED);
-              } else if (i in target) {
-                other_s = source(UNINITIALIZED, stack2);
-                sources.set(i + "", other_s);
-              }
-            }
-          }
-          if (s === void 0) {
-            if (!has || get_descriptor(target, prop2)?.writable) {
-              s = source(void 0, stack2);
-              set(s, proxy(value3, metadata));
-              sources.set(prop2, s);
-            }
-          } else {
-            has = s.v !== UNINITIALIZED;
-            set(s, proxy(value3, metadata));
-          }
-          if (true_default) {
-            var prop_metadata = value3?.[STATE_SYMBOL_METADATA];
-            if (prop_metadata && prop_metadata?.parent !== metadata) {
-              widen_ownership(metadata, prop_metadata);
-            }
-            check_ownership(metadata);
-          }
-          var descriptor = Reflect.getOwnPropertyDescriptor(target, prop2);
-          if (descriptor?.set) {
-            descriptor.set.call(receiver, value3);
-          }
-          if (!has) {
-            if (is_proxied_array && typeof prop2 === "string") {
-              var ls = (
-                /** @type {Source<number>} */
-                sources.get("length")
-              );
-              var n = Number(prop2);
-              if (Number.isInteger(n) && n >= ls.v) {
-                set(ls, n + 1);
-              }
-            }
-            update_version(version2);
-          }
-          return true;
-        },
-        ownKeys(target) {
-          get(version2);
-          var own_keys = Reflect.ownKeys(target).filter((key2) => {
-            var source3 = sources.get(key2);
-            return source3 === void 0 || source3.v !== UNINITIALIZED;
-          });
-          for (var [key, source2] of sources) {
-            if (source2.v !== UNINITIALIZED && !(key in target)) {
-              own_keys.push(key);
-            }
-          }
-          return own_keys;
-        },
-        setPrototypeOf() {
-          state_prototype_fixed();
-        }
-      }
-    );
-  }
-  function update_version(signal, d = 1) {
-    set(signal, signal.v + d);
-  }
-  function get_proxied_value(value2) {
-    if (value2 !== null && typeof value2 === "object" && STATE_SYMBOL in value2) {
-      return value2[STATE_SYMBOL];
-    }
-    return value2;
-  }
-
   // node_modules/svelte/src/internal/client/dev/equality.js
   function init_array_prototype_warnings() {
     const array_prototype2 = Array.prototype;
@@ -10373,14 +10354,19 @@ https://svelte.dev/e/svelte_element_invalid_this_value`);
     is_firefox = /Firefox/.test(navigator.userAgent);
     var element_prototype = Element.prototype;
     var node_prototype = Node.prototype;
+    var text_prototype = Text.prototype;
     first_child_getter = get_descriptor(node_prototype, "firstChild").get;
     next_sibling_getter = get_descriptor(node_prototype, "nextSibling").get;
-    element_prototype.__click = void 0;
-    element_prototype.__className = void 0;
-    element_prototype.__attributes = null;
-    element_prototype.__style = void 0;
-    element_prototype.__e = void 0;
-    Text.prototype.__t = void 0;
+    if (is_extensible(element_prototype)) {
+      element_prototype.__click = void 0;
+      element_prototype.__className = void 0;
+      element_prototype.__attributes = null;
+      element_prototype.__style = void 0;
+      element_prototype.__e = void 0;
+    }
+    if (is_extensible(text_prototype)) {
+      text_prototype.__t = void 0;
+    }
     if (true_default) {
       element_prototype.__svelte_meta = null;
       init_array_prototype_warnings();
@@ -10969,9 +10955,18 @@ https://svelte.dev/e/svelte_element_invalid_this_value`);
   function set_active_effect(effect2) {
     active_effect = effect2;
   }
-  var derived_sources = null;
-  function set_derived_sources(sources) {
-    derived_sources = sources;
+  var reaction_sources = null;
+  function set_reaction_sources(sources) {
+    reaction_sources = sources;
+  }
+  function push_reaction_value(value2) {
+    if (active_reaction !== null && active_reaction.f & EFFECT_IS_UPDATING) {
+      if (reaction_sources === null) {
+        set_reaction_sources([value2]);
+      } else {
+        reaction_sources.push(value2);
+      }
+    }
   }
   var new_deps = null;
   var skipped_deps = 0;
@@ -11129,6 +11124,7 @@ ${indent}in ${name}`).join("")}
     if (reactions === null) return;
     for (var i = 0; i < reactions.length; i++) {
       var reaction = reactions[i];
+      if (reaction_sources?.includes(signal)) continue;
       if ((reaction.f & DERIVED) !== 0) {
         schedule_possible_effect_self_invalidation(
           /** @type {Derived} */
@@ -11156,7 +11152,7 @@ ${indent}in ${name}`).join("")}
     var previous_untracked_writes = untracked_writes;
     var previous_reaction = active_reaction;
     var previous_skip_reaction = skip_reaction;
-    var prev_derived_sources = derived_sources;
+    var previous_reaction_sources = reaction_sources;
     var previous_component_context = component_context;
     var previous_untracking = untracking;
     var flags = reaction.f;
@@ -11166,10 +11162,11 @@ ${indent}in ${name}`).join("")}
     untracked_writes = null;
     skip_reaction = (flags & UNOWNED) !== 0 && (untracking || !is_updating_effect || active_reaction === null);
     active_reaction = (flags & (BRANCH_EFFECT | ROOT_EFFECT)) === 0 ? reaction : null;
-    derived_sources = null;
+    reaction_sources = null;
     set_component_context(reaction.ctx);
     untracking = false;
     read_version++;
+    reaction.f |= EFFECT_IS_UPDATING;
     try {
       var result = (
         /** @type {Function} */
@@ -11224,9 +11221,10 @@ ${indent}in ${name}`).join("")}
       untracked_writes = previous_untracked_writes;
       active_reaction = previous_reaction;
       skip_reaction = previous_skip_reaction;
-      derived_sources = prev_derived_sources;
+      reaction_sources = previous_reaction_sources;
       set_component_context(previous_component_context);
       untracking = previous_untracking;
+      reaction.f ^= EFFECT_IS_UPDATING;
     }
   }
   function remove_reaction(signal, dependency) {
@@ -11488,18 +11486,17 @@ ${indent}in ${name}`).join("")}
       captured_signals.add(signal);
     }
     if (active_reaction !== null && !untracking) {
-      if (derived_sources !== null && derived_sources.includes(signal)) {
-        state_unsafe_local_read();
-      }
-      var deps = active_reaction.deps;
-      if (signal.rv < read_version) {
-        signal.rv = read_version;
-        if (new_deps === null && deps !== null && deps[skipped_deps] === signal) {
-          skipped_deps++;
-        } else if (new_deps === null) {
-          new_deps = [signal];
-        } else if (!skip_reaction || !new_deps.includes(signal)) {
-          new_deps.push(signal);
+      if (!reaction_sources?.includes(signal)) {
+        var deps = active_reaction.deps;
+        if (signal.rv < read_version) {
+          signal.rv = read_version;
+          if (new_deps === null && deps !== null && deps[skipped_deps] === signal) {
+            skipped_deps++;
+          } else if (new_deps === null) {
+            new_deps = [signal];
+          } else if (!skip_reaction || !new_deps.includes(signal)) {
+            new_deps.push(signal);
+          }
         }
       }
     } else if (is_derived && /** @type {Derived} */
@@ -15404,7 +15401,7 @@ ${indent}in ${name}`).join("")}
     let dispatch = createEventDispatcher();
     let editor;
     let monaco;
-    let editorContainer = mutable_state();
+    let editorContainer = mutable_source();
     onMount(async () => {
       loader_default2.config({
         paths: { vs: "/node_modules/monaco-editor/min/vs" }
@@ -15511,11 +15508,11 @@ ${indent}in ${name}`).join("")}
     const [$$stores, $$cleanup] = setup_stores();
     const $currentComponentCategory = () => (validate_store(currentComponentCategory, "currentComponentCategory"), store_get(currentComponentCategory, "$currentComponentCategory", $$stores));
     const $draggedComponentDefinition = () => (validate_store(draggedComponentDefinition, "draggedComponentDefinition"), store_get(draggedComponentDefinition, "$draggedComponentDefinition", $$stores));
-    const componentDefinitions = mutable_state();
-    const componentDefinitionsByCategory = mutable_state();
-    const currentDefinitions = mutable_state();
+    const componentDefinitions = mutable_source();
+    const componentDefinitionsByCategory = mutable_source();
+    const currentDefinitions = mutable_source();
     let components = prop($$props, "components", 12);
-    let menuCategories = mutable_state([]);
+    let menuCategories = mutable_source([]);
     const sectionTitles = {
       basic: "Basics",
       html_tag: "HTML Tags",
@@ -15524,7 +15521,7 @@ ${indent}in ${name}`).join("")}
       media: "Media",
       section: "Section"
     };
-    let showExamples = mutable_state(false);
+    let showExamples = mutable_source(false);
     let hideComponentTimer;
     let changeCategoryTimer;
     function collapseCategoryMenu() {
@@ -16122,13 +16119,13 @@ ${indent}in ${name}`).join("")}
     const $pageAst = () => (validate_store(pageAst, "pageAst"), store_get(pageAst, "$pageAst", $$stores));
     const $live = () => (validate_store(live, "live"), store_get(live, "$live", $$stores));
     const $pageInfo = () => (validate_store(pageInfo, "pageInfo"), store_get(pageInfo, "$pageInfo", $$stores));
-    const canBeDragged = mutable_state();
-    const dragDirection = mutable_state();
+    const canBeDragged = mutable_source();
+    const dragDirection = mutable_source();
     let element2 = prop($$props, "element", 12);
     let isParent = prop($$props, "isParent", 12, false);
     let originalSiblings;
-    let dragHandleElement = mutable_state();
-    let dragHandleStyle = mutable_state("");
+    let dragHandleElement = mutable_source();
+    let dragHandleStyle = mutable_source("");
     let currentHandleCoords;
     let relativeWrapperRect;
     let dragElementInfo;
@@ -16348,7 +16345,7 @@ ${indent}in ${name}`).join("")}
       get(dragHandleElement).style.setProperty("--tw-translate-x", `${mouseDiff.x}px`);
       get(dragHandleElement).style.setProperty("--tw-translate-y", `${mouseDiff.y}px`);
     }
-    let placeholderStyle = mutable_state(null);
+    let placeholderStyle = mutable_source(null);
     let newIndex = null;
     function updateSiblingsPositioning(mouseDiff) {
       if (!relativeWrapperRect) {
@@ -16595,19 +16592,19 @@ ${indent}in ${name}`).join("")}
     const $selectedAstElement = () => (validate_store(selectedAstElement, "selectedAstElement"), store_get(selectedAstElement, "$selectedAstElement", $$stores));
     const $highlightedAstElement = () => (validate_store(highlightedAstElement, "highlightedAstElement"), store_get(highlightedAstElement, "$highlightedAstElement", $$stores));
     const $draggedComponentDefinition = () => (validate_store(draggedComponentDefinition, "draggedComponentDefinition"), store_get(draggedComponentDefinition, "$draggedComponentDefinition", $$stores));
-    const isDragTarget = mutable_state();
-    const isSelectedNode = mutable_state();
-    const isHighlightedNode = mutable_state();
-    const isEditable = mutable_state();
-    const isParentOfSelectedNode = mutable_state();
-    const htmlWrapperHasMultipleElements = mutable_state();
-    const htmlWrapperHasIframe = mutable_state();
+    const isDragTarget = mutable_source();
+    const isSelectedNode = mutable_source();
+    const isHighlightedNode = mutable_source();
+    const isEditable = mutable_source();
+    const isParentOfSelectedNode = mutable_source();
+    const htmlWrapperHasMultipleElements = mutable_source();
+    const htmlWrapperHasIframe = mutable_source();
     let node = prop($$props, "node", 12);
     let nodeId = prop($$props, "nodeId", 12);
-    let htmlWrapper = mutable_state();
-    let domElement = mutable_state();
+    let htmlWrapper = mutable_source();
+    let domElement = mutable_source();
     let previewDropInside;
-    let children = mutable_state();
+    let children = mutable_source();
     function handleDragEnter() {
       if ($draggedComponentDefinition()) {
         if (isAstElement(node()) && elementCanBeDroppedInTarget($draggedComponentDefinition())) {
@@ -16968,7 +16965,7 @@ ${indent}in ${name}`).join("")}
     const $pageAst = () => (validate_store(pageAst, "pageAst"), store_get(pageAst, "$pageAst", $$stores));
     const $slotTargetElement = () => (validate_store(slotTargetElement, "slotTargetElement"), store_get(slotTargetElement, "$slotTargetElement", $$stores));
     const $selectedAstElementId = () => (validate_store(selectedAstElementId, "selectedAstElementId"), store_get(selectedAstElementId, "$selectedAstElementId", $$stores));
-    let isDraggingOver = mutable_state(false);
+    let isDraggingOver = mutable_source(false);
     async function handleDragDrop(e) {
       const target = e.target;
       const layoutZone = e.dataTransfer?.getData("layoutZone");
@@ -26876,9 +26873,9 @@ ${indent}in ${name}`).join("")}
     const $tailwindInput = () => (validate_store(tailwindInput, "tailwindInput"), store_get(tailwindInput, "$tailwindInput", $$stores));
     const $pageInfo = () => (validate_store(pageInfo, "pageInfo"), store_get(pageInfo, "$pageInfo", $$stores));
     const $pageAst = () => (validate_store(pageAst, "pageAst"), store_get(pageAst, "$pageAst", $$stores));
-    let wrapper = mutable_state();
-    let styleWrapper = mutable_state();
-    let contentWrapper = mutable_state();
+    let wrapper = mutable_source();
+    let styleWrapper = mutable_source();
+    let contentWrapper = mutable_source();
     let twConfig = $tailwindConfig();
     let configPromise = import(twConfig);
     onMount(async () => {
@@ -27043,9 +27040,9 @@ ${indent}in ${name}`).join("")}
     const $isDragging = () => (validate_store(isDragging, "isDragging"), store_get(isDragging, "$isDragging", $$stores));
     const $selectedAstElementId = () => (validate_store(selectedAstElementId, "selectedAstElementId"), store_get(selectedAstElementId, "$selectedAstElementId", $$stores));
     const $selectedAstElement = () => (validate_store(selectedAstElement, "selectedAstElement"), store_get(selectedAstElement, "$selectedAstElement", $$stores));
-    const showMenu = mutable_state();
-    let menuDOMElement = mutable_state();
-    let menuPosition = mutable_state();
+    const showMenu = mutable_source();
+    let menuDOMElement = mutable_source();
+    let menuPosition = mutable_source();
     async function deleteComponent() {
       if (!$selectedAstElementId()) return;
       if (confirm("Are you sure you want to delete this component?")) {
@@ -27221,7 +27218,7 @@ ${indent}in ${name}`).join("")}
     const [$$stores, $$cleanup] = setup_stores();
     const $highlightedAstElement = () => (validate_store(highlightedAstElement, "highlightedAstElement"), store_get(highlightedAstElement, "$highlightedAstElement", $$stores));
     const $selectedAstElementId = () => (validate_store(selectedAstElementId, "selectedAstElementId"), store_get(selectedAstElementId, "$selectedAstElementId", $$stores));
-    const astElements = mutable_state();
+    const astElements = mutable_source();
     const dispatch = createEventDispatcher();
     let value2 = prop($$props, "value", 12, "");
     let astNodes = prop($$props, "astNodes", 12, null);
@@ -27242,7 +27239,7 @@ ${indent}in ${name}`).join("")}
         dispatch("delete");
       }
     }
-    let internalValue = mutable_state(get(astElements) ? null : value2());
+    let internalValue = mutable_source(get(astElements) ? null : value2());
     function handleKeydown(e) {
       if (!(e.target instanceof HTMLInputElement)) return;
       let text2 = e.target.value;

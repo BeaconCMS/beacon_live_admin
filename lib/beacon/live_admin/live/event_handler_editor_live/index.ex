@@ -255,7 +255,7 @@ defmodule Beacon.LiveAdmin.EventHandlerEditorLive.Index do
             </.form>
             <div class="mt-4 flex gap-x-4">
               <div>Variables available:</div>
-              <div>params socket</div>
+              <div>event_params socket</div>
             </div>
             <%= template_error(@form[:code]) %>
             <div class="w-full mt-10 space-y-8">

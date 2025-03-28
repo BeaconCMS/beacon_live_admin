@@ -1,5 +1,24 @@
 # Changelog
 
+## Unreleased
+
+### Fixes
+  - [Event Handlers] Fix event_params in "variables available" message
+
+## 0.4.2 (2025-03-24)
+
+### Enhancements
+  - [Visual Editor] Added Border controls
+  - [Visual Editor] Added Padding controls
+  - [Visual Editor] Added Margin controls
+  - [Visual Editor] Added Layout controls
+  - [Visual Editor] Added Typography controls
+  - [Deps] Bump Svelte to v5
+  - [Deps] Update heroicons
+
+### Fixes
+  - [Media Library] Fix search when form is submitted
+
 ## 0.4.1 (2025-02-20)
 
 ### Enhancements
