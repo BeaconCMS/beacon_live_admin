@@ -108,7 +108,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Components.ColorPicker do
       </div>
 
       <%= if @show_picker do %>
-        <div class="absolute top-full right-0 mt-2 bg-white rounded-lg shadow-lg p-4 z-50 w-[300px] border border-gray-200">
+        <div class="absolute top-full right-0 mt-2 bg-white rounded-lg shadow-lg p-2 z-50 w-[300px] border border-gray-200">
           <div class="flex items-center gap-2 mb-4">
             <input
               type="color"
