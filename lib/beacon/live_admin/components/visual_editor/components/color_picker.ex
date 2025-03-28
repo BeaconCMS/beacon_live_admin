@@ -85,6 +85,14 @@ defmodule Beacon.LiveAdmin.VisualEditor.Components.ColorPicker do
     end
   end
 
+  defp get_color_name_or_value(value) do
+    case value do
+      nil -> "transparent"
+      "#" <> _ -> value
+      _ -> value
+    end
+  end
+
   def render(assigns) do
     ~H"""
     <div
@@ -116,13 +124,15 @@ defmodule Beacon.LiveAdmin.VisualEditor.Components.ColorPicker do
               value={get_color_value(@value)}
               phx-change="select_custom_color"
               phx-target={@myself}
+              name={"#{@name}-hex"}
               class="w-8 h-8 rounded cursor-pointer"
             />
             <input
               type="text"
-              value={@value}
+              value={get_color_name_or_value(@value)}
               phx-change="update_custom_color"
               phx-target={@myself}
+              name={"#{@name}-hex-value"}
               class="flex-1 text-sm border rounded px-2 py-1"
             />
           </div>
@@ -153,18 +163,15 @@ defmodule Beacon.LiveAdmin.VisualEditor.Components.ColorPicker do
   end
 
   def handle_event("select_tailwind_color", %{"color" => color}, socket) do
-    push_event(socket, "color_picker:trigger_change", %{value: color})
     {:noreply, assign(socket, value: color)}
   end
 
-  def handle_event("select_custom_color", %{"value" => color}, socket) do
-    push_event(socket, "color_picker:trigger_change", %{value: color})
+  def handle_event("select_custom_color", %{"color-hex" => color}, socket) do
     {:noreply, assign(socket, value: color)}
   end
 
-  def handle_event("update_custom_color", %{"value" => color}, socket) do
+  def handle_event("update_custom_color", %{"color-hex-value" => color}, socket) do
     if Regex.match?(~r/^#[0-9A-Fa-f]{6}$/, color) do
-      push_event(socket, "color_picker:trigger_change", %{value: color})
       {:noreply, assign(socket, value: color)}
     else
       {:noreply, socket}
