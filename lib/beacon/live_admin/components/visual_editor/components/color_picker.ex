@@ -88,14 +88,12 @@ defmodule Beacon.LiveAdmin.VisualEditor.Components.ColorPicker do
   def render(assigns) do
     ~H"""
     <div class="relative" id={"color-picker-#{@id}"} phx-click-away="close_picker" phx-target={@myself}>
-      <div class="relative flex bg-gray-100 border border-gray-100 rounded-md focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500">
+      <div class="relative flex bg-gray-100 border border-gray-100 rounded-md focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500 cursor-pointer" phx-click="toggle_picker" phx-target={@myself}>
         <input
           type="text"
           name={@name}
           value={@value}
           class="w-full py-0.5 px-2 bg-transparent outline-none border-none focus:border-none focus:outline-none focus:ring-0 focus:ring-offset-0 focus:ring-transparent focus:ring-offset-transparent leading-5 text-sm pr-8"
-          phx-click="toggle_picker"
-          phx-target={@myself}
           readonly
         />
         <div class="flex items-center pr-2">
