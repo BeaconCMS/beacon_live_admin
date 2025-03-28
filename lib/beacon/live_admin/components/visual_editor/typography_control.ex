@@ -4,6 +4,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
   use Beacon.LiveAdmin.Web, :live_component
   import Beacon.LiveAdmin.VisualEditor.Components.InputWithUnits
   import Beacon.LiveAdmin.VisualEditor.Components.ToggleGroup
+  import Beacon.LiveAdmin.VisualEditor.Components.ColorPicker
   alias Beacon.LiveAdmin.VisualEditor
   alias Beacon.LiveAdmin.VisualEditor.Components.ControlSection
   alias Beacon.LiveAdmin.VisualEditor.Css.Typography
@@ -26,22 +27,6 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
     {"Bold", "bold"},
     {"Extra Bold", "extrabold"},
     {"Black", "black"}
-  ]
-
-  @text_color_options [
-    {"Default", "default"},
-    {"Black", "black"},
-    {"White", "white"},
-    {"Gray 50", "gray-50"},
-    {"Gray 100", "gray-100"},
-    {"Gray 200", "gray-200"},
-    {"Gray 300", "gray-300"},
-    {"Gray 400", "gray-400"},
-    {"Gray 500", "gray-500"},
-    {"Gray 600", "gray-600"},
-    {"Gray 700", "gray-700"},
-    {"Gray 800", "gray-800"},
-    {"Gray 900", "gray-900"}
   ]
 
   @font_sizes [
@@ -109,7 +94,6 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
      assign(socket,
        font_family_options: @font_family_options,
        font_weight_options: @font_weight_options,
-       text_color_options: @text_color_options,
        font_sizes: @font_sizes,
        line_height_sizes: @line_height_sizes,
        css_units: @css_units,
@@ -155,11 +139,14 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
 
           <div class="grid grid-cols-2 items-center gap-x-2">
             <label class="text-xs">Color</label>
-            <select name="text_color" class="w-full py-0.5 px-2 bg-gray-100 border-gray-100 rounded-md leading-5 text-sm">
-              <option :for={{label, value} <- @text_color_options} value={value} selected={@form.params["text_color"] == value}>
-                <%= label %>
-              </option>
-            </select>
+            <div class="flex">
+              <.live_component
+                module={Beacon.LiveAdmin.VisualEditor.Components.ColorPicker}
+                id="text-color-picker"
+                name="text_color"
+                value={@form.params["text_color"]}
+              />
+            </div>
           </div>
 
           <div class="flex gap-1">

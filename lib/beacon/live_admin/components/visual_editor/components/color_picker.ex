@@ -79,7 +79,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Components.ColorPicker do
   defp get_color_value(value) do
     case value do
       nil -> "transparent"
-      "Default" -> @tailwind_colors |> Enum.find(fn {n, hex} -> n == "gray-200" end) |> elem(1)
+      "Default" -> @tailwind_colors |> Enum.find(fn {n, _hex} -> n == "gray-200" end) |> elem(1)
       "#" <> _ -> value
       name -> Enum.find_value(@tailwind_colors, fn {n, hex} -> if n == name, do: hex end) || "transparent"
     end
@@ -108,7 +108,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Components.ColorPicker do
           name={@name}
           value={@value}
           data-value={@value}
-          class="w-full py-0.5 px-2 bg-transparent outline-none border-none focus:border-none focus:outline-none focus:ring-0 focus:ring-offset-0 focus:ring-transparent focus:ring-offset-transparent leading-5 text-sm pr-8"
+          class="w-full py-0.5 px-2 bg-transparent outline-none border-none focus:border-none focus:outline-none focus:ring-0 focus:ring-offset-0 focus:ring-transparent focus:ring-offset-transparent leading-5 text-sm"
           readonly
         />
         <div class="flex items-center pr-2">
@@ -124,7 +124,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Components.ColorPicker do
               value={get_color_value(@value)}
               phx-change="select_custom_color"
               phx-target={@myself}
-              name={"#{@name}-hex"}
+              name="color-hex"
               class="w-8 h-8 rounded cursor-pointer"
             />
             <input
@@ -132,7 +132,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Components.ColorPicker do
               value={get_color_name_or_value(@value)}
               phx-change="update_custom_color"
               phx-target={@myself}
-              name={"#{@name}-hex-value"}
+              name="#color-hex-value"
               class="flex-1 text-sm border rounded px-2 py-1"
             />
           </div>
