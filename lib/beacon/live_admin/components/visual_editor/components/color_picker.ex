@@ -132,7 +132,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Components.ColorPicker do
               value={get_color_name_or_value(@value)}
               phx-change="update_custom_color"
               phx-target={@myself}
-              name="#color-hex-value"
+              name="color-hex-value"
               class="flex-1 text-sm border rounded px-2 py-1"
             />
           </div>
