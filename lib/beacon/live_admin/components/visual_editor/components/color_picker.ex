@@ -76,6 +76,14 @@ defmodule Beacon.LiveAdmin.VisualEditor.Components.ColorPicker do
     {:ok, assign(socket, show_picker: false, tailwind_colors: @tailwind_colors)}
   end
 
+  defp get_color_value(value) do
+    case value do
+      nil -> "transparent"
+      "#" <> _ -> value
+      name -> Enum.find_value(@tailwind_colors, fn {n, hex} -> if n == name, do: hex end) || "transparent"
+    end
+  end
+
   def render(assigns) do
     ~H"""
     <div class="relative" id={"color-picker-#{@id}"} phx-click-away="close_picker" phx-target={@myself}>
@@ -90,7 +98,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Components.ColorPicker do
           readonly
         />
         <div class="flex items-center pr-2">
-          <div class="w-4 h-4 rounded border border-gray-200" style={"background-color: #{@value}"} />
+          <div class="w-4 h-4 rounded border border-gray-200" style={"background-color: #{get_color_value(@value)}"} title={get_color_value(@value)}/>
         </div>
       </div>
 
@@ -99,7 +107,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Components.ColorPicker do
           <div class="flex items-center gap-2 mb-4">
             <input
               type="color"
-              value={@value}
+              value={get_color_value(@value)}
               phx-change="select_custom_color"
               phx-target={@myself}
               class="w-8 h-8 rounded cursor-pointer"
@@ -122,6 +130,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Components.ColorPicker do
                 phx-click="select_tailwind_color"
                 phx-value-color={name}
                 phx-target={@myself}
+                title={name}
               >
                 <%= if @value == name do %>
                   <div class="w-full h-full flex items-center justify-center">
@@ -138,7 +147,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Components.ColorPicker do
   end
 
   def handle_event("select_tailwind_color", %{"color" => color}, socket) do
-    {:noreply, assign(socket, value: color, show_picker: false)}
+    {:noreply, assign(socket, value: color)}
   end
 
   def handle_event("select_custom_color", %{"value" => color}, socket) do
