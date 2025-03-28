@@ -78,7 +78,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Components.ColorPicker do
 
   def render(assigns) do
     ~H"""
-    <div class="relative">
+    <div class="relative" id={"color-picker-#{@id}"} phx-click-away="close_picker" phx-target={@myself}>
       <div class="relative flex bg-gray-100 border border-gray-100 rounded-md focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500">
         <input
           type="text"
@@ -113,7 +113,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Components.ColorPicker do
             />
           </div>
 
-          <div class="flex flex-wrap gap-1 mb-4">
+          <div class="flex flex-wrap gap-1">
             <%= for {name, hex} <- @tailwind_colors do %>
               <button
                 type="button"
@@ -131,17 +131,6 @@ defmodule Beacon.LiveAdmin.VisualEditor.Components.ColorPicker do
               </button>
             <% end %>
           </div>
-
-          <div class="flex justify-end">
-            <button
-              type="button"
-              class="text-sm text-gray-600 hover:text-gray-900"
-              phx-click="toggle_picker"
-              phx-target={@myself}
-            >
-              Close
-            </button>
-          </div>
         </div>
       <% end %>
     </div>
@@ -149,7 +138,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Components.ColorPicker do
   end
 
   def handle_event("select_tailwind_color", %{"color" => color}, socket) do
-    {:noreply, assign(socket, value: color)}
+    {:noreply, assign(socket, value: color, show_picker: false)}
   end
 
   def handle_event("select_custom_color", %{"value" => color}, socket) do
@@ -166,5 +155,9 @@ defmodule Beacon.LiveAdmin.VisualEditor.Components.ColorPicker do
 
   def handle_event("toggle_picker", _, socket) do
     {:noreply, assign(socket, show_picker: !socket.assigns.show_picker)}
+  end
+
+  def handle_event("close_picker", _, socket) do
+    {:noreply, assign(socket, show_picker: false)}
   end
 end
