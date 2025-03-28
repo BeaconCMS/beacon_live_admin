@@ -91,7 +91,6 @@ defmodule Beacon.LiveAdmin.VisualEditor.Components.ColorPicker do
       class="relative"
       id={"color-picker-#{@id}"}
       phx-click-away="close_picker"
-
       phx-target={@myself}
     >
       <div class="relative flex bg-gray-100 border border-gray-100 rounded-md focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500 cursor-pointer" phx-click="toggle_picker" phx-target={@myself}>
