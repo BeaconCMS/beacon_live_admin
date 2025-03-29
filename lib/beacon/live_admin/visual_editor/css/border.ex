@@ -602,6 +602,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
     case params["color"] do
       nil -> []
       "Default" -> []
+      "#" <> _ -> ["border-[#{params["color"]}]"]
       color -> ["border-#{color}"]
     end
   end

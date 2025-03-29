@@ -32,7 +32,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Typography do
     []
     |> maybe_add_class("font", params["font_family"])
     |> maybe_add_class("font", params["font_weight"])
-    |> maybe_add_class("text", params["text_color"])
+    |> maybe_add_text_color(params["text_color"])
     |> maybe_add_font_size(params["font_size"], params["font_size_unit"])
     |> maybe_add_line_height(params["line_height"], params["line_height_unit"])
     |> maybe_add_letter_spacing(params["letter_spacing"], params["letter_spacing_unit"])
@@ -46,6 +46,16 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Typography do
   defp maybe_add_class(classes, _prefix, "default"), do: classes
   defp maybe_add_class(classes, _prefix, ""), do: classes
   defp maybe_add_class(classes, prefix, value) when is_binary(value), do: classes ++ ["#{prefix}-#{value}"]
+
+  defp maybe_add_text_color(classes, nil), do: classes
+  defp maybe_add_text_color(classes, "default"), do: classes
+  defp maybe_add_text_color(classes, ""), do: classes
+  defp maybe_add_text_color(classes, value) when is_binary(value) do
+    case value do
+      "#" <> _ -> classes ++ ["text-[#{value}]"]
+      _ -> classes ++ ["text-#{value}"]
+    end
+  end
 
   defp maybe_add_decoration(classes, "default"), do: classes
   defp maybe_add_decoration(classes, value), do: classes ++ [value]
@@ -142,6 +152,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Typography do
         "text-gray-700" -> "gray-700"
         "text-gray-800" -> "gray-800"
         "text-gray-900" -> "gray-900"
+        <<"text-[", color::binary>> -> String.trim_trailing(color, "]")
         _ -> nil
       end
     end)
