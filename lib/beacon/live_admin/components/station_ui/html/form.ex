@@ -62,6 +62,12 @@ defmodule Beacon.LiveAdmin.StationUI.HTML.Form do
     """
   end
 
+  def input(%{type: "hidden"} = assigns) do
+    ~H"""
+    <input type={@type} name={@name} id={@id} value={Phoenix.HTML.Form.normalize_value(@type, @value)} {@rest} />
+    """
+  end
+
   def input(assigns) do
     ~H"""
     <Input.generic_input {Map.drop(assigns, [:checked, :field, :label, :multiple, :options, :prompt])}>
