@@ -1,5 +1,8 @@
 # Changelog
 
+## Unreleased
+  - [Visual Editor] Added Color Picker to change border color
+
 ## 0.4.3 (2025-03-31)
 
 ### Fixes
