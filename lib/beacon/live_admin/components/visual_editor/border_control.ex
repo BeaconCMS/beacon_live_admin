@@ -8,8 +8,6 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
   alias Beacon.LiveAdmin.VisualEditor.Components.ControlSection
   alias Beacon.LiveAdmin.VisualEditor.Css.Border
 
-  require Logger
-
   @border_styles [{"none", ""}, {"solid", "—"}, {"dashed", "--"}, {"dotted", "..."}]
 
   @border_colors ~w(Default gray-200 red-200 blue-200 green-200 yellow-200 purple-200)
@@ -212,7 +210,6 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
   end
 
   def handle_event("update_border", params, socket) do
-    Logger.info("########################################## update_border #{inspect(params)}")
     update_classes(socket, params)
   end
 

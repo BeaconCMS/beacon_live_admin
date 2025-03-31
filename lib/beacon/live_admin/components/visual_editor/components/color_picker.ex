@@ -4,7 +4,6 @@ defmodule Beacon.LiveAdmin.VisualEditor.Components.ColorPicker do
   use Beacon.LiveAdmin.Web, :live_component
 
   @tailwind_colors [
-    # Grays
     {"gray-50", "#F9FAFB"},
     {"gray-100", "#F3F4F6"},
     {"gray-200", "#E5E7EB"},
@@ -15,7 +14,6 @@ defmodule Beacon.LiveAdmin.VisualEditor.Components.ColorPicker do
     {"gray-700", "#374151"},
     {"gray-800", "#1F2937"},
     {"gray-900", "#111827"},
-    # Reds
     {"red-50", "#FEF2F2"},
     {"red-100", "#FEE2E2"},
     {"red-200", "#FECACA"},
@@ -26,7 +24,6 @@ defmodule Beacon.LiveAdmin.VisualEditor.Components.ColorPicker do
     {"red-700", "#B91C1C"},
     {"red-800", "#991B1B"},
     {"red-900", "#7F1D1D"},
-    # Blues
     {"blue-50", "#EFF6FF"},
     {"blue-100", "#DBEAFE"},
     {"blue-200", "#BFDBFE"},
@@ -37,7 +34,6 @@ defmodule Beacon.LiveAdmin.VisualEditor.Components.ColorPicker do
     {"blue-700", "#1D4ED8"},
     {"blue-800", "#1E40AF"},
     {"blue-900", "#1E3A8A"},
-    # Greens
     {"green-50", "#F0FDF4"},
     {"green-100", "#DCFCE7"},
     {"green-200", "#BBF7D0"},
@@ -48,7 +44,6 @@ defmodule Beacon.LiveAdmin.VisualEditor.Components.ColorPicker do
     {"green-700", "#15803D"},
     {"green-800", "#166534"},
     {"green-900", "#14532D"},
-    # Yellows
     {"yellow-50", "#FEFCE8"},
     {"yellow-100", "#FEF9C3"},
     {"yellow-200", "#FEF08A"},
@@ -59,7 +54,6 @@ defmodule Beacon.LiveAdmin.VisualEditor.Components.ColorPicker do
     {"yellow-700", "#A16207"},
     {"yellow-800", "#854D0E"},
     {"yellow-900", "#713F12"},
-    # Purples
     {"purple-50", "#FAF5FF"},
     {"purple-100", "#F3E8FF"},
     {"purple-200", "#E9D5FF"},
