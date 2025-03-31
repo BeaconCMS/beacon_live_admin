@@ -72,11 +72,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
               <label class="text-xs">Color</label>
             </div>
             <div class="w-2/3 flex">
-              <select name="color" class="flex-1 py-0.5 px-2 bg-gray-100 border-gray-100 rounded-md leading-5 text-sm">
-                <option :for={color <- @border_colors} value={color} selected={@form.params["color"] == color}>
-                  <%= String.replace(color, "-", " ") |> String.capitalize() %>
-                </option>
-              </select>
+              <.live_component module={Beacon.LiveAdmin.VisualEditor.Components.ColorPicker} id="border-color-picker" name="color" value={@form.params["color"]} />
             </div>
           </div>
 

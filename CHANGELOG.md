@@ -1,9 +1,17 @@
 # Changelog
 
 ## Unreleased
+  - [Visual Editor] Added Color Picker to change border color
+
+## 0.4.3 (2025-03-31)
 
 ### Fixes
+  - [Components] Remove gap in components attributes editor
   - [Event Handlers] Fix event_params in "variables available" message
+  - [Deps] Relax `:tailwind` version
+
+### Changes
+  - [Deps] Vendor heroicons using the npm package
 
 ## 0.4.2 (2025-03-24)
 
