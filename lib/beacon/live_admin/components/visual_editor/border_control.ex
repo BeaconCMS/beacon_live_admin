@@ -4,7 +4,6 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
   use Beacon.LiveAdmin.Web, :live_component
   import Beacon.LiveAdmin.VisualEditor.Components.InputWithUnits
   import Beacon.LiveAdmin.VisualEditor.Components.ToggleGroup
-  import Beacon.LiveAdmin.VisualEditor.Components.ColorPicker
   alias Beacon.LiveAdmin.VisualEditor
   alias Beacon.LiveAdmin.VisualEditor.Components.ControlSection
   alias Beacon.LiveAdmin.VisualEditor.Css.Border
