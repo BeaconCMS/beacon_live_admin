@@ -1,0 +1,8 @@
+---
+description: Rules for Svelve, TypeScript, and JavaScript
+globs: assets/**/*.{svelte,js,ts}
+alwaysApply: true
+---
+Guidelines:
+- Consult latest Svelte documentation at @https://svelte.dev/docs
+- Prefer TypeScript over JavaScript
