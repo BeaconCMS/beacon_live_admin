@@ -50,6 +50,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Typography do
   defp maybe_add_text_color(classes, nil), do: classes
   defp maybe_add_text_color(classes, "default"), do: classes
   defp maybe_add_text_color(classes, ""), do: classes
+
   defp maybe_add_text_color(classes, value) when is_binary(value) do
     case value do
       "#" <> _ -> classes ++ ["text-[#{value}]"]

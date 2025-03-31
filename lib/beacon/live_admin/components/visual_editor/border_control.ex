@@ -74,12 +74,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
               <label class="text-xs">Color</label>
             </div>
             <div class="w-2/3 flex">
-              <.live_component
-                module={Beacon.LiveAdmin.VisualEditor.Components.ColorPicker}
-                id="border-color-picker"
-                name="color"
-                value={@form.params["color"]}
-              />
+              <.live_component module={Beacon.LiveAdmin.VisualEditor.Components.ColorPicker} id="border-color-picker" name="color" value={@form.params["color"]} />
             </div>
           </div>
 

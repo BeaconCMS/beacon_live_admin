@@ -95,14 +95,12 @@ defmodule Beacon.LiveAdmin.VisualEditor.Components.ColorPicker do
 
   def render(assigns) do
     ~H"""
-    <div
-      class="relative"
-      id={"color-picker-#{@id}"}
-      phx-click-away="close_picker"
-      phx-hook="ColorPicker"
-      phx-target={@myself}
-    >
-      <div class="relative flex bg-gray-100 border border-gray-100 rounded-md focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500 cursor-pointer" phx-click="toggle_picker" phx-target={@myself}>
+    <div class="relative" id={"color-picker-#{@id}"} phx-click-away="close_picker" phx-hook="ColorPicker" phx-target={@myself}>
+      <div
+        class="relative flex bg-gray-100 border border-gray-100 rounded-md focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500 cursor-pointer"
+        phx-click="toggle_picker"
+        phx-target={@myself}
+      >
         <input
           type="text"
           name={@name}
@@ -112,29 +110,15 @@ defmodule Beacon.LiveAdmin.VisualEditor.Components.ColorPicker do
           readonly
         />
         <div class="flex items-center pr-2">
-          <div class="w-4 h-4 rounded border border-gray-200" style={"background-color: #{get_color_value(@value)}"} title={get_color_value(@value)}/>
+          <div class="w-4 h-4 rounded border border-gray-200" style={"background-color: #{get_color_value(@value)}"} title={get_color_value(@value)} />
         </div>
       </div>
 
       <%= if @show_picker do %>
         <div class="absolute top-full right-0 mt-2 bg-white rounded-lg shadow-lg p-2 z-50 w-[300px] border border-gray-200">
           <div class="flex items-center gap-2 mb-4">
-            <input
-              type="color"
-              value={get_color_value(@value)}
-              phx-change="select_custom_color"
-              phx-target={@myself}
-              name="color-hex"
-              class="w-8 h-8 rounded cursor-pointer"
-            />
-            <input
-              type="text"
-              value={get_color_name_or_value(@value)}
-              phx-change="update_custom_color"
-              phx-target={@myself}
-              name="color-hex-value"
-              class="flex-1 text-sm border rounded px-2 py-1"
-            />
+            <input type="color" value={get_color_value(@value)} phx-change="select_custom_color" phx-target={@myself} name="color-hex" class="w-8 h-8 rounded cursor-pointer" />
+            <input type="text" value={get_color_name_or_value(@value)} phx-change="update_custom_color" phx-target={@myself} name="color-hex-value" class="flex-1 text-sm border rounded px-2 py-1" />
           </div>
 
           <div class="flex flex-wrap gap-1">

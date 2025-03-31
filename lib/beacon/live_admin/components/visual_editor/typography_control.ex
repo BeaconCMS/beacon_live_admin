@@ -139,12 +139,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
           <div class="grid grid-cols-2 items-center gap-x-2">
             <label class="text-xs">Color</label>
             <div class="flex">
-              <.live_component
-                module={Beacon.LiveAdmin.VisualEditor.Components.ColorPicker}
-                id="text-color-picker"
-                name="text_color"
-                value={@form.params["text_color"]}
-              />
+              <.live_component module={Beacon.LiveAdmin.VisualEditor.Components.ColorPicker} id="text-color-picker" name="text_color" value={@form.params["text_color"]} />
             </div>
           </div>
 
