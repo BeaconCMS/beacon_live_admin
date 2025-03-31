@@ -65,28 +65,28 @@ defmodule Beacon.LiveAdmin.PageEditorLive.New do
     {:noreply, socket}
   end
 
-  @impl true
-  def handle_event(
-        "render_component_in_page",
-        %{"component_id" => component_id},
-        socket
-      ) do
-    component = Content.get_component(socket.assigns.beacon_page.site, component_id)
-
-    %{data: %{ast: ast}} =
-      WebAPI.Component.show_ast(socket.assigns.beacon_page.site, component, socket.assigns.page)
-
-    {:reply, %{"ast" => ast}, socket}
-  end
-
-  def handle_event("update_page_ast", %{"ast" => ast}, socket) do
-    send_update(Beacon.LiveAdmin.PageEditorLive.FormComponent,
-      id: "page-editor-form",
-      ast: ast
-    )
-
-    {:noreply, socket}
-  end
+  # @impl true
+  # def handle_event(
+  #       "render_component_in_page",
+  #       %{"component_id" => component_id},
+  #       socket
+  #     ) do
+  #   component = Content.get_component(socket.assigns.beacon_page.site, component_id)
+  #
+  #   %{data: %{ast: ast}} =
+  #     WebAPI.Component.show_ast(socket.assigns.beacon_page.site, component, socket.assigns.page)
+  #
+  #   {:reply, %{"ast" => ast}, socket}
+  # end
+  #
+  # def handle_event("update_page_ast", %{"ast" => ast}, socket) do
+  #   send_update(Beacon.LiveAdmin.PageEditorLive.FormComponent,
+  #     id: "page-editor-form",
+  #     ast: ast
+  #   )
+  #
+  #   {:noreply, socket}
+  # end
 
   # def handle_event("select_element", %{"path" => path}, socket) do
   #   ElementSelection.select_element(path, socket)

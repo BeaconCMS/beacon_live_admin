@@ -101,9 +101,34 @@ defmodule Beacon.LiveAdmin.VisualEditor.Components.HEExEditor do
         socket={@socket}
       />
 
-      <.live_component module={Beacon.LiveAdmin.VisualEditor.PropertiesSidebarComponent} id="properties-sidebar" page={@page} ast={@ast} selected_element_path={@selected_element_path} />
+      <.live_component
+        module={Beacon.LiveAdmin.VisualEditor.PropertiesSidebarComponent}
+        id="properties-sidebar"
+        page={@page}
+        ast={@ast}
+        selected_element_path={@selected_element_path}
+        heex_editor={@myself}
+      />
     </div>
     """
+  end
+
+  @doc """
+  Notify the parent editor instance of an element attr change.
+
+  ## Options
+
+    - `:origin` - The origin of the event, usually the module that triggered it.
+    - `:path` - The path to the element in the AST, eg: "2.0.1"
+    - `:changed` - The changes made to the element, typically a map of updated attributes.
+  """
+  def element_changed(cid, opts) do
+  dbg opts
+    origin = Keyword.fetch!(opts, :origin)
+    path = Keyword.fetch!(opts, :path)
+    changed = Keyword.fetch!(opts, :changed)
+    event = {origin, :element_changed, %{path: path, changed: changed}}
+    send_update(cid, %{event: event})
   end
 
   def handle_event("select_element", %{"path" => path}, socket) do
