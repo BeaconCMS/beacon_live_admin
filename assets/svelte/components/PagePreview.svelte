@@ -19,14 +19,15 @@
     let draggedObj = $draggedComponentDefinition
 
     if (layoutZone) {
-      $live.pushEvent(
+      $live.pushEventTo(
+        "#heex-visual-editor",
         "render_component_in_page",
         { component_id: draggedObj.id, page_id: $pageInfo.id },
         ({ ast }: { ast: AstNode[] }) => {
           // If the element was dropped before the main content, it appends it at the top of the page
           // otherwise it appends it at the bottom of the page
           const newAst = layoutZone === "preamble" ? [...ast, ...$pageAst] : [...$pageAst, ...ast]
-          $live.pushEvent("update_page_ast", { id: $pageInfo.id, ast: newAst })
+          $live.pushEventTo("#heex-visual-editor", "update_page_ast", { id: $pageInfo.id, ast: newAst })
         },
       )
     } else if (target.id !== "fake-browser-content" && elementCanBeDroppedInTarget(draggedObj)) {
@@ -37,12 +38,13 @@
 
       addBasicComponentToTarget($slotTargetElement)
     } else {
-      $live.pushEvent(
+      $live.pushEventTo(
+        "#heex-visual-editor",
         "render_component_in_page",
         { component_id: draggedObj.id, page_id: $pageInfo.id },
         ({ ast }: { ast: AstNode[] }) => {
           // This appends at the end. We might want at the beginning, or in a specific position
-          $live.pushEvent("update_page_ast", { id: $pageInfo.id, ast: [...$pageAst, ...ast] })
+          $live.pushEventTo("#heex-visual-editor", "update_page_ast", { id: $pageInfo.id, ast: [...$pageAst, ...ast] })
         },
       )
     }
@@ -54,13 +56,14 @@
     let componentDefinition = $draggedComponentDefinition
     $draggedComponentDefinition = null
     let targetNode = astElement
-    $live.pushEvent(
+    $live.pushEventTo(
+      "#heex-visual-editor",
       "render_component_in_page",
       { component_id: componentDefinition.id, page_id: $pageInfo.id },
       ({ ast }: { ast: AstNode[] }) => {
         targetNode?.content.push(...ast)
         $slotTargetElement = undefined
-        $live.pushEvent("update_page_ast", { id: $pageInfo.id, ast: $pageAst })
+        $live.pushEventTo("#heex-visual-editor", "update_page_ast", { id: $pageInfo.id, ast: $pageAst })
       },
     )
   }

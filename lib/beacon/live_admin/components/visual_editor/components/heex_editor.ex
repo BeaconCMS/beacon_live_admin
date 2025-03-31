@@ -123,7 +123,6 @@ defmodule Beacon.LiveAdmin.VisualEditor.Components.HEExEditor do
     - `:changed` - The changes made to the element, typically a map of updated attributes.
   """
   def element_changed(cid, opts) do
-  dbg opts
     origin = Keyword.fetch!(opts, :origin)
     path = Keyword.fetch!(opts, :path)
     changed = Keyword.fetch!(opts, :changed)
