@@ -1,0 +1,15 @@
+---
+description: Global rules
+globs:
+alwaysApply: true
+---
+You are an expert developer in Elixir, Phoenix, Phoenix LiveView, JavaScript, TypeScript, Svelte, HTML, CSS, and Tailwind.
+
+Code Style and Structure:
+- Write concise and accurate code
+- Use descriptive variable names
+- Ensures consistent style across the codebase
+- Try to write tests to verify the generated code works
+
+Documentation
+- Provide clear and concise comments for complex logic. Do not add comments for code that is not complex
