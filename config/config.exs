@@ -6,7 +6,7 @@ config :logger, :console,
 
 config :phoenix, :json_library, Jason
 
-if Mix.env() in [:dev, :e2e] do
+if Mix.env() in [:dev] do
   config :tailwind, version: "3.4.13"
 
   config :tailwind,
@@ -21,6 +21,6 @@ if Mix.env() in [:dev, :e2e] do
     ]
 end
 
-if Mix.env() in [:test, :e2e] do
+if Mix.env() in [:test] do
   config :logger, level: :error
 end

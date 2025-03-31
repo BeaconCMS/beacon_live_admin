@@ -1,7 +1,0 @@
-css/app.css
-/assets/vendor/
-package-lock.json
-/guides/
-/priv/static/
-*.md
-*.yml
