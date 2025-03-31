@@ -93,7 +93,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.PropertiesSidebarComponent do
   def render(assigns) do
     ~H"""
     <div id={@id} class="mt-4 w-64 bg-white" data-testid="right-sidebar">
-      <div :if={@selected_element} class="sticky top-0 overflow-y-auto h-screen">
+      <div :if={@selected_element} class="sticky top-0 h-screen">
         <div class="border-b text-lg font-medium leading-5 p-4 relative">
           <%= @selected_element["tag"] %>
           <.svelte :if={@selected_element["path"] !== "root"} name="components/GoToParentButton" class="contents" socket={@socket} />
