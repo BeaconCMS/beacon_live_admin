@@ -35,17 +35,6 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
   end
 
   @impl true
-  def handle_event("set_template", %{"value" => value}, socket) do
-    send_update(Beacon.LiveAdmin.PageEditorLive.FormComponent,
-      id: "page-editor-form",
-      event: :template_changed,
-      template: value
-    )
-
-    {:noreply, socket}
-  end
-
-  @impl true
   def render(assigns) do
     ~H"""
     <.live_component

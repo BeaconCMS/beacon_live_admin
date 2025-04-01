@@ -55,14 +55,8 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
      end)}
   end
 
-  def update(%{event: :template_changed, template: template}, %{assigns: %{editor: editor}} = socket) when editor in ["code", "visual"] do
-    params = Map.merge(socket.assigns.form.params, %{"template" => template})
-    changeset = Content.change_page(socket.assigns.site, socket.assigns.page, params)
-
-    {:ok,
-     socket
-     |> assign_form(changeset)
-     |> assign_template(template)}
+  def update(%{event: :template_changed, template: template}, socket) do
+    {:ok, assign_template(socket, template)}
   end
 
   @impl true
@@ -171,6 +165,10 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
     {:noreply, push_patch(socket, to: path)}
   end
 
+  def handle_event("set_template", %{"value" => template}, socket) do
+    {:noreply, assign_template(socket, template)}
+  end
+
   defp save(page_params, user_action, socket) do
     %{site: site, template: template, page: page, live_action: live_action} = socket.assigns
     page_params = Map.merge(page_params, %{"site" => site, "template" => template})
@@ -207,7 +205,12 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
   end
 
   defp assign_template(socket, template) do
-    assign(socket, :template, template)
+    params = Map.merge(socket.assigns.form.params, %{"template" => template})
+    changeset = Content.change_page(socket.assigns.site, socket.assigns.page, params)
+
+    socket
+    |> assign_form(changeset)
+    |> assign(:template, template)
   end
 
   defp maybe_assign_builder_page(%{assigns: %{editor: "visual"}} = socket, changeset) do
@@ -387,6 +390,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
               value={@form[:template].value}
               opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => @language})}
               change="set_template"
+              target={@myself}
             />
           </div>
         </div>
