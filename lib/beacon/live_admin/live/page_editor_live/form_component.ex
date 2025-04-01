@@ -7,7 +7,6 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
   alias Beacon.LiveAdmin.Client.Content
   alias Beacon.LiveAdmin.RuntimeCSS
   alias Beacon.LiveAdmin.WebAPI
-  alias Beacon.LiveAdmin.VisualEditor
   alias Ecto.Changeset
 
   @impl true
@@ -67,19 +66,19 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
      |> assign_template(template)}
   end
 
-  # updated ast from visual editor
-  def update(%{ast: ast}, %{assigns: %{editor: "visual"}} = socket) do
-    template = Beacon.Template.HEEx.HEExDecoder.decode(ast)
-    params = Map.merge(socket.assigns.form.params, %{"template" => template})
-    changeset = Content.change_page(socket.assigns.site, socket.assigns.page, params)
-
-    socket =
-      socket
-      |> assign_form(changeset)
-      |> maybe_assign_builder_page(changeset)
-
-    {:ok, socket}
-  end
+  # # updated ast from visual editor
+  # def update(%{ast: ast}, %{assigns: %{editor: "visual"}} = socket) do
+  #   template = Beacon.Template.HEEx.HEExDecoder.decode(ast)
+  #   params = Map.merge(socket.assigns.form.params, %{"template" => template})
+  #   changeset = Content.change_page(socket.assigns.site, socket.assigns.page, params)
+  #
+  #   socket =
+  #     socket
+  #     |> assign_form(changeset)
+  #     |> maybe_assign_builder_page(changeset)
+  #
+  #   {:ok, socket}
+  # end
 
   def update(%{event: :template_changed, template: template}, socket) do
     params = Map.merge(socket.assigns.form.params, %{"template" => template})
@@ -315,8 +314,8 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
     {:safe, html}
   end
 
-  defp svelte_page_builder_class("code" = _editor), do: "hidden"
-  defp svelte_page_builder_class("visual" = _editor), do: "mt-4 relative flex-1"
+  # defp svelte_page_builder_class("code" = _editor), do: "hidden"
+  # defp svelte_page_builder_class("visual" = _editor), do: "mt-4 relative flex-1"
 
   @impl true
   @spec render(any()) :: Phoenix.LiveView.Rendered.t()
@@ -403,7 +402,18 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
       </.modal>
 
       <%= if @editor == "visual" do %>
-        <.heex_visual_editor components={@components} template="<div><p>hello</p></div>" on_template_change={&send_update(@myself, event: :template_changed, template: &1)} /> />
+        <.heex_visual_editor
+          components={[]}
+          template="<div><p>hello</p></div>"
+          on_template_change={&send_update(@myself, event: :template_changed, template: &1)}
+          render_node_fun={
+            fn node ->
+              heex = Beacon.LiveAdmin.VisualEditor.HEEx.HEExDecoder.decode(node)
+              assigns = %{}
+              Beacon.LiveAdmin.Client.HEEx.render(@site, heex, assigns)
+            end
+          }
+        /> />
       <% end %>
 
       <div class={[

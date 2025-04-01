@@ -2,9 +2,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
   @moduledoc false
   require Logger
   use Beacon.LiveAdmin.PageBuilder
-  alias Beacon.LiveAdmin.PageEditorLive.ElementSelection
   alias Beacon.LiveAdmin.Client.Content
-  alias Beacon.LiveAdmin.WebAPI
 
   @impl true
   def menu_link("/pages", :edit), do: {:submenu, "Pages"}

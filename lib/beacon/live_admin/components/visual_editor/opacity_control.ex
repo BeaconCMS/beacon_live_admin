@@ -10,7 +10,6 @@ defmodule Beacon.LiveAdmin.VisualEditor.OpacityControl do
   def render(assigns) do
     ~H"""
     <div id={@id}>
-      <%= inspect(@socket) %>
       <.live_component module={ControlSection} id={@id <> "-section"} label="Opacity">
         <.form for={@form} phx-target={@myself} phx-change="update" phx-throttle="1000">
           <.input field={@form[:value]} type="range" min="0" max="100" step="5" />
@@ -38,11 +37,17 @@ defmodule Beacon.LiveAdmin.VisualEditor.OpacityControl do
     if validate(opacity) == :ok do
       class = VisualEditor.merge_class(socket.assigns.element, "opacity-#{opacity}")
 
-      HEExEditor.element_changed(
-        socket.assigns.heex_editor,
-        origin: __MODULE__,
-        path: socket.assigns.element["path"],
-        changed: %{updated: %{"attrs" => %{"class" => class}}}
+      # HEExEditor.element_changed(
+      #   socket.assigns.heex_editor,
+      #   origin: __MODULE__,
+      #   path: socket.assigns.element["path"],
+      #   changed: %{updated: %{"attrs" => %{"class" => class}}}
+      # )
+
+      socket.assigns.on_element_change.(
+        __MODULE__,
+        socket.assigns.element["path"],
+        %{updated: %{"attrs" => %{"class" => class}}}
       )
 
       {:noreply, assign_form(socket, opacity)}

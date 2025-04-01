@@ -105,7 +105,16 @@ defmodule Beacon.LiveAdmin.VisualEditor.PropertiesSidebarComponent do
           <.live_component module={VisualEditor.TypographyControl} id="control-typography" element={@selected_element} />
           <.live_component module={VisualEditor.SpaceControl} id="control-space" element={@selected_element} />
           <.live_component module={VisualEditor.BorderControl} id="control-border" element={@selected_element} />
-          <.live_component module={VisualEditor.OpacityControl} id="control-opacity" element={@selected_element} heex_editor={@heex_editor} />
+          <.live_component
+            module={VisualEditor.OpacityControl}
+            id="control-opacity"
+            element={@selected_element}
+            on_element_change={
+              fn origin, path, payload ->
+                element_changed(@heex_editor, origin, path, payload)
+              end
+            }
+          />
           <.live_component module={VisualEditor.IdControl} id="control-id" element={@selected_element} />
           <.live_component module={VisualEditor.ClassControl} id="control-class" element={@selected_element} />
           <%= for attribute <- @other_attributes do %>
@@ -126,5 +135,19 @@ defmodule Beacon.LiveAdmin.VisualEditor.PropertiesSidebarComponent do
       </div>
     </div>
     """
+  end
+
+  # bubbles up the element attrs changes to the parent HEExEditor
+  defp element_changed(heex_editor, origin, path, payload) do
+    if origin in [Beacon.LiveAdmin.VisualEditor.OpacityControl] do
+      event = {origin, :element_changed, %{path: path, payload: payload}}
+      send_update(heex_editor, %{event: event})
+    else
+      raise """
+      HEEx Editor failed to handle element change from #{inspect(origin)}.
+
+      That module is not recognized.
+      """
+    end
   end
 end
