@@ -32,7 +32,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Components.HEExEditor do
   defp init(assigns, socket) do
     template = assigns[:template] || ""
     layout_template = assigns[:layout_template] || ""
-    render_heex_fun = assigns[:render_heex_fun] || fn heex  -> heex end
+    render_heex_fun = assigns[:render_heex_fun] || fn heex -> heex end
 
     {:ok, ast} = Beacon.LiveAdmin.VisualEditor.HEEx.JSONEncoder.encode(template, render_heex_fun)
     {:ok, layout_ast} = Beacon.LiveAdmin.VisualEditor.HEEx.JSONEncoder.encode(layout_template, render_heex_fun)
