@@ -4,7 +4,6 @@ defmodule Beacon.LiveAdmin.VisualEditor.OpacityControl do
 
   use Beacon.LiveAdmin.Web, :live_component
   alias Beacon.LiveAdmin.VisualEditor
-  alias Beacon.LiveAdmin.VisualEditor.Components.HEExEditor
   alias Beacon.LiveAdmin.VisualEditor.Components.ControlSection
 
   def render(assigns) do
@@ -36,13 +35,6 @@ defmodule Beacon.LiveAdmin.VisualEditor.OpacityControl do
   def handle_event("update", %{"value" => opacity}, socket) do
     if validate(opacity) == :ok do
       class = VisualEditor.merge_class(socket.assigns.element, "opacity-#{opacity}")
-
-      # HEExEditor.element_changed(
-      #   socket.assigns.heex_editor,
-      #   origin: __MODULE__,
-      #   path: socket.assigns.element["path"],
-      #   changed: %{updated: %{"attrs" => %{"class" => class}}}
-      # )
 
       socket.assigns.on_element_change.(
         __MODULE__,

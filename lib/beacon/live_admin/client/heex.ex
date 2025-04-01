@@ -3,7 +3,7 @@ defmodule Beacon.LiveAdmin.Client.HEEx do
 
   import Beacon.LiveAdmin.Cluster, only: [call: 4]
 
-  def render(site, template, assigns) do
-    call(site, Beacon.Template.HEEx, :render, [site, template, assigns])
+  def render(site, template, opts \\ []) do
+    call(site, Beacon.Template.HEEx, :render, [site, template, opts])
   end
 end

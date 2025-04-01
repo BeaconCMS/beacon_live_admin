@@ -66,20 +66,6 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
      |> assign_template(template)}
   end
 
-  # # updated ast from visual editor
-  # def update(%{ast: ast}, %{assigns: %{editor: "visual"}} = socket) do
-  #   template = Beacon.Template.HEEx.HEExDecoder.decode(ast)
-  #   params = Map.merge(socket.assigns.form.params, %{"template" => template})
-  #   changeset = Content.change_page(socket.assigns.site, socket.assigns.page, params)
-  #
-  #   socket =
-  #     socket
-  #     |> assign_form(changeset)
-  #     |> maybe_assign_builder_page(changeset)
-  #
-  #   {:ok, socket}
-  # end
-
   def update(%{event: :template_changed, template: template}, socket) do
     params = Map.merge(socket.assigns.form.params, %{"template" => template})
     changeset = Content.change_page(socket.assigns.site, socket.assigns.page, params)
@@ -89,25 +75,6 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
      |> assign_form(changeset)
      |> assign_template(template)}
   end
-
-  # # changed element from visual editor control
-  # def update(%{path: path, payload: payload}, %{assigns: %{editor: "visual"}} = socket) do
-  #   updated = Map.get(payload, :updated, %{})
-  #   attrs = Map.get(updated, "attrs", %{})
-  #   deleted_attrs = Map.get(payload, :deleted, [])
-  #   ast = VisualEditor.update_node(socket.assigns.builder_page_ast, path, attrs, deleted_attrs)
-  #
-  #   # TODO: Don't save immediately. Debounce serializing this to a template
-  #   template = Beacon.Template.HEEx.HEExDecoder.decode(ast)
-  #   params = Map.merge(socket.assigns.form.params, %{"template" => template})
-  #   changeset = Content.change_page(socket.assigns.site, socket.assigns.page, params)
-  #
-  #   {:ok,
-  #    socket
-  #    |> assign_form(changeset)
-  #    |> assign_template(template)
-  #    |> assign(builder_page_ast: ast)}
-  # end
 
   @impl true
   # ignore change events from the editor field
@@ -404,15 +371,9 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
       <%= if @editor == "visual" do %>
         <.heex_visual_editor
           components={[]}
-          template="<div><p>hello</p></div>"
+          template={@template}
           on_template_change={&send_update(@myself, event: :template_changed, template: &1)}
-          render_node_fun={
-            fn node ->
-              heex = Beacon.LiveAdmin.VisualEditor.HEEx.HEExDecoder.decode(node)
-              assigns = %{}
-              Beacon.LiveAdmin.Client.HEEx.render(@site, heex, assigns)
-            end
-          }
+          render_heex_fun={&Beacon.LiveAdmin.Client.HEEx.render(@site, &1, page: @page)}
         /> />
       <% end %>
 

@@ -140,7 +140,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.PropertiesSidebarComponent do
   # bubbles up the element attrs changes to the parent HEExEditor
   defp element_changed(heex_editor, origin, path, payload) do
     if origin in [Beacon.LiveAdmin.VisualEditor.OpacityControl] do
-      event = {origin, :element_changed, %{path: path, payload: payload}}
+      event = {:element_changed, %{path: path, payload: payload}}
       send_update(heex_editor, %{event: event})
     else
       raise """
