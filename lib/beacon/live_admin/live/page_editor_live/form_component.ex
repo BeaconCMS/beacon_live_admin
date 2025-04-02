@@ -355,7 +355,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
 
       <.heex_visual_editor
         :if={@editor == "visual"}
-        components={[]}
+        components={@components}
         template={@template}
         on_template_change={&send_update(@myself, event: :template_changed, template: &1)}
         render_node_fun={fn node -> Beacon.LiveAdmin.Client.HEEx.render(@site, node, @page_assigns) end}

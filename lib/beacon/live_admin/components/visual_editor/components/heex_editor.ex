@@ -99,4 +99,26 @@ defmodule Beacon.LiveAdmin.VisualEditor.Components.HEExEditor do
   def handle_event("select_element", %{"path" => path}, socket) do
     {:noreply, assign(socket, selected_element_path: path)}
   end
+
+  def handle_event("render_component_in_page", %{"component_id" => id}, socket) do
+    template = Enum.find(socket.assigns.components, fn component -> component.id == id end)[:template] || ""
+
+    ast =
+      Beacon.LiveAdmin.VisualEditor.HEEx.JSONEncoder.encode(template, fn node ->
+        Beacon.LiveAdmin.Client.HEEx.render(:dev, node, %{})
+      end)
+      |> case do
+        {:ok, ast} -> ast
+        _ -> []
+      end
+
+    {:reply, %{"ast" => ast}, socket}
+  end
+
+  def handle_event("update_page_ast", %{"ast" => ast}, socket) do
+    heex_template = Beacon.LiveAdmin.VisualEditor.HEEx.HEExDecoder.decode(ast)
+    socket.assigns.on_template_change.(heex_template)
+
+    {:noreply, assign(socket, ast: ast)}
+  end
 end
