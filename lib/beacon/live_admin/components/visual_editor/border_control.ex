@@ -234,7 +234,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
       |> VisualEditor.delete_classes(~r/^rounded(-(?:[tlbr][tlbr]|[tlbr])?)?(-(?:none|sm|md|lg|xl|2xl|3xl|full|\[.+?\]))?$/)
       |> VisualEditor.merge_class(Enum.join(new_classes, " "))
 
-    send(self(), {:element_changed, {socket.assigns.element["path"], %{updated: %{"attrs" => %{"class" => classes}}}}})
+    socket.assigns.on_element_change.(socket.assigns.element["path"], %{updated: %{"attrs" => %{"class" => classes}}})
 
     {:noreply, socket}
   end

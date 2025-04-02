@@ -101,7 +101,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.SpaceControl do
       |> VisualEditor.delete_classes(~r/^#{String.first(type)}[trblxy]?-(\d+|auto|\[.+\])$/)
       |> VisualEditor.merge_class(Enum.join(new_classes, " "))
 
-    send(self(), {:element_changed, {socket.assigns.element["path"], %{updated: %{"attrs" => %{"class" => classes}}}}})
+    socket.assigns.on_element_change.(socket.assigns.element["path"], %{updated: %{"attrs" => %{"class" => classes}}})
 
     {:noreply, socket}
   end

@@ -35,11 +35,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.OpacityControl do
   def handle_event("update", %{"value" => opacity}, socket) do
     if validate(opacity) == :ok do
       class = VisualEditor.merge_class(socket.assigns.element, "opacity-#{opacity}")
-
-      socket.assigns.on_element_change.(
-        socket.assigns.element["path"],
-        %{updated: %{"attrs" => %{"class" => class}}}
-      )
+      socket.assigns.on_element_change.(socket.assigns.element["path"], %{updated: %{"attrs" => %{"class" => class}}})
 
       {:noreply, assign_form(socket, opacity)}
     else
