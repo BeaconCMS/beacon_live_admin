@@ -3,7 +3,7 @@
   import BrowserFrame from "./BrowserFrame.svelte"
   import { selectedAstElementId } from "$lib/stores/page"
   import { currentComponentCategory } from "$lib/stores/currentComponentCategory"
-  import { pageAst, pageInfo, slotTargetElement } from "$lib/stores/page"
+  import { pageAst, layoutAst, slotTargetElement } from "$lib/stores/page"
   import { draggedComponentDefinition, resetDrag } from "$lib/stores/dragAndDrop"
   import { live } from "$lib/stores/live"
   import { elementCanBeDroppedInTarget } from "$lib/utils/drag-helpers"
@@ -79,8 +79,8 @@
 </script>
 
 <div class="flex-1 px-8 pb-4 flex max-h-full" data-testid="main">
-  {#if $pageInfo && $pageAst}
-    <BrowserFrame pageInfo={$pageInfo} pageAst={$pageAst}>
+  {#if $pageAst}
+    <BrowserFrame>
       <div
         on:drop|preventDefault={handleDragDrop}
         on:dragover|preventDefault={dragOver}

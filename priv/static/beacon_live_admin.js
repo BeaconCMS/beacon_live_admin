@@ -8298,10 +8298,9 @@ var BeaconLiveAdmin = (() => {
     var keys = Object.keys(object);
     if (Object.getOwnPropertySymbols) {
       var symbols = Object.getOwnPropertySymbols(object);
-      if (enumerableOnly)
-        symbols = symbols.filter(function(sym) {
-          return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-        });
+      if (enumerableOnly) symbols = symbols.filter(function(sym) {
+        return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+      });
       keys.push.apply(keys, symbols);
     }
     return keys;
@@ -8324,32 +8323,27 @@ var BeaconLiveAdmin = (() => {
     return target;
   }
   function _objectWithoutPropertiesLoose(source2, excluded) {
-    if (source2 == null)
-      return {};
+    if (source2 == null) return {};
     var target = {};
     var sourceKeys = Object.keys(source2);
     var key, i;
     for (i = 0; i < sourceKeys.length; i++) {
       key = sourceKeys[i];
-      if (excluded.indexOf(key) >= 0)
-        continue;
+      if (excluded.indexOf(key) >= 0) continue;
       target[key] = source2[key];
     }
     return target;
   }
   function _objectWithoutProperties(source2, excluded) {
-    if (source2 == null)
-      return {};
+    if (source2 == null) return {};
     var target = _objectWithoutPropertiesLoose(source2, excluded);
     var key, i;
     if (Object.getOwnPropertySymbols) {
       var sourceSymbolKeys = Object.getOwnPropertySymbols(source2);
       for (i = 0; i < sourceSymbolKeys.length; i++) {
         key = sourceSymbolKeys[i];
-        if (excluded.indexOf(key) >= 0)
-          continue;
-        if (!Object.prototype.propertyIsEnumerable.call(source2, key))
-          continue;
+        if (excluded.indexOf(key) >= 0) continue;
+        if (!Object.prototype.propertyIsEnumerable.call(source2, key)) continue;
         target[key] = source2[key];
       }
     }
@@ -8359,12 +8353,10 @@ var BeaconLiveAdmin = (() => {
     return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();
   }
   function _arrayWithHoles(arr) {
-    if (Array.isArray(arr))
-      return arr;
+    if (Array.isArray(arr)) return arr;
   }
   function _iterableToArrayLimit(arr, i) {
-    if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr)))
-      return;
+    if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return;
     var _arr = [];
     var _n = true;
     var _d = false;
@@ -8372,41 +8364,31 @@ var BeaconLiveAdmin = (() => {
     try {
       for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
         _arr.push(_s.value);
-        if (i && _arr.length === i)
-          break;
+        if (i && _arr.length === i) break;
       }
     } catch (err) {
       _d = true;
       _e = err;
     } finally {
       try {
-        if (!_n && _i["return"] != null)
-          _i["return"]();
+        if (!_n && _i["return"] != null) _i["return"]();
       } finally {
-        if (_d)
-          throw _e;
+        if (_d) throw _e;
       }
     }
     return _arr;
   }
   function _unsupportedIterableToArray(o, minLen) {
-    if (!o)
-      return;
-    if (typeof o === "string")
-      return _arrayLikeToArray(o, minLen);
+    if (!o) return;
+    if (typeof o === "string") return _arrayLikeToArray(o, minLen);
     var n = Object.prototype.toString.call(o).slice(8, -1);
-    if (n === "Object" && o.constructor)
-      n = o.constructor.name;
-    if (n === "Map" || n === "Set")
-      return Array.from(o);
-    if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n))
-      return _arrayLikeToArray(o, minLen);
+    if (n === "Object" && o.constructor) n = o.constructor.name;
+    if (n === "Map" || n === "Set") return Array.from(o);
+    if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
   }
   function _arrayLikeToArray(arr, len) {
-    if (len == null || len > arr.length)
-      len = arr.length;
-    for (var i = 0, arr2 = new Array(len); i < len; i++)
-      arr2[i] = arr[i];
+    if (len == null || len > arr.length) len = arr.length;
+    for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i];
     return arr2;
   }
   function _nonIterableRest() {
@@ -8429,10 +8411,9 @@ var BeaconLiveAdmin = (() => {
     var keys = Object.keys(object);
     if (Object.getOwnPropertySymbols) {
       var symbols = Object.getOwnPropertySymbols(object);
-      if (enumerableOnly)
-        symbols = symbols.filter(function(sym) {
-          return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-        });
+      if (enumerableOnly) symbols = symbols.filter(function(sym) {
+        return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+      });
       keys.push.apply(keys, symbols);
     }
     return keys;
@@ -8491,33 +8472,25 @@ var BeaconLiveAdmin = (() => {
     return Object.prototype.hasOwnProperty.call(object, property);
   }
   function validateChanges(initial, changes) {
-    if (!isObject(changes))
-      errorHandler("changeType");
+    if (!isObject(changes)) errorHandler("changeType");
     if (Object.keys(changes).some(function(field) {
       return !hasOwnProperty(initial, field);
-    }))
-      errorHandler("changeField");
+    })) errorHandler("changeField");
     return changes;
   }
   function validateSelector(selector) {
-    if (!isFunction(selector))
-      errorHandler("selectorType");
+    if (!isFunction(selector)) errorHandler("selectorType");
   }
   function validateHandler(handler) {
-    if (!(isFunction(handler) || isObject(handler)))
-      errorHandler("handlerType");
+    if (!(isFunction(handler) || isObject(handler))) errorHandler("handlerType");
     if (isObject(handler) && Object.values(handler).some(function(_handler) {
       return !isFunction(_handler);
-    }))
-      errorHandler("handlersType");
+    })) errorHandler("handlersType");
   }
   function validateInitial(initial) {
-    if (!initial)
-      errorHandler("initialIsRequired");
-    if (!isObject(initial))
-      errorHandler("initialType");
-    if (isEmpty(initial))
-      errorHandler("initialContent");
+    if (!initial) errorHandler("initialIsRequired");
+    if (!isObject(initial)) errorHandler("initialType");
+    if (isEmpty(initial)) errorHandler("initialContent");
   }
   function throwError(errorMessages32, type) {
     throw new Error(errorMessages32[type] || errorMessages32["default"]);
@@ -8607,10 +8580,8 @@ var BeaconLiveAdmin = (() => {
   }
   var isObject_default = isObject2;
   function validateConfig(config32) {
-    if (!config32)
-      errorHandler2("configIsRequired");
-    if (!isObject_default(config32))
-      errorHandler2("configType");
+    if (!config32) errorHandler2("configIsRequired");
+    if (!isObject_default(config32)) errorHandler2("configType");
     if (config32.urls) {
       informAboutDeprecation();
       return {
@@ -8888,7 +8859,7 @@ var BeaconLiveAdmin = (() => {
     _mountEditor() {
       this.opts.value = this.value;
       loader_default.config({
-        paths: { vs: "https://cdn.jsdelivr.net/npm/monaco-editor@0.52.0/min/vs" }
+        paths: { vs: "https://cdn.jsdelivr.net/npm/monaco-editor@0.52.2/min/vs" }
       });
       loader_default.init().then((monaco) => {
         monaco.editor.defineTheme("default", theme);
@@ -9015,8 +8986,45 @@ var BeaconLiveAdmin = (() => {
     }
   };
 
+  // ../lib/beacon/live_admin/components/visual_editor/hooks/color_picker.js
+  var ColorPicker = {
+    mounted() {
+      this.handleKeydown = (event2) => {
+        if (event2.key === "Escape") {
+          this.pushEventTo(this.el, "close_picker", {});
+        }
+      };
+      document.addEventListener("keydown", this.handleKeydown);
+      const input = this.el.querySelector("input[name]");
+      if (input) {
+        const observer = new MutationObserver((mutations) => {
+          mutations.forEach((mutation) => {
+            if (mutation.type === "attributes" && mutation.attributeName === "data-value") {
+              const newValue = input.getAttribute("data-value");
+              input.value = newValue;
+              input.dispatchEvent(new Event("change", { bubbles: true }));
+            }
+          });
+        });
+        observer.observe(input, {
+          attributes: true,
+          attributeFilter: ["data-value"]
+        });
+        this.observer = observer;
+      }
+    },
+    destroyed() {
+      document.removeEventListener("keydown", this.handleKeydown);
+      if (this.observer) {
+        this.observer.disconnect();
+      }
+    }
+  };
+  var color_picker_default = ColorPicker;
+
   // ../lib/beacon/live_admin/components/visual_editor/hooks.js
   var hooks_default = {
+    ColorPicker: color_picker_default,
     VisualEditorClassInput: {
       mounted() {
         this.el.addEventListener("keydown", (event2) => {
@@ -14821,22 +14829,22 @@ ${indent}in ${name}`).join("")}
   });
   mark_module_start();
   BrowserFrame[FILENAME] = "svelte/components/BrowserFrame.svelte";
-  var root = add_locations(template(`<div class="flex-1 flex flex-col" data-testid="fake-browser"><div class="bg-gray-50 border-b border-gray-200 border-solid rounded-t-xl h-12 px-3.5 flex" data-testid="address-bar"><div class="py-2"><span class="inline-block h-2 w-2 ml-2 rounded-full bg-red-800"></span> <span class="inline-block h-2 w-2 ml-2 rounded-full bg-amber-400"></span> <span class="inline-block h-2 w-2 ml-2 rounded-full bg-lime-600"></span></div> <div class="flex-1 py-2.5 overflow-visible"><div class="rounded bg-gray-50 border-b border-gray-200 shadow max-w-xs mx-auto text-center py-0.5 relative"><span data-testid="url-box"> </span></div></div> <div class="py-3"></div></div> <!></div>`), BrowserFrame[FILENAME], [
+  var root = add_locations(template(`<div class="flex-1 flex flex-col" data-testid="fake-browser"><div class="bg-gray-50 border-b border-gray-200 border-solid rounded-t-xl h-12 px-3.5 flex" data-testid="address-bar"><div class="py-2"><span class="inline-block h-2 w-2 ml-2 rounded-full bg-red-800"></span> <span class="inline-block h-2 w-2 ml-2 rounded-full bg-amber-400"></span> <span class="inline-block h-2 w-2 ml-2 rounded-full bg-lime-600"></span></div> <div class="flex-1"></div> <div class="py-3"></div></div> <!></div>`), BrowserFrame[FILENAME], [
     [
-      8,
+      3,
       0,
       [
         [
-          9,
+          4,
           2,
           [
             [
-              10,
+              5,
               4,
-              [[11, 6], [12, 6], [13, 6]]
+              [[6, 6], [7, 6], [8, 6]]
             ],
-            [15, 4, [[16, 6, [[17, 8]]]]],
-            [20, 4]
+            [10, 4],
+            [11, 4]
           ]
         ]
       ]
@@ -14845,47 +14853,15 @@ ${indent}in ${name}`).join("")}
   function BrowserFrame($$anchor, $$props) {
     check_target(new.target);
     push($$props, false, BrowserFrame);
-    let pageInfo2 = prop($$props, "pageInfo", 12);
-    let pageAst2 = prop($$props, "pageAst", 12);
-    function getPageName(pageInfo3) {
-      return !pageInfo3.path || strict_equals(pageInfo3.path, "") ? "index" : pageInfo3.path;
-    }
     var div = root();
-    var div_1 = child(div);
-    var div_2 = sibling(child(div_1), 2);
-    var div_3 = child(div_2);
-    var span = child(div_3);
-    var text2 = child(span, true);
-    reset(span);
-    reset(div_3);
-    reset(div_2);
-    next(2);
-    reset(div_1);
-    var node = sibling(div_1, 2);
+    var node = sibling(child(div), 2);
     slot(node, $$props, "default", {}, null);
     reset(div);
-    template_effect(($0) => set_text(text2, $0), [() => getPageName(pageInfo2())], derived_safe_equal);
     append($$anchor, div);
-    return pop({
-      get pageInfo() {
-        return pageInfo2();
-      },
-      set pageInfo($$value) {
-        pageInfo2($$value);
-        flushSync();
-      },
-      get pageAst() {
-        return pageAst2();
-      },
-      set pageAst($$value) {
-        pageAst2($$value);
-        flushSync();
-      },
-      ...legacy_api()
-    });
+    return pop({ ...legacy_api() });
   }
   mark_module_end(BrowserFrame);
-  create_custom_element(BrowserFrame, { pageInfo: {}, pageAst: {} }, ["default"], [], true);
+  create_custom_element(BrowserFrame, {}, ["default"], [], true);
 
   // svelte/components/CodeEditor.svelte
   var CodeEditor_exports = {};
@@ -15735,10 +15711,11 @@ ${indent}in ${name}`).join("")}
     ([$pageAst, $selectedAstElementId]) => {
       if ($pageAst && $selectedAstElementId) {
         const element2 = findAstElement($pageAst, $selectedAstElementId);
-        get2(live).pushEvent("select_element", { path: $selectedAstElementId });
+        console.log("pushing select_element", { path: $selectedAstElementId });
+        get2(live).pushEventTo("#heex-visual-editor", "select_element", { path: $selectedAstElementId });
         return element2;
       } else {
-        get2(live).pushEvent("select_element", { path: null });
+        get2(live).pushEventTo("#heex-visual-editor", "select_element", { path: null });
       }
     }
   );
@@ -16069,7 +16046,7 @@ ${indent}in ${name}`).join("")}
     let info = get2(pageInfo);
     let ast = get2(pageAst);
     let live2 = get2(live);
-    live2.pushEvent("update_page_ast", { id: info.id, ast });
+    live2.pushEventTo("#heex-visual-editor", "update_page_ast", { id: info.id, ast });
   }
   function deleteAstNode(astElementId) {
     let ast = get2(pageAst);
@@ -16118,7 +16095,6 @@ ${indent}in ${name}`).join("")}
     const $selectedAstElementId = () => (validate_store(selectedAstElementId, "selectedAstElementId"), store_get(selectedAstElementId, "$selectedAstElementId", $$stores));
     const $pageAst = () => (validate_store(pageAst, "pageAst"), store_get(pageAst, "$pageAst", $$stores));
     const $live = () => (validate_store(live, "live"), store_get(live, "$live", $$stores));
-    const $pageInfo = () => (validate_store(pageInfo, "pageInfo"), store_get(pageInfo, "$pageInfo", $$stores));
     const canBeDragged = mutable_source();
     const dragDirection = mutable_source();
     let element2 = prop($$props, "element", 12);
@@ -16250,7 +16226,7 @@ ${indent}in ${name}`).join("")}
           store_set(selectedAstElementId, parts.join("."));
         }
         store_set(pageAst, [...$pageAst()]);
-        $live().pushEvent("update_page_ast", { id: $pageInfo().id, ast: $pageAst() });
+        $live().pushEventTo("#heex-visual-editor", "update_page_ast", { ast: $pageAst() });
       }
     }
     function resetDragElementHandle() {
@@ -16951,7 +16927,7 @@ ${indent}in ${name}`).join("")}
   var root5 = add_locations(template(`<div class="flex-1 px-8 pb-4 flex max-h-full" data-testid="main"><!></div>`), PagePreview[FILENAME], [[60, 0]]);
   var $$css3 = {
     hash: "svelte-r4h6jy",
-    code: '\n  .contents[data-nochildren="true"], .contents[data-nochildren="true"] {\n    /* In the specific case of an element containing only an EEX expression that generates no children (only a text node),\n    there is no child node to which apply the styles, so we have to apply them to the wrapper, so we have to overwrite the\n    display: contents for the styles to apply */\n    display: inline;\n  }\n  [data-slot-target="true"] {\n    outline-color: red;\n    outline-width: 2px;\n    outline-style: dashed;\n  }\n\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiUGFnZVByZXZpZXcuc3ZlbHRlIiwibWFwcGluZ3MiOiI7QUFtR0EsRUFBVSxvRUFBcUUsQ0FBQztBQUNoRjtBQUNBO0FBQ0E7QUFDQSxJQUFJLGVBQWU7QUFDbkI7QUFDQSxFQUFVLHlCQUEwQixDQUFDO0FBQ3JDLElBQUksa0JBQWtCO0FBQ3RCLElBQUksa0JBQWtCO0FBQ3RCLElBQUkscUJBQXFCO0FBQ3pCIiwibmFtZXMiOltdLCJpZ25vcmVMaXN0IjpbXSwic291cmNlcyI6WyJQYWdlUHJldmlldy5zdmVsdGUiXX0= */'
+    code: '\n  .contents[data-nochildren="true"], .contents[data-nochildren="true"] {\n    /* In the specific case of an element containing only an EEX expression that generates no children (only a text node),\n    there is no child node to which apply the styles, so we have to apply them to the wrapper, so we have to overwrite the\n    display: contents for the styles to apply */\n    display: inline;\n  }\n  [data-slot-target="true"] {\n    outline-color: red;\n    outline-width: 2px;\n    outline-style: dashed;\n  }\n\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiUGFnZVByZXZpZXcuc3ZlbHRlIiwibWFwcGluZ3MiOiI7QUFzR0EsRUFBVSxvRUFBcUUsQ0FBQztBQUNoRjtBQUNBO0FBQ0E7QUFDQSxJQUFJLGVBQWU7QUFDbkI7QUFDQSxFQUFVLHlCQUEwQixDQUFDO0FBQ3JDLElBQUksa0JBQWtCO0FBQ3RCLElBQUksa0JBQWtCO0FBQ3RCLElBQUkscUJBQXFCO0FBQ3pCIiwibmFtZXMiOltdLCJpZ25vcmVMaXN0IjpbXSwic291cmNlcyI6WyJQYWdlUHJldmlldy5zdmVsdGUiXX0= */'
   };
   function PagePreview($$anchor, $$props) {
     check_target(new.target);
@@ -16961,9 +16937,9 @@ ${indent}in ${name}`).join("")}
     const $currentComponentCategory = () => (validate_store(currentComponentCategory, "currentComponentCategory"), store_get(currentComponentCategory, "$currentComponentCategory", $$stores));
     const $draggedComponentDefinition = () => (validate_store(draggedComponentDefinition, "draggedComponentDefinition"), store_get(draggedComponentDefinition, "$draggedComponentDefinition", $$stores));
     const $live = () => (validate_store(live, "live"), store_get(live, "$live", $$stores));
-    const $pageInfo = () => (validate_store(pageInfo, "pageInfo"), store_get(pageInfo, "$pageInfo", $$stores));
     const $pageAst = () => (validate_store(pageAst, "pageAst"), store_get(pageAst, "$pageAst", $$stores));
     const $slotTargetElement = () => (validate_store(slotTargetElement, "slotTargetElement"), store_get(slotTargetElement, "$slotTargetElement", $$stores));
+    const $pageInfo = () => (validate_store(pageInfo, "pageInfo"), store_get(pageInfo, "$pageInfo", $$stores));
     const $selectedAstElementId = () => (validate_store(selectedAstElementId, "selectedAstElementId"), store_get(selectedAstElementId, "$selectedAstElementId", $$stores));
     let isDraggingOver = mutable_source(false);
     async function handleDragDrop(e) {
@@ -16973,17 +16949,10 @@ ${indent}in ${name}`).join("")}
       if (!$draggedComponentDefinition()) return;
       let draggedObj = $draggedComponentDefinition();
       if (layoutZone) {
-        $live().pushEvent(
-          "render_component_in_page",
-          {
-            component_id: draggedObj.id,
-            page_id: $pageInfo().id
-          },
-          ({ ast }) => {
-            const newAst = strict_equals(layoutZone, "preamble") ? [...ast, ...$pageAst()] : [...$pageAst(), ...ast];
-            $live().pushEvent("update_page_ast", { id: $pageInfo().id, ast: newAst });
-          }
-        );
+        $live().pushEventTo("#heex-visual-editor", "render_component_in_page", { component_id: draggedObj.id }, ({ ast }) => {
+          const newAst = strict_equals(layoutZone, "preamble") ? [...ast, ...$pageAst()] : [...$pageAst(), ...ast];
+          $live().pushEventTo("#heex-visual-editor", "update_page_ast", { ast: newAst });
+        });
       } else if (strict_equals(target.id, "fake-browser-content", false) && elementCanBeDroppedInTarget(draggedObj)) {
         if (!(target instanceof HTMLElement) || !$slotTargetElement() || $slotTargetElement().attrs.selfClose) {
           resetDragDrop();
@@ -16991,19 +16960,9 @@ ${indent}in ${name}`).join("")}
         }
         addBasicComponentToTarget($slotTargetElement());
       } else {
-        $live().pushEvent(
-          "render_component_in_page",
-          {
-            component_id: draggedObj.id,
-            page_id: $pageInfo().id
-          },
-          ({ ast }) => {
-            $live().pushEvent("update_page_ast", {
-              id: $pageInfo().id,
-              ast: [...$pageAst(), ...ast]
-            });
-          }
-        );
+        $live().pushEventTo("#heex-visual-editor", "render_component_in_page", { component_id: draggedObj.id }, ({ ast }) => {
+          $live().pushEventTo("#heex-visual-editor", "update_page_ast", { ast: [...$pageAst(), ...ast] });
+        });
       }
       resetDragDrop();
     }
@@ -17012,18 +16971,11 @@ ${indent}in ${name}`).join("")}
       let componentDefinition = $draggedComponentDefinition();
       store_set(draggedComponentDefinition, null);
       let targetNode = astElement;
-      $live().pushEvent(
-        "render_component_in_page",
-        {
-          component_id: componentDefinition.id,
-          page_id: $pageInfo().id
-        },
-        ({ ast }) => {
-          targetNode?.content.push(...ast);
-          store_set(slotTargetElement, void 0);
-          $live().pushEvent("update_page_ast", { id: $pageInfo().id, ast: $pageAst() });
-        }
-      );
+      $live().pushEventTo("#heex-visual-editor", "render_component_in_page", { component_id: componentDefinition.id }, ({ ast }) => {
+        targetNode?.content.push(...ast);
+        store_set(slotTargetElement, void 0);
+        $live().pushEventTo("#heex-visual-editor", "update_page_ast", { ast: $pageAst() });
+      });
     }
     function dragOver() {
       set(isDraggingOver, true);
@@ -27635,8 +27587,8 @@ ${indent}in ${name}`).join("")}
     const $tailwindInputStore = () => (validate_store(tailwindInput, "tailwindInputStore"), store_get(tailwindInput, "$tailwindInputStore", $$stores));
     const $liveStore = () => (validate_store(live, "liveStore"), store_get(live, "$liveStore", $$stores));
     let components = prop($$props, "components", 12);
-    let pageInfo2 = prop($$props, "pageInfo", 12);
     let pageAst2 = prop($$props, "pageAst", 12);
+    let layoutAst = prop($$props, "layoutAst", 12);
     let tailwindConfig2 = prop($$props, "tailwindConfig", 12);
     let tailwindInput2 = prop($$props, "tailwindInput", 12);
     let live2 = prop($$props, "live", 12);
@@ -27646,8 +27598,8 @@ ${indent}in ${name}`).join("")}
     legacy_pre_effect(() => deep_read_state(pageAst2()), () => {
       store_set(pageAst, pageAst2());
     });
-    legacy_pre_effect(() => deep_read_state(pageInfo2()), () => {
-      store_set(pageInfo, pageInfo2());
+    legacy_pre_effect(() => deep_read_state(layoutAst()), () => {
+      store_set(pageInfo, { layout: { ast: layoutAst() } });
     });
     legacy_pre_effect(() => deep_read_state(tailwindConfig2()), () => {
       store_set(tailwindConfig, tailwindConfig2());
@@ -27683,18 +27635,18 @@ ${indent}in ${name}`).join("")}
         components($$value);
         flushSync();
       },
-      get pageInfo() {
-        return pageInfo2();
-      },
-      set pageInfo($$value) {
-        pageInfo2($$value);
-        flushSync();
-      },
       get pageAst() {
         return pageAst2();
       },
       set pageAst($$value) {
         pageAst2($$value);
+        flushSync();
+      },
+      get layoutAst() {
+        return layoutAst();
+      },
+      set layoutAst($$value) {
+        layoutAst($$value);
         flushSync();
       },
       get tailwindConfig() {
@@ -27728,8 +27680,8 @@ ${indent}in ${name}`).join("")}
     UiBuilder,
     {
       components: {},
-      pageInfo: {},
       pageAst: {},
+      layoutAst: {},
       tailwindConfig: {},
       tailwindInput: {},
       live: {}

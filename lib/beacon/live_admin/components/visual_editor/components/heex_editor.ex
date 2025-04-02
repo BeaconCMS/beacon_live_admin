@@ -38,16 +38,8 @@ defmodule Beacon.LiveAdmin.VisualEditor.Components.HEExEditor do
     layout_ast =
       case assigns[:encode_template_fun] do
         nil -> nil
-        layout -> assigns[:encode_template_fun].()
+        fun -> fun.()
       end
-
-    page = %{
-      id: "192cfc3c-7fc7-4329-aa44-ede411651016",
-      path: "/",
-      layout: %{
-        ast: layout_ast
-      }
-    }
 
     tailwind_input =
       IO.iodata_to_binary([
@@ -62,7 +54,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Components.HEExEditor do
     {:ok,
      socket
      |> assign(assigns)
-     |> assign(page: page, ast: ast, tailwind_input: tailwind_input, selected_element_path: nil)}
+     |> assign(ast: ast, layout_ast: layout_ast, tailwind_input: tailwind_input, selected_element_path: nil)}
   end
 
   def render(assigns) do
@@ -74,8 +66,8 @@ defmodule Beacon.LiveAdmin.VisualEditor.Components.HEExEditor do
         props={
           %{
             components: @components,
-            pageInfo: @page,
             pageAst: @ast,
+            layoutAst: @layout_ast,
             tailwindConfig: "http://localhost:4001/dev/__beacon_assets__/css_config",
             tailwindInput: @tailwind_input,
             selectedAstElementId: @selected_element_path
@@ -87,7 +79,6 @@ defmodule Beacon.LiveAdmin.VisualEditor.Components.HEExEditor do
       <.live_component
         module={Beacon.LiveAdmin.VisualEditor.PropertiesSidebarComponent}
         id="properties-sidebar"
-        page={@page}
         ast={@ast}
         selected_element_path={@selected_element_path}
         heex_editor={@myself}

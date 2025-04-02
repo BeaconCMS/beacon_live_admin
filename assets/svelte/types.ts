@@ -77,13 +77,6 @@ export interface RootComponent extends Component {
   rendered_html: string | null
 }
 
-export interface Layout {
-  ast: AstNode[]
-}
-export interface PageInfo {
-  layout: Layout
-  components: RootComponent[]
-}
-export interface Page extends PageInfo {
+export interface Page {
   ast: AstNode[]
 }
