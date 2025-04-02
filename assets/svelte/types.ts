@@ -82,7 +82,6 @@ export interface Layout {
 }
 export interface PageInfo {
   id: string
-  path: string
   site: string
   layoutId: string
   layout: Layout
