@@ -76,13 +76,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Components.HEExEditor do
         socket={@socket}
       />
 
-      <.live_component
-        module={Beacon.LiveAdmin.VisualEditor.PropertiesSidebarComponent}
-        id="properties-sidebar"
-        ast={@ast}
-        selected_element_path={@selected_element_path}
-        heex_editor={@myself}
-      />
+      <.live_component module={Beacon.LiveAdmin.VisualEditor.PropertiesSidebarComponent} id="properties-sidebar" ast={@ast} selected_element_path={@selected_element_path} heex_editor={@myself} />
     </div>
     """
   end
