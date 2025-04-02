@@ -110,8 +110,8 @@ defmodule Beacon.LiveAdmin.VisualEditor.PropertiesSidebarComponent do
             id="control-opacity"
             element={@selected_element}
             on_element_change={
-              fn origin, path, payload ->
-                element_changed(@heex_editor, origin, path, payload)
+              fn path, payload ->
+                element_changed(@heex_editor, path, payload)
               end
             }
           />
@@ -138,16 +138,8 @@ defmodule Beacon.LiveAdmin.VisualEditor.PropertiesSidebarComponent do
   end
 
   # bubbles up the element attrs changes to the parent HEExEditor
-  defp element_changed(heex_editor, origin, path, payload) do
-    if origin in [Beacon.LiveAdmin.VisualEditor.OpacityControl] do
-      event = {:element_changed, %{path: path, payload: payload}}
-      send_update(heex_editor, %{event: event})
-    else
-      raise """
-      HEEx Editor failed to handle element change from #{inspect(origin)}.
-
-      That module is not recognized.
-      """
-    end
+  defp element_changed(heex_editor, path, payload) do
+    event = {:element_changed, %{path: path, payload: payload}}
+    send_update(heex_editor, %{event: event})
   end
 end

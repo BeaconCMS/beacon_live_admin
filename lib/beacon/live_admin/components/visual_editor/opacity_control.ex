@@ -37,7 +37,6 @@ defmodule Beacon.LiveAdmin.VisualEditor.OpacityControl do
       class = VisualEditor.merge_class(socket.assigns.element, "opacity-#{opacity}")
 
       socket.assigns.on_element_change.(
-        __MODULE__,
         socket.assigns.element["path"],
         %{updated: %{"attrs" => %{"class" => class}}}
       )
