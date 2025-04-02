@@ -190,7 +190,7 @@
       }
       $pageAst = [...$pageAst]
       // Update in the server
-      $live.pushEventTo("#heex-visual-editor", "update_page_ast", { id: $pageInfo.id, ast: $pageAst })
+      $live.pushEventTo("#heex-visual-editor", "update_page_ast", { ast: $pageAst })
     }
   }
 

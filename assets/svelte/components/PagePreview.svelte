@@ -22,12 +22,12 @@
       $live.pushEventTo(
         "#heex-visual-editor",
         "render_component_in_page",
-        { component_id: draggedObj.id, page_id: $pageInfo.id },
+        { component_id: draggedObj.id },
         ({ ast }: { ast: AstNode[] }) => {
           // If the element was dropped before the main content, it appends it at the top of the page
           // otherwise it appends it at the bottom of the page
           const newAst = layoutZone === "preamble" ? [...ast, ...$pageAst] : [...$pageAst, ...ast]
-          $live.pushEventTo("#heex-visual-editor", "update_page_ast", { id: $pageInfo.id, ast: newAst })
+          $live.pushEventTo("#heex-visual-editor", "update_page_ast", { ast: newAst })
         },
       )
     } else if (target.id !== "fake-browser-content" && elementCanBeDroppedInTarget(draggedObj)) {
@@ -41,10 +41,10 @@
       $live.pushEventTo(
         "#heex-visual-editor",
         "render_component_in_page",
-        { component_id: draggedObj.id, page_id: $pageInfo.id },
+        { component_id: draggedObj.id },
         ({ ast }: { ast: AstNode[] }) => {
           // This appends at the end. We might want at the beginning, or in a specific position
-          $live.pushEventTo("#heex-visual-editor", "update_page_ast", { id: $pageInfo.id, ast: [...$pageAst, ...ast] })
+          $live.pushEventTo("#heex-visual-editor", "update_page_ast", { ast: [...$pageAst, ...ast] })
         },
       )
     }
@@ -59,11 +59,11 @@
     $live.pushEventTo(
       "#heex-visual-editor",
       "render_component_in_page",
-      { component_id: componentDefinition.id, page_id: $pageInfo.id },
+      { component_id: componentDefinition.id },
       ({ ast }: { ast: AstNode[] }) => {
         targetNode?.content.push(...ast)
         $slotTargetElement = undefined
-        $live.pushEventTo("#heex-visual-editor", "update_page_ast", { id: $pageInfo.id, ast: $pageAst })
+        $live.pushEventTo("#heex-visual-editor", "update_page_ast", { ast: $pageAst })
       },
     )
   }

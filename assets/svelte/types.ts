@@ -81,7 +81,6 @@ export interface Layout {
   ast: AstNode[]
 }
 export interface PageInfo {
-  id: string
   site: string
   layoutId: string
   layout: Layout
