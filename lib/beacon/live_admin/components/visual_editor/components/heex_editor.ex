@@ -35,11 +35,11 @@ defmodule Beacon.LiveAdmin.VisualEditor.Components.HEExEditor do
 
     {:ok, ast} = Beacon.LiveAdmin.VisualEditor.HEEx.JSONEncoder.encode(template, render_node_fun)
 
-    # FIXME
-    {:ok, layout_ast} =
-      Beacon.LiveAdmin.VisualEditor.HEEx.JSONEncoder.encode("<%= @inner_content %>", fn node ->
-        Beacon.LiveAdmin.Client.HEEx.render(:dev, node, %{inner_content: template})
-      end)
+    layout_ast =
+      case assigns[:encode_template_fun] do
+        nil -> nil
+        layout -> assigns[:encode_template_fun].()
+      end
 
     page = %{
       id: "192cfc3c-7fc7-4329-aa44-ede411651016",

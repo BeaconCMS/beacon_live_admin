@@ -37,6 +37,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
   attr :template, :string, required: true
   attr :on_template_change, {:fun, 1}, default: &Function.identity/1
   attr :render_node_fun, {:fun, 1}, default: &Beacon.LiveAdmin.AdminComponents.render_heex/1
+  attr :encode_template_fun, {:fun, 1}, default: nil
 
   def heex_visual_editor(assigns) do
     ~H"""
@@ -47,6 +48,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
       template={@template}
       on_template_change={@on_template_change}
       render_node_fun={@render_node_fun}
+      encode_template_fun={@encode_template_fun}
     />
     """
   end

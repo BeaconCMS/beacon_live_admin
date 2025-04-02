@@ -359,6 +359,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
         template={@template}
         on_template_change={&send_update(@myself, event: :template_changed, template: &1)}
         render_node_fun={fn node -> Beacon.LiveAdmin.Client.HEEx.render(@site, node, @page_assigns) end}
+        encode_template_fun={fn -> encode_template(@page) end}
       />
 
       <div class={[
@@ -413,4 +414,18 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
     </div>
     """
   end
+
+  def encode_template(%{site: site, template: page_template, layout: %{template: layout_template}}) do
+    ast =
+      Beacon.LiveAdmin.VisualEditor.HEEx.JSONEncoder.encode(layout_template, fn node ->
+        Beacon.LiveAdmin.Client.HEEx.render(site, node, %{inner_content: page_template})
+      end)
+
+    case ast do
+      {:ok, ast} -> ast
+      _ -> []
+    end
+  end
+
+  def encode_template(_), do: []
 end
