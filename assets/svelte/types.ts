@@ -81,8 +81,6 @@ export interface Layout {
   ast: AstNode[]
 }
 export interface PageInfo {
-  site: string
-  layoutId: string
   layout: Layout
   components: RootComponent[]
 }
