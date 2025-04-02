@@ -21,7 +21,6 @@ export const selectedAstElement: Readable<AstElement | undefined> = derived(
   ([$pageAst, $selectedAstElementId]) => {
     if ($pageAst && $selectedAstElementId) {
       const element = findAstElement($pageAst, $selectedAstElementId)
-      console.log("pushing select_element", { path: $selectedAstElementId })
       // FIXME: add $myself
       get(live).pushEventTo("#heex-visual-editor", "select_element", { path: $selectedAstElementId })
       return element

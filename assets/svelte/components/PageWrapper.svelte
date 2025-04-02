@@ -33,6 +33,11 @@
     reloadStylesheet()
   })
 
+  pageAst.subscribe(async () => {
+    await tick()
+    window.reloadStylesheet && window.reloadStylesheet()
+  })
+
   function preventLinkNavigation(event: MouseEvent) {
     if (event.target instanceof HTMLAnchorElement) {
       event.preventDefault()
