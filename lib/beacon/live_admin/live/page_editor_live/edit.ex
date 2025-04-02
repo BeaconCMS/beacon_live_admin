@@ -13,6 +13,8 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
     editor = Map.get(params, "editor", "code")
     %{site: site} = socket.assigns.beacon_page
 
+    page = Content.get_page(site, params["id"], preloads: [:layout])
+
     socket =
       socket
       |> assign_new(:selected_element_path, fn -> nil end)
@@ -22,7 +24,8 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
         %{data: components} = Beacon.Web.API.ComponentJSON.index(%{components: components})
         components
       end)
-      |> assign_new(:page, fn -> Content.get_page(site, params["id"], preloads: [:layout]) end)
+      |> assign_new(:page, fn -> page end)
+      |> assign_new(:page_assigns, fn -> Beacon.LiveAdmin.Client.HEEx.assigns(site, page) end)
 
     socket =
       socket
@@ -45,6 +48,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Edit do
       site={@beacon_page.site}
       layouts={@layouts}
       page={@page}
+      page_assigns={@page_assigns}
       selected_element_path={@selected_element_path}
       components={@components}
       editor={@editor}

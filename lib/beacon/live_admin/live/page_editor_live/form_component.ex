@@ -353,14 +353,13 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
         </div>
       </.modal>
 
-      <%= if @editor == "visual" do %>
-        <.heex_visual_editor
-          components={[]}
-          template={@template}
-          on_template_change={&send_update(@myself, event: :template_changed, template: &1)}
-          render_heex_fun={&Beacon.LiveAdmin.Client.HEEx.render(@site, &1, page: @page)}
-        /> />
-      <% end %>
+      <.heex_visual_editor
+        :if={@editor == "visual"}
+        components={[]}
+        template={@template}
+        on_template_change={&send_update(@myself, event: :template_changed, template: &1)}
+        render_node_fun={fn node -> Beacon.LiveAdmin.Client.HEEx.render(@site, node, @page_assigns) end}
+      />
 
       <div class={[
         "grid items-start grid-cols-1 mx-auto mt-4 gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3 h-auto",

@@ -30,14 +30,13 @@ defmodule Beacon.LiveAdmin.AdminComponents do
   @menu_link_regular_class "inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300"
 
   @doc false
+  # TODO: provide a default render_node_fun
+  # TODO: doc https://hexdocs.pm/phoenix_live_view/Phoenix.LiveComponent.html#module-unifying-liveview-and-livecomponent-communication
   attr :id, :string, default: "heex-visual-editor"
   attr :components, :list
   attr :template, :string, required: true
-  attr :layout_template, :string, default: "<%= @inner_content %>"
-  # TODO: provide a default render_heex_fun
-  attr :render_heex_fun, {:fun, 1}, default: &Beacon.LiveAdmin.AdminComponents.render_heex/1
-  # TODO: doc https://hexdocs.pm/phoenix_live_view/Phoenix.LiveComponent.html#module-unifying-liveview-and-livecomponent-communication
   attr :on_template_change, {:fun, 1}, default: &Function.identity/1
+  attr :render_node_fun, {:fun, 1}, default: &Beacon.LiveAdmin.AdminComponents.render_heex/1
 
   def heex_visual_editor(assigns) do
     ~H"""
@@ -46,9 +45,8 @@ defmodule Beacon.LiveAdmin.AdminComponents do
       id={@id}
       components={@components}
       template={@template}
-      layout_template={@layout_template}
       on_template_change={@on_template_change}
-      render_heex_fun={@render_heex_fun}
+      render_node_fun={@render_node_fun}
     />
     """
   end

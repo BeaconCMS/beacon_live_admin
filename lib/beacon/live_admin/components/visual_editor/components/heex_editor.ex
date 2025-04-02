@@ -31,21 +31,15 @@ defmodule Beacon.LiveAdmin.VisualEditor.Components.HEExEditor do
 
   defp init(assigns, socket) do
     template = assigns[:template] || ""
-    layout_template = assigns[:layout_template] || ""
-    render_heex_fun = assigns[:render_heex_fun] || fn heex -> heex end
+    render_node_fun = assigns[:render_node_fun] || fn heex -> heex end
 
-    {:ok, ast} = Beacon.LiveAdmin.VisualEditor.HEEx.JSONEncoder.encode(template, render_heex_fun)
-    {:ok, layout_ast} = Beacon.LiveAdmin.VisualEditor.HEEx.JSONEncoder.encode(layout_template, render_heex_fun)
+    {:ok, ast} = Beacon.LiveAdmin.VisualEditor.HEEx.JSONEncoder.encode(template, render_node_fun)
 
-    # FIXME: inner_content page_template
-    # defp layout_ast(layout, page_template, assigns) do
-    #   assigns = Map.put(assigns, :inner_content, page_template)
-    #
-    #   case JSONEncoder.encode(layout.site, layout.template, assigns) do
-    #     {:ok, ast} -> ast
-    #     _ -> []
-    #   end
-    # end
+    # FIXME
+    {:ok, layout_ast} =
+      Beacon.LiveAdmin.VisualEditor.HEEx.JSONEncoder.encode("<%= @inner_content %>", fn node ->
+        Beacon.LiveAdmin.Client.HEEx.render(:dev, node, %{inner_content: template})
+      end)
 
     page = %{
       id: "192cfc3c-7fc7-4329-aa44-ede411651016",

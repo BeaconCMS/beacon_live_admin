@@ -77,15 +77,15 @@ defmodule Beacon.LiveAdmin.VisualEditor.HEEx.JSONEncoder do
 
   """
   @spec encode(String.t(), fun()) :: {:ok, [token()]} | {:error, String.t()}
-  def encode(template, render_heex_fun)
+  def encode(template, render_node_fun)
 
-  def encode(nil = _template, render_heex_fun) when is_function(render_heex_fun, 1) do
-    encode("", render_heex_fun)
+  def encode(nil = _template, render_node_fun) when is_function(render_node_fun, 1) do
+    encode("", render_node_fun)
   end
 
-  def encode(template, render_heex_fun) when is_binary(template) and is_function(render_heex_fun, 1) do
+  def encode(template, render_node_fun) when is_binary(template) and is_function(render_node_fun, 1) do
     case Beacon.LiveAdmin.VisualEditor.HEEx.Tokenizer.tokenize(template) do
-      {:ok, tokens} -> {:ok, encode_tokens(tokens, render_heex_fun)}
+      {:ok, tokens} -> {:ok, encode_tokens(tokens, render_node_fun)}
       error -> error
     end
   rescue
@@ -93,12 +93,12 @@ defmodule Beacon.LiveAdmin.VisualEditor.HEEx.JSONEncoder do
       {:error, Exception.message(exception)}
   end
 
-  defp encode_tokens(ast, render_heex_fun) do
-    transform(ast, [], render_heex_fun)
+  defp encode_tokens(ast, render_node_fun) do
+    transform(ast, [], render_node_fun)
   end
 
-  defp transform([head], acc, render_heex_fun) do
-    case transform_entry(head, render_heex_fun) do
+  defp transform([head], acc, render_node_fun) do
+    case transform_entry(head, render_node_fun) do
       nil ->
         acc
 
@@ -107,20 +107,20 @@ defmodule Beacon.LiveAdmin.VisualEditor.HEEx.JSONEncoder do
     end
   end
 
-  defp transform([head | tail], acc, render_heex_fun) do
-    case transform_entry(head, render_heex_fun) do
+  defp transform([head | tail], acc, render_node_fun) do
+    case transform_entry(head, render_node_fun) do
       nil ->
-        transform(tail, acc, render_heex_fun)
+        transform(tail, acc, render_node_fun)
 
       entry ->
-        [entry | transform(tail, acc, render_heex_fun)]
+        [entry | transform(tail, acc, render_node_fun)]
     end
   end
 
-  defp transform([], acc, _render_heex_fun), do: acc
+  defp transform([], acc, _render_node_fun), do: acc
 
   # strips out blank text nodes and insignificant whitespace before or after text.
-  defp transform_entry({:text, text, _metadata}, _render_heex_fun) do
+  defp transform_entry({:text, text, _metadata}, _render_node_fun) do
     text =
       text
       |> cleanup_extra_spaces_leading()
@@ -129,7 +129,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.HEEx.JSONEncoder do
     if String.trim(text) != "", do: text
   end
 
-  defp transform_entry({:eex, expr, %{opt: opt}} = node, render_heex_fun) do
+  defp transform_entry({:eex, expr, %{opt: opt}} = node, render_node_fun) do
     entry = %{
       "tag" => "eex",
       "metadata" => %{"opt" => opt},
@@ -137,24 +137,24 @@ defmodule Beacon.LiveAdmin.VisualEditor.HEEx.JSONEncoder do
       "content" => [expr]
     }
 
-    case maybe_render_heex(node, render_heex_fun) do
+    case maybe_render_heex(node, render_node_fun) do
       nil -> entry
       html -> Map.put(entry, "rendered_html", html)
     end
   end
 
-  defp transform_entry({:eex_block, arg, _content} = entry, render_heex_fun) do
+  defp transform_entry({:eex_block, arg, _content} = entry, render_node_fun) do
     arg = String.trim(arg)
 
     %{
       "tag" => "eex_block",
       "arg" => arg,
-      "rendered_html" => render_eex_block(render_heex_fun, entry),
+      "rendered_html" => render_eex_block(render_node_fun, entry),
       "ast" => entry |> encode_eex_block() |> Jason.encode!()
     }
   end
 
-  defp transform_entry({:eex_comment, text}, _render_heex_fun) do
+  defp transform_entry({:eex_comment, text}, _render_node_fun) do
     %{
       "tag" => "eex_comment",
       "attrs" => %{},
@@ -162,7 +162,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.HEEx.JSONEncoder do
     }
   end
 
-  defp transform_entry({:html_comment, [{:text, text, _}]}, _render_heex_fun) do
+  defp transform_entry({:html_comment, [{:text, text, _}]}, _render_node_fun) do
     text =
       text
       |> String.replace("<!--", "")
@@ -175,24 +175,24 @@ defmodule Beacon.LiveAdmin.VisualEditor.HEEx.JSONEncoder do
     }
   end
 
-  defp transform_entry({:tag_block, tag, attrs, content, _} = node, render_heex_fun) do
+  defp transform_entry({:tag_block, tag, attrs, content, _} = node, render_node_fun) do
     entry = %{
       "tag" => tag,
       "attrs" => transform_attrs(attrs),
-      "content" => encode_tokens(content, render_heex_fun)
+      "content" => encode_tokens(content, render_node_fun)
     }
 
-    maybe_add_rendered_html(render_heex_fun, node, entry)
+    maybe_add_rendered_html(render_node_fun, node, entry)
   end
 
-  defp transform_entry({:tag_self_close, tag, attrs} = node, render_heex_fun) do
+  defp transform_entry({:tag_self_close, tag, attrs} = node, render_node_fun) do
     entry = %{
       "tag" => tag,
       "attrs" => transform_attrs(attrs, true),
       "content" => []
     }
 
-    maybe_add_rendered_html(render_heex_fun, node, entry)
+    maybe_add_rendered_html(render_node_fun, node, entry)
   end
 
   # https://github.com/phoenixframework/phoenix_live_view/blob/c87f12d7cc7d74b98183b5fe9f3a6a910c21ce1b/lib/phoenix_live_view/html_formatter.ex#L631
@@ -213,9 +213,9 @@ defmodule Beacon.LiveAdmin.VisualEditor.HEEx.JSONEncoder do
     end
   end
 
-  defp maybe_render_heex(node, render_heex_fun) do
+  defp maybe_render_heex(node, render_node_fun) do
     heex = Beacon.LiveAdmin.VisualEditor.HEEx.HEExDecoder.decode(node)
-    render_heex_fun.(heex)
+    render_node_fun.(heex)
     # TODO: let it raise
     # For context, we rescue it for now so we avoid crashing when rendering nexted :eex expressions,
     # for example take this template:
@@ -241,21 +241,21 @@ defmodule Beacon.LiveAdmin.VisualEditor.HEEx.JSONEncoder do
 
           #{inspect(node)}
 
-        render_heex_fun:
+        render_node_fun:
 
-          #{inspect(render_heex_fun)}
+          #{inspect(render_node_fun)}
 
       """)
 
       nil
   end
 
-  defp maybe_add_rendered_html(render_heex_fun, node, entry) do
+  defp maybe_add_rendered_html(render_node_fun, node, entry) do
     tag = elem(node, 1)
     attrs = elem(node, 2)
 
     add_rendered_html = fn ->
-      case maybe_render_heex(node, render_heex_fun) do
+      case maybe_render_heex(node, render_node_fun) do
         nil -> entry
         html -> Map.put(entry, "rendered_html", html)
       end
@@ -304,7 +304,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.HEEx.JSONEncoder do
     {attr_name, true}
   end
 
-  defp render_eex_block(render_heex_fun, {:eex_block, arg, nodes}) do
+  defp render_eex_block(render_node_fun, {:eex_block, arg, nodes}) do
     arg = ["<%= ", arg, " %>", "\n"]
 
     template =
@@ -314,7 +314,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.HEEx.JSONEncoder do
       |> Enum.reverse()
       |> List.to_string()
 
-    Beacon.Template.HEEx.render(template, render_heex_fun)
+    Beacon.Template.HEEx.render(template, render_node_fun)
   end
 
   defp extract_node_text({nodes, text} = value) when is_list(nodes) and is_binary(text) do
