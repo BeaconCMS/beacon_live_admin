@@ -359,6 +359,7 @@
     class="rounded-full w-6 h-6 flex justify-center items-center absolute bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 active:bg-blue-800 transform"
     style={dragHandleStyle}
     data-testid="drag-button{isParent ? '-parent' : ''}"
+    aria-label={`Drag to ${dragDirection === "horizontal" ? "reorder horizontally" : dragDirection === "vertical" ? "reorder vertically" : "reorder in any direction"}`}
   >
     <span
       class:hero-arrows-right-left={dragDirection === "horizontal"}

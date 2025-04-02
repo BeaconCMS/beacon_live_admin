@@ -44,6 +44,12 @@
     }
   }
 
+  function handleKeydown(event: KeyboardEvent) {
+    if (event.key === "Enter" && event.target instanceof HTMLAnchorElement) {
+      event.preventDefault()
+    }
+  }
+
   // Annotates the drop event here to know wether it was fired before the main content
   // or after it.
   function handleDragDrop(e: DragEvent) {
@@ -59,7 +65,8 @@
 </script>
 
 <span bind:this={styleWrapper}></span>
-<div bind:this={wrapper} on:click={preventLinkNavigation} on:drop={handleDragDrop}>
+<!-- svelte-ignore a11y-no-static-element-interactions -->
+<div bind:this={wrapper} on:click={preventLinkNavigation} on:drop={handleDragDrop} on:keydown={handleKeydown}>
   {#each $layoutAst as layoutAstNode}
     <LayoutAstNode node={layoutAstNode}>
       <!-- This seemingly useless wrapper is here just so we are sure that the layout and the page don't share the same parent, which screws the position calculations -->
