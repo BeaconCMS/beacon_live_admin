@@ -1,9 +1,8 @@
 import { writable, derived, get } from "svelte/store"
 import type { Writable, Readable } from "svelte/store"
-import type { AstElement, AstNode, Page } from "$lib/types"
+import type { AstElement, AstNode } from "$lib/types"
 import { live } from "$lib/stores/live"
 
-// export const page: Writable<Page> = writable()
 export const pageAst: Writable<AstNode[]> = writable()
 export const layoutAst: Writable<AstNode[]> = writable()
 export const selectedAstElementId: Writable<string | undefined> = writable()

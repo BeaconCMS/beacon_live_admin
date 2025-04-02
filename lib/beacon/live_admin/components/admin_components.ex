@@ -42,7 +42,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
     ~H"""
     <.live_component
       module={Beacon.LiveAdmin.VisualEditor.Components.HEExEditor}
-      id={"heex-visual-editor"}
+      id="heex-visual-editor"
       components={@components}
       template={@template}
       on_template_change={@on_template_change}

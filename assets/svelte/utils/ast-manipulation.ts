@@ -1,7 +1,7 @@
 import { pageAst, isAstElement, findAstElement } from "$lib/stores/page"
 import { live as liveStore } from "$lib/stores/live"
 import { get } from "svelte/store"
-import type { AstNode, Page } from "$lib/types"
+import type { AstNode } from "$lib/types"
 import { getParentNodeId } from "./ast-helpers"
 
 export function updateNodeContent(node, text) {
