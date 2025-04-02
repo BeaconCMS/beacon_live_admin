@@ -32,7 +32,6 @@ defmodule Beacon.LiveAdmin.AdminComponents do
   @doc false
   # TODO: provide a default render_node_fun
   # TODO: doc https://hexdocs.pm/phoenix_live_view/Phoenix.LiveComponent.html#module-unifying-liveview-and-livecomponent-communication
-  attr :id, :string, default: "heex-visual-editor"
   attr :components, :list
   attr :template, :string, required: true
   attr :on_template_change, {:fun, 1}, default: &Function.identity/1
@@ -43,7 +42,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
     ~H"""
     <.live_component
       module={Beacon.LiveAdmin.VisualEditor.Components.HEExEditor}
-      id={@id}
+      id={"heex-visual-editor"}
       components={@components}
       template={@template}
       on_template_change={@on_template_change}

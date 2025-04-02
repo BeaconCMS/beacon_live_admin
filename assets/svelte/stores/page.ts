@@ -21,11 +21,9 @@ export const selectedAstElement: Readable<AstElement | undefined> = derived(
   ([$pageAst, $selectedAstElementId]) => {
     if ($pageAst && $selectedAstElementId) {
       const element = findAstElement($pageAst, $selectedAstElementId)
-      // FIXME: add $myself
       get(live).pushEventTo("#heex-visual-editor", "select_element", { path: $selectedAstElementId })
       return element
     } else {
-      // FIXME: add $myself
       get(live).pushEventTo("#heex-visual-editor", "select_element", { path: null })
     }
   },
