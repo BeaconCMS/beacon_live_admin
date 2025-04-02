@@ -14829,22 +14829,21 @@ ${indent}in ${name}`).join("")}
   });
   mark_module_start();
   BrowserFrame[FILENAME] = "svelte/components/BrowserFrame.svelte";
-  var root = add_locations(template(`<div class="flex-1 flex flex-col" data-testid="fake-browser"><div class="bg-gray-50 border-b border-gray-200 border-solid rounded-t-xl h-12 px-3.5 flex" data-testid="address-bar"><div class="py-2"><span class="inline-block h-2 w-2 ml-2 rounded-full bg-red-800"></span> <span class="inline-block h-2 w-2 ml-2 rounded-full bg-amber-400"></span> <span class="inline-block h-2 w-2 ml-2 rounded-full bg-lime-600"></span></div> <div class="flex-1"></div> <div class="py-3"></div></div> <!></div>`), BrowserFrame[FILENAME], [
+  var root = add_locations(template(`<div class="flex-1 flex flex-col" data-testid="fake-browser"><div class="bg-gray-50 border-b border-gray-200 border-solid rounded-t-xl h-12 px-3.5 flex" data-testid="address-bar"><div class="py-2"><span class="inline-block h-2 w-2 ml-2 rounded-full bg-red-800"></span> <span class="inline-block h-2 w-2 ml-2 rounded-full bg-amber-400"></span> <span class="inline-block h-2 w-2 ml-2 rounded-full bg-lime-600"></span></div> <div class="py-3"></div></div> <!></div>`), BrowserFrame[FILENAME], [
     [
-      3,
+      1,
       0,
       [
         [
-          4,
+          2,
           2,
           [
             [
-              5,
+              3,
               4,
-              [[6, 6], [7, 6], [8, 6]]
+              [[4, 6], [5, 6], [6, 6]]
             ],
-            [10, 4],
-            [11, 4]
+            [8, 4]
           ]
         ]
       ]
@@ -15711,7 +15710,6 @@ ${indent}in ${name}`).join("")}
     ([$pageAst, $selectedAstElementId]) => {
       if ($pageAst && $selectedAstElementId) {
         const element2 = findAstElement($pageAst, $selectedAstElementId);
-        console.log("pushing select_element", { path: $selectedAstElementId });
         get2(live).pushEventTo("#heex-visual-editor", "select_element", { path: $selectedAstElementId });
         return element2;
       } else {
@@ -26802,11 +26800,11 @@ ${indent}in ${name}`).join("")}
   var import_html_entities = __toESM(require_lib());
   mark_module_start();
   PageWrapper[FILENAME] = "svelte/components/PageWrapper.svelte";
-  var root_24 = add_locations(template(`<div class="contents"></div>`), PageWrapper[FILENAME], [[57, 6]]);
-  var root7 = add_locations(template(`<span></span> <div></div>`, 1), PageWrapper[FILENAME], [[52, 0], [53, 0]]);
+  var root_24 = add_locations(template(`<div class="contents"></div>`), PageWrapper[FILENAME], [[61, 6]]);
+  var root7 = add_locations(template(`<span></span> <div></div>`, 1), PageWrapper[FILENAME], [[56, 0], [57, 0]]);
   var $$css4 = {
     hash: "svelte-9t6pvg",
-    code: '\n  [data-selected="true"], [data-selected-parent="true"] {\n    outline-color: #06b6d4;\n    outline-width: 1px;\n    outline-style: solid;\n  }\n  [data-selected="true"].contents > *, [data-selected-parent="true"].contents > * {\n    outline-color: #06b6d4;\n    outline-width: 1px;\n    outline-style: solid;\n  }\n  /* TODO: Apply this styles to [data-selected-parent="true"] once dragging of the parent element is allowed */\n  [data-highlighted="true"] {\n    outline-color: #06b6d4;\n    outline-width: 2px;\n    outline-style: dashed;\n  }\n\n  :before, :after {\n    pointer-events: none;\n  }\n\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiUGFnZVdyYXBwZXIuc3ZlbHRlIiwibWFwcGluZ3MiOiI7QUFzRUEsRUFBVSxxREFBc0QsQ0FBQztBQUNqRSxJQUFJLHNCQUFzQjtBQUMxQixJQUFJLGtCQUFrQjtBQUN0QixJQUFJLG9CQUFvQjtBQUN4QjtBQUNBLEVBQVUsK0VBQWdGLENBQUM7QUFDM0YsSUFBSSxzQkFBc0I7QUFDMUIsSUFBSSxrQkFBa0I7QUFDdEIsSUFBSSxvQkFBb0I7QUFDeEI7QUFDQTtBQUNBLEVBQVUseUJBQTBCLENBQUM7QUFDckMsSUFBSSxzQkFBc0I7QUFDMUIsSUFBSSxrQkFBa0I7QUFDdEIsSUFBSSxxQkFBcUI7QUFDekI7O0FBRUEsRUFBVSxlQUFnQixDQUFDO0FBQzNCLElBQUksb0JBQW9CO0FBQ3hCIiwibmFtZXMiOltdLCJpZ25vcmVMaXN0IjpbXSwic291cmNlcyI6WyJQYWdlV3JhcHBlci5zdmVsdGUiXX0= */'
+    code: '\n  [data-selected="true"], [data-selected-parent="true"] {\n    outline-color: #06b6d4;\n    outline-width: 1px;\n    outline-style: solid;\n  }\n  [data-selected="true"].contents > *, [data-selected-parent="true"].contents > * {\n    outline-color: #06b6d4;\n    outline-width: 1px;\n    outline-style: solid;\n  }\n  /* TODO: Apply this styles to [data-selected-parent="true"] once dragging of the parent element is allowed */\n  [data-highlighted="true"] {\n    outline-color: #06b6d4;\n    outline-width: 2px;\n    outline-style: dashed;\n  }\n\n  :before, :after {\n    pointer-events: none;\n  }\n\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiUGFnZVdyYXBwZXIuc3ZlbHRlIiwibWFwcGluZ3MiOiI7QUEyRUEsRUFBVSxxREFBc0QsQ0FBQztBQUNqRSxJQUFJLHNCQUFzQjtBQUMxQixJQUFJLGtCQUFrQjtBQUN0QixJQUFJLG9CQUFvQjtBQUN4QjtBQUNBLEVBQVUsK0VBQWdGLENBQUM7QUFDM0YsSUFBSSxzQkFBc0I7QUFDMUIsSUFBSSxrQkFBa0I7QUFDdEIsSUFBSSxvQkFBb0I7QUFDeEI7QUFDQTtBQUNBLEVBQVUseUJBQTBCLENBQUM7QUFDckMsSUFBSSxzQkFBc0I7QUFDMUIsSUFBSSxrQkFBa0I7QUFDdEIsSUFBSSxxQkFBcUI7QUFDekI7O0FBRUEsRUFBVSxlQUFnQixDQUFDO0FBQzNCLElBQUksb0JBQW9CO0FBQ3hCIiwibmFtZXMiOltdLCJpZ25vcmVMaXN0IjpbXSwic291cmNlcyI6WyJQYWdlV3JhcHBlci5zdmVsdGUiXX0= */'
   };
   function PageWrapper($$anchor, $$props) {
     check_target(new.target);
@@ -26835,6 +26833,10 @@ ${indent}in ${name}`).join("")}
       };
       window.reloadStylesheet = reloadStylesheet;
       reloadStylesheet();
+    });
+    pageAst.subscribe(async () => {
+      await tick();
+      window.reloadStylesheet && window.reloadStylesheet();
     });
     function preventLinkNavigation(event2) {
       if (event2.target instanceof HTMLAnchorElement) {
