@@ -15697,7 +15697,7 @@ ${indent}in ${name}`).join("")}
 
   // svelte/stores/page.ts
   var pageAst = writable();
-  var pageInfo = writable();
+  var layoutAst = writable();
   var selectedAstElementId = writable();
   var highlightedAstElement = writable();
   var slotTargetElement = writable();
@@ -15791,7 +15791,7 @@ ${indent}in ${name}`).join("")}
   }
   function resetStores() {
     pageAst.set(null);
-    pageInfo.set(null);
+    layoutAst.set(null);
     selectedAstElementId.set(null);
     highlightedAstElement.set(null);
     slotTargetElement.set(null);
@@ -16043,10 +16043,9 @@ ${indent}in ${name}`).join("")}
     }
   }
   function updateAst() {
-    let info = get2(pageInfo);
     let ast = get2(pageAst);
     let live2 = get2(live);
-    live2.pushEventTo("#heex-visual-editor", "update_page_ast", { id: info.id, ast });
+    live2.pushEventTo("#heex-visual-editor", "update_page_ast", { ast });
   }
   function deleteAstNode(astElementId) {
     let ast = get2(pageAst);
@@ -16939,7 +16938,6 @@ ${indent}in ${name}`).join("")}
     const $live = () => (validate_store(live, "live"), store_get(live, "$live", $$stores));
     const $pageAst = () => (validate_store(pageAst, "pageAst"), store_get(pageAst, "$pageAst", $$stores));
     const $slotTargetElement = () => (validate_store(slotTargetElement, "slotTargetElement"), store_get(slotTargetElement, "$slotTargetElement", $$stores));
-    const $pageInfo = () => (validate_store(pageInfo, "pageInfo"), store_get(pageInfo, "$pageInfo", $$stores));
     const $selectedAstElementId = () => (validate_store(selectedAstElementId, "selectedAstElementId"), store_get(selectedAstElementId, "$selectedAstElementId", $$stores));
     let isDraggingOver = mutable_source(false);
     async function handleDragDrop(e) {
@@ -16990,12 +16988,6 @@ ${indent}in ${name}`).join("")}
     {
       var consequent = ($$anchor2) => {
         BrowserFrame($$anchor2, {
-          get pageInfo() {
-            return $pageInfo();
-          },
-          get pageAst() {
-            return $pageAst();
-          },
           children: wrap_snippet(PagePreview, ($$anchor3, $$slotProps) => {
             var div_1 = root_23();
             var div_2 = child(div_1);
@@ -17015,7 +17007,7 @@ ${indent}in ${name}`).join("")}
         });
       };
       if_block(node, ($$render) => {
-        if ($pageInfo() && $pageAst()) $$render(consequent);
+        if ($pageAst()) $$render(consequent);
       });
     }
     reset(div);
@@ -26810,11 +26802,11 @@ ${indent}in ${name}`).join("")}
   var import_html_entities = __toESM(require_lib());
   mark_module_start();
   PageWrapper[FILENAME] = "svelte/components/PageWrapper.svelte";
-  var root_24 = add_locations(template(`<div class="contents"></div>`), PageWrapper[FILENAME], [[60, 6]]);
-  var root7 = add_locations(template(`<span></span> <div></div>`, 1), PageWrapper[FILENAME], [[55, 0], [56, 0]]);
+  var root_24 = add_locations(template(`<div class="contents"></div>`), PageWrapper[FILENAME], [[57, 6]]);
+  var root7 = add_locations(template(`<span></span> <div></div>`, 1), PageWrapper[FILENAME], [[52, 0], [53, 0]]);
   var $$css4 = {
     hash: "svelte-9t6pvg",
-    code: '\n  [data-selected="true"], [data-selected-parent="true"] {\n    outline-color: #06b6d4;\n    outline-width: 1px;\n    outline-style: solid;\n  }\n  [data-selected="true"].contents > *, [data-selected-parent="true"].contents > * {\n    outline-color: #06b6d4;\n    outline-width: 1px;\n    outline-style: solid;\n  }\n  /* TODO: Apply this styles to [data-selected-parent="true"] once dragging of the parent element is allowed */\n  [data-highlighted="true"] {\n    outline-color: #06b6d4;\n    outline-width: 2px;\n    outline-style: dashed;\n  }\n\n  :before, :after {\n    pointer-events: none;\n  }\n\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiUGFnZVdyYXBwZXIuc3ZlbHRlIiwibWFwcGluZ3MiOiI7QUF5RUEsRUFBVSxxREFBc0QsQ0FBQztBQUNqRSxJQUFJLHNCQUFzQjtBQUMxQixJQUFJLGtCQUFrQjtBQUN0QixJQUFJLG9CQUFvQjtBQUN4QjtBQUNBLEVBQVUsK0VBQWdGLENBQUM7QUFDM0YsSUFBSSxzQkFBc0I7QUFDMUIsSUFBSSxrQkFBa0I7QUFDdEIsSUFBSSxvQkFBb0I7QUFDeEI7QUFDQTtBQUNBLEVBQVUseUJBQTBCLENBQUM7QUFDckMsSUFBSSxzQkFBc0I7QUFDMUIsSUFBSSxrQkFBa0I7QUFDdEIsSUFBSSxxQkFBcUI7QUFDekI7O0FBRUEsRUFBVSxlQUFnQixDQUFDO0FBQzNCLElBQUksb0JBQW9CO0FBQ3hCIiwibmFtZXMiOltdLCJpZ25vcmVMaXN0IjpbXSwic291cmNlcyI6WyJQYWdlV3JhcHBlci5zdmVsdGUiXX0= */'
+    code: '\n  [data-selected="true"], [data-selected-parent="true"] {\n    outline-color: #06b6d4;\n    outline-width: 1px;\n    outline-style: solid;\n  }\n  [data-selected="true"].contents > *, [data-selected-parent="true"].contents > * {\n    outline-color: #06b6d4;\n    outline-width: 1px;\n    outline-style: solid;\n  }\n  /* TODO: Apply this styles to [data-selected-parent="true"] once dragging of the parent element is allowed */\n  [data-highlighted="true"] {\n    outline-color: #06b6d4;\n    outline-width: 2px;\n    outline-style: dashed;\n  }\n\n  :before, :after {\n    pointer-events: none;\n  }\n\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiUGFnZVdyYXBwZXIuc3ZlbHRlIiwibWFwcGluZ3MiOiI7QUFzRUEsRUFBVSxxREFBc0QsQ0FBQztBQUNqRSxJQUFJLHNCQUFzQjtBQUMxQixJQUFJLGtCQUFrQjtBQUN0QixJQUFJLG9CQUFvQjtBQUN4QjtBQUNBLEVBQVUsK0VBQWdGLENBQUM7QUFDM0YsSUFBSSxzQkFBc0I7QUFDMUIsSUFBSSxrQkFBa0I7QUFDdEIsSUFBSSxvQkFBb0I7QUFDeEI7QUFDQTtBQUNBLEVBQVUseUJBQTBCLENBQUM7QUFDckMsSUFBSSxzQkFBc0I7QUFDMUIsSUFBSSxrQkFBa0I7QUFDdEIsSUFBSSxxQkFBcUI7QUFDekI7O0FBRUEsRUFBVSxlQUFnQixDQUFDO0FBQzNCLElBQUksb0JBQW9CO0FBQ3hCIiwibmFtZXMiOltdLCJpZ25vcmVMaXN0IjpbXSwic291cmNlcyI6WyJQYWdlV3JhcHBlci5zdmVsdGUiXX0= */'
   };
   function PageWrapper($$anchor, $$props) {
     check_target(new.target);
@@ -26823,7 +26815,7 @@ ${indent}in ${name}`).join("")}
     const [$$stores, $$cleanup] = setup_stores();
     const $tailwindConfig = () => (validate_store(tailwindConfig, "tailwindConfig"), store_get(tailwindConfig, "$tailwindConfig", $$stores));
     const $tailwindInput = () => (validate_store(tailwindInput, "tailwindInput"), store_get(tailwindInput, "$tailwindInput", $$stores));
-    const $pageInfo = () => (validate_store(pageInfo, "pageInfo"), store_get(pageInfo, "$pageInfo", $$stores));
+    const $layoutAst = () => (validate_store(layoutAst, "layoutAst"), store_get(layoutAst, "$layoutAst", $$stores));
     const $pageAst = () => (validate_store(pageAst, "pageAst"), store_get(pageAst, "$pageAst", $$stores));
     let wrapper = mutable_source();
     let styleWrapper = mutable_source();
@@ -26843,10 +26835,6 @@ ${indent}in ${name}`).join("")}
       };
       window.reloadStylesheet = reloadStylesheet;
       reloadStylesheet();
-    });
-    pageInfo.subscribe(async () => {
-      await tick();
-      window.reloadStylesheet && window.reloadStylesheet();
     });
     function preventLinkNavigation(event2) {
       if (event2.target instanceof HTMLAnchorElement) {
@@ -26868,7 +26856,7 @@ ${indent}in ${name}`).join("")}
     var span = first_child(fragment);
     bind_this(span, ($$value) => set(styleWrapper, $$value), () => get(styleWrapper));
     var div = sibling(span, 2);
-    each(div, 5, () => $pageInfo().layout.ast, index2, ($$anchor2, layoutAstNode) => {
+    each(div, 5, $layoutAst, index2, ($$anchor2, layoutAstNode) => {
       LayoutAstNode($$anchor2, {
         get node() {
           return get(layoutAstNode);
@@ -27582,13 +27570,13 @@ ${indent}in ${name}`).join("")}
     push($$props, false, UiBuilder);
     const [$$stores, $$cleanup] = setup_stores();
     const $pageAstStore = () => (validate_store(pageAst, "pageAstStore"), store_get(pageAst, "$pageAstStore", $$stores));
-    const $pageInfoStore = () => (validate_store(pageInfo, "pageInfoStore"), store_get(pageInfo, "$pageInfoStore", $$stores));
+    const $layoutAstStore = () => (validate_store(layoutAst, "layoutAstStore"), store_get(layoutAst, "$layoutAstStore", $$stores));
     const $tailwindConfigStore = () => (validate_store(tailwindConfig, "tailwindConfigStore"), store_get(tailwindConfig, "$tailwindConfigStore", $$stores));
     const $tailwindInputStore = () => (validate_store(tailwindInput, "tailwindInputStore"), store_get(tailwindInput, "$tailwindInputStore", $$stores));
     const $liveStore = () => (validate_store(live, "liveStore"), store_get(live, "$liveStore", $$stores));
     let components = prop($$props, "components", 12);
     let pageAst2 = prop($$props, "pageAst", 12);
-    let layoutAst = prop($$props, "layoutAst", 12);
+    let layoutAst2 = prop($$props, "layoutAst", 12);
     let tailwindConfig2 = prop($$props, "tailwindConfig", 12);
     let tailwindInput2 = prop($$props, "tailwindInput", 12);
     let live2 = prop($$props, "live", 12);
@@ -27598,8 +27586,8 @@ ${indent}in ${name}`).join("")}
     legacy_pre_effect(() => deep_read_state(pageAst2()), () => {
       store_set(pageAst, pageAst2());
     });
-    legacy_pre_effect(() => deep_read_state(layoutAst()), () => {
-      store_set(pageInfo, { layout: { ast: layoutAst() } });
+    legacy_pre_effect(() => deep_read_state(layoutAst2()), () => {
+      store_set(layoutAst, layoutAst2());
     });
     legacy_pre_effect(() => deep_read_state(tailwindConfig2()), () => {
       store_set(tailwindConfig, tailwindConfig2());
@@ -27643,10 +27631,10 @@ ${indent}in ${name}`).join("")}
         flushSync();
       },
       get layoutAst() {
-        return layoutAst();
+        return layoutAst2();
       },
       set layoutAst($$value) {
-        layoutAst($$value);
+        layoutAst2($$value);
         flushSync();
       },
       get tailwindConfig() {
