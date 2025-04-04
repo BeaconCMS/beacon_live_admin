@@ -93,6 +93,13 @@ defmodule Beacon.LiveAdmin.VisualEditor.HEEx.JSONEncoder do
       {:error, Exception.message(exception)}
   end
 
+  def maybe_encode(template, render_node_fun) do
+    case encode(template, render_node_fun) do
+      {:ok, ast} -> ast
+      _ -> []
+    end
+  end
+
   defp encode_tokens(ast, render_node_fun) do
     transform(ast, [], render_node_fun)
   end

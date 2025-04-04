@@ -359,7 +359,8 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
         template={@template}
         on_template_change={&send_update(@myself, event: :template_changed, template: &1)}
         render_node_fun={fn node -> Beacon.LiveAdmin.Client.HEEx.render(@site, node, @page_assigns) end}
-        encode_template_fun={fn -> encode_template(@page) end}
+        encode_layout_fun={fn -> encode_layout(@page) end}
+        encode_component_fun={fn component -> encode_component(@site, component, @page_assigns) end}
       />
 
       <div class={[
@@ -415,17 +416,21 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
     """
   end
 
-  def encode_template(%{site: site, template: page_template, layout: %{template: layout_template}}) do
-    ast =
-      Beacon.LiveAdmin.VisualEditor.HEEx.JSONEncoder.encode(layout_template, fn node ->
-        Beacon.LiveAdmin.Client.HEEx.render(site, node, %{inner_content: page_template})
-      end)
-
-    case ast do
-      {:ok, ast} -> ast
-      _ -> []
-    end
+  def encode_layout(%{site: site, template: page_template, layout: %{template: layout_template}}) do
+    Beacon.LiveAdmin.VisualEditor.HEEx.JSONEncoder.maybe_encode(layout_template, fn node ->
+      Beacon.LiveAdmin.Client.HEEx.render(site, node, %{inner_content: page_template})
+    end)
   end
 
-  def encode_template(_), do: []
+  def encode_layout(_), do: []
+
+  def encode_component(site, component, page_assigns) do
+    template = component[:example] || ""
+
+    Beacon.LiveAdmin.VisualEditor.HEEx.JSONEncoder.maybe_encode(template, fn node ->
+      Beacon.LiveAdmin.Client.HEEx.render(site, node, page_assigns)
+    end)
+  end
+
+  def encode_component(_site, _component, _page_assigns), do: []
 end

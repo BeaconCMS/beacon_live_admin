@@ -33,10 +33,10 @@ defmodule Beacon.LiveAdmin.VisualEditor.Components.HEExEditor do
     template = assigns[:template] || ""
     render_node_fun = assigns[:render_node_fun] || fn heex -> heex end
 
-    {:ok, ast} = Beacon.LiveAdmin.VisualEditor.HEEx.JSONEncoder.encode(template, render_node_fun)
+    ast = Beacon.LiveAdmin.VisualEditor.HEEx.JSONEncoder.maybe_encode(template, render_node_fun)
 
     layout_ast =
-      case assigns[:encode_template_fun] do
+      case assigns[:encode_layout_fun] do
         nil -> nil
         fun -> fun.()
       end
@@ -86,17 +86,8 @@ defmodule Beacon.LiveAdmin.VisualEditor.Components.HEExEditor do
   end
 
   def handle_event("render_component_in_page", %{"component_id" => id}, socket) do
-    template = Enum.find(socket.assigns.components, fn component -> component.id == id end)[:template] || ""
-
-    ast =
-      Beacon.LiveAdmin.VisualEditor.HEEx.JSONEncoder.encode(template, fn node ->
-        Beacon.LiveAdmin.Client.HEEx.render(:dev, node, %{})
-      end)
-      |> case do
-        {:ok, ast} -> ast
-        _ -> []
-      end
-
+    component = Enum.find(socket.assigns.components, fn component -> component.id == id end)
+    ast = socket.assigns.encode_component_fun.(component)
     {:reply, %{"ast" => ast}, socket}
   end
 
