@@ -2,7 +2,6 @@ defmodule Beacon.LiveAdmin.VisualEditor.Components.HEExEditor do
   @moduledoc false
 
   use Beacon.LiveAdmin.Web, :live_component
-
   alias Beacon.LiveAdmin.VisualEditor
 
   def update(%{event: {:element_changed, %{path: path, payload: payload}}}, socket) do
@@ -96,5 +95,37 @@ defmodule Beacon.LiveAdmin.VisualEditor.Components.HEExEditor do
     socket.assigns.on_template_change.(heex_template)
 
     {:noreply, assign(socket, ast: ast)}
+  end
+
+  @spec render_node(String.t(), map()) :: String.t()
+  def render_node(node, assigns \\ %{}) when is_binary(node) and is_map(assigns) do
+    assigns =
+      assigns
+      |> Map.new()
+      |> Map.put_new(:__changed__, %{})
+
+    {:ok, ast} = compile_template(node)
+    {rendered, _} = Code.eval_quoted(ast, [assigns: assigns], __ENV__)
+
+    rendered
+    |> Phoenix.HTML.Safe.to_iodata()
+    |> IO.iodata_to_binary()
+  end
+
+  defp compile_template(template, file \\ "nofile") do
+    opts = [
+      engine: Phoenix.LiveView.TagEngine,
+      line: 1,
+      indentation: 0,
+      file: file,
+      caller: __ENV__,
+      source: template,
+      trim: true,
+      tag_handler: Phoenix.LiveView.HTMLEngine
+    ]
+
+    {:ok, EEx.compile_string(template, opts)}
+  rescue
+    error -> {:error, error}
   end
 end

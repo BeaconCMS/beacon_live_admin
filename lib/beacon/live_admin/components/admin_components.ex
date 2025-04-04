@@ -47,8 +47,15 @@ defmodule Beacon.LiveAdmin.AdminComponents do
   """
   attr :components, :list, doc: "List of available components that can be used in the visual editor"
   attr :template, :string, required: true, doc: "The HEEx/HTML template to edit"
-  attr :on_template_change, {:fun, 1}, default: &Function.identity/1, doc: "A function that is called when the template changes, receives the updated template as argument"
-  attr :render_node_fun, {:fun, 1}, required: true, doc: "A function to render a HEEx node"
+
+  attr :on_template_change, {:fun, 1},
+    default: &Function.identity/1,
+    doc: "A function that is called when the template changes, receives the updated template as argument"
+
+  attr :render_node_fun, {:fun, 1},
+    default: &Beacon.LiveAdmin.VisualEditor.Components.HEExEditor.render_node/1,
+    doc: "A function to render a HEEx node"
+
   attr :encode_layout_fun, {:fun, 0}, default: nil, doc: "A function that returns the layout AST to be used in the visual editor"
   attr :encode_component_fun, {:fun, 1}, default: nil, doc: "A function that takes a component and returns its AST representation"
 
