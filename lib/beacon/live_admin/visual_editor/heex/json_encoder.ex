@@ -321,7 +321,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.HEEx.JSONEncoder do
       |> Enum.reverse()
       |> List.to_string()
 
-    Beacon.Template.HEEx.render(template, render_node_fun)
+    render_node_fun.(template)
   end
 
   defp extract_node_text({nodes, text} = value) when is_list(nodes) and is_binary(text) do
