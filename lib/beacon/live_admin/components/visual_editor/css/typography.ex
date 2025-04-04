@@ -143,20 +143,31 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Typography do
     Enum.find_value(text_classes, fn class ->
       cond do
         # Skip size classes
-        class in ~w(text-xs text-sm text-base text-lg text-xl text-2xl text-3xl text-4xl text-5xl text-6xl) -> nil
+        class in ~w(text-xs text-sm text-base text-lg text-xl text-2xl text-3xl text-4xl text-5xl text-6xl) ->
+          nil
+
         # Skip size classes with units
-        String.match?(class, ~r/^text-\[\d+(?:\.\d+)?(?:px|rem|em|%)?\]$/) -> nil
+        String.match?(class, ~r/^text-\[\d+(?:\.\d+)?(?:px|rem|em|%)?\]$/) ->
+          nil
+
         # Handle hex colors in square brackets
         String.match?(class, ~r/^text-\[#[0-9A-Fa-f]{6}\]$/) ->
           [_, color] = Regex.run(~r/^text-\[(.+)\]$/, class)
           color
+
         # Handle standard Tailwind color classes
-        String.match?(class, ~r/^text-(?:slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(?:[1-9]0{2}|950)$/) ->
+        String.match?(
+          class,
+          ~r/^text-(?:slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(?:[1-9]0{2}|950)$/
+        ) ->
           String.replace_prefix(class, "text-", "")
+
         # Handle special colors
         class in ~w(text-inherit text-current text-transparent text-black text-white) ->
           String.replace_prefix(class, "text-", "")
-        true -> nil
+
+        true ->
+          nil
       end
     end)
   end
