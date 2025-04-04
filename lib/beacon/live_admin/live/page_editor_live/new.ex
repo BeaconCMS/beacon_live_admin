@@ -18,9 +18,18 @@ defmodule Beacon.LiveAdmin.PageEditorLive.New do
       |> assign_new(:selected_element_path, fn -> nil end)
       |> assign_new(:layouts, fn -> Content.list_layouts(site) end)
       |> assign_new(:components, fn ->
-        components = Content.list_components(site, per_page: :infinity)
-        %{data: components} = Beacon.Web.API.ComponentJSON.index(%{components: components})
-        components
+        site
+        |> Content.list_components(per_page: :infinity)
+        |> Enum.map(fn component ->
+          %{
+            id: component.id,
+            name: component.name,
+            category: component.category,
+            thumbnail: component.thumbnail,
+            template: component.template,
+            example: component.example
+          }
+        end)
       end)
 
     socket =

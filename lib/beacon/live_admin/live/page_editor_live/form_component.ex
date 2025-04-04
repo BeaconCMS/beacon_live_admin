@@ -6,7 +6,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
   alias Beacon.LiveAdmin.Client.Config
   alias Beacon.LiveAdmin.Client.Content
   alias Beacon.LiveAdmin.RuntimeCSS
-  alias Beacon.LiveAdmin.WebAPI
+  # alias Beacon.LiveAdmin.WebAPI
   alias Ecto.Changeset
 
   @impl true
@@ -28,7 +28,6 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
      |> assign(assigns)
      |> assign_form(changeset)
      |> assign_template(Changeset.get_field(changeset, :template))
-     |> maybe_assign_builder_page(changeset)
      |> assign(:language, language(page.format))
      |> assign(:page_status, page_status)
      |> assign_extra_fields(changeset)
@@ -213,21 +212,6 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
     |> assign(:template, template)
   end
 
-  defp maybe_assign_builder_page(%{assigns: %{editor: "visual"}} = socket, changeset) do
-    with :heex <- Changeset.get_field(changeset, :format),
-         {:ok, page} <- Changeset.apply_action(changeset, :update),
-         %{data: builder_page} <- WebAPI.Page.show(page.site, page) do
-      {builder_page_ast, builder_page} = Map.pop(builder_page, :ast)
-      assign(socket, builder_page: builder_page, builder_page_ast: builder_page_ast)
-    else
-      # TODO: handle errors
-      _ ->
-        assign(socket, builder_page: nil, builder_page_ast: nil)
-    end
-  end
-
-  defp maybe_assign_builder_page(socket, _changeset), do: assign(socket, builder_page: nil, builder_page_ast: nil)
-
   defp assign_extra_fields(socket, changeset) do
     params = Ecto.Changeset.get_field(changeset, :extra)
 
@@ -359,7 +343,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
         template={@template}
         on_template_change={&send_update(@myself, event: :template_changed, template: &1)}
         render_node_fun={fn node -> Beacon.LiveAdmin.Client.HEEx.render(@site, node, @page_assigns) end}
-        encode_layout_fun={fn -> encode_layout(@page) end}
+        encode_layout_fun={fn -> encode_layout(@page, @page_assigns) end}
         encode_component_fun={fn component -> encode_component(@site, component, @page_assigns) end}
       />
 
@@ -416,13 +400,15 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
     """
   end
 
-  def encode_layout(%{site: site, template: page_template, layout: %{template: layout_template}}) do
+  def encode_layout(%{site: site, template: page_template, layout: %{template: layout_template}}, page_assigns) do
+    assigns = Map.put(page_assigns, :inner_content, page_template)
+
     Beacon.LiveAdmin.VisualEditor.HEEx.JSONEncoder.maybe_encode(layout_template, fn node ->
-      Beacon.LiveAdmin.Client.HEEx.render(site, node, %{inner_content: page_template})
+      Beacon.LiveAdmin.Client.HEEx.render(site, node, assigns)
     end)
   end
 
-  def encode_layout(_), do: []
+  def encode_layout(_, _), do: []
 
   def encode_component(site, component, page_assigns) when is_atom(site) and is_map(component) do
     template = component[:example] || ""
