@@ -8298,10 +8298,9 @@ var BeaconLiveAdmin = (() => {
     var keys = Object.keys(object);
     if (Object.getOwnPropertySymbols) {
       var symbols = Object.getOwnPropertySymbols(object);
-      if (enumerableOnly)
-        symbols = symbols.filter(function(sym) {
-          return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-        });
+      if (enumerableOnly) symbols = symbols.filter(function(sym) {
+        return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+      });
       keys.push.apply(keys, symbols);
     }
     return keys;
@@ -8324,32 +8323,27 @@ var BeaconLiveAdmin = (() => {
     return target;
   }
   function _objectWithoutPropertiesLoose(source2, excluded) {
-    if (source2 == null)
-      return {};
+    if (source2 == null) return {};
     var target = {};
     var sourceKeys = Object.keys(source2);
     var key, i;
     for (i = 0; i < sourceKeys.length; i++) {
       key = sourceKeys[i];
-      if (excluded.indexOf(key) >= 0)
-        continue;
+      if (excluded.indexOf(key) >= 0) continue;
       target[key] = source2[key];
     }
     return target;
   }
   function _objectWithoutProperties(source2, excluded) {
-    if (source2 == null)
-      return {};
+    if (source2 == null) return {};
     var target = _objectWithoutPropertiesLoose(source2, excluded);
     var key, i;
     if (Object.getOwnPropertySymbols) {
       var sourceSymbolKeys = Object.getOwnPropertySymbols(source2);
       for (i = 0; i < sourceSymbolKeys.length; i++) {
         key = sourceSymbolKeys[i];
-        if (excluded.indexOf(key) >= 0)
-          continue;
-        if (!Object.prototype.propertyIsEnumerable.call(source2, key))
-          continue;
+        if (excluded.indexOf(key) >= 0) continue;
+        if (!Object.prototype.propertyIsEnumerable.call(source2, key)) continue;
         target[key] = source2[key];
       }
     }
@@ -8359,12 +8353,10 @@ var BeaconLiveAdmin = (() => {
     return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();
   }
   function _arrayWithHoles(arr) {
-    if (Array.isArray(arr))
-      return arr;
+    if (Array.isArray(arr)) return arr;
   }
   function _iterableToArrayLimit(arr, i) {
-    if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr)))
-      return;
+    if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return;
     var _arr = [];
     var _n = true;
     var _d = false;
@@ -8372,41 +8364,31 @@ var BeaconLiveAdmin = (() => {
     try {
       for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
         _arr.push(_s.value);
-        if (i && _arr.length === i)
-          break;
+        if (i && _arr.length === i) break;
       }
     } catch (err) {
       _d = true;
       _e = err;
     } finally {
       try {
-        if (!_n && _i["return"] != null)
-          _i["return"]();
+        if (!_n && _i["return"] != null) _i["return"]();
       } finally {
-        if (_d)
-          throw _e;
+        if (_d) throw _e;
       }
     }
     return _arr;
   }
   function _unsupportedIterableToArray(o, minLen) {
-    if (!o)
-      return;
-    if (typeof o === "string")
-      return _arrayLikeToArray(o, minLen);
+    if (!o) return;
+    if (typeof o === "string") return _arrayLikeToArray(o, minLen);
     var n = Object.prototype.toString.call(o).slice(8, -1);
-    if (n === "Object" && o.constructor)
-      n = o.constructor.name;
-    if (n === "Map" || n === "Set")
-      return Array.from(o);
-    if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n))
-      return _arrayLikeToArray(o, minLen);
+    if (n === "Object" && o.constructor) n = o.constructor.name;
+    if (n === "Map" || n === "Set") return Array.from(o);
+    if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
   }
   function _arrayLikeToArray(arr, len) {
-    if (len == null || len > arr.length)
-      len = arr.length;
-    for (var i = 0, arr2 = new Array(len); i < len; i++)
-      arr2[i] = arr[i];
+    if (len == null || len > arr.length) len = arr.length;
+    for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i];
     return arr2;
   }
   function _nonIterableRest() {
@@ -8429,10 +8411,9 @@ var BeaconLiveAdmin = (() => {
     var keys = Object.keys(object);
     if (Object.getOwnPropertySymbols) {
       var symbols = Object.getOwnPropertySymbols(object);
-      if (enumerableOnly)
-        symbols = symbols.filter(function(sym) {
-          return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-        });
+      if (enumerableOnly) symbols = symbols.filter(function(sym) {
+        return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+      });
       keys.push.apply(keys, symbols);
     }
     return keys;
@@ -8491,33 +8472,25 @@ var BeaconLiveAdmin = (() => {
     return Object.prototype.hasOwnProperty.call(object, property);
   }
   function validateChanges(initial, changes) {
-    if (!isObject(changes))
-      errorHandler("changeType");
+    if (!isObject(changes)) errorHandler("changeType");
     if (Object.keys(changes).some(function(field) {
       return !hasOwnProperty(initial, field);
-    }))
-      errorHandler("changeField");
+    })) errorHandler("changeField");
     return changes;
   }
   function validateSelector(selector) {
-    if (!isFunction(selector))
-      errorHandler("selectorType");
+    if (!isFunction(selector)) errorHandler("selectorType");
   }
   function validateHandler(handler) {
-    if (!(isFunction(handler) || isObject(handler)))
-      errorHandler("handlerType");
+    if (!(isFunction(handler) || isObject(handler))) errorHandler("handlerType");
     if (isObject(handler) && Object.values(handler).some(function(_handler) {
       return !isFunction(_handler);
-    }))
-      errorHandler("handlersType");
+    })) errorHandler("handlersType");
   }
   function validateInitial(initial) {
-    if (!initial)
-      errorHandler("initialIsRequired");
-    if (!isObject(initial))
-      errorHandler("initialType");
-    if (isEmpty(initial))
-      errorHandler("initialContent");
+    if (!initial) errorHandler("initialIsRequired");
+    if (!isObject(initial)) errorHandler("initialType");
+    if (isEmpty(initial)) errorHandler("initialContent");
   }
   function throwError(errorMessages32, type) {
     throw new Error(errorMessages32[type] || errorMessages32["default"]);
@@ -8607,10 +8580,8 @@ var BeaconLiveAdmin = (() => {
   }
   var isObject_default = isObject2;
   function validateConfig(config32) {
-    if (!config32)
-      errorHandler2("configIsRequired");
-    if (!isObject_default(config32))
-      errorHandler2("configType");
+    if (!config32) errorHandler2("configIsRequired");
+    if (!isObject_default(config32)) errorHandler2("configType");
     if (config32.urls) {
       informAboutDeprecation();
       return {
@@ -8888,7 +8859,7 @@ var BeaconLiveAdmin = (() => {
     _mountEditor() {
       this.opts.value = this.value;
       loader_default.config({
-        paths: { vs: "https://cdn.jsdelivr.net/npm/monaco-editor@0.52.0/min/vs" }
+        paths: { vs: "https://cdn.jsdelivr.net/npm/monaco-editor@0.52.2/min/vs" }
       });
       loader_default.init().then((monaco) => {
         monaco.editor.defineTheme("default", theme);
@@ -9015,8 +8986,45 @@ var BeaconLiveAdmin = (() => {
     }
   };
 
+  // ../lib/beacon/live_admin/components/visual_editor/hooks/color_picker.js
+  var ColorPicker = {
+    mounted() {
+      this.handleKeydown = (event2) => {
+        if (event2.key === "Escape") {
+          this.pushEventTo(this.el, "close_picker", {});
+        }
+      };
+      document.addEventListener("keydown", this.handleKeydown);
+      const input = this.el.querySelector("input[name]");
+      if (input) {
+        const observer = new MutationObserver((mutations) => {
+          mutations.forEach((mutation) => {
+            if (mutation.type === "attributes" && mutation.attributeName === "data-value") {
+              const newValue = input.getAttribute("data-value");
+              input.value = newValue;
+              input.dispatchEvent(new Event("change", { bubbles: true }));
+            }
+          });
+        });
+        observer.observe(input, {
+          attributes: true,
+          attributeFilter: ["data-value"]
+        });
+        this.observer = observer;
+      }
+    },
+    destroyed() {
+      document.removeEventListener("keydown", this.handleKeydown);
+      if (this.observer) {
+        this.observer.disconnect();
+      }
+    }
+  };
+  var color_picker_default = ColorPicker;
+
   // ../lib/beacon/live_admin/components/visual_editor/hooks.js
   var hooks_default = {
+    ColorPicker: color_picker_default,
     VisualEditorClassInput: {
       mounted() {
         this.el.addEventListener("keydown", (event2) => {
@@ -14821,22 +14829,21 @@ ${indent}in ${name}`).join("")}
   });
   mark_module_start();
   BrowserFrame[FILENAME] = "svelte/components/BrowserFrame.svelte";
-  var root = add_locations(template(`<div class="flex-1 flex flex-col" data-testid="fake-browser"><div class="bg-gray-50 border-b border-gray-200 border-solid rounded-t-xl h-12 px-3.5 flex" data-testid="address-bar"><div class="py-2"><span class="inline-block h-2 w-2 ml-2 rounded-full bg-red-800"></span> <span class="inline-block h-2 w-2 ml-2 rounded-full bg-amber-400"></span> <span class="inline-block h-2 w-2 ml-2 rounded-full bg-lime-600"></span></div> <div class="flex-1 py-2.5 overflow-visible"><div class="rounded bg-gray-50 border-b border-gray-200 shadow max-w-xs mx-auto text-center py-0.5 relative"><span data-testid="url-box"> </span></div></div> <div class="py-3"></div></div> <!></div>`), BrowserFrame[FILENAME], [
+  var root = add_locations(template(`<div class="flex-1 flex flex-col" data-testid="fake-browser"><div class="bg-gray-50 border-b border-gray-200 border-solid rounded-t-xl h-12 px-3.5 flex" data-testid="address-bar"><div class="py-2"><span class="inline-block h-2 w-2 ml-2 rounded-full bg-red-800"></span> <span class="inline-block h-2 w-2 ml-2 rounded-full bg-amber-400"></span> <span class="inline-block h-2 w-2 ml-2 rounded-full bg-lime-600"></span></div> <div class="py-3"></div></div> <!></div>`), BrowserFrame[FILENAME], [
     [
-      8,
+      1,
       0,
       [
         [
-          9,
+          2,
           2,
           [
             [
-              10,
+              3,
               4,
-              [[11, 6], [12, 6], [13, 6]]
+              [[4, 6], [5, 6], [6, 6]]
             ],
-            [15, 4, [[16, 6, [[17, 8]]]]],
-            [20, 4]
+            [8, 4]
           ]
         ]
       ]
@@ -14845,47 +14852,15 @@ ${indent}in ${name}`).join("")}
   function BrowserFrame($$anchor, $$props) {
     check_target(new.target);
     push($$props, false, BrowserFrame);
-    let pageInfo2 = prop($$props, "pageInfo", 12);
-    let pageAst2 = prop($$props, "pageAst", 12);
-    function getPageName(pageInfo3) {
-      return !pageInfo3.path || strict_equals(pageInfo3.path, "") ? "index" : pageInfo3.path;
-    }
     var div = root();
-    var div_1 = child(div);
-    var div_2 = sibling(child(div_1), 2);
-    var div_3 = child(div_2);
-    var span = child(div_3);
-    var text2 = child(span, true);
-    reset(span);
-    reset(div_3);
-    reset(div_2);
-    next(2);
-    reset(div_1);
-    var node = sibling(div_1, 2);
+    var node = sibling(child(div), 2);
     slot(node, $$props, "default", {}, null);
     reset(div);
-    template_effect(($0) => set_text(text2, $0), [() => getPageName(pageInfo2())], derived_safe_equal);
     append($$anchor, div);
-    return pop({
-      get pageInfo() {
-        return pageInfo2();
-      },
-      set pageInfo($$value) {
-        pageInfo2($$value);
-        flushSync();
-      },
-      get pageAst() {
-        return pageAst2();
-      },
-      set pageAst($$value) {
-        pageAst2($$value);
-        flushSync();
-      },
-      ...legacy_api()
-    });
+    return pop({ ...legacy_api() });
   }
   mark_module_end(BrowserFrame);
-  create_custom_element(BrowserFrame, { pageInfo: {}, pageAst: {} }, ["default"], [], true);
+  create_custom_element(BrowserFrame, {}, ["default"], [], true);
 
   // svelte/components/CodeEditor.svelte
   var CodeEditor_exports = {};
@@ -15721,7 +15696,7 @@ ${indent}in ${name}`).join("")}
 
   // svelte/stores/page.ts
   var pageAst = writable();
-  var pageInfo = writable();
+  var layoutAst = writable();
   var selectedAstElementId = writable();
   var highlightedAstElement = writable();
   var slotTargetElement = writable();
@@ -15735,10 +15710,10 @@ ${indent}in ${name}`).join("")}
     ([$pageAst, $selectedAstElementId]) => {
       if ($pageAst && $selectedAstElementId) {
         const element2 = findAstElement($pageAst, $selectedAstElementId);
-        get2(live).pushEvent("select_element", { path: $selectedAstElementId });
+        get2(live).pushEventTo("#heex-visual-editor", "select_element", { path: $selectedAstElementId });
         return element2;
       } else {
-        get2(live).pushEvent("select_element", { path: null });
+        get2(live).pushEventTo("#heex-visual-editor", "select_element", { path: null });
       }
     }
   );
@@ -15814,7 +15789,7 @@ ${indent}in ${name}`).join("")}
   }
   function resetStores() {
     pageAst.set(null);
-    pageInfo.set(null);
+    layoutAst.set(null);
     selectedAstElementId.set(null);
     highlightedAstElement.set(null);
     slotTargetElement.set(null);
@@ -16066,10 +16041,9 @@ ${indent}in ${name}`).join("")}
     }
   }
   function updateAst() {
-    let info = get2(pageInfo);
     let ast = get2(pageAst);
     let live2 = get2(live);
-    live2.pushEvent("update_page_ast", { id: info.id, ast });
+    live2.pushEventTo("#heex-visual-editor", "update_page_ast", { ast });
   }
   function deleteAstNode(astElementId) {
     let ast = get2(pageAst);
@@ -16107,7 +16081,7 @@ ${indent}in ${name}`).join("")}
     }
   }
   var root_22 = add_locations(template(`<div class="absolute transition-all" data-testid="drag-placeholder"></div>`), DragMenuOption[FILENAME], [[306, 4]]);
-  var root_13 = add_locations(template(`<!> <button class="rounded-full w-6 h-6 flex justify-center items-center absolute bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 active:bg-blue-800 transform"><span></span></button>`, 1), DragMenuOption[FILENAME], [[312, 2, [[319, 4]]]]);
+  var root_13 = add_locations(template(`<!> <button class="rounded-full w-6 h-6 flex justify-center items-center absolute bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 active:bg-blue-800 transform"><span></span></button>`, 1), DragMenuOption[FILENAME], [[313, 2, [[321, 4]]]]);
   function DragMenuOption($$anchor, $$props) {
     check_target(new.target);
     push($$props, false, DragMenuOption);
@@ -16118,7 +16092,6 @@ ${indent}in ${name}`).join("")}
     const $selectedAstElementId = () => (validate_store(selectedAstElementId, "selectedAstElementId"), store_get(selectedAstElementId, "$selectedAstElementId", $$stores));
     const $pageAst = () => (validate_store(pageAst, "pageAst"), store_get(pageAst, "$pageAst", $$stores));
     const $live = () => (validate_store(live, "live"), store_get(live, "$live", $$stores));
-    const $pageInfo = () => (validate_store(pageInfo, "pageInfo"), store_get(pageInfo, "$pageInfo", $$stores));
     const canBeDragged = mutable_source();
     const dragDirection = mutable_source();
     let element2 = prop($$props, "element", 12);
@@ -16250,7 +16223,7 @@ ${indent}in ${name}`).join("")}
           store_set(selectedAstElementId, parts.join("."));
         }
         store_set(pageAst, [...$pageAst()]);
-        $live().pushEvent("update_page_ast", { id: $pageInfo().id, ast: $pageAst() });
+        $live().pushEventTo("#heex-visual-editor", "update_page_ast", { ast: $pageAst() });
       }
     }
     function resetDragElementHandle() {
@@ -16411,6 +16384,7 @@ ${indent}in ${name}`).join("")}
           ($0) => {
             set_style(button, get(dragHandleStyle));
             set_attribute(button, "data-testid", `drag-button${(isParent() ? "-parent" : "") ?? ""}`);
+            set_attribute(button, "aria-label", `Drag to ${strict_equals(get(dragDirection), "horizontal") ? "reorder horizontally" : strict_equals(get(dragDirection), "vertical") ? "reorder vertically" : "reorder in any direction"}`);
             classes = set_class(span, 1, "", null, classes, $0);
           },
           [
@@ -16576,12 +16550,12 @@ ${indent}in ${name}`).join("")}
   // svelte/components/PageAstNode.svelte
   mark_module_start();
   PageAstNode[FILENAME] = "svelte/components/PageAstNode.svelte";
-  var root_8 = add_locations(template(`<div><!></div>`), PageAstNode[FILENAME], [[129, 4]]);
-  var root_132 = add_locations(template(`<div class="dragged-element-placeholder svelte-fu018p">Preview</div>`), PageAstNode[FILENAME], [[165, 10]]);
+  var root_8 = add_locations(template(`<div tabindex="0" role="button"><!></div>`), PageAstNode[FILENAME], [[130, 4]]);
+  var root_132 = add_locations(template(`<div class="dragged-element-placeholder svelte-fu018p">Preview</div>`), PageAstNode[FILENAME], [[171, 10]]);
   var root_11 = add_locations(template(`<!> <!>`, 1), PageAstNode[FILENAME], []);
   var $$css2 = {
     hash: "svelte-fu018p",
-    code: "\n  .dragged-element-placeholder.svelte-fu018p {\n    outline: 2px dashed red;\n\n    /* Disable pointer events to block out any dragOver event triggers on the placeholder while dragging */\n    pointer-events: none;\n  }\n\n  .embedded-iframe {\n    display: inline;\n  }\n\n  .embedded-iframe > iframe {\n    pointer-events: none;\n  }\n\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiUGFnZUFzdE5vZGUuc3ZlbHRlIiwibWFwcGluZ3MiOiI7QUFzTUEsRUFBRSwwQ0FBNEIsQ0FBQztBQUMvQixJQUFJLHVCQUF1Qjs7QUFFM0I7QUFDQSxJQUFJLG9CQUFvQjtBQUN4Qjs7QUFFQSxFQUFVLGdCQUFpQixDQUFDO0FBQzVCLElBQUksZUFBZTtBQUNuQjs7QUFFQSxFQUFVLHlCQUEwQixDQUFDO0FBQ3JDLElBQUksb0JBQW9CO0FBQ3hCIiwibmFtZXMiOltdLCJpZ25vcmVMaXN0IjpbXSwic291cmNlcyI6WyJQYWdlQXN0Tm9kZS5zdmVsdGUiXX0= */"
+    code: "\n  .dragged-element-placeholder.svelte-fu018p {\n    outline: 2px dashed red;\n\n    /* Disable pointer events to block out any dragOver event triggers on the placeholder while dragging */\n    pointer-events: none;\n  }\n\n  .embedded-iframe {\n    display: inline;\n  }\n\n  .embedded-iframe > iframe {\n    pointer-events: none;\n  }\n\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiUGFnZUFzdE5vZGUuc3ZlbHRlIiwibWFwcGluZ3MiOiI7QUE0TUEsRUFBRSwwQ0FBNEIsQ0FBQztBQUMvQixJQUFJLHVCQUF1Qjs7QUFFM0I7QUFDQSxJQUFJLG9CQUFvQjtBQUN4Qjs7QUFFQSxFQUFVLGdCQUFpQixDQUFDO0FBQzVCLElBQUksZUFBZTtBQUNuQjs7QUFFQSxFQUFVLHlCQUEwQixDQUFDO0FBQ3JDLElBQUksb0JBQW9CO0FBQ3hCIiwibmFtZXMiOltdLCJpZ25vcmVMaXN0IjpbXSwic291cmNlcyI6WyJQYWdlQXN0Tm9kZS5zdmVsdGUiXX0= */"
   };
   function PageAstNode($$anchor, $$props) {
     check_target(new.target);
@@ -16778,7 +16752,10 @@ ${indent}in ${name}`).join("")}
                         bind_this(div, ($$value) => set(htmlWrapper, $$value), () => get(htmlWrapper));
                         effect(() => event("mouseover", div, stopPropagation(handleMouseOver)));
                         effect(() => event("mouseout", div, stopPropagation(handleMouseOut)));
+                        effect(() => event("focus", div, stopPropagation(handleMouseOver)));
+                        effect(() => event("blur", div, stopPropagation(handleMouseOut)));
                         effect(() => event("click", div, preventDefault(stopPropagation(handleClick))));
+                        effect(() => event("keydown", div, preventDefault(stopPropagation((e) => strict_equals(e.key, "Enter") && handleClick(e)))));
                         action(div, ($$node, $$action_arg) => highlightContent?.($$node, $$action_arg), () => ({
                           selected: get(isSelectedNode),
                           highlighted: get(isHighlightedNode)
@@ -16863,7 +16840,7 @@ ${indent}in ${name}`).join("")}
                             append($$anchor7, fragment_6);
                           },
                           void 0,
-                          [142, 4]
+                          [148, 4]
                         );
                         append($$anchor6, fragment_5);
                       };
@@ -16951,7 +16928,7 @@ ${indent}in ${name}`).join("")}
   var root5 = add_locations(template(`<div class="flex-1 px-8 pb-4 flex max-h-full" data-testid="main"><!></div>`), PagePreview[FILENAME], [[60, 0]]);
   var $$css3 = {
     hash: "svelte-r4h6jy",
-    code: '\n  .contents[data-nochildren="true"], .contents[data-nochildren="true"] {\n    /* In the specific case of an element containing only an EEX expression that generates no children (only a text node),\n    there is no child node to which apply the styles, so we have to apply them to the wrapper, so we have to overwrite the\n    display: contents for the styles to apply */\n    display: inline;\n  }\n  [data-slot-target="true"] {\n    outline-color: red;\n    outline-width: 2px;\n    outline-style: dashed;\n  }\n\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiUGFnZVByZXZpZXcuc3ZlbHRlIiwibWFwcGluZ3MiOiI7QUFtR0EsRUFBVSxvRUFBcUUsQ0FBQztBQUNoRjtBQUNBO0FBQ0E7QUFDQSxJQUFJLGVBQWU7QUFDbkI7QUFDQSxFQUFVLHlCQUEwQixDQUFDO0FBQ3JDLElBQUksa0JBQWtCO0FBQ3RCLElBQUksa0JBQWtCO0FBQ3RCLElBQUkscUJBQXFCO0FBQ3pCIiwibmFtZXMiOltdLCJpZ25vcmVMaXN0IjpbXSwic291cmNlcyI6WyJQYWdlUHJldmlldy5zdmVsdGUiXX0= */'
+    code: '\n  .contents[data-nochildren="true"], .contents[data-nochildren="true"] {\n    /* In the specific case of an element containing only an EEX expression that generates no children (only a text node),\n    there is no child node to which apply the styles, so we have to apply them to the wrapper, so we have to overwrite the\n    display: contents for the styles to apply */\n    display: inline;\n  }\n  [data-slot-target="true"] {\n    outline-color: red;\n    outline-width: 2px;\n    outline-style: dashed;\n  }\n\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiUGFnZVByZXZpZXcuc3ZlbHRlIiwibWFwcGluZ3MiOiI7QUFzR0EsRUFBVSxvRUFBcUUsQ0FBQztBQUNoRjtBQUNBO0FBQ0E7QUFDQSxJQUFJLGVBQWU7QUFDbkI7QUFDQSxFQUFVLHlCQUEwQixDQUFDO0FBQ3JDLElBQUksa0JBQWtCO0FBQ3RCLElBQUksa0JBQWtCO0FBQ3RCLElBQUkscUJBQXFCO0FBQ3pCIiwibmFtZXMiOltdLCJpZ25vcmVMaXN0IjpbXSwic291cmNlcyI6WyJQYWdlUHJldmlldy5zdmVsdGUiXX0= */'
   };
   function PagePreview($$anchor, $$props) {
     check_target(new.target);
@@ -16961,7 +16938,6 @@ ${indent}in ${name}`).join("")}
     const $currentComponentCategory = () => (validate_store(currentComponentCategory, "currentComponentCategory"), store_get(currentComponentCategory, "$currentComponentCategory", $$stores));
     const $draggedComponentDefinition = () => (validate_store(draggedComponentDefinition, "draggedComponentDefinition"), store_get(draggedComponentDefinition, "$draggedComponentDefinition", $$stores));
     const $live = () => (validate_store(live, "live"), store_get(live, "$live", $$stores));
-    const $pageInfo = () => (validate_store(pageInfo, "pageInfo"), store_get(pageInfo, "$pageInfo", $$stores));
     const $pageAst = () => (validate_store(pageAst, "pageAst"), store_get(pageAst, "$pageAst", $$stores));
     const $slotTargetElement = () => (validate_store(slotTargetElement, "slotTargetElement"), store_get(slotTargetElement, "$slotTargetElement", $$stores));
     const $selectedAstElementId = () => (validate_store(selectedAstElementId, "selectedAstElementId"), store_get(selectedAstElementId, "$selectedAstElementId", $$stores));
@@ -16973,17 +16949,10 @@ ${indent}in ${name}`).join("")}
       if (!$draggedComponentDefinition()) return;
       let draggedObj = $draggedComponentDefinition();
       if (layoutZone) {
-        $live().pushEvent(
-          "render_component_in_page",
-          {
-            component_id: draggedObj.id,
-            page_id: $pageInfo().id
-          },
-          ({ ast }) => {
-            const newAst = strict_equals(layoutZone, "preamble") ? [...ast, ...$pageAst()] : [...$pageAst(), ...ast];
-            $live().pushEvent("update_page_ast", { id: $pageInfo().id, ast: newAst });
-          }
-        );
+        $live().pushEventTo("#heex-visual-editor", "render_component_in_page", { component_id: draggedObj.id }, ({ ast }) => {
+          const newAst = strict_equals(layoutZone, "preamble") ? [...ast, ...$pageAst()] : [...$pageAst(), ...ast];
+          $live().pushEventTo("#heex-visual-editor", "update_page_ast", { ast: newAst });
+        });
       } else if (strict_equals(target.id, "fake-browser-content", false) && elementCanBeDroppedInTarget(draggedObj)) {
         if (!(target instanceof HTMLElement) || !$slotTargetElement() || $slotTargetElement().attrs.selfClose) {
           resetDragDrop();
@@ -16991,19 +16960,9 @@ ${indent}in ${name}`).join("")}
         }
         addBasicComponentToTarget($slotTargetElement());
       } else {
-        $live().pushEvent(
-          "render_component_in_page",
-          {
-            component_id: draggedObj.id,
-            page_id: $pageInfo().id
-          },
-          ({ ast }) => {
-            $live().pushEvent("update_page_ast", {
-              id: $pageInfo().id,
-              ast: [...$pageAst(), ...ast]
-            });
-          }
-        );
+        $live().pushEventTo("#heex-visual-editor", "render_component_in_page", { component_id: draggedObj.id }, ({ ast }) => {
+          $live().pushEventTo("#heex-visual-editor", "update_page_ast", { ast: [...$pageAst(), ...ast] });
+        });
       }
       resetDragDrop();
     }
@@ -17012,18 +16971,11 @@ ${indent}in ${name}`).join("")}
       let componentDefinition = $draggedComponentDefinition();
       store_set(draggedComponentDefinition, null);
       let targetNode = astElement;
-      $live().pushEvent(
-        "render_component_in_page",
-        {
-          component_id: componentDefinition.id,
-          page_id: $pageInfo().id
-        },
-        ({ ast }) => {
-          targetNode?.content.push(...ast);
-          store_set(slotTargetElement, void 0);
-          $live().pushEvent("update_page_ast", { id: $pageInfo().id, ast: $pageAst() });
-        }
-      );
+      $live().pushEventTo("#heex-visual-editor", "render_component_in_page", { component_id: componentDefinition.id }, ({ ast }) => {
+        targetNode?.content.push(...ast);
+        store_set(slotTargetElement, void 0);
+        $live().pushEventTo("#heex-visual-editor", "update_page_ast", { ast: $pageAst() });
+      });
     }
     function dragOver() {
       set(isDraggingOver, true);
@@ -17038,12 +16990,6 @@ ${indent}in ${name}`).join("")}
     {
       var consequent = ($$anchor2) => {
         BrowserFrame($$anchor2, {
-          get pageInfo() {
-            return $pageInfo();
-          },
-          get pageAst() {
-            return $pageAst();
-          },
           children: wrap_snippet(PagePreview, ($$anchor3, $$slotProps) => {
             var div_1 = root_23();
             var div_2 = child(div_1);
@@ -17063,7 +17009,7 @@ ${indent}in ${name}`).join("")}
         });
       };
       if_block(node, ($$render) => {
-        if ($pageInfo() && $pageAst()) $$render(consequent);
+        if ($pageAst()) $$render(consequent);
       });
     }
     reset(div);
@@ -26858,11 +26804,11 @@ ${indent}in ${name}`).join("")}
   var import_html_entities = __toESM(require_lib());
   mark_module_start();
   PageWrapper[FILENAME] = "svelte/components/PageWrapper.svelte";
-  var root_24 = add_locations(template(`<div class="contents"></div>`), PageWrapper[FILENAME], [[60, 6]]);
-  var root7 = add_locations(template(`<span></span> <div></div>`, 1), PageWrapper[FILENAME], [[55, 0], [56, 0]]);
+  var root_24 = add_locations(template(`<div class="contents"></div>`), PageWrapper[FILENAME], [[72, 6]]);
+  var root7 = add_locations(template(`<span></span> <div></div>`, 1), PageWrapper[FILENAME], [[61, 0], [63, 0]]);
   var $$css4 = {
     hash: "svelte-9t6pvg",
-    code: '\n  [data-selected="true"], [data-selected-parent="true"] {\n    outline-color: #06b6d4;\n    outline-width: 1px;\n    outline-style: solid;\n  }\n  [data-selected="true"].contents > *, [data-selected-parent="true"].contents > * {\n    outline-color: #06b6d4;\n    outline-width: 1px;\n    outline-style: solid;\n  }\n  /* TODO: Apply this styles to [data-selected-parent="true"] once dragging of the parent element is allowed */\n  [data-highlighted="true"] {\n    outline-color: #06b6d4;\n    outline-width: 2px;\n    outline-style: dashed;\n  }\n\n  :before, :after {\n    pointer-events: none;\n  }\n\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiUGFnZVdyYXBwZXIuc3ZlbHRlIiwibWFwcGluZ3MiOiI7QUF5RUEsRUFBVSxxREFBc0QsQ0FBQztBQUNqRSxJQUFJLHNCQUFzQjtBQUMxQixJQUFJLGtCQUFrQjtBQUN0QixJQUFJLG9CQUFvQjtBQUN4QjtBQUNBLEVBQVUsK0VBQWdGLENBQUM7QUFDM0YsSUFBSSxzQkFBc0I7QUFDMUIsSUFBSSxrQkFBa0I7QUFDdEIsSUFBSSxvQkFBb0I7QUFDeEI7QUFDQTtBQUNBLEVBQVUseUJBQTBCLENBQUM7QUFDckMsSUFBSSxzQkFBc0I7QUFDMUIsSUFBSSxrQkFBa0I7QUFDdEIsSUFBSSxxQkFBcUI7QUFDekI7O0FBRUEsRUFBVSxlQUFnQixDQUFDO0FBQzNCLElBQUksb0JBQW9CO0FBQ3hCIiwibmFtZXMiOltdLCJpZ25vcmVMaXN0IjpbXSwic291cmNlcyI6WyJQYWdlV3JhcHBlci5zdmVsdGUiXX0= */'
+    code: '\n  [data-selected="true"], [data-selected-parent="true"] {\n    outline-color: #06b6d4;\n    outline-width: 1px;\n    outline-style: solid;\n  }\n  [data-selected="true"].contents > *, [data-selected-parent="true"].contents > * {\n    outline-color: #06b6d4;\n    outline-width: 1px;\n    outline-style: solid;\n  }\n  /* TODO: Apply this styles to [data-selected-parent="true"] once dragging of the parent element is allowed */\n  [data-highlighted="true"] {\n    outline-color: #06b6d4;\n    outline-width: 2px;\n    outline-style: dashed;\n  }\n\n  :before, :after {\n    pointer-events: none;\n  }\n\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiUGFnZVdyYXBwZXIuc3ZlbHRlIiwibWFwcGluZ3MiOiI7QUF1RkEsRUFBVSxxREFBc0QsQ0FBQztBQUNqRSxJQUFJLHNCQUFzQjtBQUMxQixJQUFJLGtCQUFrQjtBQUN0QixJQUFJLG9CQUFvQjtBQUN4QjtBQUNBLEVBQVUsK0VBQWdGLENBQUM7QUFDM0YsSUFBSSxzQkFBc0I7QUFDMUIsSUFBSSxrQkFBa0I7QUFDdEIsSUFBSSxvQkFBb0I7QUFDeEI7QUFDQTtBQUNBLEVBQVUseUJBQTBCLENBQUM7QUFDckMsSUFBSSxzQkFBc0I7QUFDMUIsSUFBSSxrQkFBa0I7QUFDdEIsSUFBSSxxQkFBcUI7QUFDekI7O0FBRUEsRUFBVSxlQUFnQixDQUFDO0FBQzNCLElBQUksb0JBQW9CO0FBQ3hCIiwibmFtZXMiOltdLCJpZ25vcmVMaXN0IjpbXSwic291cmNlcyI6WyJQYWdlV3JhcHBlci5zdmVsdGUiXX0= */'
   };
   function PageWrapper($$anchor, $$props) {
     check_target(new.target);
@@ -26871,7 +26817,7 @@ ${indent}in ${name}`).join("")}
     const [$$stores, $$cleanup] = setup_stores();
     const $tailwindConfig = () => (validate_store(tailwindConfig, "tailwindConfig"), store_get(tailwindConfig, "$tailwindConfig", $$stores));
     const $tailwindInput = () => (validate_store(tailwindInput, "tailwindInput"), store_get(tailwindInput, "$tailwindInput", $$stores));
-    const $pageInfo = () => (validate_store(pageInfo, "pageInfo"), store_get(pageInfo, "$pageInfo", $$stores));
+    const $layoutAst = () => (validate_store(layoutAst, "layoutAst"), store_get(layoutAst, "$layoutAst", $$stores));
     const $pageAst = () => (validate_store(pageAst, "pageAst"), store_get(pageAst, "$pageAst", $$stores));
     let wrapper = mutable_source();
     let styleWrapper = mutable_source();
@@ -26892,12 +26838,17 @@ ${indent}in ${name}`).join("")}
       window.reloadStylesheet = reloadStylesheet;
       reloadStylesheet();
     });
-    pageInfo.subscribe(async () => {
+    pageAst.subscribe(async () => {
       await tick();
       window.reloadStylesheet && window.reloadStylesheet();
     });
     function preventLinkNavigation(event2) {
       if (event2.target instanceof HTMLAnchorElement) {
+        event2.preventDefault();
+      }
+    }
+    function handleKeydown(event2) {
+      if (strict_equals(event2.key, "Enter") && event2.target instanceof HTMLAnchorElement) {
         event2.preventDefault();
       }
     }
@@ -26916,7 +26867,7 @@ ${indent}in ${name}`).join("")}
     var span = first_child(fragment);
     bind_this(span, ($$value) => set(styleWrapper, $$value), () => get(styleWrapper));
     var div = sibling(span, 2);
-    each(div, 5, () => $pageInfo().layout.ast, index2, ($$anchor2, layoutAstNode) => {
+    each(div, 5, $layoutAst, index2, ($$anchor2, layoutAstNode) => {
       LayoutAstNode($$anchor2, {
         get node() {
           return get(layoutAstNode);
@@ -26945,6 +26896,7 @@ ${indent}in ${name}`).join("")}
     bind_this(div, ($$value) => set(wrapper, $$value), () => get(wrapper));
     event("click", div, preventLinkNavigation);
     event("drop", div, handleDragDrop);
+    event("keydown", div, handleKeydown);
     append($$anchor, fragment);
     var $$pop = pop({ ...legacy_api() });
     $$cleanup();
@@ -27135,51 +27087,51 @@ ${indent}in ${name}`).join("")}
   });
   mark_module_start();
   SidebarSection[FILENAME] = "svelte/components/SidebarSection.svelte";
-  var root_15 = add_locations(template(`<button type="button" class="ml-4" title="Delete attribute"><span class="hero-trash text-red hover:text-red"></span></button>`), SidebarSection[FILENAME], [[85, 10, [[86, 13]]]]);
-  var root_32 = add_locations(template(`<input type="text" class="w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm">`), SidebarSection[FILENAME], [[109, 6]]);
-  var root_26 = add_locations(template(`<!> <div class="pt-3"><!></div>`, 1), SidebarSection[FILENAME], [[118, 4]]);
-  var root_82 = add_locations(template(`<textarea class="w-full py-1 px-2 bg-slate-100 border-slate-100 rounded-md leading-6 text-sm"></textarea>`), SidebarSection[FILENAME], [[124, 10]]);
-  var root_9 = add_locations(template(`<input type="text" class="w-full py-1 px-2 bg-slate-100 border-slate-100 rounded-md leading-6 text-sm">`), SidebarSection[FILENAME], [[133, 10]]);
-  var root_10 = add_locations(template(`<div class="pt-3"><!></div>`), SidebarSection[FILENAME], [[143, 10]]);
+  var root_15 = add_locations(template(`<span class="ml-4 inline-block cursor-pointer" title="Delete attribute" role="button" tabindex="0"><span class="hero-trash text-red hover:text-red"></span></span>`), SidebarSection[FILENAME], [[85, 10, [[92, 11]]]]);
+  var root_32 = add_locations(template(`<input type="text" class="w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm">`), SidebarSection[FILENAME], [[114, 6]]);
+  var root_26 = add_locations(template(`<!> <div class="pt-3"><!></div>`, 1), SidebarSection[FILENAME], [[123, 4]]);
+  var root_82 = add_locations(template(`<textarea class="w-full py-1 px-2 bg-slate-100 border-slate-100 rounded-md leading-6 text-sm"></textarea>`), SidebarSection[FILENAME], [[129, 10]]);
+  var root_9 = add_locations(template(`<input type="text" class="w-full py-1 px-2 bg-slate-100 border-slate-100 rounded-md leading-6 text-sm">`), SidebarSection[FILENAME], [[138, 10]]);
+  var root_10 = add_locations(template(`<div class="pt-3"><!></div>`), SidebarSection[FILENAME], [[148, 10]]);
   var root_7 = add_locations(template(`<!> <!>`, 1), SidebarSection[FILENAME], []);
   var root_142 = add_locations(template(`<div class="mt-5"><div class="flex items-center justify-between"><span><code> </code></span> <button class="flex items-center justify-center gap-x-0.5 px-2 py-1 bg-cyan-300 font-bold text-xs uppercase tracking-wide rounded transition-colors hover:bg-cyan-900 active:bg-cyan-700 hover:text-white">Edit <span class="sr-only"> </span> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-3 h-3"><path d="M21.731 2.269a2.625 2.625 0 0 0-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 0 0 0-3.712ZM19.513 8.199l-3.712-3.712-8.4 8.4a5.25 5.25 0 0 0-1.32 2.214l-.8 2.685a.75.75 0 0 0 .933.933l2.685-.8a5.25 5.25 0 0 0 2.214-1.32l8.4-8.4Z"></path><path d="M5.25 5.25a3 3 0 0 0-3 3v10.5a3 3 0 0 0 3 3h10.5a3 3 0 0 0 3-3V13.5a.75.75 0 0 0-1.5 0v5.25a1.5 1.5 0 0 1-1.5 1.5H5.25a1.5 1.5 0 0 1-1.5-1.5V8.25a1.5 1.5 0 0 1 1.5-1.5h5.25a.75.75 0 0 0 0-1.5H5.25Z"></path></svg></button></div> <div class="mt-2 grid grid-cols-2 gap-x-1"><button class="flex items-center justify-center gap-x-0.5 px-1.5 py-1 bg-cyan-800 font-bold text-xs uppercase tracking-wide rounded hover:bg-cyan-950 active:bg-cyan-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white"><span>Move <span class="sr-only"> </span> up</span> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-3 h-3"><path fill-rule="evenodd" d="M11.47 2.47a.75.75 0 0 1 1.06 0l7.5 7.5a.75.75 0 1 1-1.06 1.06l-6.22-6.22V21a.75.75 0 0 1-1.5 0V4.81l-6.22 6.22a.75.75 0 1 1-1.06-1.06l7.5-7.5Z" clip-rule="evenodd"></path></svg></button> <button class="flex items-center justify-center gap-x-0.5 px-1.5 py-1 bg-cyan-800 font-bold text-xs uppercase tracking-wide rounded hover:bg-cyan-950 active:bg-cyan-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white"><span>Move <span class="sr-only"> </span> down</span> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-3 h-3"><path fill-rule="evenodd" d="M12 2.25a.75.75 0 0 1 .75.75v16.19l6.22-6.22a.75.75 0 1 1 1.06 1.06l-7.5 7.5a.75.75 0 0 1-1.06 0l-7.5-7.5a.75.75 0 1 1 1.06-1.06l6.22 6.22V3a.75.75 0 0 1 .75-.75Z" clip-rule="evenodd"></path></svg></button></div></div>`), SidebarSection[FILENAME], [
     [
-      149,
+      154,
       12,
       [
         [
-          154,
+          159,
           14,
           [
-            [155, 16, [[155, 22]]],
+            [160, 16, [[160, 22]]],
             [
-              156,
+              161,
               16,
               [
-                [160, 23],
-                [161, 18, [[162, 20], [165, 20]]]
+                [165, 23],
+                [166, 18, [[167, 20], [170, 20]]]
               ]
             ]
           ]
         ],
         [
-          171,
+          176,
           14,
           [
             [
-              172,
+              177,
               16,
               [
-                [177, 18, [[177, 29]]],
-                [178, 18, [[179, 20]]]
+                [182, 18, [[182, 29]]],
+                [183, 18, [[184, 20]]]
               ]
             ],
             [
-              186,
+              191,
               16,
               [
-                [191, 18, [[191, 29]]],
-                [192, 18, [[193, 20]]]
+                [196, 18, [[196, 29]]],
+                [197, 18, [[198, 20]]]
               ]
             ]
           ]
@@ -27187,8 +27139,8 @@ ${indent}in ${name}`).join("")}
       ]
     ]
   ]);
-  var root_16 = add_locations(template(`<textarea class="w-full py-1 px-2 bg-slate-100 border-slate-100 rounded-md leading-6 text-sm"></textarea>`), SidebarSection[FILENAME], [[203, 12]]);
-  var root_17 = add_locations(template(`<input type="text" class="w-full py-1 px-2 mt-5 bg-slate-100 border-slate-100 rounded-md leading-6 text-sm">`), SidebarSection[FILENAME], [[211, 12]]);
+  var root_16 = add_locations(template(`<textarea class="w-full py-1 px-2 bg-slate-100 border-slate-100 rounded-md leading-6 text-sm"></textarea>`), SidebarSection[FILENAME], [[208, 12]]);
+  var root_17 = add_locations(template(`<input type="text" class="w-full py-1 px-2 mt-5 bg-slate-100 border-slate-100 rounded-md leading-6 text-sm">`), SidebarSection[FILENAME], [[216, 12]]);
   var root10 = add_locations(template(`<section class="p-4 border-b border-b-gray-100 border-solid"><header class="flex items-center text-sm mb-2 font-medium"><button type="button" class="w-full flex items-center justify-between gap-x-1 p-1 font-semibold group"><span><span class="hover:text-blue-700 active:text-blue-900"><!></span> <!></span> <span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 stroke-slate-500 fill-slate-500 group-hover:stroke-current group-hover:fill-current"><path fill-rule="evenodd" d="M11.47 7.72a.75.75 0 0 1 1.06 0l7.5 7.5a.75.75 0 1 1-1.06 1.06L12 9.31l-6.97 6.97a.75.75 0 0 1-1.06-1.06l7.5-7.5Z" clip-rule="evenodd"></path></svg></span></button></header> <!></section>`), SidebarSection[FILENAME], [
     [
       74,
@@ -27203,7 +27155,11 @@ ${indent}in ${name}`).join("")}
               4,
               [
                 [82, 6, [[83, 8]]],
-                [90, 6, [[91, 8, [[97, 10]]]]]
+                [
+                  95,
+                  6,
+                  [[96, 8, [[102, 10]]]]
+                ]
               ]
             ]
           ]
@@ -27305,16 +27261,17 @@ ${indent}in ${name}`).join("")}
     var node_1 = sibling(span_1, 2);
     {
       var consequent = ($$anchor2) => {
-        var button_1 = root_15();
-        event("click", button_1, stopPropagation(deleteAttribute));
-        append($$anchor2, button_1);
+        var span_2 = root_15();
+        event("click", span_2, stopPropagation(deleteAttribute));
+        event("keydown", span_2, (e) => strict_equals(e.key, "Enter") && deleteAttribute());
+        append($$anchor2, span_2);
       };
       if_block(node_1, ($$render) => {
         if (!disableDelete()) $$render(consequent);
       });
     }
     reset(span);
-    var span_2 = sibling(span, 2);
+    var span_3 = sibling(span, 2);
     reset(button);
     reset(header);
     var node_2 = sibling(header, 2);
@@ -27407,50 +27364,50 @@ ${indent}in ${name}`).join("")}
                           var consequent_5 = ($$anchor8) => {
                             var div_2 = root_142();
                             var div_3 = child(div_2);
-                            var span_3 = child(div_3);
-                            var code = child(span_3);
+                            var span_4 = child(div_3);
+                            var code = child(span_4);
                             var text_1 = child(code);
                             reset(code);
-                            reset(span_3);
-                            var button_2 = sibling(span_3, 2);
-                            var span_4 = sibling(child(button_2));
-                            var text_2 = child(span_4);
                             reset(span_4);
-                            next(2);
-                            reset(button_2);
-                            reset(div_3);
-                            var div_4 = sibling(div_3, 2);
-                            var button_3 = child(div_4);
-                            button_3.disabled = strict_equals(idx, 0);
-                            var span_5 = child(button_3);
-                            var span_6 = sibling(child(span_5));
-                            var text_3 = child(span_6);
-                            reset(span_6);
-                            next();
+                            var button_1 = sibling(span_4, 2);
+                            var span_5 = sibling(child(button_1));
+                            var text_2 = child(span_5);
                             reset(span_5);
                             next(2);
-                            reset(button_3);
-                            var button_4 = sibling(button_3, 2);
-                            var span_7 = child(button_4);
-                            var span_8 = sibling(child(span_7));
-                            var text_4 = child(span_8);
-                            reset(span_8);
-                            next();
+                            reset(button_1);
+                            reset(div_3);
+                            var div_4 = sibling(div_3, 2);
+                            var button_2 = child(div_4);
+                            button_2.disabled = strict_equals(idx, 0);
+                            var span_6 = child(button_2);
+                            var span_7 = sibling(child(span_6));
+                            var text_3 = child(span_7);
                             reset(span_7);
+                            next();
+                            reset(span_6);
                             next(2);
-                            reset(button_4);
+                            reset(button_2);
+                            var button_3 = sibling(button_2, 2);
+                            var span_8 = child(button_3);
+                            var span_9 = sibling(child(span_8));
+                            var text_4 = child(span_9);
+                            reset(span_9);
+                            next();
+                            reset(span_8);
+                            next(2);
+                            reset(button_3);
                             reset(div_4);
                             reset(div_2);
                             template_effect(() => {
                               set_text(text_1, `<${get(astNode).tag ?? ""}>`);
                               set_text(text_2, `${get(astNode).tag ?? ""} element`);
                               set_text(text_3, `${get(astNode).tag ?? ""} element`);
-                              button_4.disabled = strict_equals(idx, astNodes().length - 1);
+                              button_3.disabled = strict_equals(idx, astNodes().length - 1);
                               set_text(text_4, `${get(astNode).tag ?? ""} element`);
                             });
-                            event("click", button_2, () => select(get(astNode)));
-                            event("click", button_3, () => moveAstElement(-1, get(astNode)));
-                            event("click", button_4, () => moveAstElement(1, get(astNode)));
+                            event("click", button_1, () => select(get(astNode)));
+                            event("click", button_2, () => moveAstElement(-1, get(astNode)));
+                            event("click", button_3, () => moveAstElement(1, get(astNode)));
                             event("mouseenter", div_2, () => highlightAstElement(get(astNode)));
                             event("mouseleave", div_2, () => unhighlightAstElement());
                             append($$anchor8, div_2);
@@ -27533,7 +27490,7 @@ ${indent}in ${name}`).join("")}
     reset(section);
     template_effect(() => {
       set_attribute(button, "aria-expanded", expanded());
-      set_class(span_2, 1, clsx2(expanded() ? "" : " [&_path]:origin-center [&_path]:rotate-180"));
+      set_class(span_3, 1, clsx2(expanded() ? "" : " [&_path]:origin-center [&_path]:rotate-180"));
     });
     event("click", button, () => expanded(!expanded()));
     append($$anchor, section);
@@ -27630,13 +27587,13 @@ ${indent}in ${name}`).join("")}
     push($$props, false, UiBuilder);
     const [$$stores, $$cleanup] = setup_stores();
     const $pageAstStore = () => (validate_store(pageAst, "pageAstStore"), store_get(pageAst, "$pageAstStore", $$stores));
-    const $pageInfoStore = () => (validate_store(pageInfo, "pageInfoStore"), store_get(pageInfo, "$pageInfoStore", $$stores));
+    const $layoutAstStore = () => (validate_store(layoutAst, "layoutAstStore"), store_get(layoutAst, "$layoutAstStore", $$stores));
     const $tailwindConfigStore = () => (validate_store(tailwindConfig, "tailwindConfigStore"), store_get(tailwindConfig, "$tailwindConfigStore", $$stores));
     const $tailwindInputStore = () => (validate_store(tailwindInput, "tailwindInputStore"), store_get(tailwindInput, "$tailwindInputStore", $$stores));
     const $liveStore = () => (validate_store(live, "liveStore"), store_get(live, "$liveStore", $$stores));
     let components = prop($$props, "components", 12);
-    let pageInfo2 = prop($$props, "pageInfo", 12);
     let pageAst2 = prop($$props, "pageAst", 12);
+    let layoutAst2 = prop($$props, "layoutAst", 12);
     let tailwindConfig2 = prop($$props, "tailwindConfig", 12);
     let tailwindInput2 = prop($$props, "tailwindInput", 12);
     let live2 = prop($$props, "live", 12);
@@ -27646,8 +27603,8 @@ ${indent}in ${name}`).join("")}
     legacy_pre_effect(() => deep_read_state(pageAst2()), () => {
       store_set(pageAst, pageAst2());
     });
-    legacy_pre_effect(() => deep_read_state(pageInfo2()), () => {
-      store_set(pageInfo, pageInfo2());
+    legacy_pre_effect(() => deep_read_state(layoutAst2()), () => {
+      store_set(layoutAst, layoutAst2());
     });
     legacy_pre_effect(() => deep_read_state(tailwindConfig2()), () => {
       store_set(tailwindConfig, tailwindConfig2());
@@ -27683,18 +27640,18 @@ ${indent}in ${name}`).join("")}
         components($$value);
         flushSync();
       },
-      get pageInfo() {
-        return pageInfo2();
-      },
-      set pageInfo($$value) {
-        pageInfo2($$value);
-        flushSync();
-      },
       get pageAst() {
         return pageAst2();
       },
       set pageAst($$value) {
         pageAst2($$value);
+        flushSync();
+      },
+      get layoutAst() {
+        return layoutAst2();
+      },
+      set layoutAst($$value) {
+        layoutAst2($$value);
         flushSync();
       },
       get tailwindConfig() {
@@ -27728,8 +27685,8 @@ ${indent}in ${name}`).join("")}
     UiBuilder,
     {
       components: {},
-      pageInfo: {},
       pageAst: {},
+      layoutAst: {},
       tailwindConfig: {},
       tailwindInput: {},
       live: {}

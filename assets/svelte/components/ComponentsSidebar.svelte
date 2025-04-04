@@ -115,7 +115,6 @@
       <p class="font-medium">Drag and drop an element into the page</p>
       {#if currentDefinitions}
         {#each currentDefinitions as example}
-          <!-- svelte-ignore a11y-no-static-element-interactions -->
           <div
             draggable="true"
             on:dragstart={(e) => dragStart(example, e)}

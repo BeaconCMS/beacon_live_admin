@@ -2,9 +2,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.New do
   @moduledoc false
 
   use Beacon.LiveAdmin.PageBuilder
-  alias Beacon.LiveAdmin.PageEditorLive.ElementSelection
   alias Beacon.LiveAdmin.Client.Content
-  alias Beacon.LiveAdmin.WebAPI
 
   @impl true
   def menu_link("/pages", :new), do: {:submenu, "Pages"}
@@ -20,9 +18,18 @@ defmodule Beacon.LiveAdmin.PageEditorLive.New do
       |> assign_new(:selected_element_path, fn -> nil end)
       |> assign_new(:layouts, fn -> Content.list_layouts(site) end)
       |> assign_new(:components, fn ->
-        components = Content.list_components(site, per_page: :infinity)
-        %{data: components} = Beacon.Web.API.ComponentJSON.index(%{components: components})
-        components
+        site
+        |> Content.list_components(per_page: :infinity)
+        |> Enum.map(fn component ->
+          %{
+            id: component.id,
+            name: component.name,
+            category: component.category,
+            thumbnail: component.thumbnail,
+            template: component.template,
+            example: component.example
+          }
+        end)
       end)
 
     socket =
@@ -53,48 +60,6 @@ defmodule Beacon.LiveAdmin.PageEditorLive.New do
       layout_id: nil,
       layout: nil
     }
-  end
-
-  @impl true
-  def handle_event("set_template", %{"value" => value}, socket) do
-    send_update(Beacon.LiveAdmin.PageEditorLive.FormComponent,
-      id: "page-editor-form",
-      template: value
-    )
-
-    {:noreply, socket}
-  end
-
-  @impl true
-  def handle_event(
-        "render_component_in_page",
-        %{"component_id" => component_id},
-        socket
-      ) do
-    component = Content.get_component(socket.assigns.beacon_page.site, component_id)
-
-    %{data: %{ast: ast}} =
-      WebAPI.Component.show_ast(socket.assigns.beacon_page.site, component, socket.assigns.page)
-
-    {:reply, %{"ast" => ast}, socket}
-  end
-
-  def handle_event("update_page_ast", %{"ast" => ast}, socket) do
-    send_update(Beacon.LiveAdmin.PageEditorLive.FormComponent,
-      id: "page-editor-form",
-      ast: ast
-    )
-
-    {:noreply, socket}
-  end
-
-  def handle_event("select_element", %{"path" => path}, socket) do
-    ElementSelection.select_element(path, socket)
-  end
-
-  @impl true
-  def handle_info({:element_changed, {path, payload}}, socket) do
-    ElementSelection.handle_element_changed({path, payload}, socket)
   end
 
   @impl true

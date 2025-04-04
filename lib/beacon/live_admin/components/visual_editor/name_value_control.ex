@@ -76,11 +76,11 @@ defmodule Beacon.LiveAdmin.VisualEditor.NameValueControl do
         cond do
           name_value.name != attribute.name ->
             changes = %{updated: %{"attrs" => %{name_value.name => name_value.value}}, deleted: [attribute.name]}
-            send(self(), {:element_changed, {path, changes}})
+            socket.assigns.on_element_change.(path, changes)
 
           name_value.value != attribute.value ->
             changes = %{updated: %{"attrs" => %{name_value.name => name_value.value}}}
-            send(self(), {:element_changed, {path, changes}})
+            socket.assigns.on_element_change.(path, changes)
 
           # nothing has changed so we skip it to save resources
           :else ->

@@ -1,7 +1,7 @@
-import { pageInfo, pageAst, isAstElement, findAstElement } from "$lib/stores/page"
+import { pageAst, isAstElement, findAstElement } from "$lib/stores/page"
 import { live as liveStore } from "$lib/stores/live"
 import { get } from "svelte/store"
-import type { AstNode, Page, PageInfo } from "$lib/types"
+import type { AstNode } from "$lib/types"
 import { getParentNodeId } from "./ast-helpers"
 
 export function updateNodeContent(node, text) {
@@ -12,10 +12,9 @@ export function updateNodeContent(node, text) {
 }
 
 export function updateAst() {
-  let info: PageInfo = get(pageInfo)
   let ast: AstNode[] = get(pageAst)
   let live = get(liveStore)
-  live.pushEvent("update_page_ast", { id: info.id, ast })
+  live.pushEventTo("#heex-visual-editor", "update_page_ast", { ast })
 }
 
 export function deleteAstNode(astElementId: string) {
