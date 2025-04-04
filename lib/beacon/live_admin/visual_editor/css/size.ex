@@ -37,6 +37,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Size do
   end
 
   require Logger
+
   def generate_size_classes(params) do
     [
       maybe_add_size_class("w", params["width"], params["width_unit"]),
@@ -56,10 +57,14 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Size do
     classes = VisualEditor.element_classes(element)
 
     case Enum.find(classes, &String.starts_with?(&1, "#{prefix}-")) do
-      nil -> nil
+      nil ->
+        nil
+
       class ->
         case Regex.run(~r/\[(.+?)(px|%|em|rem|svw|svh|lvw|lvh|ch)?\]$/, class) do
-          [_, value, _] -> value
+          [_, value, _] ->
+            value
+
           _ ->
             case Regex.run(~r/^#{prefix}-(.+)$/, class) do
               [_, value] -> value
@@ -73,10 +78,14 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Size do
     classes = VisualEditor.element_classes(element)
 
     case Enum.find(classes, &String.starts_with?(&1, "#{prefix}-")) do
-      nil -> nil
+      nil ->
+        nil
+
       class ->
         case Regex.run(~r/\[(.+?)(px|%|em|rem|svw|svh|lvw|lvh|ch)?\]$/, class) do
-          [_, _, unit] -> unit
+          [_, _, unit] ->
+            unit
+
           _ ->
             case Regex.run(~r/^#{prefix}-(.+)$/, class) do
               [_, value] when value in @sizes -> value
@@ -88,27 +97,45 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Size do
 
   defp maybe_add_size_class(prefix, _value, unit) when unit in @sizes or unit in @aspect_ratio_values, do: "#{prefix}-#{unit}"
   defp maybe_add_size_class(prefix, nil, unit) when unit in @units, do: maybe_add_size_class(prefix, "1", unit)
-  defp maybe_add_size_class(_prefix, nil, unit), do: nil
+  defp maybe_add_size_class(_prefix, nil, _unit), do: nil
   defp maybe_add_size_class(_prefix, "", _unit), do: nil
+
   defp maybe_add_size_class(prefix, value, "") do
     case String.split(value, "/") do
-      [_, ""] -> nil # Incomplete fraction like "1/"
-      ["" | _] -> nil # Incomplete fraction like "/2"
-      [_numerator, _denominator] -> "#{prefix}-#{value}" # Complete fraction like "1/2"
-      _ -> "#{prefix}-#{value}" # Not a fraction
+      # Incomplete fraction like "1/"
+      [_, ""] -> nil
+      # Incomplete fraction like "/2"
+      ["" | _] -> nil
+      # Complete fraction like "1/2"
+      [_numerator, _denominator] -> "#{prefix}-#{value}"
+      # Not a fraction
+      _ -> "#{prefix}-#{value}"
     end
   end
+
   defp maybe_add_size_class("aspect", value, "") do
     case String.split(value, "/") do
-      [_, ""] -> nil # Incomplete fraction like "1/"
-      ["" | _] -> nil # Incomplete fraction like "/2"
+      # Incomplete fraction like "1/"
+      [_, ""] ->
+        nil
+
+      # Incomplete fraction like "/2"
+      ["" | _] ->
+        nil
+
       [numerator, denominator] ->
         case {Integer.parse(numerator), Integer.parse(denominator)} do
-          {{n, ""}, {d, ""}} -> "aspect-[#{n}/#{d}]" # Both parts are valid integers
-          _ -> nil # Not valid integers
+          # Both parts are valid integers
+          {{n, ""}, {d, ""}} -> "aspect-[#{n}/#{d}]"
+          # Not valid integers
+          _ -> nil
         end
-      _ -> nil # Only fractions are allowed
+
+      # Only fractions are allowed
+      _ ->
+        nil
     end
   end
+
   defp maybe_add_size_class(prefix, value, unit), do: "#{prefix}-[#{value}#{unit}]"
 end

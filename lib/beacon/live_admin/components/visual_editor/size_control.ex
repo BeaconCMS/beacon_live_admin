@@ -37,81 +37,32 @@ defmodule Beacon.LiveAdmin.VisualEditor.SizeControl do
           <div class="grid grid-cols-2 gap-4">
             <div>
               <label class="text-xs block mb-1">Width</label>
-              <.input_with_units
-                name="width"
-                value={@form.params["width"]}
-                value_unit={@form.params["width_unit"]}
-                sizes={@sizes}
-                units={@units}
-                size="sm"
-              />
+              <.input_with_units name="width" value={@form.params["width"]} value_unit={@form.params["width_unit"]} sizes={@sizes} units={@units} size="sm" />
             </div>
             <div>
               <label class="text-xs block mb-1">Height</label>
-              <.input_with_units
-                name="height"
-                value={@form.params["height"]}
-                value_unit={@form.params["height_unit"]}
-                sizes={@sizes}
-                units={@units}
-                size="sm"
-              />
+              <.input_with_units name="height" value={@form.params["height"]} value_unit={@form.params["height_unit"]} sizes={@sizes} units={@units} size="sm" />
             </div>
             <div>
               <label class="text-xs block mb-1">Min Width</label>
-              <.input_with_units
-                name="min_width"
-                value={@form.params["min_width"]}
-                value_unit={@form.params["min_width_unit"]}
-                sizes={@sizes}
-                units={@units}
-                size="sm"
-              />
+              <.input_with_units name="min_width" value={@form.params["min_width"]} value_unit={@form.params["min_width_unit"]} sizes={@sizes} units={@units} size="sm" />
             </div>
             <div>
               <label class="text-xs block mb-1">Min Height</label>
-              <.input_with_units
-                name="min_height"
-                value={@form.params["min_height"]}
-                value_unit={@form.params["min_height_unit"]}
-                sizes={@sizes}
-                units={@units}
-                size="sm"
-              />
+              <.input_with_units name="min_height" value={@form.params["min_height"]} value_unit={@form.params["min_height_unit"]} sizes={@sizes} units={@units} size="sm" />
             </div>
             <div>
               <label class="text-xs block mb-1">Max Width</label>
-              <.input_with_units
-                name="max_width"
-                value={@form.params["max_width"]}
-                value_unit={@form.params["max_width_unit"]}
-                sizes={@sizes}
-                units={@units}
-                size="sm"
-              />
+              <.input_with_units name="max_width" value={@form.params["max_width"]} value_unit={@form.params["max_width_unit"]} sizes={@sizes} units={@units} size="sm" />
             </div>
             <div>
               <label class="text-xs block mb-1">Max Height</label>
-              <.input_with_units
-                name="max_height"
-                value={@form.params["max_height"]}
-                value_unit={@form.params["max_height_unit"]}
-                sizes={@sizes}
-                units={@units}
-                size="sm"
-              />
+              <.input_with_units name="max_height" value={@form.params["max_height"]} value_unit={@form.params["max_height_unit"]} sizes={@sizes} units={@units} size="sm" />
             </div>
           </div>
           <div>
             <label class="text-xs block mb-1">Aspect Ratio</label>
-            <.input_with_units
-              name="aspect_ratio"
-              value={@form.params["aspect_ratio"]}
-              value_unit={@form.params["aspect_ratio_unit"]}
-              sizes={@aspect_ratio_values}
-              units={[]}
-              size="sm"
-            />
+            <.input_with_units name="aspect_ratio" value={@form.params["aspect_ratio"]} value_unit={@form.params["aspect_ratio_unit"]} sizes={@aspect_ratio_values} units={[]} size="sm" />
           </div>
         </form>
       </.live_component>
