@@ -1,6 +1,5 @@
 defmodule Beacon.LiveAdmin.VisualEditor.HEEx.JSONEncoderTest do
   use Beacon.LiveAdmin.ConnCase, async: false
-
   import Beacon.LiveAdminTest.Cluster, only: [rpc: 4]
   alias Beacon.LiveAdmin.VisualEditor.HEEx.JSONEncoder
   alias Beacon.LiveAdmin.VisualEditor.Components.HEExEditor
