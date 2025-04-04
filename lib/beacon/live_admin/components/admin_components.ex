@@ -48,6 +48,15 @@ defmodule Beacon.LiveAdmin.AdminComponents do
   attr :components, :list, doc: "List of available components that can be used in the visual editor"
   attr :template, :string, required: true, doc: "The HEEx/HTML template to edit"
 
+  attr :tailwind_input, :string,
+    default: """
+    @tailwind base;
+    @tailwind components;
+    @tailwind utilities;
+    """
+
+  attr :tailwind_config_url, :string, default: nil
+
   attr :on_template_change, {:fun, 1},
     default: &Function.identity/1,
     doc: "A function that is called when the template changes, receives the updated template as argument"
@@ -66,6 +75,8 @@ defmodule Beacon.LiveAdmin.AdminComponents do
       id="heex-visual-editor"
       components={@components}
       template={@template}
+      tailwind_input={@tailwind_input}
+      tailwind_config_url={@tailwind_config_url}
       on_template_change={@on_template_change}
       render_node_fun={@render_node_fun}
       encode_layout_fun={@encode_layout_fun}

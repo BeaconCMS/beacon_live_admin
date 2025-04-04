@@ -32,7 +32,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
      |> assign(:page_status, page_status)
      |> assign_extra_fields(changeset)
      |> assign_new(:show_modal, fn -> nil end)
-     |> assign_new(:tailwind_config, fn -> RuntimeCSS.css_config_url(site) end)
+     |> assign_new(:tailwind_config_url, fn -> RuntimeCSS.css_config_url(site) end)
      |> assign_new(:tailwind_input, fn ->
        tailwind = [
          "@tailwind base;",
@@ -341,6 +341,8 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
         :if={@editor == "visual"}
         components={@components}
         template={@template}
+        tailwind_input={@tailwind_input}
+        tailwind_config_url={@tailwind_config_url}
         on_template_change={&send_update(@myself, event: :template_changed, template: &1)}
         render_node_fun={fn node -> Beacon.LiveAdmin.Client.HEEx.render(@site, node, @page_assigns) end}
         encode_layout_fun={fn -> encode_layout(@page, @page_assigns) end}

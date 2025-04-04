@@ -40,20 +40,10 @@ defmodule Beacon.LiveAdmin.VisualEditor.Components.HEExEditor do
         fun -> fun.()
       end
 
-    tailwind_input =
-      IO.iodata_to_binary([
-        "@tailwind base;",
-        "\n",
-        "@tailwind components;",
-        "\n",
-        "@tailwind utilities;",
-        "\n"
-      ])
-
     {:ok,
      socket
      |> assign(assigns)
-     |> assign(ast: ast, layout_ast: layout_ast, tailwind_input: tailwind_input, selected_element_path: nil)}
+     |> assign(ast: ast, layout_ast: layout_ast, selected_element_path: nil)}
   end
 
   def render(assigns) do
@@ -67,8 +57,8 @@ defmodule Beacon.LiveAdmin.VisualEditor.Components.HEExEditor do
             components: @components,
             pageAst: @ast,
             layoutAst: @layout_ast,
-            tailwindConfig: "http://localhost:4001/dev/__beacon_assets__/css_config",
             tailwindInput: @tailwind_input,
+            tailwindConfig: @tailwind_config_url,
             selectedAstElementId: @selected_element_path
           }
         }
