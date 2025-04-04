@@ -2459,6 +2459,6 @@ var getDefaultConfig = () => {
 var twMerge = /* @__PURE__ */ createTailwindMerge(getDefaultConfig);
 
 // js/merge.js
-module.exports = function merge(arg) {
-  return twMerge("h-48", "h-screen");
+module.exports = function merge(a, b) {
+  return twMerge(a, b);
 };
