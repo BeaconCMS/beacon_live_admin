@@ -353,7 +353,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
         </div>
       </.modal>
 
-      <.heex_visual_editor
+      <.visual_editor
         :if={@editor == "visual"}
         components={@components}
         template={@template}
@@ -424,7 +424,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
 
   def encode_layout(_), do: []
 
-  def encode_component(site, component, page_assigns) do
+  def encode_component(site, component, page_assigns) when is_atom(site) and is_map(component) do
     template = component[:example] || ""
 
     Beacon.LiveAdmin.VisualEditor.HEEx.JSONEncoder.maybe_encode(template, fn node ->

@@ -29,17 +29,30 @@ defmodule Beacon.LiveAdmin.AdminComponents do
 
   @menu_link_regular_class "inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300"
 
-  @doc false
-  # TODO: provide a default render_node_fun
-  # TODO: doc https://hexdocs.pm/phoenix_live_view/Phoenix.LiveComponent.html#module-unifying-liveview-and-livecomponent-communication
-  attr :components, :list
-  attr :template, :string, required: true
-  attr :on_template_change, {:fun, 1}, default: &Function.identity/1
-  attr :render_node_fun, {:fun, 1}, default: &Beacon.LiveAdmin.AdminComponents.render_heex/1
-  attr :encode_layout_fun, {:fun, 0}, default: nil
-  attr :encode_component_fun, {:fun, 1}, default: nil
+  @doc """
+  Visual Editor for HEEx and HTML templates.
 
-  def heex_visual_editor(assigns) do
+  This component provides a drag-and-drop interface for building and editing
+  HEEx templates. It renders a live visual editor with a properties sidebar
+  that allows editing component attributes.
+
+  ## Examples
+
+      <.visual_editor
+        template={@page_template}
+        components={@available_components}
+        on_template_change={fn updated_template -> assign(socket, :page_template, updated_template) end}
+      />
+
+  """
+  attr :components, :list, doc: "List of available components that can be used in the visual editor"
+  attr :template, :string, required: true, doc: "The HEEx/HTML template to edit"
+  attr :on_template_change, {:fun, 1}, default: &Function.identity/1, doc: "A function that is called when the template changes, receives the updated template as argument"
+  attr :render_node_fun, {:fun, 1}, required: true, doc: "A function to render a HEEx node"
+  attr :encode_layout_fun, {:fun, 0}, default: nil, doc: "A function that returns the layout AST to be used in the visual editor"
+  attr :encode_component_fun, {:fun, 1}, default: nil, doc: "A function that takes a component and returns its AST representation"
+
+  def visual_editor(assigns) do
     ~H"""
     <.live_component
       module={Beacon.LiveAdmin.VisualEditor.Components.HEExEditor}
@@ -52,14 +65,6 @@ defmodule Beacon.LiveAdmin.AdminComponents do
       encode_component_fun={@encode_component_fun}
     />
     """
-  end
-
-  # FIXME
-  def render_heex(heex) do
-    # heex = Beacon.LiveAdmin.VisualEditor.HEEx.HEExDecoder.decode(node)
-    # assigns = %{}
-    # Beacon.LiveAdmin.Client.HEEx.render(@site, heex, assigns)
-    heex
   end
 
   @doc false
