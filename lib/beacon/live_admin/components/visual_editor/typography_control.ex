@@ -29,7 +29,6 @@ defmodule Beacon.LiveAdmin.VisualEditor.TypographyControl do
   ]
 
   @font_sizes [
-    {"-", "default"},
     {"xs", "xs"},
     {"sm", "sm"},
     {"base", "base"},
