@@ -21,6 +21,10 @@ if Mix.env() in [:dev] do
     ]
 end
 
+if Mix.env() in [:dev] do
+  config :nodejs, debug_mode: true
+end
+
 if Mix.env() in [:test] do
   config :logger, level: :error
 end
