@@ -67,6 +67,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Typography do
   defp maybe_add_style(classes, "default"), do: classes
   defp maybe_add_style(classes, value), do: classes ++ [value]
 
+  defp maybe_add_font_size(classes, _value, ""), do: classes
   # Special case for px, all other units default to 1
   defp maybe_add_font_size(classes, value, "px") do
     classes ++ ["text-[#{value || "16"}px]"]
@@ -140,21 +141,33 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Typography do
     text_classes = Enum.filter(classes, &String.starts_with?(&1, "text-"))
 
     Enum.find_value(text_classes, fn class ->
-      case class do
-        "text-black" -> "black"
-        "text-white" -> "white"
-        "text-gray-50" -> "gray-50"
-        "text-gray-100" -> "gray-100"
-        "text-gray-200" -> "gray-200"
-        "text-gray-300" -> "gray-300"
-        "text-gray-400" -> "gray-400"
-        "text-gray-500" -> "gray-500"
-        "text-gray-600" -> "gray-600"
-        "text-gray-700" -> "gray-700"
-        "text-gray-800" -> "gray-800"
-        "text-gray-900" -> "gray-900"
-        <<"text-[", color::binary>> -> String.trim_trailing(color, "]")
-        _ -> nil
+      cond do
+        # Skip size classes
+        class in ~w(text-xs text-sm text-base text-lg text-xl text-2xl text-3xl text-4xl text-5xl text-6xl) ->
+          nil
+
+        # Skip size classes with units
+        String.match?(class, ~r/^text-\[\d+(?:\.\d+)?(?:px|rem|em|%)?\]$/) ->
+          nil
+
+        # Handle hex colors in square brackets
+        String.match?(class, ~r/^text-\[#[0-9A-Fa-f]{6}\]$/) ->
+          [_, color] = Regex.run(~r/^text-\[(.+)\]$/, class)
+          color
+
+        # Handle standard Tailwind color classes
+        String.match?(
+          class,
+          ~r/^text-(?:slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(?:[1-9]0{2}|950)$/
+        ) ->
+          String.replace_prefix(class, "text-", "")
+
+        # Handle special colors
+        class in ~w(text-inherit text-current text-transparent text-black text-white) ->
+          String.replace_prefix(class, "text-", "")
+
+        true ->
+          nil
       end
     end)
   end
