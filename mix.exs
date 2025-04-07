@@ -116,6 +116,7 @@ defmodule Beacon.LiveAdmin.MixProject do
       ],
       "assets.setup": [
         "tailwind.install --if-missing --no-assets",
+        "esbuild.install --if-missing",
         "cmd npm install --prefix assets"
       ],
       "assets.watch": [
