@@ -64,6 +64,7 @@ defmodule Beacon.LiveAdmin.MixProject do
       {:floki, ">= 0.30.0"},
       # TODO: tailwind v4 needs more testing
       {:tailwind, "~> 0.2"},
+      esbuild_dep(),
       {:gettext, "~> 0.26"},
       {:jason, "~> 1.0"},
       {:igniter, "~> 0.5", optional: true},
@@ -105,6 +106,14 @@ defmodule Beacon.LiveAdmin.MixProject do
     end
   end
 
+  # TODO: remove this check after we start requiring min OTP 25
+  # https://github.com/phoenixframework/esbuild/commit/83b786bb91438c496f7d917d98ac9c72e3b210c6
+  if System.otp_release() >= "25" do
+    defp esbuild_dep, do: {:esbuild, "~> 0.5"}
+  else
+    defp esbuild_dep, do: {:esbuild, "~> 0.5 and < 0.9.0"}
+  end
+
   defp aliases do
     [
       setup: ["deps.get", "assets.setup"],
@@ -116,6 +125,7 @@ defmodule Beacon.LiveAdmin.MixProject do
       ],
       "assets.setup": [
         "tailwind.install --if-missing --no-assets",
+        "esbuild.install --if-missing",
         "cmd npm install --prefix assets"
       ],
       "assets.watch": [
