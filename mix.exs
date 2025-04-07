@@ -9,7 +9,7 @@ defmodule Beacon.LiveAdmin.MixProject do
     [
       app: :beacon_live_admin,
       version: @version,
-      elixir: "~> 1.14",
+      elixir: "~> 1.14.1 or ~> 1.15",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       name: "Beacon LiveAdmin",

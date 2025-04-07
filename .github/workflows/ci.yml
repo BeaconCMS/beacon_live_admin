@@ -23,7 +23,7 @@ jobs:
         include:
           # minimum required versions
           - otp: "25.1"
-            elixir: "1.14.0"
+            elixir: "1.14.1"
             phoenix: "1.7.0"
             phoenix-live-view: "1.0.0"
             postgres: '13.0-alpine'
@@ -78,11 +78,11 @@ jobs:
           restore-keys: |
             mix-${{ env.MIX_ENV }}-${{ runner.os }}-${{ matrix.otp }}-${{ matrix.elixir }}-${{ matrix.phoenix }}-${{ matrix.phoenix-live-view }}-${{ hashFiles('**/mix.lock') }}
 
-      - run: mix deps.get
+      - run: mix deps.get --only test
 
-      - run: mix tailwind.install --no-assets
+      - run: mix compile
 
-      - run: mix esbuild.install
+      - run: mix assets.setup
 
       - name: Run tests
         env:
