@@ -152,7 +152,12 @@
       data-selected={isSelectedNode}
       on:mouseover|stopPropagation={handleMouseOver}
       on:mouseout|stopPropagation={handleMouseOut}
+      on:focus|stopPropagation={handleMouseOver}
+      on:blur|stopPropagation={handleMouseOut}
       on:click|preventDefault|stopPropagation={handleClick}
+      on:keydown|preventDefault|stopPropagation={(e) => e.key === "Enter" && handleClick(e)}
+      tabindex="0"
+      role="button"
       use:highlightContent={{ selected: isSelectedNode, highlighted: isHighlightedNode }}
     >
       {@html node.rendered_html}

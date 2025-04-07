@@ -6,8 +6,6 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
   alias Beacon.LiveAdmin.Client.Config
   alias Beacon.LiveAdmin.Client.Content
   alias Beacon.LiveAdmin.RuntimeCSS
-  alias Beacon.LiveAdmin.WebAPI
-  alias Beacon.LiveAdmin.VisualEditor
   alias Ecto.Changeset
 
   @impl true
@@ -29,12 +27,11 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
      |> assign(assigns)
      |> assign_form(changeset)
      |> assign_template(Changeset.get_field(changeset, :template))
-     |> maybe_assign_builder_page(changeset)
      |> assign(:language, language(page.format))
      |> assign(:page_status, page_status)
      |> assign_extra_fields(changeset)
      |> assign_new(:show_modal, fn -> nil end)
-     |> assign_new(:tailwind_config, fn -> RuntimeCSS.css_config_url(site) end)
+     |> assign_new(:tailwind_config_url, fn -> RuntimeCSS.css_config_url(site) end)
      |> assign_new(:tailwind_input, fn ->
        tailwind = [
          "@tailwind base;",
@@ -56,48 +53,8 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
      end)}
   end
 
-  # updated template from code editor
-  def update(%{template: template}, %{assigns: %{editor: "code"}} = socket) do
-    params = Map.merge(socket.assigns.form.params, %{"template" => template})
-    changeset = Content.change_page(socket.assigns.site, socket.assigns.page, params)
-
-    {:ok,
-     socket
-     |> assign_form(changeset)
-     |> assign_template(template)}
-  end
-
-  # updated ast from visual editor
-  def update(%{ast: ast}, %{assigns: %{editor: "visual"}} = socket) do
-    template = Beacon.Template.HEEx.HEExDecoder.decode(ast)
-    params = Map.merge(socket.assigns.form.params, %{"template" => template})
-    changeset = Content.change_page(socket.assigns.site, socket.assigns.page, params)
-
-    socket =
-      socket
-      |> assign_form(changeset)
-      |> maybe_assign_builder_page(changeset)
-
-    {:ok, socket}
-  end
-
-  # changed element from visual editor control
-  def update(%{path: path, payload: payload}, %{assigns: %{editor: "visual"}} = socket) do
-    updated = Map.get(payload, :updated, %{})
-    attrs = Map.get(updated, "attrs", %{})
-    deleted_attrs = Map.get(payload, :deleted, [])
-    ast = VisualEditor.update_node(socket.assigns.builder_page_ast, path, attrs, deleted_attrs)
-
-    # TODO: Don't save immediately. Debounce serializing this to a template
-    template = Beacon.Template.HEEx.HEExDecoder.decode(ast)
-    params = Map.merge(socket.assigns.form.params, %{"template" => template})
-    changeset = Content.change_page(socket.assigns.site, socket.assigns.page, params)
-
-    {:ok,
-     socket
-     |> assign_form(changeset)
-     |> assign_template(template)
-     |> assign(builder_page_ast: ast)}
+  def update(%{event: :template_changed, template: template}, socket) do
+    {:ok, assign_template(socket, template)}
   end
 
   @impl true
@@ -169,14 +126,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
   end
 
   def handle_event("enable_editor", %{"editor" => "code"}, socket) do
-    template = Beacon.Template.HEEx.HEExDecoder.decode(socket.assigns.builder_page_ast)
-    params = Map.merge(socket.assigns.form.params, %{"template" => template})
-    changeset = Content.change_page(socket.assigns.site, socket.assigns.page, params)
-
-    socket =
-      socket
-      |> LiveMonacoEditor.set_value(template, to: "template")
-      |> assign_form(changeset)
+    socket = LiveMonacoEditor.set_value(socket, socket.assigns.template, to: "template")
 
     path =
       case socket.assigns.live_action do
@@ -211,6 +161,10 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
       )
 
     {:noreply, push_patch(socket, to: path)}
+  end
+
+  def handle_event("set_template", %{"value" => template}, socket) do
+    {:noreply, assign_template(socket, template)}
   end
 
   defp save(page_params, user_action, socket) do
@@ -249,23 +203,13 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
   end
 
   defp assign_template(socket, template) do
-    assign(socket, :template, template)
-  end
+    params = Map.merge(socket.assigns.form.params, %{"template" => template})
+    changeset = Content.change_page(socket.assigns.site, socket.assigns.page, params)
 
-  defp maybe_assign_builder_page(%{assigns: %{editor: "visual"}} = socket, changeset) do
-    with :heex <- Changeset.get_field(changeset, :format),
-         {:ok, page} <- Changeset.apply_action(changeset, :update),
-         %{data: builder_page} <- WebAPI.Page.show(page.site, page) do
-      {builder_page_ast, builder_page} = Map.pop(builder_page, :ast)
-      assign(socket, builder_page: builder_page, builder_page_ast: builder_page_ast)
-    else
-      # TODO: handle errors
-      _ ->
-        assign(socket, builder_page: nil, builder_page_ast: nil)
-    end
+    socket
+    |> assign_form(changeset)
+    |> assign(:template, template)
   end
-
-  defp maybe_assign_builder_page(socket, _changeset), do: assign(socket, builder_page: nil, builder_page_ast: nil)
 
   defp assign_extra_fields(socket, changeset) do
     params = Ecto.Changeset.get_field(changeset, :extra)
@@ -305,11 +249,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
     {:safe, html}
   end
 
-  defp svelte_page_builder_class("code" = _editor), do: "hidden"
-  defp svelte_page_builder_class("visual" = _editor), do: "mt-4 relative flex-1"
-
   @impl true
-  @spec render(any()) :: Phoenix.LiveView.Rendered.t()
   def render(assigns) do
     ~H"""
     <div>
@@ -392,26 +332,17 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
         </div>
       </.modal>
 
-      <%= if @editor == "visual" do %>
-        <div class="flex">
-          <.svelte
-            name="components/UiBuilder"
-            class={svelte_page_builder_class(@editor)}
-            props={
-              %{
-                components: @components,
-                pageInfo: @builder_page,
-                pageAst: @builder_page_ast,
-                tailwindConfig: @tailwind_config,
-                tailwindInput: @tailwind_input,
-                selectedAstElementId: @selected_element_path
-              }
-            }
-            socket={@socket}
-          />
-          <.live_component module={VisualEditor.PropertiesSidebarComponent} id="properties_sidebar" page={@builder_page} ast={@builder_page_ast} selected_element_path={@selected_element_path} />
-        </div>
-      <% end %>
+      <.visual_editor
+        :if={@editor == "visual"}
+        template={@template}
+        components={@components}
+        tailwind_input={@tailwind_input}
+        tailwind_config_url={@tailwind_config_url}
+        on_template_change={&send_update(@myself, event: :template_changed, template: &1)}
+        render_node_fun={fn node -> Beacon.LiveAdmin.Client.HEEx.render(@site, node, @page_assigns) end}
+        encode_layout_fun={fn -> encode_layout(@page, @page_assigns) end}
+        encode_component_fun={fn component -> encode_component(@site, component, @page_assigns) end}
+      />
 
       <div class={[
         "grid items-start grid-cols-1 mx-auto mt-4 gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3 h-auto",
@@ -441,6 +372,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
               value={@form[:template].value}
               opts={Map.merge(LiveMonacoEditor.default_opts(), %{"language" => @language})}
               change="set_template"
+              target={@myself}
             />
           </div>
         </div>
@@ -464,4 +396,24 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
     </div>
     """
   end
+
+  defp encode_layout(%{site: site, template: page_template, layout: %{template: layout_template}}, page_assigns) do
+    assigns = Map.put(page_assigns, :inner_content, page_template)
+
+    Beacon.LiveAdmin.VisualEditor.HEEx.JSONEncoder.maybe_encode(layout_template, fn node ->
+      Beacon.LiveAdmin.Client.HEEx.render(site, node, assigns)
+    end)
+  end
+
+  defp encode_layout(_, _), do: []
+
+  defp encode_component(site, component, page_assigns) when is_atom(site) and is_map(component) do
+    template = component[:example] || ""
+
+    Beacon.LiveAdmin.VisualEditor.HEEx.JSONEncoder.maybe_encode(template, fn node ->
+      Beacon.LiveAdmin.Client.HEEx.render(site, node, page_assigns)
+    end)
+  end
+
+  defp encode_component(_site, _component, _page_assigns), do: []
 end

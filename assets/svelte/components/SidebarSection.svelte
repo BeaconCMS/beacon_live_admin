@@ -87,8 +87,14 @@
       <span>
         <span class="hover:text-blue-700 active:text-blue-900"><slot name="heading" /></span>
         {#if !disableDelete}
-          <button type="button" class="ml-4" title="Delete attribute" on:click|stopPropagation={deleteAttribute}
-            ><span class="hero-trash text-red hover:text-red"></span></button
+          <span
+            class="ml-4 inline-block cursor-pointer"
+            title="Delete attribute"
+            on:click|stopPropagation={deleteAttribute}
+            role="button"
+            tabindex="0"
+            on:keydown={(e) => e.key === "Enter" && deleteAttribute()}
+            ><span class="hero-trash text-red hover:text-red"></span></span
           >
         {/if}
       </span>

@@ -28,6 +28,99 @@ defmodule Beacon.LiveAdmin.AdminComponents do
   @menu_link_active_class "inline-block p-4 text-blue-600 border-b-2 border-blue-600 rounded-t-lg active"
   @menu_link_regular_class "inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300"
 
+  @doc """
+  Visual Editor for HEEx and HTML templates.
+
+  This component provides a drag-and-drop interface for building and editing
+  HEEx templates. It renders a live visual editor with a properties sidebar
+  that allows editing component attributes.
+
+  ## Examples
+
+      <.visual_editor
+        template={@page_template}
+        components={@available_components}
+        on_template_change={fn updated_template -> assign(socket, :page_template, updated_template) end}
+      />
+
+  """
+  attr :template, :string, required: true, doc: "The HEEx/HTML template to edit"
+
+  attr :components, :list, doc: "List of available components that can be used in the visual editor"
+
+  attr :tailwind_input, :string,
+    default: """
+    @tailwind base;
+    @tailwind components;
+    @tailwind utilities;
+    """
+
+  attr :tailwind_config_url, :string, default: nil
+
+  attr :on_template_change, {:fun, 1},
+    default: &Function.identity/1,
+    doc: "A function that is called when the template changes, receives the updated template as argument"
+
+  attr :render_node_fun, {:fun, 1},
+    default: &Beacon.LiveAdmin.AdminComponents.render_node/1,
+    doc: "A function to render a HEEx node"
+
+  attr :encode_layout_fun, {:fun, 0}, default: nil, doc: "A function that returns the layout AST to be used in the visual editor"
+
+  attr :encode_component_fun, {:fun, 1}, default: nil, doc: "A function that takes a component and returns its AST representation"
+
+  def visual_editor(assigns) do
+    ~H"""
+    <.live_component
+      module={Beacon.LiveAdmin.VisualEditor.Components.HEExEditor}
+      id="heex-visual-editor"
+      components={@components}
+      template={@template}
+      tailwind_input={@tailwind_input}
+      tailwind_config_url={@tailwind_config_url}
+      on_template_change={@on_template_change}
+      render_node_fun={@render_node_fun}
+      encode_layout_fun={@encode_layout_fun}
+      encode_component_fun={@encode_component_fun}
+    />
+    """
+  end
+
+  @doc """
+  Renders a HEEx node (piece of template template).
+  """
+  @spec render_node(String.t(), map()) :: String.t()
+  def render_node(node, assigns \\ %{}) when is_binary(node) and is_map(assigns) do
+    assigns =
+      assigns
+      |> Map.new()
+      |> Map.put_new(:__changed__, %{})
+
+    {:ok, ast} = compile_template(node)
+    {rendered, _} = Code.eval_quoted(ast, [assigns: assigns], __ENV__)
+
+    rendered
+    |> Phoenix.HTML.Safe.to_iodata()
+    |> IO.iodata_to_binary()
+  end
+
+  defp compile_template(template, file \\ "nofile") do
+    opts = [
+      engine: Phoenix.LiveView.TagEngine,
+      line: 1,
+      indentation: 0,
+      file: file,
+      caller: __ENV__,
+      source: template,
+      trim: true,
+      tag_handler: Phoenix.LiveView.HTMLEngine
+    ]
+
+    {:ok, EEx.compile_string(template, opts)}
+  rescue
+    error -> {:error, error}
+  end
+
   @doc false
   attr :socket, :map
   attr :flash, :map
@@ -450,7 +543,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
   end
 
   @doc """
-  Renders pagination to nagivate table results.
+  Renders pagination to navigate table results.
   """
   attr :socket, Phoenix.LiveView.Socket, required: true
   attr :page, Beacon.LiveAdmin.PageBuilder.Page, required: true

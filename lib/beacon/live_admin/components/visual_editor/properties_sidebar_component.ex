@@ -101,17 +101,31 @@ defmodule Beacon.LiveAdmin.VisualEditor.PropertiesSidebarComponent do
         </div>
 
         <%= if VisualEditor.element_editable?(@selected_element) do %>
-          <.live_component module={VisualEditor.LayoutControl} id="control-layout" element={@selected_element} />
-          <.live_component module={VisualEditor.SizeControl} id="control-size" element={@selected_element} />
-          <.live_component module={VisualEditor.TypographyControl} id="control-typography" element={@selected_element} />
-          <.live_component module={VisualEditor.SpaceControl} id="control-space" element={@selected_element} />
-          <.live_component module={VisualEditor.BorderControl} id="control-border" element={@selected_element} />
-          <.live_component module={VisualEditor.OpacityControl} id="control-opacity" element={@selected_element} />
-          <.live_component module={VisualEditor.IdControl} id="control-id" element={@selected_element} />
-          <.live_component module={VisualEditor.ClassControl} id="control-class" element={@selected_element} />
+          <.live_component module={VisualEditor.LayoutControl} id="control-layout" element={@selected_element} on_element_change={fn path, payload -> element_changed(@heex_editor, path, payload) end} />
+
+          <.live_component module={VisualEditor.SizeControl} id="control-size" element={@selected_element} on_element_change={fn path, payload -> element_changed(@heex_editor, path, payload) end} />
+
+          <.live_component
+            module={VisualEditor.TypographyControl}
+            id="control-typography"
+            element={@selected_element}
+            on_element_change={fn path, payload -> element_changed(@heex_editor, path, payload) end}
+          />
+
+          <.live_component module={VisualEditor.SpaceControl} id="control-space" element={@selected_element} on_element_change={fn path, payload -> element_changed(@heex_editor, path, payload) end} />
+
+          <.live_component module={VisualEditor.BorderControl} id="control-border" element={@selected_element} on_element_change={fn path, payload -> element_changed(@heex_editor, path, payload) end} />
+
+          <.live_component module={VisualEditor.OpacityControl} id="control-opacity" element={@selected_element} on_element_change={fn path, payload -> element_changed(@heex_editor, path, payload) end} />
+
+          <.live_component module={VisualEditor.IdControl} id="control-id" element={@selected_element} on_element_change={fn path, payload -> element_changed(@heex_editor, path, payload) end} />
+
+          <.live_component module={VisualEditor.ClassControl} id="control-class" element={@selected_element} on_element_change={fn path, payload -> element_changed(@heex_editor, path, payload) end} />
+
           <%= for attribute <- @other_attributes do %>
             <.live_component module={VisualEditor.NameValueControl} id={attribute.id} path={@selected_element["path"]} parent={@myself} attribute={attribute} />
           <% end %>
+
           <div class="p-4">
             <button
               :if={!@editing}
@@ -127,5 +141,11 @@ defmodule Beacon.LiveAdmin.VisualEditor.PropertiesSidebarComponent do
       </div>
     </div>
     """
+  end
+
+  # bubbles up the element attrs changes to the parent HEExEditor
+  defp element_changed(heex_editor, path, payload) do
+    event = {:element_changed, %{path: path, payload: payload}}
+    send_update(heex_editor, %{event: event})
   end
 end

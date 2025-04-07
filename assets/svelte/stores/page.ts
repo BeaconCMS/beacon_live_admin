@@ -1,11 +1,10 @@
 import { writable, derived, get } from "svelte/store"
 import type { Writable, Readable } from "svelte/store"
-import type { AstElement, AstNode, Page, PageInfo } from "$lib/types"
+import type { AstElement, AstNode } from "$lib/types"
 import { live } from "$lib/stores/live"
 
-// export const page: Writable<Page> = writable()
 export const pageAst: Writable<AstNode[]> = writable()
-export const pageInfo: Writable<PageInfo> = writable()
+export const layoutAst: Writable<AstNode[]> = writable()
 export const selectedAstElementId: Writable<string | undefined> = writable()
 export const highlightedAstElement: Writable<AstElement | undefined> = writable()
 export const slotTargetElement: Writable<AstElement | undefined> = writable()
@@ -21,10 +20,10 @@ export const selectedAstElement: Readable<AstElement | undefined> = derived(
   ([$pageAst, $selectedAstElementId]) => {
     if ($pageAst && $selectedAstElementId) {
       const element = findAstElement($pageAst, $selectedAstElementId)
-      get(live).pushEvent("select_element", { path: $selectedAstElementId })
+      get(live).pushEventTo("#heex-visual-editor", "select_element", { path: $selectedAstElementId })
       return element
     } else {
-      get(live).pushEvent("select_element", { path: null })
+      get(live).pushEventTo("#heex-visual-editor", "select_element", { path: null })
     }
   },
 )
@@ -113,7 +112,7 @@ export function _findAstElementId(ast: AstNode[], astNode: AstNode, id: string):
 
 export function resetStores() {
   pageAst.set(null)
-  pageInfo.set(null)
+  layoutAst.set(null)
   selectedAstElementId.set(null)
   highlightedAstElement.set(null)
   slotTargetElement.set(null)

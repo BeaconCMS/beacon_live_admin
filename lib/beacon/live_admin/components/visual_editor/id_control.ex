@@ -46,8 +46,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.IdControl do
 
     case changeset do
       {:ok, id} ->
-        changes = %{updated: %{"attrs" => %{"id" => id.value}}}
-        send(self(), {:element_changed, {socket.assigns.element["path"], changes}})
+        socket.assigns.on_element_change.(socket.assigns.element["path"], %{updated: %{"attrs" => %{"id" => id.value}}})
         {:noreply, socket}
 
       {:error, changeset} ->

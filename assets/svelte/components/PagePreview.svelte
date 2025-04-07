@@ -3,7 +3,7 @@
   import BrowserFrame from "./BrowserFrame.svelte"
   import { selectedAstElementId } from "$lib/stores/page"
   import { currentComponentCategory } from "$lib/stores/currentComponentCategory"
-  import { pageAst, pageInfo, slotTargetElement } from "$lib/stores/page"
+  import { pageAst, layoutAst, slotTargetElement } from "$lib/stores/page"
   import { draggedComponentDefinition, resetDrag } from "$lib/stores/dragAndDrop"
   import { live } from "$lib/stores/live"
   import { elementCanBeDroppedInTarget } from "$lib/utils/drag-helpers"
@@ -19,14 +19,15 @@
     let draggedObj = $draggedComponentDefinition
 
     if (layoutZone) {
-      $live.pushEvent(
+      $live.pushEventTo(
+        "#heex-visual-editor",
         "render_component_in_page",
-        { component_id: draggedObj.id, page_id: $pageInfo.id },
+        { component_id: draggedObj.id },
         ({ ast }: { ast: AstNode[] }) => {
           // If the element was dropped before the main content, it appends it at the top of the page
           // otherwise it appends it at the bottom of the page
           const newAst = layoutZone === "preamble" ? [...ast, ...$pageAst] : [...$pageAst, ...ast]
-          $live.pushEvent("update_page_ast", { id: $pageInfo.id, ast: newAst })
+          $live.pushEventTo("#heex-visual-editor", "update_page_ast", { ast: newAst })
         },
       )
     } else if (target.id !== "fake-browser-content" && elementCanBeDroppedInTarget(draggedObj)) {
@@ -37,12 +38,13 @@
 
       addBasicComponentToTarget($slotTargetElement)
     } else {
-      $live.pushEvent(
+      $live.pushEventTo(
+        "#heex-visual-editor",
         "render_component_in_page",
-        { component_id: draggedObj.id, page_id: $pageInfo.id },
+        { component_id: draggedObj.id },
         ({ ast }: { ast: AstNode[] }) => {
           // This appends at the end. We might want at the beginning, or in a specific position
-          $live.pushEvent("update_page_ast", { id: $pageInfo.id, ast: [...$pageAst, ...ast] })
+          $live.pushEventTo("#heex-visual-editor", "update_page_ast", { ast: [...$pageAst, ...ast] })
         },
       )
     }
@@ -54,13 +56,14 @@
     let componentDefinition = $draggedComponentDefinition
     $draggedComponentDefinition = null
     let targetNode = astElement
-    $live.pushEvent(
+    $live.pushEventTo(
+      "#heex-visual-editor",
       "render_component_in_page",
-      { component_id: componentDefinition.id, page_id: $pageInfo.id },
+      { component_id: componentDefinition.id },
       ({ ast }: { ast: AstNode[] }) => {
         targetNode?.content.push(...ast)
         $slotTargetElement = undefined
-        $live.pushEvent("update_page_ast", { id: $pageInfo.id, ast: $pageAst })
+        $live.pushEventTo("#heex-visual-editor", "update_page_ast", { ast: $pageAst })
       },
     )
   }
@@ -76,8 +79,8 @@
 </script>
 
 <div class="flex-1 px-8 pb-4 flex max-h-full" data-testid="main">
-  {#if $pageInfo && $pageAst}
-    <BrowserFrame pageInfo={$pageInfo} pageAst={$pageAst}>
+  {#if $pageAst}
+    <BrowserFrame>
       <div
         on:drop|preventDefault={handleDragDrop}
         on:dragover|preventDefault={dragOver}
