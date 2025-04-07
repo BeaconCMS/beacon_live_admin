@@ -4003,24 +4003,13 @@ select{
   color: rgb(30 64 175 / var(--tw-text-opacity));
 }
 
+.text-current{
+  color: currentColor;
+}
+
 .text-emerald-800{
   --tw-text-opacity: 1;
   color: rgb(6 95 70 / var(--tw-text-opacity));
-}
-
-.text-gray-100{
-  --tw-text-opacity: 1;
-  color: rgb(243 244 246 / var(--tw-text-opacity));
-}
-
-.text-gray-200{
-  --tw-text-opacity: 1;
-  color: rgb(229 231 235 / var(--tw-text-opacity));
-}
-
-.text-gray-300{
-  --tw-text-opacity: 1;
-  color: rgb(209 213 219 / var(--tw-text-opacity));
 }
 
 .text-gray-400{
@@ -4043,16 +4032,6 @@ select{
   color: rgb(75 85 99 / var(--tw-text-opacity));
 }
 
-.text-gray-700{
-  --tw-text-opacity: 1;
-  color: rgb(55 65 81 / var(--tw-text-opacity));
-}
-
-.text-gray-800{
-  --tw-text-opacity: 1;
-  color: rgb(31 41 55 / var(--tw-text-opacity));
-}
-
 .text-gray-900{
   --tw-text-opacity: 1;
   color: rgb(17 24 39 / var(--tw-text-opacity));
@@ -4071,6 +4050,10 @@ select{
 .text-indigo-600{
   --tw-text-opacity: 1;
   color: rgb(79 70 229 / var(--tw-text-opacity));
+}
+
+.text-inherit{
+  color: inherit;
 }
 
 .text-red-500{
@@ -4106,6 +4089,10 @@ select{
 .text-slate-800{
   --tw-text-opacity: 1;
   color: rgb(30 41 59 / var(--tw-text-opacity));
+}
+
+.text-transparent{
+  color: transparent;
 }
 
 .text-violet-600{
