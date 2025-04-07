@@ -44,8 +44,9 @@ defmodule Beacon.LiveAdmin.AdminComponents do
       />
 
   """
-  attr :components, :list, doc: "List of available components that can be used in the visual editor"
   attr :template, :string, required: true, doc: "The HEEx/HTML template to edit"
+
+  attr :components, :list, doc: "List of available components that can be used in the visual editor"
 
   attr :tailwind_input, :string,
     default: """
@@ -61,10 +62,11 @@ defmodule Beacon.LiveAdmin.AdminComponents do
     doc: "A function that is called when the template changes, receives the updated template as argument"
 
   attr :render_node_fun, {:fun, 1},
-    default: &Beacon.LiveAdmin.VisualEditor.Components.HEExEditor.render_node/1,
+    default: &Beacon.LiveAdmin.AdminComponents.render_node/1,
     doc: "A function to render a HEEx node"
 
   attr :encode_layout_fun, {:fun, 0}, default: nil, doc: "A function that returns the layout AST to be used in the visual editor"
+
   attr :encode_component_fun, {:fun, 1}, default: nil, doc: "A function that takes a component and returns its AST representation"
 
   def visual_editor(assigns) do
@@ -82,6 +84,41 @@ defmodule Beacon.LiveAdmin.AdminComponents do
       encode_component_fun={@encode_component_fun}
     />
     """
+  end
+
+  @doc """
+  Renders a HEEx node (piece of template template).
+  """
+  @spec render_node(String.t(), map()) :: String.t()
+  def render_node(node, assigns \\ %{}) when is_binary(node) and is_map(assigns) do
+    assigns =
+      assigns
+      |> Map.new()
+      |> Map.put_new(:__changed__, %{})
+
+    {:ok, ast} = compile_template(node)
+    {rendered, _} = Code.eval_quoted(ast, [assigns: assigns], __ENV__)
+
+    rendered
+    |> Phoenix.HTML.Safe.to_iodata()
+    |> IO.iodata_to_binary()
+  end
+
+  defp compile_template(template, file \\ "nofile") do
+    opts = [
+      engine: Phoenix.LiveView.TagEngine,
+      line: 1,
+      indentation: 0,
+      file: file,
+      caller: __ENV__,
+      source: template,
+      trim: true,
+      tag_handler: Phoenix.LiveView.HTMLEngine
+    ]
+
+    {:ok, EEx.compile_string(template, opts)}
+  rescue
+    error -> {:error, error}
   end
 
   @doc false

@@ -6,7 +6,6 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
   alias Beacon.LiveAdmin.Client.Config
   alias Beacon.LiveAdmin.Client.Content
   alias Beacon.LiveAdmin.RuntimeCSS
-  # alias Beacon.LiveAdmin.WebAPI
   alias Ecto.Changeset
 
   @impl true
@@ -250,11 +249,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
     {:safe, html}
   end
 
-  # defp svelte_page_builder_class("code" = _editor), do: "hidden"
-  # defp svelte_page_builder_class("visual" = _editor), do: "mt-4 relative flex-1"
-
   @impl true
-  @spec render(any()) :: Phoenix.LiveView.Rendered.t()
   def render(assigns) do
     ~H"""
     <div>
@@ -339,8 +334,8 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
 
       <.visual_editor
         :if={@editor == "visual"}
-        components={@components}
         template={@template}
+        components={@components}
         tailwind_input={@tailwind_input}
         tailwind_config_url={@tailwind_config_url}
         on_template_change={&send_update(@myself, event: :template_changed, template: &1)}
@@ -402,7 +397,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
     """
   end
 
-  def encode_layout(%{site: site, template: page_template, layout: %{template: layout_template}}, page_assigns) do
+  defp encode_layout(%{site: site, template: page_template, layout: %{template: layout_template}}, page_assigns) do
     assigns = Map.put(page_assigns, :inner_content, page_template)
 
     Beacon.LiveAdmin.VisualEditor.HEEx.JSONEncoder.maybe_encode(layout_template, fn node ->
@@ -410,9 +405,9 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
     end)
   end
 
-  def encode_layout(_, _), do: []
+  defp encode_layout(_, _), do: []
 
-  def encode_component(site, component, page_assigns) when is_atom(site) and is_map(component) do
+  defp encode_component(site, component, page_assigns) when is_atom(site) and is_map(component) do
     template = component[:example] || ""
 
     Beacon.LiveAdmin.VisualEditor.HEEx.JSONEncoder.maybe_encode(template, fn node ->
@@ -420,5 +415,5 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
     end)
   end
 
-  def encode_component(_site, _component, _page_assigns), do: []
+  defp encode_component(_site, _component, _page_assigns), do: []
 end
