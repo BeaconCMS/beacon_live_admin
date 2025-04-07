@@ -15,6 +15,8 @@ You can expect incomplete features and breaking changes before a stable v1.0 is 
 
 - Erlang/OTP v25.1
 - Elixir v1.14
+- Phoenix v1.7.0
+- Phoenix LiveView v1.0.0
 
 ## Local Development
 
