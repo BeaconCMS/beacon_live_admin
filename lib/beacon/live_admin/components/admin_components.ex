@@ -56,21 +56,16 @@ defmodule Beacon.LiveAdmin.AdminComponents do
 
   attr :tailwind_config_url, :string, default: nil
 
-  attr :on_template_change, Beacon.LiveAdmin.Private.attr_fun_1(),
+  attr :on_template_change, {:fun, 1},
     default: &Function.identity/1,
     doc: "A function that is called when the template changes, receives the updated template as argument"
 
-  attr :render_node_fun, Beacon.LiveAdmin.Private.attr_fun_1(),
+  attr :render_node_fun, {:fun, 1},
     default: &Beacon.LiveAdmin.VisualEditor.Components.HEExEditor.render_node/1,
     doc: "A function to render a HEEx node"
 
-  attr :encode_layout_fun, Beacon.LiveAdmin.Private.attr_fun_0(),
-    default: nil,
-    doc: "A function that returns the layout AST to be used in the visual editor"
-
-  attr :encode_component_fun, Beacon.LiveAdmin.Private.attr_fun_1(),
-    default: nil,
-    doc: "A function that takes a component and returns its AST representation"
+  attr :encode_layout_fun, {:fun, 0}, default: nil, doc: "A function that returns the layout AST to be used in the visual editor"
+  attr :encode_component_fun, {:fun, 1}, default: nil, doc: "A function that takes a component and returns its AST representation"
 
   def visual_editor(assigns) do
     ~H"""
