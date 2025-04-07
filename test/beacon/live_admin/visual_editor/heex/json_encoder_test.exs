@@ -549,7 +549,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.HEEx.JSONEncoderTest do
       <% end %>
       """
 
-      {:ok, [eex_block]} = Beacon.Template.HEEx.Tokenizer.tokenize(template)
+      {:ok, [eex_block]} = Beacon.LiveAdmin.VisualEditor.HEEx.Tokenizer.tokenize(template)
 
       assert JSONEncoder.encode_eex_block(eex_block) == %{
                type: :eex_block,
@@ -607,7 +607,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.HEEx.JSONEncoderTest do
       <% end %>
       """
 
-      {:ok, [eex_block]} = Beacon.Template.HEEx.Tokenizer.tokenize(template)
+      {:ok, [eex_block]} = Beacon.LiveAdmin.VisualEditor.HEEx.Tokenizer.tokenize(template)
 
       assert JSONEncoder.encode_eex_block(eex_block) == %{
                children: [

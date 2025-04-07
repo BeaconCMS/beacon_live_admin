@@ -1,5 +1,5 @@
 defmodule Beacon.LiveAdmin.VisualEditor.HEEx.TokenizerTest do
-  use ExUnit.Case, async: true
+  use ExUnit.Case, async: false
 
   alias Beacon.LiveAdmin.VisualEditor.HEEx.Tokenizer
 
