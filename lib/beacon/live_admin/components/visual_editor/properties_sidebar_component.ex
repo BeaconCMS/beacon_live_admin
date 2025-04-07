@@ -103,7 +103,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.PropertiesSidebarComponent do
         <%= if VisualEditor.element_editable?(@selected_element) do %>
           <.live_component module={VisualEditor.LayoutControl} id="control-layout" element={@selected_element} on_element_change={fn path, payload -> element_changed(@heex_editor, path, payload) end} />
 
-          <.live_component module={VisualEditor.SizeControl} id="control-size" element={@selected_element} />
+          <.live_component module={VisualEditor.SizeControl} id="control-size" element={@selected_element} on_element_change={fn path, payload -> element_changed(@heex_editor, path, payload) end} />
 
           <.live_component
             module={VisualEditor.TypographyControl}
