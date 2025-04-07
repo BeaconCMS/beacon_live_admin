@@ -37,7 +37,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.HEEx.HEExDecoderTest do
     Beacon.LiveAdmin.Client.HEEx.render(@site, template, assigns)
   end
 
-  defp assert_equal(input, assigns \\ %{}, site \\ :my_site) do
+  defp assert_equal(input, assigns \\ %{}) do
     render_node_fun = fn node -> render_node(node, assigns) end
     assert {:ok, encoded} = JSONEncoder.encode(input, render_node_fun)
     decoded = HEExDecoder.decode(encoded)
