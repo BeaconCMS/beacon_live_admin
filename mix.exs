@@ -9,7 +9,7 @@ defmodule Beacon.LiveAdmin.MixProject do
     [
       app: :beacon_live_admin,
       version: @version,
-      elixir: "~> 1.14",
+      elixir: "~> 1.14.1 or ~> 1.15",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       name: "Beacon LiveAdmin",
@@ -53,7 +53,7 @@ defmodule Beacon.LiveAdmin.MixProject do
     [
       # Overridable
       override_dep(:phoenix, "~> 1.7", "PHOENIX_VERSION", "PHOENIX_PATH"),
-      override_dep(:phoenix_live_view, "~> 0.20 or ~> 1.0", "PHOENIX_LIVE_VIEW_VERSION", "PHOENIX_LIVE_VIEW_PATH"),
+      override_dep(:phoenix_live_view, "~> 1.0", "PHOENIX_LIVE_VIEW_VERSION", "PHOENIX_LIVE_VIEW_PATH"),
       override_dep(:live_monaco_editor, "~> 0.2", "LIVE_MONACO_EDITOR_VERSION", "LIVE_MONACO_EDITOR_PATH"),
       beacon_dep(),
 
@@ -64,6 +64,7 @@ defmodule Beacon.LiveAdmin.MixProject do
       {:floki, ">= 0.30.0"},
       # TODO: tailwind v4 needs more testing
       {:tailwind, "~> 0.2"},
+      esbuild_dep(),
       {:gettext, "~> 0.26"},
       {:jason, "~> 1.0"},
       {:igniter, "~> 0.5", optional: true},
@@ -105,6 +106,14 @@ defmodule Beacon.LiveAdmin.MixProject do
     end
   end
 
+  # TODO: remove this check after we start requiring min OTP 25
+  # https://github.com/phoenixframework/esbuild/commit/83b786bb91438c496f7d917d98ac9c72e3b210c6
+  if System.otp_release() >= "25" do
+    defp esbuild_dep, do: {:esbuild, "~> 0.5"}
+  else
+    defp esbuild_dep, do: {:esbuild, "~> 0.5 and < 0.9.0"}
+  end
+
   defp aliases do
     [
       setup: ["deps.get", "assets.setup"],
@@ -116,6 +125,7 @@ defmodule Beacon.LiveAdmin.MixProject do
       ],
       "assets.setup": [
         "tailwind.install --if-missing --no-assets",
+        "esbuild.install --if-missing",
         "cmd npm install --prefix assets"
       ],
       "assets.watch": [

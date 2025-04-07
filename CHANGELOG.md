@@ -2,6 +2,7 @@
 
 ## Unreleased
   - [Visual Editor] Added Color Picker to change border color
+  - [Deps] Require minimum Phoenix LiveView v1.0.0
 
 ## 0.4.3 (2025-03-31)
 
