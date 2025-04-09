@@ -1,6 +1,8 @@
 defmodule Beacon.LiveAdmin.VisualEditor.HEEx.HEExDecoderTest do
-  use Beacon.LiveAdmin.ConnCase, async: false
+  use ExUnit.Case, async: false
+
   import Beacon.LiveAdminTest.Cluster, only: [rpc: 4]
+  import Beacon.LiveAdmin.Fixtures
   alias Beacon.LiveAdmin.VisualEditor.HEEx.HEExDecoder
   alias Beacon.LiveAdmin.VisualEditor.HEEx.JSONEncoder
 
