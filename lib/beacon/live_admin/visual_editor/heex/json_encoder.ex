@@ -3,8 +3,11 @@ defmodule Beacon.LiveAdmin.VisualEditor.HEEx.JSONEncoder do
 
   require Logger
 
+  alias Beacon.LiveAdmin.VisualEditor.HEEx.Tokenizer
+
   @type token :: map()
 
+  # FIXME: update docs
   @doc """
   Encodes a HEEx `template` into a format that can be encoded into JSON.
 
@@ -84,20 +87,22 @@ defmodule Beacon.LiveAdmin.VisualEditor.HEEx.JSONEncoder do
   end
 
   def encode(template, render_node_fun) when is_binary(template) and is_function(render_node_fun, 1) do
-    case Beacon.LiveAdmin.VisualEditor.HEEx.Tokenizer.tokenize(template) do
-      {:ok, tokens} -> {:ok, encode_tokens(tokens, render_node_fun)}
-      error -> error
-    end
-  rescue
-    exception ->
-      {:error, Exception.message(exception)}
+    ast =
+      template
+      |> Tokenizer.tokenize()
+      |> encode_tokens(render_node_fun)
+
+    {:ok, ast}
   end
 
+  # TODO: rename to safe_encode?
   def maybe_encode(template, render_node_fun) do
     case encode(template, render_node_fun) do
       {:ok, ast} -> ast
       _ -> []
     end
+  rescue
+    _ -> []
   end
 
   defp encode_tokens(ast, render_node_fun) do
