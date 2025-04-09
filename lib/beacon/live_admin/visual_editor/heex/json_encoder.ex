@@ -3,9 +3,18 @@ defmodule Beacon.LiveAdmin.VisualEditor.HEEx.JSONEncoder do
 
   require Logger
 
-  alias Beacon.LiveAdmin.VisualEditor.HEEx.Tokenizer
+  alias Beacon.LiveAdmin.VisualEditor.HEEx.HTMLFormatter
 
   @type token :: map()
+
+  def to_tree(template) do
+    newlines = :binary.matches(template, ["\r\n", "\n"])
+
+    case HTMLFormatter.tokenize(template) do
+      {:ok, tokens} -> HTMLFormatter.to_tree(tokens, [], [], {template, newlines})
+      error -> error
+    end
+  end
 
   # FIXME: update docs
   @doc """
@@ -80,19 +89,14 @@ defmodule Beacon.LiveAdmin.VisualEditor.HEEx.JSONEncoder do
 
   """
   @spec encode(String.t(), fun()) :: {:ok, [token()]} | {:error, String.t()}
-  def encode(template, render_node_fun)
-
-  def encode(nil = _template, render_node_fun) when is_function(render_node_fun, 1) do
-    encode("", render_node_fun)
-  end
-
   def encode(template, render_node_fun) when is_binary(template) and is_function(render_node_fun, 1) do
-    ast =
-      template
-      |> Tokenizer.tokenize()
-      |> encode_tokens(render_node_fun)
+    case to_tree(template) do
+      {:ok, ast} ->
+        {:ok, encode_tokens(ast, render_node_fun)}
 
-    {:ok, ast}
+      {:error, line, column, message} ->
+        %Phoenix.LiveView.Tokenizer.ParseError{line: line, column: column, file: "nofile", description: message}
+    end
   end
 
   # TODO: rename to safe_encode?
@@ -166,6 +170,18 @@ defmodule Beacon.LiveAdmin.VisualEditor.HEEx.JSONEncoder do
     }
   end
 
+  defp transform_entry({:eex_block, arg, _content, %{opt: opt}} = entry, render_node_fun) do
+    arg = String.trim(arg)
+
+    %{
+      "tag" => "eex_block",
+      "arg" => arg,
+      "metadata" => %{"opt" => opt},
+      "rendered_html" => render_eex_block(render_node_fun, entry),
+      "ast" => entry |> encode_eex_block() |> Jason.encode!()
+    }
+  end
+
   defp transform_entry({:eex_comment, text}, _render_node_fun) do
     %{
       "tag" => "eex_comment",
@@ -232,7 +248,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.HEEx.JSONEncoder do
     # For context, we rescue it for now so we avoid crashing when rendering nexted :eex expressions,
     # for example take this template:
     #
-    #  <.table id="users" rows={[%{iusername: "foo"}]}>
+    #  <.table id="users" rows={[%{username: "foo"}]}>
     #    <:col :let={user} label="username"><%= user.username %></:col>
     #  </.table>
     #
@@ -329,6 +345,19 @@ defmodule Beacon.LiveAdmin.VisualEditor.HEEx.JSONEncoder do
     render_node_fun.(template)
   end
 
+  defp render_eex_block(render_node_fun, {:eex_block, arg, nodes, _metadata}) do
+    arg = ["<%= ", arg, " %>", "\n"]
+
+    template =
+      Enum.reduce(nodes, [arg], fn node, acc ->
+        [[extract_node_text(node), " \n "] | acc]
+      end)
+      |> Enum.reverse()
+      |> List.to_string()
+
+    render_node_fun.(template)
+  end
+
   defp extract_node_text({nodes, text} = value) when is_list(nodes) and is_binary(text) do
     value
     |> Tuple.to_list()
@@ -365,6 +394,8 @@ defmodule Beacon.LiveAdmin.VisualEditor.HEEx.JSONEncoder do
 
   defp extract_node_text({:eex_block, expr, children}), do: ["<%= ", expr, " %>", extract_node_text(children)]
 
+  defp extract_node_text({:eex_block, expr, children, _metadata}), do: ["<%= ", expr, " %>", extract_node_text(children)]
+
   defp extract_node_text({:tag_self_close, tag, attrs}) do
     attrs =
       Enum.reduce(attrs, [], fn attr, acc ->
@@ -382,6 +413,11 @@ defmodule Beacon.LiveAdmin.VisualEditor.HEEx.JSONEncoder do
   defp extract_node_attr({attr, {:expr, expr, _}, _}), do: [attr, ?=, ?{, expr, ?}, " "]
 
   def encode_eex_block({:eex_block, arg, children}) do
+    children = encode_eex_block_node(children, [])
+    %{type: :eex_block, content: arg, children: children}
+  end
+
+  def encode_eex_block({:eex_block, arg, children, _metadata}) do
     children = encode_eex_block_node(children, [])
     %{type: :eex_block, content: arg, children: children}
   end
@@ -408,6 +444,11 @@ defmodule Beacon.LiveAdmin.VisualEditor.HEEx.JSONEncoder do
   end
 
   def encode_eex_block_node({:eex_block, content, children}) do
+    children = encode_eex_block_node(children, [])
+    %{type: :eex_block, content: content, children: children}
+  end
+
+  def encode_eex_block_node({:eex_block, content, children, _metadata}) do
     children = encode_eex_block_node(children, [])
     %{type: :eex_block, content: content, children: children}
   end

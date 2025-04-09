@@ -46,10 +46,6 @@ defmodule Beacon.LiveAdmin.VisualEditor.HEEx.JSONEncoderTest do
     JSONEncoder.encode(template, fn node -> render_node(node, assigns) end)
   end
 
-  test "nil template cast to empty string" do
-    assert_output(nil, [])
-  end
-
   test "html elements with attrs" do
     assert_output(~S|<div>content</div>|, [%{"attrs" => %{}, "content" => ["content"], "tag" => "div"}])
     assert_output(~S|<a href="/contact">contact</a>|, [%{"attrs" => %{"href" => "/contact"}, "content" => ["contact"], "tag" => "a"}])
@@ -536,7 +532,8 @@ defmodule Beacon.LiveAdmin.VisualEditor.HEEx.JSONEncoderTest do
   end
 
   test "invalid template" do
-    assert {:error, _} = encode(~S|<%= :error|)
+    assert %Phoenix.LiveView.Tokenizer.ParseError{description: description} = encode(~S|<%= :error|)
+    assert description =~ "expected closing"
   end
 
   describe "encode_eex_block" do
@@ -549,7 +546,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.HEEx.JSONEncoderTest do
       <% end %>
       """
 
-      {:ok, [eex_block]} = Beacon.LiveAdmin.VisualEditor.HEEx.Tokenizer.tokenize(template)
+      {:ok, [eex_block]} = JSONEncoder.to_tree(template)
 
       assert JSONEncoder.encode_eex_block(eex_block) == %{
                type: :eex_block,
@@ -607,7 +604,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.HEEx.JSONEncoderTest do
       <% end %>
       """
 
-      {:ok, [eex_block]} = Beacon.LiveAdmin.VisualEditor.HEEx.Tokenizer.tokenize(template)
+      {:ok, [eex_block]} = JSONEncoder.to_tree(template)
 
       assert JSONEncoder.encode_eex_block(eex_block) == %{
                children: [
