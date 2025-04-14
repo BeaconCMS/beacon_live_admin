@@ -81,6 +81,17 @@ let optsServer = {
   ],
 }
 
+// TODO
+let optsMerge = {
+  entryPoints: ["js/merge.js"],
+  platform: "node",
+  bundle: true,
+  minify: false,
+  target: "node22",
+  outfile: "../priv/static/merge.js",
+  logLevel: "debug",
+}
+
 if (watch) {
   esbuild
     .context(optsClient)
@@ -91,7 +102,13 @@ if (watch) {
     .context(optsServer)
     .then((ctx) => ctx.watch())
     .catch((_error) => process.exit(1))
+
+  esbuild
+    .context(optsMerge)
+    .then((ctx) => ctx.watch())
+    .catch((_error) => process.exit(1))
 } else {
   esbuild.build(optsClient)
   esbuild.build(optsServer)
+  esbuild.build(optsMerge)
 }
