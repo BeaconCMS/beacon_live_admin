@@ -17,7 +17,21 @@ defmodule Beacon.LiveAdmin.Plug do
     only: ["images"]
 
   plug :fetch_session
+
   plug :page_url
+
+  plug :secure_headers
+
+  # visual builder has to be permissive to allow loading images, fonts, etc. from anywhere,
+  # either from another beacon site running in another node or from CDNs.
+  # that also covers loading fonts (icons) for the admin interface itself,
+  # and also loading assets and workers for the code editor
+  @doc false
+  def secure_headers(conn, _opts) do
+    Phoenix.Controller.put_secure_browser_headers(conn, %{
+      "content-security-policy" => "default-src 'self' 'unsafe-inline' data: blob: *"
+    })
+  end
 
   @doc false
   def page_url(%{path_info: ["__beacon_live_admin__", "assets" | _]} = conn, _opts), do: conn
