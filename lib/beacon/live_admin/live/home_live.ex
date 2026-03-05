@@ -7,10 +7,12 @@ defmodule Beacon.LiveAdmin.HomeLive do
   alias Beacon.LiveAdmin.Router
 
   @impl true
-  def mount(_params, _session, socket) do
+  def mount(_params, %{"pages" => pages}, socket) do
     if connected?(socket) do
       PubSub.subscribe()
     end
+
+    socket = assign(socket, :pages, pages)
 
     {:ok, assign(socket, :running_sites, Cluster.running_sites())}
   end
@@ -33,33 +35,11 @@ defmodule Beacon.LiveAdmin.HomeLive do
               <div class="p-6 rounded-[20px] bg-white border border-gray-200 hover:border-white hover:ring-2 hover:ring-gray-200 hover:ring-offset-8 hover:ring-offset-white transition">
                 <h3 class="mb-2 text-sm font-semibold leading-8 tracking-wider text-gray-600 uppercase"><%= site %></h3>
                 <div class="flex flex-col flex-wrap gap-2 mt-10 md:flex-row">
-                  <.link href={Router.beacon_live_admin_path(@socket, site, "/media_library")} class={nav_class()}>
-                    Media Library
-                  </.link>
-                  <.link href={Router.beacon_live_admin_path(@socket, site, "/components")} class={nav_class()}>
-                    Components
-                  </.link>
-                  <.link href={Router.beacon_live_admin_path(@socket, site, "/layouts")} class={nav_class()}>
-                    Layouts
-                  </.link>
-                  <.link href={Router.beacon_live_admin_path(@socket, site, "/pages")} class={nav_class()}>
-                    Pages
-                  </.link>
-                  <.link href={Router.beacon_live_admin_path(@socket, site, "/live_data")} class={nav_class()}>
-                    Live Data
-                  </.link>
-                  <.link href={Router.beacon_live_admin_path(@socket, site, "/events")} class={nav_class()}>
-                    Event Handlers
-                  </.link>
-                  <.link href={Router.beacon_live_admin_path(@socket, site, "/info_handlers")} class={nav_class()}>
-                    Info Handlers
-                  </.link>
-                  <.link href={Router.beacon_live_admin_path(@socket, site, "/error_pages")} class={nav_class()}>
-                    Error Pages
-                  </.link>
-                  <.link href={Router.beacon_live_admin_path(@socket, site, "/hooks")} class={nav_class()}>
-                    JS Hooks
-                  </.link>
+                  <%= for {path, _, _, _} <- all_pages(@pages) do %>
+                    <.link href={Router.beacon_live_admin_path(@socket, site, path)} class={nav_class()}>
+                      <%= path_to_title(path) %>
+                    </.link>
+                  <% end %>
                 </div>
               </div>
             <% end %>
@@ -78,4 +58,19 @@ defmodule Beacon.LiveAdmin.HomeLive do
   def handle_info({Cluster, :sites_changed}, socket) do
     {:noreply, assign(socket, :running_sites, Beacon.LiveAdmin.Cluster.running_sites())}
   end
+
+  defp all_pages(pages) do
+    Enum.filter(pages, fn {path, _, _, _} ->
+      path =~ ~r{^/[^/]+$}
+    end)
+  end
+
+  defp path_to_title(path) do
+    path
+    |> String.replace(~w[/ _ -], " ")
+    |> String.trim()
+    |> String.capitalize()
+  end
+
+
 end
