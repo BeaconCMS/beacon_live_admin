@@ -25,8 +25,8 @@ defmodule Beacon.LiveAdmin.AdminComponents do
   defp icon(assigns), do: Beacon.LiveAdmin.StationUI.HTML.Icon.icon(assigns)
   defp input(assigns), do: Beacon.LiveAdmin.CoreComponents.input(assigns)
 
-  @menu_link_active_class "inline-block p-4 text-blue-600 border-b-2 border-blue-600 rounded-t-lg active"
-  @menu_link_regular_class "inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300"
+  @menu_link_active_class "inline-flex items-center px-3.5 py-2 text-sm font-medium text-indigo-700 bg-indigo-50 rounded-lg transition-colors"
+  @menu_link_regular_class "inline-flex items-center px-3.5 py-2 text-sm font-medium text-slate-500 hover:text-slate-700 hover:bg-slate-50 rounded-lg transition-colors"
 
   @doc """
   Visual Editor for HEEx and HTML templates.
@@ -147,8 +147,8 @@ defmodule Beacon.LiveAdmin.AdminComponents do
       )
 
     ~H"""
-    <div class="mb-10 text-sm font-medium text-center text-gray-500 border-b border-gray-200">
-      <ul class="flex flex-wrap -mb-px">
+    <div class="mb-8">
+      <ul class="flex flex-wrap items-center gap-1 p-1 bg-slate-100/80 rounded-lg w-fit">
         <%= layout_menu_items(assigns) %>
       </ul>
     </div>
@@ -157,24 +157,24 @@ defmodule Beacon.LiveAdmin.AdminComponents do
 
   defp layout_menu_items(%{current_action: :new} = assigns) do
     ~H"""
-    <li class="mr-2"><.link patch={beacon_live_admin_path(@socket, @site, "/layouts/#{@layout_id}")} class={@active_class}>Layout</.link></li>
+    <li><.link patch={beacon_live_admin_path(@socket, @site, "/layouts/#{@layout_id}")} class={@active_class}>Layout</.link></li>
     """
   end
 
   defp layout_menu_items(assigns) do
     ~H"""
-    <li class="mr-2">
+    <li>
       <.link patch={beacon_live_admin_path(@socket, @site, "/layouts/#{@layout_id}")} class={if(@current_action == :edit, do: @active_class, else: @regular_class)}>Layout</.link>
     </li>
-    <li class="mr-2">
+    <li>
       <.link patch={beacon_live_admin_path(@socket, @site, "/layouts/#{@layout_id}/meta_tags")} class={if(@current_action == :meta_tags, do: @active_class, else: @regular_class)}>Meta Tags</.link>
     </li>
-    <li class="mr-2">
+    <li>
       <.link patch={beacon_live_admin_path(@socket, @site, "/layouts/#{@layout_id}/resource_links")} class={if(@current_action == :resource_links, do: @active_class, else: @regular_class)}>
         Resource Links
       </.link>
     </li>
-    <li class="mr-2">
+    <li>
       <.link patch={beacon_live_admin_path(@socket, @site, "/layouts/#{@layout_id}/revisions")} class={if(@current_action == :revisions, do: @active_class, else: @regular_class)}>Revisions</.link>
     </li>
     """
@@ -206,8 +206,8 @@ defmodule Beacon.LiveAdmin.AdminComponents do
       )
 
     ~H"""
-    <div class="mb-10 text-sm font-medium text-center text-gray-500 border-b border-gray-200">
-      <ul class="flex flex-wrap -mb-px">
+    <div class="mb-8">
+      <ul class="flex flex-wrap items-center gap-1 p-1 bg-slate-100/80 rounded-lg w-fit">
         <%= page_menu_items(assigns) %>
       </ul>
     </div>
@@ -216,25 +216,25 @@ defmodule Beacon.LiveAdmin.AdminComponents do
 
   defp page_menu_items(%{current_action: :new} = assigns) do
     ~H"""
-    <li class="mr-2"><.link patch={beacon_live_admin_path(@socket, @site, "/pages/#{@page_id}")} class={@active_class}>Page</.link></li>
+    <li><.link patch={beacon_live_admin_path(@socket, @site, "/pages/#{@page_id}")} class={@active_class}>Page</.link></li>
     """
   end
 
   defp page_menu_items(assigns) do
     ~H"""
-    <li class="mr-2">
+    <li>
       <.link patch={beacon_live_admin_path(@socket, @site, "/pages/#{@page_id}")} class={if(@current_action == :edit, do: @active_class, else: @regular_class)}>Page</.link>
     </li>
-    <li class="mr-2">
+    <li>
       <.link patch={beacon_live_admin_path(@socket, @site, "/pages/#{@page_id}/meta_tags")} class={if(@current_action == :meta_tags, do: @active_class, else: @regular_class)}>Meta Tags</.link>
     </li>
-    <li class="mr-2">
+    <li>
       <.link patch={beacon_live_admin_path(@socket, @site, "/pages/#{@page_id}/schema")} class={if(@current_action == :schema, do: @active_class, else: @regular_class)}>Schema</.link>
     </li>
-    <li class="mr-2">
+    <li>
       <.link patch={beacon_live_admin_path(@socket, @site, "/pages/#{@page_id}/variants")} class={if(@current_action == :variants, do: @active_class, else: @regular_class)}>Variants</.link>
     </li>
-    <li class="mr-2">
+    <li>
       <.link patch={beacon_live_admin_path(@socket, @site, "/pages/#{@page_id}/revisions")} class={if(@current_action == :revisions, do: @active_class, else: @regular_class)}>Revisions</.link>
     </li>
     """
@@ -266,8 +266,8 @@ defmodule Beacon.LiveAdmin.AdminComponents do
       )
 
     ~H"""
-    <div class="mb-10 text-sm font-medium text-center text-gray-500 border-b border-gray-200">
-      <ul class="flex flex-wrap -mb-px">
+    <div class="mb-8">
+      <ul class="flex flex-wrap items-center gap-1 p-1 bg-slate-100/80 rounded-lg w-fit">
         <%= component_menu_items(assigns) %>
       </ul>
     </div>
@@ -276,16 +276,16 @@ defmodule Beacon.LiveAdmin.AdminComponents do
 
   defp component_menu_items(%{current_action: :new} = assigns) do
     ~H"""
-    <li class="mr-2"><.link patch={beacon_live_admin_path(@socket, @site, "/components/#{@component_id}")} class={@active_class}>Component</.link></li>
+    <li><.link patch={beacon_live_admin_path(@socket, @site, "/components/#{@component_id}")} class={@active_class}>Component</.link></li>
     """
   end
 
   defp component_menu_items(assigns) do
     ~H"""
-    <li class="mr-2">
+    <li>
       <.link patch={beacon_live_admin_path(@socket, @site, "/components/#{@component_id}")} class={if(@current_action == :edit, do: @active_class, else: @regular_class)}>Component</.link>
     </li>
-    <li class="mr-2">
+    <li>
       <.link patch={beacon_live_admin_path(@socket, @site, "/components/#{@component_id}/slots")} class={if(@current_action == :slots, do: @active_class, else: @regular_class)}>Slots</.link>
     </li>
     """
@@ -421,11 +421,11 @@ defmodule Beacon.LiveAdmin.AdminComponents do
             <th class="relative p-0 pb-4"><span class="sr-only"><%= gettext("Actions") %></span></th>
           </tr>
         </thead>
-        <tbody id={@id} phx-update={match?(%Phoenix.LiveView.LiveStream{}, @rows) && "stream"} class="relative text-sm leading-6 divide-y border-grey-100 divide-grey-100 text-[#111625] font-medium">
-          <tr :for={row <- @rows} id={@row_id && @row_id.(row)} class="group hover:bg-[#F0F5F9]">
+        <tbody id={@id} phx-update={match?(%Phoenix.LiveView.LiveStream{}, @rows) && "stream"} class="relative text-sm leading-6 divide-y border-grey-100 divide-grey-100 text-slate-800 font-medium">
+          <tr :for={row <- @rows} id={@row_id && @row_id.(row)} class="group hover:bg-slate-50">
             <td :for={{col, i} <- Enum.with_index(@col)} phx-click={@row_click && @row_click.(row)} class={["relative p-0", @row_click && "hover:cursor-pointer"]}>
               <div class="block py-4 pr-6">
-                <span class="absolute right-0 -inset-y-px -left-3 group-hover:bg-[#F0F5F9] sm:rounded-l-xl" />
+                <span class="absolute right-0 -inset-y-px -left-3 group-hover:bg-slate-50 sm:rounded-l-xl" />
                 <span class={["relative", i == 0 && "font-semibold text-zinc-900"]}>
                   <%= render_slot(col, @row_item.(row)) %>
                 </span>
@@ -434,7 +434,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
             <td :if={@action != []} class="relative p-0 w-14">
               <div class="block py-4 pl-6">
                 <div class="flex justify-end">
-                  <span class="absolute left-0 -inset-y-px -right-3 group-hover:bg-[#F0F5F9] sm:rounded-r-xl" />
+                  <span class="absolute left-0 -inset-y-px -right-3 group-hover:bg-slate-50 sm:rounded-r-xl" />
                   <span :for={action <- @action} class="relative text-sm font-medium font-semibold text-right text-zinc-900 hover:text-zinc-700 whitespace-nowrap">
                     <%= render_slot(action, @row_item.(row)) %>
                   </span>
@@ -505,7 +505,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
 
   def main_content(assigns) do
     ~H"""
-    <div class={"#{@class} px-4 py-2 mt-6 bg-white col-span-full rounded-[1.1rem]"}>
+    <div class={"#{@class} px-4 py-3 mt-6 bg-white col-span-full rounded-xl border border-slate-200 shadow-sm"}>
       <%= render_slot(@inner_block) %>
     </div>
     """
@@ -553,34 +553,34 @@ defmodule Beacon.LiveAdmin.AdminComponents do
     assigns = assign(assigns, :table, assigns.page.table)
 
     ~H"""
-    <div :if={@table.page_count > 1} class="flex flex-row justify-center space-x-6 pt-8 text-xl font-semibold pt-10 pb-10">
+    <div :if={@table.page_count > 1} class="flex items-center justify-center gap-1 pt-6 pb-4 text-sm font-medium">
       <.link
         :if={@table.current_page > 1}
         patch={Table.prev_path(@socket, @page)}
-        class="border-b-4 border-transparent hover:text-blue-600 hover:border-blue-600 active:text-blue-700 focus:outline-none focus:duration-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300 focus-visible:rounded focus-visible:duration-300 transition-link duration-300 only-large"
+        class="inline-flex items-center gap-1 px-3 py-1.5 rounded-md text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
       >
-        <.icon name="hero-arrow-long-left-solid" class="mr-2" /> prev
+        <.icon name="hero-chevron-left-solid" class="w-4 h-4" /> Prev
       </.link>
-      <span :if={@table.current_page == 1} class="font-heading font-semibold text-gray-400 cursor-default">
-        <.icon name="hero-arrow-long-left-solid" class="mr-2" /> prev
+      <span :if={@table.current_page == 1} class="inline-flex items-center gap-1 px-3 py-1.5 text-slate-300 cursor-default">
+        <.icon name="hero-chevron-left-solid" class="w-4 h-4" /> Prev
       </span>
 
       <%= for page <- Beacon.LiveAdmin.PageBuilder.Table.nav_pages(@table.current_page, @table.page_count, @limit) do %>
         <span :if={is_integer(page)}>
           <.link
             patch={Table.goto_path(@socket, @page, page)}
-            class={
-              if @table.current_page == page,
-                do:
-                  "px-3 pb-0.5 pt-1.5 border-b-4 border-transparent hover:text-blue-600 hover:border-blue-600 active:text-blue-700 focus:outline-none focus:duration-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300 focus-visible:rounded focus-visible:duration-300 transition-link duration-300 only-large text-blue-700 border-blue-700",
-                else:
-                  "px-3 pb-0.5 pt-1.5 border-b-4 border-transparent hover:text-blue-600 hover:border-blue-600 active:text-blue-700 focus:outline-none focus:duration-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300 focus-visible:rounded focus-visible:duration-300 transition-link duration-300 only-large"
-            }
+            class={[
+              "inline-flex items-center justify-center w-8 h-8 rounded-md transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500",
+              if(@table.current_page == page,
+                do: "bg-indigo-600 text-white",
+                else: "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+              )
+            ]}
           >
             <%= page %>
           </.link>
         </span>
-        <span :if={page == :sep}>
+        <span :if={page == :sep} class="text-slate-400 px-1">
           ...
         </span>
       <% end %>
@@ -588,12 +588,12 @@ defmodule Beacon.LiveAdmin.AdminComponents do
       <.link
         :if={@table.current_page < @table.page_count}
         patch={Table.next_path(@socket, @page)}
-        class="border-b-4 border-transparent hover:text-blue-600 hover:border-blue-600 active:text-blue-800 focus:outline-none focus:duration-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300 focus-visible:rounded focus-visible:duration-300 transition-link duration-300 only-large"
+        class="inline-flex items-center gap-1 px-3 py-1.5 rounded-md text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
       >
-        next <.icon name="hero-arrow-long-right-solid" class="mr-2" />
+        Next <.icon name="hero-chevron-right-solid" class="w-4 h-4" />
       </.link>
-      <span :if={@table.current_page == @table.page_count} class="font-heading font-semibold text-gray-400 cursor-default">
-        next <.icon name="hero-arrow-long-right-solid" class="mr-2" />
+      <span :if={@table.current_page == @table.page_count} class="inline-flex items-center gap-1 px-3 py-1.5 text-slate-300 cursor-default">
+        Next <.icon name="hero-chevron-right-solid" class="w-4 h-4" />
       </span>
     </div>
     """

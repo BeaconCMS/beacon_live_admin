@@ -1,34 +1,31 @@
-<aside id="sidebar" class="@container w-full max-w-[76px] sm:max-w-[180px]">
-  <div class="flex flex-col h-full min-h-screen px-1 py-2 bg-white shadow-xl @[180px]:pr-0 @[180px]:pl-2 @[240px]:pl-3 @[350px]:pl-6">
-    <header class="p-2 @[240px]:py-2.5 @[300px]:py-3.5 @[350px]:py-4.5">
-      <div class="flex items-center justify-center @[180px]:justify-start gap-0 @[180px]:gap-1.5 @[240px]:gap-2.5 @[300px]:gap-3.5 @[350px]:gap-4">
-        <!--
-        <% # @Hanna, ask about image paths %>
-        <img
-          src={beacon_live_admin_static_path("/images/narwin_logo.svg")}
-          alt="Narwin"
-          class="block bg-gray-400 rounded-full w-9 @[180px]:w-11 @[240px]:w-[54px] @[300px]:w-[62px] @[350px]:w-[72px] aspect-square "
-          loading="lazy"
-        />
-        <span class="hidden antialiased font-light @[180px]:block @[180px]:text-lg/7 @[240px]:text-xl/[30px] @[300px]:text-3xl/[45px] @[350px]:text-4xl/[56px]">
-          Dockyard
+<aside id="sidebar" class="@container w-full max-w-[56px] sm:max-w-[220px] flex-shrink-0">
+  <div class="flex flex-col h-full min-h-screen border-r border-slate-200 bg-white">
+    <header class="px-4 py-5 @[180px]:px-5">
+      <div class="flex items-center justify-center @[180px]:justify-start gap-2.5">
+        <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-indigo-600 flex-shrink-0">
+          <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3" />
+            <path d="M12 2v4m0 12v4m10-10h-4M6 12H2m15.07-7.07l-2.83 2.83M9.76 14.24l-2.83 2.83m11.14 0l-2.83-2.83M9.76 9.76L6.93 6.93" />
+          </svg>
+        </div>
+        <span class="hidden @[180px]:block text-base font-semibold text-slate-900 tracking-tight">
+          Beacon
         </span>
-        -->
       </div>
     </header>
-    <nav aria-label="Primary navigation" class="flex flex-col flex-1 px-2">
-      <ul role="list" class="flex flex-1 flex-col gap-0.5 mt-2">
+    <nav aria-label="Primary navigation" class="flex flex-col flex-1 px-2 @[180px]:px-3 overflow-y-auto">
+      <div role="list" class="flex flex-1 flex-col gap-0.5">
         <%= for link <- @__beacon_menu__.links, link != :skip do %>
-          <li>
-            <%= maybe_link(@socket, @beacon_page, link) %>
-          </li>
+          <%= maybe_link(@socket, @beacon_page, link) %>
         <% end %>
-      </ul>
+      </div>
     </nav>
-    <.site_selector selected_site={@beacon_page.site} options={@__beacon_sites__} />
+    <div class="px-2 @[180px]:px-3 py-3 border-t border-slate-200">
+      <.site_selector selected_site={@beacon_page.site} options={@__beacon_sites__} />
+    </div>
   </div>
 </aside>
 
-<main class="w-full px-4 pt-4 sm:px-6 lg:px-6">
+<main class="flex-1 min-w-0 px-6 pt-6 pb-6 lg:px-8">
   <%= render_page(@beacon_page.module, assigns) %>
 </main>

@@ -67,13 +67,21 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.Index do
     <.main_content>
       <.table id="layouts" rows={@streams.beacon_layouts} row_click={fn {_dom_id, layout} -> JS.navigate(beacon_live_admin_path(@socket, @beacon_page.site, "/layouts/#{layout.id}")) end}>
         <:col :let={{_, layout}} label="Title"><%= layout.title %></:col>
-        <:col :let={{_, layout}} label="Status"><%= display_status(layout.status) %></:col>
+        <:col :let={{_, layout}} label="Status">
+          <span class={[
+            "inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full",
+            status_class(layout.status)
+          ]}>
+            <span class={["w-1.5 h-1.5 rounded-full", status_dot_class(layout.status)]}></span>
+            <%= display_status(layout.status) %>
+          </span>
+        </:col>
         <:action :let={{_, layout}}>
           <div class="sr-only">
             <.link navigate={beacon_live_admin_path(@socket, @beacon_page.site, "/layouts/#{layout.id}")}>Edit</.link>
           </div>
           <.link patch={beacon_live_admin_path(@socket, @beacon_page.site, "/layouts/#{layout.id}")} title="Edit layout" aria-label="Edit layout" class="flex items-center justify-center w-10 h-10 group">
-            <.icon name="hero-pencil-square text-[#61758A] hover:text-[#304254]" />
+            <.icon name="hero-pencil-square text-slate-400 hover:text-slate-600" />
           </.link>
         </:action>
       </.table>
@@ -93,4 +101,10 @@ defmodule Beacon.LiveAdmin.LayoutEditorLive.Index do
 
   defp display_status(:published), do: "Published"
   defp display_status(:created), do: "Draft"
+
+  defp status_class(:published), do: "bg-emerald-50 text-emerald-700"
+  defp status_class(_), do: "bg-slate-100 text-slate-600"
+
+  defp status_dot_class(:published), do: "bg-emerald-500"
+  defp status_dot_class(_), do: "bg-slate-400"
 end

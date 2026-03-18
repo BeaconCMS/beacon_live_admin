@@ -130,14 +130,31 @@ defmodule Beacon.LiveAdmin.PageLive do
     update_page(socket, params: params)
   end
 
+  @default_icons %{
+    "/pages" => "hero-document-text",
+    "/layouts" => "hero-rectangle-group",
+    "/components" => "hero-cube",
+    "/media_library" => "hero-photo",
+    "/live_data" => "hero-circle-stack",
+    "/events" => "hero-bolt",
+    "/info_handlers" => "hero-information-circle",
+    "/error_pages" => "hero-exclamation-triangle",
+    "/hooks" => "hero-code-bracket"
+  }
+
+  @menu_groups [
+    {:content, "Content", ["/pages", "/layouts", "/components", "/media_library"]},
+    {:data, "Data & Logic", ["/live_data", "/events", "/info_handlers"]},
+    {:developer, "Developer", ["/error_pages", "/hooks"]}
+  ]
+
   # TODO subpath /pages/:id -> Pages menu
   defp assign_menu_links(socket, pages) do
     ["", current_prefix | _] = String.split(socket.assigns.beacon_page.path, "/")
     current_prefix = "/" <> current_prefix
 
-    links =
-      pages
-      |> Enum.reduce(%{}, fn {path, module, live_action, _session}, acc ->
+    link_map =
+      Enum.reduce(pages, %{}, fn {path, module, live_action, _session}, acc ->
         ["", prefix | _] = String.split(path, "/")
         prefix = "/" <> prefix
 
@@ -151,14 +168,17 @@ defmodule Beacon.LiveAdmin.PageLive do
 
         case {current?, menu_link} do
           {true, {:root, anchor, icon}} ->
+            icon = icon || Map.get(@default_icons, prefix)
             value = {:current, anchor, icon}
             Map.update(acc, prefix, value, fn _ -> value end)
 
           {true, {:submenu, anchor, icon}} ->
+            icon = icon || Map.get(@default_icons, prefix)
             value = {:current, anchor, icon}
             Map.update(acc, prefix, value, fn _ -> value end)
 
           {false, {:root, anchor, icon}} ->
+            icon = icon || Map.get(@default_icons, prefix)
             value = {:enabled, anchor, icon}
             Map.update(acc, prefix, value, fn _ -> value end)
 
@@ -166,32 +186,35 @@ defmodule Beacon.LiveAdmin.PageLive do
             acc
         end
       end)
-      |> Enum.sort(fn {a, _}, {b, _} ->
-        case {a, b} do
-          {"/media_library", _} -> true
-          {_, "/media_library"} -> false
-          {"/components", _} -> true
-          {_, "/components"} -> false
-          {"/layouts", _} -> true
-          {_, "/layouts"} -> false
-          {"/pages", _} -> true
-          {_, "/pages"} -> false
-          {"/live_data", _} -> true
-          {_, "/live_data"} -> false
-          {"/events", _} -> true
-          {_, "/events"} -> false
-          {"/info_handlers", _} -> true
-          {_, "/info_handlers"} -> false
-          {"/error_pages", _} -> true
-          {_, "/error_pages"} -> false
-          {"/hooks", _} -> true
-          {_, "/hooks"} -> false
-          {a, b} -> a <= b
+
+    grouped_links =
+      Enum.flat_map(@menu_groups, fn {_group_id, group_label, prefixes} ->
+        group_items =
+          Enum.flat_map(prefixes, fn prefix ->
+            case Map.get(link_map, prefix) do
+              {state, anchor, icon} -> [{state, anchor, icon, prefix}]
+              nil -> []
+            end
+          end)
+
+        case group_items do
+          [] -> []
+          items -> [{:group, group_label} | items]
         end
       end)
+
+    # Append any links not in a predefined group
+    known_prefixes = Enum.flat_map(@menu_groups, fn {_, _, prefixes} -> prefixes end)
+
+    extra_links =
+      link_map
+      |> Enum.reject(fn {prefix, _} -> prefix in known_prefixes end)
+      |> Enum.sort_by(fn {prefix, _} -> prefix end)
       |> Enum.map(fn {prefix, {state, anchor, icon}} -> {state, anchor, icon, prefix} end)
 
-    update_menu(socket, links: links)
+    all_links = grouped_links ++ extra_links
+
+    update_menu(socket, links: all_links)
   end
 
   defp maybe_apply_module(socket, fun, params, default) do
@@ -234,6 +257,16 @@ defmodule Beacon.LiveAdmin.PageLive do
 
   ## Navbar handling
 
+  defp maybe_link(_socket, _page, {:group, label}) do
+    assigns = %{label: label}
+
+    ~H"""
+    <div class="hidden @[180px]:block pt-4 pb-1 px-2 first:pt-0">
+      <span class="text-[11px] font-semibold uppercase tracking-wider text-slate-400"><%= @label %></span>
+    </div>
+    """
+  end
+
   defp maybe_link(socket, page, {:current, text, icon, path}) do
     path = Beacon.LiveAdmin.Router.beacon_live_admin_path(socket, page.site, path)
     assigns = %{text: text, icon: icon, path: path}
@@ -243,10 +276,11 @@ defmodule Beacon.LiveAdmin.PageLive do
     ~H"""
     <.link
       href={@path}
-      class="w-full transition-colors outline-none active:text-blue-700 focus-visible:[&:not(:active)]:ring-2 @[350px]:focus-visible:[&:not(:active)]:ring-4 focus-visible:ring-purple-500 hover:bg-slate-100 flex rounded items-center justify-center @[180px]:justify-start gap-0 @[180px]:gap-2 @[240px]:gap-3  @[300px]:gap-4 px-[18px] py-3.5 @[180px]:p-2 @[240px]:py-3.5 @[240px]:px-2 @[350px]:py-4 antialiased font-semibold text-base @[240px]:text-lg  @[300px]:text-xl @[350px]:text-2xl text-slate-800"
+      class="w-full transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 bg-indigo-50 text-indigo-700 flex rounded-lg items-center justify-center @[180px]:justify-start gap-0 @[180px]:gap-2.5 px-3 py-2 antialiased text-sm font-medium"
     >
-      <span :if={@icon} aria-hidden="true" class={@icon <> " aspect-square h-7 @[180px]:h-4.5 w-7 @[180px]:w-4.5 @[350px]:h-7 @[350px]:w-7"}></span>
-      <div class="hidden font-semibold @[180px]:block line-clamp-1 text-blue-700"><%= @text %></div>
+      <span :if={@icon} aria-hidden="true" class={@icon <> " h-[18px] w-[18px] flex-shrink-0 text-indigo-600"}></span>
+      <span :if={!@icon} class="hidden @[180px]:block h-[18px] w-[18px] flex-shrink-0"></span>
+      <span class="hidden @[180px]:block line-clamp-1"><%= @text %></span>
     </.link>
     """
   end
@@ -259,10 +293,11 @@ defmodule Beacon.LiveAdmin.PageLive do
     ~H"""
     <.link
       href={@path}
-      class="w-full transition-colors outline-none active:text-blue-700 focus-visible:[&:not(:active)]:ring-2 @[350px]:focus-visible:[&:not(:active)]:ring-4 focus-visible:ring-purple-500 hover:bg-slate-100 flex rounded items-center justify-center @[180px]:justify-start gap-0 @[180px]:gap-2 @[240px]:gap-3  @[300px]:gap-4 px-[18px] py-3.5 @[180px]:p-2 @[240px]:py-3.5 @[240px]:px-2 @[350px]:py-4 antialiased font-semibold text-base @[240px]:text-lg  @[300px]:text-xl @[350px]:text-2xl text-slate-800"
+      class="w-full transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 hover:bg-slate-50 text-slate-600 hover:text-slate-900 flex rounded-lg items-center justify-center @[180px]:justify-start gap-0 @[180px]:gap-2.5 px-3 py-2 antialiased text-sm font-medium"
     >
-      <span :if={@icon} aria-hidden="true" class={@icon <> " aspect-square h-7 @[180px]:h-4.5 w-7 @[180px]:w-4.5 @[350px]:h-7 @[350px]:w-7"}></span>
-      <div class="hidden font-semibold @[180px]:block line-clamp-1"><%= @text %></div>
+      <span :if={@icon} aria-hidden="true" class={@icon <> " h-[18px] w-[18px] flex-shrink-0 text-slate-400"}></span>
+      <span :if={!@icon} class="hidden @[180px]:block h-[18px] w-[18px] flex-shrink-0"></span>
+      <span class="hidden @[180px]:block line-clamp-1"><%= @text %></span>
     </.link>
     """
   end
@@ -271,8 +306,10 @@ defmodule Beacon.LiveAdmin.PageLive do
     assigns = %{text: text, icon: icon}
 
     ~H"""
-    <span :if={@icon} aria-hidden="true" class={@icon <> " aspect-square h-7 @[180px]:h-4.5 w-7 @[180px]:w-4.5 @[350px]:h-7 @[350px]:w-7"}></span>
-    <span class=""><%= @text %></span>
+    <span class="w-full flex rounded-lg items-center justify-center @[180px]:justify-start gap-0 @[180px]:gap-2.5 px-3 py-2 antialiased text-sm font-medium text-slate-300 cursor-not-allowed">
+      <span :if={@icon} aria-hidden="true" class={@icon <> " h-[18px] w-[18px] flex-shrink-0"}></span>
+      <span class="hidden @[180px]:block line-clamp-1"><%= @text %></span>
+    </span>
     """
   end
 end
