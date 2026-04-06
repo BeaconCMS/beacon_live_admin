@@ -30,6 +30,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
      |> assign(:language, language(page.format))
      |> assign(:page_status, page_status)
      |> assign_extra_fields(changeset)
+     |> assign_cache_ttl(changeset)
      |> assign_new(:show_modal, fn -> nil end)
      |> assign_new(:tailwind_config_url, fn -> RuntimeCSS.css_config_url(site) end)
      |> assign_new(:tailwind_input, fn ->
@@ -76,7 +77,10 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
       |> Content.validate_page(socket.assigns.page, page_params)
       |> Map.put(:action, :validate)
 
-    {:noreply, assign_form(socket, changeset)}
+    {:noreply,
+     socket
+     |> assign_form(changeset)
+     |> assign_cache_ttl(changeset)}
   end
 
   def handle_event("validate", %{"page" => page_params}, socket) do
@@ -88,7 +92,8 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
     {:noreply,
      socket
      |> assign_form(changeset)
-     |> assign_extra_fields(changeset)}
+     |> assign_extra_fields(changeset)
+     |> assign_cache_ttl(changeset)}
   end
 
   def handle_event("show_modal", %{"confirm" => action} = _params, socket) do
@@ -210,6 +215,17 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
     |> assign_form(changeset)
     |> assign(:template, template)
   end
+
+  defp assign_cache_ttl(socket, changeset) do
+    extra = Changeset.get_field(changeset, :extra) || %{}
+    assign(socket, :cache_ttl, display_cache_ttl(extra["cache_ttl"]))
+  end
+
+  defp display_cache_ttl(nil), do: ""
+  defp display_cache_ttl("infinity"), do: "infinity"
+  defp display_cache_ttl(n) when is_integer(n), do: Integer.to_string(n)
+  defp display_cache_ttl(val) when is_binary(val), do: val
+  defp display_cache_ttl(_), do: ""
 
   defp assign_extra_fields(socket, changeset) do
     params = Ecto.Changeset.get_field(changeset, :extra)
@@ -357,6 +373,18 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
             <.input field={f[:layout_id]} type="select" options={layouts_to_options(@layouts)} label="Layout" />
             <.input field={f[:format]} type="select" label="Format" options={template_format_options(@site)} />
             <.input field={f[:template]} type="hidden" name="page[template]" id="page-form_template" value={Phoenix.HTML.Form.input_value(f, :template)} />
+
+            <.input
+              type="text"
+              name="page[extra][cache_ttl]"
+              value={@cache_ttl}
+              label="Cache TTL (seconds)"
+              id="page-form_extra_cache_ttl"
+              placeholder="Site default"
+            />
+            <p class="mt-[-1.25rem] text-xs text-gray-500">
+              Leave blank for site default. Use an integer for seconds or "infinity" for no expiration.
+            </p>
 
             <%= for mod <- extra_page_fields(@site) do %>
               <%= extra_page_field(@site, @extra_fields, mod) %>
