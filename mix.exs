@@ -65,7 +65,7 @@ defmodule Beacon.LiveAdmin.MixProject do
       # TODO: tailwind v4 needs more testing
       {:tailwind, "~> 0.2"},
       esbuild_dep(),
-      {:gettext, "~> 0.26"},
+      {:gettext, "~> 0.26 or ~> 1.0"},
       {:jason, "~> 1.0"},
       {:igniter, "~> 0.5", optional: true},
       {:turboprop, "~> 0.1"},
