@@ -27,8 +27,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.HEEx.JSONEncoderTest do
       })
 
     component = rpc(@node, Beacon.Content, :create_component!, [attrs])
-    # FIXME: autoload
-    rpc(@node, Beacon.Loader, :load_components_module, [@site])
+    rpc(@node, Beacon.RuntimeRenderer.Loader, :load_components, [@site])
     component
   end
 
@@ -82,9 +81,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.HEEx.JSONEncoderTest do
   end
 
   test "links with sigil_p" do
-    # FIXME: autoload
-    rpc(@node, Beacon.Loader, :load_components_module, [@site])
-    rpc(@node, Beacon.Loader, :load_routes_module, [@site])
+    rpc(@node, Beacon.RuntimeRenderer.Loader, :load_components, [@site])
 
     assert_output(
       ~S|<.link patch={~p"/details"}>view details</.link>|,

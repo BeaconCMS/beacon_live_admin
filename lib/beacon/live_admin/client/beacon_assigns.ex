@@ -3,7 +3,7 @@ defmodule Beacon.LiveAdmin.Client.BeaconAssigns do
 
   import Beacon.LiveAdmin.Cluster, only: [call: 4]
 
-  def new(site, page, metadata \\ []) do
-    call(site, Beacon.Web.BeaconAssigns, :new, [page, metadata])
+  def new(site) do
+    call(site, Beacon.Web.BeaconAssigns, :new, [site])
   end
 end

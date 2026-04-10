@@ -28,8 +28,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.HEEx.HEExDecoderTest do
       })
 
     component = rpc(@node, Beacon.Content, :create_component!, [attrs])
-    # FIXME: autoload
-    rpc(@node, Beacon.Loader, :load_components_module, [@site])
+    rpc(@node, Beacon.RuntimeRenderer.Loader, :load_components, [@site])
     component
   end
 
