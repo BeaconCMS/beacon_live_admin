@@ -22,6 +22,7 @@
   },
   "devDependencies": {
     "@tailwindcss/container-queries": "^0.1",
+    "@tailwindcss/forms": "^0.5.11",
     "esbuild": "^0.25",
     "esbuild-plugin-import-glob": "^0.1",
     "esbuild-svelte": "^0.9",
