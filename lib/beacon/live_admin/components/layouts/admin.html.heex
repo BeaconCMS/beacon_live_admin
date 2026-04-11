@@ -5,11 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="csrf-token" content={get_csrf_token()} />
     <title><%= assigns[:page_title] || "Beacon LiveAdmin" %></title>
+    <script>
+      (function() {
+        var theme = localStorage.getItem("beacon_admin_theme") || "system"
+        if (theme === "dark" || (theme === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+          document.documentElement.classList.add("dark")
+        }
+      })()
+    </script>
     <link rel="stylesheet" href={asset_path(@conn, :css)} />
     <script defer src={asset_path(@conn, :js)}>
     </script>
   </head>
-  <body class="h-full antialiased bg-slate-50">
+  <body class="h-full antialiased bg-slate-50 dark:bg-gray-950">
     <div class="flex h-full min-h-screen [&>div]:contents">
       <%= @inner_content %>
     </div>

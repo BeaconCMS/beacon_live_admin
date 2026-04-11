@@ -25,8 +25,8 @@ defmodule Beacon.LiveAdmin.AdminComponents do
   defp icon(assigns), do: Beacon.LiveAdmin.StationUI.HTML.Icon.icon(assigns)
   defp input(assigns), do: Beacon.LiveAdmin.CoreComponents.input(assigns)
 
-  @menu_link_active_class "inline-flex items-center px-3.5 py-2 text-sm font-medium text-indigo-700 bg-indigo-50 rounded-lg transition-colors"
-  @menu_link_regular_class "inline-flex items-center px-3.5 py-2 text-sm font-medium text-slate-500 hover:text-slate-700 hover:bg-slate-50 rounded-lg transition-colors"
+  @menu_link_active_class "inline-flex items-center px-3.5 py-2 text-sm font-medium text-indigo-700 bg-indigo-50 dark:bg-indigo-900/50 dark:text-indigo-300 rounded-lg transition-colors"
+  @menu_link_regular_class "inline-flex items-center px-3.5 py-2 text-sm font-medium text-slate-500 dark:text-gray-400 hover:text-slate-700 dark:hover:text-gray-200 hover:bg-slate-50 dark:hover:bg-gray-700 rounded-lg transition-colors"
 
   @doc """
   Visual Editor for HEEx and HTML templates.
@@ -148,7 +148,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
 
     ~H"""
     <div class="mb-8">
-      <ul class="flex flex-wrap items-center gap-1 p-1 bg-slate-100/80 rounded-lg w-fit">
+      <ul class="flex flex-wrap items-center gap-1 p-1 bg-slate-100/80 dark:bg-gray-800 rounded-lg w-fit">
         <%= layout_menu_items(assigns) %>
       </ul>
     </div>
@@ -207,7 +207,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
 
     ~H"""
     <div class="mb-8">
-      <ul class="flex flex-wrap items-center gap-1 p-1 bg-slate-100/80 rounded-lg w-fit">
+      <ul class="flex flex-wrap items-center gap-1 p-1 bg-slate-100/80 dark:bg-gray-800 rounded-lg w-fit">
         <%= page_menu_items(assigns) %>
       </ul>
     </div>
@@ -267,7 +267,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
 
     ~H"""
     <div class="mb-8">
-      <ul class="flex flex-wrap items-center gap-1 p-1 bg-slate-100/80 rounded-lg w-fit">
+      <ul class="flex flex-wrap items-center gap-1 p-1 bg-slate-100/80 dark:bg-gray-800 rounded-lg w-fit">
         <%= component_menu_items(assigns) %>
       </ul>
     </div>
@@ -327,19 +327,19 @@ defmodule Beacon.LiveAdmin.AdminComponents do
       role="alert"
       class={[
         "fixed top-2 right-2 w-80 sm:w-96 z-50 rounded-lg p-3 ring-1",
-        @kind == :info && "bg-emerald-50 text-emerald-800 ring-emerald-500 fill-cyan-900",
-        @kind == :error && "bg-rose-50 text-rose-900 shadow-md ring-rose-500 fill-rose-900"
+        @kind == :info && "bg-emerald-50 text-emerald-800 ring-emerald-500 fill-cyan-900 dark:bg-emerald-900/20 dark:text-emerald-300 dark:ring-emerald-700",
+        @kind == :error && "bg-rose-50 text-rose-900 shadow-md ring-rose-500 fill-rose-900 dark:bg-rose-900/20 dark:text-rose-300 dark:ring-rose-700"
       ]}
       {@rest}
     >
-      <p :if={@title} class="flex items-center gap-1.5 text-sm font-semibold leading-6">
+      <p :if={@title} class="flex items-center gap-1.5 text-sm font-semibold leading-6 dark:text-inherit">
         <.icon :if={@kind == :info} name="hero-information-circle-mini" class="w-4 h-4" />
         <.icon :if={@kind == :error} name="hero-exclamation-circle-mini" class="w-4 h-4" />
         <%= @title %>
       </p>
-      <p class="mt-2 text-sm leading-5"><%= msg %></p>
+      <p class="mt-2 text-sm leading-5 dark:text-inherit"><%= msg %></p>
       <button type="button" class="absolute p-2 group top-1 right-1" aria-label={gettext("close")}>
-        <.icon name="hero-x-mark-solid" class="w-5 h-5 opacity-40 group-hover:opacity-70" />
+        <.icon name="hero-x-mark-solid" class="w-5 h-5 opacity-40 group-hover:opacity-70 dark:opacity-60 dark:group-hover:opacity-90" />
       </button>
     </div>
     """
@@ -415,18 +415,18 @@ defmodule Beacon.LiveAdmin.AdminComponents do
     ~H"""
     <div class="px-4 overflow-y-auto sm:overflow-visible sm:px-0">
       <table class="w-[40rem] mt-6 sm:w-full">
-        <thead class="text-sm leading-6 text-left text-zinc-500">
+        <thead class="text-sm leading-6 text-left text-zinc-500 dark:text-gray-400">
           <tr>
             <th :for={col <- @col} class="pt-0 pb-4 pl-0 pr-6 font-sans font-semibold uppercase text-sm tracking-[1.68px]"><%= col[:label] %></th>
             <th class="relative p-0 pb-4"><span class="sr-only"><%= gettext("Actions") %></span></th>
           </tr>
         </thead>
-        <tbody id={@id} phx-update={match?(%Phoenix.LiveView.LiveStream{}, @rows) && "stream"} class="relative text-sm leading-6 divide-y border-grey-100 divide-grey-100 text-slate-800 font-medium">
-          <tr :for={row <- @rows} id={@row_id && @row_id.(row)} class="group hover:bg-slate-50">
+        <tbody id={@id} phx-update={match?(%Phoenix.LiveView.LiveStream{}, @rows) && "stream"} class="relative text-sm leading-6 divide-y border-grey-100 divide-grey-100 dark:divide-gray-700 text-slate-800 dark:text-gray-300 font-medium">
+          <tr :for={row <- @rows} id={@row_id && @row_id.(row)} class="group hover:bg-slate-50 dark:hover:bg-gray-700/50">
             <td :for={{col, i} <- Enum.with_index(@col)} phx-click={@row_click && @row_click.(row)} class={["relative p-0", @row_click && "hover:cursor-pointer"]}>
               <div class="block py-4 pr-6">
-                <span class="absolute right-0 -inset-y-px -left-3 group-hover:bg-slate-50 sm:rounded-l-xl" />
-                <span class={["relative", i == 0 && "font-semibold text-zinc-900"]}>
+                <span class="absolute right-0 -inset-y-px -left-3 group-hover:bg-slate-50 dark:group-hover:bg-gray-700/50 sm:rounded-l-xl" />
+                <span class={["relative", i == 0 && "font-semibold text-zinc-900 dark:text-gray-100"]}>
                   <%= render_slot(col, @row_item.(row)) %>
                 </span>
               </div>
@@ -434,8 +434,8 @@ defmodule Beacon.LiveAdmin.AdminComponents do
             <td :if={@action != []} class="relative p-0 w-14">
               <div class="block py-4 pl-6">
                 <div class="flex justify-end">
-                  <span class="absolute left-0 -inset-y-px -right-3 group-hover:bg-slate-50 sm:rounded-r-xl" />
-                  <span :for={action <- @action} class="relative text-sm font-medium font-semibold text-right text-zinc-900 hover:text-zinc-700 whitespace-nowrap">
+                  <span class="absolute left-0 -inset-y-px -right-3 group-hover:bg-slate-50 dark:group-hover:bg-gray-700/50 sm:rounded-r-xl" />
+                  <span :for={action <- @action} class="relative text-sm font-medium font-semibold text-right text-zinc-900 dark:text-gray-100 hover:text-zinc-700 dark:hover:text-gray-300 whitespace-nowrap">
                     <%= render_slot(action, @row_item.(row)) %>
                   </span>
                 </div>
@@ -465,10 +465,10 @@ defmodule Beacon.LiveAdmin.AdminComponents do
   def list(assigns) do
     ~H"""
     <div class="mt-14">
-      <dl class="-my-4 divide-y divide-zinc-100">
+      <dl class="-my-4 divide-y divide-zinc-100 dark:divide-gray-700">
         <div :for={item <- @item} class="flex gap-4 py-4 text-sm leading-6 sm:gap-8">
-          <dt class="flex-none w-1/4 text-zinc-500"><%= item.title %></dt>
-          <dd class="text-zinc-700"><%= render_slot(item) %></dd>
+          <dt class="flex-none w-1/4 text-zinc-500 dark:text-gray-400"><%= item.title %></dt>
+          <dd class="text-zinc-700 dark:text-gray-300"><%= render_slot(item) %></dd>
         </div>
       </dl>
     </div>
@@ -488,7 +488,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
   def back(assigns) do
     ~H"""
     <div class="mt-16">
-      <.link navigate={@navigate} class="text-sm font-semibold leading-6 text-zinc-900 hover:text-zinc-700">
+      <.link navigate={@navigate} class="text-sm font-semibold leading-6 text-zinc-900 dark:text-gray-100 hover:text-zinc-700 dark:hover:text-gray-300">
         <.icon name="hero-arrow-left-solid" class="w-3 h-3" />
         <%= render_slot(@inner_block) %>
       </.link>
@@ -505,7 +505,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
 
   def main_content(assigns) do
     ~H"""
-    <div class={"#{@class} px-4 py-3 mt-6 bg-white col-span-full rounded-xl border border-slate-200 shadow-sm"}>
+    <div class={"#{@class} px-4 py-3 mt-6 bg-white dark:bg-gray-800 dark:text-gray-100 col-span-full rounded-xl border border-slate-200 dark:border-gray-700 shadow-sm"}>
       <%= render_slot(@inner_block) %>
     </div>
     """
@@ -535,7 +535,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
     ~H"""
     <.simple_form :let={f} for={%{}} as={:sort} phx-change="beacon:table-sort">
       <div class="flex items-center gap-2 justify-end">
-        <label for="sort_sort_by" class="text-sm font-medium text-gray-900">Sort by</label>
+        <label for="sort_sort_by" class="text-sm font-medium text-gray-900 dark:text-gray-100">Sort by</label>
         <.input type="select" field={f[:sort_by]} value={@table.sort_by} options={@options} />
       </div>
     </.simple_form>
@@ -557,11 +557,11 @@ defmodule Beacon.LiveAdmin.AdminComponents do
       <.link
         :if={@table.current_page > 1}
         patch={Table.prev_path(@socket, @page)}
-        class="inline-flex items-center gap-1 px-3 py-1.5 rounded-md text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+        class="inline-flex items-center gap-1 px-3 py-1.5 rounded-md text-slate-600 dark:text-gray-400 hover:bg-slate-100 dark:hover:bg-gray-700 hover:text-slate-900 dark:hover:text-gray-100 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:focus-visible:ring-indigo-400"
       >
         <.icon name="hero-chevron-left-solid" class="w-4 h-4" /> Prev
       </.link>
-      <span :if={@table.current_page == 1} class="inline-flex items-center gap-1 px-3 py-1.5 text-slate-300 cursor-default">
+      <span :if={@table.current_page == 1} class="inline-flex items-center gap-1 px-3 py-1.5 text-slate-300 dark:text-gray-600 cursor-default">
         <.icon name="hero-chevron-left-solid" class="w-4 h-4" /> Prev
       </span>
 
@@ -570,17 +570,17 @@ defmodule Beacon.LiveAdmin.AdminComponents do
           <.link
             patch={Table.goto_path(@socket, @page, page)}
             class={[
-              "inline-flex items-center justify-center w-8 h-8 rounded-md transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500",
+              "inline-flex items-center justify-center w-8 h-8 rounded-md transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:focus-visible:ring-indigo-400",
               if(@table.current_page == page,
                 do: "bg-indigo-600 text-white",
-                else: "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+                else: "text-slate-600 dark:text-gray-400 hover:bg-slate-100 dark:hover:bg-gray-700 hover:text-slate-900 dark:hover:text-gray-100"
               )
             ]}
           >
             <%= page %>
           </.link>
         </span>
-        <span :if={page == :sep} class="text-slate-400 px-1">
+        <span :if={page == :sep} class="text-slate-400 dark:text-gray-500 px-1">
           ...
         </span>
       <% end %>
@@ -588,11 +588,11 @@ defmodule Beacon.LiveAdmin.AdminComponents do
       <.link
         :if={@table.current_page < @table.page_count}
         patch={Table.next_path(@socket, @page)}
-        class="inline-flex items-center gap-1 px-3 py-1.5 rounded-md text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+        class="inline-flex items-center gap-1 px-3 py-1.5 rounded-md text-slate-600 dark:text-gray-400 hover:bg-slate-100 dark:hover:bg-gray-700 hover:text-slate-900 dark:hover:text-gray-100 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:focus-visible:ring-indigo-400"
       >
         Next <.icon name="hero-chevron-right-solid" class="w-4 h-4" />
       </.link>
-      <span :if={@table.current_page == @table.page_count} class="inline-flex items-center gap-1 px-3 py-1.5 text-slate-300 cursor-default">
+      <span :if={@table.current_page == @table.page_count} class="inline-flex items-center gap-1 px-3 py-1.5 text-slate-300 dark:text-gray-600 cursor-default">
         Next <.icon name="hero-chevron-right-solid" class="w-4 h-4" />
       </span>
     </div>

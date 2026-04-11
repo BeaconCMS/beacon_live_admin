@@ -263,7 +263,7 @@ defmodule Beacon.LiveAdmin.PageLive do
 
     ~H"""
     <div class="hidden @[180px]:block pt-4 pb-1 px-2 first:pt-0">
-      <span class="text-[11px] font-semibold uppercase tracking-wider text-slate-400"><%= @label %></span>
+      <span class="text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-gray-500"><%= @label %></span>
     </div>
     """
   end
@@ -277,9 +277,9 @@ defmodule Beacon.LiveAdmin.PageLive do
     ~H"""
     <.link
       href={@path}
-      class="w-full transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 bg-indigo-50 text-indigo-700 flex rounded-lg items-center justify-center @[180px]:justify-start gap-0 @[180px]:gap-2.5 px-3 py-2 antialiased text-sm font-medium"
+      class="w-full transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 bg-indigo-50 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 flex rounded-lg items-center justify-center @[180px]:justify-start gap-0 @[180px]:gap-2.5 px-3 py-2 antialiased text-sm font-medium"
     >
-      <span :if={@icon} aria-hidden="true" class={@icon <> " h-[18px] w-[18px] flex-shrink-0 text-indigo-600"}></span>
+      <span :if={@icon} aria-hidden="true" class={@icon <> " h-[18px] w-[18px] flex-shrink-0 text-indigo-600 dark:text-indigo-400"}></span>
       <span :if={!@icon} class="hidden @[180px]:block h-[18px] w-[18px] flex-shrink-0"></span>
       <span class="hidden @[180px]:block line-clamp-1"><%= @text %></span>
     </.link>
@@ -294,9 +294,9 @@ defmodule Beacon.LiveAdmin.PageLive do
     ~H"""
     <.link
       href={@path}
-      class="w-full transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 hover:bg-slate-50 text-slate-600 hover:text-slate-900 flex rounded-lg items-center justify-center @[180px]:justify-start gap-0 @[180px]:gap-2.5 px-3 py-2 antialiased text-sm font-medium"
+      class="w-full transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 hover:bg-slate-50 dark:hover:bg-gray-800 text-slate-600 dark:text-gray-300 hover:text-slate-900 dark:hover:text-gray-100 flex rounded-lg items-center justify-center @[180px]:justify-start gap-0 @[180px]:gap-2.5 px-3 py-2 antialiased text-sm font-medium"
     >
-      <span :if={@icon} aria-hidden="true" class={@icon <> " h-[18px] w-[18px] flex-shrink-0 text-slate-400"}></span>
+      <span :if={@icon} aria-hidden="true" class={@icon <> " h-[18px] w-[18px] flex-shrink-0 text-slate-400 dark:text-gray-500"}></span>
       <span :if={!@icon} class="hidden @[180px]:block h-[18px] w-[18px] flex-shrink-0"></span>
       <span class="hidden @[180px]:block line-clamp-1"><%= @text %></span>
     </.link>
