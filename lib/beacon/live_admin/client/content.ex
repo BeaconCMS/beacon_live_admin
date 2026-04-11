@@ -318,4 +318,20 @@ defmodule Beacon.LiveAdmin.Client.Content do
   def delete_js_hook(site, js_hook) do
     call(site, Beacon.Content, :delete_js_hook, [js_hook])
   end
+
+  def list_site_settings(site) do
+    call(site, Beacon.Content, :list_site_settings, [site])
+  end
+
+  def get_site_setting(site, key) do
+    call(site, Beacon.Content, :get_site_setting, [site, key])
+  end
+
+  def change_site_setting(site, setting, params \\ %{}) do
+    call(site, Beacon.Content, :change_site_setting, [setting, params])
+  end
+
+  def update_site_setting(site, setting, attrs) do
+    call(site, Beacon.Content, :update_site_setting, [setting, attrs])
+  end
 end

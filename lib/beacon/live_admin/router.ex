@@ -176,7 +176,10 @@ defmodule Beacon.LiveAdmin.Router do
       {"/error_pages/:status", Beacon.LiveAdmin.ErrorPageEditorLive.Index, :index, %{}},
       # js hooks
       {"/hooks", Beacon.LiveAdmin.JSHookEditorLive.Index, :index, %{}},
-      {"/hooks/:id", Beacon.LiveAdmin.JSHookEditorLive.Index, :index, %{}}
+      {"/hooks/:id", Beacon.LiveAdmin.JSHookEditorLive.Index, :index, %{}},
+      # site settings
+      {"/settings", Beacon.LiveAdmin.SiteSettingsEditorLive.Index, :index, %{}},
+      {"/settings/:key", Beacon.LiveAdmin.SiteSettingsEditorLive.Index, :edit, %{}}
     ]
     |> Enum.concat(additional_pages)
     |> Enum.map(fn {path, module, live_action, opts} ->

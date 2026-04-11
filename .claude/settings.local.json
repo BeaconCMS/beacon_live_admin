@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find:*)",
+      "Bash(grep:*)",
+      "Bash(mix compile:*)",
+      "Bash(mix:*)",
+      "Bash(elixirc:*)",
+      "Bash(for f:*)",
+      "Bash(cd assets:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(/tmp/beacon_api_summary.txt:*)",
+      "Read(//tmp/**)",
+      "Bash(ls -la /Users/bcardarella/projects/beacon_live_admin/lib/beacon/live_admin/*.ex)"
+    ]
+  }
+}

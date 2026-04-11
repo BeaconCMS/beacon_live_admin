@@ -139,13 +139,14 @@ defmodule Beacon.LiveAdmin.PageLive do
     "/events" => "hero-bolt",
     "/info_handlers" => "hero-information-circle",
     "/error_pages" => "hero-exclamation-triangle",
-    "/hooks" => "hero-code-bracket"
+    "/hooks" => "hero-code-bracket",
+    "/settings" => "hero-cog-6-tooth"
   }
 
   @menu_groups [
     {:content, "Content", ["/pages", "/layouts", "/components", "/media_library"]},
     {:data, "Data & Logic", ["/live_data", "/events", "/info_handlers"]},
-    {:developer, "Developer", ["/error_pages", "/hooks"]}
+    {:developer, "Developer", ["/error_pages", "/hooks", "/settings"]}
   ]
 
   # TODO subpath /pages/:id -> Pages menu
