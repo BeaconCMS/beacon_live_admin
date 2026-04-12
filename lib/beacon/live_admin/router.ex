@@ -158,13 +158,16 @@ defmodule Beacon.LiveAdmin.Router do
       {"/pages/:id/revisions", Beacon.LiveAdmin.PageEditorLive.Revisions, :revisions, %{}},
       {"/pages/:page_id/variants", Beacon.LiveAdmin.PageEditorLive.Variants, :variants, %{}},
       {"/pages/:page_id/variants/:variant_id", Beacon.LiveAdmin.PageEditorLive.Variants, :variants, %{}},
-      # live data
-      {"/live_data", Beacon.LiveAdmin.LiveDataEditorLive.Index, :index, %{}},
-      {"/live_data/new", Beacon.LiveAdmin.LiveDataEditorLive.Index, :new, %{}},
-      {"/live_data/:live_data_id", Beacon.LiveAdmin.LiveDataEditorLive.Index, :edit, %{}},
-      {"/live_data/:live_data_id/assigns", Beacon.LiveAdmin.LiveDataEditorLive.Assigns, :assigns, %{}},
-      {"/live_data/:live_data_id/assigns/:assign_id", Beacon.LiveAdmin.LiveDataEditorLive.Assigns, :assigns, %{}},
       {"/media_library/:id", Beacon.LiveAdmin.MediaLibraryLive.Index, :show, %{}},
+      # action builder
+      {"/action_builder", Beacon.LiveAdmin.ActionBuilderLive.Index, :index, %{}},
+      # graphql endpoints
+      {"/graphql_endpoints", Beacon.LiveAdmin.GraphQLEndpointEditorLive.Index, :index, %{}},
+      {"/graphql_endpoints/:id", Beacon.LiveAdmin.GraphQLEndpointEditorLive.Index, :index, %{}},
+      {"/graphql_endpoints/:id/schema", Beacon.LiveAdmin.GraphQLEndpointEditorLive.Schema, :schema, %{}},
+      # page queries
+      {"/pages/:page_id/queries", Beacon.LiveAdmin.PageQueryEditorLive.Index, :index, %{}},
+      {"/pages/:page_id/queries/:id", Beacon.LiveAdmin.PageQueryEditorLive.Index, :edit, %{}},
       # events
       {"/events", Beacon.LiveAdmin.EventHandlerEditorLive.Index, :index, %{}},
       {"/events/:id", Beacon.LiveAdmin.EventHandlerEditorLive.Index, :index, %{}},

@@ -97,32 +97,6 @@ defmodule Beacon.LiveAdmin.Fixtures do
     Path.join(["test", "support", "fixtures", file_name])
   end
 
-  def live_data_fixture(node \\ node1(), attrs \\ %{}) do
-    attrs =
-      Enum.into(attrs, %{
-        site: "site_a",
-        path: "/foo/:id",
-        format: :elixir
-      })
-
-    rpc(node, Beacon.Content, :create_live_data!, [attrs])
-  end
-
-  def live_data_assign_fixture(node \\ node1(), attrs \\ %{}) do
-    live_data = get_lazy(attrs, :live_data, fn -> live_data_fixture(node) end)
-
-    attrs =
-      Enum.into(attrs, %{
-        format: "elixir",
-        key: "sum",
-        value: "1 + 1"
-      })
-
-    {:ok, live_data} = rpc(node, Beacon.Content, :create_assign_for_live_data, [live_data, attrs])
-
-    Enum.find(live_data.assigns, &(&1.key == attrs.key))
-  end
-
   def info_handler_fixture(node \\ node(), attrs \\ %{}) do
     attrs =
       Enum.into(attrs, %{

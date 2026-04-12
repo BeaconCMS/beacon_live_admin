@@ -14,7 +14,7 @@ defmodule Beacon.LiveAdmin.HomeLive do
       %{path: "/media_library", icon: "hero-photo", title: "Media Library", description: "Upload and organize media files"}
     ]},
     {"Data & Logic", [
-      %{path: "/live_data", icon: "hero-circle-stack", title: "Live Data", description: "Configure dynamic data sources"},
+      %{path: "/graphql_endpoints", icon: "hero-server-stack", title: "GraphQL Endpoints", description: "Connect to external data sources via GraphQL"},
       %{path: "/events", icon: "hero-bolt", title: "Event Handlers", description: "Handle user interactions"},
       %{path: "/info_handlers", icon: "hero-information-circle", title: "Info Handlers", description: "Process LiveView info messages"}
     ]},

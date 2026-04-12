@@ -135,7 +135,7 @@ defmodule Beacon.LiveAdmin.PageLive do
     "/layouts" => "hero-rectangle-group",
     "/components" => "hero-cube",
     "/media_library" => "hero-photo",
-    "/live_data" => "hero-circle-stack",
+    "/graphql_endpoints" => "hero-server-stack",
     "/events" => "hero-bolt",
     "/info_handlers" => "hero-information-circle",
     "/error_pages" => "hero-exclamation-triangle",
@@ -145,7 +145,7 @@ defmodule Beacon.LiveAdmin.PageLive do
 
   @menu_groups [
     {:content, "Content", ["/pages", "/layouts", "/components", "/media_library"]},
-    {:data, "Data & Logic", ["/live_data", "/events", "/info_handlers"]},
+    {:data, "Data & Logic", ["/graphql_endpoints", "/events", "/info_handlers"]},
     {:developer, "Developer", ["/error_pages", "/hooks", "/settings"]}
   ]
 

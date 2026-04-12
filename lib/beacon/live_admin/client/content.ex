@@ -227,50 +227,6 @@ defmodule Beacon.LiveAdmin.Client.Content do
     call(site, Beacon.Content.ErrorPage, :valid_statuses, [])
   end
 
-  def live_data_assign_formats(site) do
-    call(site, Beacon.Content, :live_data_assign_formats, [])
-  end
-
-  def change_live_data_path(site, live_data, attrs \\ %{}) do
-    call(site, Beacon.Content, :change_live_data_path, [live_data, attrs])
-  end
-
-  def change_live_data_assign(site, live_data_assign, attrs \\ %{}) do
-    call(site, Beacon.Content, :change_live_data_assign, [live_data_assign, attrs])
-  end
-
-  def create_live_data(site, attrs) do
-    call(site, Beacon.Content, :create_live_data, [attrs])
-  end
-
-  def create_assign_for_live_data(site, live_data, attrs) do
-    call(site, Beacon.Content, :create_assign_for_live_data, [live_data, attrs])
-  end
-
-  def get_live_data_by(site, clauses) do
-    call(site, Beacon.Content, :get_live_data_by, [site, clauses])
-  end
-
-  def live_data_for_site(site, opts \\ []) do
-    call(site, Beacon.Content, :live_data_for_site, [site, opts])
-  end
-
-  def update_live_data_path(site, live_data, attrs) do
-    call(site, Beacon.Content, :update_live_data_path, [live_data, attrs])
-  end
-
-  def update_live_data_assign(site, live_data_assign, attrs) do
-    call(site, Beacon.Content, :update_live_data_assign, [live_data_assign, site, attrs])
-  end
-
-  def delete_live_data(site, live_data) do
-    call(site, Beacon.Content, :delete_live_data, [live_data, site])
-  end
-
-  def delete_live_data_assign(site, live_data_assign) do
-    call(site, Beacon.Content, :delete_live_data_assign, [live_data_assign, site])
-  end
-
   def create_info_handler(site, attrs) do
     call(site, Beacon.Content, :create_info_handler, [attrs])
   end
@@ -333,5 +289,53 @@ defmodule Beacon.LiveAdmin.Client.Content do
 
   def update_site_setting(site, setting, attrs) do
     call(site, Beacon.Content, :update_site_setting, [setting, attrs])
+  end
+
+  # GraphQL Endpoints
+
+  def list_graphql_endpoints(site) do
+    call(site, Beacon.Content, :list_graphql_endpoints, [site])
+  end
+
+  def get_graphql_endpoint(site, id) do
+    call(site, Beacon.Content, :get_graphql_endpoint, [site, id])
+  end
+
+  def create_graphql_endpoint(site, attrs) do
+    call(site, Beacon.Content, :create_graphql_endpoint, [attrs])
+  end
+
+  def update_graphql_endpoint(site, endpoint, attrs) do
+    call(site, Beacon.Content, :update_graphql_endpoint, [endpoint, attrs])
+  end
+
+  def delete_graphql_endpoint(site, endpoint) do
+    call(site, Beacon.Content, :delete_graphql_endpoint, [endpoint])
+  end
+
+  def change_graphql_endpoint(site, endpoint, attrs \\ %{}) do
+    call(site, Beacon.Content, :change_graphql_endpoint, [endpoint, attrs])
+  end
+
+  def introspect_graphql_endpoint(site, endpoint_name) do
+    call(site, Beacon.GraphQL.Introspection, :introspect, [site, endpoint_name])
+  end
+
+  # Page Queries
+
+  def list_page_queries(site, page_id) do
+    call(site, Beacon.Content, :list_page_queries, [site, page_id])
+  end
+
+  def create_page_query(site, attrs) do
+    call(site, Beacon.Content, :create_page_query, [site, attrs])
+  end
+
+  def update_page_query(site, page_query, attrs) do
+    call(site, Beacon.Content, :update_page_query, [site, page_query, attrs])
+  end
+
+  def delete_page_query(site, page_query) do
+    call(site, Beacon.Content, :delete_page_query, [site, page_query])
   end
 end
