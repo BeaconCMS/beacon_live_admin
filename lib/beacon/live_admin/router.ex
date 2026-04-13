@@ -103,6 +103,12 @@ defmodule Beacon.LiveAdmin.Router do
         import Phoenix.Router, only: [get: 4]
         import Phoenix.LiveView.Router, only: [live: 4, live_session: 3]
 
+        # Login route — pre-auth, separate live_session with minimal layout
+        live_session :beacon_live_admin_login,
+          root_layout: {Beacon.LiveAdmin.Auth.LoginLayout, :render} do
+          live "/login", Beacon.LiveAdmin.Auth.LoginLive, :login, as: :beacon_live_admin_login
+        end
+
         live_session session_name, session_opts do
           live "/", Beacon.LiveAdmin.HomeLive, :index, as: :beacon_live_admin_home
 
@@ -191,7 +197,12 @@ defmodule Beacon.LiveAdmin.Router do
       {"/hooks/:id", Beacon.LiveAdmin.JSHookEditorLive.Index, :index, %{}},
       # site settings
       {"/settings", Beacon.LiveAdmin.SiteSettingsEditorLive.Index, :index, %{}},
-      {"/settings/:key", Beacon.LiveAdmin.SiteSettingsEditorLive.Index, :edit, %{}}
+      {"/settings/:key", Beacon.LiveAdmin.SiteSettingsEditorLive.Index, :edit, %{}},
+      # beacon admin (super_admin only)
+      {"/beacon", Beacon.LiveAdmin.BeaconAdmin.DashboardLive, :dashboard, %{}},
+      {"/beacon/users", Beacon.LiveAdmin.BeaconAdmin.UsersLive, :index, %{}},
+      {"/beacon/settings", Beacon.LiveAdmin.BeaconAdmin.SettingsLive, :settings, %{}},
+      {"/beacon/template_types", Beacon.LiveAdmin.BeaconAdmin.GlobalTemplateTypesLive, :index, %{}}
     ]
     |> Enum.concat(additional_pages)
     |> Enum.map(fn {path, module, live_action, opts} ->

@@ -140,13 +140,15 @@ defmodule Beacon.LiveAdmin.PageLive do
     "/info_handlers" => "hero-information-circle",
     "/error_pages" => "hero-exclamation-triangle",
     "/hooks" => "hero-code-bracket",
-    "/settings" => "hero-cog-6-tooth"
+    "/settings" => "hero-cog-6-tooth",
+    "/beacon" => "hero-shield-check"
   }
 
   @menu_groups [
     {:content, "Content", ["/pages", "/layouts", "/components", "/media_library"]},
     {:data, "Data & Logic", ["/graphql_endpoints", "/events", "/info_handlers"]},
-    {:developer, "Developer", ["/error_pages", "/hooks", "/settings"]}
+    {:developer, "Developer", ["/error_pages", "/hooks", "/settings"]},
+    {:beacon_admin, "Platform", ["/beacon"]}
   ]
 
   # TODO subpath /pages/:id -> Pages menu
