@@ -338,4 +338,35 @@ defmodule Beacon.LiveAdmin.Client.Content do
   def delete_page_query(site, page_query) do
     call(site, Beacon.Content, :delete_page_query, [site, page_query])
   end
+
+  # Redirects
+
+  def list_redirects(site, opts \\ []), do: call(site, Beacon.Content, :list_redirects, [site, opts])
+  def get_redirect(site, id), do: call(site, Beacon.Content, :get_redirect, [site, id])
+  def create_redirect(site, attrs), do: call(site, Beacon.Content, :create_redirect, [attrs])
+  def update_redirect(site, redirect, attrs), do: call(site, Beacon.Content, :update_redirect, [redirect, attrs])
+  def delete_redirect(site, redirect), do: call(site, Beacon.Content, :delete_redirect, [redirect])
+
+  # Authors
+
+  def list_authors(site, opts \\ []), do: call(site, Beacon.Content, :list_authors, [site, opts])
+  def get_author(site, id), do: call(site, Beacon.Content, :get_author, [site, id])
+  def create_author(site, attrs), do: call(site, Beacon.Content, :create_author, [attrs])
+  def update_author(site, redirect, attrs), do: call(site, Beacon.Content, :update_author, [redirect, attrs])
+  def delete_author(site, redirect), do: call(site, Beacon.Content, :delete_author, [redirect])
+
+  # Link Health
+
+  def list_orphan_pages(site), do: call(site, Beacon.Content, :list_orphan_pages, [site])
+  def list_broken_links(site), do: call(site, Beacon.Content, :list_broken_links, [site])
+
+  # Measurement
+
+  def take_seo_snapshot(site), do: call(site, Beacon.Content, :take_seo_snapshot, [site])
+  def list_seo_snapshots(site, opts \\ []), do: call(site, Beacon.Content, :list_seo_snapshots, [site, opts])
+
+  # Content Freshness
+
+  def mark_page_updated(site, page), do: call(site, Beacon.Content, :mark_page_updated, [page])
+  def list_stale_pages(site, days \\ 90), do: call(site, Beacon.Content, :list_stale_pages, [site, days])
 end

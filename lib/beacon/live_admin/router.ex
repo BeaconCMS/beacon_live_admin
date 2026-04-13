@@ -153,12 +153,21 @@ defmodule Beacon.LiveAdmin.Router do
       {"/pages", Beacon.LiveAdmin.PageEditorLive.Index, :index, %{}},
       {"/pages/new", Beacon.LiveAdmin.PageEditorLive.New, :new, %{}},
       {"/pages/:id", Beacon.LiveAdmin.PageEditorLive.Edit, :edit, %{}},
+      {"/pages/:id/seo", Beacon.LiveAdmin.PageEditorLive.SEO, :seo, %{}},
       {"/pages/:id/meta_tags", Beacon.LiveAdmin.PageEditorLive.MetaTags, :meta_tags, %{}},
       {"/pages/:id/schema", Beacon.LiveAdmin.PageEditorLive.Schema, :schema, %{}},
       {"/pages/:id/revisions", Beacon.LiveAdmin.PageEditorLive.Revisions, :revisions, %{}},
       {"/pages/:page_id/variants", Beacon.LiveAdmin.PageEditorLive.Variants, :variants, %{}},
       {"/pages/:page_id/variants/:variant_id", Beacon.LiveAdmin.PageEditorLive.Variants, :variants, %{}},
       {"/media_library/:id", Beacon.LiveAdmin.MediaLibraryLive.Index, :show, %{}},
+      # seo audit + measurement + link health
+      {"/seo_audit", Beacon.LiveAdmin.SEOAuditLive, :seo_audit, %{}},
+      {"/measurement", Beacon.LiveAdmin.MeasurementLive, :measurement, %{}},
+      {"/link_health", Beacon.LiveAdmin.LinkHealthLive, :index, %{}},
+      # redirects
+      {"/redirects", Beacon.LiveAdmin.RedirectManagerLive, :index, %{}},
+      # authors
+      {"/authors", Beacon.LiveAdmin.AuthorManagerLive, :index, %{}},
       # action builder
       {"/action_builder", Beacon.LiveAdmin.ActionBuilderLive.Index, :index, %{}},
       # graphql endpoints

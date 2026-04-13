@@ -226,6 +226,9 @@ defmodule Beacon.LiveAdmin.AdminComponents do
       <.link patch={beacon_live_admin_path(@socket, @site, "/pages/#{@page_id}")} class={if(@current_action == :edit, do: @active_class, else: @regular_class)}>Page</.link>
     </li>
     <li>
+      <.link patch={beacon_live_admin_path(@socket, @site, "/pages/#{@page_id}/seo")} class={if(@current_action == :seo, do: @active_class, else: @regular_class)}>SEO</.link>
+    </li>
+    <li>
       <.link patch={beacon_live_admin_path(@socket, @site, "/pages/#{@page_id}/meta_tags")} class={if(@current_action == :meta_tags, do: @active_class, else: @regular_class)}>Meta Tags</.link>
     </li>
     <li>
