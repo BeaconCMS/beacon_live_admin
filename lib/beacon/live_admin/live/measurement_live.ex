@@ -92,12 +92,8 @@ defmodule Beacon.LiveAdmin.MeasurementLive do
             <div class="text-xs text-gray-500 uppercase">With Canonical</div>
           </div>
           <div class="bg-white rounded-lg border p-4 text-center">
-            <div class="text-2xl font-bold text-gray-900"><%= metric(@latest, "pages_with_author") %></div>
-            <div class="text-xs text-gray-500 uppercase">With Author</div>
-          </div>
-          <div class="bg-white rounded-lg border p-4 text-center">
-            <div class="text-2xl font-bold text-gray-900"><%= metric(@latest, "pages_article_type") %></div>
-            <div class="text-xs text-gray-500 uppercase">Articles</div>
+            <div class="text-2xl font-bold text-gray-900"><%= metric(@latest, "pages_with_template_type") %></div>
+            <div class="text-xs text-gray-500 uppercase">With Template Type</div>
           </div>
           <div class="bg-white rounded-lg border p-4 text-center">
             <div class="text-2xl font-bold text-gray-900"><%= metric(@latest, "redirect_count") %></div>

@@ -43,7 +43,7 @@ defmodule Beacon.LiveAdmin.SEOAuditLive do
       {10, non_empty?(page.canonical_url)},
       {10, page.raw_schema != nil and page.raw_schema != []},
       {5, non_empty?(page.robots)},
-      {5, page.page_type != nil and page.page_type != "website"},
+      {5, page.template_type_id != nil},
       {5, non_empty?(page.twitter_card)}
     ]
 

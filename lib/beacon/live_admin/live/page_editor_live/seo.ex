@@ -32,8 +32,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.SEO do
       "og_image" => params["og_image"],
       "canonical_url" => params["canonical_url"],
       "robots" => params["robots"],
-      "twitter_card" => params["twitter_card"],
-      "page_type" => params["page_type"]
+      "twitter_card" => params["twitter_card"]
     }
 
     case Content.update_page(page.site, page, attrs) do
@@ -53,7 +52,47 @@ defmodule Beacon.LiveAdmin.PageEditorLive.SEO do
     {:noreply, assign(socket, :form_data, params)}
   end
 
+  def handle_event("mark_updated", _, socket) do
+    page = socket.assigns.page
+
+    case Content.mark_page_updated(socket.assigns.beacon_page.site, page) do
+      {:ok, updated_page} ->
+        {:noreply,
+         socket
+         |> assign(:page, updated_page)
+         |> assign_seo_fields(updated_page)
+         |> put_flash(:info, "Page marked as substantially updated")}
+
+      {:error, _} ->
+        {:noreply, put_flash(socket, :error, "Failed to update")}
+    end
+  end
+
+  def handle_event("set_template_type", %{"template_type_id" => ""}, socket) do
+    page = socket.assigns.page
+    case Content.update_page(page.site, page, %{"template_type_id" => nil}) do
+      {:ok, updated} ->
+        {:noreply, socket |> assign(:page, updated) |> assign_seo_fields(updated)}
+      {:error, _} ->
+        {:noreply, put_flash(socket, :error, "Failed to update")}
+    end
+  end
+
+  def handle_event("set_template_type", %{"template_type_id" => id}, socket) do
+    page = socket.assigns.page
+    case Content.update_page(page.site, page, %{"template_type_id" => id}) do
+      {:ok, updated} ->
+        {:noreply, socket |> assign(:page, updated) |> assign_seo_fields(updated)}
+      {:error, _} ->
+        {:noreply, put_flash(socket, :error, "Failed to update")}
+    end
+  end
+
   defp assign_seo_fields(socket, page) do
+    site = socket.assigns.beacon_page.site
+    template_types = Content.list_template_types(site)
+    current_tt = if page.template_type_id, do: Content.get_template_type(site, page.template_type_id)
+
     form_data = %{
       "meta_description" => page.meta_description || "",
       "og_title" => page.og_title || "",
@@ -61,13 +100,16 @@ defmodule Beacon.LiveAdmin.PageEditorLive.SEO do
       "og_image" => page.og_image || "",
       "canonical_url" => page.canonical_url || "",
       "robots" => page.robots || "index, follow",
-      "twitter_card" => page.twitter_card || "summary_large_image",
-      "page_type" => page.page_type || "website"
+      "twitter_card" => page.twitter_card || "summary_large_image"
     }
 
     socket
     |> assign(:form_data, form_data)
     |> assign(:seo_score, compute_seo_score(page))
+    |> assign(:template_types, template_types)
+    |> assign(:current_template_type, current_tt)
+    |> assign(:page_fields, page.fields || %{})
+    |> assign(:date_modified, page.date_modified)
   end
 
   defp compute_seo_score(page) do
@@ -82,7 +124,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.SEO do
       {10, non_empty?(page.canonical_url)},
       {10, page.raw_schema != nil and page.raw_schema != []},
       {5, non_empty?(page.robots)},
-      {5, page.page_type != nil and page.page_type != "website"},
+      {5, page.template_type_id != nil},
       {5, non_empty?(page.twitter_card)}
     ]
 

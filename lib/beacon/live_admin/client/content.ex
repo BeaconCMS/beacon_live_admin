@@ -347,13 +347,13 @@ defmodule Beacon.LiveAdmin.Client.Content do
   def update_redirect(site, redirect, attrs), do: call(site, Beacon.Content, :update_redirect, [redirect, attrs])
   def delete_redirect(site, redirect), do: call(site, Beacon.Content, :delete_redirect, [redirect])
 
-  # Authors
+  # Template Types
 
-  def list_authors(site, opts \\ []), do: call(site, Beacon.Content, :list_authors, [site, opts])
-  def get_author(site, id), do: call(site, Beacon.Content, :get_author, [site, id])
-  def create_author(site, attrs), do: call(site, Beacon.Content, :create_author, [attrs])
-  def update_author(site, redirect, attrs), do: call(site, Beacon.Content, :update_author, [redirect, attrs])
-  def delete_author(site, redirect), do: call(site, Beacon.Content, :delete_author, [redirect])
+  def list_template_types(site, opts \\ []), do: call(site, Beacon.Content, :list_template_types, [site, opts])
+  def get_template_type(site, id), do: call(site, Beacon.Content, :get_template_type, [site, id])
+  def create_template_type(site, attrs), do: call(site, Beacon.Content, :create_template_type, [site, attrs])
+  def update_template_type(site, tt, attrs), do: call(site, Beacon.Content, :update_template_type, [tt, attrs])
+  def delete_template_type(site, tt), do: call(site, Beacon.Content, :delete_template_type, [tt])
 
   # Link Health
 

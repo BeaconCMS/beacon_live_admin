@@ -166,8 +166,8 @@ defmodule Beacon.LiveAdmin.Router do
       {"/link_health", Beacon.LiveAdmin.LinkHealthLive, :index, %{}},
       # redirects
       {"/redirects", Beacon.LiveAdmin.RedirectManagerLive, :index, %{}},
-      # authors
-      {"/authors", Beacon.LiveAdmin.AuthorManagerLive, :index, %{}},
+      # template types
+      {"/template_types", Beacon.LiveAdmin.TemplateTypeManagerLive, :index, %{}},
       # action builder
       {"/action_builder", Beacon.LiveAdmin.ActionBuilderLive.Index, :index, %{}},
       # graphql endpoints
