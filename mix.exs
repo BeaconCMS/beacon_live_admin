@@ -60,7 +60,7 @@ defmodule Beacon.LiveAdmin.MixProject do
       # Runtime
       {:ecto, "~> 3.6"},
       {:bcrypt_elixir, "~> 3.0"},
-      {:openid_connect, "~> 1.0"},
+      {:openid_connect, "~> 1.0", optional: true},
       {:phoenix_html, "~> 4.0"},
       {:live_svelte, "~> 0.12"},
       {:floki, ">= 0.30.0"},
