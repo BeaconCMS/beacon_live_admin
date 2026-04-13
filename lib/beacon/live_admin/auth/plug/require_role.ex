@@ -26,7 +26,7 @@ defmodule Beacon.LiveAdmin.Auth.Plug.RequireRole do
 
   import Plug.Conn
 
-  alias Beacon.Auth
+  alias Beacon.LiveAdmin.Auth
 
   @impl true
   def init(opts), do: opts

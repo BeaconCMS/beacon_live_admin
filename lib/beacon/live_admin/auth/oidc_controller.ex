@@ -16,7 +16,7 @@ defmodule Beacon.LiveAdmin.Auth.OIDCController do
 
   use Phoenix.Controller
 
-  alias Beacon.Auth
+  alias Beacon.LiveAdmin.Auth
   alias Beacon.LiveAdmin.Auth.Config, as: AuthConfig
 
   @doc """
@@ -82,6 +82,25 @@ defmodule Beacon.LiveAdmin.Auth.OIDCController do
     conn
     |> put_flash(:error, "Missing authorization code.")
     |> redirect(to: "/admin/auth/login")
+  end
+
+  @doc """
+  Logs out the user by deleting the session and clearing the cookie.
+  """
+  def logout(conn, _params) do
+    case conn.cookies["_beacon_session"] do
+      nil -> :ok
+      encoded_token ->
+        case Base.url_decode64(encoded_token) do
+          {:ok, token} -> Auth.delete_session(token)
+          _ -> :ok
+        end
+    end
+
+    conn
+    |> delete_resp_cookie("_beacon_session")
+    |> put_flash(:info, "Signed out successfully.")
+    |> redirect(to: "/admin/login")
   end
 
   defp callback_url(conn, provider) do

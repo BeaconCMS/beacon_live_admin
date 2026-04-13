@@ -12,7 +12,7 @@ defmodule Beacon.LiveAdmin.Auth.DevLoginController do
 
   use Phoenix.Controller
 
-  alias Beacon.Auth
+  alias Beacon.LiveAdmin.Auth
   alias Beacon.LiveAdmin.Auth.Config, as: AuthConfig
 
   @doc """

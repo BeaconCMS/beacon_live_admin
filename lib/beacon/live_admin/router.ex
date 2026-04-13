@@ -100,8 +100,14 @@ defmodule Beacon.LiveAdmin.Router do
 
         {_instance_name, session_name, session_opts} = Beacon.LiveAdmin.Router.__options__(pages, opts)
 
-        import Phoenix.Router, only: [get: 4]
+        import Phoenix.Router, only: [get: 4, post: 4]
         import Phoenix.LiveView.Router, only: [live: 4, live_session: 3]
+
+        # Auth controller routes (OIDC + dev login + logout)
+        get "/auth/:provider", Beacon.LiveAdmin.Auth.OIDCController, :authorize
+        get "/auth/:provider/callback", Beacon.LiveAdmin.Auth.OIDCController, :callback
+        post "/auth/dev/login", Beacon.LiveAdmin.Auth.DevLoginController, :login
+        get "/auth/logout", Beacon.LiveAdmin.Auth.OIDCController, :logout
 
         # Login route — pre-auth, separate live_session with minimal layout
         live_session :beacon_live_admin_login,
