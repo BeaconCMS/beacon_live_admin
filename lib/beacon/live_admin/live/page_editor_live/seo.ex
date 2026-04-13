@@ -35,6 +35,13 @@ defmodule Beacon.LiveAdmin.PageEditorLive.SEO do
       "twitter_card" => params["twitter_card"]
     }
 
+    # Include template type fields if present
+    attrs = case params["fields"] do
+      fields when is_map(fields) and map_size(fields) > 0 ->
+        Map.put(attrs, "fields", fields)
+      _ -> attrs
+    end
+
     case Content.update_page(page.site, page, attrs) do
       {:ok, updated_page} ->
         {:noreply,
@@ -245,11 +252,12 @@ defmodule Beacon.LiveAdmin.PageEditorLive.SEO do
               </div>
 
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Page Type</label>
-                <select name="seo[page_type]" class="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
-                  <option value="website" selected={@form_data["page_type"] == "website"}>Website</option>
-                  <option value="article" selected={@form_data["page_type"] == "article"}>Article</option>
-                  <option value="product" selected={@form_data["page_type"] == "product"}>Product</option>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Template Type</label>
+                <select phx-change="set_template_type" name="template_type_id" class="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
+                  <option value="">None</option>
+                  <%= for tt <- @template_types do %>
+                    <option value={tt.id} selected={@page.template_type_id == tt.id}><%= tt.name %></option>
+                  <% end %>
                 </select>
               </div>
             </div>
@@ -340,6 +348,59 @@ defmodule Beacon.LiveAdmin.PageEditorLive.SEO do
               </div>
             </div>
           </section>
+
+          <%!-- Content Freshness --%>
+          <section>
+            <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wide mb-3">Content Freshness</h3>
+            <div class="space-y-3">
+              <div class="flex items-center justify-between bg-gray-50 rounded-lg p-4">
+                <div>
+                  <p class="text-sm font-medium text-gray-700">Last Substantially Updated</p>
+                  <p class="text-sm text-gray-500">
+                    <%= if @date_modified do %>
+                      <%= Calendar.strftime(@date_modified, "%B %d, %Y at %I:%M %p UTC") %>
+                    <% else %>
+                      Never marked as updated
+                    <% end %>
+                  </p>
+                </div>
+                <button type="button" phx-click="mark_updated" class="px-3 py-1.5 bg-green-600 text-white text-xs font-medium rounded-md hover:bg-green-700">
+                  Mark as Updated
+                </button>
+              </div>
+            </div>
+          </section>
+
+          <%!-- Template Type Fields --%>
+          <%= if @current_template_type do %>
+            <section>
+              <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wide mb-3">
+                <%= @current_template_type.name %> Fields
+              </h3>
+              <div class="space-y-4 bg-gray-50 rounded-lg p-4">
+                <%= for field_def <- @current_template_type.field_definitions || [] do %>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                      <%= field_def["label"] || field_def["name"] %>
+                      <%= if field_def["required"], do: "*" %>
+                    </label>
+                    <%= case field_def["type"] do %>
+                      <% "text" -> %>
+                        <textarea name={"seo[fields][#{field_def["name"]}]"} rows="3" class="w-full rounded-md border-gray-300 text-sm"><%= @page_fields[field_def["name"]] %></textarea>
+                      <% "boolean" -> %>
+                        <input type="checkbox" name={"seo[fields][#{field_def["name"]}]"} value="true" checked={@page_fields[field_def["name"]] == true or @page_fields[field_def["name"]] == "true"} class="rounded border-gray-300" />
+                      <% "datetime" -> %>
+                        <input type="datetime-local" name={"seo[fields][#{field_def["name"]}]"} value={@page_fields[field_def["name"]]} class="rounded-md border-gray-300 text-sm" />
+                      <% "integer" -> %>
+                        <input type="number" name={"seo[fields][#{field_def["name"]}]"} value={@page_fields[field_def["name"]]} class="w-full rounded-md border-gray-300 text-sm" />
+                      <% _ -> %>
+                        <input type="text" name={"seo[fields][#{field_def["name"]}]"} value={@page_fields[field_def["name"]]} class="w-full rounded-md border-gray-300 text-sm" />
+                    <% end %>
+                  </div>
+                <% end %>
+              </div>
+            </section>
+          <% end %>
 
           <div class="flex justify-end pt-4 border-t">
             <button type="submit" class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">

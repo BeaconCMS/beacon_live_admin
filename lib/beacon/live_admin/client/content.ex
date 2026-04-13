@@ -359,6 +359,7 @@ defmodule Beacon.LiveAdmin.Client.Content do
 
   def list_orphan_pages(site), do: call(site, Beacon.Content, :list_orphan_pages, [site])
   def list_broken_links(site), do: call(site, Beacon.Content, :list_broken_links, [site])
+  def list_link_stats(site), do: call(site, Beacon.Content, :list_link_stats, [site])
 
   # Measurement
 
