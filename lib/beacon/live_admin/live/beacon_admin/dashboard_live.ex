@@ -47,7 +47,7 @@ defmodule Beacon.LiveAdmin.BeaconAdmin.DashboardLive do
 
     user_count =
       try do
-        length(Beacon.Auth.list_users())
+        length(Beacon.LiveAdmin.Auth.list_users())
       rescue
         _ -> 0
       end

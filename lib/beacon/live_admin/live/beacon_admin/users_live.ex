@@ -201,12 +201,12 @@ defmodule Beacon.LiveAdmin.BeaconAdmin.UsersLive do
   defp format_errors(_), do: "unknown error"
 
   defp dev_mode? do
-    Code.ensure_loaded?(Beacon.Auth.Config) and Beacon.Auth.Config.dev_mode?()
+    Code.ensure_loaded?(Beacon.LiveAdmin.Auth.Config) and Beacon.LiveAdmin.Auth.Config.dev_mode?()
   end
 
   defp format_roles(user) do
     try do
-      roles = Beacon.Auth.list_roles(user)
+      roles = Beacon.LiveAdmin.Auth.list_roles(user)
 
       Enum.map_join(roles, ", ", fn role ->
         if role.site do

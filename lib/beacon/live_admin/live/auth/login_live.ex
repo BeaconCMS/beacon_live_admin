@@ -38,8 +38,8 @@ defmodule Beacon.LiveAdmin.Auth.LoginLive do
 
   defp dev_login(email, _password) do
     with true <- dev_mode?(),
-         user when not is_nil(user) <- Beacon.Auth.get_user_by_email(email),
-         token when is_binary(token) <- Beacon.Auth.create_session(user) do
+         user when not is_nil(user) <- Beacon.LiveAdmin.Auth.get_user_by_email(email),
+         token when is_binary(token) <- Beacon.LiveAdmin.Auth.create_session(user) do
       {:ok, token}
     else
       false -> {:error, "Dev mode is not enabled"}
@@ -49,12 +49,12 @@ defmodule Beacon.LiveAdmin.Auth.LoginLive do
   end
 
   defp dev_mode? do
-    Code.ensure_loaded?(Beacon.Auth.Config) and Beacon.Auth.Config.dev_mode?()
+    Code.ensure_loaded?(Beacon.LiveAdmin.Auth.Config) and Beacon.LiveAdmin.Auth.Config.dev_mode?()
   end
 
   defp providers do
-    if Code.ensure_loaded?(Beacon.Auth.Config) do
-      Beacon.Auth.Config.providers()
+    if Code.ensure_loaded?(Beacon.LiveAdmin.Auth.Config) do
+      Beacon.LiveAdmin.Auth.Config.providers()
     else
       []
     end
