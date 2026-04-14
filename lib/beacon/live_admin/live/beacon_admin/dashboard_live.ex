@@ -124,21 +124,21 @@ defmodule Beacon.LiveAdmin.BeaconAdmin.DashboardLive do
 
       <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <.link
-          href={beacon_live_admin_path(@socket, "/beacon/users")}
+          href={Beacon.LiveAdmin.Router.beacon_live_admin_path(@socket, "/beacon/users")}
           class="block p-5 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-indigo-300 dark:hover:border-indigo-500/50 transition-all"
         >
           <div class="text-sm font-semibold text-gray-900 dark:text-gray-100">User Management</div>
           <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Create, edit, and manage users and their roles</p>
         </.link>
         <.link
-          href={beacon_live_admin_path(@socket, "/beacon/settings")}
+          href={Beacon.LiveAdmin.Router.beacon_live_admin_path(@socket, "/beacon/settings")}
           class="block p-5 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-indigo-300 dark:hover:border-indigo-500/50 transition-all"
         >
           <div class="text-sm font-semibold text-gray-900 dark:text-gray-100">Global Settings</div>
           <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Configure platform-wide defaults and policies</p>
         </.link>
         <.link
-          href={beacon_live_admin_path(@socket, "/beacon/template_types")}
+          href={Beacon.LiveAdmin.Router.beacon_live_admin_path(@socket, "/beacon/template_types")}
           class="block p-5 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-indigo-300 dark:hover:border-indigo-500/50 transition-all"
         >
           <div class="text-sm font-semibold text-gray-900 dark:text-gray-100">Global Template Types</div>
