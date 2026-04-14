@@ -30,6 +30,25 @@ defmodule Beacon.LiveAdmin.PageLive do
     assign_mount(socket, site, page, sites, pages, params)
   end
 
+  # Beacon admin pages (no site param — platform-level)
+  def mount(params, %{"pages" => pages} = session, socket) when not is_map_key(params, "site") do
+    sites = Beacon.LiveAdmin.Cluster.running_sites()
+    # Use the first running site for platform-level pages
+    site = List.first(sites) || :beacon
+
+    current_url =
+      Map.get(session, "beacon_live_admin_page_url") ||
+        raise Beacon.LiveAdmin.PageNotFoundError, """
+        failed to resolve Beacon.LiveAdmin page URL
+
+        You must add Beacon.LiveAdmin.Plug to the :browser pipeline that beacon_live_admin is piped through.
+        """
+
+    page = lookup_page!(socket, current_url)
+
+    assign_mount(socket, site, page, sites, pages, params)
+  end
+
   def mount(_params, _session, _socket) do
     raise Beacon.LiveAdmin.PageNotFoundError, """
     failed to resolve Beacon.LiveAdmin page URL

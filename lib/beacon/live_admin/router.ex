@@ -106,7 +106,16 @@ defmodule Beacon.LiveAdmin.Router do
         live_session session_name, session_opts do
           live "/", Beacon.LiveAdmin.HomeLive, :index, as: :beacon_live_admin_home
 
-          for {path, page_module, live_action, _session} = page <- pages do
+          # Beacon admin pages — platform-level, no site prefix
+          for {path, page_module, live_action, _session} = page <- pages,
+              String.starts_with?(path, "/beacon") do
+            route_opts = Beacon.LiveAdmin.Router.__route_options__(opts, page)
+            live path, Beacon.LiveAdmin.PageLive, live_action, route_opts
+          end
+
+          # Site-scoped pages — prefixed with /:site
+          for {path, page_module, live_action, _session} = page <- pages,
+              not String.starts_with?(path, "/beacon") do
             route_opts = Beacon.LiveAdmin.Router.__route_options__(opts, page)
             path = "/:site#{path}"
             live path, Beacon.LiveAdmin.PageLive, live_action, route_opts
