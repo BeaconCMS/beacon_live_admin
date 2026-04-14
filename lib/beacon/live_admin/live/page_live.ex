@@ -311,7 +311,7 @@ defmodule Beacon.LiveAdmin.PageLive do
   end
 
   defp maybe_link(socket, page, {:current, text, icon, path}) do
-    path = Beacon.LiveAdmin.Router.beacon_live_admin_path(socket, page.site, path)
+    path = build_link_path(socket, page, path)
     assigns = %{text: text, icon: icon, path: path}
 
     # use href to force redirecting to re-execute plug to fecth current url
@@ -329,7 +329,7 @@ defmodule Beacon.LiveAdmin.PageLive do
   end
 
   defp maybe_link(socket, page, {:enabled, text, icon, path}) do
-    path = Beacon.LiveAdmin.Router.beacon_live_admin_path(socket, page.site, path)
+    path = build_link_path(socket, page, path)
     assigns = %{text: text, icon: icon, path: path}
 
     # force redirect to re-execute plug to fecth current url
@@ -354,5 +354,15 @@ defmodule Beacon.LiveAdmin.PageLive do
       <span class="hidden @[180px]:block line-clamp-1"><%= @text %></span>
     </span>
     """
+  end
+
+  # Beacon admin pages (/beacon/*) don't need the site prefix
+  defp build_link_path(socket, _page, "/beacon" <> _ = path) do
+    Beacon.LiveAdmin.Router.beacon_live_admin_path(socket, path)
+  end
+
+  # Site-scoped pages get the site prefix
+  defp build_link_path(socket, page, path) do
+    Beacon.LiveAdmin.Router.beacon_live_admin_path(socket, page.site, path)
   end
 end

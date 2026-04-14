@@ -399,6 +399,23 @@ defmodule Beacon.LiveAdmin.Router do
   end
 
   @doc """
+  Generates a path without a site prefix (for platform-level pages).
+
+  ## Example
+
+      iex> Beacon.LiveAdmin.Router.beacon_live_admin_path(@socket, "/beacon/users")
+      "/my_admin/beacon/users"
+
+  """
+  @spec beacon_live_admin_path(conn_or_socket, String.t()) :: String.t()
+  def beacon_live_admin_path(conn_or_socket, path) when is_binary(path) do
+    router = router(conn_or_socket)
+    prefix = router.__beacon_live_admin_prefix__()
+    path = sanitize_path("#{prefix}#{path}")
+    Phoenix.VerifiedRoutes.unverified_path(conn_or_socket, router, path, %{})
+  end
+
+  @doc """
   Generate the path to serve files in `priv/static`.
 
   See the actual configuration in `Beacon.LiveAdmin.Plug`.
