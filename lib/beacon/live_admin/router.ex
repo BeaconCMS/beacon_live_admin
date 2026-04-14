@@ -117,7 +117,7 @@ defmodule Beacon.LiveAdmin.Router do
           for {path, page_module, live_action, _session} = page <- pages,
               not String.starts_with?(path, "/beacon") do
             route_opts = Beacon.LiveAdmin.Router.__route_options__(opts, page)
-            path = "/:site#{path}"
+            path = if path == "/", do: "/:site", else: "/:site#{path}"
             live path, Beacon.LiveAdmin.PageLive, live_action, route_opts
           end
         end
@@ -140,6 +140,8 @@ defmodule Beacon.LiveAdmin.Router do
       end)
 
     [
+      # site dashboard
+      {"/", Beacon.LiveAdmin.SiteDashboardLive, :site_dashboard, %{}},
       # media library
       {"/media_library", Beacon.LiveAdmin.MediaLibraryLive.Index, :index, %{}},
       {"/media_library/upload", Beacon.LiveAdmin.MediaLibraryLive.Index, :upload, %{}},
