@@ -8,6 +8,8 @@ defmodule Beacon.LiveAdmin.Migrations.V001 do
       add :email, :text, null: false
       add :name, :text
       add :avatar_url, :text
+      add :last_login_at, :utc_datetime_usec
+      add :last_login_provider, :text
 
       timestamps type: :utc_datetime_usec
     end

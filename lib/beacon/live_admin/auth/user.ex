@@ -15,6 +15,8 @@ defmodule Beacon.LiveAdmin.Auth.User do
     field :email, :string
     field :name, :string
     field :avatar_url, :string
+    field :last_login_at, :utc_datetime_usec
+    field :last_login_provider, :string
 
     has_many :roles, Beacon.LiveAdmin.Auth.UserRole
 
@@ -24,7 +26,7 @@ defmodule Beacon.LiveAdmin.Auth.User do
   @doc false
   def changeset(user \\ %__MODULE__{}, attrs) do
     user
-    |> cast(attrs, [:email, :name, :avatar_url])
+    |> cast(attrs, [:email, :name, :avatar_url, :last_login_at, :last_login_provider])
     |> validate_required([:email])
     |> validate_format(:email, ~r/@/)
     |> unique_constraint(:email)

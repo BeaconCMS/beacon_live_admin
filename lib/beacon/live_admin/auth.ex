@@ -144,6 +144,31 @@ defmodule Beacon.LiveAdmin.Auth do
     User.changeset(user, attrs)
   end
 
+  @doc """
+  Records a login event for a user.
+
+  Call this from your auth provider after successful authentication to
+  track when and how users last logged in.
+
+  ## Examples
+
+      # In your auth provider callback
+      def on_login(user_email, provider) do
+        case Beacon.LiveAdmin.Auth.get_user_by_email(user_email) do
+          nil -> :ok
+          user -> Beacon.LiveAdmin.Auth.record_login(user, provider)
+        end
+      end
+  """
+  def record_login(%User{} = user, provider \\ "unknown") do
+    user
+    |> User.changeset(%{
+      last_login_at: DateTime.utc_now() |> DateTime.truncate(:microsecond),
+      last_login_provider: to_string(provider)
+    })
+    |> repo().update()
+  end
+
   # ---------------------------------------------------------------------------
   # Roles
   # ---------------------------------------------------------------------------

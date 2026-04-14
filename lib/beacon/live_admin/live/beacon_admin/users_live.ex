@@ -35,8 +35,7 @@ defmodule Beacon.LiveAdmin.BeaconAdmin.UsersLive do
   defp default_form do
     %{
       "email" => "",
-      "name" => "",
-      "password" => ""
+      "name" => ""
     }
   end
 
@@ -59,8 +58,7 @@ defmodule Beacon.LiveAdmin.BeaconAdmin.UsersLive do
        editing: user,
        form_data: %{
          "email" => user.email || "",
-         "name" => user.name || "",
-         "password" => ""
+         "name" => user.name || ""
        }
      )}
   end
@@ -72,10 +70,7 @@ defmodule Beacon.LiveAdmin.BeaconAdmin.UsersLive do
   def handle_event("save", %{"user" => params}, socket) do
     site = socket.assigns.beacon_page.site
 
-    attrs =
-      params
-      |> Map.take(["email", "name"])
-      |> maybe_add_password(params)
+    attrs = Map.take(params, ["email", "name"])
 
     result =
       case socket.assigns.editing do
@@ -183,11 +178,6 @@ defmodule Beacon.LiveAdmin.BeaconAdmin.UsersLive do
     end
   end
 
-  defp maybe_add_password(attrs, %{"password" => password}) when password != "" do
-    Map.put(attrs, "password", password)
-  end
-
-  defp maybe_add_password(attrs, _params), do: attrs
 
   defp format_errors(%Ecto.Changeset{} = changeset) do
     Ecto.Changeset.traverse_errors(changeset, fn {msg, opts} ->
