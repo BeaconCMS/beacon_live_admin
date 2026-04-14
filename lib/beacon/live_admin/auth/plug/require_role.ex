@@ -2,24 +2,20 @@ defmodule Beacon.LiveAdmin.Auth.Plug.RequireRole do
   @moduledoc """
   Plug that enforces role-based authorization.
 
-  Must be used after `Beacon.LiveAdmin.Auth.Plug.RequireAuth` so that
-  `conn.assigns.current_user` is available.
+  Uses the configured `auth_provider` to get the current user from the
+  connection, matches against `beacon_users` by email, then checks roles.
 
   ## Options
 
-    * `:role` - A single role atom to require (e.g., `:super_admin`)
-    * `:roles` - A list of role atoms, any of which satisfies the check
-    * `:site` - The site to scope the role check to. Use `:from_params`
-      to read it from `conn.params["site"]`
+    * `:role` — a single required role (atom or string)
+    * `:roles` — a list of roles, any of which is sufficient
+    * `:site` — the site to scope the check. Use `:from_params` to read
+      from `conn.params["site"]`.
 
   ## Examples
 
-      # Require super_admin
       plug Beacon.LiveAdmin.Auth.Plug.RequireRole, role: :super_admin
-
-      # Require site_admin or site_editor, site from URL params
       plug Beacon.LiveAdmin.Auth.Plug.RequireRole, roles: [:site_admin, :site_editor], site: :from_params
-
   """
 
   @behaviour Plug
@@ -33,12 +29,12 @@ defmodule Beacon.LiveAdmin.Auth.Plug.RequireRole do
 
   @impl true
   def call(conn, opts) do
-    user = conn.assigns[:current_user]
+    user = Auth.get_current_user(conn)
     roles = roles_from_opts(opts)
     site = site_from_opts(conn, opts)
 
     if user && authorized?(user, roles, site) do
-      conn
+      assign(conn, :beacon_admin_user, user)
     else
       conn
       |> send_resp(403, "Forbidden")
@@ -63,8 +59,7 @@ defmodule Beacon.LiveAdmin.Auth.Plug.RequireRole do
   end
 
   defp authorized?(user, roles, site) do
-    Enum.any?(roles, fn role ->
-      Auth.has_role?(user, role, site)
-    end)
+    Auth.is_super_admin?(user) ||
+      Enum.any?(roles, fn role -> Auth.has_role?(user, role, site) end)
   end
 end

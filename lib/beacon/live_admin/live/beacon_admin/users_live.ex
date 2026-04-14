@@ -200,10 +200,6 @@ defmodule Beacon.LiveAdmin.BeaconAdmin.UsersLive do
 
   defp format_errors(_), do: "unknown error"
 
-  defp dev_mode? do
-    Code.ensure_loaded?(Beacon.LiveAdmin.Auth.Config) and Beacon.LiveAdmin.Auth.Config.dev_mode?()
-  end
-
   defp format_roles(user) do
     try do
       roles = Beacon.LiveAdmin.Auth.list_roles(user)
@@ -228,7 +224,6 @@ defmodule Beacon.LiveAdmin.BeaconAdmin.UsersLive do
 
   @impl true
   def render(assigns) do
-    assigns = assign(assigns, :dev_mode?, dev_mode?())
 
     ~H"""
     <div class="mx-auto max-w-6xl py-6 px-4">
@@ -271,18 +266,6 @@ defmodule Beacon.LiveAdmin.BeaconAdmin.UsersLive do
                 />
               </div>
             </div>
-            <%= if @dev_mode? and @editing == nil do %>
-              <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Password (dev mode only)</label>
-                <input
-                  type="password"
-                  name="user[password]"
-                  value={@form_data["password"]}
-                  placeholder="password"
-                  class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 text-sm"
-                />
-              </div>
-            <% end %>
             <div class="flex gap-2 pt-2">
               <button type="submit" class="px-4 py-2 bg-indigo-600 text-white text-sm rounded-md hover:bg-indigo-700">Save</button>
               <button type="button" phx-click="cancel" class="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm rounded-md hover:bg-gray-200 dark:hover:bg-gray-600">Cancel</button>

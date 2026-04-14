@@ -4,19 +4,18 @@ defmodule Mix.Tasks.BeaconLiveAdmin.CreateAdmin do
   @moduledoc """
   Creates a new Beacon super admin user.
 
+  The user must be pre-provisioned here before they can access the admin.
+  The host application handles authentication — LiveAdmin only needs the
+  email to match against when checking roles.
+
   ## Usage
 
       mix beacon_live_admin.create_admin --email admin@example.com --name "Admin User"
 
-  In dev mode, you can also set a password:
-
-      mix beacon_live_admin.create_admin --email admin@example.com --name "Admin" --password secret123
-
   ## Options
 
-    * `--email` (required) - The admin user's email address
-    * `--name` - The admin user's display name
-    * `--password` - A password for local login (dev mode only, min 8 chars)
+    * `--email` (required) — the admin user's email address
+    * `--name` — the admin user's display name
 
   """
 
@@ -28,7 +27,7 @@ defmodule Mix.Tasks.BeaconLiveAdmin.CreateAdmin do
   def run(args) do
     {opts, _, _} =
       OptionParser.parse(args,
-        strict: [email: :string, name: :string, password: :string]
+        strict: [email: :string, name: :string]
       )
 
     email = opts[:email] || Mix.raise("--email is required")
@@ -40,23 +39,11 @@ defmodule Mix.Tasks.BeaconLiveAdmin.CreateAdmin do
       {:ok, user} ->
         case Beacon.LiveAdmin.Auth.assign_role(user, "super_admin") do
           {:ok, _role} ->
-            Mix.shell().info("Super admin role assigned.")
+            Mix.shell().info("Done! User #{email} is now a super admin.")
 
           {:error, changeset} ->
             Mix.raise("Failed to assign super_admin role: #{inspect(changeset.errors)}")
         end
-
-        if password = opts[:password] do
-          case Beacon.LiveAdmin.Auth.set_password(user, password) do
-            {:ok, _user} ->
-              Mix.shell().info("Password set successfully.")
-
-            {:error, changeset} ->
-              Mix.raise("Failed to set password: #{inspect(changeset.errors)}")
-          end
-        end
-
-        Mix.shell().info("Done! User #{email} is now a super admin.")
 
       {:error, changeset} ->
         Mix.raise("Failed to create user: #{inspect(changeset.errors)}")

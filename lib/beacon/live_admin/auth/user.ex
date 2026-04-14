@@ -1,9 +1,10 @@
 defmodule Beacon.LiveAdmin.Auth.User do
   @moduledoc """
-  Represents a Beacon CMS user.
+  A pre-provisioned admin user for Beacon LiveAdmin.
 
-  Users authenticate via OIDC providers or local password (dev mode).
-  Authorization is managed through `Beacon.LiveAdmin.Auth.UserRole`.
+  Users must be created by a super admin before they can access the admin.
+  Authentication is handled by the host application — LiveAdmin only stores
+  user identity for role assignment.
   """
 
   use Beacon.Schema
@@ -13,14 +14,9 @@ defmodule Beacon.LiveAdmin.Auth.User do
   schema "beacon_users" do
     field :email, :string
     field :name, :string
-    field :hashed_password, :string
     field :avatar_url, :string
-    field :last_login_at, :utc_datetime_usec
-    field :last_login_provider, :string
-    field :password, :string, virtual: true
 
     has_many :roles, Beacon.LiveAdmin.Auth.UserRole
-    has_many :sessions, Beacon.LiveAdmin.Auth.UserSession
 
     timestamps()
   end
@@ -28,26 +24,9 @@ defmodule Beacon.LiveAdmin.Auth.User do
   @doc false
   def changeset(user \\ %__MODULE__{}, attrs) do
     user
-    |> cast(attrs, [:email, :name, :avatar_url, :last_login_at, :last_login_provider])
+    |> cast(attrs, [:email, :name, :avatar_url])
     |> validate_required([:email])
-    |> validate_format(:email, ~r/^[^\s]+@[^\s]+\.[^\s]+$/, message: "must be a valid email address")
+    |> validate_format(:email, ~r/@/)
     |> unique_constraint(:email)
   end
-
-  @doc false
-  def password_changeset(user, attrs) do
-    user
-    |> cast(attrs, [:password])
-    |> validate_required([:password])
-    |> validate_length(:password, min: 8)
-    |> hash_password()
-  end
-
-  defp hash_password(%Changeset{valid?: true, changes: %{password: password}} = changeset) do
-    changeset
-    |> put_change(:hashed_password, Bcrypt.hash_pwd_salt(password))
-    |> delete_change(:password)
-  end
-
-  defp hash_password(changeset), do: changeset
 end
