@@ -5,7 +5,7 @@ defmodule Beacon.LiveAdmin.BeaconAdmin.GlobalTemplateTypesLive do
   alias Beacon.LiveAdmin.Client.Content
 
   @impl true
-  def menu_link("/beacon/template_types", :index), do: {:submenu, "Global Template Types"}
+  def menu_link("/beacon", :index), do: {:submenu, "Global Template Types"}
   def menu_link(_, _), do: :skip
 
   @impl true

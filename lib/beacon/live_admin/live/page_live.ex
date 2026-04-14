@@ -172,11 +172,25 @@ defmodule Beacon.LiveAdmin.PageLive do
 
   # TODO subpath /pages/:id -> Pages menu
   defp assign_menu_links(socket, pages) do
-    ["", current_prefix | _] = String.split(socket.assigns.beacon_page.path, "/")
+    current_path = socket.assigns.beacon_page.path
+    ["", current_prefix | _] = String.split(current_path, "/")
     current_prefix = "/" <> current_prefix
 
+    # When viewing /beacon/* pages, only show beacon admin links
+    # When viewing site-scoped pages, only show site-scoped links
+    is_beacon_admin = String.starts_with?(current_path, "/beacon")
+
+    filtered_pages =
+      Enum.filter(pages, fn {path, _module, _live_action, _session} ->
+        if is_beacon_admin do
+          String.starts_with?(path, "/beacon")
+        else
+          not String.starts_with?(path, "/beacon")
+        end
+      end)
+
     link_map =
-      Enum.reduce(pages, %{}, fn {path, module, live_action, _session}, acc ->
+      Enum.reduce(filtered_pages, %{}, fn {path, module, live_action, _session}, acc ->
         ["", prefix | _] = String.split(path, "/")
         prefix = "/" <> prefix
 
@@ -209,8 +223,15 @@ defmodule Beacon.LiveAdmin.PageLive do
         end
       end)
 
+    # Only show menu groups relevant to the current scope
+    active_groups = if is_beacon_admin do
+      Enum.filter(@menu_groups, fn {group_id, _, _} -> group_id == :beacon_admin end)
+    else
+      Enum.filter(@menu_groups, fn {group_id, _, _} -> group_id != :beacon_admin end)
+    end
+
     grouped_links =
-      Enum.flat_map(@menu_groups, fn {_group_id, group_label, prefixes} ->
+      Enum.flat_map(active_groups, fn {_group_id, group_label, prefixes} ->
         group_items =
           Enum.flat_map(prefixes, fn prefix ->
             case Map.get(link_map, prefix) do
@@ -225,8 +246,8 @@ defmodule Beacon.LiveAdmin.PageLive do
         end
       end)
 
-    # Append any links not in a predefined group
-    known_prefixes = Enum.flat_map(@menu_groups, fn {_, _, prefixes} -> prefixes end)
+    # Append any links not in a predefined group (only from filtered pages)
+    known_prefixes = Enum.flat_map(active_groups, fn {_, _, prefixes} -> prefixes end)
 
     extra_links =
       link_map

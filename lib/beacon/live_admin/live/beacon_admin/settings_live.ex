@@ -4,7 +4,7 @@ defmodule Beacon.LiveAdmin.BeaconAdmin.SettingsLive do
   use Beacon.LiveAdmin.PageBuilder
 
   @impl true
-  def menu_link("/beacon/settings", :settings), do: {:submenu, "Global Settings"}
+  def menu_link("/beacon", :settings), do: {:submenu, "Global Settings"}
   def menu_link(_, _), do: :skip
 
   @impl true

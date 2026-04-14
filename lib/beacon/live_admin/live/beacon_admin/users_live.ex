@@ -9,7 +9,7 @@ defmodule Beacon.LiveAdmin.BeaconAdmin.UsersLive do
   @roles ["super_admin", "site_admin", "site_editor", "site_viewer"]
 
   @impl true
-  def menu_link("/beacon/users", :index), do: {:submenu, "Users"}
+  def menu_link("/beacon", :index), do: {:submenu, "Users"}
   def menu_link(_, _), do: :skip
 
   @impl true
