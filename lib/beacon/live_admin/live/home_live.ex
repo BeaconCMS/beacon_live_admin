@@ -122,7 +122,7 @@ defmodule Beacon.LiveAdmin.HomeLive do
               <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 <%= for section <- @platform_sections do %>
                   <.link
-                    href={section.path}
+                    href={Router.beacon_live_admin_path(@socket, section.path)}
                     class="group block p-5 bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md dark:hover:shadow-slate-700/50 hover:border-purple-300 dark:hover:border-purple-500/50 transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-900"
                   >
                     <div class="flex items-start gap-4">
