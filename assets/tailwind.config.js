@@ -4,8 +4,6 @@ const fs = require("fs")
 const path = require("path")
 
 module.exports = {
-  darkMode: 'class',
-  presets: [require("./js/station-ui.js")],
   content: ["./js/**/*.js", "../lib/beacon/live_admin/**/*.*ex", "./svelte/**/*.svelte"],
   theme: {
     extend: {
@@ -31,8 +29,6 @@ module.exports = {
 
     // Embeds Hero Icons (https://heroicons.com) into your app.css bundle
     // See your `CoreComponents.icon/1` for more information.
-    //
-    //
     plugin(function ({ matchComponents, theme }) {
       let iconsDir = path.join(__dirname, "../assets/node_modules/heroicons")
       let values = {}
@@ -77,5 +73,61 @@ module.exports = {
         { values },
       )
     }),
+
+    require("daisyui"),
   ],
+
+  daisyui: {
+    themes: [
+      {
+        beacon: {
+          "primary": "#4f46e5",
+          "primary-content": "#ffffff",
+          "secondary": "#6366f1",
+          "secondary-content": "#ffffff",
+          "accent": "#8b5cf6",
+          "accent-content": "#ffffff",
+          "neutral": "#1e293b",
+          "neutral-content": "#e2e8f0",
+          "base-100": "#ffffff",
+          "base-200": "#f8fafc",
+          "base-300": "#f1f5f9",
+          "base-content": "#0f172a",
+          "info": "#3b82f6",
+          "info-content": "#ffffff",
+          "success": "#10b981",
+          "success-content": "#ffffff",
+          "warning": "#f59e0b",
+          "warning-content": "#ffffff",
+          "error": "#ef4444",
+          "error-content": "#ffffff",
+        },
+      },
+      {
+        "beacon-dark": {
+          "primary": "#6366f1",
+          "primary-content": "#ffffff",
+          "secondary": "#818cf8",
+          "secondary-content": "#ffffff",
+          "accent": "#a78bfa",
+          "accent-content": "#ffffff",
+          "neutral": "#334155",
+          "neutral-content": "#e2e8f0",
+          "base-100": "#0f172a",
+          "base-200": "#020617",
+          "base-300": "#1e293b",
+          "base-content": "#e2e8f0",
+          "info": "#60a5fa",
+          "info-content": "#0f172a",
+          "success": "#34d399",
+          "success-content": "#0f172a",
+          "warning": "#fbbf24",
+          "warning-content": "#0f172a",
+          "error": "#f87171",
+          "error-content": "#0f172a",
+        },
+      },
+    ],
+    darkTheme: "beacon-dark",
+  },
 }

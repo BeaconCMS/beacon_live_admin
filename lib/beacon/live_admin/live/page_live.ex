@@ -9,12 +9,6 @@ defmodule Beacon.LiveAdmin.PageLive do
   @impl true
   def mount(%{"site" => site} = params, %{"pages" => pages} = session, socket) do
     site = String.to_existing_atom(site)
-
-    # if connected?(socket) do
-    # TODO: pubsub cluster
-    # TODO: nodedow -> notify/alert user
-    # end
-
     sites = Beacon.LiveAdmin.Cluster.running_sites()
 
     current_url =
@@ -25,7 +19,7 @@ defmodule Beacon.LiveAdmin.PageLive do
         You must add Beacon.LiveAdmin.Plug to the :browser pipeline that beacon_live_admin is piped through.
         """
 
-    page = lookup_page!(socket, current_url)
+    page = lookup_page(socket, current_url)
 
     assign_mount(socket, site, page, sites, pages, params)
   end
@@ -33,7 +27,6 @@ defmodule Beacon.LiveAdmin.PageLive do
   # Beacon admin pages (no site param — platform-level)
   def mount(params, %{"pages" => pages} = session, socket) when not is_map_key(params, "site") do
     sites = Beacon.LiveAdmin.Cluster.running_sites()
-    # Use the first running site for platform-level pages
     site = List.first(sites) || :beacon
 
     current_url =
@@ -44,7 +37,7 @@ defmodule Beacon.LiveAdmin.PageLive do
         You must add Beacon.LiveAdmin.Plug to the :browser pipeline that beacon_live_admin is piped through.
         """
 
-    page = lookup_page!(socket, current_url)
+    page = lookup_page(socket, current_url)
 
     assign_mount(socket, site, page, sites, pages, params)
   end
@@ -55,6 +48,31 @@ defmodule Beacon.LiveAdmin.PageLive do
 
     You must add Beacon.LiveAdmin.Plug to the :browser pipeline that beacon_live_admin is piped through.
     """
+  end
+
+  defp assign_mount(socket, site, nil, sites, pages, params) do
+    # Page not found from session URL — this happens when navigating
+    # from HomeLive to PageLive. Use a minimal placeholder; handle_params
+    # will immediately resolve the correct page from the actual URL.
+    {first_path, first_module, _, _first_session} = List.first(pages)
+
+    page = %PageBuilder.Page{
+      site: site,
+      path: first_path,
+      module: first_module,
+      table: first_module.__beacon_page_table__()
+    }
+
+    socket =
+      assign(socket,
+        __beacon_sites__: sites,
+        __beacon_pages__: pages,
+        __beacon_menu__: %PageBuilder.Menu{},
+        beacon_page: page
+      )
+
+    # Don't call the module's mount — handle_params will mount the correct module
+    {:ok, assign_params(socket, params)}
   end
 
   defp assign_mount(socket, site, page, sites, pages, params) do
@@ -84,9 +102,22 @@ defmodule Beacon.LiveAdmin.PageLive do
   @impl true
   def handle_params(params, url, socket) do
     page = lookup_page!(socket, url)
+    prev_module = socket.assigns.beacon_page.module
 
     with %Socket{redirected: nil} = socket <-
-           update_page(socket, path: page.path, module: page.module, params: params) do
+           update_page(socket, path: page.path, module: page.module, params: params),
+         %Socket{redirected: nil} = socket <- assign_menu_links(socket, socket.assigns.__beacon_pages__) do
+      # If the module changed (e.g., navigating from a stale mount), call the new module's mount first
+      socket =
+        if page.module != prev_module do
+          case maybe_apply_module(socket, :mount, [params, page.session], & &1) do
+            {:ok, s} -> s
+            s -> s
+          end
+        else
+          socket
+        end
+
       maybe_apply_module(socket, :handle_params, [params, url], &{:noreply, &1})
     else
       %Socket{} = redirected_socket ->
@@ -133,10 +164,23 @@ defmodule Beacon.LiveAdmin.PageLive do
     maybe_apply_module(socket, :handle_call, [msg, from], &{:noreply, &1})
   end
 
-  defp lookup_page!(socket, url) do
-    %URI{host: host, path: path} = URI.parse(url)
+  # Non-raising version for mount — returns nil if page not found.
+  # This handles the case where the session URL is stale (e.g., from HomeLive)
+  # and doesn't match a PageLive route. handle_params will correct it.
+  defp lookup_page(socket, url) do
+    %URI{path: path} = URI.parse(url)
 
-    case Phoenix.Router.route_info(socket.router, "GET", path, host) do
+    case Phoenix.Router.route_info(socket.router, "GET", path, "localhost") do
+      %{beacon: %{"page" => page}} -> page
+      _ -> nil
+    end
+  end
+
+  # Raising version for handle_params — the URL is always correct here.
+  defp lookup_page!(socket, url) do
+    %URI{path: path} = URI.parse(url)
+
+    case Phoenix.Router.route_info(socket.router, "GET", path, "localhost") do
       %{beacon: %{"page" => page}} ->
         page
 
@@ -144,6 +188,7 @@ defmodule Beacon.LiveAdmin.PageLive do
         raise Beacon.LiveAdmin.PageNotFoundError, "failed to find a Beacon.LiveAdmin page for URL #{url}"
     end
   end
+
 
   defp assign_params(socket, params) do
     update_page(socket, params: params)
@@ -160,6 +205,7 @@ defmodule Beacon.LiveAdmin.PageLive do
     "/error_pages" => "hero-exclamation-triangle",
     "/hooks" => "hero-code-bracket",
     "/settings" => "hero-cog-6-tooth",
+    "/groups" => "hero-user-group",
     "/beacon" => "hero-shield-check"
   }
 
@@ -167,6 +213,7 @@ defmodule Beacon.LiveAdmin.PageLive do
     {:content, "Content", ["/pages", "/layouts", "/components", "/media_library"]},
     {:data, "Data & Logic", ["/graphql_endpoints", "/events", "/info_handlers"]},
     {:developer, "Developer", ["/error_pages", "/hooks", "/settings"]},
+    {:admin, "Administration", ["/groups"]},
     {:beacon_admin, "Platform", ["/beacon"]}
   ]
 
@@ -305,7 +352,7 @@ defmodule Beacon.LiveAdmin.PageLive do
 
     ~H"""
     <div class="hidden @[180px]:block pt-4 pb-1 px-2 first:pt-0">
-      <span class="text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-gray-500"><%= @label %></span>
+      <span class="text-[11px] font-semibold uppercase tracking-wider text-base-content/40"><%= @label %></span>
     </div>
     """
   end
@@ -314,14 +361,12 @@ defmodule Beacon.LiveAdmin.PageLive do
     path = build_link_path(socket, page, path)
     assigns = %{text: text, icon: icon, path: path}
 
-    # use href to force redirecting to re-execute plug to fecth current url
-    # more info at https://github.com/phoenixframework/phoenix_live_view/pull/2654
     ~H"""
     <.link
-      href={@path}
-      class="w-full transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 bg-indigo-50 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 flex rounded-lg items-center justify-center @[180px]:justify-start gap-0 @[180px]:gap-2.5 px-3 py-2 antialiased text-sm font-medium"
+      patch={@path}
+      class="w-full transition-colors outline-none focus-visible:ring-2 focus-visible:ring-primary bg-primary/10 text-primary flex rounded-lg items-center justify-center @[180px]:justify-start gap-0 @[180px]:gap-2.5 px-3 py-2 antialiased text-sm font-medium"
     >
-      <span :if={@icon} aria-hidden="true" class={@icon <> " h-[18px] w-[18px] flex-shrink-0 text-indigo-600 dark:text-indigo-400"}></span>
+      <span :if={@icon} aria-hidden="true" class={@icon <> " h-[18px] w-[18px] flex-shrink-0 text-primary"}></span>
       <span :if={!@icon} class="hidden @[180px]:block h-[18px] w-[18px] flex-shrink-0"></span>
       <span class="hidden @[180px]:block line-clamp-1"><%= @text %></span>
     </.link>
@@ -332,13 +377,12 @@ defmodule Beacon.LiveAdmin.PageLive do
     path = build_link_path(socket, page, path)
     assigns = %{text: text, icon: icon, path: path}
 
-    # force redirect to re-execute plug to fecth current url
     ~H"""
     <.link
-      href={@path}
-      class="w-full transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 hover:bg-slate-50 dark:hover:bg-gray-800 text-slate-600 dark:text-gray-300 hover:text-slate-900 dark:hover:text-gray-100 flex rounded-lg items-center justify-center @[180px]:justify-start gap-0 @[180px]:gap-2.5 px-3 py-2 antialiased text-sm font-medium"
+      patch={@path}
+      class="w-full transition-colors outline-none focus-visible:ring-2 focus-visible:ring-primary hover:bg-base-200 text-base-content/60 hover:text-base-content flex rounded-lg items-center justify-center @[180px]:justify-start gap-0 @[180px]:gap-2.5 px-3 py-2 antialiased text-sm font-medium"
     >
-      <span :if={@icon} aria-hidden="true" class={@icon <> " h-[18px] w-[18px] flex-shrink-0 text-slate-400 dark:text-gray-500"}></span>
+      <span :if={@icon} aria-hidden="true" class={@icon <> " h-[18px] w-[18px] flex-shrink-0 text-base-content/40"}></span>
       <span :if={!@icon} class="hidden @[180px]:block h-[18px] w-[18px] flex-shrink-0"></span>
       <span class="hidden @[180px]:block line-clamp-1"><%= @text %></span>
     </.link>
@@ -349,7 +393,7 @@ defmodule Beacon.LiveAdmin.PageLive do
     assigns = %{text: text, icon: icon}
 
     ~H"""
-    <span class="w-full flex rounded-lg items-center justify-center @[180px]:justify-start gap-0 @[180px]:gap-2.5 px-3 py-2 antialiased text-sm font-medium text-slate-300 cursor-not-allowed">
+    <span class="w-full flex rounded-lg items-center justify-center @[180px]:justify-start gap-0 @[180px]:gap-2.5 px-3 py-2 antialiased text-sm font-medium text-base-content/20 cursor-not-allowed">
       <span :if={@icon} aria-hidden="true" class={@icon <> " h-[18px] w-[18px] flex-shrink-0"}></span>
       <span class="hidden @[180px]:block line-clamp-1"><%= @text %></span>
     </span>

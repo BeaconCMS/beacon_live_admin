@@ -337,7 +337,7 @@ defmodule Beacon.LiveAdmin.EventHandlerEditorLive.Index do
       <.header>
         <%= @page_title %>
         <:actions>
-          <.button type="button" id="new-event-handler-button" phx-click="create_new" class="sui-primary uppercase">
+          <.button type="button" id="new-event-handler-button" phx-click="create_new" class="btn-primary">
             New Event Handler
           </.button>
         </:actions>
@@ -346,22 +346,22 @@ defmodule Beacon.LiveAdmin.EventHandlerEditorLive.Index do
       <.main_content>
         <.modal :if={@show_nav_modal} id="confirm-nav" on_cancel={JS.push("stay_here")} show>
           <p>You've made unsaved changes to this event handler!</p>
-          <.button type="button" phx-click="stay_here" class="sui-secondary">Stay here</.button>
-          <.button type="button" phx-click="discard_changes" class="sui-primary-destructive">Discard changes</.button>
+          <.button type="button" phx-click="stay_here" class="btn-ghost">Stay here</.button>
+          <.button type="button" phx-click="discard_changes" class="btn-error">Discard changes</.button>
         </.modal>
 
         <.modal :if={@show_create_modal} id="create-modal" on_cancel={JS.push("cancel_create")} show>
           <:title>New Event Handler</:title>
           <.form :let={f} for={@create_form} id="create-form" phx-submit="save_new" class="px-4">
             <.input field={f[:name]} type="text" label="Event name:" />
-            <.button class="sui-primary mt-4">Save</.button>
+            <.button class="btn-primary mt-4">Save</.button>
           </.form>
         </.modal>
 
         <.modal :if={@show_delete_modal} id="delete-modal" on_cancel={JS.push("delete_cancel")} show>
           <p>Are you sure you want to delete this event handler?</p>
-          <.button type="button" id="confirm-delete-button" phx-click="delete_confirm" class="sui-primary-destructive">Delete</.button>
-          <.button type="button" phx-click="delete_cancel" class="sui-secondary">Cancel</.button>
+          <.button type="button" id="confirm-delete-button" phx-click="delete_confirm" class="btn-error">Delete</.button>
+          <.button type="button" phx-click="delete_cancel" class="btn-ghost">Cancel</.button>
         </.modal>
 
         <div class="grid items-start grid-cols-1 grid-rows-1 mx-auto gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
@@ -369,7 +369,7 @@ defmodule Beacon.LiveAdmin.EventHandlerEditorLive.Index do
             <.table id="event-handlers" rows={@event_handlers} row_click={fn row -> "select-#{row.id}" end}>
               <:col :let={event_handler} label="Name"><%= Map.fetch!(event_handler, :name) %></:col>
               <:col :let={event_handler} label="Format">
-                <span class={"px-2 py-0.5 text-xs rounded-full #{if event_handler.format == :actions, do: "bg-indigo-100 text-indigo-700 dark:bg-indigo-900 dark:text-indigo-300", else: "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400"}"}>
+                <span class={"px-2 py-0.5 text-xs rounded-full #{if event_handler.format == :actions, do: "bg-indigo-100 text-indigo-700", else: "bg-gray-100 text-gray-600 bg-base-100 "}"}>
                   <%= event_handler.format %>
                 </span>
               </:col>
@@ -380,21 +380,21 @@ defmodule Beacon.LiveAdmin.EventHandlerEditorLive.Index do
             <.form :let={f} for={@form} id="event-handler-form" class="flex items-end gap-4" phx-change="validate" phx-submit="save_changes">
               <.input label="Name" field={f[:name]} type="text" />
               <input type="hidden" name="event_handler[code]" id="event_handler-form_code" value={Phoenix.HTML.Form.input_value(f, :code)} />
-              <.button phx-disable-with="Saving..." class="sui-primary ml-auto">Save Changes</.button>
-              <.button id="delete-event-handler-button" type="button" phx-click="delete" class="sui-primary-destructive">Delete</.button>
+              <.button phx-disable-with="Saving..." class="btn-primary ml-auto">Save Changes</.button>
+              <.button id="delete-event-handler-button" type="button" phx-click="delete" class="btn-error">Delete</.button>
             </.form>
 
             <div class="mt-4 flex items-center gap-4">
-              <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Format:</span>
+              <span class="text-sm font-medium text-base-content/80">Format:</span>
               <button type="button" phx-click="toggle_format"
-                class={"px-3 py-1.5 text-sm rounded-lg border transition-colors #{if selected_format(@selected) == :elixir, do: "bg-gray-100 border-gray-300 dark:bg-gray-800 dark:border-gray-600", else: "bg-indigo-50 border-indigo-300 text-indigo-700 dark:bg-indigo-900 dark:border-indigo-600 dark:text-indigo-300"}"}>
+                class={"px-3 py-1.5 text-sm rounded-lg border transition-colors #{if selected_format(@selected) == :elixir, do: "bg-gray-100 border-gray-300 bg-base-100 ", else: "bg-indigo-50 border-indigo-300 text-indigo-700"}"}>
                 <%= if selected_format(@selected) == :elixir, do: "Elixir Code", else: "Actions (Declarative)" %>
                 <span class="ml-1 text-xs opacity-60">click to switch</span>
               </button>
             </div>
 
             <%= if selected_format(@selected) == :elixir do %>
-              <div class="mt-2 flex gap-x-4 text-sm text-gray-500 dark:text-gray-400">
+              <div class="mt-2 flex gap-x-4 text-sm text-base-content/60">
                 <span>Variables available:</span>
                 <span class="font-mono">event_params socket</span>
               </div>
@@ -413,20 +413,20 @@ defmodule Beacon.LiveAdmin.EventHandlerEditorLive.Index do
             <% else %>
               <div class="mt-4 space-y-3">
                 <div class="flex items-center justify-between">
-                  <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300">Action Steps</h3>
+                  <h3 class="text-sm font-semibold text-base-content/80">Action Steps</h3>
                 </div>
 
                 <div class="space-y-2">
                   <%= for {step, index} <- Enum.with_index((@selected.actions || %{"steps" => []})["steps"] || []) do %>
-                    <div class="flex items-start gap-2 p-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
-                      <span class="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 text-xs font-bold">
+                    <div class="flex items-start gap-2 p-3 bg-base-100 border border-base-300 rounded-lg">
+                      <span class="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full bg-indigo-100 text-primary text-xs font-bold">
                         <%= index + 1 %>
                       </span>
                       <div class="flex-1 min-w-0">
                         <div class="flex items-center gap-2">
-                          <span class="text-sm font-medium text-gray-900 dark:text-gray-100"><%= step["action"] %></span>
+                          <span class="text-sm font-medium text-base-content"><%= step["action"] %></span>
                           <%= for {key, value} <- Map.drop(step, ["action"]) do %>
-                            <span class="text-xs text-gray-500 dark:text-gray-400"><%= key %>: <span class="font-mono"><%= inspect(value) %></span></span>
+                            <span class="text-xs text-base-content/60"><%= key %>: <span class="font-mono"><%= inspect(value) %></span></span>
                           <% end %>
                         </div>
                         <div class="mt-2 flex gap-2 flex-wrap">
@@ -438,7 +438,7 @@ defmodule Beacon.LiveAdmin.EventHandlerEditorLive.Index do
                               placeholder={field}
                               phx-blur="update_action"
                               phx-value-index={index}
-                              class="text-xs px-2 py-1 border border-gray-300 dark:border-gray-600 rounded bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100"
+                              class="text-xs px-2 py-1 border border-gray-300  rounded bg-base-200 text-base-content"
                             />
                           <% end %>
                         </div>
@@ -451,16 +451,16 @@ defmodule Beacon.LiveAdmin.EventHandlerEditorLive.Index do
                   <% end %>
                 </div>
 
-                <div class="border-t border-gray-200 dark:border-gray-700 pt-3">
-                  <h4 class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-2">Add Action</h4>
+                <div class="border-t border-base-300 pt-3">
+                  <h4 class="text-xs font-semibold uppercase tracking-wider text-base-content/60 mb-2">Add Action</h4>
                   <div class="space-y-2">
                     <%= for {group_name, actions} <- @action_types do %>
                       <div>
-                        <span class="text-xs font-medium text-gray-400 dark:text-gray-500"><%= group_name %></span>
+                        <span class="text-xs font-medium text-base-content/40"><%= group_name %></span>
                         <div class="flex flex-wrap gap-1 mt-1">
                           <%= for action <- actions do %>
                             <button type="button" phx-click="add_action" phx-value-type={action.type}
-                              class="px-2 py-1 text-xs bg-gray-100 dark:bg-gray-800 hover:bg-indigo-100 dark:hover:bg-indigo-900 text-gray-700 dark:text-gray-300 rounded transition-colors">
+                              class="px-2 py-1 text-xs bg-gray-100 bg-base-100 hover:bg-indigo-100 text-base-content/80 rounded transition-colors">
                               <%= action.label %>
                             </button>
                           <% end %>

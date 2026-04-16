@@ -35,7 +35,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.SEO do
       "twitter_card" => params["twitter_card"]
     }
 
-    # Include template type fields if present
+    # Include collection fields if present
     attrs = case params["fields"] do
       fields when is_map(fields) and map_size(fields) > 0 ->
         Map.put(attrs, "fields", fields)
@@ -75,9 +75,9 @@ defmodule Beacon.LiveAdmin.PageEditorLive.SEO do
     end
   end
 
-  def handle_event("set_template_type", %{"template_type_id" => ""}, socket) do
+  def handle_event("set_collection", %{"collection_id" => ""}, socket) do
     page = socket.assigns.page
-    case Content.update_page(page.site, page, %{"template_type_id" => nil}) do
+    case Content.update_page(page.site, page, %{"collection_id" => nil}) do
       {:ok, updated} ->
         {:noreply, socket |> assign(:page, updated) |> assign_seo_fields(updated)}
       {:error, _} ->
@@ -85,9 +85,9 @@ defmodule Beacon.LiveAdmin.PageEditorLive.SEO do
     end
   end
 
-  def handle_event("set_template_type", %{"template_type_id" => id}, socket) do
+  def handle_event("set_collection", %{"collection_id" => id}, socket) do
     page = socket.assigns.page
-    case Content.update_page(page.site, page, %{"template_type_id" => id}) do
+    case Content.update_page(page.site, page, %{"collection_id" => id}) do
       {:ok, updated} ->
         {:noreply, socket |> assign(:page, updated) |> assign_seo_fields(updated)}
       {:error, _} ->
@@ -97,8 +97,8 @@ defmodule Beacon.LiveAdmin.PageEditorLive.SEO do
 
   defp assign_seo_fields(socket, page) do
     site = socket.assigns.beacon_page.site
-    template_types = Content.list_template_types(site)
-    current_tt = if page.template_type_id, do: Content.get_template_type(site, page.template_type_id)
+    collections = Content.list_collections(site, [])
+    current_tt = if page.collection_id, do: Content.get_collection(site, page.collection_id)
 
     form_data = %{
       "meta_description" => page.meta_description || "",
@@ -113,8 +113,8 @@ defmodule Beacon.LiveAdmin.PageEditorLive.SEO do
     socket
     |> assign(:form_data, form_data)
     |> assign(:seo_score, compute_seo_score(page))
-    |> assign(:template_types, template_types)
-    |> assign(:current_template_type, current_tt)
+    |> assign(:collections, collections)
+    |> assign(:current_collection, current_tt)
     |> assign(:page_fields, page.fields || %{})
     |> assign(:date_modified, page.date_modified)
   end
@@ -131,7 +131,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.SEO do
       {10, non_empty?(page.canonical_url)},
       {10, page.raw_schema != nil and page.raw_schema != []},
       {5, non_empty?(page.robots)},
-      {5, page.template_type_id != nil},
+      {5, page.collection_id != nil},
       {5, non_empty?(page.twitter_card)}
     ]
 
@@ -205,7 +205,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.SEO do
           <span class={"text-lg font-bold #{@score_color}"}><%= @score_label %></span>
         </div>
 
-        <form phx-submit="save" phx-change="validate" class="space-y-8">
+        <.form for={%{}} phx-submit="save" phx-change="validate" class="space-y-8">
           <input type="hidden" name="_csrf_token" value={Phoenix.Controller.get_csrf_token()} />
 
           <%!-- SERP Preview --%>
@@ -252,11 +252,11 @@ defmodule Beacon.LiveAdmin.PageEditorLive.SEO do
               </div>
 
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Template Type</label>
-                <select phx-change="set_template_type" name="template_type_id" class="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Collection</label>
+                <select phx-change="set_collection" name="collection_id" class="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
                   <option value="">None</option>
-                  <%= for tt <- @template_types do %>
-                    <option value={tt.id} selected={@page.template_type_id == tt.id}><%= tt.name %></option>
+                  <%= for tt <- @collections do %>
+                    <option value={tt.id} selected={@page.collection_id == tt.id}><%= tt.name %></option>
                   <% end %>
                 </select>
               </div>
@@ -371,14 +371,14 @@ defmodule Beacon.LiveAdmin.PageEditorLive.SEO do
             </div>
           </section>
 
-          <%!-- Template Type Fields --%>
-          <%= if @current_template_type do %>
+          <%!-- Collection Fields --%>
+          <%= if @current_collection do %>
             <section>
               <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wide mb-3">
-                <%= @current_template_type.name %> Fields
+                <%= @current_collection.name %> Fields
               </h3>
               <div class="space-y-4 bg-gray-50 rounded-lg p-4">
-                <%= for field_def <- @current_template_type.field_definitions || [] do %>
+                <%= for field_def <- @current_collection.field_definitions || [] do %>
                   <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">
                       <%= field_def["label"] || field_def["name"] %>
@@ -407,7 +407,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.SEO do
               Save SEO Settings
             </button>
           </div>
-        </form>
+        </.form>
       </div>
     </div>
     """

@@ -16,41 +16,15 @@ defmodule Beacon.LiveAdmin.BeaconAdmin.DashboardLive do
 
     site_stats =
       Enum.map(sites, fn site ->
-        page_count =
-          try do
-            Content.count_pages(site)
-          rescue
-            _ -> 0
-          end
-
-        layout_count =
-          try do
-            Content.count_layouts(site)
-          rescue
-            _ -> 0
-          end
-
-        component_count =
-          try do
-            Content.count_components(site)
-          rescue
-            _ -> 0
-          end
-
         %{
           site: site,
-          page_count: page_count,
-          layout_count: layout_count,
-          component_count: component_count
+          page_count: safe_count(fn -> Content.count_pages(site) end),
+          layout_count: safe_count(fn -> Content.count_layouts(site) end),
+          component_count: safe_count(fn -> Content.count_components(site) end)
         }
       end)
 
-    user_count =
-      try do
-        length(Beacon.LiveAdmin.Auth.list_users())
-      rescue
-        _ -> 0
-      end
+    user_count = safe_count(fn -> length(Beacon.LiveAdmin.Auth.list_users()) end)
 
     {:noreply,
      socket
@@ -60,91 +34,105 @@ defmodule Beacon.LiveAdmin.BeaconAdmin.DashboardLive do
      |> assign(page_title: "Beacon Admin")}
   end
 
+  defp safe_count(fun) do
+    try do
+      fun.()
+    rescue
+      _ -> 0
+    end
+  end
+
+  @admin_links [
+    %{path: "/beacon/users", icon: "hero-users", title: "User Management", description: "Create, edit, and manage users"},
+    %{path: "/beacon/group_templates", icon: "hero-user-group", title: "Group Templates", description: "Default permission groups for new sites"},
+    %{path: "/beacon/collections", icon: "hero-document-duplicate", title: "Global Collections", description: "Manage collections available to all sites"},
+    %{path: "/beacon/settings", icon: "hero-cog-6-tooth", title: "Global Settings", description: "Configure platform-wide defaults and policies"}
+  ]
+
   @impl true
   def render(assigns) do
+    assigns = assign(assigns, :admin_links, @admin_links)
+
     ~H"""
-    <div class="mx-auto max-w-6xl py-6 px-4">
-      <div class="mb-8">
-        <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Beacon Admin</h1>
-        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Platform-wide overview and management</p>
-      </div>
+    <.header>
+      Beacon Admin
+    </.header>
 
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-        <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-5">
-          <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Sites</div>
-          <div class="mt-1 text-3xl font-bold text-gray-900 dark:text-gray-100"><%= length(@sites) %></div>
+    <%!-- Stats --%>
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8 -mt-2">
+      <.main_content>
+        <div class="flex items-center gap-3 px-1 py-2">
+          <div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+            <.icon name="hero-globe-alt" class="w-5 h-5 text-primary" />
+          </div>
+          <div>
+            <div class="text-2xl font-bold text-base-content"><%= length(@sites) %></div>
+            <div class="text-xs font-medium text-base-content/60 uppercase tracking-wide">Sites</div>
+          </div>
         </div>
-        <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-5">
-          <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Users</div>
-          <div class="mt-1 text-3xl font-bold text-gray-900 dark:text-gray-100"><%= @user_count %></div>
+      </.main_content>
+      <.main_content>
+        <div class="flex items-center gap-3 px-1 py-2">
+          <div class="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center flex-shrink-0">
+            <.icon name="hero-users" class="w-5 h-5 text-purple-500" />
+          </div>
+          <div>
+            <div class="text-2xl font-bold text-base-content"><%= @user_count %></div>
+            <div class="text-xs font-medium text-base-content/60 uppercase tracking-wide">Users</div>
+          </div>
         </div>
-        <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-5">
-          <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Pages</div>
-          <div class="mt-1 text-3xl font-bold text-gray-900 dark:text-gray-100"><%= Enum.reduce(@site_stats, 0, &(&1.page_count + &2)) %></div>
+      </.main_content>
+      <.main_content>
+        <div class="flex items-center gap-3 px-1 py-2">
+          <div class="w-10 h-10 rounded-lg bg-success/10 flex items-center justify-center flex-shrink-0">
+            <.icon name="hero-document-text" class="w-5 h-5 text-success" />
+          </div>
+          <div>
+            <div class="text-2xl font-bold text-base-content"><%= Enum.reduce(@site_stats, 0, &(&1.page_count + &2)) %></div>
+            <div class="text-xs font-medium text-base-content/60 uppercase tracking-wide">Total Pages</div>
+          </div>
         </div>
-      </div>
+      </.main_content>
+    </div>
 
-      <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Sites</h2>
-      <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
-        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-          <thead class="bg-gray-50 dark:bg-gray-900">
-            <tr>
-              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Site</th>
-              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Pages</th>
-              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Layouts</th>
-              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Components</th>
-              <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Actions</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-            <%= for stat <- @site_stats do %>
-              <tr>
-                <td class="px-4 py-3 text-sm font-medium text-gray-900 dark:text-gray-100"><%= stat.site %></td>
-                <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-400"><%= stat.page_count %></td>
-                <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-400"><%= stat.layout_count %></td>
-                <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-400"><%= stat.component_count %></td>
-                <td class="px-4 py-3 text-right">
-                  <.link
-                    href={beacon_live_admin_path(@socket, stat.site, "/pages")}
-                    class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300 text-sm font-medium"
-                  >
-                    Manage
-                  </.link>
-                </td>
-              </tr>
-            <% end %>
-            <%= if @site_stats == [] do %>
-              <tr>
-                <td colspan="5" class="px-4 py-8 text-center text-sm text-gray-500 dark:text-gray-400">No sites running</td>
-              </tr>
-            <% end %>
-          </tbody>
-        </table>
-      </div>
+    <%!-- Sites Table --%>
+    <h3 class="text-xs font-semibold uppercase tracking-[1.68px] text-base-content/60 mb-3 px-1">Sites</h3>
+    <.main_content class="mb-8">
+      <.table id="sites" rows={@site_stats} row_id={&"site-#{&1.site}"}>
+        <:col :let={stat} label="Site">
+          <span class="font-semibold"><%= stat.site %></span>
+        </:col>
+        <:col :let={stat} label="Pages"><%= stat.page_count %></:col>
+        <:col :let={stat} label="Layouts"><%= stat.layout_count %></:col>
+        <:col :let={stat} label="Components"><%= stat.component_count %></:col>
+        <:action :let={stat}>
+          <.link
+            patch={beacon_live_admin_path(@socket, stat.site, "/pages")}
+            class="text-sm font-medium text-primary hover:text-indigo-800"
+          >
+            Manage
+          </.link>
+        </:action>
+      </.table>
+    </.main_content>
 
-      <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    <%!-- Admin Links --%>
+    <h3 class="text-xs font-semibold uppercase tracking-[1.68px] text-base-content/60 mb-3 px-1">Platform</h3>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <%= for link <- @admin_links do %>
         <.link
-          href={Beacon.LiveAdmin.Router.beacon_live_admin_path(@socket, "/beacon/users")}
-          class="block p-5 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-indigo-300 dark:hover:border-indigo-500/50 transition-all"
+          patch={Beacon.LiveAdmin.Router.beacon_live_admin_path(@socket, link.path)}
+          class="group flex items-start gap-3.5 p-4 bg-base-100 rounded-xl border border-base-300 shadow-sm hover:shadow-md hover:border-indigo-300 transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
         >
-          <div class="text-sm font-semibold text-gray-900 dark:text-gray-100">User Management</div>
-          <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Create, edit, and manage users and their roles</p>
+          <div class="flex items-center justify-center w-9 h-9 rounded-lg bg-slate-100 bg-base-200 flex-shrink-0 group-hover:bg-indigo-50 transition-colors duration-200">
+            <.icon name={link.icon} class="w-4.5 h-4.5 text-slate-500  group-hover:text-indigo-500 transition-colors duration-200" />
+          </div>
+          <div class="min-w-0 pt-0.5">
+            <h4 class="text-sm font-semibold text-base-content group-hover:text-indigo-600 transition-colors"><%= link.title %></h4>
+            <p class="mt-0.5 text-xs text-base-content/60"><%= link.description %></p>
+          </div>
         </.link>
-        <.link
-          href={Beacon.LiveAdmin.Router.beacon_live_admin_path(@socket, "/beacon/settings")}
-          class="block p-5 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-indigo-300 dark:hover:border-indigo-500/50 transition-all"
-        >
-          <div class="text-sm font-semibold text-gray-900 dark:text-gray-100">Global Settings</div>
-          <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Configure platform-wide defaults and policies</p>
-        </.link>
-        <.link
-          href={Beacon.LiveAdmin.Router.beacon_live_admin_path(@socket, "/beacon/template_types")}
-          class="block p-5 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-indigo-300 dark:hover:border-indigo-500/50 transition-all"
-        >
-          <div class="text-sm font-semibold text-gray-900 dark:text-gray-100">Global Template Types</div>
-          <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Manage template types available to all sites</p>
-        </.link>
-      </div>
+      <% end %>
     </div>
     """
   end

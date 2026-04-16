@@ -11,7 +11,7 @@ defmodule Beacon.LiveAdmin.SEOAuditLive do
   @impl true
   def handle_params(_params, _url, socket) do
     site = socket.assigns.beacon_page.site
-    pages = Content.list_pages(site, %{per_page: 500})
+    pages = Content.list_pages(site, per_page: 500)
 
     audited =
       pages
@@ -43,7 +43,7 @@ defmodule Beacon.LiveAdmin.SEOAuditLive do
       {10, non_empty?(page.canonical_url)},
       {10, page.raw_schema != nil and page.raw_schema != []},
       {5, non_empty?(page.robots)},
-      {5, page.template_type_id != nil},
+      {5, page.collection_id != nil},
       {5, non_empty?(page.twitter_card)}
     ]
 
@@ -55,13 +55,11 @@ defmodule Beacon.LiveAdmin.SEOAuditLive do
   defp find_issues(page) do
     issues = []
     issues = if !non_empty?(page.title), do: ["Missing title" | issues], else: issues
-    issues = if non_empty?(page.title) and String.length(page.title) > 60, do: ["Title too long (#{String.length(page.title)} chars)" | issues], else: issues
-    issues = if !non_empty?(page.meta_description) and !non_empty?(page.description), do: ["Missing description" | issues], else: issues
-    issues = if !non_empty?(page.og_image), do: ["Missing OG image" | issues], else: issues
-    issues = if !non_empty?(page.canonical_url), do: ["No canonical URL" | issues], else: issues
-    issues = if page.raw_schema == nil or page.raw_schema == [], do: ["No structured data" | issues], else: issues
-
-    # Check for duplicate titles
+    issues = if non_empty?(page.title) and String.length(page.title) > 60, do: ["Title too long" | issues], else: issues
+    issues = if !non_empty?(page.meta_description) and !non_empty?(page.description), do: ["No description" | issues], else: issues
+    issues = if !non_empty?(page.og_image), do: ["No OG image" | issues], else: issues
+    issues = if !non_empty?(page.canonical_url), do: ["No canonical" | issues], else: issues
+    issues = if page.raw_schema == nil or page.raw_schema == [], do: ["No schema" | issues], else: issues
     issues
   end
 
@@ -85,85 +83,117 @@ defmodule Beacon.LiveAdmin.SEOAuditLive do
   defp score_color({earned, total}) do
     pct = earned / max(total, 1) * 100
     cond do
-      pct >= 80 -> "text-green-600"
-      pct >= 40 -> "text-yellow-600"
-      true -> "text-red-600"
+      pct >= 80 -> "text-success"
+      pct >= 40 -> "text-warning"
+      true -> "text-error"
     end
   end
 
   defp score_bg({earned, total}) do
     pct = earned / max(total, 1) * 100
     cond do
-      pct >= 80 -> "bg-green-50"
-      pct >= 40 -> "bg-yellow-50"
-      true -> "bg-red-50"
+      pct >= 80 -> "bg-emerald-50/50"
+      pct >= 40 -> "bg-amber-50/50"
+      true -> "bg-rose-50/50"
+    end
+  end
+
+  defp issue_badge_class(issue) do
+    cond do
+      String.contains?(issue, "Missing") or String.contains?(issue, "No ") ->
+        "bg-rose-50 text-rose-700 ring-rose-200"
+      String.contains?(issue, "too long") ->
+        "bg-amber-50 text-amber-700 ring-amber-200"
+      true ->
+        "bg-zinc-100 text-zinc-600 ring-zinc-200 bg-base-200 "
     end
   end
 
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="mx-auto max-w-6xl py-6 px-4">
-      <h1 class="text-2xl font-bold text-gray-900 mb-6">SEO Audit</h1>
+    <.header>
+      SEO Audit
+    </.header>
 
-      <%!-- Summary Stats --%>
-      <div class="grid grid-cols-2 md:grid-cols-6 gap-4 mb-8">
-        <div class="bg-white rounded-lg border p-4 text-center">
-          <div class="text-2xl font-bold text-gray-900"><%= @stats.total %></div>
-          <div class="text-xs text-gray-500 uppercase">Pages</div>
+    <%!-- Summary Stats --%>
+    <div class="grid grid-cols-2 md:grid-cols-6 gap-3 mb-8 -mt-2">
+      <.main_content>
+        <div class="text-center py-1">
+          <div class="text-2xl font-bold text-base-content tabular-nums"><%= @stats.total %></div>
+          <div class="text-[11px] font-medium text-base-content/60 uppercase tracking-wide">Pages</div>
         </div>
-        <div class="bg-green-50 rounded-lg border border-green-200 p-4 text-center">
-          <div class="text-2xl font-bold text-green-600"><%= @stats.good %></div>
-          <div class="text-xs text-green-600 uppercase">Good</div>
+      </.main_content>
+      <.main_content>
+        <div class="text-center py-1">
+          <div class="text-2xl font-bold text-success tabular-nums"><%= @stats.good %></div>
+          <div class="text-[11px] font-medium text-success uppercase tracking-wide">Good</div>
         </div>
-        <div class="bg-yellow-50 rounded-lg border border-yellow-200 p-4 text-center">
-          <div class="text-2xl font-bold text-yellow-600"><%= @stats.needs_work %></div>
-          <div class="text-xs text-yellow-600 uppercase">Needs Work</div>
+      </.main_content>
+      <.main_content>
+        <div class="text-center py-1">
+          <div class="text-2xl font-bold text-warning tabular-nums"><%= @stats.needs_work %></div>
+          <div class="text-[11px] font-medium text-warning uppercase tracking-wide">Needs Work</div>
         </div>
-        <div class="bg-red-50 rounded-lg border border-red-200 p-4 text-center">
-          <div class="text-2xl font-bold text-red-600"><%= @stats.poor %></div>
-          <div class="text-xs text-red-600 uppercase">Poor</div>
+      </.main_content>
+      <.main_content>
+        <div class="text-center py-1">
+          <div class="text-2xl font-bold text-error tabular-nums"><%= @stats.poor %></div>
+          <div class="text-[11px] font-medium text-error uppercase tracking-wide">Poor</div>
         </div>
-        <div class="bg-white rounded-lg border p-4 text-center">
-          <div class="text-2xl font-bold text-gray-900"><%= @stats.missing_desc %></div>
-          <div class="text-xs text-gray-500 uppercase">No Description</div>
+      </.main_content>
+      <.main_content>
+        <div class="text-center py-1">
+          <div class="text-2xl font-bold text-base-content tabular-nums"><%= @stats.missing_desc %></div>
+          <div class="text-[11px] font-medium text-base-content/60 uppercase tracking-wide">No Desc</div>
         </div>
-        <div class="bg-white rounded-lg border p-4 text-center">
-          <div class="text-2xl font-bold text-gray-900"><%= @stats.missing_og %></div>
-          <div class="text-xs text-gray-500 uppercase">No OG Image</div>
+      </.main_content>
+      <.main_content>
+        <div class="text-center py-1">
+          <div class="text-2xl font-bold text-base-content tabular-nums"><%= @stats.missing_og %></div>
+          <div class="text-[11px] font-medium text-base-content/60 uppercase tracking-wide">No OG</div>
         </div>
-      </div>
+      </.main_content>
+    </div>
 
-      <%!-- Page List --%>
-      <div class="bg-white rounded-lg border overflow-hidden">
-        <table class="min-w-full divide-y divide-gray-200">
-          <thead class="bg-gray-50">
+    <%!-- Audit Table --%>
+    <.main_content>
+      <div class="px-4 overflow-y-auto sm:overflow-visible sm:px-0">
+        <table class="w-[40rem] mt-2 sm:w-full">
+          <thead class="text-sm leading-6 text-left text-base-content/60">
             <tr>
-              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Score</th>
-              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Path</th>
-              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Title</th>
-              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Issues</th>
-              <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Action</th>
+              <th class="pt-0 pb-4 pl-4 pr-6 font-sans font-semibold uppercase text-sm tracking-[1.68px] w-20">Score</th>
+              <th class="pt-0 pb-4 pl-0 pr-6 font-sans font-semibold uppercase text-sm tracking-[1.68px]">Path</th>
+              <th class="pt-0 pb-4 pl-0 pr-6 font-sans font-semibold uppercase text-sm tracking-[1.68px]">Title</th>
+              <th class="pt-0 pb-4 pl-0 pr-6 font-sans font-semibold uppercase text-sm tracking-[1.68px]">Issues</th>
+              <th class="relative p-0 pb-4"><span class="sr-only">Actions</span></th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-gray-200">
+          <tbody class="relative text-sm leading-6 divide-y divide-zinc-100 text-slate-800 ">
             <%= for %{page: page, score: score, issues: issues} <- @audited_pages do %>
-              <tr class={score_bg(score)}>
-                <td class="px-4 py-3">
-                  <span class={"text-sm font-bold #{score_color(score)}"}><%= score_pct(score) %>%</span>
+              <tr class={"group #{score_bg(score)}"}>
+                <td class="py-4 pl-4 pr-6">
+                  <span class={"text-sm font-bold tabular-nums #{score_color(score)}"}><%= score_pct(score) %>%</span>
                 </td>
-                <td class="px-4 py-3 text-sm text-gray-600 font-mono"><%= page.path %></td>
-                <td class="px-4 py-3 text-sm text-gray-900 max-w-xs truncate"><%= page.title %></td>
-                <td class="px-4 py-3">
+                <td class="py-4 pr-6">
+                  <span class="font-mono text-base-content/70 text-xs"><%= page.path %></span>
+                </td>
+                <td class="py-4 pr-6 max-w-[200px]">
+                  <span class="text-base-content font-medium truncate block"><%= page.title %></span>
+                </td>
+                <td class="py-4 pr-6">
                   <div class="flex flex-wrap gap-1">
                     <%= for issue <- issues do %>
-                      <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800"><%= issue %></span>
+                      <span class={"inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-medium ring-1 #{issue_badge_class(issue)}"}><%= issue %></span>
                     <% end %>
                   </div>
                 </td>
-                <td class="px-4 py-3 text-right">
-                  <.link patch={beacon_live_admin_path(@socket, @beacon_page.site, "/pages/#{page.id}/seo")} class="text-indigo-600 hover:text-indigo-900 text-sm font-medium">
-                    Fix
+                <td class="py-4 pr-4 text-right">
+                  <.link
+                    patch={beacon_live_admin_path(@socket, @beacon_page.site, "/pages/#{page.id}/seo")}
+                    class="inline-flex items-center gap-1 text-sm font-medium text-primary hover:text-indigo-800 transition-colors"
+                  >
+                    Fix <.icon name="hero-arrow-right-mini" class="w-3.5 h-3.5" />
                   </.link>
                 </td>
               </tr>
@@ -171,7 +201,7 @@ defmodule Beacon.LiveAdmin.SEOAuditLive do
           </tbody>
         </table>
       </div>
-    </div>
+    </.main_content>
     """
   end
 end

@@ -42,7 +42,7 @@ defmodule Beacon.LiveAdmin.PageEditorLive.Index do
       Pages
       <:actions>
         <.link patch={beacon_live_admin_path(@socket, @beacon_page.site, "/pages/new")} phx-click={JS.push_focus()}>
-          <.button class="sui-primary uppercase">Create New Page</.button>
+          <.button class="btn-primary">Create New Page</.button>
         </.link>
       </:actions>
     </.header>

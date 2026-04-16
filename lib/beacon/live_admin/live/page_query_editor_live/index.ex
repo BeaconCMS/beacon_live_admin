@@ -125,7 +125,7 @@ defmodule Beacon.LiveAdmin.PageQueryEditorLive.Index do
           <.back navigate={beacon_live_admin_path(@socket, @beacon_page.site, "/pages/#{@page_id}")}>
             Back to Page
           </.back>
-          <.button type="button" phx-click="create_new" class="sui-primary uppercase ml-4">
+          <.button type="button" phx-click="create_new" class="btn-primary ml-4">
             Add Query
           </.button>
         </:actions>
@@ -139,37 +139,37 @@ defmodule Beacon.LiveAdmin.PageQueryEditorLive.Index do
             <.input field={f[:result_alias]} type="text" label="Result Alias:" placeholder="e.g. posts, author" />
             <.input field={f[:query_string]} type="textarea" label="GraphQL Query:" placeholder="query GetPosts($limit: Int) { posts(limit: $limit) { id title } }" />
             <.input field={f[:depends_on]} type="text" label="Depends On (optional):" placeholder="e.g. get_author (another query's alias)" />
-            <.button class="sui-primary mt-4">Add Query</.button>
+            <.button class="btn-primary mt-4">Add Query</.button>
           </.form>
         </.modal>
 
         <.modal :if={@show_delete_modal} id="delete-modal" on_cancel={JS.push("delete_cancel")} show>
           <p>Remove this query from the page?</p>
-          <.button type="button" phx-click="delete_confirm" class="sui-primary-destructive">Remove</.button>
-          <.button type="button" phx-click="delete_cancel" class="sui-secondary">Cancel</.button>
+          <.button type="button" phx-click="delete_confirm" class="btn-error">Remove</.button>
+          <.button type="button" phx-click="delete_cancel" class="btn-ghost">Cancel</.button>
         </.modal>
 
         <%= if @page_queries == [] do %>
           <div class="text-center py-12">
-            <p class="text-gray-500 dark:text-gray-400 mb-4">No queries bound to this page yet.</p>
-            <p class="text-sm text-gray-400 dark:text-gray-500">Add a GraphQL query to populate page data.</p>
+            <p class="text-base-content/60 mb-4">No queries bound to this page yet.</p>
+            <p class="text-sm text-base-content/40">Add a GraphQL query to populate page data.</p>
           </div>
         <% else %>
           <div class="space-y-3">
             <%= for {query, index} <- Enum.with_index(@page_queries) do %>
-              <div class="p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
+              <div class="p-4 bg-base-100 border border-base-300 rounded-lg">
                 <div class="flex items-start justify-between">
                   <div class="flex items-center gap-3">
-                    <span class="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 text-xs font-bold">
+                    <span class="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full bg-indigo-100 text-primary text-xs font-bold">
                       <%= index + 1 %>
                     </span>
                     <div>
                       <div class="flex items-center gap-2">
-                        <span class="text-sm font-semibold text-gray-900 dark:text-gray-100 font-mono">@<%= query.result_alias %></span>
-                        <span class="text-xs px-2 py-0.5 rounded bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400"><%= query.endpoint_name %></span>
-                        <span :if={query.depends_on} class="text-xs px-2 py-0.5 rounded bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300">depends on: <%= query.depends_on %></span>
+                        <span class="text-sm font-semibold text-base-content font-mono">@<%= query.result_alias %></span>
+                        <span class="text-xs px-2 py-0.5 rounded bg-gray-100 bg-base-200 text-base-content/70"><%= query.endpoint_name %></span>
+                        <span :if={query.depends_on} class="text-xs px-2 py-0.5 rounded bg-amber-100 text-warning">depends on: <%= query.depends_on %></span>
                       </div>
-                      <div class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                      <div class="mt-1 text-xs text-base-content/60">
                         Variables: <%= variable_binding_summary(query.variable_bindings) %>
                       </div>
                     </div>
@@ -179,7 +179,7 @@ defmodule Beacon.LiveAdmin.PageQueryEditorLive.Index do
                     <.icon name="hero-x-mark" class="w-4 h-4" />
                   </button>
                 </div>
-                <div class="mt-3 p-2 bg-gray-50 dark:bg-gray-900 rounded font-mono text-xs text-gray-700 dark:text-gray-300 overflow-x-auto">
+                <div class="mt-3 p-2 bg-base-200 rounded font-mono text-xs text-base-content/80 overflow-x-auto">
                   <pre class="whitespace-pre-wrap"><%= query.query_string %></pre>
                 </div>
               </div>

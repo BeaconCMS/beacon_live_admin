@@ -150,10 +150,10 @@ defmodule Beacon.LiveAdmin.SiteSettingsEditorLive.Index do
         <.modal :if={@show_nav_modal} id="confirm-nav" on_cancel={JS.push("stay_here")} show>
           <p>You've made unsaved changes to this setting!</p>
           <p>Navigating to another setting without saving will cause these changes to be lost.</p>
-          <.button type="button" phx-click="stay_here" class="sui-secondary">
+          <.button type="button" phx-click="stay_here" class="btn-ghost">
             Stay here
           </.button>
-          <.button type="button" phx-click="discard_changes" class="sui-primary-destructive">
+          <.button type="button" phx-click="discard_changes" class="btn-error">
             Discard changes
           </.button>
         </.modal>
@@ -173,7 +173,7 @@ defmodule Beacon.LiveAdmin.SiteSettingsEditorLive.Index do
               <.input label="Format" field={f[:format]} type="text" disabled readonly />
               <.input type="hidden" field={f[:template]} name="site_setting[template]" id="site_setting-form_template" value={Phoenix.HTML.Form.input_value(f, :template)} />
 
-              <.button phx-disable-with="Saving..." class="sui-primary ml-auto">Save Changes</.button>
+              <.button phx-disable-with="Saving..." class="btn-primary ml-auto">Save Changes</.button>
             </.form>
 
             <div :if={@selected.description} class="mt-4 text-sm text-slate-600">

@@ -20,6 +20,10 @@ defmodule Beacon.LiveAdmin.Router do
           get "/css-:md5", Beacon.LiveAdmin.AssetsController, :css, as: :beacon_live_admin_asset
           get "/js-:md5", Beacon.LiveAdmin.AssetsController, :js, as: :beacon_live_admin_asset
         end
+
+        scope "/__beacon_live_admin__/preview", alias: false, as: false do
+          get "/:site/:type/:id", Beacon.LiveAdmin.PreviewController, :preview, as: :beacon_live_admin_preview
+        end
       end
 
     quote do
@@ -160,6 +164,7 @@ defmodule Beacon.LiveAdmin.Router do
       {"/layouts/:id/meta_tags", Beacon.LiveAdmin.LayoutEditorLive.MetaTags, :meta_tags, %{}},
       {"/layouts/:id/revisions", Beacon.LiveAdmin.LayoutEditorLive.Revisions, :revisions, %{}},
       {"/layouts/:id/resource_links", Beacon.LiveAdmin.LayoutEditorLive.ResourceLinks, :resource_links, %{}},
+      {"/layouts/:id/preview", Beacon.LiveAdmin.LayoutEditorLive.Preview, :preview, %{}},
       # pages
       {"/pages", Beacon.LiveAdmin.PageEditorLive.Index, :index, %{}},
       {"/pages/new", Beacon.LiveAdmin.PageEditorLive.New, :new, %{}},
@@ -168,6 +173,7 @@ defmodule Beacon.LiveAdmin.Router do
       {"/pages/:id/meta_tags", Beacon.LiveAdmin.PageEditorLive.MetaTags, :meta_tags, %{}},
       {"/pages/:id/schema", Beacon.LiveAdmin.PageEditorLive.Schema, :schema, %{}},
       {"/pages/:id/revisions", Beacon.LiveAdmin.PageEditorLive.Revisions, :revisions, %{}},
+      {"/pages/:id/preview", Beacon.LiveAdmin.PageEditorLive.Preview, :preview, %{}},
       {"/pages/:page_id/variants", Beacon.LiveAdmin.PageEditorLive.Variants, :variants, %{}},
       {"/pages/:page_id/variants/:variant_id", Beacon.LiveAdmin.PageEditorLive.Variants, :variants, %{}},
       {"/media_library/:id", Beacon.LiveAdmin.MediaLibraryLive.Index, :show, %{}},
@@ -177,8 +183,8 @@ defmodule Beacon.LiveAdmin.Router do
       {"/link_health", Beacon.LiveAdmin.LinkHealthLive, :index, %{}},
       # redirects
       {"/redirects", Beacon.LiveAdmin.RedirectManagerLive, :index, %{}},
-      # template types
-      {"/template_types", Beacon.LiveAdmin.TemplateTypeManagerLive, :index, %{}},
+      # collections
+      {"/collections", Beacon.LiveAdmin.CollectionManagerLive, :index, %{}},
       # action builder
       {"/action_builder", Beacon.LiveAdmin.ActionBuilderLive.Index, :index, %{}},
       # graphql endpoints
@@ -203,11 +209,14 @@ defmodule Beacon.LiveAdmin.Router do
       # site settings
       {"/settings", Beacon.LiveAdmin.SiteSettingsEditorLive.Index, :index, %{}},
       {"/settings/:key", Beacon.LiveAdmin.SiteSettingsEditorLive.Index, :edit, %{}},
-      # beacon admin (super_admin only)
+      # site-level groups
+      {"/groups", Beacon.LiveAdmin.GroupsLive, :index, %{}},
+      # beacon admin (owner only)
       {"/beacon", Beacon.LiveAdmin.BeaconAdmin.DashboardLive, :dashboard, %{}},
       {"/beacon/users", Beacon.LiveAdmin.BeaconAdmin.UsersLive, :index, %{}},
       {"/beacon/settings", Beacon.LiveAdmin.BeaconAdmin.SettingsLive, :settings, %{}},
-      {"/beacon/template_types", Beacon.LiveAdmin.BeaconAdmin.GlobalTemplateTypesLive, :index, %{}}
+      {"/beacon/collections", Beacon.LiveAdmin.BeaconAdmin.GlobalCollectionsLive, :index, %{}},
+      {"/beacon/group_templates", Beacon.LiveAdmin.BeaconAdmin.GroupTemplatesLive, :index, %{}}
     ]
     |> Enum.concat(additional_pages)
     |> Enum.map(fn {path, module, live_action, opts} ->

@@ -213,7 +213,7 @@ defmodule Beacon.LiveAdmin.GraphQLEndpointEditorLive.Index do
       <.header>
         <%= @page_title %>
         <:actions>
-          <.button type="button" id="new-endpoint-button" phx-click="create_new" class="sui-primary uppercase">
+          <.button type="button" id="new-endpoint-button" phx-click="create_new" class="btn-primary">
             New Endpoint
           </.button>
         </:actions>
@@ -222,8 +222,8 @@ defmodule Beacon.LiveAdmin.GraphQLEndpointEditorLive.Index do
       <.main_content>
         <.modal :if={@show_nav_modal} id="confirm-nav" on_cancel={JS.push("stay_here")} show>
           <p>You've made unsaved changes to this endpoint!</p>
-          <.button type="button" phx-click="stay_here" class="sui-secondary">Stay here</.button>
-          <.button type="button" phx-click="discard_changes" class="sui-primary-destructive">Discard changes</.button>
+          <.button type="button" phx-click="stay_here" class="btn-ghost">Stay here</.button>
+          <.button type="button" phx-click="discard_changes" class="btn-error">Discard changes</.button>
         </.modal>
 
         <.modal :if={@show_create_modal} id="create-modal" on_cancel={JS.push("cancel_create")} show>
@@ -232,14 +232,14 @@ defmodule Beacon.LiveAdmin.GraphQLEndpointEditorLive.Index do
             <.input field={f[:name]} type="text" label="Endpoint name:" placeholder="e.g. blog_api" />
             <.input field={f[:url]} type="text" label="URL:" placeholder="https://api.example.com/graphql" />
             <.input field={f[:auth_type]} type="select" label="Auth type:" options={[{"Bearer Token", "bearer"}, {"Custom Header", "header"}, {"None", "none"}]} />
-            <.button class="sui-primary mt-4">Save</.button>
+            <.button class="btn-primary mt-4">Save</.button>
           </.form>
         </.modal>
 
         <.modal :if={@show_delete_modal} id="delete-modal" on_cancel={JS.push("delete_cancel")} show>
           <p>Are you sure you want to delete this endpoint?</p>
-          <.button type="button" id="confirm-delete-button" phx-click="delete_confirm" class="sui-primary-destructive">Delete</.button>
-          <.button type="button" phx-click="delete_cancel" class="sui-secondary">Cancel</.button>
+          <.button type="button" id="confirm-delete-button" phx-click="delete_confirm" class="btn-error">Delete</.button>
+          <.button type="button" phx-click="delete_cancel" class="btn-ghost">Cancel</.button>
         </.modal>
 
         <div class="grid items-start grid-cols-1 grid-rows-1 mx-auto gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
@@ -256,8 +256,8 @@ defmodule Beacon.LiveAdmin.GraphQLEndpointEditorLive.Index do
                 <div class="flex-1">
                   <.input label="Name" field={f[:name]} type="text" />
                 </div>
-                <.button phx-disable-with="Saving..." class="sui-primary">Save Changes</.button>
-                <.button id="delete-endpoint-button" type="button" phx-click="delete" class="sui-primary-destructive">Delete</.button>
+                <.button phx-disable-with="Saving..." class="btn-primary">Save Changes</.button>
+                <.button id="delete-endpoint-button" type="button" phx-click="delete" class="btn-error">Delete</.button>
               </div>
 
               <.input label="URL" field={f[:url]} type="text" placeholder="https://api.example.com/graphql" />
@@ -277,20 +277,20 @@ defmodule Beacon.LiveAdmin.GraphQLEndpointEditorLive.Index do
               </div>
             </.form>
 
-            <div class="mt-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+            <div class="mt-6 p-4 bg-gray-50 bg-base-100 rounded-lg">
               <div class="flex items-center justify-between mb-3">
-                <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300">Schema</h3>
-                <.button type="button" phx-click="introspect" class="sui-secondary text-xs">
+                <h3 class="text-sm font-semibold text-base-content/80">Schema</h3>
+                <.button type="button" phx-click="introspect" class="btn-ghost btn-xs">
                   Introspect Schema
                 </.button>
               </div>
               <%= if @selected && @selected.introspected_schema do %>
-                <div class="text-sm text-gray-600 dark:text-gray-400 space-y-1">
+                <div class="text-sm text-base-content/70 space-y-1">
                   <p><%= schema_query_count(@selected) %> queries available</p>
                   <p><%= schema_mutation_count(@selected) %> mutations available</p>
                 </div>
               <% else %>
-                <p class="text-sm text-gray-500 dark:text-gray-400">
+                <p class="text-sm text-base-content/60">
                   No schema loaded. Click "Introspect Schema" to discover available queries and mutations.
                 </p>
               <% end %>

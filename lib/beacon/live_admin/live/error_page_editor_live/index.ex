@@ -201,7 +201,7 @@ defmodule Beacon.LiveAdmin.ErrorPageEditorLive.Index do
       <.header>
         <%= @page_title %>
         <:actions>
-          <.button type="button" id="new-error-page-button" phx-click="create_new" class="sui-primary uppercase">
+          <.button type="button" id="new-error-page-button" phx-click="create_new" class="btn-primary">
             New Error Page
           </.button>
         </:actions>
@@ -211,10 +211,10 @@ defmodule Beacon.LiveAdmin.ErrorPageEditorLive.Index do
         <.modal :if={@show_nav_modal} id="confirm-nav" on_cancel={JS.push("stay_here")} show>
           <p>You've made unsaved changes to this error page!</p>
           <p>Navigating to another error page without saving will cause these changes to be lost.</p>
-          <.button type="button" class="sui-secondary" phx-click="stay_here">
+          <.button type="button" class="btn-ghost" phx-click="stay_here">
             Stay here
           </.button>
-          <.button type="button" class="sui-primary-destructive" phx-click="discard_changes">
+          <.button type="button" class="btn-error" phx-click="discard_changes">
             Discard changes
           </.button>
         </.modal>
@@ -223,16 +223,16 @@ defmodule Beacon.LiveAdmin.ErrorPageEditorLive.Index do
           <:title>New Error Page</:title>
           <.form :let={f} for={@create_form} id="create-form" phx-submit="save_new" class="px-4">
             <.input field={f[:status]} type="select" label="Status code for new error page:" options={Content.valid_error_statuses(@beacon_page.site)} />
-            <.button class="sui-primary mt-4">Save</.button>
+            <.button class="btn-primary mt-4">Save</.button>
           </.form>
         </.modal>
 
         <.modal :if={@show_delete_modal} id="delete-modal" on_cancel={JS.push("delete_cancel")} show>
           <p>Are you sure you want to delete this error page?</p>
-          <.button type="button" id="confirm-delete-button" phx-click="delete_confirm" class="sui-primary-destructive">
+          <.button type="button" id="confirm-delete-button" phx-click="delete_confirm" class="btn-error">
             Delete
           </.button>
-          <.button type="button" phx-click="delete_cancel" class="sui-secondary">
+          <.button type="button" phx-click="delete_cancel" class="btn-ghost">
             Cancel
           </.button>
         </.modal>
@@ -252,8 +252,8 @@ defmodule Beacon.LiveAdmin.ErrorPageEditorLive.Index do
               <.input label="Layout" field={f[:layout_id]} options={Enum.map(@layouts, &{&1.title, &1.id})} value={@selected.layout_id} type="select" />
               <.input type="hidden" field={f[:template]} name="error_page[template]" id="error_page-form_template" value={Phoenix.HTML.Form.input_value(f, :template)} />
 
-              <.button phx-disable-with="Saving..." class="sui-primary ml-auto">Save Changes</.button>
-              <.button id="delete-error-page-button" type="button" phx-click="delete" class="sui-primary-destructive">Delete</.button>
+              <.button phx-disable-with="Saving..." class="btn-primary ml-auto">Save Changes</.button>
+              <.button id="delete-error-page-button" type="button" phx-click="delete" class="btn-error">Delete</.button>
             </.form>
 
             <div class="w-full mt-10 space-y-8">

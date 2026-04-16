@@ -70,7 +70,6 @@ defmodule Beacon.LiveAdmin.PageBuilder do
   defmacro __using__(opts) do
     quote location: :keep, bind_quoted: [opts: opts] do
       use Phoenix.Component
-      use Beacon.LiveAdmin.StationUI.HTML
 
       import Beacon.LiveAdmin.Router,
         only: [

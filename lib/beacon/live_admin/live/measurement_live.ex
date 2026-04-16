@@ -51,92 +51,82 @@ defmodule Beacon.LiveAdmin.MeasurementLive do
     if snapshot, do: Map.get(snapshot.metrics, key, 0), else: 0
   end
 
+  @metric_cards [
+    %{key: "total_pages", label: "Total Pages", color: "zinc"},
+    %{key: "pages_with_description", label: "With Description", color: "emerald"},
+    %{key: "pages_with_og_image", label: "With OG Image", color: "emerald"},
+    %{key: "stale_pages_count", label: "Stale (90+ days)", color: "amber"},
+    %{key: "pages_with_canonical", label: "With Canonical", color: "zinc"},
+    %{key: "pages_with_collection", label: "With Collection", color: "zinc"},
+    %{key: "redirect_count", label: "Redirects", color: "zinc"}
+  ]
+
+  defp metric_value_class("emerald"), do: "text-success"
+  defp metric_value_class("amber"), do: "text-warning"
+  defp metric_value_class(_), do: "text-base-content"
+
   @impl true
   def render(assigns) do
+    assigns = assign(assigns, :metric_cards, @metric_cards)
+
     ~H"""
-    <div class="mx-auto max-w-6xl py-6 px-4">
-      <div class="flex items-center justify-between mb-6">
-        <h1 class="text-2xl font-bold text-gray-900">SEO Measurement</h1>
+    <.header>
+      SEO Measurement
+      <:actions>
         <div class="flex items-center gap-3">
-          <select phx-change="set_days" name="days" class="rounded-md border-gray-300 text-sm">
+          <select phx-change="set_days" name="days" class="rounded-lg border-base-300 bg-base-200 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
             <option value="7" selected={@days == 7}>7 days</option>
             <option value="30" selected={@days == 30}>30 days</option>
             <option value="90" selected={@days == 90}>90 days</option>
           </select>
-          <button phx-click="take_snapshot" class="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-md hover:bg-indigo-700">
-            Take Snapshot
-          </button>
+          <.button phx-click="take_snapshot" class="btn-primary">Take Snapshot</.button>
         </div>
-      </div>
+      </:actions>
+    </.header>
 
-      <%= if @latest do %>
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <div class="bg-white rounded-lg border p-4 text-center">
-            <div class="text-2xl font-bold text-gray-900"><%= metric(@latest, "total_pages") %></div>
-            <div class="text-xs text-gray-500 uppercase">Total Pages</div>
-          </div>
-          <div class="bg-white rounded-lg border p-4 text-center">
-            <div class="text-2xl font-bold text-green-600"><%= metric(@latest, "pages_with_description") %></div>
-            <div class="text-xs text-gray-500 uppercase">With Description</div>
-          </div>
-          <div class="bg-white rounded-lg border p-4 text-center">
-            <div class="text-2xl font-bold text-green-600"><%= metric(@latest, "pages_with_og_image") %></div>
-            <div class="text-xs text-gray-500 uppercase">With OG Image</div>
-          </div>
-          <div class="bg-white rounded-lg border p-4 text-center">
-            <div class="text-2xl font-bold text-yellow-600"><%= metric(@latest, "stale_pages_count") %></div>
-            <div class="text-xs text-gray-500 uppercase">Stale (90+ days)</div>
-          </div>
-          <div class="bg-white rounded-lg border p-4 text-center">
-            <div class="text-2xl font-bold text-gray-900"><%= metric(@latest, "pages_with_canonical") %></div>
-            <div class="text-xs text-gray-500 uppercase">With Canonical</div>
-          </div>
-          <div class="bg-white rounded-lg border p-4 text-center">
-            <div class="text-2xl font-bold text-gray-900"><%= metric(@latest, "pages_with_template_type") %></div>
-            <div class="text-xs text-gray-500 uppercase">With Template Type</div>
-          </div>
-          <div class="bg-white rounded-lg border p-4 text-center">
-            <div class="text-2xl font-bold text-gray-900"><%= metric(@latest, "redirect_count") %></div>
-            <div class="text-xs text-gray-500 uppercase">Redirects</div>
-          </div>
-        </div>
-      <% else %>
-        <div class="bg-gray-50 rounded-lg border p-8 text-center mb-8">
-          <p class="text-gray-500">No snapshots yet. Click "Take Snapshot" to capture current metrics.</p>
-        </div>
-      <% end %>
-
-      <h2 class="text-lg font-medium text-gray-900 mb-4">History</h2>
-      <div class="bg-white rounded-lg border overflow-hidden">
-        <table class="min-w-full divide-y divide-gray-200">
-          <thead class="bg-gray-50">
-            <tr>
-              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
-              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Pages</th>
-              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Descriptions</th>
-              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">OG Images</th>
-              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Stale</th>
-              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Redirects</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-gray-200">
-            <%= for snapshot <- @snapshots do %>
-              <tr>
-                <td class="px-4 py-3 text-sm text-gray-900"><%= snapshot.snapshot_date %></td>
-                <td class="px-4 py-3 text-sm"><%= metric(snapshot, "total_pages") %></td>
-                <td class="px-4 py-3 text-sm"><%= metric(snapshot, "pages_with_description") %></td>
-                <td class="px-4 py-3 text-sm"><%= metric(snapshot, "pages_with_og_image") %></td>
-                <td class="px-4 py-3 text-sm"><%= metric(snapshot, "stale_pages_count") %></td>
-                <td class="px-4 py-3 text-sm"><%= metric(snapshot, "redirect_count") %></td>
-              </tr>
-            <% end %>
-            <%= if @snapshots == [] do %>
-              <tr><td colspan="6" class="px-4 py-8 text-center text-sm text-gray-500">No snapshots recorded</td></tr>
-            <% end %>
-          </tbody>
-        </table>
+    <%= if @latest do %>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8 -mt-2">
+        <%= for card <- @metric_cards do %>
+          <.main_content>
+            <div class="text-center py-1">
+              <div class={"text-2xl font-bold tabular-nums #{metric_value_class(card.color)}"}><%= metric(@latest, card.key) %></div>
+              <div class="text-[11px] font-medium text-base-content/60 uppercase tracking-wide"><%= card.label %></div>
+            </div>
+          </.main_content>
+        <% end %>
       </div>
-    </div>
+    <% else %>
+      <.main_content class="mb-8">
+        <div class="py-8 text-center">
+          <.icon name="hero-chart-bar" class="w-10 h-10 text-zinc-300  mx-auto mb-3" />
+          <p class="text-sm text-base-content/60">No snapshots yet. Click "Take Snapshot" to capture current metrics.</p>
+        </div>
+      </.main_content>
+    <% end %>
+
+    <h3 class="text-xs font-semibold uppercase tracking-[1.68px] text-base-content/60 mb-3 px-1">History</h3>
+    <.main_content>
+      <.table id="snapshots" rows={@snapshots} row_id={&"snapshot-#{&1.id}"}>
+        <:col :let={snapshot} label="Date">
+          <span class="font-medium"><%= snapshot.snapshot_date %></span>
+        </:col>
+        <:col :let={snapshot} label="Pages">
+          <span class="tabular-nums"><%= metric(snapshot, "total_pages") %></span>
+        </:col>
+        <:col :let={snapshot} label="Descriptions">
+          <span class="tabular-nums"><%= metric(snapshot, "pages_with_description") %></span>
+        </:col>
+        <:col :let={snapshot} label="OG Images">
+          <span class="tabular-nums"><%= metric(snapshot, "pages_with_og_image") %></span>
+        </:col>
+        <:col :let={snapshot} label="Stale">
+          <span class="tabular-nums"><%= metric(snapshot, "stale_pages_count") %></span>
+        </:col>
+        <:col :let={snapshot} label="Redirects">
+          <span class="tabular-nums"><%= metric(snapshot, "redirect_count") %></span>
+        </:col>
+      </.table>
+    </.main_content>
     """
   end
 end

@@ -20,6 +20,7 @@ defmodule Beacon.LiveAdmin.RedirectManagerLive do
      |> assign(:search, search || "")
      |> assign(:show_form, false)
      |> assign(:editing, nil)
+     |> assign(:confirm_delete, nil)
      |> assign(:form_data, %{"source_path" => "", "destination_path" => "", "status_code" => "301"})
      |> assign(page_title: "Redirects")}
   end
@@ -36,7 +37,7 @@ defmodule Beacon.LiveAdmin.RedirectManagerLive do
   end
 
   def handle_event("cancel", _, socket) do
-    {:noreply, assign(socket, show_form: false, editing: nil)}
+    {:noreply, assign(socket, show_form: false, editing: nil, confirm_delete: nil)}
   end
 
   def handle_event("edit", %{"id" => id}, socket) do
@@ -88,6 +89,10 @@ defmodule Beacon.LiveAdmin.RedirectManagerLive do
     end
   end
 
+  def handle_event("confirm_delete", %{"id" => id}, socket) do
+    {:noreply, assign(socket, :confirm_delete, id)}
+  end
+
   def handle_event("delete", %{"id" => id}, socket) do
     site = socket.assigns.beacon_page.site
     redirect = Content.get_redirect(site, id)
@@ -95,94 +100,137 @@ defmodule Beacon.LiveAdmin.RedirectManagerLive do
     case Content.delete_redirect(site, redirect) do
       {:ok, _} ->
         redirects = Content.list_redirects(site)
-        {:noreply, socket |> assign(redirects: redirects) |> put_flash(:info, "Redirect deleted")}
+        {:noreply, socket |> assign(redirects: redirects, confirm_delete: nil) |> put_flash(:info, "Redirect deleted")}
 
       {:error, _} ->
         {:noreply, put_flash(socket, :error, "Failed to delete redirect")}
     end
   end
 
+  defp status_badge_class(code) when code in [301, 308], do: "bg-indigo-50 text-indigo-700 ring-indigo-200"
+  defp status_badge_class(_code), do: "bg-amber-50 text-amber-700 ring-amber-200"
+
+  defp status_label(301), do: "301 Permanent"
+  defp status_label(302), do: "302 Temporary"
+  defp status_label(307), do: "307 Temporary"
+  defp status_label(308), do: "308 Permanent"
+  defp status_label(code), do: "#{code}"
+
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="mx-auto max-w-6xl py-6 px-4">
-      <div class="flex items-center justify-between mb-6">
-        <h1 class="text-2xl font-bold text-gray-900">Redirects</h1>
-        <button phx-click="new" class="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-md hover:bg-indigo-700">
-          New Redirect
-        </button>
-      </div>
+    <.header>
+      Redirects
+      <:actions>
+        <.button phx-click="new" class="btn-primary">Create New Redirect</.button>
+      </:actions>
+    </.header>
 
-      <div class="mb-4">
-        <form phx-change="search" class="flex gap-2">
-          <input type="text" name="search" value={@search} placeholder="Search paths..." class="flex-1 rounded-md border-gray-300 text-sm" phx-debounce="300" />
-        </form>
-      </div>
+    <div class="mb-4 -mt-2">
+      <.form for={%{}} phx-change="search">
+        <input
+          type="search"
+          name="search"
+          value={@search}
+          placeholder="Search by path..."
+          phx-debounce="300"
+          class="w-full sm:w-80 rounded-lg border-base-300 bg-base-200 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+        />
+      </.form>
+    </div>
 
-      <%= if @show_form do %>
-        <div class="bg-white border rounded-lg p-6 mb-6">
-          <h2 class="text-lg font-medium mb-4"><%= if @editing, do: "Edit Redirect", else: "New Redirect" %></h2>
-          <form phx-submit="save" phx-change="validate" class="space-y-4">
-            <div class="grid grid-cols-2 gap-4">
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Source Path</label>
-                <input type="text" name="redirect[source_path]" value={@form_data["source_path"]} placeholder="/old-page" class="w-full rounded-md border-gray-300 text-sm" />
-              </div>
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Destination Path</label>
-                <input type="text" name="redirect[destination_path]" value={@form_data["destination_path"]} placeholder="/new-page" class="w-full rounded-md border-gray-300 text-sm" />
+    <.main_content :if={@show_form} class="mb-6">
+      <div class="px-2 py-4">
+        <h2 class="text-base font-semibold text-base-content mb-4">
+          <%= if @editing, do: "Edit Redirect", else: "New Redirect" %>
+        </h2>
+        <.form for={%{}} phx-submit="save" phx-change="validate" class="space-y-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-base-content/80 mb-1.5">Source Path</label>
+              <div class="relative">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-base-content/40">
+                  <.icon name="hero-arrow-right-start-on-rectangle" class="w-4 h-4" />
+                </span>
+                <input
+                  type="text"
+                  name="redirect[source_path]"
+                  value={@form_data["source_path"]}
+                  placeholder="/old-page"
+                  class="w-full pl-9 rounded-lg border-base-300 bg-base-200 text-sm font-mono shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                />
               </div>
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Status Code</label>
-              <select name="redirect[status_code]" class="rounded-md border-gray-300 text-sm">
-                <option value="301" selected={@form_data["status_code"] == "301"}>301 — Permanent</option>
-                <option value="302" selected={@form_data["status_code"] == "302"}>302 — Temporary</option>
-                <option value="307" selected={@form_data["status_code"] == "307"}>307 — Temporary (preserve method)</option>
-                <option value="308" selected={@form_data["status_code"] == "308"}>308 — Permanent (preserve method)</option>
-              </select>
+              <label class="block text-sm font-medium text-base-content/80 mb-1.5">Destination Path</label>
+              <div class="relative">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-base-content/40">
+                  <.icon name="hero-arrow-right-end-on-rectangle" class="w-4 h-4" />
+                </span>
+                <input
+                  type="text"
+                  name="redirect[destination_path]"
+                  value={@form_data["destination_path"]}
+                  placeholder="/new-page"
+                  class="w-full pl-9 rounded-lg border-base-300 bg-base-200 text-sm font-mono shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                />
+              </div>
             </div>
-            <div class="flex gap-2 pt-2">
-              <button type="submit" class="px-4 py-2 bg-indigo-600 text-white text-sm rounded-md hover:bg-indigo-700">Save</button>
-              <button type="button" phx-click="cancel" class="px-4 py-2 bg-gray-100 text-gray-700 text-sm rounded-md hover:bg-gray-200">Cancel</button>
-            </div>
-          </form>
-        </div>
-      <% end %>
-
-      <div class="bg-white rounded-lg border overflow-hidden">
-        <table class="min-w-full divide-y divide-gray-200">
-          <thead class="bg-gray-50">
-            <tr>
-              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Source</th>
-              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Destination</th>
-              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Hits</th>
-              <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-gray-200">
-            <%= for redirect <- @redirects do %>
-              <tr>
-                <td class="px-4 py-3 text-sm font-mono text-gray-600"><%= redirect.source_path %></td>
-                <td class="px-4 py-3 text-sm font-mono text-gray-600"><%= redirect.destination_path %></td>
-                <td class="px-4 py-3 text-sm"><%= redirect.status_code %></td>
-                <td class="px-4 py-3 text-sm text-gray-500"><%= redirect.hit_count %></td>
-                <td class="px-4 py-3 text-right space-x-2">
-                  <button phx-click="edit" phx-value-id={redirect.id} class="text-indigo-600 hover:text-indigo-900 text-sm">Edit</button>
-                  <button phx-click="delete" phx-value-id={redirect.id} data-confirm="Delete this redirect?" class="text-red-600 hover:text-red-900 text-sm">Delete</button>
-                </td>
-              </tr>
-            <% end %>
-            <%= if @redirects == [] do %>
-              <tr>
-                <td colspan="5" class="px-4 py-8 text-center text-sm text-gray-500">No redirects configured</td>
-              </tr>
-            <% end %>
-          </tbody>
-        </table>
+          </div>
+          <div class="w-48">
+            <label class="block text-sm font-medium text-base-content/80 mb-1.5">Status Code</label>
+            <select name="redirect[status_code]" class="w-full rounded-lg border-base-300 bg-base-200 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+              <option value="301" selected={@form_data["status_code"] == "301"}>301 — Permanent</option>
+              <option value="302" selected={@form_data["status_code"] == "302"}>302 — Temporary</option>
+              <option value="307" selected={@form_data["status_code"] == "307"}>307 — Temporary (preserve method)</option>
+              <option value="308" selected={@form_data["status_code"] == "308"}>308 — Permanent (preserve method)</option>
+            </select>
+          </div>
+          <div class="flex items-center gap-3 pt-2">
+            <.button type="submit" class="btn-primary">Save</.button>
+            <.button type="button" phx-click="cancel" class="btn-ghost">Cancel</.button>
+          </div>
+        </.form>
       </div>
-    </div>
+    </.main_content>
+
+    <.main_content>
+      <.table id="redirects" rows={@redirects} row_id={&"redirect-#{&1.id}"}>
+        <:col :let={redirect} label="Source">
+          <span class="font-mono text-base-content/70"><%= redirect.source_path %></span>
+        </:col>
+        <:col :let={redirect} label="Destination">
+          <div class="flex items-center gap-1.5">
+            <.icon name="hero-arrow-long-right" class="w-4 h-4 text-zinc-300  flex-shrink-0" />
+            <span class="font-mono text-base-content/70"><%= redirect.destination_path %></span>
+          </div>
+        </:col>
+        <:col :let={redirect} label="Status">
+          <span class={"inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ring-1 #{status_badge_class(redirect.status_code)}"}>
+            <%= status_label(redirect.status_code) %>
+          </span>
+        </:col>
+        <:col :let={redirect} label="Hits">
+          <span class="text-base-content/40 tabular-nums"><%= redirect.hit_count %></span>
+        </:col>
+        <:action :let={redirect}>
+          <div class="flex items-center gap-1">
+            <button phx-click="edit" phx-value-id={redirect.id} title="Edit" class="p-2 rounded-md hover:bg-zinc-100 transition-colors">
+              <.icon name="hero-pencil-square" class="w-4 h-4 text-zinc-400 hover:text-zinc-600" />
+            </button>
+            <%= if @confirm_delete == redirect.id do %>
+              <span class="text-xs text-base-content/60">Delete?</span>
+              <button phx-click="delete" phx-value-id={redirect.id} class="p-1 text-rose-600 hover:text-rose-800 text-xs font-semibold">Yes</button>
+              <button phx-click="cancel" class="p-1 text-zinc-500 hover:text-zinc-700 text-xs">No</button>
+            <% else %>
+              <button phx-click="confirm_delete" phx-value-id={redirect.id} title="Delete" class="p-2 rounded-md hover:bg-rose-50 transition-colors">
+                <.icon name="hero-trash" class="w-4 h-4 text-zinc-400 hover:text-rose-500" />
+              </button>
+            <% end %>
+          </div>
+        </:action>
+      </.table>
+    </.main_content>
     """
   end
 end

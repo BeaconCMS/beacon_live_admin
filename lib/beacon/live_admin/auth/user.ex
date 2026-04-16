@@ -18,7 +18,10 @@ defmodule Beacon.LiveAdmin.Auth.User do
     field :last_login_at, :utc_datetime_usec
     field :last_login_provider, :string
 
-    has_many :roles, Beacon.LiveAdmin.Auth.UserRole
+    has_one :owner, Beacon.LiveAdmin.Auth.Owner
+    has_many :user_groups, Beacon.LiveAdmin.Auth.UserGroup
+    has_many :groups, through: [:user_groups, :group]
+    has_many :permissions, Beacon.LiveAdmin.Auth.UserPermission
 
     timestamps()
   end

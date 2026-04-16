@@ -1,14 +1,14 @@
 <aside id="sidebar" class="@container w-[220px] flex-shrink-0">
-  <div class="flex flex-col h-full min-h-screen border-r border-slate-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+  <div class="flex flex-col h-full min-h-screen border-r border-base-300 bg-base-100">
     <header class="px-4 py-5 @[180px]:px-5">
       <div class="flex items-center justify-center @[180px]:justify-start gap-2.5">
-        <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-indigo-600 flex-shrink-0">
-          <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-primary flex-shrink-0">
+          <svg class="w-5 h-5 text-primary-content" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="3" />
             <path d="M12 2v4m0 12v4m10-10h-4M6 12H2m15.07-7.07l-2.83 2.83M9.76 14.24l-2.83 2.83m11.14 0l-2.83-2.83M9.76 9.76L6.93 6.93" />
           </svg>
         </div>
-        <span class="hidden @[180px]:block text-base font-semibold text-slate-900 dark:text-gray-100 tracking-tight">
+        <span class="hidden @[180px]:block text-base font-semibold text-base-content tracking-tight">
           Beacon
         </span>
       </div>
@@ -20,7 +20,7 @@
         <% end %>
       </div>
     </nav>
-    <div class="px-2 @[180px]:px-3 py-3 border-t border-slate-200 dark:border-gray-700">
+    <div class="px-2 @[180px]:px-3 py-3 border-t border-base-300">
       <.site_selector selected_site={@beacon_page.site} options={@__beacon_sites__} />
     </div>
   </div>

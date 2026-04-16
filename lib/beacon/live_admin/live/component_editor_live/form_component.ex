@@ -384,7 +384,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
       <.header>
         <%= @page_title %>
         <:actions>
-          <.button phx-disable-with="Saving..." form="component-form" class="sui-primary uppercase">Save Changes</.button>
+          <.button phx-disable-with="Saving..." form="component-form" class="btn-primary">Save Changes</.button>
         </:actions>
       </.header>
 
@@ -441,11 +441,11 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
             </:action>
           </.table>
 
-          <.button class="sui-tertiary mt-4" phx-click={JS.push("show_attr_modal", target: @myself)}>Add new Attribute</.button>
+          <.button class="btn-neutral mt-4" phx-click={JS.push("show_attr_modal", target: @myself)}>Add new Attribute</.button>
         </div>
         <div class="col-span-full lg:col-span-2 space-y-6">
           <div>
-            <.label for={@form[:body].id}>Body</.label>
+            <span class="label mb-1">Body</span>
             <%= template_error(@form[:body]) %>
             <div class="py-6 w-full rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
               <LiveMonacoEditor.code_editor
@@ -459,7 +459,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
           </div>
 
           <div>
-            <.label for={@form[:template].id}>Template</.label>
+            <span class="label mb-1">Template</span>
             <%= template_error(@form[:template]) %>
             <div class="py-6 w-full rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
               <LiveMonacoEditor.code_editor
@@ -473,7 +473,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
           </div>
 
           <div>
-            <.label for={@form[:example].id}>Example</.label>
+            <span class="label mb-1">Example</span>
             <%= template_error(@form[:example]) %>
             <div class="py-6 w-full rounded-[1.25rem] bg-[#0D1829] [&_.monaco-editor-background]:!bg-[#0D1829] [&_.margin]:!bg-[#0D1829]">
               <LiveMonacoEditor.code_editor
@@ -513,7 +513,7 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
 
           <div class="flex mt-8 gap-x-[20px]">
             <.button type="submit">Ok</.button>
-            <.button type="button" phx-click={JS.push("close_modal", target: @myself)} class="sui-secondary">Cancel</.button>
+            <.button type="button" phx-click={JS.push("close_modal", target: @myself)} class="btn-ghost">Cancel</.button>
           </div>
         </.form>
       </.modal>

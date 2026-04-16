@@ -262,7 +262,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.BorderControl do
 
   defp toggle_expand(assigns) do
     ~H"""
-    <button type="button" class="sui-secondary !px-2" phx-click="toggle_expand" phx-target="#control-border" phx-value-control={@control}>
+    <button type="button" class="btn btn-ghost btn-sm !px-2" phx-click="toggle_expand" phx-target="#control-border" phx-value-control={@control}>
       <.icon name={if(@expanded, do: "hero-arrows-pointing-in", else: "hero-arrows-pointing-out")} class="w-4 h-4" />
     </button>
     """

@@ -203,7 +203,7 @@ defmodule Beacon.LiveAdmin.InfoHandlerEditorLive.Index do
       <.header>
         <%= @page_title %>
         <:actions>
-          <.button type="button" id="new-info-handler-button" phx-click="create_new" class="sui-primary uppercase">
+          <.button type="button" id="new-info-handler-button" phx-click="create_new" class="btn-primary">
             New Handle Info Callback
           </.button>
         </:actions>
@@ -213,10 +213,10 @@ defmodule Beacon.LiveAdmin.InfoHandlerEditorLive.Index do
         <.modal :if={@show_nav_modal} id="confirm-nav" on_cancel={JS.push("stay_here")} show>
           <p>You've made unsaved changes to this error page!</p>
           <p>Navigating to another error page without saving will cause these changes to be lost.</p>
-          <.button type="button" phx-click="stay_here" class="sui-secondary">
+          <.button type="button" phx-click="stay_here" class="btn-ghost">
             Stay here
           </.button>
-          <.button type="button" phx-click="discard_changes" class="sui-primary-destructive">
+          <.button type="button" phx-click="discard_changes" class="btn-error">
             Discard changes
           </.button>
         </.modal>
@@ -225,16 +225,16 @@ defmodule Beacon.LiveAdmin.InfoHandlerEditorLive.Index do
           <:title>New Info Handler</:title>
           <.form :let={f} for={@create_form} id="create-form" phx-submit="save_new" class="px-4">
             <.input field={f[:msg]} type="text" label="Msg argument for new handle_info callback:" />
-            <.button class="sui-primary mt-4">Save</.button>
+            <.button class="btn-primary mt-4">Save</.button>
           </.form>
         </.modal>
 
         <.modal :if={@show_delete_modal} id="delete-modal" on_cancel={JS.push("delete_cancel")} show>
           <p>Are you sure you want to delete this error page?</p>
-          <.button type="button" id="confirm-delete-button" phx-click="delete_confirm" class="sui-primary-destructive">
+          <.button type="button" id="confirm-delete-button" phx-click="delete_confirm" class="btn-error">
             Delete
           </.button>
-          <.button type="button" phx-click="delete_cancel" class="sui-secondary">
+          <.button type="button" phx-click="delete_cancel" class="btn-ghost">
             Cancel
           </.button>
         </.modal>
@@ -253,8 +253,8 @@ defmodule Beacon.LiveAdmin.InfoHandlerEditorLive.Index do
               <.input label="Message Argument" field={f[:msg]} type="text" />
               <.input type="hidden" field={f[:code]} name="info_handler[code]" id="info_handler-form_code" value={Phoenix.HTML.Form.input_value(f, :code)} />
 
-              <.button phx-disable-with="Saving..." class="sui-primary ml-auto">Save Changes</.button>
-              <.button id="delete-info-handler-button" type="button" phx-click="delete" class="sui-primary-destructive">Delete</.button>
+              <.button phx-disable-with="Saving..." class="btn-primary ml-auto">Save Changes</.button>
+              <.button id="delete-info-handler-button" type="button" phx-click="delete" class="btn-error">Delete</.button>
             </.form>
 
             <div class="w-full mt-10 space-y-8">

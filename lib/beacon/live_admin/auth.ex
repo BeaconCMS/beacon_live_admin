@@ -2,8 +2,9 @@ defmodule Beacon.LiveAdmin.Auth do
   @moduledoc """
   Authorization context for Beacon LiveAdmin.
 
-  Provides user management and role-based access control. Authentication
-  is delegated to the host application via a callback behaviour.
+  Provides user management and permission-based access control via groups
+  and individual grants. Authentication is delegated to the host application
+  via a callback behaviour.
 
   ## Authentication Callback
 
@@ -24,22 +25,27 @@ defmodule Beacon.LiveAdmin.Auth do
         end
       end
 
-  LiveAdmin matches the returned email against `beacon_users` for role lookup.
+  LiveAdmin matches the returned email against `beacon_users` for permission lookup.
   If no `auth_provider` is configured, LiveAdmin runs without authentication
   (all access granted — suitable for development only).
 
-  ## Roles
+  ## Permission Model
 
-    * `super_admin` — Platform-wide. Manages sites, global template types, users.
-    * `site_admin` — Full control over assigned sites.
-    * `site_editor` — Create/edit/publish content on assigned sites.
-    * `site_viewer` — Read-only access to assigned sites.
+    * **Owner** — Single platform-wide account with unrestricted access.
+    * **Groups** — Site-scoped permission bundles. Users inherit all group permissions.
+    * **Individual grants** — Per-user permissions for fine-grained control.
+    * **Group templates** — Owner-defined defaults copied into new sites.
   """
 
   import Ecto.Query
 
+  alias Beacon.LiveAdmin.Auth.Group
+  alias Beacon.LiveAdmin.Auth.GroupPermission
+  alias Beacon.LiveAdmin.Auth.Owner
+  alias Beacon.LiveAdmin.Auth.Permissions
   alias Beacon.LiveAdmin.Auth.User
-  alias Beacon.LiveAdmin.Auth.UserRole
+  alias Beacon.LiveAdmin.Auth.UserGroup
+  alias Beacon.LiveAdmin.Auth.UserPermission
 
   # ---------------------------------------------------------------------------
   # Behaviour
@@ -65,13 +71,12 @@ defmodule Beacon.LiveAdmin.Auth do
   @doc """
   Gets the current Beacon user from a connection using the configured auth provider.
 
-  Returns the `Beacon.LiveAdmin.Auth.User` struct (with roles) if the
+  Returns the `Beacon.LiveAdmin.Auth.User` struct if the
   authenticated email matches a pre-provisioned user, or `nil`.
   """
   def get_current_user(conn) do
     case auth_provider() do
       nil ->
-        # No auth provider — development mode, no access control
         nil
 
       provider ->
@@ -112,7 +117,7 @@ defmodule Beacon.LiveAdmin.Auth do
     |> repo().update()
   end
 
-  @doc "Deletes a user and all associated roles (via cascading delete)."
+  @doc "Deletes a user and all associated data (via cascading delete)."
   def delete_user(%User{} = user) do
     repo().delete(user)
   end
@@ -149,16 +154,6 @@ defmodule Beacon.LiveAdmin.Auth do
 
   Call this from your auth provider after successful authentication to
   track when and how users last logged in.
-
-  ## Examples
-
-      # In your auth provider callback
-      def on_login(user_email, provider) do
-        case Beacon.LiveAdmin.Auth.get_user_by_email(user_email) do
-          nil -> :ok
-          user -> Beacon.LiveAdmin.Auth.record_login(user, provider)
-        end
-      end
   """
   def record_login(%User{} = user, provider \\ "unknown") do
     user
@@ -170,96 +165,278 @@ defmodule Beacon.LiveAdmin.Auth do
   end
 
   # ---------------------------------------------------------------------------
-  # Roles
+  # Owner
   # ---------------------------------------------------------------------------
 
-  @doc "Assigns a role to a user, optionally scoped to a site."
-  def assign_role(%User{} = user, role, site \\ nil) do
-    %UserRole{}
-    |> UserRole.changeset(%{user_id: user.id, role: to_string(role), site: site})
+  @doc "Returns true if the user is the platform owner."
+  def is_owner?(user), do: Permissions.is_owner?(user)
+
+  @doc "Returns the owner user, or nil if no owner is set."
+  def get_owner do
+    case repo().one(from(o in Owner, preload: :user)) do
+      nil -> nil
+      owner -> owner.user
+    end
+  end
+
+  @doc "Sets the given user as the platform owner, replacing any existing owner."
+  def set_owner(%User{} = user) do
+    repo().transaction(fn ->
+      repo().delete_all(Owner)
+
+      %Owner{}
+      |> Owner.changeset(%{user_id: user.id})
+      |> repo().insert!()
+    end)
+  end
+
+  @doc "Transfers ownership from the current owner to a new user."
+  def transfer_ownership(%User{} = new_owner) do
+    set_owner(new_owner)
+  end
+
+  # ---------------------------------------------------------------------------
+  # Groups
+  # ---------------------------------------------------------------------------
+
+  @doc "Creates a new group."
+  def create_group(attrs) do
+    %Group{}
+    |> Group.changeset(attrs)
     |> repo().insert()
   end
 
-  @doc "Revokes a role from a user."
-  def revoke_role(%User{} = user, role, site \\ nil) do
-    query =
-      UserRole
-      |> where([r], r.user_id == ^user.id and r.role == ^to_string(role))
-
-    query =
-      if is_nil(site),
-        do: where(query, [r], is_nil(r.site)),
-        else: where(query, [r], r.site == ^site)
-
-    repo().delete_all(query)
-    :ok
+  @doc "Updates an existing group."
+  def update_group(%Group{} = group, attrs) do
+    group
+    |> Group.changeset(attrs)
+    |> repo().update()
   end
 
-  @doc "Lists all roles for a user."
-  def list_roles(%User{} = user) do
-    UserRole
-    |> where([r], r.user_id == ^user.id)
-    |> repo().all()
-  end
-
-  @doc "Checks if a user has a specific role."
-  def has_role?(%User{} = user, role, site \\ nil) do
-    query =
-      UserRole
-      |> where([r], r.user_id == ^user.id and r.role == ^to_string(role))
-
-    query =
-      if is_nil(site),
-        do: where(query, [r], is_nil(r.site)),
-        else: where(query, [r], r.site == ^site)
-
-    repo().exists?(query)
-  end
-
-  @doc "Returns true if the user is a super admin."
-  def is_super_admin?(%User{} = user) do
-    has_role?(user, "super_admin")
-  end
-
-  @doc "Returns true if the user can access the given site."
-  def can_access_site?(%User{} = user, site) do
-    is_super_admin?(user) ||
-      UserRole
-      |> where([r], r.user_id == ^user.id and r.site == ^site)
-      |> repo().exists?()
+  @doc "Deletes a group and all associated permissions and memberships."
+  def delete_group(%Group{} = group) do
+    repo().delete(group)
   end
 
   @doc """
-  Checks authorization. Raises `Beacon.LiveAdmin.Auth.UnauthorizedError` if denied.
+  Lists groups with filtering options.
 
-  Actions:
-    * `:manage` — requires super_admin or site_admin
-    * `:edit` — requires super_admin, site_admin, or site_editor
-    * `:view` — requires any role for the site or super_admin
+  ## Options
+
+    * `:site` — filter by site (required for site-scoped groups)
+    * `:templates_only` — if true, only return template groups (site=nil, is_template=true)
   """
-  def authorize!(%User{} = user, action, site) do
-    authorized =
-      case action do
-        :manage ->
-          is_super_admin?(user) || has_role?(user, "site_admin", site)
+  def list_groups(opts \\ []) do
+    query =
+      cond do
+        opts[:templates_only] ->
+          from(g in Group, where: g.is_template == true and is_nil(g.site))
 
-        :edit ->
-          is_super_admin?(user) ||
-            has_role?(user, "site_admin", site) ||
-            has_role?(user, "site_editor", site)
+        site = opts[:site] ->
+          site_string = to_string(site)
+          from(g in Group, where: g.site == ^site_string and g.is_template == false)
 
-        :view ->
-          can_access_site?(user, site)
-
-        _ ->
-          false
+        true ->
+          from(g in Group)
       end
 
-    unless authorized do
-      raise Beacon.LiveAdmin.Auth.UnauthorizedError,
-        message: "user #{user.email} is not authorized to #{action} on site #{inspect(site)}"
-    end
+    query
+    |> order_by([g], asc: g.name)
+    |> repo().all()
+  end
+
+  @doc "Gets a group by ID."
+  def get_group(id) do
+    repo().get(Group, id)
+  end
+
+  @doc "Gets a group by ID with preloaded permissions."
+  def get_group_with_permissions(id) do
+    repo().get(Group, id)
+    |> repo().preload(:permissions)
+  end
+
+  # ---------------------------------------------------------------------------
+  # Group Membership
+  # ---------------------------------------------------------------------------
+
+  @doc "Adds a user to a group."
+  def add_user_to_group(user_id, group_id) do
+    %UserGroup{}
+    |> UserGroup.changeset(%{user_id: user_id, group_id: group_id})
+    |> repo().insert()
+  end
+
+  @doc "Removes a user from a group."
+  def remove_user_from_group(user_id, group_id) do
+    from(ug in UserGroup, where: ug.user_id == ^user_id and ug.group_id == ^group_id)
+    |> repo().delete_all()
 
     :ok
+  end
+
+  @doc "Lists all members of a group."
+  def list_group_members(group_id) do
+    from(u in User,
+      join: ug in UserGroup, on: ug.user_id == u.id,
+      where: ug.group_id == ^group_id,
+      order_by: [asc: u.email]
+    )
+    |> repo().all()
+  end
+
+  @doc "Lists all groups a user belongs to for a given site."
+  def list_user_groups(user_id, site) do
+    site_string = to_string(site)
+
+    from(g in Group,
+      join: ug in UserGroup, on: ug.group_id == g.id,
+      where: ug.user_id == ^user_id,
+      where: g.site == ^site_string,
+      where: g.is_template == false,
+      order_by: [asc: g.name]
+    )
+    |> repo().all()
+  end
+
+  # ---------------------------------------------------------------------------
+  # Group Permissions
+  # ---------------------------------------------------------------------------
+
+  @doc """
+  Replaces all permissions for a group with the given list.
+
+  Each permission is a map with keys: `:feature`, `:sub_feature`,
+  and optionally `:scope_type` (default "all") and `:scope_id`.
+  """
+  def set_group_permissions(%Group{} = group, permissions) when is_list(permissions) do
+    repo().transaction(fn ->
+      from(gp in GroupPermission, where: gp.group_id == ^group.id)
+      |> repo().delete_all()
+
+      Enum.each(permissions, fn perm ->
+        %GroupPermission{}
+        |> GroupPermission.changeset(Map.put(perm, :group_id, group.id))
+        |> repo().insert!()
+      end)
+    end)
+  end
+
+  @doc "Adds a single permission to a group."
+  def add_group_permission(%Group{} = group, attrs) do
+    %GroupPermission{}
+    |> GroupPermission.changeset(Map.put(attrs, :group_id, group.id))
+    |> repo().insert()
+  end
+
+  @doc "Removes a permission by ID."
+  def remove_group_permission(permission_id) do
+    case repo().get(GroupPermission, permission_id) do
+      nil -> {:error, :not_found}
+      perm -> repo().delete(perm)
+    end
+  end
+
+  @doc "Lists all permissions for a group."
+  def list_group_permissions(group_id) do
+    from(gp in GroupPermission,
+      where: gp.group_id == ^group_id,
+      order_by: [asc: gp.feature, asc: gp.sub_feature]
+    )
+    |> repo().all()
+  end
+
+  # ---------------------------------------------------------------------------
+  # User Permissions (individual grants)
+  # ---------------------------------------------------------------------------
+
+  @doc "Grants a permission directly to a user."
+  def grant_user_permission(attrs) do
+    %UserPermission{}
+    |> UserPermission.changeset(attrs)
+    |> repo().insert()
+  end
+
+  @doc "Revokes an individual permission by ID."
+  def revoke_user_permission(permission_id) do
+    case repo().get(UserPermission, permission_id) do
+      nil -> {:error, :not_found}
+      perm -> repo().delete(perm)
+    end
+  end
+
+  @doc "Lists all individual permissions for a user on a site."
+  def list_user_permissions(user_id, site) do
+    site_string = to_string(site)
+
+    from(up in UserPermission,
+      where: up.user_id == ^user_id,
+      where: up.site == ^site_string,
+      order_by: [asc: up.feature, asc: up.sub_feature]
+    )
+    |> repo().all()
+  end
+
+  # ---------------------------------------------------------------------------
+  # Permission Checking (delegates to Permissions module)
+  # ---------------------------------------------------------------------------
+
+  @doc "Checks if a user can perform sub_feature on feature for the given site."
+  defdelegate can?(user, site, feature, sub_feature), to: Permissions
+
+  @doc "Checks if a user can perform sub_feature on feature with resource scoping."
+  defdelegate can?(user, site, feature, sub_feature, opts), to: Permissions
+
+  @doc "Checks if a user can access the given site at all."
+  defdelegate can_access_site?(user, site), to: Permissions
+
+  @doc "Checks if a user has view access to a feature on a site."
+  defdelegate can_access_feature?(user, site, feature), to: Permissions
+
+  # ---------------------------------------------------------------------------
+  # Group Templates
+  # ---------------------------------------------------------------------------
+
+  @doc """
+  Copies all global group templates into a site as real groups.
+
+  Creates a copy of each template group (with all its permissions)
+  as a site-scoped, non-template group. Skips groups where a group
+  with the same name already exists for the site.
+  """
+  def copy_templates_to_site(site) do
+    templates = list_groups(templates_only: true)
+    site_string = to_string(site)
+
+    repo().transaction(fn ->
+      Enum.each(templates, fn template ->
+        # Check if a group with this name already exists for the site
+        existing =
+          from(g in Group, where: g.site == ^site_string and g.name == ^template.name)
+          |> repo().one()
+
+        unless existing do
+          {:ok, new_group} =
+            create_group(%{
+              site: site,
+              name: template.name,
+              description: template.description,
+              is_template: false
+            })
+
+          # Copy permissions
+          template_perms = list_group_permissions(template.id)
+
+          Enum.each(template_perms, fn perm ->
+            add_group_permission(new_group, %{
+              feature: perm.feature,
+              sub_feature: perm.sub_feature,
+              scope_type: perm.scope_type,
+              scope_id: perm.scope_id
+            })
+          end)
+        end
+      end)
+    end)
   end
 end

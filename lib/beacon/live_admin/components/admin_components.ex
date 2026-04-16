@@ -6,7 +6,6 @@ defmodule Beacon.LiveAdmin.AdminComponents do
   """
   use Phoenix.Component
 
-  alias Phoenix.LiveView.JS
   alias Beacon.LiveAdmin.CoreComponents
   alias Beacon.LiveAdmin.PageBuilder.Table
 
@@ -21,52 +20,38 @@ defmodule Beacon.LiveAdmin.AdminComponents do
   defdelegate hide(selector), to: CoreComponents
   defdelegate hide(js, selector), to: CoreComponents
   defdelegate translate_errors(errors, field), to: CoreComponents
+  defdelegate translate_error(error), to: CoreComponents
+  defdelegate icon(assigns), to: CoreComponents
+  defdelegate button(assigns), to: CoreComponents
+  defdelegate modal(assigns), to: CoreComponents
+  defdelegate input(assigns), to: CoreComponents
+  defdelegate error(assigns), to: CoreComponents
+  defdelegate show_modal(id), to: CoreComponents
+  defdelegate show_modal(js, id), to: CoreComponents
+  defdelegate preview(assigns), to: Beacon.LiveAdmin.Preview
 
-  defp icon(assigns), do: Beacon.LiveAdmin.StationUI.HTML.Icon.icon(assigns)
-  defp input(assigns), do: Beacon.LiveAdmin.CoreComponents.input(assigns)
-
-  @menu_link_active_class "inline-flex items-center px-3.5 py-2 text-sm font-medium text-indigo-700 bg-indigo-50 dark:bg-indigo-900/50 dark:text-indigo-300 rounded-lg transition-colors"
-  @menu_link_regular_class "inline-flex items-center px-3.5 py-2 text-sm font-medium text-slate-500 dark:text-gray-400 hover:text-slate-700 dark:hover:text-gray-200 hover:bg-slate-50 dark:hover:bg-gray-700 rounded-lg transition-colors"
+  @menu_link_active_class "inline-flex items-center px-3.5 py-2 text-sm font-medium text-primary bg-primary/10 rounded-lg transition-colors"
+  @menu_link_regular_class "inline-flex items-center px-3.5 py-2 text-sm font-medium text-base-content/60 hover:text-base-content hover:bg-base-300 rounded-lg transition-colors"
 
   @doc """
   Visual Editor for HEEx and HTML templates.
-
-  This component provides a drag-and-drop interface for building and editing
-  HEEx templates. It renders a live visual editor with a properties sidebar
-  that allows editing component attributes.
-
-  ## Examples
-
-      <.visual_editor
-        template={@page_template}
-        components={@available_components}
-        on_template_change={fn updated_template -> assign(socket, :page_template, updated_template) end}
-      />
-
   """
-  attr :template, :string, required: true, doc: "The HEEx/HTML template to edit"
-
+  attr :template, :string, required: true
   attr :components, :list, doc: "List of available components that can be used in the visual editor"
-
   attr :tailwind_input, :string,
     default: """
     @tailwind base;
     @tailwind components;
     @tailwind utilities;
     """
-
   attr :tailwind_config_url, :string, default: nil
-
   attr :on_template_change, {:fun, 1},
     default: &Function.identity/1,
     doc: "A function that is called when the template changes, receives the updated template as argument"
-
   attr :render_node_fun, {:fun, 1},
     default: &Beacon.LiveAdmin.AdminComponents.render_node/1,
     doc: "A function to render a HEEx node"
-
   attr :encode_layout_fun, {:fun, 0}, default: nil, doc: "A function that returns the layout AST to be used in the visual editor"
-
   attr :encode_component_fun, {:fun, 1}, default: nil, doc: "A function that takes a component and returns its AST representation"
 
   def visual_editor(assigns) do
@@ -148,7 +133,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
 
     ~H"""
     <div class="mb-8">
-      <ul class="flex flex-wrap items-center gap-1 p-1 bg-slate-100/80 dark:bg-gray-800 rounded-lg w-fit">
+      <ul class="flex flex-wrap items-center gap-1 p-1 bg-base-200 rounded-lg w-fit">
         <%= layout_menu_items(assigns) %>
       </ul>
     </div>
@@ -176,6 +161,9 @@ defmodule Beacon.LiveAdmin.AdminComponents do
     </li>
     <li>
       <.link patch={beacon_live_admin_path(@socket, @site, "/layouts/#{@layout_id}/revisions")} class={if(@current_action == :revisions, do: @active_class, else: @regular_class)}>Revisions</.link>
+    </li>
+    <li>
+      <.link patch={beacon_live_admin_path(@socket, @site, "/layouts/#{@layout_id}/preview")} class={if(@current_action == :preview, do: @active_class, else: @regular_class)}>Preview</.link>
     </li>
     """
   end
@@ -207,7 +195,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
 
     ~H"""
     <div class="mb-8">
-      <ul class="flex flex-wrap items-center gap-1 p-1 bg-slate-100/80 dark:bg-gray-800 rounded-lg w-fit">
+      <ul class="flex flex-wrap items-center gap-1 p-1 bg-base-200 rounded-lg w-fit">
         <%= page_menu_items(assigns) %>
       </ul>
     </div>
@@ -240,6 +228,9 @@ defmodule Beacon.LiveAdmin.AdminComponents do
     <li>
       <.link patch={beacon_live_admin_path(@socket, @site, "/pages/#{@page_id}/revisions")} class={if(@current_action == :revisions, do: @active_class, else: @regular_class)}>Revisions</.link>
     </li>
+    <li>
+      <.link patch={beacon_live_admin_path(@socket, @site, "/pages/#{@page_id}/preview")} class={if(@current_action == :preview, do: @active_class, else: @regular_class)}>Preview</.link>
+    </li>
     """
   end
 
@@ -270,7 +261,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
 
     ~H"""
     <div class="mb-8">
-      <ul class="flex flex-wrap items-center gap-1 p-1 bg-slate-100/80 dark:bg-gray-800 rounded-lg w-fit">
+      <ul class="flex flex-wrap items-center gap-1 p-1 bg-base-200 rounded-lg w-fit">
         <%= component_menu_items(assigns) %>
       </ul>
     </div>
@@ -305,210 +296,22 @@ defmodule Beacon.LiveAdmin.AdminComponents do
     """
   end
 
-  @doc """
-  Renders flash notices.
-
-  ## Examples
-
-      <.flash kind={:info} flash={@flash} />
-      <.flash kind={:info} phx-mounted={show("#flash")}>Welcome Back!</.flash>
-  """
-  attr :id, :string, default: "flash", doc: "the optional id of flash container"
-  attr :flash, :map, default: %{}, doc: "the map of flash messages to display"
-  attr :title, :string, default: nil
-  attr :kind, :atom, values: [:info, :error], doc: "used for styling and flash lookup"
-  attr :rest, :global, doc: "the arbitrary HTML attributes to add to the flash container"
-
-  slot :inner_block, doc: "the optional inner block that renders the flash message"
-
-  def flash(assigns) do
-    ~H"""
-    <div
-      :if={msg = render_slot(@inner_block) || Phoenix.Flash.get(@flash, @kind)}
-      id={@id}
-      phx-click={JS.push("lv:clear-flash", value: %{key: @kind}) |> hide("##{@id}")}
-      role="alert"
-      class={[
-        "fixed top-2 right-2 w-80 sm:w-96 z-50 rounded-lg p-3 ring-1",
-        @kind == :info && "bg-emerald-50 text-emerald-800 ring-emerald-500 fill-cyan-900 dark:bg-emerald-900/20 dark:text-emerald-300 dark:ring-emerald-700",
-        @kind == :error && "bg-rose-50 text-rose-900 shadow-md ring-rose-500 fill-rose-900 dark:bg-rose-900/20 dark:text-rose-300 dark:ring-rose-700"
-      ]}
-      {@rest}
-    >
-      <p :if={@title} class="flex items-center gap-1.5 text-sm font-semibold leading-6 dark:text-inherit">
-        <.icon :if={@kind == :info} name="hero-information-circle-mini" class="w-4 h-4" />
-        <.icon :if={@kind == :error} name="hero-exclamation-circle-mini" class="w-4 h-4" />
-        <%= @title %>
-      </p>
-      <p class="mt-2 text-sm leading-5 dark:text-inherit"><%= msg %></p>
-      <button type="button" class="absolute p-2 group top-1 right-1" aria-label={gettext("close")}>
-        <.icon name="hero-x-mark-solid" class="w-5 h-5 opacity-40 group-hover:opacity-70 dark:opacity-60 dark:group-hover:opacity-90" />
-      </button>
-    </div>
-    """
-  end
+  # These delegate to CoreComponents (now aligned with Phoenix 1.8.5)
+  defdelegate flash(assigns), to: CoreComponents
+  defdelegate simple_form(assigns), to: CoreComponents
+  defdelegate table(assigns), to: CoreComponents
+  defdelegate list(assigns), to: CoreComponents
+  defdelegate back(assigns), to: CoreComponents
 
   @doc """
-  Renders a simple form.
-
-  ## Examples
-
-      <.simple_form for={@form} phx-change="validate" phx-submit="save">
-        <.input field={@form[:email]} label="Email"/>
-        <.input field={@form[:username]} label="Username" />
-        <:actions>
-          <.button>Save</.button>
-        </:actions>
-      </.simple_form>
-  """
-  attr :for, :any, required: true, doc: "the datastructure for the form"
-  attr :as, :any, default: nil, doc: "the server side parameter to collect all input under"
-
-  attr :rest, :global,
-    include: ~w(autocomplete name rel action enctype method novalidate target),
-    doc: "the arbitrary HTML attributes to apply to the form tag"
-
-  slot :inner_block, required: true
-  slot :actions, doc: "the slot for form actions, such as a submit button"
-
-  def simple_form(assigns) do
-    ~H"""
-    <.form :let={f} for={@for} as={@as} {@rest}>
-      <div class="mt-10 space-y-8">
-        <%= render_slot(@inner_block, f) %>
-        <div :for={action <- @actions} class="flex items-center justify-between gap-6 mt-2">
-          <%= render_slot(action, f) %>
-        </div>
-      </div>
-    </.form>
-    """
-  end
-
-  @doc ~S"""
-  Renders a table with generic styling.
-
-  ## Examples
-
-      <.table id="users" rows={@users}>
-        <:col :let={user} label="id"><%= user.id %></:col>
-        <:col :let={user} label="username"><%= user.username %></:col>
-      </.table>
-  """
-  attr :id, :string, required: true
-  attr :rows, :list, required: true
-  attr :row_id, :any, default: nil, doc: "the function for generating the row id"
-  attr :row_click, :any, default: nil, doc: "the function for handling phx-click on each row"
-
-  attr :row_item, :any,
-    default: &Function.identity/1,
-    doc: "the function for mapping each row before calling the :col and :action slots"
-
-  slot :col, required: true do
-    attr :label, :string
-  end
-
-  slot :action, doc: "the slot for showing user actions in the last table column"
-
-  def table(assigns) do
-    assigns =
-      with %{rows: %Phoenix.LiveView.LiveStream{}} <- assigns do
-        assign(assigns, row_id: assigns.row_id || fn {id, _item} -> id end)
-      end
-
-    ~H"""
-    <div class="px-4 overflow-y-auto sm:overflow-visible sm:px-0">
-      <table class="w-[40rem] mt-6 sm:w-full">
-        <thead class="text-sm leading-6 text-left text-zinc-500 dark:text-gray-400">
-          <tr>
-            <th :for={col <- @col} class="pt-0 pb-4 pl-0 pr-6 font-sans font-semibold uppercase text-sm tracking-[1.68px]"><%= col[:label] %></th>
-            <th class="relative p-0 pb-4"><span class="sr-only"><%= gettext("Actions") %></span></th>
-          </tr>
-        </thead>
-        <tbody id={@id} phx-update={match?(%Phoenix.LiveView.LiveStream{}, @rows) && "stream"} class="relative text-sm leading-6 divide-y border-grey-100 divide-grey-100 dark:divide-gray-700 text-slate-800 dark:text-gray-300 font-medium">
-          <tr :for={row <- @rows} id={@row_id && @row_id.(row)} class="group hover:bg-slate-50 dark:hover:bg-gray-700/50">
-            <td :for={{col, i} <- Enum.with_index(@col)} phx-click={@row_click && @row_click.(row)} class={["relative p-0", @row_click && "hover:cursor-pointer"]}>
-              <div class="block py-4 pr-6">
-                <span class="absolute right-0 -inset-y-px -left-3 group-hover:bg-slate-50 dark:group-hover:bg-gray-700/50 sm:rounded-l-xl" />
-                <span class={["relative", i == 0 && "font-semibold text-zinc-900 dark:text-gray-100"]}>
-                  <%= render_slot(col, @row_item.(row)) %>
-                </span>
-              </div>
-            </td>
-            <td :if={@action != []} class="relative p-0 w-14">
-              <div class="block py-4 pl-6">
-                <div class="flex justify-end">
-                  <span class="absolute left-0 -inset-y-px -right-3 group-hover:bg-slate-50 dark:group-hover:bg-gray-700/50 sm:rounded-r-xl" />
-                  <span :for={action <- @action} class="relative text-sm font-medium font-semibold text-right text-zinc-900 dark:text-gray-100 hover:text-zinc-700 dark:hover:text-gray-300 whitespace-nowrap">
-                    <%= render_slot(action, @row_item.(row)) %>
-                  </span>
-                </div>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    """
-  end
-
-  @doc """
-  Renders a data list.
-
-  ## Examples
-
-      <.list>
-        <:item title="Title"><%= @post.title %></:item>
-        <:item title="Views"><%= @post.views %></:item>
-      </.list>
-  """
-  slot :item, required: true do
-    attr :title, :string, required: true
-  end
-
-  def list(assigns) do
-    ~H"""
-    <div class="mt-14">
-      <dl class="-my-4 divide-y divide-zinc-100 dark:divide-gray-700">
-        <div :for={item <- @item} class="flex gap-4 py-4 text-sm leading-6 sm:gap-8">
-          <dt class="flex-none w-1/4 text-zinc-500 dark:text-gray-400"><%= item.title %></dt>
-          <dd class="text-zinc-700 dark:text-gray-300"><%= render_slot(item) %></dd>
-        </div>
-      </dl>
-    </div>
-    """
-  end
-
-  @doc """
-  Renders a back navigation link.
-
-  ## Examples
-
-      <.back navigate={~p"/posts"}>Back to posts</.back>
-  """
-  attr :navigate, :any, required: true
-  slot :inner_block, required: true
-
-  def back(assigns) do
-    ~H"""
-    <div class="mt-16">
-      <.link navigate={@navigate} class="text-sm font-semibold leading-6 text-zinc-900 dark:text-gray-100 hover:text-zinc-700 dark:hover:text-gray-300">
-        <.icon name="hero-arrow-left-solid" class="w-3 h-3" />
-        <%= render_slot(@inner_block) %>
-      </.link>
-    </div>
-    """
-  end
-
-  @doc """
-  Renders a rounded white panel that is pinned to the bottom of the screen and scrolls.
-
+  Renders a rounded panel container for main content.
   """
   slot :inner_block, required: true
   attr :class, :string, default: ""
 
   def main_content(assigns) do
     ~H"""
-    <div class={"#{@class} px-4 py-3 mt-6 bg-white dark:bg-gray-800 dark:text-gray-100 col-span-full rounded-xl border border-slate-200 dark:border-gray-700 shadow-sm"}>
+    <div class={"#{@class} card bg-base-100 shadow-sm border border-base-300 px-4 py-3 mt-6"}>
       <%= render_slot(@inner_block) %>
     </div>
     """
@@ -538,7 +341,7 @@ defmodule Beacon.LiveAdmin.AdminComponents do
     ~H"""
     <.simple_form :let={f} for={%{}} as={:sort} phx-change="beacon:table-sort">
       <div class="flex items-center gap-2 justify-end">
-        <label for="sort_sort_by" class="text-sm font-medium text-gray-900 dark:text-gray-100">Sort by</label>
+        <label for="sort_sort_by" class="text-sm font-medium text-base-content">Sort by</label>
         <.input type="select" field={f[:sort_by]} value={@table.sort_by} options={@options} />
       </div>
     </.simple_form>
@@ -556,58 +359,48 @@ defmodule Beacon.LiveAdmin.AdminComponents do
     assigns = assign(assigns, :table, assigns.page.table)
 
     ~H"""
-    <div :if={@table.page_count > 1} class="flex items-center justify-center gap-1 pt-6 pb-4 text-sm font-medium">
-      <.link
-        :if={@table.current_page > 1}
-        patch={Table.prev_path(@socket, @page)}
-        class="inline-flex items-center gap-1 px-3 py-1.5 rounded-md text-slate-600 dark:text-gray-400 hover:bg-slate-100 dark:hover:bg-gray-700 hover:text-slate-900 dark:hover:text-gray-100 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:focus-visible:ring-indigo-400"
-      >
-        <.icon name="hero-chevron-left-solid" class="w-4 h-4" /> Prev
-      </.link>
-      <span :if={@table.current_page == 1} class="inline-flex items-center gap-1 px-3 py-1.5 text-slate-300 dark:text-gray-600 cursor-default">
-        <.icon name="hero-chevron-left-solid" class="w-4 h-4" /> Prev
-      </span>
+    <div :if={@table && @table.page_count > 1} class="flex items-center justify-center pt-6 pb-4">
+      <div class="join">
+        <.link
+          :if={@table.current_page > 1}
+          patch={Table.prev_path(@socket, @page)}
+          class="join-item btn btn-sm"
+        >
+          <.icon name="hero-chevron-left-solid" class="w-4 h-4" />
+        </.link>
+        <button :if={@table.current_page == 1} class="join-item btn btn-sm btn-disabled">
+          <.icon name="hero-chevron-left-solid" class="w-4 h-4" />
+        </button>
 
-      <%= for page <- Beacon.LiveAdmin.PageBuilder.Table.nav_pages(@table.current_page, @table.page_count, @limit) do %>
-        <span :if={is_integer(page)}>
-          <.link
-            patch={Table.goto_path(@socket, @page, page)}
-            class={[
-              "inline-flex items-center justify-center w-8 h-8 rounded-md transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:focus-visible:ring-indigo-400",
-              if(@table.current_page == page,
-                do: "bg-indigo-600 text-white",
-                else: "text-slate-600 dark:text-gray-400 hover:bg-slate-100 dark:hover:bg-gray-700 hover:text-slate-900 dark:hover:text-gray-100"
-              )
-            ]}
-          >
-            <%= page %>
-          </.link>
-        </span>
-        <span :if={page == :sep} class="text-slate-400 dark:text-gray-500 px-1">
-          ...
-        </span>
-      <% end %>
+        <%= for page <- Beacon.LiveAdmin.PageBuilder.Table.nav_pages(@table.current_page, @table.page_count, @limit) do %>
+          <span :if={is_integer(page)}>
+            <.link
+              patch={Table.goto_path(@socket, @page, page)}
+              class={["join-item btn btn-sm", if(@table.current_page == page, do: "btn-primary", else: "")]}
+            >
+              <%= page %>
+            </.link>
+          </span>
+          <button :if={page == :sep} class="join-item btn btn-sm btn-disabled">...</button>
+        <% end %>
 
-      <.link
-        :if={@table.current_page < @table.page_count}
-        patch={Table.next_path(@socket, @page)}
-        class="inline-flex items-center gap-1 px-3 py-1.5 rounded-md text-slate-600 dark:text-gray-400 hover:bg-slate-100 dark:hover:bg-gray-700 hover:text-slate-900 dark:hover:text-gray-100 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:focus-visible:ring-indigo-400"
-      >
-        Next <.icon name="hero-chevron-right-solid" class="w-4 h-4" />
-      </.link>
-      <span :if={@table.current_page == @table.page_count} class="inline-flex items-center gap-1 px-3 py-1.5 text-slate-300 dark:text-gray-600 cursor-default">
-        Next <.icon name="hero-chevron-right-solid" class="w-4 h-4" />
-      </span>
+        <.link
+          :if={@table.current_page < @table.page_count}
+          patch={Table.next_path(@socket, @page)}
+          class="join-item btn btn-sm"
+        >
+          <.icon name="hero-chevron-right-solid" class="w-4 h-4" />
+        </.link>
+        <button :if={@table.current_page == @table.page_count} class="join-item btn btn-sm btn-disabled">
+          <.icon name="hero-chevron-right-solid" class="w-4 h-4" />
+        </button>
+      </div>
     </div>
     """
   end
 
   @doc """
   Renders a select input with the available sites to select.
-
-  ## Examples
-
-      <.site_selector selected_site="dev" options={[:dev, :dy]} />
   """
   attr :selected_site, :string, default: ""
   attr :options, :list, default: []

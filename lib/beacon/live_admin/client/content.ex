@@ -347,13 +347,13 @@ defmodule Beacon.LiveAdmin.Client.Content do
   def update_redirect(site, redirect, attrs), do: call(site, Beacon.Content, :update_redirect, [redirect, attrs])
   def delete_redirect(site, redirect), do: call(site, Beacon.Content, :delete_redirect, [redirect])
 
-  # Template Types
+  # Collections
 
-  def list_template_types(site, opts \\ []), do: call(site, Beacon.Content, :list_template_types, [site, opts])
-  def get_template_type(site, id), do: call(site, Beacon.Content, :get_template_type, [site, id])
-  def create_template_type(site, attrs), do: call(site, Beacon.Content, :create_template_type, [site, attrs])
-  def update_template_type(site, tt, attrs), do: call(site, Beacon.Content, :update_template_type, [tt, attrs])
-  def delete_template_type(site, tt), do: call(site, Beacon.Content, :delete_template_type, [tt])
+  def list_collections(site, opts \\ []), do: call(site, Beacon.Content, :list_collections, [site, opts])
+  def get_collection(site, id), do: call(site, Beacon.Content, :get_collection, [site, id])
+  def create_collection(site, attrs), do: call(site, Beacon.Content, :create_collection, [site, attrs])
+  def update_collection(site, tt, attrs), do: call(site, Beacon.Content, :update_collection, [tt, attrs])
+  def delete_collection(site, tt), do: call(site, Beacon.Content, :delete_collection, [tt])
 
   # Link Health
 

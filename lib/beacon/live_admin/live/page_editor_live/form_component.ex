@@ -283,17 +283,17 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
             phx-click="enable_editor"
             phx-value-editor="visual"
             phx-target={@myself}
-            class="sui-primary uppercase"
+            class="btn-primary"
           >
             Visual Editor
           </.button>
-          <.button :if={@live_action in [:new, :edit] && @editor == "visual"} type="button" phx-click="enable_editor" phx-value-editor="code" phx-target={@myself} class="sui-primary uppercase">
+          <.button :if={@live_action in [:new, :edit] && @editor == "visual"} type="button" phx-click="enable_editor" phx-value-editor="code" phx-target={@myself} class="btn-primary">
             Code Editor
           </.button>
-          <.button :if={@live_action == :new} phx-disable-with="Saving..." form="page-form" name="save" value="save" class="sui-primary uppercase">Create Draft Page</.button>
-          <.button :if={@live_action == :edit} phx-disable-with="Saving..." form="page-form" name="save" value="save" class="sui-primary uppercase">Save Changes</.button>
-          <.button :if={@live_action == :edit} phx-click="show_modal" phx-value-confirm="publish" phx-target={@myself} class="sui-primary uppercase">Publish</.button>
-          <.button :if={@live_action == :edit and @page_status == :published} phx-click="show_modal" phx-value-confirm="unpublish" phx-target={@myself} class="sui-primary-destructive uppercase">
+          <.button :if={@live_action == :new} phx-disable-with="Saving..." form="page-form" name="save" value="save" class="btn-primary">Create Draft Page</.button>
+          <.button :if={@live_action == :edit} phx-disable-with="Saving..." form="page-form" name="save" value="save" class="btn-primary">Save Changes</.button>
+          <.button :if={@live_action == :edit} phx-click="show_modal" phx-value-confirm="publish" phx-target={@myself} class="btn-primary">Publish</.button>
+          <.button :if={@live_action == :edit and @page_status == :published} phx-click="show_modal" phx-value-confirm="unpublish" phx-target={@myself} class="btn-error">
             Unpublish
           </.button>
         </:actions>
@@ -332,14 +332,14 @@ defmodule Beacon.LiveAdmin.PageEditorLive.FormComponent do
         <div class="py-4">
           <.button
             type="button"
-            class="sui-secondary inline-flex justify-center w-full px-3 py-2 mt-3 text-sm font-semibold text-gray-900 bg-white rounded-md shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+            class="btn-ghost"
             phx-click={JS.push("close_modal", target: @myself)}
           >
             Cancel
           </.button>
           <.button
             type="button"
-            class="sui-primary-destructive inline-flex justify-center w-full px-3 py-2 text-sm font-semibold text-white bg-blue-600 rounded-md shadow-sm hover:bg-blue-500 sm:w-auto"
+            class="btn-error"
             phx-click="unpublish"
             phx-target={@myself}
           >

@@ -32,109 +32,97 @@ defmodule Beacon.LiveAdmin.LinkHealthLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="mx-auto max-w-6xl py-6 px-4">
-      <h1 class="text-2xl font-bold text-gray-900 mb-6">Link Health</h1>
+    <.header>
+      Link Health
+    </.header>
 
-      <div class="grid grid-cols-3 gap-4 mb-8">
-        <div class={"rounded-lg border p-4 text-center cursor-pointer #{if @tab == "orphans", do: "bg-yellow-50 border-yellow-300", else: "bg-white"}"} phx-click="tab" phx-value-tab="orphans">
-          <div class="text-2xl font-bold text-yellow-600"><%= length(@orphans) %></div>
-          <div class="text-xs text-gray-500 uppercase">Orphan Pages</div>
-          <div class="text-xs text-gray-400 mt-1">No inbound links</div>
-        </div>
-        <div class={"rounded-lg border p-4 text-center cursor-pointer #{if @tab == "broken", do: "bg-red-50 border-red-300", else: "bg-white"}"} phx-click="tab" phx-value-tab="broken">
-          <div class="text-2xl font-bold text-red-600"><%= length(@broken_links) %></div>
-          <div class="text-xs text-gray-500 uppercase">Broken Links</div>
-          <div class="text-xs text-gray-400 mt-1">Target not found</div>
-        </div>
-        <div class={"rounded-lg border p-4 text-center cursor-pointer #{if @tab == "stats", do: "bg-blue-50 border-blue-300", else: "bg-white"}"} phx-click="tab" phx-value-tab="stats">
-          <div class="text-2xl font-bold text-blue-600"><%= length(@link_stats) %></div>
-          <div class="text-xs text-gray-500 uppercase">Pages Analyzed</div>
-          <div class="text-xs text-gray-400 mt-1">Inbound/outbound counts</div>
-        </div>
+    <%!-- Stat Cards (clickable tabs) --%>
+    <div class="grid grid-cols-3 gap-3 mb-6 -mt-2">
+      <div phx-click="tab" phx-value-tab="orphans" class={"cursor-pointer transition-all duration-200 rounded-xl border p-4 text-center #{if @tab == "orphans", do: "bg-amber-50 border-amber-300 shadow-sm", else: "bg-base-100 border-base-300 hover:border-amber-200"}"}>
+        <div class={"text-2xl font-bold tabular-nums #{if @tab == "orphans", do: "text-warning", else: "text-base-content"}"}><%= length(@orphans) %></div>
+        <div class="text-[11px] font-medium text-base-content/60 uppercase tracking-wide mt-0.5">Orphan Pages</div>
+        <div class="text-[10px] text-base-content/40 mt-0.5">No inbound links</div>
       </div>
-
-      <%= if @tab == "orphans" do %>
-        <div class="bg-white rounded-lg border overflow-hidden">
-          <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
-              <tr>
-                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Path</th>
-                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Title</th>
-                <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Action</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-200">
-              <%= for page <- @orphans do %>
-                <tr class="bg-yellow-50">
-                  <td class="px-4 py-3 text-sm font-mono text-gray-600"><%= page.path %></td>
-                  <td class="px-4 py-3 text-sm text-gray-900 max-w-xs truncate"><%= page.title %></td>
-                  <td class="px-4 py-3 text-right">
-                    <.link patch={beacon_live_admin_path(@socket, @beacon_page.site, "/pages/#{page.id}")} class="text-indigo-600 hover:text-indigo-900 text-sm">Edit</.link>
-                  </td>
-                </tr>
-              <% end %>
-              <%= if @orphans == [] do %>
-                <tr><td colspan="3" class="px-4 py-8 text-center text-sm text-green-600">No orphan pages found</td></tr>
-              <% end %>
-            </tbody>
-          </table>
-        </div>
-      <% end %>
-
-      <%= if @tab == "broken" do %>
-        <div class="bg-white rounded-lg border overflow-hidden">
-          <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
-              <tr>
-                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Source Page</th>
-                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Broken Target</th>
-                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Anchor Text</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-200">
-              <%= for link <- @broken_links do %>
-                <tr class="bg-red-50">
-                  <td class="px-4 py-3 text-sm font-mono text-gray-600"><%= link.source_page_id %></td>
-                  <td class="px-4 py-3 text-sm font-mono text-red-600"><%= link.target_path %></td>
-                  <td class="px-4 py-3 text-sm text-gray-600"><%= link.anchor_text %></td>
-                </tr>
-              <% end %>
-              <%= if @broken_links == [] do %>
-                <tr><td colspan="3" class="px-4 py-8 text-center text-sm text-green-600">No broken links found</td></tr>
-              <% end %>
-            </tbody>
-          </table>
-        </div>
-      <% end %>
-
-      <%= if @tab == "stats" do %>
-        <div class="bg-white rounded-lg border overflow-hidden">
-          <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
-              <tr>
-                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Path</th>
-                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Title</th>
-                <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Inbound</th>
-                <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Outbound</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-200">
-              <%= for stat <- @link_stats do %>
-                <tr>
-                  <td class="px-4 py-3 text-sm font-mono text-gray-600"><%= stat.path %></td>
-                  <td class="px-4 py-3 text-sm text-gray-900 max-w-xs truncate"><%= stat.title %></td>
-                  <td class={"px-4 py-3 text-sm text-center #{if stat.inbound == 0, do: "text-yellow-600 font-bold", else: "text-gray-600"}"}><%= stat.inbound %></td>
-                  <td class="px-4 py-3 text-sm text-center text-gray-600"><%= stat.outbound %></td>
-                </tr>
-              <% end %>
-              <%= if @link_stats == [] do %>
-                <tr><td colspan="4" class="px-4 py-8 text-center text-sm text-gray-500">No link data available. Publish pages to generate link graph.</td></tr>
-              <% end %>
-            </tbody>
-          </table>
-        </div>
-      <% end %>
+      <div phx-click="tab" phx-value-tab="broken" class={"cursor-pointer transition-all duration-200 rounded-xl border p-4 text-center #{if @tab == "broken", do: "bg-rose-50 border-rose-300 shadow-sm", else: "bg-base-100 border-base-300 hover:border-rose-200"}"}>
+        <div class={"text-2xl font-bold tabular-nums #{if @tab == "broken", do: "text-error", else: "text-base-content"}"}><%= length(@broken_links) %></div>
+        <div class="text-[11px] font-medium text-base-content/60 uppercase tracking-wide mt-0.5">Broken Links</div>
+        <div class="text-[10px] text-base-content/40 mt-0.5">Target not found</div>
+      </div>
+      <div phx-click="tab" phx-value-tab="stats" class={"cursor-pointer transition-all duration-200 rounded-xl border p-4 text-center #{if @tab == "stats", do: "bg-sky-50 border-sky-300 shadow-sm", else: "bg-base-100 border-base-300 hover:border-sky-200"}"}>
+        <div class={"text-2xl font-bold tabular-nums #{if @tab == "stats", do: "text-info", else: "text-base-content"}"}><%= length(@link_stats) %></div>
+        <div class="text-[11px] font-medium text-base-content/60 uppercase tracking-wide mt-0.5">Pages Analyzed</div>
+        <div class="text-[10px] text-base-content/40 mt-0.5">Link counts</div>
+      </div>
     </div>
+
+    <%!-- Tab Content --%>
+    <%= if @tab == "orphans" do %>
+      <.main_content>
+        <.table id="orphans" rows={@orphans} row_id={&"orphan-#{&1.id}"}>
+          <:col :let={page} label="Path">
+            <span class="font-mono text-xs text-base-content/70"><%= page.path %></span>
+          </:col>
+          <:col :let={page} label="Title">
+            <span class="text-base-content font-medium"><%= page.title %></span>
+          </:col>
+          <:action :let={page}>
+            <.link
+              patch={beacon_live_admin_path(@socket, @beacon_page.site, "/pages/#{page.id}")}
+              class="inline-flex items-center gap-1 text-sm font-medium text-primary hover:text-indigo-800 transition-colors"
+            >
+              Edit <.icon name="hero-arrow-right-mini" class="w-3.5 h-3.5" />
+            </.link>
+          </:action>
+        </.table>
+        <div :if={@orphans == []} class="py-8 text-center">
+          <.icon name="hero-check-circle" class="w-8 h-8 text-emerald-400 mx-auto mb-2" />
+          <p class="text-sm text-success font-medium">No orphan pages found</p>
+        </div>
+      </.main_content>
+    <% end %>
+
+    <%= if @tab == "broken" do %>
+      <.main_content>
+        <.table id="broken-links" rows={@broken_links} row_id={&"broken-#{&1.id}"}>
+          <:col :let={link} label="Source Page">
+            <span class="font-mono text-xs text-base-content/70"><%= link.source_page_id %></span>
+          </:col>
+          <:col :let={link} label="Broken Target">
+            <span class="font-mono text-xs text-error"><%= link.target_path %></span>
+          </:col>
+          <:col :let={link} label="Anchor Text">
+            <span class="text-base-content/60"><%= link.anchor_text %></span>
+          </:col>
+        </.table>
+        <div :if={@broken_links == []} class="py-8 text-center">
+          <.icon name="hero-check-circle" class="w-8 h-8 text-emerald-400 mx-auto mb-2" />
+          <p class="text-sm text-success font-medium">No broken links found</p>
+        </div>
+      </.main_content>
+    <% end %>
+
+    <%= if @tab == "stats" do %>
+      <.main_content>
+        <.table id="link-stats" rows={@link_stats} row_id={&"stat-#{&1.path}"}>
+          <:col :let={stat} label="Path">
+            <span class="font-mono text-xs text-base-content/70"><%= stat.path %></span>
+          </:col>
+          <:col :let={stat} label="Title">
+            <span class="text-base-content font-medium truncate block max-w-[200px]"><%= stat.title %></span>
+          </:col>
+          <:col :let={stat} label="Inbound">
+            <span class={"tabular-nums #{if stat.inbound == 0, do: "text-warning font-bold", else: "text-base-content/70"}"}><%= stat.inbound %></span>
+          </:col>
+          <:col :let={stat} label="Outbound">
+            <span class="text-base-content/70 tabular-nums"><%= stat.outbound %></span>
+          </:col>
+        </.table>
+        <div :if={@link_stats == []} class="py-8 text-center">
+          <.icon name="hero-link" class="w-8 h-8 text-zinc-300  mx-auto mb-2" />
+          <p class="text-sm text-base-content/60">No link data available. Publish pages to generate link graph.</p>
+        </div>
+      </.main_content>
+    <% end %>
     """
   end
 end

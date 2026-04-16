@@ -147,7 +147,7 @@ defmodule Beacon.LiveAdmin.ActionBuilderLive.Index do
       <.header>
         <%= @page_title %>
         <:actions>
-          <.button type="button" phx-click="validate_document" class="sui-primary">
+          <.button type="button" phx-click="validate_document" class="btn-primary">
             Validate
           </.button>
         </:actions>
@@ -157,16 +157,16 @@ defmodule Beacon.LiveAdmin.ActionBuilderLive.Index do
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <%!-- Action Palette --%>
           <div class="lg:col-span-1 space-y-4">
-            <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300">Action Palette</h3>
+            <h3 class="text-sm font-semibold text-base-content/80">Action Palette</h3>
             <%= for {group_name, actions} <- @action_groups do %>
               <div>
-                <h4 class="text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-1.5"><%= group_name %></h4>
+                <h4 class="text-xs font-medium uppercase tracking-wider text-base-content/60 mb-1.5"><%= group_name %></h4>
                 <div class="space-y-1">
                   <%= for action <- actions do %>
                     <button type="button" phx-click="add_action" phx-value-type={action.type}
-                      class="w-full flex items-center gap-2 px-3 py-2 text-sm bg-white dark:bg-gray-800 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 border border-gray-200 dark:border-gray-700 rounded-lg transition-colors text-left">
-                      <span class="font-medium text-gray-900 dark:text-gray-100"><%= action.label %></span>
-                      <span class="text-xs text-gray-400 dark:text-gray-500 ml-auto"><%= action.desc %></span>
+                      class="w-full flex items-center gap-2 px-3 py-2 text-sm bg-base-100 hover:bg-indigo-50 border border-base-300 rounded-lg transition-colors text-left">
+                      <span class="font-medium text-base-content"><%= action.label %></span>
+                      <span class="text-xs text-base-content/40 ml-auto"><%= action.desc %></span>
                     </button>
                   <% end %>
                 </div>
@@ -176,12 +176,12 @@ defmodule Beacon.LiveAdmin.ActionBuilderLive.Index do
 
           <%!-- Step Sequence --%>
           <div class="lg:col-span-2 space-y-4">
-            <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300">
+            <h3 class="text-sm font-semibold text-base-content/80">
               Steps (<%= length(@steps) %>)
             </h3>
 
             <%= if @validation_result do %>
-              <div class={"p-3 rounded-lg text-sm #{case @validation_result do {:ok, _} -> "bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300"; {:error, _} -> "bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300" end}"}>
+              <div class={"p-3 rounded-lg text-sm #{case @validation_result do {:ok, _} -> "bg-success/10 text-green-700"; {:error, _} -> "bg-error/10 text-red-700" end}"}>
                 <%= case @validation_result do %>
                   <% {:ok, msg} -> %><%= msg %>
                   <% {:error, errors} -> %>
@@ -195,34 +195,34 @@ defmodule Beacon.LiveAdmin.ActionBuilderLive.Index do
             <% end %>
 
             <%= if @steps == [] do %>
-              <div class="text-center py-12 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg">
-                <p class="text-gray-500 dark:text-gray-400">Click an action from the palette to add steps</p>
+              <div class="text-center py-12 border-2 border-dashed border-gray-300  rounded-lg">
+                <p class="text-base-content/60">Click an action from the palette to add steps</p>
               </div>
             <% else %>
               <div class="space-y-2">
                 <%= for {step, index} <- Enum.with_index(@steps) do %>
-                  <div class="flex items-start gap-2 p-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg group">
+                  <div class="flex items-start gap-2 p-3 bg-base-100 border border-base-300 rounded-lg group">
                     <div class="flex flex-col gap-1 flex-shrink-0">
                       <button type="button" phx-click="move_up" phx-value-index={index}
-                        class="text-gray-300 hover:text-gray-600 dark:hover:text-gray-300 transition-colors disabled:opacity-30"
+                        class="text-gray-300 hover:text-gray-600 transition-colors disabled:opacity-30"
                         disabled={index == 0}>
                         <.icon name="hero-chevron-up-mini" class="w-4 h-4" />
                       </button>
-                      <span class="w-6 h-6 flex items-center justify-center rounded-full bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 text-xs font-bold">
+                      <span class="w-6 h-6 flex items-center justify-center rounded-full bg-indigo-100 text-primary text-xs font-bold">
                         <%= index + 1 %>
                       </span>
                       <button type="button" phx-click="move_down" phx-value-index={index}
-                        class="text-gray-300 hover:text-gray-600 dark:hover:text-gray-300 transition-colors disabled:opacity-30"
+                        class="text-gray-300 hover:text-gray-600 transition-colors disabled:opacity-30"
                         disabled={index == length(@steps) - 1}>
                         <.icon name="hero-chevron-down-mini" class="w-4 h-4" />
                       </button>
                     </div>
                     <div class="flex-1 min-w-0">
-                      <span class="text-sm font-semibold text-gray-900 dark:text-gray-100"><%= step["action"] %></span>
+                      <span class="text-sm font-semibold text-base-content"><%= step["action"] %></span>
                       <div class="mt-2 flex gap-2 flex-wrap">
                         <%= for field <- action_fields(step["action"]) do %>
                           <div class="flex flex-col">
-                            <label class="text-xs text-gray-500 dark:text-gray-400 mb-0.5"><%= field %></label>
+                            <label class="text-xs text-base-content/60 mb-0.5"><%= field %></label>
                             <input
                               type="text"
                               name={field}
@@ -230,7 +230,7 @@ defmodule Beacon.LiveAdmin.ActionBuilderLive.Index do
                               placeholder={field}
                               phx-blur="update_field"
                               phx-value-index={index}
-                              class="text-xs px-2 py-1.5 border border-gray-300 dark:border-gray-600 rounded bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 w-40"
+                              class="text-xs px-2 py-1.5 border border-gray-300  rounded bg-base-200 text-base-content w-40"
                             />
                           </div>
                         <% end %>
@@ -247,8 +247,8 @@ defmodule Beacon.LiveAdmin.ActionBuilderLive.Index do
 
             <%!-- JSON Preview --%>
             <div class="mt-6">
-              <h4 class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-2">JSON Preview</h4>
-              <pre class="p-4 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg text-xs font-mono text-gray-700 dark:text-gray-300 overflow-x-auto"><%= Jason.encode!(%{"version" => 1, "steps" => @steps}, pretty: true) %></pre>
+              <h4 class="text-xs font-semibold uppercase tracking-wider text-base-content/60 mb-2">JSON Preview</h4>
+              <pre class="p-4 bg-base-200 border border-base-300 rounded-lg text-xs font-mono text-base-content/80 overflow-x-auto"><%= Jason.encode!(%{"version" => 1, "steps" => @steps}, pretty: true) %></pre>
             </div>
           </div>
         </div>

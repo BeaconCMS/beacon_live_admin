@@ -195,7 +195,7 @@ defmodule Beacon.LiveAdmin.JSHookEditorLive.Index do
       <.header>
         <%= @page_title %>
         <:actions>
-          <.button type="button" id="new-js-hook-button" phx-click="create_new" class="sui-primary uppercase">
+          <.button type="button" id="new-js-hook-button" phx-click="create_new" class="btn-primary">
             New JS Hook
           </.button>
         </:actions>
@@ -205,10 +205,10 @@ defmodule Beacon.LiveAdmin.JSHookEditorLive.Index do
         <.modal :if={@show_nav_modal} id="confirm-nav" on_cancel={JS.push("stay_here")} show>
           <p>You've made unsaved changes to this JS Hook!</p>
           <p>Navigating to another hook without saving will cause these changes to be lost.</p>
-          <.button type="button" phx-click="stay_here" class="sui-secondary">
+          <.button type="button" phx-click="stay_here" class="btn-ghost">
             Stay here
           </.button>
-          <.button type="button" phx-click="discard_changes" class="sui-primary-destructive">
+          <.button type="button" phx-click="discard_changes" class="btn-error">
             Discard changes
           </.button>
         </.modal>
@@ -217,16 +217,16 @@ defmodule Beacon.LiveAdmin.JSHookEditorLive.Index do
           <:title>New JS Hook</:title>
           <.form :let={f} for={@create_form} id="create-form" phx-submit="save_new" class="px-4">
             <.input field={f[:name]} type="text" label="Hook name:" />
-            <.button class="sui-primary mt-4">Save</.button>
+            <.button class="btn-primary mt-4">Save</.button>
           </.form>
         </.modal>
 
         <.modal :if={@show_delete_modal} id="delete-modal" on_cancel={JS.push("delete_cancel")} show>
           <p>Are you sure you want to delete this JS Hook?</p>
-          <.button type="button" id="confirm-delete-button" phx-click="delete_confirm" class="sui-primary-destructive">
+          <.button type="button" id="confirm-delete-button" phx-click="delete_confirm" class="btn-error">
             Delete
           </.button>
-          <.button type="button" phx-click="delete_cancel" class="sui-secondary">
+          <.button type="button" phx-click="delete_cancel" class="btn-ghost">
             Cancel
           </.button>
         </.modal>
@@ -244,8 +244,8 @@ defmodule Beacon.LiveAdmin.JSHookEditorLive.Index do
             <.form :let={f} for={@form} id="js-hook-form" class="flex items-start gap-4 mb-2" phx-change="validate" phx-submit="save_changes">
               <.input label="Name" field={f[:name]} type="text" />
               <input type="hidden" name="js_hook[code]" id="js_hook-form_code" value={Phoenix.HTML.Form.input_value(f, :code)} />
-              <.button phx-disable-with="Saving..." class="sui-primary ml-auto">Save Changes</.button>
-              <.button id="delete-js-hook-button" type="button" phx-click="delete" class="sui-primary-destructive">Delete</.button>
+              <.button phx-disable-with="Saving..." class="btn-primary ml-auto">Save Changes</.button>
+              <.button id="delete-js-hook-button" type="button" phx-click="delete" class="btn-error">Delete</.button>
             </.form>
 
             <div class="w-full mt-2 space-y-8">
