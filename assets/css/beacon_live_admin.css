@@ -3,3 +3,10 @@
 @import "tailwindcss/utilities";
 @import "../../deps/live_monaco_editor/priv/static/live_monaco_editor.min.css";
 @import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&display=swap");
+
+.beacon-page-code-editor {
+  width: 100%;
+  height: 100% !important;
+  min-height: 0;
+  overflow: hidden;
+}

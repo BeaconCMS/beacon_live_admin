@@ -62,7 +62,7 @@ defmodule Beacon.LiveAdmin.MixProject do
       {:phoenix_html, "~> 4.0"},
       {:live_svelte, "~> 0.12"},
       {:floki, ">= 0.30.0"},
-      {:tailwind_compiler, path: "/Users/bcardarella/projects/tailwind_compiler", override: true},
+      {:tailwind_compiler, github: "BeaconCMS/tailwind_compiler", tag: "v0.0.7"},
       esbuild_dep(),
       {:gettext, "~> 0.26"},
       {:jason, "~> 1.0"},

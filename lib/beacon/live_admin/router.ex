@@ -19,6 +19,8 @@ defmodule Beacon.LiveAdmin.Router do
         scope "/__beacon_live_admin__/assets", alias: false, as: false do
           get "/css-:md5", Beacon.LiveAdmin.AssetsController, :css, as: :beacon_live_admin_asset
           get "/js-:md5", Beacon.LiveAdmin.AssetsController, :js, as: :beacon_live_admin_asset
+          get "/wasm-:md5", Beacon.LiveAdmin.AssetsController, :wasm, as: :beacon_live_admin_asset
+          get "/plugin-css-:md5", Beacon.LiveAdmin.AssetsController, :plugin_css, as: :beacon_live_admin_asset
         end
 
         scope "/__beacon_live_admin__/preview", alias: false, as: false do

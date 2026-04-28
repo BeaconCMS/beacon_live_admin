@@ -1,8 +1,8 @@
 import topbar from "../vendor/topbar"
-import { CodeEditorHook } from "../../deps/live_monaco_editor/priv/static/live_monaco_editor.esm"
 import visualEditorHooks from "../../lib/beacon/live_admin/components/visual_editor/hooks"
 import { getHooks } from "live_svelte"
 import * as Components from "../svelte/**/*.svelte"
+import { CodeEditorHook } from "./hooks/code_editor_hook"
 
 let Hooks = {}
 
@@ -51,6 +51,63 @@ Hooks.ThemeToggle = {
     if (sunIcon) sunIcon.classList.toggle("hidden", theme !== "light")
     if (moonIcon) moonIcon.classList.toggle("hidden", theme !== "dark")
     if (systemIcon) systemIcon.classList.toggle("hidden", theme !== "system")
+  }
+}
+
+Hooks.SidebarToggle = {
+  mounted() {
+    const sidebar = this.el
+    const btn = document.getElementById("sidebar-toggle")
+    const collapseIcon = document.getElementById("sidebar-collapse-icon")
+    const expandIcon = document.getElementById("sidebar-expand-icon")
+    const collapsed = localStorage.getItem("beacon_sidebar_collapsed") === "true"
+
+    if (collapsed) this.collapse(sidebar, collapseIcon, expandIcon)
+
+    btn.addEventListener("click", () => {
+      const isCollapsed = sidebar.style.width === "56px"
+      if (isCollapsed) {
+        this.expand(sidebar, collapseIcon, expandIcon)
+        localStorage.setItem("beacon_sidebar_collapsed", "false")
+      } else {
+        this.collapse(sidebar, collapseIcon, expandIcon)
+        localStorage.setItem("beacon_sidebar_collapsed", "true")
+      }
+    })
+  },
+  collapse(sidebar, collapseIcon, expandIcon) {
+    sidebar.style.width = "56px"
+    collapseIcon.classList.add("hidden")
+    expandIcon.classList.remove("hidden")
+  },
+  expand(sidebar, collapseIcon, expandIcon) {
+    sidebar.style.width = "220px"
+    collapseIcon.classList.remove("hidden")
+    expandIcon.classList.add("hidden")
+  }
+}
+
+Hooks.WorkspaceResize = {
+  mounted() {
+    this._resize = () => {
+      const top = this.el.getBoundingClientRect().top
+      const h = window.innerHeight - top - 12
+      this.el.style.height = h + 'px'
+    }
+    // Wait for layout to settle, then measure
+    requestAnimationFrame(() => {
+      this._resize()
+      this._observer = new ResizeObserver(() => this._resize())
+      this._observer.observe(this.el.parentElement)
+    })
+    window.addEventListener('resize', this._resize)
+  },
+  updated() {
+    requestAnimationFrame(() => this._resize())
+  },
+  destroyed() {
+    window.removeEventListener('resize', this._resize)
+    if (this._observer) this._observer.disconnect()
   }
 }
 

@@ -180,11 +180,11 @@ var BeaconLiveAdmin = (() => {
   var require_picocolors_browser = __commonJS({
     "node_modules/picocolors/picocolors.browser.js"(exports, module) {
       var x = String;
-      var create3 = function() {
+      var create2 = function() {
         return { isColorSupported: false, reset: x, bold: x, dim: x, italic: x, underline: x, inverse: x, hidden: x, strikethrough: x, black: x, red: x, green: x, yellow: x, blue: x, magenta: x, cyan: x, white: x, gray: x, bgBlack: x, bgRed: x, bgGreen: x, bgYellow: x, bgBlue: x, bgMagenta: x, bgCyan: x, bgWhite: x, blackBright: x, redBright: x, greenBright: x, yellowBright: x, blueBright: x, magentaBright: x, cyanBright: x, whiteBright: x, bgBlackBright: x, bgRedBright: x, bgGreenBright: x, bgYellowBright: x, bgBlueBright: x, bgMagentaBright: x, bgCyanBright: x, bgWhiteBright: x };
       };
-      module.exports = create3();
-      module.exports.createColors = create3;
+      module.exports = create2();
+      module.exports.createColors = create2;
     }
   });
 
@@ -257,8 +257,8 @@ var BeaconLiveAdmin = (() => {
           let start = Math.max(this.line - 3, 0);
           let end = Math.min(this.line + 2, lines.length);
           let maxWidth = String(end).length;
-          return lines.slice(start, end).map((line, index5) => {
-            let number2 = start + 1 + index5;
+          return lines.slice(start, end).map((line, index4) => {
+            let number2 = start + 1 + index4;
             let gutter = " " + (" " + number2).slice(-maxWidth) + " | ";
             if (number2 === this.line) {
               if (line.length > 160) {
@@ -788,8 +788,8 @@ var BeaconLiveAdmin = (() => {
         }
         next() {
           if (!this.parent) return void 0;
-          let index5 = this.parent.index(this);
-          return this.parent.nodes[index5 + 1];
+          let index4 = this.parent.index(this);
+          return this.parent.nodes[index4 + 1];
         }
         positionBy(opts) {
           let pos = this.source.start;
@@ -801,17 +801,17 @@ var BeaconLiveAdmin = (() => {
               sourceOffset(inputString, this.source.start),
               sourceOffset(inputString, this.source.end)
             );
-            let index5 = stringRepresentation.indexOf(opts.word);
-            if (index5 !== -1) pos = this.positionInside(index5);
+            let index4 = stringRepresentation.indexOf(opts.word);
+            if (index4 !== -1) pos = this.positionInside(index4);
           }
           return pos;
         }
-        positionInside(index5) {
+        positionInside(index4) {
           let column = this.source.start.column;
           let line = this.source.start.line;
           let inputString = "document" in this.source.input ? this.source.input.document : this.source.input.css;
           let offset = sourceOffset(inputString, this.source.start);
-          let end = offset + index5;
+          let end = offset + index4;
           for (let i = offset; i < end; i++) {
             if (inputString[i] === "\n") {
               column = 1;
@@ -824,8 +824,8 @@ var BeaconLiveAdmin = (() => {
         }
         prev() {
           if (!this.parent) return void 0;
-          let index5 = this.parent.index(this);
-          return this.parent.nodes[index5 - 1];
+          let index4 = this.parent.index(this);
+          return this.parent.nodes[index4 - 1];
         }
         rangeBy(opts) {
           let start = {
@@ -845,11 +845,11 @@ var BeaconLiveAdmin = (() => {
               sourceOffset(inputString, this.source.start),
               sourceOffset(inputString, this.source.end)
             );
-            let index5 = stringRepresentation.indexOf(opts.word);
-            if (index5 !== -1) {
-              start = this.positionInside(index5);
+            let index4 = stringRepresentation.indexOf(opts.word);
+            if (index4 !== -1) {
+              start = this.positionInside(index4);
               end = this.positionInside(
-                index5 + opts.word.length
+                index4 + opts.word.length
               );
             }
           } else {
@@ -1073,10 +1073,10 @@ var BeaconLiveAdmin = (() => {
         each(callback) {
           if (!this.proxyOf.nodes) return void 0;
           let iterator = this.getIterator();
-          let index5, result;
+          let index4, result;
           while (this.indexes[iterator] < this.proxyOf.nodes.length) {
-            index5 = this.indexes[iterator];
-            result = callback(this.proxyOf.nodes[index5], index5);
+            index4 = this.indexes[iterator];
+            result = callback(this.proxyOf.nodes[index4], index4);
             if (result === false) break;
             this.indexes[iterator] += 1;
           }
@@ -1106,7 +1106,7 @@ var BeaconLiveAdmin = (() => {
                   return node[prop2](
                     ...args.map((i) => {
                       if (typeof i === "function") {
-                        return (child2, index5) => i(child2.toProxy(), index5);
+                        return (child2, index4) => i(child2.toProxy(), index4);
                       } else {
                         return i;
                       }
@@ -1149,11 +1149,11 @@ var BeaconLiveAdmin = (() => {
           let nodes = this.normalize(add, this.proxyOf.nodes[existIndex]).reverse();
           existIndex = this.index(exist);
           for (let node of nodes) this.proxyOf.nodes.splice(existIndex + 1, 0, node);
-          let index5;
+          let index4;
           for (let id in this.indexes) {
-            index5 = this.indexes[id];
-            if (existIndex < index5) {
-              this.indexes[id] = index5 + nodes.length;
+            index4 = this.indexes[id];
+            if (existIndex < index4) {
+              this.indexes[id] = index4 + nodes.length;
             }
           }
           this.markDirty();
@@ -1169,11 +1169,11 @@ var BeaconLiveAdmin = (() => {
           ).reverse();
           existIndex = this.index(exist);
           for (let node of nodes) this.proxyOf.nodes.splice(existIndex, 0, node);
-          let index5;
+          let index4;
           for (let id in this.indexes) {
-            index5 = this.indexes[id];
-            if (existIndex <= index5) {
-              this.indexes[id] = index5 + nodes.length;
+            index4 = this.indexes[id];
+            if (existIndex <= index4) {
+              this.indexes[id] = index4 + nodes.length;
             }
           }
           this.markDirty();
@@ -1255,11 +1255,11 @@ var BeaconLiveAdmin = (() => {
           child2 = this.index(child2);
           this.proxyOf.nodes[child2].parent = void 0;
           this.proxyOf.nodes.splice(child2, 1);
-          let index5;
+          let index4;
           for (let id in this.indexes) {
-            index5 = this.indexes[id];
-            if (index5 >= child2) {
-              this.indexes[id] = index5 - 1;
+            index4 = this.indexes[id];
+            if (index4 >= child2) {
+              this.indexes[id] = index4 - 1;
             }
           }
           this.markDirty();
@@ -1871,9 +1871,9 @@ var BeaconLiveAdmin = (() => {
           return nodes;
         }
         removeChild(child2, ignore) {
-          let index5 = this.index(child2);
-          if (!ignore && index5 === 0 && this.nodes.length > 1) {
-            this.nodes[1].raws.before = this.nodes[index5].raws.before;
+          let index4 = this.index(child2);
+          if (!ignore && index4 === 0 && this.nodes.length > 1) {
+            this.nodes[1].raws.before = this.nodes[index4].raws.before;
           }
           return super.removeChild(child2);
         }
@@ -4179,8 +4179,8 @@ var BeaconLiveAdmin = (() => {
         };
         _proto.replaceWith = function replaceWith() {
           if (this.parent) {
-            for (var index5 in arguments) {
-              this.parent.insertBefore(this, arguments[index5]);
+            for (var index4 in arguments) {
+              this.parent.insertBefore(this, arguments[index4]);
             }
             this.remove();
           }
@@ -4373,7 +4373,7 @@ var BeaconLiveAdmin = (() => {
       function _createForOfIteratorHelperLoose(o, allowArrayLike) {
         var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"];
         if (it) return (it = it.call(o)).next.bind(it);
-        if (Array.isArray(o) || (it = _unsupportedIterableToArray3(o)) || allowArrayLike && o && typeof o.length === "number") {
+        if (Array.isArray(o) || (it = _unsupportedIterableToArray2(o)) || allowArrayLike && o && typeof o.length === "number") {
           if (it) o = it;
           var i = 0;
           return function() {
@@ -4383,15 +4383,15 @@ var BeaconLiveAdmin = (() => {
         }
         throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
       }
-      function _unsupportedIterableToArray3(o, minLen) {
+      function _unsupportedIterableToArray2(o, minLen) {
         if (!o) return;
-        if (typeof o === "string") return _arrayLikeToArray3(o, minLen);
+        if (typeof o === "string") return _arrayLikeToArray2(o, minLen);
         var n = Object.prototype.toString.call(o).slice(8, -1);
         if (n === "Object" && o.constructor) n = o.constructor.name;
         if (n === "Map" || n === "Set") return Array.from(o);
-        if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray3(o, minLen);
+        if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray2(o, minLen);
       }
-      function _arrayLikeToArray3(arr, len) {
+      function _arrayLikeToArray2(arr, len) {
         if (len == null || len > arr.length) len = arr.length;
         for (var i = 0, arr2 = new Array(len); i < len; i++) {
           arr2[i] = arr[i];
@@ -4446,10 +4446,10 @@ var BeaconLiveAdmin = (() => {
           this.nodes.unshift(selector);
           return this;
         };
-        _proto.at = function at(index5) {
-          return this.nodes[index5];
+        _proto.at = function at(index4) {
+          return this.nodes[index4];
         };
-        _proto.index = function index5(child2) {
+        _proto.index = function index4(child2) {
           if (typeof child2 === "number") {
             return child2;
           }
@@ -4459,11 +4459,11 @@ var BeaconLiveAdmin = (() => {
           child2 = this.index(child2);
           this.at(child2).parent = void 0;
           this.nodes.splice(child2, 1);
-          var index5;
+          var index4;
           for (var id in this.indexes) {
-            index5 = this.indexes[id];
-            if (index5 >= child2) {
-              this.indexes[id] = index5 - 1;
+            index4 = this.indexes[id];
+            if (index4 >= child2) {
+              this.indexes[id] = index4 - 1;
             }
           }
           return this;
@@ -4484,11 +4484,11 @@ var BeaconLiveAdmin = (() => {
           var oldIndex = this.index(oldNode);
           this.nodes.splice(oldIndex + 1, 0, newNode);
           newNode.parent = this;
-          var index5;
+          var index4;
           for (var id in this.indexes) {
-            index5 = this.indexes[id];
-            if (oldIndex <= index5) {
-              this.indexes[id] = index5 + 1;
+            index4 = this.indexes[id];
+            if (oldIndex <= index4) {
+              this.indexes[id] = index4 + 1;
             }
           }
           return this;
@@ -4498,11 +4498,11 @@ var BeaconLiveAdmin = (() => {
           var oldIndex = this.index(oldNode);
           this.nodes.splice(oldIndex, 0, newNode);
           newNode.parent = this;
-          var index5;
+          var index4;
           for (var id in this.indexes) {
-            index5 = this.indexes[id];
-            if (index5 <= oldIndex) {
-              this.indexes[id] = index5 + 1;
+            index4 = this.indexes[id];
+            if (index4 <= oldIndex) {
+              this.indexes[id] = index4 + 1;
             }
           }
           return this;
@@ -4550,10 +4550,10 @@ var BeaconLiveAdmin = (() => {
           if (!this.length) {
             return void 0;
           }
-          var index5, result;
+          var index4, result;
           while (this.indexes[id] < this.length) {
-            index5 = this.indexes[id];
-            result = callback(this.at(index5), index5);
+            index4 = this.indexes[id];
+            result = callback(this.at(index4), index4);
             if (result === false) {
               break;
             }
@@ -4650,13 +4650,13 @@ var BeaconLiveAdmin = (() => {
         _proto.split = function split(callback) {
           var _this11 = this;
           var current = [];
-          return this.reduce(function(memo, node, index5) {
+          return this.reduce(function(memo, node, index4) {
             var split2 = callback.call(_this11, node);
             current.push(node);
             if (split2) {
               memo.push(current);
               current = [];
-            } else if (index5 === _this11.length - 1) {
+            } else if (index4 === _this11.length - 1) {
               memo.push(current);
             }
             return memo;
@@ -4823,14 +4823,14 @@ var BeaconLiveAdmin = (() => {
     "node_modules/cssesc/cssesc.js"(exports, module) {
       "use strict";
       var object = {};
-      var hasOwnProperty3 = object.hasOwnProperty;
-      var merge3 = function merge4(options, defaults3) {
+      var hasOwnProperty2 = object.hasOwnProperty;
+      var merge2 = function merge3(options, defaults3) {
         if (!options) {
           return defaults3;
         }
         var result = {};
         for (var key in defaults3) {
-          result[key] = hasOwnProperty3.call(options, key) ? options[key] : defaults3[key];
+          result[key] = hasOwnProperty2.call(options, key) ? options[key] : defaults3[key];
         }
         return result;
       };
@@ -4838,7 +4838,7 @@ var BeaconLiveAdmin = (() => {
       var regexSingleEscape = /[ -,\.\/:-@\[\]\^`\{-~]/;
       var regexExcessiveSpaces = /(^|\\+)?(\\[A-F0-9]{1,6})\x20(?![a-fA-F0-9\x20])/g;
       var cssesc = function cssesc2(string, options) {
-        options = merge3(options, cssesc2.options);
+        options = merge2(options, cssesc2.options);
         if (options.quotes != "single" && options.quotes != "double") {
           options.quotes = "single";
         }
@@ -5301,15 +5301,15 @@ var BeaconLiveAdmin = (() => {
     "node_modules/util-deprecate/browser.js"(exports, module) {
       module.exports = deprecate;
       function deprecate(fn, msg) {
-        if (config5("noDeprecation")) {
+        if (config3("noDeprecation")) {
           return fn;
         }
         var warned = false;
         function deprecated() {
           if (!warned) {
-            if (config5("throwDeprecation")) {
+            if (config3("throwDeprecation")) {
               throw new Error(msg);
-            } else if (config5("traceDeprecation")) {
+            } else if (config3("traceDeprecation")) {
               console.trace(msg);
             } else {
               console.warn(msg);
@@ -5320,7 +5320,7 @@ var BeaconLiveAdmin = (() => {
         }
         return deprecated;
       }
-      function config5(name) {
+      function config3(name) {
         try {
           if (!global.localStorage) return false;
         } catch (_) {
@@ -7006,15 +7006,15 @@ var BeaconLiveAdmin = (() => {
           }
           var indices = (0, _sortAscending["default"])(uniqs([0].concat(hasClass, hasId)));
           indices.forEach(function(ind, i) {
-            var index5 = indices[i + 1] || word.length;
-            var value2 = word.slice(ind, index5);
+            var index4 = indices[i + 1] || word.length;
+            var value2 = word.slice(ind, index4);
             if (i === 0 && firstCallback) {
               return firstCallback.call(_this5, value2, indices.length);
             }
             var node;
             var current2 = _this5.currToken;
             var sourceIndex = current2[_tokenize.FIELDS.START_POS] + indices[i];
-            var source2 = getSource(current2[1], current2[2] + ind, current2[3], current2[2] + (index5 - 1));
+            var source2 = getSource(current2[1], current2[2] + ind, current2[3], current2[2] + (index4 - 1));
             if (~hasClass.indexOf(ind)) {
               var classNameOpts = {
                 value: value2.slice(1),
@@ -7111,7 +7111,7 @@ var BeaconLiveAdmin = (() => {
               this.unexpected();
           }
         };
-        _proto.expected = function expected(description, index5, found) {
+        _proto.expected = function expected(description, index4, found) {
           if (Array.isArray(description)) {
             var last = description.pop();
             description = description.join(", ") + " or " + last;
@@ -7119,11 +7119,11 @@ var BeaconLiveAdmin = (() => {
           var an = /^[aeiou]/.test(description[0]) ? "an" : "a";
           if (!found) {
             return this.error("Expected " + an + " " + description + ".", {
-              index: index5
+              index: index4
             });
           }
           return this.error("Expected " + an + " " + description + ', found "' + found + '" instead.', {
-            index: index5
+            index: index4
           });
         };
         _proto.requiredSpace = function requiredSpace(space) {
@@ -8279,712 +8279,6 @@ var BeaconLiveAdmin = (() => {
 
   // js/beacon_live_admin.js
   var import_topbar = __toESM(require_topbar());
-
-  // ../deps/live_monaco_editor/priv/static/live_monaco_editor.esm.js
-  function _defineProperty(obj, key, value2) {
-    if (key in obj) {
-      Object.defineProperty(obj, key, {
-        value: value2,
-        enumerable: true,
-        configurable: true,
-        writable: true
-      });
-    } else {
-      obj[key] = value2;
-    }
-    return obj;
-  }
-  function ownKeys(object, enumerableOnly) {
-    var keys = Object.keys(object);
-    if (Object.getOwnPropertySymbols) {
-      var symbols = Object.getOwnPropertySymbols(object);
-      if (enumerableOnly) symbols = symbols.filter(function(sym) {
-        return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-      });
-      keys.push.apply(keys, symbols);
-    }
-    return keys;
-  }
-  function _objectSpread2(target) {
-    for (var i = 1; i < arguments.length; i++) {
-      var source2 = arguments[i] != null ? arguments[i] : {};
-      if (i % 2) {
-        ownKeys(Object(source2), true).forEach(function(key) {
-          _defineProperty(target, key, source2[key]);
-        });
-      } else if (Object.getOwnPropertyDescriptors) {
-        Object.defineProperties(target, Object.getOwnPropertyDescriptors(source2));
-      } else {
-        ownKeys(Object(source2)).forEach(function(key) {
-          Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source2, key));
-        });
-      }
-    }
-    return target;
-  }
-  function _objectWithoutPropertiesLoose(source2, excluded) {
-    if (source2 == null) return {};
-    var target = {};
-    var sourceKeys = Object.keys(source2);
-    var key, i;
-    for (i = 0; i < sourceKeys.length; i++) {
-      key = sourceKeys[i];
-      if (excluded.indexOf(key) >= 0) continue;
-      target[key] = source2[key];
-    }
-    return target;
-  }
-  function _objectWithoutProperties(source2, excluded) {
-    if (source2 == null) return {};
-    var target = _objectWithoutPropertiesLoose(source2, excluded);
-    var key, i;
-    if (Object.getOwnPropertySymbols) {
-      var sourceSymbolKeys = Object.getOwnPropertySymbols(source2);
-      for (i = 0; i < sourceSymbolKeys.length; i++) {
-        key = sourceSymbolKeys[i];
-        if (excluded.indexOf(key) >= 0) continue;
-        if (!Object.prototype.propertyIsEnumerable.call(source2, key)) continue;
-        target[key] = source2[key];
-      }
-    }
-    return target;
-  }
-  function _slicedToArray(arr, i) {
-    return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();
-  }
-  function _arrayWithHoles(arr) {
-    if (Array.isArray(arr)) return arr;
-  }
-  function _iterableToArrayLimit(arr, i) {
-    if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return;
-    var _arr = [];
-    var _n = true;
-    var _d = false;
-    var _e = void 0;
-    try {
-      for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
-        _arr.push(_s.value);
-        if (i && _arr.length === i) break;
-      }
-    } catch (err) {
-      _d = true;
-      _e = err;
-    } finally {
-      try {
-        if (!_n && _i["return"] != null) _i["return"]();
-      } finally {
-        if (_d) throw _e;
-      }
-    }
-    return _arr;
-  }
-  function _unsupportedIterableToArray(o, minLen) {
-    if (!o) return;
-    if (typeof o === "string") return _arrayLikeToArray(o, minLen);
-    var n = Object.prototype.toString.call(o).slice(8, -1);
-    if (n === "Object" && o.constructor) n = o.constructor.name;
-    if (n === "Map" || n === "Set") return Array.from(o);
-    if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
-  }
-  function _arrayLikeToArray(arr, len) {
-    if (len == null || len > arr.length) len = arr.length;
-    for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i];
-    return arr2;
-  }
-  function _nonIterableRest() {
-    throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
-  }
-  function _defineProperty2(obj, key, value2) {
-    if (key in obj) {
-      Object.defineProperty(obj, key, {
-        value: value2,
-        enumerable: true,
-        configurable: true,
-        writable: true
-      });
-    } else {
-      obj[key] = value2;
-    }
-    return obj;
-  }
-  function ownKeys2(object, enumerableOnly) {
-    var keys = Object.keys(object);
-    if (Object.getOwnPropertySymbols) {
-      var symbols = Object.getOwnPropertySymbols(object);
-      if (enumerableOnly) symbols = symbols.filter(function(sym) {
-        return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-      });
-      keys.push.apply(keys, symbols);
-    }
-    return keys;
-  }
-  function _objectSpread22(target) {
-    for (var i = 1; i < arguments.length; i++) {
-      var source2 = arguments[i] != null ? arguments[i] : {};
-      if (i % 2) {
-        ownKeys2(Object(source2), true).forEach(function(key) {
-          _defineProperty2(target, key, source2[key]);
-        });
-      } else if (Object.getOwnPropertyDescriptors) {
-        Object.defineProperties(target, Object.getOwnPropertyDescriptors(source2));
-      } else {
-        ownKeys2(Object(source2)).forEach(function(key) {
-          Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source2, key));
-        });
-      }
-    }
-    return target;
-  }
-  function compose() {
-    for (var _len = arguments.length, fns = new Array(_len), _key = 0; _key < _len; _key++) {
-      fns[_key] = arguments[_key];
-    }
-    return function(x) {
-      return fns.reduceRight(function(y, f) {
-        return f(y);
-      }, x);
-    };
-  }
-  function curry(fn) {
-    return function curried() {
-      var _this = this;
-      for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-        args[_key2] = arguments[_key2];
-      }
-      return args.length >= fn.length ? fn.apply(this, args) : function() {
-        for (var _len3 = arguments.length, nextArgs = new Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
-          nextArgs[_key3] = arguments[_key3];
-        }
-        return curried.apply(_this, [].concat(args, nextArgs));
-      };
-    };
-  }
-  function isObject(value2) {
-    return {}.toString.call(value2).includes("Object");
-  }
-  function isEmpty(obj) {
-    return !Object.keys(obj).length;
-  }
-  function isFunction(value2) {
-    return typeof value2 === "function";
-  }
-  function hasOwnProperty(object, property) {
-    return Object.prototype.hasOwnProperty.call(object, property);
-  }
-  function validateChanges(initial, changes) {
-    if (!isObject(changes)) errorHandler("changeType");
-    if (Object.keys(changes).some(function(field) {
-      return !hasOwnProperty(initial, field);
-    })) errorHandler("changeField");
-    return changes;
-  }
-  function validateSelector(selector) {
-    if (!isFunction(selector)) errorHandler("selectorType");
-  }
-  function validateHandler(handler) {
-    if (!(isFunction(handler) || isObject(handler))) errorHandler("handlerType");
-    if (isObject(handler) && Object.values(handler).some(function(_handler) {
-      return !isFunction(_handler);
-    })) errorHandler("handlersType");
-  }
-  function validateInitial(initial) {
-    if (!initial) errorHandler("initialIsRequired");
-    if (!isObject(initial)) errorHandler("initialType");
-    if (isEmpty(initial)) errorHandler("initialContent");
-  }
-  function throwError(errorMessages32, type) {
-    throw new Error(errorMessages32[type] || errorMessages32["default"]);
-  }
-  var errorMessages = {
-    initialIsRequired: "initial state is required",
-    initialType: "initial state should be an object",
-    initialContent: "initial state shouldn't be an empty object",
-    handlerType: "handler should be an object or a function",
-    handlersType: "all handlers should be a functions",
-    selectorType: "selector should be a function",
-    changeType: "provided value of changes should be an object",
-    changeField: 'it seams you want to change a field in the state which is not specified in the "initial" state',
-    "default": "an unknown error accured in `state-local` package"
-  };
-  var errorHandler = curry(throwError)(errorMessages);
-  var validators = {
-    changes: validateChanges,
-    selector: validateSelector,
-    handler: validateHandler,
-    initial: validateInitial
-  };
-  function create(initial) {
-    var handler = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {};
-    validators.initial(initial);
-    validators.handler(handler);
-    var state2 = {
-      current: initial
-    };
-    var didUpdate = curry(didStateUpdate)(state2, handler);
-    var update2 = curry(updateState)(state2);
-    var validate = curry(validators.changes)(initial);
-    var getChanges = curry(extractChanges)(state2);
-    function getState22() {
-      var selector = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : function(state22) {
-        return state22;
-      };
-      validators.selector(selector);
-      return selector(state2.current);
-    }
-    function setState22(causedChanges) {
-      compose(didUpdate, update2, validate, getChanges)(causedChanges);
-    }
-    return [getState22, setState22];
-  }
-  function extractChanges(state2, causedChanges) {
-    return isFunction(causedChanges) ? causedChanges(state2.current) : causedChanges;
-  }
-  function updateState(state2, changes) {
-    state2.current = _objectSpread22(_objectSpread22({}, state2.current), changes);
-    return changes;
-  }
-  function didStateUpdate(state2, handler, changes) {
-    isFunction(handler) ? handler(state2.current) : Object.keys(changes).forEach(function(field) {
-      var _handler$field;
-      return (_handler$field = handler[field]) === null || _handler$field === void 0 ? void 0 : _handler$field.call(handler, state2.current[field]);
-    });
-    return changes;
-  }
-  var index = {
-    create
-  };
-  var state_local_default = index;
-  var config = {
-    paths: {
-      vs: "https://cdn.jsdelivr.net/npm/monaco-editor@0.43.0/min/vs"
-    }
-  };
-  var config_default = config;
-  function curry2(fn) {
-    return function curried() {
-      var _this = this;
-      for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-        args[_key] = arguments[_key];
-      }
-      return args.length >= fn.length ? fn.apply(this, args) : function() {
-        for (var _len2 = arguments.length, nextArgs = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-          nextArgs[_key2] = arguments[_key2];
-        }
-        return curried.apply(_this, [].concat(args, nextArgs));
-      };
-    };
-  }
-  var curry_default = curry2;
-  function isObject2(value2) {
-    return {}.toString.call(value2).includes("Object");
-  }
-  var isObject_default = isObject2;
-  function validateConfig(config32) {
-    if (!config32) errorHandler2("configIsRequired");
-    if (!isObject_default(config32)) errorHandler2("configType");
-    if (config32.urls) {
-      informAboutDeprecation();
-      return {
-        paths: {
-          vs: config32.urls.monacoBase
-        }
-      };
-    }
-    return config32;
-  }
-  function informAboutDeprecation() {
-    console.warn(errorMessages2.deprecation);
-  }
-  function throwError2(errorMessages32, type) {
-    throw new Error(errorMessages32[type] || errorMessages32["default"]);
-  }
-  var errorMessages2 = {
-    configIsRequired: "the configuration object is required",
-    configType: "the configuration object should be an object",
-    "default": "an unknown error accured in `@monaco-editor/loader` package",
-    deprecation: "Deprecation warning!\n    You are using deprecated way of configuration.\n\n    Instead of using\n      monaco.config({ urls: { monacoBase: '...' } })\n    use\n      monaco.config({ paths: { vs: '...' } })\n\n    For more please check the link https://github.com/suren-atoyan/monaco-loader#config\n  "
-  };
-  var errorHandler2 = curry_default(throwError2)(errorMessages2);
-  var validators2 = {
-    config: validateConfig
-  };
-  var validators_default = validators2;
-  var compose2 = function compose3() {
-    for (var _len = arguments.length, fns = new Array(_len), _key = 0; _key < _len; _key++) {
-      fns[_key] = arguments[_key];
-    }
-    return function(x) {
-      return fns.reduceRight(function(y, f) {
-        return f(y);
-      }, x);
-    };
-  };
-  var compose_default = compose2;
-  function merge(target, source2) {
-    Object.keys(source2).forEach(function(key) {
-      if (source2[key] instanceof Object) {
-        if (target[key]) {
-          Object.assign(source2[key], merge(target[key], source2[key]));
-        }
-      }
-    });
-    return _objectSpread2(_objectSpread2({}, target), source2);
-  }
-  var deepMerge_default = merge;
-  var CANCELATION_MESSAGE = {
-    type: "cancelation",
-    msg: "operation is manually canceled"
-  };
-  function makeCancelable(promise) {
-    var hasCanceled_ = false;
-    var wrappedPromise = new Promise(function(resolve, reject) {
-      promise.then(function(val) {
-        return hasCanceled_ ? reject(CANCELATION_MESSAGE) : resolve(val);
-      });
-      promise["catch"](reject);
-    });
-    return wrappedPromise.cancel = function() {
-      return hasCanceled_ = true;
-    }, wrappedPromise;
-  }
-  var makeCancelable_default = makeCancelable;
-  var _state$create = state_local_default.create({
-    config: config_default,
-    isInitialized: false,
-    resolve: null,
-    reject: null,
-    monaco: null
-  });
-  var _state$create2 = _slicedToArray(_state$create, 2);
-  var getState = _state$create2[0];
-  var setState = _state$create2[1];
-  function config2(globalConfig) {
-    var _validators$config = validators_default.config(globalConfig), monaco = _validators$config.monaco, config32 = _objectWithoutProperties(_validators$config, ["monaco"]);
-    setState(function(state2) {
-      return {
-        config: deepMerge_default(state2.config, config32),
-        monaco
-      };
-    });
-  }
-  function init() {
-    var state2 = getState(function(_ref) {
-      var monaco = _ref.monaco, isInitialized = _ref.isInitialized, resolve = _ref.resolve;
-      return {
-        monaco,
-        isInitialized,
-        resolve
-      };
-    });
-    if (!state2.isInitialized) {
-      setState({
-        isInitialized: true
-      });
-      if (state2.monaco) {
-        state2.resolve(state2.monaco);
-        return makeCancelable_default(wrapperPromise);
-      }
-      if (window.monaco && window.monaco.editor) {
-        storeMonacoInstance(window.monaco);
-        state2.resolve(window.monaco);
-        return makeCancelable_default(wrapperPromise);
-      }
-      compose_default(injectScripts, getMonacoLoaderScript)(configureLoader);
-    }
-    return makeCancelable_default(wrapperPromise);
-  }
-  function injectScripts(script) {
-    return document.body.appendChild(script);
-  }
-  function createScript(src) {
-    var script = document.createElement("script");
-    return src && (script.src = src), script;
-  }
-  function getMonacoLoaderScript(configureLoader22) {
-    var state2 = getState(function(_ref2) {
-      var config32 = _ref2.config, reject = _ref2.reject;
-      return {
-        config: config32,
-        reject
-      };
-    });
-    var loaderScript = createScript("".concat(state2.config.paths.vs, "/loader.js"));
-    loaderScript.onload = function() {
-      return configureLoader22();
-    };
-    loaderScript.onerror = state2.reject;
-    return loaderScript;
-  }
-  function configureLoader() {
-    var state2 = getState(function(_ref3) {
-      var config32 = _ref3.config, resolve = _ref3.resolve, reject = _ref3.reject;
-      return {
-        config: config32,
-        resolve,
-        reject
-      };
-    });
-    var require2 = window.require;
-    require2.config(state2.config);
-    require2(["vs/editor/editor.main"], function(monaco) {
-      storeMonacoInstance(monaco);
-      state2.resolve(monaco);
-    }, function(error) {
-      state2.reject(error);
-    });
-  }
-  function storeMonacoInstance(monaco) {
-    if (!getState().monaco) {
-      setState({
-        monaco
-      });
-    }
-  }
-  function __getMonacoInstance() {
-    return getState(function(_ref4) {
-      var monaco = _ref4.monaco;
-      return monaco;
-    });
-  }
-  var wrapperPromise = new Promise(function(resolve, reject) {
-    return setState({
-      resolve,
-      reject
-    });
-  });
-  var loader = {
-    config: config2,
-    init,
-    __getMonacoInstance
-  };
-  var loader_default = loader;
-  var colors = {
-    background: "#282c34",
-    default: "#c4cad6",
-    lightRed: "#e06c75",
-    blue: "#61afef",
-    gray: "#8c92a3",
-    green: "#98c379",
-    purple: "#c678dd",
-    red: "#be5046",
-    teal: "#56b6c2",
-    peach: "#d19a66"
-  };
-  var rules = (colors2) => [
-    { token: "", foreground: colors2.default },
-    { token: "variable", foreground: colors2.lightRed },
-    { token: "constant", foreground: colors2.blue },
-    { token: "constant.character.escape", foreground: colors2.blue },
-    { token: "comment", foreground: colors2.gray },
-    { token: "number", foreground: colors2.blue },
-    { token: "regexp", foreground: colors2.lightRed },
-    { token: "type", foreground: colors2.lightRed },
-    { token: "string", foreground: colors2.green },
-    { token: "keyword", foreground: colors2.purple },
-    { token: "operator", foreground: colors2.peach },
-    { token: "delimiter.bracket.embed", foreground: colors2.red },
-    { token: "sigil", foreground: colors2.teal },
-    { token: "function", foreground: colors2.blue },
-    { token: "function.call", foreground: colors2.default },
-    // Markdown specific
-    { token: "emphasis", fontStyle: "italic" },
-    { token: "strong", fontStyle: "bold" },
-    { token: "keyword.md", foreground: colors2.lightRed },
-    { token: "keyword.table", foreground: colors2.lightRed },
-    { token: "string.link.md", foreground: colors2.blue },
-    { token: "variable.md", foreground: colors2.teal },
-    { token: "string.md", foreground: colors2.default },
-    { token: "variable.source.md", foreground: colors2.default },
-    // XML specific
-    { token: "tag", foreground: colors2.lightRed },
-    { token: "metatag", foreground: colors2.lightRed },
-    { token: "attribute.name", foreground: colors2.peach },
-    { token: "attribute.value", foreground: colors2.green },
-    // JSON specific
-    { token: "string.key", foreground: colors2.lightRed },
-    { token: "keyword.json", foreground: colors2.blue },
-    // SQL specific
-    { token: "operator.sql", foreground: colors2.purple }
-  ];
-  var theme = {
-    base: "vs-dark",
-    inherit: false,
-    rules: rules(colors),
-    colors: {
-      "editor.background": colors.background,
-      "editor.foreground": colors.default,
-      "editorLineNumber.foreground": "#636d83",
-      "editorCursor.foreground": "#636d83",
-      "editor.selectionBackground": "#3e4451",
-      "editor.findMatchHighlightBackground": "#528bff3d",
-      "editorSuggestWidget.background": "#21252b",
-      "editorSuggestWidget.border": "#181a1f",
-      "editorSuggestWidget.selectedBackground": "#2c313a",
-      "input.background": "#1b1d23",
-      "input.border": "#181a1f",
-      "editorBracketMatch.border": "#282c34",
-      "editorBracketMatch.background": "#3e4451"
-    }
-  };
-  var CodeEditor = class {
-    constructor(el, path, value2, opts) {
-      this.el = el;
-      this.path = path;
-      this.value = value2;
-      this.opts = opts;
-      this.standalone_code_editor = null;
-      this._onMount = [];
-    }
-    isMounted() {
-      return !!this.standalone_code_editor;
-    }
-    mount() {
-      if (this.isMounted()) {
-        throw new Error("The monaco editor is already mounted");
-      }
-      this._mountEditor();
-    }
-    onMount(callback) {
-      this._onMount.push(callback);
-    }
-    dispose() {
-      if (this.isMounted()) {
-        const model = this.standalone_code_editor.getModel();
-        if (model) {
-          model.dispose();
-        }
-        this.standalone_code_editor.dispose();
-      }
-    }
-    _mountEditor() {
-      this.opts.value = this.value;
-      loader_default.config({
-        paths: { vs: "https://cdn.jsdelivr.net/npm/monaco-editor@0.52.2/min/vs" }
-      });
-      loader_default.init().then((monaco) => {
-        monaco.editor.defineTheme("default", theme);
-        let modelUri = monaco.Uri.parse(this.path);
-        let language = this.opts.language;
-        let model = monaco.editor.createModel(this.value, language, modelUri);
-        this.opts.language = void 0;
-        this.opts.model = model;
-        this.standalone_code_editor = monaco.editor.create(this.el, this.opts);
-        this._onMount.forEach((callback) => callback(monaco));
-        this._setScreenDependantEditorOptions();
-        this.standalone_code_editor.addAction({
-          contextMenuGroupId: "word-wrapping",
-          id: "enable-word-wrapping",
-          label: "Enable word wrapping",
-          precondition: "config.editor.wordWrap == off",
-          keybindings: [monaco.KeyMod.Alt | monaco.KeyCode.KeyZ],
-          run: (editor) => editor.updateOptions({ wordWrap: "on" })
-        });
-        this.standalone_code_editor.addAction({
-          contextMenuGroupId: "word-wrapping",
-          id: "disable-word-wrapping",
-          label: "Disable word wrapping",
-          precondition: "config.editor.wordWrap == on",
-          keybindings: [monaco.KeyMod.Alt | monaco.KeyCode.KeyZ],
-          run: (editor) => editor.updateOptions({ wordWrap: "off" })
-        });
-        const resizeObserver = new ResizeObserver((entries) => {
-          entries.forEach(() => {
-            if (this.el.offsetHeight > 0) {
-              this._setScreenDependantEditorOptions();
-              this.standalone_code_editor.layout();
-            }
-          });
-        });
-        resizeObserver.observe(this.el);
-        this.standalone_code_editor.onDidContentSizeChange(() => {
-          const contentHeight = this.standalone_code_editor.getContentHeight();
-          this.el.style.height = `${contentHeight}px`;
-        });
-      });
-    }
-    _setScreenDependantEditorOptions() {
-      if (window.screen.width < 768) {
-        this.standalone_code_editor.updateOptions({
-          folding: false,
-          lineDecorationsWidth: 16,
-          lineNumbersMinChars: Math.floor(
-            Math.log10(this.standalone_code_editor.getModel().getLineCount())
-          ) + 3
-        });
-      } else {
-        this.standalone_code_editor.updateOptions({
-          folding: true,
-          lineDecorationsWidth: 10,
-          lineNumbersMinChars: 5
-        });
-      }
-    }
-  };
-  var code_editor_default = CodeEditor;
-  var CodeEditorHook = {
-    mounted() {
-      const opts = JSON.parse(this.el.dataset.opts);
-      this.codeEditor = new code_editor_default(
-        this.el,
-        this.el.dataset.path,
-        this.el.dataset.value,
-        opts
-      );
-      this.codeEditor.onMount((monaco) => {
-        if (this.el.dataset.changeEvent && this.el.dataset.changeEvent !== "") {
-          this.codeEditor.standalone_code_editor.onDidChangeModelContent(() => {
-            if (this.el.dataset.target && this.el.dataset.target !== "") {
-              this.pushEventTo(
-                this.el.dataset.target,
-                this.el.dataset.changeEvent,
-                {
-                  value: this.codeEditor.standalone_code_editor.getValue()
-                }
-              );
-            } else {
-              this.pushEvent(this.el.dataset.changeEvent, {
-                value: this.codeEditor.standalone_code_editor.getValue()
-              });
-            }
-          });
-        }
-        this.handleEvent(
-          "lme:change_language:" + this.el.dataset.path,
-          (data) => {
-            const model = this.codeEditor.standalone_code_editor.getModel();
-            if (model.getLanguageId() !== data.mimeTypeOrLanguageId) {
-              monaco.editor.setModelLanguage(model, data.mimeTypeOrLanguageId);
-            }
-          }
-        );
-        this.handleEvent("lme:set_value:" + this.el.dataset.path, (data) => {
-          this.codeEditor.standalone_code_editor.setValue(data.value);
-        });
-        this.el.querySelectorAll("textarea").forEach((textarea) => {
-          textarea.setAttribute(
-            "name",
-            "live_monaco_editor[" + this.el.dataset.path + "]"
-          );
-        });
-        this.el.removeAttribute("data-value");
-        this.el.removeAttribute("data-opts");
-        this.el.dispatchEvent(
-          new CustomEvent("lme:editor_mounted", {
-            detail: { hook: this, editor: this.codeEditor },
-            bubbles: true
-          })
-        );
-      });
-      if (!this.codeEditor.isMounted()) {
-        this.codeEditor.mount();
-      }
-    },
-    destroyed() {
-      if (this.codeEditor) {
-        this.codeEditor.dispose();
-      }
-    }
-  };
 
   // ../lib/beacon/live_admin/components/visual_editor/hooks/color_picker.js
   var ColorPicker = {
@@ -10296,8 +9590,8 @@ https://svelte.dev/e/svelte_element_invalid_this_value`);
     }
     const { indexOf, lastIndexOf, includes } = array_prototype2;
     array_prototype2.indexOf = function(item, from_index) {
-      const index5 = indexOf.call(this, item, from_index);
-      if (index5 === -1) {
+      const index4 = indexOf.call(this, item, from_index);
+      if (index4 === -1) {
         for (let i = from_index ?? 0; i < this.length; i += 1) {
           if (get_proxied_value(this[i]) === item) {
             state_proxy_equality_mismatch("array.indexOf(...)");
@@ -10305,11 +9599,11 @@ https://svelte.dev/e/svelte_element_invalid_this_value`);
           }
         }
       }
-      return index5;
+      return index4;
     };
     array_prototype2.lastIndexOf = function(item, from_index) {
-      const index5 = lastIndexOf.call(this, item, from_index ?? this.length - 1);
-      if (index5 === -1) {
+      const index4 = lastIndexOf.call(this, item, from_index ?? this.length - 1);
+      if (index4 === -1) {
         for (let i = 0; i <= (from_index ?? this.length - 1); i += 1) {
           if (get_proxied_value(this[i]) === item) {
             state_proxy_equality_mismatch("array.lastIndexOf(...)");
@@ -10317,7 +9611,7 @@ https://svelte.dev/e/svelte_element_invalid_this_value`);
           }
         }
       }
-      return index5;
+      return index4;
     };
     array_prototype2.includes = function(item, from_index) {
       const has = includes.call(this, item, from_index);
@@ -11238,13 +10532,13 @@ ${indent}in ${name}`).join("")}
   function remove_reaction(signal, dependency) {
     let reactions = dependency.reactions;
     if (reactions !== null) {
-      var index5 = index_of.call(reactions, signal);
-      if (index5 !== -1) {
+      var index4 = index_of.call(reactions, signal);
+      if (index4 !== -1) {
         var new_length = reactions.length - 1;
         if (new_length === 0) {
           reactions = dependency.reactions = null;
         } else {
-          reactions[index5] = reactions[new_length];
+          reactions[index4] = reactions[new_length];
           reactions.pop();
         }
       }
@@ -12391,7 +11685,7 @@ ${indent}in ${name}`).join("")}
   function set_current_each_item(item) {
     current_each_item = item;
   }
-  function index2(_, i) {
+  function index(_, i) {
     return i;
   }
   function pause_effects(state2, items, controlled_anchor, items_map) {
@@ -12674,7 +11968,7 @@ ${indent}in ${name}`).join("")}
     active_effect.first = state2.first && state2.first.e;
     active_effect.last = prev && prev.e;
   }
-  function update_item(item, value2, index5, type) {
+  function update_item(item, value2, index4, type) {
     if ((type & EACH_ITEM_REACTIVE) !== 0) {
       internal_set(item.v, value2);
     }
@@ -12682,21 +11976,21 @@ ${indent}in ${name}`).join("")}
       internal_set(
         /** @type {Value<number>} */
         item.i,
-        index5
+        index4
       );
     } else {
-      item.i = index5;
+      item.i = index4;
     }
   }
-  function create_item(anchor, state2, prev, next2, value2, key, index5, render_fn, flags, get_collection) {
+  function create_item(anchor, state2, prev, next2, value2, key, index4, render_fn, flags, get_collection) {
     var previous_each_item = current_each_item;
     var reactive = (flags & EACH_ITEM_REACTIVE) !== 0;
     var mutable = (flags & EACH_ITEM_IMMUTABLE) === 0;
     var v = reactive ? mutable ? mutable_source(value2) : source(value2) : value2;
-    var i = (flags & EACH_INDEX_REACTIVE) === 0 ? index5 : source(index5);
+    var i = (flags & EACH_INDEX_REACTIVE) === 0 ? index4 : source(index4);
     if (true_default && reactive) {
       v.debug = () => {
-        var collection_index = typeof i === "number" ? index5 : i.v;
+        var collection_index = typeof i === "number" ? index4 : i.v;
         get_collection()[collection_index];
       };
     }
@@ -13707,7 +13001,7 @@ ${indent}in ${name}`).join("")}
   }
 
   // node_modules/svelte/src/internal/client/dom/legacy/lifecycle.js
-  function init2(immutable = false) {
+  function init(immutable = false) {
     const context = (
       /** @type {ComponentContextLegacy} */
       component_context
@@ -14677,9 +13971,9 @@ ${indent}in ${name}`).join("")}
   function normalizeComponents(components) {
     if (!Array.isArray(components.default) || !Array.isArray(components.filenames)) return components;
     const normalized = {};
-    for (const [index5, module] of components.default.entries()) {
+    for (const [index4, module] of components.default.entries()) {
       const Component = module.default;
-      const name = components.filenames[index5].replace("../svelte/", "").replace(".svelte", "");
+      const name = components.filenames[index4].replace("../svelte/", "").replace(".svelte", "");
       normalized[name] = Component;
     }
     return normalized;
@@ -14801,7 +14095,7 @@ ${indent}in ${name}`).join("")}
     push($$props, false, Backdrop);
     const [$$stores, $$cleanup] = setup_stores();
     const $backdropVisible = () => (validate_store(backdropVisible, "backdropVisible"), store_get(backdropVisible, "$backdropVisible", $$stores));
-    init2();
+    init();
     var fragment = comment();
     var node = first_child(fragment);
     {
@@ -14865,11 +14159,11 @@ ${indent}in ${name}`).join("")}
   // svelte/components/CodeEditor.svelte
   var CodeEditor_exports = {};
   __export(CodeEditor_exports, {
-    default: () => CodeEditor2
+    default: () => CodeEditor
   });
 
   // node_modules/@monaco-editor/loader/lib/es/_virtual/_rollupPluginBabelHelpers.js
-  function _defineProperty3(obj, key, value2) {
+  function _defineProperty(obj, key, value2) {
     if (key in obj) {
       Object.defineProperty(obj, key, {
         value: value2,
@@ -14882,7 +14176,7 @@ ${indent}in ${name}`).join("")}
     }
     return obj;
   }
-  function ownKeys3(object, enumerableOnly) {
+  function ownKeys(object, enumerableOnly) {
     var keys = Object.keys(object);
     if (Object.getOwnPropertySymbols) {
       var symbols = Object.getOwnPropertySymbols(object);
@@ -14893,24 +14187,24 @@ ${indent}in ${name}`).join("")}
     }
     return keys;
   }
-  function _objectSpread23(target) {
+  function _objectSpread2(target) {
     for (var i = 1; i < arguments.length; i++) {
       var source2 = arguments[i] != null ? arguments[i] : {};
       if (i % 2) {
-        ownKeys3(Object(source2), true).forEach(function(key) {
-          _defineProperty3(target, key, source2[key]);
+        ownKeys(Object(source2), true).forEach(function(key) {
+          _defineProperty(target, key, source2[key]);
         });
       } else if (Object.getOwnPropertyDescriptors) {
         Object.defineProperties(target, Object.getOwnPropertyDescriptors(source2));
       } else {
-        ownKeys3(Object(source2)).forEach(function(key) {
+        ownKeys(Object(source2)).forEach(function(key) {
           Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source2, key));
         });
       }
     }
     return target;
   }
-  function _objectWithoutPropertiesLoose2(source2, excluded) {
+  function _objectWithoutPropertiesLoose(source2, excluded) {
     if (source2 == null) return {};
     var target = {};
     var sourceKeys = Object.keys(source2);
@@ -14922,9 +14216,9 @@ ${indent}in ${name}`).join("")}
     }
     return target;
   }
-  function _objectWithoutProperties2(source2, excluded) {
+  function _objectWithoutProperties(source2, excluded) {
     if (source2 == null) return {};
-    var target = _objectWithoutPropertiesLoose2(source2, excluded);
+    var target = _objectWithoutPropertiesLoose(source2, excluded);
     var key, i;
     if (Object.getOwnPropertySymbols) {
       var sourceSymbolKeys = Object.getOwnPropertySymbols(source2);
@@ -14937,13 +14231,13 @@ ${indent}in ${name}`).join("")}
     }
     return target;
   }
-  function _slicedToArray2(arr, i) {
-    return _arrayWithHoles2(arr) || _iterableToArrayLimit2(arr, i) || _unsupportedIterableToArray2(arr, i) || _nonIterableRest2();
+  function _slicedToArray(arr, i) {
+    return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();
   }
-  function _arrayWithHoles2(arr) {
+  function _arrayWithHoles(arr) {
     if (Array.isArray(arr)) return arr;
   }
-  function _iterableToArrayLimit2(arr, i) {
+  function _iterableToArrayLimit(arr, i) {
     if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return;
     var _arr = [];
     var _n = true;
@@ -14966,25 +14260,25 @@ ${indent}in ${name}`).join("")}
     }
     return _arr;
   }
-  function _unsupportedIterableToArray2(o, minLen) {
+  function _unsupportedIterableToArray(o, minLen) {
     if (!o) return;
-    if (typeof o === "string") return _arrayLikeToArray2(o, minLen);
+    if (typeof o === "string") return _arrayLikeToArray(o, minLen);
     var n = Object.prototype.toString.call(o).slice(8, -1);
     if (n === "Object" && o.constructor) n = o.constructor.name;
     if (n === "Map" || n === "Set") return Array.from(o);
-    if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray2(o, minLen);
+    if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
   }
-  function _arrayLikeToArray2(arr, len) {
+  function _arrayLikeToArray(arr, len) {
     if (len == null || len > arr.length) len = arr.length;
     for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i];
     return arr2;
   }
-  function _nonIterableRest2() {
+  function _nonIterableRest() {
     throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }
 
   // node_modules/state-local/lib/es/state-local.js
-  function _defineProperty4(obj, key, value2) {
+  function _defineProperty2(obj, key, value2) {
     if (key in obj) {
       Object.defineProperty(obj, key, {
         value: value2,
@@ -14997,7 +14291,7 @@ ${indent}in ${name}`).join("")}
     }
     return obj;
   }
-  function ownKeys4(object, enumerableOnly) {
+  function ownKeys2(object, enumerableOnly) {
     var keys = Object.keys(object);
     if (Object.getOwnPropertySymbols) {
       var symbols = Object.getOwnPropertySymbols(object);
@@ -15008,24 +14302,24 @@ ${indent}in ${name}`).join("")}
     }
     return keys;
   }
-  function _objectSpread24(target) {
+  function _objectSpread22(target) {
     for (var i = 1; i < arguments.length; i++) {
       var source2 = arguments[i] != null ? arguments[i] : {};
       if (i % 2) {
-        ownKeys4(Object(source2), true).forEach(function(key) {
-          _defineProperty4(target, key, source2[key]);
+        ownKeys2(Object(source2), true).forEach(function(key) {
+          _defineProperty2(target, key, source2[key]);
         });
       } else if (Object.getOwnPropertyDescriptors) {
         Object.defineProperties(target, Object.getOwnPropertyDescriptors(source2));
       } else {
-        ownKeys4(Object(source2)).forEach(function(key) {
+        ownKeys2(Object(source2)).forEach(function(key) {
           Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source2, key));
         });
       }
     }
     return target;
   }
-  function compose4() {
+  function compose() {
     for (var _len = arguments.length, fns = new Array(_len), _key = 0; _key < _len; _key++) {
       fns[_key] = arguments[_key];
     }
@@ -15035,7 +14329,7 @@ ${indent}in ${name}`).join("")}
       }, x);
     };
   }
-  function curry3(fn) {
+  function curry(fn) {
     return function curried() {
       var _this = this;
       for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
@@ -15049,43 +14343,43 @@ ${indent}in ${name}`).join("")}
       };
     };
   }
-  function isObject3(value2) {
+  function isObject(value2) {
     return {}.toString.call(value2).includes("Object");
   }
-  function isEmpty2(obj) {
+  function isEmpty(obj) {
     return !Object.keys(obj).length;
   }
-  function isFunction2(value2) {
+  function isFunction(value2) {
     return typeof value2 === "function";
   }
-  function hasOwnProperty2(object, property) {
+  function hasOwnProperty(object, property) {
     return Object.prototype.hasOwnProperty.call(object, property);
   }
-  function validateChanges2(initial, changes) {
-    if (!isObject3(changes)) errorHandler3("changeType");
+  function validateChanges(initial, changes) {
+    if (!isObject(changes)) errorHandler("changeType");
     if (Object.keys(changes).some(function(field) {
-      return !hasOwnProperty2(initial, field);
-    })) errorHandler3("changeField");
+      return !hasOwnProperty(initial, field);
+    })) errorHandler("changeField");
     return changes;
   }
-  function validateSelector2(selector) {
-    if (!isFunction2(selector)) errorHandler3("selectorType");
+  function validateSelector(selector) {
+    if (!isFunction(selector)) errorHandler("selectorType");
   }
-  function validateHandler2(handler) {
-    if (!(isFunction2(handler) || isObject3(handler))) errorHandler3("handlerType");
-    if (isObject3(handler) && Object.values(handler).some(function(_handler) {
-      return !isFunction2(_handler);
-    })) errorHandler3("handlersType");
+  function validateHandler(handler) {
+    if (!(isFunction(handler) || isObject(handler))) errorHandler("handlerType");
+    if (isObject(handler) && Object.values(handler).some(function(_handler) {
+      return !isFunction(_handler);
+    })) errorHandler("handlersType");
   }
-  function validateInitial2(initial) {
-    if (!initial) errorHandler3("initialIsRequired");
-    if (!isObject3(initial)) errorHandler3("initialType");
-    if (isEmpty2(initial)) errorHandler3("initialContent");
+  function validateInitial(initial) {
+    if (!initial) errorHandler("initialIsRequired");
+    if (!isObject(initial)) errorHandler("initialType");
+    if (isEmpty(initial)) errorHandler("initialContent");
   }
-  function throwError3(errorMessages5, type) {
-    throw new Error(errorMessages5[type] || errorMessages5["default"]);
+  function throwError(errorMessages3, type) {
+    throw new Error(errorMessages3[type] || errorMessages3["default"]);
   }
-  var errorMessages3 = {
+  var errorMessages = {
     initialIsRequired: "initial state is required",
     initialType: "initial state should be an object",
     initialContent: "initial state shouldn't be an empty object",
@@ -15096,65 +14390,65 @@ ${indent}in ${name}`).join("")}
     changeField: 'it seams you want to change a field in the state which is not specified in the "initial" state',
     "default": "an unknown error accured in `state-local` package"
   };
-  var errorHandler3 = curry3(throwError3)(errorMessages3);
-  var validators3 = {
-    changes: validateChanges2,
-    selector: validateSelector2,
-    handler: validateHandler2,
-    initial: validateInitial2
+  var errorHandler = curry(throwError)(errorMessages);
+  var validators = {
+    changes: validateChanges,
+    selector: validateSelector,
+    handler: validateHandler,
+    initial: validateInitial
   };
-  function create2(initial) {
+  function create(initial) {
     var handler = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {};
-    validators3.initial(initial);
-    validators3.handler(handler);
+    validators.initial(initial);
+    validators.handler(handler);
     var state2 = {
       current: initial
     };
-    var didUpdate = curry3(didStateUpdate2)(state2, handler);
-    var update2 = curry3(updateState2)(state2);
-    var validate = curry3(validators3.changes)(initial);
-    var getChanges = curry3(extractChanges2)(state2);
-    function getState3() {
+    var didUpdate = curry(didStateUpdate)(state2, handler);
+    var update2 = curry(updateState)(state2);
+    var validate = curry(validators.changes)(initial);
+    var getChanges = curry(extractChanges)(state2);
+    function getState2() {
       var selector = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : function(state3) {
         return state3;
       };
-      validators3.selector(selector);
+      validators.selector(selector);
       return selector(state2.current);
     }
-    function setState3(causedChanges) {
-      compose4(didUpdate, update2, validate, getChanges)(causedChanges);
+    function setState2(causedChanges) {
+      compose(didUpdate, update2, validate, getChanges)(causedChanges);
     }
-    return [getState3, setState3];
+    return [getState2, setState2];
   }
-  function extractChanges2(state2, causedChanges) {
-    return isFunction2(causedChanges) ? causedChanges(state2.current) : causedChanges;
+  function extractChanges(state2, causedChanges) {
+    return isFunction(causedChanges) ? causedChanges(state2.current) : causedChanges;
   }
-  function updateState2(state2, changes) {
-    state2.current = _objectSpread24(_objectSpread24({}, state2.current), changes);
+  function updateState(state2, changes) {
+    state2.current = _objectSpread22(_objectSpread22({}, state2.current), changes);
     return changes;
   }
-  function didStateUpdate2(state2, handler, changes) {
-    isFunction2(handler) ? handler(state2.current) : Object.keys(changes).forEach(function(field) {
+  function didStateUpdate(state2, handler, changes) {
+    isFunction(handler) ? handler(state2.current) : Object.keys(changes).forEach(function(field) {
       var _handler$field;
       return (_handler$field = handler[field]) === null || _handler$field === void 0 ? void 0 : _handler$field.call(handler, state2.current[field]);
     });
     return changes;
   }
-  var index3 = {
-    create: create2
+  var index2 = {
+    create
   };
-  var state_local_default2 = index3;
+  var state_local_default = index2;
 
   // node_modules/@monaco-editor/loader/lib/es/config/index.js
-  var config3 = {
+  var config = {
     paths: {
       vs: "https://cdn.jsdelivr.net/npm/monaco-editor@0.52.2/min/vs"
     }
   };
-  var config_default2 = config3;
+  var config_default = config;
 
   // node_modules/@monaco-editor/loader/lib/es/utils/curry.js
-  function curry4(fn) {
+  function curry2(fn) {
     return function curried() {
       var _this = this;
       for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
@@ -15168,48 +14462,48 @@ ${indent}in ${name}`).join("")}
       };
     };
   }
-  var curry_default2 = curry4;
+  var curry_default = curry2;
 
   // node_modules/@monaco-editor/loader/lib/es/utils/isObject.js
-  function isObject4(value2) {
+  function isObject2(value2) {
     return {}.toString.call(value2).includes("Object");
   }
-  var isObject_default2 = isObject4;
+  var isObject_default = isObject2;
 
   // node_modules/@monaco-editor/loader/lib/es/validators/index.js
-  function validateConfig2(config5) {
-    if (!config5) errorHandler4("configIsRequired");
-    if (!isObject_default2(config5)) errorHandler4("configType");
-    if (config5.urls) {
-      informAboutDeprecation2();
+  function validateConfig(config3) {
+    if (!config3) errorHandler2("configIsRequired");
+    if (!isObject_default(config3)) errorHandler2("configType");
+    if (config3.urls) {
+      informAboutDeprecation();
       return {
         paths: {
-          vs: config5.urls.monacoBase
+          vs: config3.urls.monacoBase
         }
       };
     }
-    return config5;
+    return config3;
   }
-  function informAboutDeprecation2() {
-    console.warn(errorMessages4.deprecation);
+  function informAboutDeprecation() {
+    console.warn(errorMessages2.deprecation);
   }
-  function throwError4(errorMessages5, type) {
-    throw new Error(errorMessages5[type] || errorMessages5["default"]);
+  function throwError2(errorMessages3, type) {
+    throw new Error(errorMessages3[type] || errorMessages3["default"]);
   }
-  var errorMessages4 = {
+  var errorMessages2 = {
     configIsRequired: "the configuration object is required",
     configType: "the configuration object should be an object",
     "default": "an unknown error accured in `@monaco-editor/loader` package",
     deprecation: "Deprecation warning!\n    You are using deprecated way of configuration.\n\n    Instead of using\n      monaco.config({ urls: { monacoBase: '...' } })\n    use\n      monaco.config({ paths: { vs: '...' } })\n\n    For more please check the link https://github.com/suren-atoyan/monaco-loader#config\n  "
   };
-  var errorHandler4 = curry_default2(throwError4)(errorMessages4);
-  var validators4 = {
-    config: validateConfig2
+  var errorHandler2 = curry_default(throwError2)(errorMessages2);
+  var validators2 = {
+    config: validateConfig
   };
-  var validators_default2 = validators4;
+  var validators_default = validators2;
 
   // node_modules/@monaco-editor/loader/lib/es/utils/compose.js
-  var compose5 = function compose6() {
+  var compose2 = function compose3() {
     for (var _len = arguments.length, fns = new Array(_len), _key = 0; _key < _len; _key++) {
       fns[_key] = arguments[_key];
     }
@@ -15219,31 +14513,31 @@ ${indent}in ${name}`).join("")}
       }, x);
     };
   };
-  var compose_default2 = compose5;
+  var compose_default = compose2;
 
   // node_modules/@monaco-editor/loader/lib/es/utils/deepMerge.js
-  function merge2(target, source2) {
+  function merge(target, source2) {
     Object.keys(source2).forEach(function(key) {
       if (source2[key] instanceof Object) {
         if (target[key]) {
-          Object.assign(source2[key], merge2(target[key], source2[key]));
+          Object.assign(source2[key], merge(target[key], source2[key]));
         }
       }
     });
-    return _objectSpread23(_objectSpread23({}, target), source2);
+    return _objectSpread2(_objectSpread2({}, target), source2);
   }
-  var deepMerge_default2 = merge2;
+  var deepMerge_default = merge;
 
   // node_modules/@monaco-editor/loader/lib/es/utils/makeCancelable.js
-  var CANCELATION_MESSAGE2 = {
+  var CANCELATION_MESSAGE = {
     type: "cancelation",
     msg: "operation is manually canceled"
   };
-  function makeCancelable2(promise) {
+  function makeCancelable(promise) {
     var hasCanceled_ = false;
     var wrappedPromise = new Promise(function(resolve, reject) {
       promise.then(function(val) {
-        return hasCanceled_ ? reject(CANCELATION_MESSAGE2) : resolve(val);
+        return hasCanceled_ ? reject(CANCELATION_MESSAGE) : resolve(val);
       });
       promise["catch"](reject);
     });
@@ -15251,30 +14545,30 @@ ${indent}in ${name}`).join("")}
       return hasCanceled_ = true;
     }, wrappedPromise;
   }
-  var makeCancelable_default2 = makeCancelable2;
+  var makeCancelable_default = makeCancelable;
 
   // node_modules/@monaco-editor/loader/lib/es/loader/index.js
-  var _state$create3 = state_local_default2.create({
-    config: config_default2,
+  var _state$create = state_local_default.create({
+    config: config_default,
     isInitialized: false,
     resolve: null,
     reject: null,
     monaco: null
   });
-  var _state$create22 = _slicedToArray2(_state$create3, 2);
-  var getState2 = _state$create22[0];
-  var setState2 = _state$create22[1];
-  function config4(globalConfig) {
-    var _validators$config = validators_default2.config(globalConfig), monaco = _validators$config.monaco, config5 = _objectWithoutProperties2(_validators$config, ["monaco"]);
-    setState2(function(state2) {
+  var _state$create2 = _slicedToArray(_state$create, 2);
+  var getState = _state$create2[0];
+  var setState = _state$create2[1];
+  function config2(globalConfig) {
+    var _validators$config = validators_default.config(globalConfig), monaco = _validators$config.monaco, config3 = _objectWithoutProperties(_validators$config, ["monaco"]);
+    setState(function(state2) {
       return {
-        config: deepMerge_default2(state2.config, config5),
+        config: deepMerge_default(state2.config, config3),
         monaco
       };
     });
   }
-  function init3() {
-    var state2 = getState2(function(_ref) {
+  function init2() {
+    var state2 = getState(function(_ref) {
       var monaco = _ref.monaco, isInitialized = _ref.isInitialized, resolve = _ref.resolve;
       return {
         monaco,
@@ -15283,49 +14577,49 @@ ${indent}in ${name}`).join("")}
       };
     });
     if (!state2.isInitialized) {
-      setState2({
+      setState({
         isInitialized: true
       });
       if (state2.monaco) {
         state2.resolve(state2.monaco);
-        return makeCancelable_default2(wrapperPromise2);
+        return makeCancelable_default(wrapperPromise);
       }
       if (window.monaco && window.monaco.editor) {
-        storeMonacoInstance2(window.monaco);
+        storeMonacoInstance(window.monaco);
         state2.resolve(window.monaco);
-        return makeCancelable_default2(wrapperPromise2);
+        return makeCancelable_default(wrapperPromise);
       }
-      compose_default2(injectScripts2, getMonacoLoaderScript2)(configureLoader2);
+      compose_default(injectScripts, getMonacoLoaderScript)(configureLoader);
     }
-    return makeCancelable_default2(wrapperPromise2);
+    return makeCancelable_default(wrapperPromise);
   }
-  function injectScripts2(script) {
+  function injectScripts(script) {
     return document.body.appendChild(script);
   }
-  function createScript2(src) {
+  function createScript(src) {
     var script = document.createElement("script");
     return src && (script.src = src), script;
   }
-  function getMonacoLoaderScript2(configureLoader3) {
-    var state2 = getState2(function(_ref2) {
-      var config5 = _ref2.config, reject = _ref2.reject;
+  function getMonacoLoaderScript(configureLoader2) {
+    var state2 = getState(function(_ref2) {
+      var config3 = _ref2.config, reject = _ref2.reject;
       return {
-        config: config5,
+        config: config3,
         reject
       };
     });
-    var loaderScript = createScript2("".concat(state2.config.paths.vs, "/loader.js"));
+    var loaderScript = createScript("".concat(state2.config.paths.vs, "/loader.js"));
     loaderScript.onload = function() {
-      return configureLoader3();
+      return configureLoader2();
     };
     loaderScript.onerror = state2.reject;
     return loaderScript;
   }
-  function configureLoader2() {
-    var state2 = getState2(function(_ref3) {
-      var config5 = _ref3.config, resolve = _ref3.resolve, reject = _ref3.reject;
+  function configureLoader() {
+    var state2 = getState(function(_ref3) {
+      var config3 = _ref3.config, resolve = _ref3.resolve, reject = _ref3.reject;
       return {
-        config: config5,
+        config: config3,
         resolve,
         reject
       };
@@ -15333,55 +14627,55 @@ ${indent}in ${name}`).join("")}
     var require2 = window.require;
     require2.config(state2.config);
     require2(["vs/editor/editor.main"], function(monaco) {
-      storeMonacoInstance2(monaco);
+      storeMonacoInstance(monaco);
       state2.resolve(monaco);
     }, function(error) {
       state2.reject(error);
     });
   }
-  function storeMonacoInstance2(monaco) {
-    if (!getState2().monaco) {
-      setState2({
+  function storeMonacoInstance(monaco) {
+    if (!getState().monaco) {
+      setState({
         monaco
       });
     }
   }
-  function __getMonacoInstance2() {
-    return getState2(function(_ref4) {
+  function __getMonacoInstance() {
+    return getState(function(_ref4) {
       var monaco = _ref4.monaco;
       return monaco;
     });
   }
-  var wrapperPromise2 = new Promise(function(resolve, reject) {
-    return setState2({
+  var wrapperPromise = new Promise(function(resolve, reject) {
+    return setState({
       resolve,
       reject
     });
   });
-  var loader2 = {
-    config: config4,
-    init: init3,
-    __getMonacoInstance: __getMonacoInstance2
+  var loader = {
+    config: config2,
+    init: init2,
+    __getMonacoInstance
   };
-  var loader_default2 = loader2;
+  var loader_default = loader;
 
   // svelte/components/CodeEditor.svelte
   mark_module_start();
-  CodeEditor2[FILENAME] = "svelte/components/CodeEditor.svelte";
-  var root2 = add_locations(template(`<div class="w-52 h-24 py-0.5 px-0.5 bg-gray-100"></div>`), CodeEditor2[FILENAME], [[34, 0]]);
-  function CodeEditor2($$anchor, $$props) {
+  CodeEditor[FILENAME] = "svelte/components/CodeEditor.svelte";
+  var root2 = add_locations(template(`<div class="w-52 h-24 py-0.5 px-0.5 bg-gray-100"></div>`), CodeEditor[FILENAME], [[34, 0]]);
+  function CodeEditor($$anchor, $$props) {
     check_target(new.target);
-    push($$props, false, CodeEditor2);
+    push($$props, false, CodeEditor);
     let value2 = prop($$props, "value", 12);
     let dispatch = createEventDispatcher();
     let editor;
     let monaco;
     let editorContainer = mutable_source();
     onMount(async () => {
-      loader_default2.config({
+      loader_default.config({
         paths: { vs: "/node_modules/monaco-editor/min/vs" }
       });
-      monaco = await loader_default2.init();
+      monaco = await loader_default.init();
       const editor2 = monaco.editor.create(get(editorContainer), {
         value: value2(),
         language: "elixir",
@@ -15403,7 +14697,7 @@ ${indent}in ${name}`).join("")}
       }
     });
     legacy_pre_effect_reset();
-    init2();
+    init();
     var div = root2();
     bind_this(div, ($$value) => set(editorContainer, $$value), () => get(editorContainer));
     append($$anchor, div);
@@ -15418,8 +14712,8 @@ ${indent}in ${name}`).join("")}
       ...legacy_api()
     });
   }
-  mark_module_end(CodeEditor2);
-  create_custom_element(CodeEditor2, { value: {} }, [], [], true);
+  mark_module_end(CodeEditor);
+  create_custom_element(CodeEditor, { value: {} }, [], [], true);
 
   // svelte/components/ComponentsSidebar.svelte
   var ComponentsSidebar_exports = {};
@@ -15452,9 +14746,9 @@ ${indent}in ${name}`).join("")}
   var root_3 = add_locations(template(`<li class="p-2 pl-6 hover:bg-slate-50 hover:cursor-pointer" data-testid="nav-item"><div> </div></li>`), ComponentsSidebar[FILENAME], [[81, 10, [[87, 12]]]]);
   var root_12 = add_locations(template(`<!> <!>`, 1), ComponentsSidebar[FILENAME], []);
   var root_5 = add_locations(template(`<div draggable="true" class="pt-6" data-testid="component-preview-card"><p class="mb-1 text-xs font-bold uppercase tracking-wider"> </p> <img class="w-full h-auto rounded ring-offset-2 ring-blue-500 transition hover:cursor-grab hover:ring-2"></div>`), ComponentsSidebar[FILENAME], [
-    [109, 10, [[116, 12], [118, 12]]]
+    [108, 10, [[115, 12], [117, 12]]]
   ]);
-  var root_6 = add_locations(template(`<div class="bg-black/50 absolute inset-0 z-50 svelte-uvq63b" id="backdrop" data-testid="backdrop"></div>`), ComponentsSidebar[FILENAME], [[131, 2]]);
+  var root_6 = add_locations(template(`<div class="bg-black/50 absolute inset-0 z-50 svelte-uvq63b" id="backdrop" data-testid="backdrop"></div>`), ComponentsSidebar[FILENAME], [[130, 2]]);
   var root3 = add_locations(template(`<div class="w-64 bg-white border-slate-100 border-solid border-r svelte-uvq63b" id="left-sidebar" data-testid="left-sidebar"><div class="sticky top-0"><div class="border-b border-slate-100 border-solid py-4 px-4" data-testid="logo"><h2 class="text-lg font-bold">Components</h2></div> <ul class="py-4 h-[calc(100vh_-_61px)] overflow-y-auto" data-testid="component-tree"></ul> <div id="component-previews" data-testid="component-previews"><h4 class="mb-4 font-bold text-2xl"> </h4> <p class="font-medium">Drag and drop an element into the page</p> <!></div></div></div> <!>`, 1), ComponentsSidebar[FILENAME], [
     [
       68,
@@ -15474,7 +14768,7 @@ ${indent}in ${name}`).join("")}
   ]);
   var $$css = {
     hash: "svelte-uvq63b",
-    code: "\n  #left-sidebar.svelte-uvq63b {\n    z-index: 1000;\n  }\n  #backdrop.svelte-uvq63b {\n    z-index: 999;\n  }\n\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiQ29tcG9uZW50c1NpZGViYXIuc3ZlbHRlIiwibWFwcGluZ3MiOiI7QUFxSkEsRUFBRSwyQkFBYSxDQUFDO0FBQ2hCLElBQUksYUFBYTtBQUNqQjtBQUNBLEVBQUUsdUJBQVMsQ0FBQztBQUNaLElBQUksWUFBWTtBQUNoQiIsIm5hbWVzIjpbXSwiaWdub3JlTGlzdCI6W10sInNvdXJjZXMiOlsiQ29tcG9uZW50c1NpZGViYXIuc3ZlbHRlIl19 */"
+    code: "\n  #left-sidebar.svelte-uvq63b {\n    z-index: 1000;\n  }\n  #backdrop.svelte-uvq63b {\n    z-index: 999;\n  }\n\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiQ29tcG9uZW50c1NpZGViYXIuc3ZlbHRlIiwibWFwcGluZ3MiOiI7QUFvSkEsRUFBRSwyQkFBYSxDQUFDO0FBQ2hCLElBQUksYUFBYTtBQUNqQjtBQUNBLEVBQUUsdUJBQVMsQ0FBQztBQUNaLElBQUksWUFBWTtBQUNoQiIsIm5hbWVzIjpbXSwiaWdub3JlTGlzdCI6W10sInNvdXJjZXMiOlsiQ29tcG9uZW50c1NpZGViYXIuc3ZlbHRlIl19 */"
   };
   function ComponentsSidebar($$anchor, $$props) {
     check_target(new.target);
@@ -15568,12 +14862,12 @@ ${indent}in ${name}`).join("")}
       }
     );
     legacy_pre_effect_reset();
-    init2();
+    init();
     var fragment = root3();
     var div = first_child(fragment);
     var div_1 = child(div);
     var ul = sibling(child(div_1), 2);
-    each(ul, 5, () => get(menuCategories), index2, ($$anchor2, category) => {
+    each(ul, 5, () => get(menuCategories), index, ($$anchor2, category) => {
       var fragment_1 = root_12();
       var node = first_child(fragment_1);
       {
@@ -15591,7 +14885,7 @@ ${indent}in ${name}`).join("")}
         });
       }
       var node_1 = sibling(node, 2);
-      each(node_1, 1, () => get(category).items, index2, ($$anchor3, item) => {
+      each(node_1, 1, () => get(category).items, index, ($$anchor3, item) => {
         var li_1 = root_3();
         var div_2 = child(li_1);
         var text_1 = child(div_2, true);
@@ -15615,7 +14909,7 @@ ${indent}in ${name}`).join("")}
       var consequent_1 = ($$anchor2) => {
         var fragment_2 = comment();
         var node_3 = first_child(fragment_2);
-        each(node_3, 1, () => get(currentDefinitions), index2, ($$anchor3, example) => {
+        each(node_3, 1, () => get(currentDefinitions), index, ($$anchor3, example) => {
           var div_4 = root_5();
           var p = child(div_4);
           var text_3 = child(p, true);
@@ -15828,7 +15122,7 @@ ${indent}in ${name}`).join("")}
       let parentId = getParentNodeId($selectedAstElementId());
       setSelection(parentId);
     }
-    init2();
+    init();
     var button = root4();
     event("click", button, selectParentNode);
     append($$anchor, button);
@@ -15850,7 +15144,7 @@ ${indent}in ${name}`).join("")}
     check_target(new.target);
     push($$props, false, LayoutAstNode);
     let node = prop($$props, "node", 12);
-    init2();
+    init();
     var fragment = comment();
     var node_1 = first_child(fragment);
     {
@@ -15925,7 +15219,7 @@ ${indent}in ${name}`).join("")}
                                   var consequent_5 = ($$anchor9) => {
                                     var fragment_9 = comment();
                                     var node_10 = first_child(fragment_9);
-                                    each(node_10, 1, () => node().content, index2, ($$anchor10, subnode) => {
+                                    each(node_10, 1, () => node().content, index, ($$anchor10, subnode) => {
                                       var fragment_10 = comment();
                                       var node_11 = first_child(fragment_10);
                                       LayoutAstNode(node_11, {
@@ -16081,7 +15375,7 @@ ${indent}in ${name}`).join("")}
     }
   }
   var root_22 = add_locations(template(`<div class="absolute transition-all" data-testid="drag-placeholder"></div>`), DragMenuOption[FILENAME], [[306, 4]]);
-  var root_13 = add_locations(template(`<!> <button class="rounded-full w-6 h-6 flex justify-center items-center absolute bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 active:bg-blue-800 transform"><span></span></button>`, 1), DragMenuOption[FILENAME], [[313, 2, [[321, 4]]]]);
+  var root_13 = add_locations(template(`<!> <button class="rounded-full w-6 h-6 flex justify-center items-center absolute bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 active:bg-blue-800 transform"><span></span></button>`, 1), DragMenuOption[FILENAME], [[312, 2, [[320, 4]]]]);
   function DragMenuOption($$anchor, $$props) {
     check_target(new.target);
     push($$props, false, DragMenuOption);
@@ -16181,10 +15475,10 @@ ${indent}in ${name}`).join("")}
     function isCommentOrElement(n) {
       return isElement(n) || isComment(n);
     }
-    function correctIndex(index5) {
+    function correctIndex(index4) {
       const nodes = Array.from(element2().parentElement.childNodes).filter(isCommentOrElement);
       const elements = Array.from(element2().parentElement.children);
-      const targetElement = elements[index5];
+      const targetElement = elements[index4];
       let startIndex = -1;
       let endIndex = -1;
       for (let i = 0; i < nodes.length; i++) {
@@ -16358,7 +15652,7 @@ ${indent}in ${name}`).join("")}
       }
     );
     legacy_pre_effect_reset();
-    init2();
+    init();
     var fragment = comment();
     var node_1 = first_child(fragment);
     {
@@ -16550,12 +15844,12 @@ ${indent}in ${name}`).join("")}
   // svelte/components/PageAstNode.svelte
   mark_module_start();
   PageAstNode[FILENAME] = "svelte/components/PageAstNode.svelte";
-  var root_8 = add_locations(template(`<div tabindex="0" role="button"><!></div>`), PageAstNode[FILENAME], [[130, 4]]);
-  var root_132 = add_locations(template(`<div class="dragged-element-placeholder svelte-fu018p">Preview</div>`), PageAstNode[FILENAME], [[171, 10]]);
+  var root_8 = add_locations(template(`<div tabindex="0" role="button"><!></div>`), PageAstNode[FILENAME], [[129, 4]]);
+  var root_132 = add_locations(template(`<div class="dragged-element-placeholder svelte-fu018p">Preview</div>`), PageAstNode[FILENAME], [[170, 10]]);
   var root_11 = add_locations(template(`<!> <!>`, 1), PageAstNode[FILENAME], []);
   var $$css2 = {
     hash: "svelte-fu018p",
-    code: "\n  .dragged-element-placeholder.svelte-fu018p {\n    outline: 2px dashed red;\n\n    /* Disable pointer events to block out any dragOver event triggers on the placeholder while dragging */\n    pointer-events: none;\n  }\n\n  .embedded-iframe {\n    display: inline;\n  }\n\n  .embedded-iframe > iframe {\n    pointer-events: none;\n  }\n\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiUGFnZUFzdE5vZGUuc3ZlbHRlIiwibWFwcGluZ3MiOiI7QUE0TUEsRUFBRSwwQ0FBNEIsQ0FBQztBQUMvQixJQUFJLHVCQUF1Qjs7QUFFM0I7QUFDQSxJQUFJLG9CQUFvQjtBQUN4Qjs7QUFFQSxFQUFVLGdCQUFpQixDQUFDO0FBQzVCLElBQUksZUFBZTtBQUNuQjs7QUFFQSxFQUFVLHlCQUEwQixDQUFDO0FBQ3JDLElBQUksb0JBQW9CO0FBQ3hCIiwibmFtZXMiOltdLCJpZ25vcmVMaXN0IjpbXSwic291cmNlcyI6WyJQYWdlQXN0Tm9kZS5zdmVsdGUiXX0= */"
+    code: "\n  .dragged-element-placeholder.svelte-fu018p {\n    outline: 2px dashed red;\n\n    /* Disable pointer events to block out any dragOver event triggers on the placeholder while dragging */\n    pointer-events: none;\n  }\n\n  .embedded-iframe {\n    display: inline;\n  }\n\n  .embedded-iframe > iframe {\n    pointer-events: none;\n  }\n\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiUGFnZUFzdE5vZGUuc3ZlbHRlIiwibWFwcGluZ3MiOiI7QUEyTUEsRUFBRSwwQ0FBNEIsQ0FBQztBQUMvQixJQUFJLHVCQUF1Qjs7QUFFM0I7QUFDQSxJQUFJLG9CQUFvQjtBQUN4Qjs7QUFFQSxFQUFVLGdCQUFpQixDQUFDO0FBQzVCLElBQUksZUFBZTtBQUNuQjs7QUFFQSxFQUFVLHlCQUEwQixDQUFDO0FBQ3JDLElBQUksb0JBQW9CO0FBQ3hCIiwibmFtZXMiOltdLCJpZ25vcmVMaXN0IjpbXSwic291cmNlcyI6WyJQYWdlQXN0Tm9kZS5zdmVsdGUiXX0= */"
   };
   function PageAstNode($$anchor, $$props) {
     check_target(new.target);
@@ -16711,7 +16005,7 @@ ${indent}in ${name}`).join("")}
       }
     );
     legacy_pre_effect_reset();
-    init2();
+    init();
     var fragment = comment();
     var node_1 = first_child(fragment);
     {
@@ -16808,7 +16102,7 @@ ${indent}in ${name}`).join("")}
                               var consequent_5 = ($$anchor8) => {
                                 var fragment_7 = root_11();
                                 var node_9 = first_child(fragment_7);
-                                each(node_9, 1, () => get(children), index2, ($$anchor9, child2, childIndex) => {
+                                each(node_9, 1, () => get(children), index, ($$anchor9, child2, childIndex) => {
                                   var fragment_8 = comment();
                                   var node_10 = first_child(fragment_8);
                                   PageAstNode(node_10, {
@@ -16840,7 +16134,7 @@ ${indent}in ${name}`).join("")}
                             append($$anchor7, fragment_6);
                           },
                           void 0,
-                          [148, 4]
+                          [147, 4]
                         );
                         append($$anchor6, fragment_5);
                       };
@@ -16984,7 +16278,7 @@ ${indent}in ${name}`).join("")}
       resetDrag();
       set(isDraggingOver, false);
     }
-    init2();
+    init();
     var div = root5();
     var node = child(div);
     {
@@ -19485,9 +18779,9 @@ ${indent}in ${name}`).join("")}
         }, consumeUntil = function(chars) {
           let minIndex = Infinity;
           for (let char2 of chars) {
-            let index5 = match.indexOf(char2, i);
-            if (index5 !== -1 && index5 < minIndex) {
-              minIndex = index5;
+            let index4 = match.indexOf(char2, i);
+            if (index4 !== -1 && index4 < minIndex) {
+              minIndex = index4;
             }
           }
           let result2 = match.slice(i, minIndex);
@@ -19741,29 +19035,29 @@ ${indent}in ${name}`).join("")}
     ],
     experimental: ["optimizeUniversalDefaults", "generalizedModifiers"]
   };
-  function flagEnabled(config5, flag) {
+  function flagEnabled(config3, flag) {
     if (featureFlags.future.includes(flag)) {
-      return config5.future === "all" || (config5?.future?.[flag] ?? defaults[flag] ?? false);
+      return config3.future === "all" || (config3?.future?.[flag] ?? defaults[flag] ?? false);
     }
     if (featureFlags.experimental.includes(flag)) {
-      return config5.experimental === "all" || (config5?.experimental?.[flag] ?? defaults[flag] ?? false);
+      return config3.experimental === "all" || (config3?.experimental?.[flag] ?? defaults[flag] ?? false);
     }
     return false;
   }
-  function experimentalFlagsEnabled(config5) {
-    if (config5.experimental === "all") {
+  function experimentalFlagsEnabled(config3) {
+    if (config3.experimental === "all") {
       return featureFlags.experimental;
     }
-    return Object.keys(config5?.experimental ?? {}).filter(
-      (flag) => featureFlags.experimental.includes(flag) && config5.experimental[flag]
+    return Object.keys(config3?.experimental ?? {}).filter(
+      (flag) => featureFlags.experimental.includes(flag) && config3.experimental[flag]
     );
   }
-  function issueFlagNotices(config5) {
+  function issueFlagNotices(config3) {
     if (true) {
       return;
     }
-    if (experimentalFlagsEnabled(config5).length > 0) {
-      let changes = experimentalFlagsEnabled(config5).map((s) => picocolors_default.yellow(s)).join(", ");
+    if (experimentalFlagsEnabled(config3).length > 0) {
+      let changes = experimentalFlagsEnabled(config3).map((s) => picocolors_default.yellow(s)).join(", ");
       log_default.warn("experimental-flags-enabled", [
         `You have enabled experimental features: ${changes}`,
         "Experimental features in Tailwind CSS are not covered by semver, may introduce breaking changes, and can change at any time."
@@ -20128,15 +19422,15 @@ ${indent}in ${name}`).join("")}
         return;
       }
       let parent = node.parent;
-      let formatNodes = formatAst.nodes[0].nodes;
+      let formatNodes2 = formatAst.nodes[0].nodes;
       if (parent.nodes.length === 1) {
-        node.replaceWith(...formatNodes);
+        node.replaceWith(...formatNodes2);
         return;
       }
       let simpleSelector = simpleSelectorForNode(node);
       parent.insertBefore(simpleSelector[0], simpleStart);
       parent.insertAfter(simpleSelector[simpleSelector.length - 1], simpleEnd);
-      for (let child2 of formatNodes) {
+      for (let child2 of formatNodes2) {
         parent.insertBefore(simpleSelector[0], child2.clone());
       }
       node.remove();
@@ -20173,7 +19467,7 @@ ${indent}in ${name}`).join("")}
         return;
       }
       let value2 = pseudo.nodes[0].toString();
-      let existing = merges.find((merge3) => merge3.value === value2);
+      let existing = merges.find((merge2) => merge2.value === value2);
       if (!existing) {
         return;
       }
@@ -20523,7 +19817,7 @@ ${indent}in ${name}`).join("")}
         return "&::after";
       });
     },
-    pseudoClassVariants: ({ addVariant, matchVariant, config: config5, prefix: prefix3 }) => {
+    pseudoClassVariants: ({ addVariant, matchVariant, config: config3, prefix: prefix3 }) => {
       let pseudoVariants = [
         ["first", "&:first-child"],
         ["last", "&:last-child"],
@@ -20562,7 +19856,7 @@ ${indent}in ${name}`).join("")}
         "focus-within",
         [
           "hover",
-          !flagEnabled(config5(), "hoverOnlyWhenSupported") ? "&:hover" : "@media (hover: hover) and (pointer: fine) { &:hover }"
+          !flagEnabled(config3(), "hoverOnlyWhenSupported") ? "&:hover" : "@media (hover: hover) and (pointer: fine) { &:hover }"
         ],
         "focus",
         "focus-visible",
@@ -20623,8 +19917,8 @@ ${indent}in ${name}`).join("")}
       addVariant("motion-safe", "@media (prefers-reduced-motion: no-preference)");
       addVariant("motion-reduce", "@media (prefers-reduced-motion: reduce)");
     },
-    darkVariants: ({ config: config5, addVariant }) => {
-      let [mode, selector = ".dark"] = [].concat(config5("darkMode", "media"));
+    darkVariants: ({ config: config3, addVariant }) => {
+      let [mode, selector = ".dark"] = [].concat(config3("darkMode", "media"));
       if (mode === false) {
         mode = "media";
         log_default.warn("darkmode-false", [
@@ -21263,8 +20557,8 @@ ${indent}in ${name}`).join("")}
         ".transform-none": { transform: "none" }
       });
     },
-    animation: ({ matchUtilities, theme: theme2, config: config5 }) => {
-      let prefixName = (name) => escapeClassName(config5("prefix") + name);
+    animation: ({ matchUtilities, theme: theme2, config: config3 }) => {
+      let prefixName = (name) => escapeClassName(config3("prefix") + name);
       let keyframes = Object.fromEntries(
         Object.entries(theme2("keyframes") ?? {}).map(([key, value2]) => {
           return [key, { [`@keyframes ${prefixName(key)}`]: value2 }];
@@ -22596,9 +21890,9 @@ ${indent}in ${name}`).join("")}
         { values: flattenColorPalette_default(theme2("outlineColor")), type: ["color", "any"] }
       );
     },
-    ringWidth: ({ matchUtilities, addDefaults, addUtilities, theme: theme2, config: config5 }) => {
+    ringWidth: ({ matchUtilities, addDefaults, addUtilities, theme: theme2, config: config3 }) => {
       let ringColorDefault = (() => {
-        if (flagEnabled(config5(), "respectDefaultRingColorOpacity")) {
+        if (flagEnabled(config3(), "respectDefaultRingColorOpacity")) {
           return theme2("ringColor.DEFAULT");
         }
         let ringOpacityDefault = theme2("ringOpacity.DEFAULT", "0.5");
@@ -22669,9 +21963,9 @@ ${indent}in ${name}`).join("")}
       );
     },
     ringOpacity: (helpers) => {
-      let { config: config5 } = helpers;
+      let { config: config3 } = helpers;
       return createUtilityPlugin("ringOpacity", [["ring-opacity", ["--tw-ring-opacity"]]], {
-        filterDefault: !flagEnabled(config5(), "respectDefaultRingColorOpacity")
+        filterDefault: !flagEnabled(config3(), "respectDefaultRingColorOpacity")
       })(helpers);
     },
     ringOffsetWidth: createUtilityPlugin(
@@ -23123,14 +22417,14 @@ ${indent}in ${name}`).join("")}
         arbitrary: 1n
       };
     }
-    forVariant(variant, index5 = 0) {
+    forVariant(variant, index4 = 0) {
       let offset = this.variantOffsets.get(variant);
       if (offset === void 0) {
         throw new Error(`Cannot find offset for unknown variant ${variant}`);
       }
       return {
         ...this.create("variants"),
-        variants: offset << BigInt(index5)
+        variants: offset << BigInt(index4)
       };
     }
     applyVariantOffset(rule2, variant, options) {
@@ -25432,7 +24726,7 @@ ${indent}in ${name}`).join("")}
     };
   }
   var import_value_parser = __toESM2(require_value_parser());
-  function isObject5(input) {
+  function isObject3(input) {
     return typeof input === "object" && input !== null;
   }
   function findClosestExistingPath(theme2, path) {
@@ -25459,17 +24753,17 @@ ${indent}in ${name}`).join("")}
   function listKeys(obj) {
     return list2(Object.keys(obj));
   }
-  function validatePath(config5, path, defaultValue, themeOpts = {}) {
+  function validatePath(config3, path, defaultValue, themeOpts = {}) {
     const pathString = Array.isArray(path) ? pathToString(path) : path.replace(/^['"]+|['"]+$/g, "");
     const pathSegments = Array.isArray(path) ? path : toPath(pathString);
-    const value2 = (0, import_dlv2.default)(config5.theme, pathSegments, defaultValue);
+    const value2 = (0, import_dlv2.default)(config3.theme, pathSegments, defaultValue);
     if (value2 === void 0) {
       let error = `'${pathString}' does not exist in your theme config.`;
       const parentSegments = pathSegments.slice(0, -1);
-      const parentValue = (0, import_dlv2.default)(config5.theme, parentSegments);
-      if (isObject5(parentValue)) {
+      const parentValue = (0, import_dlv2.default)(config3.theme, parentSegments);
+      if (isObject3(parentValue)) {
         const validKeys = Object.keys(parentValue).filter(
-          (key) => validatePath(config5, [...parentSegments, key]).isValid
+          (key) => validatePath(config3, [...parentSegments, key]).isValid
         );
         const suggestion = (0, import_didyoumean.default)(pathSegments[pathSegments.length - 1], validKeys);
         if (suggestion) {
@@ -25480,10 +24774,10 @@ ${indent}in ${name}`).join("")}
           )}`;
         }
       } else {
-        const closestPath = findClosestExistingPath(config5.theme, pathString);
+        const closestPath = findClosestExistingPath(config3.theme, pathString);
         if (closestPath) {
-          const closestValue = (0, import_dlv2.default)(config5.theme, closestPath);
-          if (isObject5(closestValue)) {
+          const closestValue = (0, import_dlv2.default)(config3.theme, closestPath);
+          if (isObject3(closestValue)) {
             error += ` '${pathToString(closestPath)}' has the following keys: ${listKeys(
               closestValue
             )}`;
@@ -25491,7 +24785,7 @@ ${indent}in ${name}`).join("")}
             error += ` '${pathToString(closestPath)}' is not an object.`;
           }
         } else {
-          error += ` Your theme has the following top-level keys: ${listKeys(config5.theme)}`;
+          error += ` Your theme has the following top-level keys: ${listKeys(config3.theme)}`;
         }
       }
       return {
@@ -25501,9 +24795,9 @@ ${indent}in ${name}`).join("")}
     }
     if (!(typeof value2 === "string" || typeof value2 === "number" || typeof value2 === "function" || value2 instanceof String || value2 instanceof Number || Array.isArray(value2))) {
       let error = `'${pathString}' was found but does not resolve to a string.`;
-      if (isObject5(value2)) {
+      if (isObject3(value2)) {
         let validKeys = Object.keys(value2).filter(
-          (key) => validatePath(config5, [...pathSegments, key]).isValid
+          (key) => validatePath(config3, [...pathSegments, key]).isValid
         );
         if (validKeys.length) {
           error += ` Did you mean something like '${pathToString([...pathSegments, validKeys[0]])}'?`;
@@ -25563,9 +24857,9 @@ ${indent}in ${name}`).join("")}
       yield [path, alpha];
     }
   }
-  function resolvePath(config5, path, defaultValue) {
+  function resolvePath(config3, path, defaultValue) {
     const results = Array.from(toPaths(path)).map(([path2, alpha]) => {
-      return Object.assign(validatePath(config5, path2, defaultValue, { opacityValue: alpha }), {
+      return Object.assign(validatePath(config3, path2, defaultValue, { opacityValue: alpha }), {
         resolvedPath: path2,
         alpha
       });
@@ -25573,11 +24867,11 @@ ${indent}in ${name}`).join("")}
     return results.find((result) => result.isValid) ?? results[0];
   }
   function evaluateTailwindFunctions_default(context) {
-    let config5 = context.tailwindConfig;
+    let config3 = context.tailwindConfig;
     let functions = {
       theme: (node, path, ...defaultValue) => {
         let { isValid, value: value2, error, alpha } = resolvePath(
-          config5,
+          config3,
           path,
           defaultValue.length ? defaultValue : void 0
         );
@@ -25606,7 +24900,7 @@ ${indent}in ${name}`).join("")}
       },
       screen: (node, screen) => {
         screen = screen.replace(/^['"]+/g, "").replace(/['"]+$/g, "");
-        let screens = normalizeScreens(config5.theme.screens);
+        let screens = normalizeScreens(config3.theme.screens);
         let screenDefinition = screens.find(({ name }) => name === screen);
         if (!screenDefinition) {
           throw node.error(`The '${screen}' screen does not exist in your theme.`);
@@ -26319,19 +25613,19 @@ ${indent}in ${name}`).join("")}
     }
     return target;
   }
-  function normalizeConfig(config5) {
+  function normalizeConfig(config3) {
     let valid = (() => {
-      if (config5.purge) {
+      if (config3.purge) {
         return false;
       }
-      if (!config5.content) {
+      if (!config3.content) {
         return false;
       }
-      if (!Array.isArray(config5.content) && !(typeof config5.content === "object" && config5.content !== null)) {
+      if (!Array.isArray(config3.content) && !(typeof config3.content === "object" && config3.content !== null)) {
         return false;
       }
-      if (Array.isArray(config5.content)) {
-        return config5.content.every((path) => {
+      if (Array.isArray(config3.content)) {
+        return config3.content.every((path) => {
           if (typeof path === "string")
             return true;
           if (typeof path?.raw !== "string")
@@ -26342,14 +25636,14 @@ ${indent}in ${name}`).join("")}
           return true;
         });
       }
-      if (typeof config5.content === "object" && config5.content !== null) {
-        if (Object.keys(config5.content).some(
+      if (typeof config3.content === "object" && config3.content !== null) {
+        if (Object.keys(config3.content).some(
           (key) => !["files", "relative", "extract", "transform"].includes(key)
         )) {
           return false;
         }
-        if (Array.isArray(config5.content.files)) {
-          if (!config5.content.files.every((path) => {
+        if (Array.isArray(config3.content.files)) {
+          if (!config3.content.files.every((path) => {
             if (typeof path === "string")
               return true;
             if (typeof path?.raw !== "string")
@@ -26361,25 +25655,25 @@ ${indent}in ${name}`).join("")}
           })) {
             return false;
           }
-          if (typeof config5.content.extract === "object") {
-            for (let value2 of Object.values(config5.content.extract)) {
+          if (typeof config3.content.extract === "object") {
+            for (let value2 of Object.values(config3.content.extract)) {
               if (typeof value2 !== "function") {
                 return false;
               }
             }
-          } else if (!(config5.content.extract === void 0 || typeof config5.content.extract === "function")) {
+          } else if (!(config3.content.extract === void 0 || typeof config3.content.extract === "function")) {
             return false;
           }
-          if (typeof config5.content.transform === "object") {
-            for (let value2 of Object.values(config5.content.transform)) {
+          if (typeof config3.content.transform === "object") {
+            for (let value2 of Object.values(config3.content.transform)) {
               if (typeof value2 !== "function") {
                 return false;
               }
             }
-          } else if (!(config5.content.transform === void 0 || typeof config5.content.transform === "function")) {
+          } else if (!(config3.content.transform === void 0 || typeof config3.content.transform === "function")) {
             return false;
           }
-          if (typeof config5.content.relative !== "boolean" && typeof config5.content.relative !== "undefined") {
+          if (typeof config3.content.relative !== "boolean" && typeof config3.content.relative !== "undefined") {
             return false;
           }
         }
@@ -26394,8 +25688,8 @@ ${indent}in ${name}`).join("")}
         "https://tailwindcss.com/docs/upgrade-guide#configure-content-sources"
       ]);
     }
-    config5.safelist = (() => {
-      let { content, purge, safelist } = config5;
+    config3.safelist = (() => {
+      let { content, purge, safelist } = config3;
       if (Array.isArray(safelist))
         return safelist;
       if (Array.isArray(content?.safelist))
@@ -26406,8 +25700,8 @@ ${indent}in ${name}`).join("")}
         return purge.options.safelist;
       return [];
     })();
-    config5.blocklist = (() => {
-      let { blocklist } = config5;
+    config3.blocklist = (() => {
+      let { blocklist } = config3;
       if (Array.isArray(blocklist)) {
         if (blocklist.every((item) => typeof item === "string")) {
           return blocklist;
@@ -26419,26 +25713,26 @@ ${indent}in ${name}`).join("")}
       }
       return [];
     })();
-    if (typeof config5.prefix === "function") {
+    if (typeof config3.prefix === "function") {
       log_default.warn("prefix-function", [
         "As of Tailwind CSS v3.0, `prefix` cannot be a function.",
         "Update `prefix` in your configuration to be a string to eliminate this warning.",
         "https://tailwindcss.com/docs/upgrade-guide#prefix-cannot-be-a-function"
       ]);
-      config5.prefix = "";
+      config3.prefix = "";
     } else {
-      config5.prefix = config5.prefix ?? "";
+      config3.prefix = config3.prefix ?? "";
     }
-    config5.content = {
+    config3.content = {
       relative: (() => {
-        let { content } = config5;
+        let { content } = config3;
         if (content?.relative) {
           return content.relative;
         }
-        return flagEnabled(config5, "relativeContentPathsByDefault");
+        return flagEnabled(config3, "relativeContentPathsByDefault");
       })(),
       files: (() => {
-        let { content, purge } = config5;
+        let { content, purge } = config3;
         if (Array.isArray(purge))
           return purge;
         if (Array.isArray(purge?.content))
@@ -26453,27 +25747,27 @@ ${indent}in ${name}`).join("")}
       })(),
       extract: (() => {
         let extract = (() => {
-          if (config5.purge?.extract)
-            return config5.purge.extract;
-          if (config5.content?.extract)
-            return config5.content.extract;
-          if (config5.purge?.extract?.DEFAULT)
-            return config5.purge.extract.DEFAULT;
-          if (config5.content?.extract?.DEFAULT)
-            return config5.content.extract.DEFAULT;
-          if (config5.purge?.options?.extractors)
-            return config5.purge.options.extractors;
-          if (config5.content?.options?.extractors)
-            return config5.content.options.extractors;
+          if (config3.purge?.extract)
+            return config3.purge.extract;
+          if (config3.content?.extract)
+            return config3.content.extract;
+          if (config3.purge?.extract?.DEFAULT)
+            return config3.purge.extract.DEFAULT;
+          if (config3.content?.extract?.DEFAULT)
+            return config3.content.extract.DEFAULT;
+          if (config3.purge?.options?.extractors)
+            return config3.purge.options.extractors;
+          if (config3.content?.options?.extractors)
+            return config3.content.options.extractors;
           return {};
         })();
         let extractors = {};
         let defaultExtractor2 = (() => {
-          if (config5.purge?.options?.defaultExtractor) {
-            return config5.purge.options.defaultExtractor;
+          if (config3.purge?.options?.defaultExtractor) {
+            return config3.purge.options.defaultExtractor;
           }
-          if (config5.content?.options?.defaultExtractor) {
-            return config5.content.options.defaultExtractor;
+          if (config3.content?.options?.defaultExtractor) {
+            return config3.content.options.defaultExtractor;
           }
           return void 0;
         })();
@@ -26495,14 +25789,14 @@ ${indent}in ${name}`).join("")}
       })(),
       transform: (() => {
         let transform = (() => {
-          if (config5.purge?.transform)
-            return config5.purge.transform;
-          if (config5.content?.transform)
-            return config5.content.transform;
-          if (config5.purge?.transform?.DEFAULT)
-            return config5.purge.transform.DEFAULT;
-          if (config5.content?.transform?.DEFAULT)
-            return config5.content.transform.DEFAULT;
+          if (config3.purge?.transform)
+            return config3.purge.transform;
+          if (config3.content?.transform)
+            return config3.content.transform;
+          if (config3.purge?.transform?.DEFAULT)
+            return config3.purge.transform.DEFAULT;
+          if (config3.content?.transform?.DEFAULT)
+            return config3.content.transform.DEFAULT;
           return {};
         })();
         let transformers = {};
@@ -26515,7 +25809,7 @@ ${indent}in ${name}`).join("")}
         return transformers;
       })()
     };
-    for (let file of config5.content.files) {
+    for (let file of config3.content.files) {
       if (typeof file === "string" && /{([^,]*?)}/g.test(file)) {
         log_default.warn("invalid-glob-braces", [
           `The glob pattern ${dim(file)} in your Tailwind CSS configuration is invalid.`,
@@ -26524,7 +25818,7 @@ ${indent}in ${name}`).join("")}
         break;
       }
     }
-    return config5;
+    return config3;
   }
   function cloneDeep(value2) {
     if (Array.isArray(value2)) {
@@ -26535,7 +25829,7 @@ ${indent}in ${name}`).join("")}
     }
     return value2;
   }
-  function isFunction3(input) {
+  function isFunction2(input) {
     return typeof input === "function";
   }
   function mergeWith(target, ...sources) {
@@ -26578,7 +25872,7 @@ ${indent}in ${name}`).join("")}
     }
   };
   function value(valueToResolve, ...args) {
-    return isFunction3(valueToResolve) ? valueToResolve(...args) : valueToResolve;
+    return isFunction2(valueToResolve) ? valueToResolve(...args) : valueToResolve;
   }
   function collectExtends(items) {
     return items.reduce((merged, { extend }) => {
@@ -26613,7 +25907,7 @@ ${indent}in ${name}`).join("")}
   }
   function mergeExtensions({ extend, ...theme2 }) {
     return mergeWith(theme2, extend, (themeValue, extensions) => {
-      if (!isFunction3(themeValue) && !extensions.some(isFunction3)) {
+      if (!isFunction2(themeValue) && !extensions.some(isFunction2)) {
         return mergeWith({}, themeValue, ...extensions, mergeExtensionCustomizer);
       }
       return (resolveThemePath, utils) => mergeWith(
@@ -26644,11 +25938,11 @@ ${indent}in ${name}`).join("")}
   function resolveFunctionKeys(object) {
     const resolvePath2 = (key, defaultValue) => {
       for (const path of toPaths2(key)) {
-        let index5 = 0;
+        let index4 = 0;
         let val = object;
-        while (val !== void 0 && val !== null && index5 < path.length) {
-          val = val[path[index5++]];
-          let shouldResolveAsFn = isFunction3(val) && (path.alpha === void 0 || index5 <= path.length - 1);
+        while (val !== void 0 && val !== null && index4 < path.length) {
+          val = val[path[index4++]];
+          let shouldResolveAsFn = isFunction2(val) && (path.alpha === void 0 || index4 <= path.length - 1);
           val = shouldResolveAsFn ? val(resolvePath2, configUtils) : val;
         }
         if (val !== void 0) {
@@ -26669,15 +25963,15 @@ ${indent}in ${name}`).join("")}
       ...configUtils
     });
     return Object.keys(object).reduce((resolved, key) => {
-      resolved[key] = isFunction3(object[key]) ? object[key](resolvePath2, configUtils) : object[key];
+      resolved[key] = isFunction2(object[key]) ? object[key](resolvePath2, configUtils) : object[key];
       return resolved;
     }, {});
   }
   function extractPluginConfigs(configs) {
     let allConfigs = [];
-    configs.forEach((config5) => {
-      allConfigs = [...allConfigs, config5];
-      const plugins = config5?.plugins ?? [];
+    configs.forEach((config3) => {
+      allConfigs = [...allConfigs, config3];
+      const plugins = config3?.plugins ?? [];
       if (plugins.length === 0) {
         return;
       }
@@ -26692,7 +25986,7 @@ ${indent}in ${name}`).join("")}
   }
   function resolveCorePlugins(corePluginConfigs) {
     const result = [...corePluginConfigs].reduceRight((resolved, corePluginConfig) => {
-      if (isFunction3(corePluginConfig)) {
+      if (isFunction2(corePluginConfig)) {
         return corePluginConfig({ corePlugins: resolved });
       }
       return configurePlugins_default(corePluginConfig, resolved);
@@ -26728,8 +26022,8 @@ ${indent}in ${name}`).join("")}
     );
   }
   var import_config_full = __toESM2(require_config_full());
-  function getAllConfigs(config5) {
-    const configs = (config5?.presets ?? [import_config_full.default]).slice().reverse().flatMap((preset) => getAllConfigs(preset instanceof Function ? preset() : preset));
+  function getAllConfigs(config3) {
+    const configs = (config3?.presets ?? [import_config_full.default]).slice().reverse().flatMap((preset) => getAllConfigs(preset instanceof Function ? preset() : preset));
     const features = {
       respectDefaultRingColorOpacity: {
         theme: {
@@ -26750,8 +26044,8 @@ ${indent}in ${name}`).join("")}
         }
       }
     };
-    const experimentals = Object.keys(features).filter((feature) => flagEnabled(config5, feature)).map((feature) => features[feature]);
-    return [config5, ...experimentals, ...configs];
+    const experimentals = Object.keys(features).filter((feature) => flagEnabled(config3, feature)).map((feature) => features[feature]);
+    return [config3, ...experimentals, ...configs];
   }
   function resolveConfig2(...configs) {
     let [, ...defaultConfigs] = getAllConfigs(configs[0]);
@@ -26790,10 +26084,10 @@ ${indent}in ${name}`).join("")}
     };
   };
   var createTailwindcssPlugin = ({ tailwindConfig: tailwindConfig2, content: contentCollection }) => {
-    const config5 = resolveConfig2(tailwindConfig2 ?? {});
+    const config3 = resolveConfig2(tailwindConfig2 ?? {});
     const tailwindcssPlugin = processTailwindFeatures(
       (processOptions) => () => processOptions.createContext(
-        config5,
+        config3,
         contentCollection.map((content) => typeof content === "string" ? { content } : content)
       )
     );
@@ -26804,11 +26098,11 @@ ${indent}in ${name}`).join("")}
   var import_html_entities = __toESM(require_lib());
   mark_module_start();
   PageWrapper[FILENAME] = "svelte/components/PageWrapper.svelte";
-  var root_24 = add_locations(template(`<div class="contents"></div>`), PageWrapper[FILENAME], [[72, 6]]);
+  var root_24 = add_locations(template(`<div class="contents"></div>`), PageWrapper[FILENAME], [[67, 6]]);
   var root7 = add_locations(template(`<span></span> <div></div>`, 1), PageWrapper[FILENAME], [[61, 0], [63, 0]]);
   var $$css4 = {
     hash: "svelte-9t6pvg",
-    code: '\n  [data-selected="true"], [data-selected-parent="true"] {\n    outline-color: #06b6d4;\n    outline-width: 1px;\n    outline-style: solid;\n  }\n  [data-selected="true"].contents > *, [data-selected-parent="true"].contents > * {\n    outline-color: #06b6d4;\n    outline-width: 1px;\n    outline-style: solid;\n  }\n  /* TODO: Apply this styles to [data-selected-parent="true"] once dragging of the parent element is allowed */\n  [data-highlighted="true"] {\n    outline-color: #06b6d4;\n    outline-width: 2px;\n    outline-style: dashed;\n  }\n\n  :before, :after {\n    pointer-events: none;\n  }\n\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiUGFnZVdyYXBwZXIuc3ZlbHRlIiwibWFwcGluZ3MiOiI7QUF1RkEsRUFBVSxxREFBc0QsQ0FBQztBQUNqRSxJQUFJLHNCQUFzQjtBQUMxQixJQUFJLGtCQUFrQjtBQUN0QixJQUFJLG9CQUFvQjtBQUN4QjtBQUNBLEVBQVUsK0VBQWdGLENBQUM7QUFDM0YsSUFBSSxzQkFBc0I7QUFDMUIsSUFBSSxrQkFBa0I7QUFDdEIsSUFBSSxvQkFBb0I7QUFDeEI7QUFDQTtBQUNBLEVBQVUseUJBQTBCLENBQUM7QUFDckMsSUFBSSxzQkFBc0I7QUFDMUIsSUFBSSxrQkFBa0I7QUFDdEIsSUFBSSxxQkFBcUI7QUFDekI7O0FBRUEsRUFBVSxlQUFnQixDQUFDO0FBQzNCLElBQUksb0JBQW9CO0FBQ3hCIiwibmFtZXMiOltdLCJpZ25vcmVMaXN0IjpbXSwic291cmNlcyI6WyJQYWdlV3JhcHBlci5zdmVsdGUiXX0= */'
+    code: '\n  [data-selected="true"], [data-selected-parent="true"] {\n    outline-color: #06b6d4;\n    outline-width: 1px;\n    outline-style: solid;\n  }\n  [data-selected="true"].contents > *, [data-selected-parent="true"].contents > * {\n    outline-color: #06b6d4;\n    outline-width: 1px;\n    outline-style: solid;\n  }\n  /* TODO: Apply this styles to [data-selected-parent="true"] once dragging of the parent element is allowed */\n  [data-highlighted="true"] {\n    outline-color: #06b6d4;\n    outline-width: 2px;\n    outline-style: dashed;\n  }\n\n  :before, :after {\n    pointer-events: none;\n  }\n\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiUGFnZVdyYXBwZXIuc3ZlbHRlIiwibWFwcGluZ3MiOiI7QUFrRkEsRUFBVSxxREFBc0QsQ0FBQztBQUNqRSxJQUFJLHNCQUFzQjtBQUMxQixJQUFJLGtCQUFrQjtBQUN0QixJQUFJLG9CQUFvQjtBQUN4QjtBQUNBLEVBQVUsK0VBQWdGLENBQUM7QUFDM0YsSUFBSSxzQkFBc0I7QUFDMUIsSUFBSSxrQkFBa0I7QUFDdEIsSUFBSSxvQkFBb0I7QUFDeEI7QUFDQTtBQUNBLEVBQVUseUJBQTBCLENBQUM7QUFDckMsSUFBSSxzQkFBc0I7QUFDMUIsSUFBSSxrQkFBa0I7QUFDdEIsSUFBSSxxQkFBcUI7QUFDekI7O0FBRUEsRUFBVSxlQUFnQixDQUFDO0FBQzNCLElBQUksb0JBQW9CO0FBQ3hCIiwibmFtZXMiOltdLCJpZ25vcmVMaXN0IjpbXSwic291cmNlcyI6WyJQYWdlV3JhcHBlci5zdmVsdGUiXX0= */'
   };
   function PageWrapper($$anchor, $$props) {
     check_target(new.target);
@@ -26862,20 +26156,20 @@ ${indent}in ${name}`).join("")}
         }
       }
     }
-    init2();
+    init();
     var fragment = root7();
     var span = first_child(fragment);
     bind_this(span, ($$value) => set(styleWrapper, $$value), () => get(styleWrapper));
     var div = sibling(span, 2);
-    each(div, 5, $layoutAst, index2, ($$anchor2, layoutAstNode) => {
+    each(div, 5, $layoutAst, index, ($$anchor2, layoutAstNode) => {
       LayoutAstNode($$anchor2, {
         get node() {
           return get(layoutAstNode);
         },
         children: wrap_snippet(PageWrapper, ($$anchor3, $$slotProps) => {
           var div_1 = root_24();
-          each(div_1, 5, $pageAst, index2, ($$anchor4, astNode, index5) => {
-            const expression = derived_safe_equal(() => String(index5));
+          each(div_1, 5, $pageAst, index, ($$anchor4, astNode, index4) => {
+            const expression = derived_safe_equal(() => String(index4));
             PageAstNode($$anchor4, {
               get node() {
                 return get(astNode);
@@ -26929,7 +26223,7 @@ ${indent}in ${name}`).join("")}
     check_target(new.target);
     push($$props, false, Pill);
     const dispatch = createEventDispatcher();
-    init2();
+    init();
     var div = root8();
     var node = child(div);
     slot(node, $$props, "default", {}, null);
@@ -27024,7 +26318,7 @@ ${indent}in ${name}`).join("")}
       }
     );
     legacy_pre_effect_reset();
-    init2();
+    init();
     var fragment = comment();
     var node = first_child(fragment);
     {
@@ -27087,51 +26381,51 @@ ${indent}in ${name}`).join("")}
   });
   mark_module_start();
   SidebarSection[FILENAME] = "svelte/components/SidebarSection.svelte";
-  var root_15 = add_locations(template(`<span class="ml-4 inline-block cursor-pointer" title="Delete attribute" role="button" tabindex="0"><span class="hero-trash text-red hover:text-red"></span></span>`), SidebarSection[FILENAME], [[85, 10, [[92, 11]]]]);
-  var root_32 = add_locations(template(`<input type="text" class="w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm">`), SidebarSection[FILENAME], [[114, 6]]);
-  var root_26 = add_locations(template(`<!> <div class="pt-3"><!></div>`, 1), SidebarSection[FILENAME], [[123, 4]]);
-  var root_82 = add_locations(template(`<textarea class="w-full py-1 px-2 bg-slate-100 border-slate-100 rounded-md leading-6 text-sm"></textarea>`), SidebarSection[FILENAME], [[129, 10]]);
-  var root_9 = add_locations(template(`<input type="text" class="w-full py-1 px-2 bg-slate-100 border-slate-100 rounded-md leading-6 text-sm">`), SidebarSection[FILENAME], [[138, 10]]);
-  var root_10 = add_locations(template(`<div class="pt-3"><!></div>`), SidebarSection[FILENAME], [[148, 10]]);
+  var root_15 = add_locations(template(`<span class="ml-4 inline-block cursor-pointer" title="Delete attribute" role="button" tabindex="0"><span class="hero-trash text-red hover:text-red"></span></span>`), SidebarSection[FILENAME], [[85, 10, [[92, 13]]]]);
+  var root_32 = add_locations(template(`<input type="text" class="w-full py-1 px-2 bg-gray-100 border-gray-100 rounded-md leading-6 text-sm">`), SidebarSection[FILENAME], [[115, 6]]);
+  var root_26 = add_locations(template(`<!> <div class="pt-3"><!></div>`, 1), SidebarSection[FILENAME], [[124, 4]]);
+  var root_82 = add_locations(template(`<textarea class="w-full py-1 px-2 bg-slate-100 border-slate-100 rounded-md leading-6 text-sm"></textarea>`), SidebarSection[FILENAME], [[130, 10]]);
+  var root_9 = add_locations(template(`<input type="text" class="w-full py-1 px-2 bg-slate-100 border-slate-100 rounded-md leading-6 text-sm">`), SidebarSection[FILENAME], [[139, 10]]);
+  var root_10 = add_locations(template(`<div class="pt-3"><!></div>`), SidebarSection[FILENAME], [[149, 10]]);
   var root_7 = add_locations(template(`<!> <!>`, 1), SidebarSection[FILENAME], []);
   var root_142 = add_locations(template(`<div class="mt-5"><div class="flex items-center justify-between"><span><code> </code></span> <button class="flex items-center justify-center gap-x-0.5 px-2 py-1 bg-cyan-300 font-bold text-xs uppercase tracking-wide rounded transition-colors hover:bg-cyan-900 active:bg-cyan-700 hover:text-white">Edit <span class="sr-only"> </span> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-3 h-3"><path d="M21.731 2.269a2.625 2.625 0 0 0-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 0 0 0-3.712ZM19.513 8.199l-3.712-3.712-8.4 8.4a5.25 5.25 0 0 0-1.32 2.214l-.8 2.685a.75.75 0 0 0 .933.933l2.685-.8a5.25 5.25 0 0 0 2.214-1.32l8.4-8.4Z"></path><path d="M5.25 5.25a3 3 0 0 0-3 3v10.5a3 3 0 0 0 3 3h10.5a3 3 0 0 0 3-3V13.5a.75.75 0 0 0-1.5 0v5.25a1.5 1.5 0 0 1-1.5 1.5H5.25a1.5 1.5 0 0 1-1.5-1.5V8.25a1.5 1.5 0 0 1 1.5-1.5h5.25a.75.75 0 0 0 0-1.5H5.25Z"></path></svg></button></div> <div class="mt-2 grid grid-cols-2 gap-x-1"><button class="flex items-center justify-center gap-x-0.5 px-1.5 py-1 bg-cyan-800 font-bold text-xs uppercase tracking-wide rounded hover:bg-cyan-950 active:bg-cyan-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white"><span>Move <span class="sr-only"> </span> up</span> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-3 h-3"><path fill-rule="evenodd" d="M11.47 2.47a.75.75 0 0 1 1.06 0l7.5 7.5a.75.75 0 1 1-1.06 1.06l-6.22-6.22V21a.75.75 0 0 1-1.5 0V4.81l-6.22 6.22a.75.75 0 1 1-1.06-1.06l7.5-7.5Z" clip-rule="evenodd"></path></svg></button> <button class="flex items-center justify-center gap-x-0.5 px-1.5 py-1 bg-cyan-800 font-bold text-xs uppercase tracking-wide rounded hover:bg-cyan-950 active:bg-cyan-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white"><span>Move <span class="sr-only"> </span> down</span> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-3 h-3"><path fill-rule="evenodd" d="M12 2.25a.75.75 0 0 1 .75.75v16.19l6.22-6.22a.75.75 0 1 1 1.06 1.06l-7.5 7.5a.75.75 0 0 1-1.06 0l-7.5-7.5a.75.75 0 1 1 1.06-1.06l6.22 6.22V3a.75.75 0 0 1 .75-.75Z" clip-rule="evenodd"></path></svg></button></div></div>`), SidebarSection[FILENAME], [
     [
-      154,
+      155,
       12,
       [
         [
-          159,
+          160,
           14,
           [
-            [160, 16, [[160, 22]]],
+            [161, 16, [[161, 22]]],
             [
-              161,
+              162,
               16,
               [
-                [165, 23],
-                [166, 18, [[167, 20], [170, 20]]]
+                [166, 23],
+                [167, 18, [[168, 20], [171, 20]]]
               ]
             ]
           ]
         ],
         [
-          176,
+          177,
           14,
           [
             [
-              177,
+              178,
               16,
               [
-                [182, 18, [[182, 29]]],
-                [183, 18, [[184, 20]]]
+                [183, 18, [[183, 29]]],
+                [184, 18, [[185, 20]]]
               ]
             ],
             [
-              191,
+              192,
               16,
               [
-                [196, 18, [[196, 29]]],
-                [197, 18, [[198, 20]]]
+                [197, 18, [[197, 29]]],
+                [198, 18, [[199, 20]]]
               ]
             ]
           ]
@@ -27139,8 +26433,8 @@ ${indent}in ${name}`).join("")}
       ]
     ]
   ]);
-  var root_16 = add_locations(template(`<textarea class="w-full py-1 px-2 bg-slate-100 border-slate-100 rounded-md leading-6 text-sm"></textarea>`), SidebarSection[FILENAME], [[208, 12]]);
-  var root_17 = add_locations(template(`<input type="text" class="w-full py-1 px-2 mt-5 bg-slate-100 border-slate-100 rounded-md leading-6 text-sm">`), SidebarSection[FILENAME], [[216, 12]]);
+  var root_16 = add_locations(template(`<textarea class="w-full py-1 px-2 bg-slate-100 border-slate-100 rounded-md leading-6 text-sm"></textarea>`), SidebarSection[FILENAME], [[209, 12]]);
+  var root_17 = add_locations(template(`<input type="text" class="w-full py-1 px-2 mt-5 bg-slate-100 border-slate-100 rounded-md leading-6 text-sm">`), SidebarSection[FILENAME], [[217, 12]]);
   var root10 = add_locations(template(`<section class="p-4 border-b border-b-gray-100 border-solid"><header class="flex items-center text-sm mb-2 font-medium"><button type="button" class="w-full flex items-center justify-between gap-x-1 p-1 font-semibold group"><span><span class="hover:text-blue-700 active:text-blue-900"><!></span> <!></span> <span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 stroke-slate-500 fill-slate-500 group-hover:stroke-current group-hover:fill-current"><path fill-rule="evenodd" d="M11.47 7.72a.75.75 0 0 1 1.06 0l7.5 7.5a.75.75 0 1 1-1.06 1.06L12 9.31l-6.97 6.97a.75.75 0 0 1-1.06-1.06l7.5-7.5Z" clip-rule="evenodd"></path></svg></span></button></header> <!></section>`), SidebarSection[FILENAME], [
     [
       74,
@@ -27156,9 +26450,9 @@ ${indent}in ${name}`).join("")}
               [
                 [82, 6, [[83, 8]]],
                 [
-                  95,
+                  96,
                   6,
-                  [[96, 8, [[102, 10]]]]
+                  [[97, 8, [[103, 10]]]]
                 ]
               ]
             ]
@@ -27219,9 +26513,9 @@ ${indent}in ${name}`).join("")}
     function moveAstElement(movement, astElement) {
       if (!astNodes()) return;
       let astNodesCopy = Array.from(astNodes());
-      let index5 = astNodesCopy.indexOf(astElement);
-      astNodesCopy.splice(index5, 1);
-      astNodesCopy.splice(index5 + movement, 0, astElement);
+      let index4 = astNodesCopy.indexOf(astElement);
+      astNodesCopy.splice(index4, 1);
+      astNodesCopy.splice(index4 + movement, 0, astElement);
       dispatch("nodesChange", astNodesCopy);
     }
     function updateNodeContents(e, idx) {
@@ -27249,7 +26543,7 @@ ${indent}in ${name}`).join("")}
       }
     );
     legacy_pre_effect_reset();
-    init2();
+    init();
     var section = root10();
     var header = child(section);
     var button = child(header);
@@ -27357,7 +26651,7 @@ ${indent}in ${name}`).join("")}
                     var consequent_7 = ($$anchor6) => {
                       var fragment_4 = comment();
                       var node_10 = first_child(fragment_4);
-                      each(node_10, 1, astNodes, index2, ($$anchor7, astNode, idx) => {
+                      each(node_10, 1, astNodes, index, ($$anchor7, astNode, idx) => {
                         var fragment_5 = comment();
                         var node_11 = first_child(fragment_5);
                         {
@@ -27616,7 +26910,7 @@ ${indent}in ${name}`).join("")}
       store_set(live, live2());
     });
     legacy_pre_effect_reset();
-    init2();
+    init();
     var div = root11();
     var node = child(div);
     Backdrop(node, {});
@@ -27701,9 +26995,768 @@ ${indent}in ${name}`).join("")}
   var __default = modules;
   var filenames = ["../svelte/components/Backdrop.svelte", "../svelte/components/BrowserFrame.svelte", "../svelte/components/CodeEditor.svelte", "../svelte/components/ComponentsSidebar.svelte", "../svelte/components/GoToParentButton.svelte", "../svelte/components/LayoutAstNode.svelte", "../svelte/components/PageAstNode.svelte", "../svelte/components/PagePreview.svelte", "../svelte/components/PageWrapper.svelte", "../svelte/components/Pill.svelte", "../svelte/components/ResetSelectionButton.svelte", "../svelte/components/SelectedElementFloatingMenu.svelte", "../svelte/components/SelectedElementFloatingMenu/DragMenuOption.svelte", "../svelte/components/SidebarSection.svelte", "../svelte/components/UiBuilder.svelte"];
 
+  // ../deps/live_monaco_editor/assets/js/live_monaco_editor/editor/themes.js
+  var colors = {
+    background: "#282c34",
+    default: "#c4cad6",
+    lightRed: "#e06c75",
+    blue: "#61afef",
+    gray: "#8c92a3",
+    green: "#98c379",
+    purple: "#c678dd",
+    red: "#be5046",
+    teal: "#56b6c2",
+    peach: "#d19a66"
+  };
+  var rules = (colors2) => [
+    { token: "", foreground: colors2.default },
+    { token: "variable", foreground: colors2.lightRed },
+    { token: "constant", foreground: colors2.blue },
+    { token: "constant.character.escape", foreground: colors2.blue },
+    { token: "comment", foreground: colors2.gray },
+    { token: "number", foreground: colors2.blue },
+    { token: "regexp", foreground: colors2.lightRed },
+    { token: "type", foreground: colors2.lightRed },
+    { token: "string", foreground: colors2.green },
+    { token: "keyword", foreground: colors2.purple },
+    { token: "operator", foreground: colors2.peach },
+    { token: "delimiter.bracket.embed", foreground: colors2.red },
+    { token: "sigil", foreground: colors2.teal },
+    { token: "function", foreground: colors2.blue },
+    { token: "function.call", foreground: colors2.default },
+    // Markdown specific
+    { token: "emphasis", fontStyle: "italic" },
+    { token: "strong", fontStyle: "bold" },
+    { token: "keyword.md", foreground: colors2.lightRed },
+    { token: "keyword.table", foreground: colors2.lightRed },
+    { token: "string.link.md", foreground: colors2.blue },
+    { token: "variable.md", foreground: colors2.teal },
+    { token: "string.md", foreground: colors2.default },
+    { token: "variable.source.md", foreground: colors2.default },
+    // XML specific
+    { token: "tag", foreground: colors2.lightRed },
+    { token: "metatag", foreground: colors2.lightRed },
+    { token: "attribute.name", foreground: colors2.peach },
+    { token: "attribute.value", foreground: colors2.green },
+    // JSON specific
+    { token: "string.key", foreground: colors2.lightRed },
+    { token: "keyword.json", foreground: colors2.blue },
+    // SQL specific
+    { token: "operator.sql", foreground: colors2.purple }
+  ];
+  var theme = {
+    base: "vs-dark",
+    inherit: false,
+    rules: rules(colors),
+    colors: {
+      "editor.background": colors.background,
+      "editor.foreground": colors.default,
+      "editorLineNumber.foreground": "#636d83",
+      "editorCursor.foreground": "#636d83",
+      "editor.selectionBackground": "#3e4451",
+      "editor.findMatchHighlightBackground": "#528bff3d",
+      "editorSuggestWidget.background": "#21252b",
+      "editorSuggestWidget.border": "#181a1f",
+      "editorSuggestWidget.selectedBackground": "#2c313a",
+      "input.background": "#1b1d23",
+      "input.border": "#181a1f",
+      "editorBracketMatch.border": "#282c34",
+      "editorBracketMatch.background": "#3e4451"
+    }
+  };
+
+  // js/hooks/beacon_template_language.js
+  var BEACON_LANGUAGE_ID = "beacon";
+  var voidTags = /* @__PURE__ */ new Set([
+    "area",
+    "base",
+    "br",
+    "col",
+    "embed",
+    "hr",
+    "img",
+    "input",
+    "link",
+    "meta",
+    "param",
+    "source",
+    "track",
+    "wbr"
+  ]);
+  var rawTextTags = /* @__PURE__ */ new Set(["script", "style", "textarea", "title"]);
+  function registerBeaconTemplateLanguage(monaco) {
+    if (monaco.__beaconTemplateLanguageRegistered) {
+      return;
+    }
+    if (!monaco.languages.getLanguages().some((language) => language.id === BEACON_LANGUAGE_ID)) {
+      monaco.languages.register({
+        id: BEACON_LANGUAGE_ID,
+        aliases: ["Beacon Template", "beacon"],
+        mimetypes: ["text/x-beacon-template"]
+      });
+    }
+    monaco.languages.setLanguageConfiguration(BEACON_LANGUAGE_ID, {
+      comments: {
+        blockComment: ["<!--", "-->"]
+      },
+      brackets: [
+        ["<", ">"],
+        ["{", "}"],
+        ["(", ")"],
+        ["[", "]"]
+      ],
+      autoClosingPairs: [
+        { open: "{", close: "}" },
+        { open: "(", close: ")" },
+        { open: "[", close: "]" },
+        { open: '"', close: '"', notIn: ["string"] },
+        { open: "'", close: "'", notIn: ["string"] },
+        { open: "{{", close: "}}" }
+      ],
+      surroundingPairs: [
+        { open: '"', close: '"' },
+        { open: "'", close: "'" },
+        { open: "{", close: "}" },
+        { open: "(", close: ")" },
+        { open: "[", close: "]" }
+      ]
+    });
+    monaco.languages.setMonarchTokensProvider(BEACON_LANGUAGE_ID, {
+      tokenizer: {
+        root: [
+          [/<!--/, "comment", "@comment"],
+          [/\{\{/, "delimiter.bracket", "@interpolation"],
+          [/(<\/?)([A-Za-z][\w:-]*)/, ["delimiter.html", "tag"], "@tag"],
+          [/[^<{]+/, ""]
+        ],
+        comment: [
+          [/-->/, "comment", "@pop"],
+          [/[^-]+/, "comment"],
+          [/./, "comment"]
+        ],
+        interpolation: [
+          [/\}\}/, "delimiter.bracket", "@pop"],
+          [/\|[ \t]*[A-Za-z_][\w-]*/, "function"],
+          [/"[^"]*"/, "string"],
+          [/'[^']*'/, "string"],
+          [/\b(true|false|nil|and|or|not|in)\b/, "keyword"],
+          [/[A-Za-z_][\w.]*/, "variable"],
+          [/[=!<>]=?|[+\-*/]/, "operator"],
+          [/[{}()[\],.:|]/, "delimiter"],
+          [/./, ""]
+        ],
+        tag: [
+          [/\s+/, ""],
+          [/\/?>/, "delimiter.html", "@pop"],
+          [/([:@]?[A-Za-z_][\w:.-]*)(\s*=)/, ["attribute.name", "delimiter"]],
+          [/[A-Za-z_][\w:.-]*/, "attribute.name"],
+          [/"[^"]*"/, "attribute.value"],
+          [/'[^']*'/, "attribute.value"],
+          [/\{[^}]*\}/, "attribute.value"]
+        ]
+      }
+    });
+    monaco.languages.registerDocumentFormattingEditProvider(BEACON_LANGUAGE_ID, {
+      provideDocumentFormattingEdits(model, options) {
+        const formatted = formatBeaconTemplate(model.getValue(), options);
+        if (!formatted || formatted === model.getValue()) {
+          return [];
+        }
+        return [
+          {
+            range: model.getFullModelRange(),
+            text: formatted
+          }
+        ];
+      }
+    });
+    monaco.__beaconTemplateLanguageRegistered = true;
+  }
+  function formatBeaconTemplate(source2, options = {}) {
+    try {
+      const parser5 = new BeaconTemplateParser(source2);
+      const nodes = parser5.parse();
+      const indent = options.insertSpaces === false ? "	" : " ".repeat(options.tabSize || 2);
+      const formatted = formatNodes(nodes, 0, indent).join("\n");
+      return formatted.length > 0 ? `${formatted}
+` : "";
+    } catch (_error) {
+      return null;
+    }
+  }
+  var BeaconTemplateParser = class {
+    constructor(source2) {
+      this.source = source2;
+      this.offset = 0;
+    }
+    parse() {
+      const nodes = this.parseNodes(null);
+      this.skipWhitespace();
+      if (!this.eof()) {
+        throw new Error("unexpected trailing input");
+      }
+      return trimBoundaryWhitespace(nodes);
+    }
+    parseNodes(closingTag) {
+      const nodes = [];
+      while (!this.eof()) {
+        if (this.startsWith("</")) {
+          const tag = this.parseClosingTag();
+          if (!closingTag || tag.toLowerCase() !== closingTag.toLowerCase()) {
+            throw new Error("mismatched closing tag");
+          }
+          return trimBoundaryWhitespace(nodes);
+        }
+        nodes.push(this.parseNode());
+      }
+      if (closingTag) {
+        throw new Error("missing closing tag");
+      }
+      return trimBoundaryWhitespace(nodes);
+    }
+    parseNode() {
+      if (this.startsWith("<!--")) {
+        return this.parseComment();
+      }
+      if (this.startsWith("<!")) {
+        return this.parseDeclaration();
+      }
+      if (this.startsWith("<?")) {
+        return this.parseProcessingInstruction();
+      }
+      if (this.startsWith("<")) {
+        return this.parseElement();
+      }
+      return this.parseText();
+    }
+    parseComment() {
+      const finish = this.source.indexOf("-->", this.offset + 4);
+      if (finish === -1) {
+        throw new Error("unterminated comment");
+      }
+      const value2 = this.source.slice(this.offset, finish + 3);
+      this.offset = finish + 3;
+      return { type: "comment", value: value2 };
+    }
+    parseDeclaration() {
+      const finish = this.findTagEnd(this.offset + 2);
+      if (finish === -1) {
+        throw new Error("unterminated declaration");
+      }
+      const value2 = this.source.slice(this.offset, finish + 1);
+      this.offset = finish + 1;
+      return { type: "declaration", value: value2 };
+    }
+    parseProcessingInstruction() {
+      const finish = this.source.indexOf("?>", this.offset + 2);
+      if (finish === -1) {
+        throw new Error("unterminated processing instruction");
+      }
+      const value2 = this.source.slice(this.offset, finish + 2);
+      this.offset = finish + 2;
+      return { type: "declaration", value: value2 };
+    }
+    parseElement() {
+      const start = this.offset;
+      this.offset++;
+      const tag = this.parseTagName();
+      const finish = this.findTagEnd(this.offset);
+      if (finish === -1) {
+        throw new Error("unterminated start tag");
+      }
+      const attrs = this.source.slice(this.offset, finish).trim();
+      this.offset = finish + 1;
+      const selfClosing = attrs.endsWith("/");
+      const normalizedAttrs = selfClosing ? attrs.slice(0, -1).trimEnd() : attrs;
+      const lowerTag = tag.toLowerCase();
+      if (selfClosing || voidTags.has(lowerTag)) {
+        return {
+          type: "element",
+          tag,
+          attrs: normalizedAttrs,
+          selfClosing,
+          void: voidTags.has(lowerTag),
+          children: [],
+          source: this.source.slice(start, this.offset)
+        };
+      }
+      if (rawTextTags.has(lowerTag)) {
+        const closing = `</${tag}>`;
+        const closeOffset = this.source.toLowerCase().indexOf(closing.toLowerCase(), this.offset);
+        if (closeOffset === -1) {
+          throw new Error("missing raw text closing tag");
+        }
+        const rawText = this.source.slice(this.offset, closeOffset);
+        this.offset = closeOffset + closing.length;
+        return {
+          type: "element",
+          tag,
+          attrs: normalizedAttrs,
+          rawText,
+          children: []
+        };
+      }
+      const children = this.parseNodes(tag);
+      return {
+        type: "element",
+        tag,
+        attrs: normalizedAttrs,
+        children
+      };
+    }
+    parseClosingTag() {
+      this.offset += 2;
+      this.skipWhitespace();
+      const tag = this.parseTagName();
+      this.skipWhitespace();
+      if (!this.startsWith(">")) {
+        throw new Error("unterminated closing tag");
+      }
+      this.offset++;
+      return tag;
+    }
+    parseTagName() {
+      const start = this.offset;
+      while (!this.eof() && /[A-Za-z0-9_:-]/.test(this.source[this.offset])) {
+        this.offset++;
+      }
+      if (start === this.offset) {
+        throw new Error("expected tag name");
+      }
+      return this.source.slice(start, this.offset);
+    }
+    parseText() {
+      const finish = this.findTextEnd();
+      const end = finish === -1 ? this.source.length : finish;
+      const value2 = this.source.slice(this.offset, end);
+      this.offset = end;
+      return { type: "text", value: value2 };
+    }
+    findTextEnd() {
+      let inInterpolation = false;
+      for (let i = this.offset; i < this.source.length; i++) {
+        if (!inInterpolation && this.source.startsWith("{{", i)) {
+          inInterpolation = true;
+          i++;
+        } else if (inInterpolation && this.source.startsWith("}}", i)) {
+          inInterpolation = false;
+          i++;
+        } else if (!inInterpolation && this.source[i] === "<") {
+          return i;
+        }
+      }
+      if (inInterpolation) {
+        throw new Error("unterminated interpolation");
+      }
+      return -1;
+    }
+    findTagEnd(start) {
+      let quote = null;
+      let braceDepth = 0;
+      for (let i = start; i < this.source.length; i++) {
+        const char = this.source[i];
+        if (quote) {
+          if (char === "\\" && i + 1 < this.source.length) {
+            i++;
+          } else if (char === quote) {
+            quote = null;
+          }
+        } else if (char === '"' || char === "'") {
+          quote = char;
+        } else if (char === "{") {
+          braceDepth++;
+        } else if (char === "}") {
+          braceDepth = Math.max(0, braceDepth - 1);
+        } else if (char === ">" && braceDepth === 0) {
+          return i;
+        }
+      }
+      return -1;
+    }
+    skipWhitespace() {
+      while (!this.eof() && /\s/.test(this.source[this.offset])) {
+        this.offset++;
+      }
+    }
+    startsWith(token) {
+      return this.source.startsWith(token, this.offset);
+    }
+    eof() {
+      return this.offset >= this.source.length;
+    }
+  };
+  function formatNodes(nodes, depth, indent) {
+    return nodes.flatMap((node) => formatNode(node, depth, indent)).filter((line) => line !== null);
+  }
+  function formatNode(node, depth, indent) {
+    const prefix3 = indent.repeat(depth);
+    if (node.type === "text") {
+      const text2 = normalizeText(node.value);
+      return text2 ? [`${prefix3}${text2}`] : [];
+    }
+    if (node.type === "comment" || node.type === "declaration") {
+      return [`${prefix3}${node.value.trim()}`];
+    }
+    if (node.type !== "element") {
+      return [];
+    }
+    const attrs = node.attrs ? ` ${node.attrs}` : "";
+    if (node.selfClosing) {
+      return [`${prefix3}<${node.tag}${attrs} />`];
+    }
+    if (node.void) {
+      return [`${prefix3}<${node.tag}${attrs}>`];
+    }
+    if (typeof node.rawText === "string") {
+      const rawText = node.rawText.trim();
+      if (rawText === "") {
+        return [`${prefix3}<${node.tag}${attrs}></${node.tag}>`];
+      }
+      if (!rawText.includes("\n")) {
+        return [`${prefix3}<${node.tag}${attrs}>${rawText}</${node.tag}>`];
+      }
+      return [
+        `${prefix3}<${node.tag}${attrs}>`,
+        ...rawText.split("\n").map((line) => `${indent.repeat(depth + 1)}${line.trimEnd()}`),
+        `${prefix3}</${node.tag}>`
+      ];
+    }
+    if (node.children.length === 0) {
+      return [`${prefix3}<${node.tag}${attrs}></${node.tag}>`];
+    }
+    const inlineText = inlineChildren(node.children);
+    if (inlineText !== null && inlineText.length + node.tag.length + attrs.length < 120) {
+      return [`${prefix3}<${node.tag}${attrs}>${inlineText}</${node.tag}>`];
+    }
+    return [`${prefix3}<${node.tag}${attrs}>`, ...formatNodes(node.children, depth + 1, indent), `${prefix3}</${node.tag}>`];
+  }
+  function inlineChildren(children) {
+    const parts = [];
+    for (const child2 of children) {
+      if (child2.type !== "text") {
+        return null;
+      }
+      const text2 = normalizeText(child2.value);
+      if (text2) {
+        parts.push(text2);
+      }
+    }
+    return parts.join(" ");
+  }
+  function normalizeText(text2) {
+    return text2.replace(/\s+/g, " ").trim();
+  }
+  function trimBoundaryWhitespace(nodes) {
+    let start = 0;
+    let end = nodes.length;
+    while (start < end && isWhitespaceText(nodes[start])) {
+      start++;
+    }
+    while (end > start && isWhitespaceText(nodes[end - 1])) {
+      end--;
+    }
+    return nodes.slice(start, end);
+  }
+  function isWhitespaceText(node) {
+    return node.type === "text" && node.value.trim() === "";
+  }
+
+  // js/hooks/code_editor_hook.js
+  var CodeEditor2 = class {
+    constructor(el, path, value2, opts, { autosize = true } = {}) {
+      this.el = el;
+      this.path = path;
+      this.value = value2;
+      this.opts = opts;
+      this.autosize = autosize;
+      this.standalone_code_editor = null;
+      this._onMount = [];
+      this._resizeObserver = null;
+      this._contentSizeListener = null;
+      this._windowResizeListener = null;
+    }
+    isMounted() {
+      return !!this.standalone_code_editor;
+    }
+    mount() {
+      if (this.isMounted()) {
+        throw new Error("The monaco editor is already mounted");
+      }
+      this._mountEditor();
+    }
+    onMount(callback) {
+      this._onMount.push(callback);
+    }
+    formatDocument() {
+      if (!this.isMounted()) {
+        return Promise.resolve();
+      }
+      const action2 = this.standalone_code_editor.getAction("editor.action.formatDocument");
+      return action2 ? action2.run() : Promise.resolve();
+    }
+    dispose() {
+      if (this._contentSizeListener) {
+        this._contentSizeListener.dispose();
+      }
+      if (this._resizeObserver) {
+        this._resizeObserver.disconnect();
+      }
+      if (this._windowResizeListener) {
+        window.removeEventListener("resize", this._windowResizeListener);
+      }
+      if (this.isMounted()) {
+        const model = this.standalone_code_editor.getModel();
+        if (model) {
+          model.dispose();
+        }
+        this.standalone_code_editor.dispose();
+      }
+    }
+    _mountEditor() {
+      this.opts.value = this.value;
+      loader_default.config({
+        paths: { vs: "https://cdn.jsdelivr.net/npm/monaco-editor@0.52.2/min/vs" }
+      });
+      loader_default.init().then((monaco) => {
+        monaco.editor.defineTheme("default", theme);
+        registerBeaconTemplateLanguage(monaco);
+        const modelUri = monaco.Uri.parse(this.path);
+        const language = this.opts.language;
+        const model = monaco.editor.createModel(this.value, language, modelUri);
+        this.opts.language = void 0;
+        this.opts.model = model;
+        this.standalone_code_editor = monaco.editor.create(this.el, this.opts);
+        this._onMount.forEach((callback) => callback(monaco));
+        this._setScreenDependantEditorOptions();
+        this.standalone_code_editor.addAction({
+          contextMenuGroupId: "navigation",
+          contextMenuOrder: 1,
+          id: "format-beacon-template",
+          label: "Format Beacon Template",
+          precondition: `editorLangId == '${BEACON_LANGUAGE_ID}'`,
+          keybindings: [monaco.KeyMod.Shift | monaco.KeyMod.Alt | monaco.KeyCode.KeyF],
+          run: (editor) => editor.getAction("editor.action.formatDocument").run()
+        });
+        this.standalone_code_editor.addAction({
+          contextMenuGroupId: "word-wrapping",
+          id: "enable-word-wrapping",
+          label: "Enable word wrapping",
+          precondition: "config.editor.wordWrap == off",
+          keybindings: [monaco.KeyMod.Alt | monaco.KeyCode.KeyZ],
+          run: (editor) => editor.updateOptions({ wordWrap: "on" })
+        });
+        this.standalone_code_editor.addAction({
+          contextMenuGroupId: "word-wrapping",
+          id: "disable-word-wrapping",
+          label: "Disable word wrapping",
+          precondition: "config.editor.wordWrap == on",
+          keybindings: [monaco.KeyMod.Alt | monaco.KeyCode.KeyZ],
+          run: (editor) => editor.updateOptions({ wordWrap: "off" })
+        });
+        this._resizeObserver = new ResizeObserver(() => this._layoutEditor());
+        this._resizeObserver.observe(this.el);
+        if (!this.autosize && this.el.parentElement) {
+          this._resizeObserver.observe(this.el.parentElement);
+        }
+        if (this.autosize) {
+          this._contentSizeListener = this.standalone_code_editor.onDidContentSizeChange(() => {
+            const contentHeight = this.standalone_code_editor.getContentHeight();
+            this.el.style.height = `${contentHeight}px`;
+          });
+        } else {
+          this._windowResizeListener = () => {
+            this._layoutEditor();
+          };
+          window.addEventListener("resize", this._windowResizeListener);
+          requestAnimationFrame(() => {
+            this._layoutEditor();
+          });
+        }
+      });
+    }
+    _layoutEditor() {
+      if (!this.isMounted()) {
+        return;
+      }
+      const width = this.el.clientWidth;
+      const height = this.el.clientHeight;
+      if (width > 0 && height > 0) {
+        this._setScreenDependantEditorOptions();
+        this.standalone_code_editor.layout({ width, height });
+      }
+    }
+    _setScreenDependantEditorOptions() {
+      if (window.screen.width < 768) {
+        this.standalone_code_editor.updateOptions({
+          folding: false,
+          lineDecorationsWidth: 16,
+          lineNumbersMinChars: Math.floor(Math.log10(this.standalone_code_editor.getModel().getLineCount())) + 3
+        });
+      } else {
+        this.standalone_code_editor.updateOptions({
+          folding: true,
+          lineDecorationsWidth: 10,
+          lineNumbersMinChars: 5
+        });
+      }
+    }
+  };
+  var CodeEditorHook = {
+    mounted() {
+      const opts = JSON.parse(this.el.dataset.opts);
+      this.codeEditor = new CodeEditor2(this.el, this.el.dataset.path, this.el.dataset.value, opts, {
+        autosize: !this.el.classList.contains("beacon-page-code-editor")
+      });
+      this.codeEditor.onMount((monaco) => {
+        if (this.el.dataset.changeEvent && this.el.dataset.changeEvent !== "") {
+          this.codeEditor.standalone_code_editor.onDidChangeModelContent(() => {
+            if (this.el.dataset.target && this.el.dataset.target !== "") {
+              this.pushEventTo(this.el.dataset.target, this.el.dataset.changeEvent, {
+                value: this.codeEditor.standalone_code_editor.getValue()
+              });
+            } else {
+              this.pushEvent(this.el.dataset.changeEvent, {
+                value: this.codeEditor.standalone_code_editor.getValue()
+              });
+            }
+          });
+        }
+        this.handleEvent("lme:change_language:" + this.el.dataset.path, (data) => {
+          const model = this.codeEditor.standalone_code_editor.getModel();
+          if (model.getLanguageId() !== data.mimeTypeOrLanguageId) {
+            monaco.editor.setModelLanguage(model, data.mimeTypeOrLanguageId);
+            if (data.mimeTypeOrLanguageId === BEACON_LANGUAGE_ID && this.el.dataset.formatOnMount === "true") {
+              requestAnimationFrame(() => this.codeEditor.formatDocument());
+            }
+          }
+        });
+        this.handleEvent("lme:set_value:" + this.el.dataset.path, (data) => {
+          this.codeEditor.standalone_code_editor.setValue(data.value);
+          if (this.el.dataset.formatOnMount === "true" && this.codeEditor.standalone_code_editor.getModel().getLanguageId() === BEACON_LANGUAGE_ID) {
+            requestAnimationFrame(() => this.codeEditor.formatDocument());
+          }
+        });
+        this.el.querySelectorAll("textarea").forEach((textarea) => {
+          textarea.setAttribute("name", "live_monaco_editor[" + this.el.dataset.path + "]");
+        });
+        this.el.removeAttribute("data-value");
+        this.el.removeAttribute("data-opts");
+        this.el.dispatchEvent(
+          new CustomEvent("lme:editor_mounted", {
+            detail: { hook: this, editor: this.codeEditor },
+            bubbles: true
+          })
+        );
+        if (this.el.dataset.formatOnMount === "true" && this.codeEditor.standalone_code_editor.getModel().getLanguageId() === BEACON_LANGUAGE_ID) {
+          requestAnimationFrame(() => this.codeEditor.formatDocument());
+        }
+      });
+      if (!this.codeEditor.isMounted()) {
+        this.codeEditor.mount();
+      }
+    },
+    destroyed() {
+      if (this.codeEditor) {
+        this.codeEditor.dispose();
+      }
+    }
+  };
+
   // js/beacon_live_admin.js
   var Hooks = {};
   Hooks.CodeEditorHook = CodeEditorHook;
+  Hooks.ThemeToggle = {
+    mounted() {
+      this.el.addEventListener("click", () => {
+        const html3 = document.documentElement;
+        const current = localStorage.getItem("beacon_admin_theme") || "system";
+        let next2;
+        if (current === "light") next2 = "dark";
+        else if (current === "dark") next2 = "system";
+        else next2 = "light";
+        localStorage.setItem("beacon_admin_theme", next2);
+        this.applyTheme(next2);
+        this.updateIcon(next2);
+      });
+      const saved = localStorage.getItem("beacon_admin_theme") || "system";
+      this.applyTheme(saved);
+      this.updateIcon(saved);
+    },
+    applyTheme(theme2) {
+      const html3 = document.documentElement;
+      if (theme2 === "dark") {
+        html3.classList.add("dark");
+      } else if (theme2 === "light") {
+        html3.classList.remove("dark");
+      } else {
+        if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+          html3.classList.add("dark");
+        } else {
+          html3.classList.remove("dark");
+        }
+      }
+    },
+    updateIcon(theme2) {
+      const sunIcon = this.el.querySelector("[data-icon=sun]");
+      const moonIcon = this.el.querySelector("[data-icon=moon]");
+      const systemIcon = this.el.querySelector("[data-icon=system]");
+      if (sunIcon) sunIcon.classList.toggle("hidden", theme2 !== "light");
+      if (moonIcon) moonIcon.classList.toggle("hidden", theme2 !== "dark");
+      if (systemIcon) systemIcon.classList.toggle("hidden", theme2 !== "system");
+    }
+  };
+  Hooks.SidebarToggle = {
+    mounted() {
+      const sidebar = this.el;
+      const btn = document.getElementById("sidebar-toggle");
+      const collapseIcon = document.getElementById("sidebar-collapse-icon");
+      const expandIcon = document.getElementById("sidebar-expand-icon");
+      const collapsed = localStorage.getItem("beacon_sidebar_collapsed") === "true";
+      if (collapsed) this.collapse(sidebar, collapseIcon, expandIcon);
+      btn.addEventListener("click", () => {
+        const isCollapsed = sidebar.style.width === "56px";
+        if (isCollapsed) {
+          this.expand(sidebar, collapseIcon, expandIcon);
+          localStorage.setItem("beacon_sidebar_collapsed", "false");
+        } else {
+          this.collapse(sidebar, collapseIcon, expandIcon);
+          localStorage.setItem("beacon_sidebar_collapsed", "true");
+        }
+      });
+    },
+    collapse(sidebar, collapseIcon, expandIcon) {
+      sidebar.style.width = "56px";
+      collapseIcon.classList.add("hidden");
+      expandIcon.classList.remove("hidden");
+    },
+    expand(sidebar, collapseIcon, expandIcon) {
+      sidebar.style.width = "220px";
+      collapseIcon.classList.remove("hidden");
+      expandIcon.classList.add("hidden");
+    }
+  };
+  Hooks.WorkspaceResize = {
+    mounted() {
+      this._resize = () => {
+        const top = this.el.getBoundingClientRect().top;
+        const h = window.innerHeight - top - 12;
+        this.el.style.height = h + "px";
+      };
+      requestAnimationFrame(() => {
+        this._resize();
+        this._observer = new ResizeObserver(() => this._resize());
+        this._observer.observe(this.el.parentElement);
+      });
+      window.addEventListener("resize", this._resize);
+    },
+    updated() {
+      requestAnimationFrame(() => this._resize());
+    },
+    destroyed() {
+      window.removeEventListener("resize", this._resize);
+      if (this._observer) this._observer.disconnect();
+    }
+  };
   import_topbar.default.config({ barColors: { 0: "#29d" }, shadowColor: "rgba(0, 0, 0, .3)" });
   window.addEventListener("phx:page-loading-start", (_info) => import_topbar.default.show(300));
   window.addEventListener("phx:page-loading-stop", (_info) => import_topbar.default.hide());

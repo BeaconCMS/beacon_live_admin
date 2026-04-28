@@ -1,4 +1,9 @@
-<aside id="sidebar" class="@container w-[220px] flex-shrink-0">
+<aside
+  id="sidebar"
+  class="@container flex-shrink-0 transition-[width] duration-200 ease-in-out"
+  style="width: 220px;"
+  phx-hook="SidebarToggle"
+>
   <div class="flex flex-col h-full min-h-screen border-r border-base-300 bg-base-100">
     <header class="px-4 py-5 @[180px]:px-5">
       <div class="flex items-center justify-center @[180px]:justify-start gap-2.5">
@@ -13,6 +18,20 @@
         </span>
       </div>
     </header>
+    <div class="flex items-center px-2 @[180px]:px-3 pb-2">
+      <button
+        id="sidebar-toggle"
+        class="flex items-center justify-center w-8 h-8 rounded-lg text-base-content/40 hover:text-base-content/70 hover:bg-base-200 transition-colors"
+        aria-label="Toggle sidebar"
+      >
+        <svg id="sidebar-collapse-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M18.75 19.5l-7.5-7.5 7.5-7.5m-6 15L5.25 12l7.5-7.5" />
+        </svg>
+        <svg id="sidebar-expand-icon" class="w-4 h-4 hidden" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 4.5l7.5 7.5-7.5 7.5m-6-15l7.5 7.5-7.5 7.5" />
+        </svg>
+      </button>
+    </div>
     <nav aria-label="Primary navigation" class="flex flex-col flex-1 px-2 @[180px]:px-3 overflow-y-auto">
       <div role="list" class="flex flex-1 flex-col gap-0.5">
         <%= for link <- @__beacon_menu__.links, link != :skip do %>
@@ -26,6 +45,6 @@
   </div>
 </aside>
 
-<main class="flex-1 min-w-0 px-6 pt-6 pb-6 lg:px-8">
+<main class="flex-1 min-w-0 overflow-hidden px-6 pt-4 pb-2 lg:px-8 h-screen">
   <%= render_page(@beacon_page.module, assigns) %>
 </main>

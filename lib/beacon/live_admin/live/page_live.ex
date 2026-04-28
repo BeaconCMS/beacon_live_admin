@@ -110,6 +110,8 @@ defmodule Beacon.LiveAdmin.PageLive do
       # If the module changed (e.g., navigating from a stale mount), call the new module's mount first
       socket =
         if page.module != prev_module do
+          socket = update_page(socket, table: page.module.__beacon_page_table__())
+
           case maybe_apply_module(socket, :mount, [params, page.session], & &1) do
             {:ok, s} -> s
             s -> s

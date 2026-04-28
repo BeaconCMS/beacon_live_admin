@@ -7,6 +7,7 @@ defmodule Beacon.LiveAdmin.Preview do
   """
 
   use Phoenix.Component
+  alias Phoenix.LiveView.JS
 
   attr :site, :atom, required: true
   attr :type, :string, required: true, values: ~w(page error_page layout)
@@ -23,7 +24,7 @@ defmodule Beacon.LiveAdmin.Preview do
     <div class={["w-full", @class]}>
       <div class="flex items-center gap-1 mb-2">
         <button
-          phx-click="preview_tab"
+          phx-click={JS.add_class("opacity-0", to: "#preview-iframe") |> JS.push("preview_tab")}
           phx-value-tab="draft"
           class={["btn btn-xs", if(@tab == "draft", do: "btn-primary", else: "btn-ghost")]}
         >
@@ -31,7 +32,7 @@ defmodule Beacon.LiveAdmin.Preview do
         </button>
         <button
           :if={@live_url}
-          phx-click="preview_tab"
+          phx-click={JS.add_class("opacity-0", to: "#preview-iframe") |> JS.push("preview_tab")}
           phx-value-tab="published"
           class={["btn btn-xs", if(@tab == "published", do: "btn-primary", else: "btn-ghost")]}
         >
@@ -47,12 +48,14 @@ defmodule Beacon.LiveAdmin.Preview do
           <span class="hero-arrow-top-right-on-square w-3 h-3"></span>
         </a>
       </div>
-      <div class="border border-base-300 rounded-lg overflow-hidden bg-white">
+      <div class="border border-base-300 rounded-lg overflow-hidden bg-white relative">
         <iframe
+          id="preview-iframe"
           src={if(@tab == "published" && @live_url, do: @live_url, else: @preview_url)}
-          class="w-full border-0"
+          class="w-full border-0 transition-opacity duration-500"
           style="min-height: 500px; height: 70vh;"
           title={"#{@type} preview"}
+          onload="this.classList.remove('opacity-0')"
         >
         </iframe>
       </div>
