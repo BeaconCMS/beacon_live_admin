@@ -13,7 +13,8 @@
       "Bash(git push:*)",
       "Bash(/tmp/beacon_api_summary.txt:*)",
       "Read(//tmp/**)",
-      "Bash(ls -la /Users/bcardarella/projects/beacon_live_admin/lib/beacon/live_admin/*.ex)"
+      "Bash(ls -la /Users/bcardarella/projects/beacon_live_admin/lib/beacon/live_admin/*.ex)",
+      "Bash(git check-ignore *)"
     ]
   }
 }
