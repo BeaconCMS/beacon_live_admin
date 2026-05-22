@@ -64,7 +64,7 @@ defmodule Beacon.LiveAdmin.MixProject do
       {:floki, ">= 0.30.0"},
       {:tailwind_compiler, github: "BeaconCMS/tailwind_compiler", tag: "v0.0.7"},
       esbuild_dep(),
-      {:gettext, "~> 0.26"},
+      {:gettext, "~> 0.26 or ~> 1.0"},
       {:jason, "~> 1.0"},
       {:igniter, "~> 0.5", optional: true},
       {:turboprop, "~> 0.1"},
