@@ -79,7 +79,8 @@ defmodule Beacon.LiveAdmin.MediaLibraryLive.Index do
     asset = MediaLibrary.get_asset_by(site, id: id)
     {:ok, _} = MediaLibrary.soft_delete(site, asset)
 
-    path = beacon_live_admin_path(socket, site, "/media_library", query: socket.assigns.query)
+    query = Map.get(socket.assigns, :query)
+    path = beacon_live_admin_path(socket, site, "/media_library", query: query)
     socket = push_patch(socket, to: path)
 
     {:noreply, socket}
