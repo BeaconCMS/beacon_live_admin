@@ -84,8 +84,8 @@ defmodule Beacon.LiveAdmin.PageBuilder do
       import Beacon.LiveAdmin.Components, only: [template_error: 1]
       import LiveSvelte
 
-      alias Phoenix.LiveView.JS
       alias Beacon.LiveAdmin.PageBuilder.Table
+      alias Phoenix.LiveView.JS
 
       @behaviour Beacon.LiveAdmin.PageBuilder
 

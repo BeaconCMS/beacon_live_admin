@@ -342,30 +342,40 @@ class BeaconTemplateParser {
   }
 
   findTagEnd(start) {
-    let quote = null
     let braceDepth = 0
 
     for (let i = start; i < this.source.length; i++) {
       const char = this.source[i]
 
-      if (quote) {
-        if (char === "\\" && i + 1 < this.source.length) {
-          i++
-        } else if (char === quote) {
-          quote = null
-        }
-      } else if (char === '"' || char === "'") {
-        quote = char
-      } else if (char === "{") {
-        braceDepth++
-      } else if (char === "}") {
-        braceDepth = Math.max(0, braceDepth - 1)
-      } else if (char === ">" && braceDepth === 0) {
+      if (char === '"' || char === "'") {
+        i = this.skipQuoted(i, char)
+        continue
+      }
+
+      braceDepth = nextBraceDepth(char, braceDepth)
+
+      if (char === ">" && braceDepth === 0) {
         return i
       }
     }
 
     return -1
+  }
+
+  // Index of the closing quote of the string that opens at `start`, or the end
+  // of the source if it never closes. A backslash escapes the next character.
+  skipQuoted(start, quote) {
+    for (let i = start + 1; i < this.source.length; i++) {
+      const char = this.source[i]
+
+      if (char === "\\") {
+        i++
+      } else if (char === quote) {
+        return i
+      }
+    }
+
+    return this.source.length
   }
 
   skipWhitespace() {
@@ -381,6 +391,19 @@ class BeaconTemplateParser {
   eof() {
     return this.offset >= this.source.length
   }
+}
+
+// A `>` inside a `{...}` interpolation does not end the tag.
+function nextBraceDepth(char, braceDepth) {
+  if (char === "{") {
+    return braceDepth + 1
+  }
+
+  if (char === "}") {
+    return Math.max(0, braceDepth - 1)
+  }
+
+  return braceDepth
 }
 
 function formatNodes(nodes, depth, indent) {
@@ -403,6 +426,12 @@ function formatNode(node, depth, indent) {
     return []
   }
 
+  return formatElement(node, depth, indent, prefix)
+}
+
+// An element goes on one line when it fits, and is opened, indented and closed
+// when it does not.
+function formatElement(node, depth, indent, prefix) {
   const attrs = node.attrs ? ` ${node.attrs}` : ""
 
   if (node.selfClosing) {
@@ -414,21 +443,7 @@ function formatNode(node, depth, indent) {
   }
 
   if (typeof node.rawText === "string") {
-    const rawText = node.rawText.trim()
-
-    if (rawText === "") {
-      return [`${prefix}<${node.tag}${attrs}></${node.tag}>`]
-    }
-
-    if (!rawText.includes("\n")) {
-      return [`${prefix}<${node.tag}${attrs}>${rawText}</${node.tag}>`]
-    }
-
-    return [
-      `${prefix}<${node.tag}${attrs}>`,
-      ...rawText.split("\n").map((line) => `${indent.repeat(depth + 1)}${line.trimEnd()}`),
-      `${prefix}</${node.tag}>`,
-    ]
+    return formatRawTextElement(node, depth, indent, prefix, attrs)
   }
 
   if (node.children.length === 0) {
@@ -442,6 +457,25 @@ function formatNode(node, depth, indent) {
   }
 
   return [`${prefix}<${node.tag}${attrs}>`, ...formatNodes(node.children, depth + 1, indent), `${prefix}</${node.tag}>`]
+}
+
+// An element whose contents are kept verbatim, such as <script> or <style>.
+function formatRawTextElement(node, depth, indent, prefix, attrs) {
+  const rawText = node.rawText.trim()
+
+  if (rawText === "") {
+    return [`${prefix}<${node.tag}${attrs}></${node.tag}>`]
+  }
+
+  if (!rawText.includes("\n")) {
+    return [`${prefix}<${node.tag}${attrs}>${rawText}</${node.tag}>`]
+  }
+
+  return [
+    `${prefix}<${node.tag}${attrs}>`,
+    ...rawText.split("\n").map((line) => `${indent.repeat(depth + 1)}${line.trimEnd()}`),
+    `${prefix}</${node.tag}>`,
+  ]
 }
 
 function inlineChildren(children) {

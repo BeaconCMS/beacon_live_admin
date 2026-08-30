@@ -51,6 +51,7 @@ defmodule Beacon.LiveAdmin.MixProject do
 
   defp deps do
     [
+      {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       # Overridable
       override_dep(:phoenix, "~> 1.7", "PHOENIX_VERSION", "PHOENIX_PATH"),
       override_dep(:phoenix_live_view, ">= 1.0.1", "PHOENIX_LIVE_VIEW_VERSION", "PHOENIX_LIVE_VIEW_PATH"),
@@ -127,6 +128,7 @@ defmodule Beacon.LiveAdmin.MixProject do
         "esbuild.install --if-missing",
         "cmd npm install --prefix assets"
       ],
+      "assets.lint": ["cmd --cd assets npm run lint"],
       "assets.watch": [
         "tailwind beacon_live_admin",
         "cmd --cd assets node build.js --watch"

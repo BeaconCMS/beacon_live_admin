@@ -107,23 +107,26 @@ defmodule Beacon.LiveAdmin.PageLive do
     with %Socket{redirected: nil} = socket <-
            update_page(socket, path: page.path, module: page.module, params: params),
          %Socket{redirected: nil} = socket <- assign_menu_links(socket, socket.assigns.__beacon_pages__) do
-      # If the module changed (e.g., navigating from a stale mount), call the new module's mount first
-      socket =
-        if page.module != prev_module do
-          socket = update_page(socket, table: page.module.__beacon_page_table__())
-
-          case maybe_apply_module(socket, :mount, [params, page.session], & &1) do
-            {:ok, s} -> s
-            s -> s
-          end
-        else
-          socket
-        end
-
+      socket = maybe_remount(socket, page, prev_module, params)
       maybe_apply_module(socket, :handle_params, [params, url], &{:noreply, &1})
     else
       %Socket{} = redirected_socket ->
         {:noreply, redirected_socket}
+    end
+  end
+
+  # If the module changed, e.g. navigating from a stale mount, the new module's
+  # mount runs before its handle_params.
+  defp maybe_remount(socket, page, prev_module, params) do
+    if page.module == prev_module do
+      socket
+    else
+      socket = update_page(socket, table: page.module.__beacon_page_table__())
+
+      case maybe_apply_module(socket, :mount, [params, page.session], & &1) do
+        {:ok, s} -> s
+        s -> s
+      end
     end
   end
 
@@ -191,7 +194,6 @@ defmodule Beacon.LiveAdmin.PageLive do
     end
   end
 
-
   defp assign_params(socket, params) do
     update_page(socket, params: params)
   end
@@ -225,88 +227,78 @@ defmodule Beacon.LiveAdmin.PageLive do
     ["", current_prefix | _] = String.split(current_path, "/")
     current_prefix = "/" <> current_prefix
 
-    # When viewing /beacon/* pages, only show beacon admin links
-    # When viewing site-scoped pages, only show site-scoped links
-    is_beacon_admin = String.starts_with?(current_path, "/beacon")
-
-    filtered_pages =
-      Enum.filter(pages, fn {path, _module, _live_action, _session} ->
-        if is_beacon_admin do
-          String.starts_with?(path, "/beacon")
-        else
-          not String.starts_with?(path, "/beacon")
-        end
-      end)
+    # A /beacon/* page shows only beacon admin links, and a site-scoped page
+    # shows only site-scoped ones.
+    beacon_admin? = String.starts_with?(current_path, "/beacon")
 
     link_map =
-      Enum.reduce(filtered_pages, %{}, fn {path, module, live_action, _session}, acc ->
-        ["", prefix | _] = String.split(path, "/")
-        prefix = "/" <> prefix
-
-        current? = prefix == current_prefix
-
-        menu_link =
-          case module.menu_link(prefix, live_action) do
-            {state, anchor} -> {state, anchor, nil}
-            menu_link -> menu_link
-          end
-
-        case {current?, menu_link} do
-          {true, {:root, anchor, icon}} ->
-            icon = icon || Map.get(@default_icons, prefix)
-            value = {:current, anchor, icon}
-            Map.update(acc, prefix, value, fn _ -> value end)
-
-          {true, {:submenu, anchor, icon}} ->
-            icon = icon || Map.get(@default_icons, prefix)
-            value = {:current, anchor, icon}
-            Map.update(acc, prefix, value, fn _ -> value end)
-
-          {false, {:root, anchor, icon}} ->
-            icon = icon || Map.get(@default_icons, prefix)
-            value = {:enabled, anchor, icon}
-            Map.update(acc, prefix, value, fn _ -> value end)
-
-          _ ->
-            acc
-        end
+      pages
+      |> Enum.filter(fn {path, _module, _live_action, _session} ->
+        String.starts_with?(path, "/beacon") == beacon_admin?
       end)
+      |> Enum.reduce(%{}, &collect_menu_link(&1, &2, current_prefix))
 
-    # Only show menu groups relevant to the current scope
-    active_groups = if is_beacon_admin do
-      Enum.filter(@menu_groups, fn {group_id, _, _} -> group_id == :beacon_admin end)
-    else
-      Enum.filter(@menu_groups, fn {group_id, _, _} -> group_id != :beacon_admin end)
-    end
-
-    grouped_links =
-      Enum.flat_map(active_groups, fn {_group_id, group_label, prefixes} ->
-        group_items =
-          Enum.flat_map(prefixes, fn prefix ->
-            case Map.get(link_map, prefix) do
-              {state, anchor, icon} -> [{state, anchor, icon, prefix}]
-              nil -> []
-            end
-          end)
-
-        case group_items do
-          [] -> []
-          items -> [{:group, group_label} | items]
-        end
-      end)
-
-    # Append any links not in a predefined group (only from filtered pages)
+    active_groups = active_menu_groups(beacon_admin?)
     known_prefixes = Enum.flat_map(active_groups, fn {_, _, prefixes} -> prefixes end)
 
-    extra_links =
-      link_map
-      |> Enum.reject(fn {prefix, _} -> prefix in known_prefixes end)
-      |> Enum.sort_by(fn {prefix, _} -> prefix end)
-      |> Enum.map(fn {prefix, {state, anchor, icon}} -> {state, anchor, icon, prefix} end)
+    links =
+      grouped_menu_links(active_groups, link_map) ++
+        ungrouped_menu_links(link_map, known_prefixes)
 
-    all_links = grouped_links ++ extra_links
+    update_menu(socket, links: links)
+  end
 
-    update_menu(socket, links: all_links)
+  defp collect_menu_link({path, module, live_action, _session}, acc, current_prefix) do
+    ["", prefix | _] = String.split(path, "/")
+    prefix = "/" <> prefix
+
+    menu_link =
+      case module.menu_link(prefix, live_action) do
+        {state, anchor} -> {state, anchor, nil}
+        menu_link -> menu_link
+      end
+
+    put_menu_link(acc, prefix, prefix == current_prefix, menu_link)
+  end
+
+  defp put_menu_link(acc, prefix, true, {state, anchor, icon}) when state in [:root, :submenu] do
+    Map.put(acc, prefix, {:current, anchor, icon || Map.get(@default_icons, prefix)})
+  end
+
+  defp put_menu_link(acc, prefix, false, {:root, anchor, icon}) do
+    Map.put(acc, prefix, {:enabled, anchor, icon || Map.get(@default_icons, prefix)})
+  end
+
+  defp put_menu_link(acc, _prefix, _current?, _menu_link), do: acc
+
+  # Only the menu groups relevant to the current scope.
+  defp active_menu_groups(true), do: Enum.filter(@menu_groups, fn {id, _, _} -> id == :beacon_admin end)
+  defp active_menu_groups(false), do: Enum.filter(@menu_groups, fn {id, _, _} -> id != :beacon_admin end)
+
+  defp grouped_menu_links(active_groups, link_map) do
+    Enum.flat_map(active_groups, fn {_group_id, group_label, prefixes} ->
+      case group_menu_items(prefixes, link_map) do
+        [] -> []
+        items -> [{:group, group_label} | items]
+      end
+    end)
+  end
+
+  defp group_menu_items(prefixes, link_map) do
+    Enum.flat_map(prefixes, fn prefix ->
+      case Map.get(link_map, prefix) do
+        {state, anchor, icon} -> [{state, anchor, icon, prefix}]
+        nil -> []
+      end
+    end)
+  end
+
+  # Links from pages that no predefined group claims.
+  defp ungrouped_menu_links(link_map, known_prefixes) do
+    link_map
+    |> Enum.reject(fn {prefix, _} -> prefix in known_prefixes end)
+    |> Enum.sort_by(fn {prefix, _} -> prefix end)
+    |> Enum.map(fn {prefix, {state, anchor, icon}} -> {state, anchor, icon, prefix} end)
   end
 
   defp maybe_apply_module(socket, fun, params, default) do

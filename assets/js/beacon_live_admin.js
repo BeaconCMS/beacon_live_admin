@@ -11,7 +11,6 @@ Hooks.CodeEditorHook = CodeEditorHook
 Hooks.ThemeToggle = {
   mounted() {
     this.el.addEventListener("click", () => {
-      const html = document.documentElement
       const current = localStorage.getItem("beacon_admin_theme") || "system"
       let next
       if (current === "light") next = "dark"

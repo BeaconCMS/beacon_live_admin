@@ -54,44 +54,57 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Size do
   defp extract_size_value(_element, _prefix, unit) when unit not in @units, do: nil
 
   defp extract_size_value(element, prefix, _unit) do
-    classes = VisualEditor.element_classes(element)
-
-    case Enum.find(classes, &String.starts_with?(&1, "#{prefix}-")) do
-      nil ->
-        nil
-
-      class ->
-        case Regex.run(~r/\[(.+?)(px|%|em|rem|svw|svh|lvw|lvh|ch)?\]$/, class) do
-          [_, value, _] ->
-            value
-
-          _ ->
-            case Regex.run(~r/^#{prefix}-(.+)$/, class) do
-              [_, value] -> value
-              _ -> nil
-            end
-        end
+    case size_class(element, prefix) do
+      nil -> nil
+      class -> size_value(class, prefix)
     end
   end
 
   defp extract_size_unit(element, prefix) do
-    classes = VisualEditor.element_classes(element)
+    case size_class(element, prefix) do
+      nil -> nil
+      class -> size_unit(class, prefix)
+    end
+  end
 
-    case Enum.find(classes, &String.starts_with?(&1, "#{prefix}-")) do
-      nil ->
-        nil
+  # A size class carries either an arbitrary value in brackets — `w-[32px]` —
+  # or a name from Tailwind's scale — `w-full`. Value and unit read the same
+  # class the same two ways, so the shapes live here rather than inline twice.
+  defp size_class(element, prefix) do
+    element
+    |> VisualEditor.element_classes()
+    |> Enum.find(&String.starts_with?(&1, "#{prefix}-"))
+  end
 
-      class ->
-        case Regex.run(~r/\[(.+?)(px|%|em|rem|svw|svh|lvw|lvh|ch)?\]$/, class) do
-          [_, _, unit] ->
-            unit
+  defp arbitrary_size(class) do
+    Regex.run(~r/\[(.+?)(px|%|em|rem|svw|svh|lvw|lvh|ch)?\]$/, class)
+  end
 
-          _ ->
-            case Regex.run(~r/^#{prefix}-(.+)$/, class) do
-              [_, value] when value in @sizes -> value
-              _ -> nil
-            end
-        end
+  defp named_size(class, prefix) do
+    case Regex.run(~r/^#{prefix}-(.+)$/, class) do
+      [_, value] -> value
+      _ -> nil
+    end
+  end
+
+  defp size_value(class, prefix) do
+    case arbitrary_size(class) do
+      [_, value, _] -> value
+      _ -> named_size(class, prefix)
+    end
+  end
+
+  defp size_unit(class, prefix) do
+    case arbitrary_size(class) do
+      [_, _, unit] -> unit
+      _ -> named_size_unit(class, prefix)
+    end
+  end
+
+  defp named_size_unit(class, prefix) do
+    case named_size(class, prefix) do
+      value when value in @sizes -> value
+      _ -> nil
     end
   end
 

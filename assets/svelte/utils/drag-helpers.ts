@@ -12,8 +12,8 @@ export interface CoordsDiff {
 
 export type DragDirection = "horizontal" | "vertical" | "both"
 
-export function elementCanBeDroppedInTarget(draggedComponentDefinition) {
-  // return draggedComponentDefinition?.category === "basic";
+export function elementCanBeDroppedInTarget(_draggedComponentDefinition) {
+  // return _draggedComponentDefinition?.category === "basic";
   return true
 }
 

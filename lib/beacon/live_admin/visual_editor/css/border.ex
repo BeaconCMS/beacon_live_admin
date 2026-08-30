@@ -116,93 +116,66 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
 
   defp extract_border_width(element, nil, _width_unit) do
     classes = VisualEditor.element_classes(element)
-
-    # First check for arbitrary values like border-[3px]
-    arbitrary_width =
-      Enum.find_value(classes, fn class ->
-        case Regex.run(~r/^border-\[(\d+)(?:px|rem|em|%)?\]$/, class) do
-          [_, value] -> value
-          _ -> nil
-        end
-      end)
-
-    # Then check for specific width classes (0-16)
-    specific_width =
-      Enum.find_value(@tailwind_sizes, fn width ->
-        if "border-#{width}" in classes, do: width
-      end)
-
-    # Then check for shorthand classes that imply width=1
     shorthand_borders = ["border", "border-t", "border-r", "border-b", "border-l"]
 
     cond do
-      # First priority: arbitrary width
-      arbitrary_width ->
-        arbitrary_width
-
-      # Second priority: specific width
-      specific_width ->
-        specific_width
-
+      # First priority: arbitrary width, like border-[3px]
+      width = global_arbitrary_border_width(classes) -> width
+      # Second priority: a width class from Tailwind's scale
+      width = scale_border_width(classes, "border", @tailwind_sizes) -> width
       # Third priority: shorthand implies width=1
-      Enum.any?(shorthand_borders, &(&1 in classes)) ->
-        "1"
-
+      Enum.any?(shorthand_borders, &(&1 in classes)) -> "1"
       # Default: no border
-      true ->
-        "0"
+      true -> "0"
     end
   end
 
   defp extract_border_width(element, side, width_unit) when side in ~w(top right bottom left) do
     classes = VisualEditor.element_classes(element)
     side_abbrev = String.first(side)
-
-    # First check for arbitrary values with the specific unit
-    arbitrary_width =
-      Enum.find_value(classes, fn class ->
-        pattern = ~r/^border-(?:#{side_abbrev}|[xy])-\[(\d+(?:\.\d+)?#{width_unit})\]$/
-
-        case Regex.run(pattern, class) do
-          [_, value] -> VisualEditor.parse_number_and_unit(value) |> elem(1)
-          _ -> nil
-        end
-      end)
-
-    # Then check for specific width classes (0-8)
-    specific_width =
-      Enum.find_value(0..8, fn width ->
-        if "border-#{side_abbrev}-#{width}" in classes, do: width
-      end)
-
-    # Then check for combined classes (border-x, border-y)
-    combined_class =
-      case side do
-        side when side in ~w(left right) -> "border-x"
-        side when side in ~w(top bottom) -> "border-y"
-      end
-
-    # Then check for shorthand classes that imply width=1
-    shorthand_borders = ["border", "border-#{side_abbrev}", combined_class]
+    shorthand_borders = ["border", "border-#{side_abbrev}", combined_border_class(side)]
 
     cond do
-      # First priority: arbitrary width with units
-      arbitrary_width ->
-        arbitrary_width
-
-      # Second priority: specific width
-      specific_width ->
-        specific_width
-
+      # First priority: arbitrary width carrying the requested unit
+      width = side_arbitrary_border_width(classes, side_abbrev, width_unit) -> width
+      # Second priority: a width class from Tailwind's scale
+      width = scale_border_width(classes, "border-#{side_abbrev}", 0..8) -> width
       # Third priority: shorthand implies width=1
-      Enum.any?(shorthand_borders, &(&1 in classes)) ->
-        "1"
-
-      # Default: fallback to global border width
-      true ->
-        extract_border_width(element, nil, width_unit)
+      Enum.any?(shorthand_borders, &(&1 in classes)) -> "1"
+      # Default: fall back to the global border width
+      true -> extract_border_width(element, nil, width_unit)
     end
   end
+
+  defp global_arbitrary_border_width(classes) do
+    Enum.find_value(classes, fn class ->
+      case Regex.run(~r/^border-\[(\d+)(?:px|rem|em|%)?\]$/, class) do
+        [_, value] -> value
+        _ -> nil
+      end
+    end)
+  end
+
+  defp side_arbitrary_border_width(classes, side_abbrev, width_unit) do
+    pattern = ~r/^border-(?:#{side_abbrev}|[xy])-\[(\d+(?:\.\d+)?#{width_unit})\]$/
+
+    Enum.find_value(classes, fn class ->
+      case Regex.run(pattern, class) do
+        [_, value] -> VisualEditor.parse_number_and_unit(value) |> elem(1)
+        _ -> nil
+      end
+    end)
+  end
+
+  defp scale_border_width(classes, prefix, widths) do
+    Enum.find_value(widths, fn width ->
+      if "#{prefix}-#{width}" in classes, do: width
+    end)
+  end
+
+  # `border-x` and `border-y` set two sides at once.
+  defp combined_border_class(side) when side in ~w(left right), do: "border-x"
+  defp combined_border_class(side) when side in ~w(top bottom), do: "border-y"
 
   # For global border radius
   defp extract_border_radius(_element, _corner, radius_unit) when radius_unit in @tailwind_sizes, do: nil
@@ -260,19 +233,24 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
 
       # Case 3: arbitrary values like "rounded-[10px]"
       class when is_binary(class) ->
-        case Regex.run(~r/^rounded-\[(.+)\]$/, class) do
-          [_, name] ->
-            case VisualEditor.parse_number_and_unit(name) do
-              {:ok, _, unit} -> unit
-              {:error, _} -> nil
-            end
-
-          _ ->
-            nil
-        end
+        arbitrary_radius_unit(class)
 
       _ ->
         nil
+    end
+  end
+
+  defp arbitrary_radius_unit(class) do
+    case Regex.run(~r/^rounded-\[(.+)\]$/, class) do
+      [_, name] -> parsed_radius_unit(name)
+      _ -> nil
+    end
+  end
+
+  defp parsed_radius_unit(name) do
+    case VisualEditor.parse_number_and_unit(name) do
+      {:ok, _, unit} -> unit
+      {:error, _} -> nil
     end
   end
 
@@ -287,55 +265,52 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Border do
   end
 
   defp extract_border_width_unit(element, side) do
-    classes = VisualEditor.element_classes(element)
+    prefixes = border_prefixes(side)
 
-    # Define which class prefixes to look for based on the side
-    prefixes =
-      case side do
-        nil -> ["border-"]
-        "top" -> ["border-t-", "border-y-"]
-        "bottom" -> ["border-b-", "border-y-"]
-        "left" -> ["border-l-", "border-x-"]
-        "right" -> ["border-r-", "border-x-"]
-      end
+    element
+    |> VisualEditor.element_classes()
+    |> Enum.find(fn class -> Enum.any?(prefixes, &String.starts_with?(class, &1)) end)
+    |> border_width_unit()
+  end
 
-    # Find first matching class
-    matching_class =
-      Enum.find(classes, fn class ->
-        Enum.any?(prefixes, &String.starts_with?(class, &1))
-      end)
+  # Which class prefixes carry this side's width. `border-x-` and `border-y-`
+  # set two sides at once, so each side accepts its own prefix and its axis.
+  defp border_prefixes(nil), do: ["border-"]
+  defp border_prefixes("top"), do: ["border-t-", "border-y-"]
+  defp border_prefixes("bottom"), do: ["border-b-", "border-y-"]
+  defp border_prefixes("left"), do: ["border-l-", "border-x-"]
+  defp border_prefixes("right"), do: ["border-r-", "border-x-"]
 
-    case matching_class do
-      # Default when no border class is found
-      nil ->
-        nil
+  # Default when no border class is found
+  defp border_width_unit(nil), do: nil
 
-      class ->
-        cond do
-          # For classes with arbitrary values like border-[2rem]
-          String.contains?(class, "[") ->
-            case Regex.run(~r/\[(.+)\]$/, class) do
-              [_, value] ->
-                case VisualEditor.parse_number_and_unit(value) do
-                  {:ok, _, unit} ->
-                    unit
+  defp border_width_unit(class) do
+    cond do
+      # For classes with arbitrary values like border-[2rem]
+      String.contains?(class, "[") ->
+        arbitrary_border_width_unit(class)
 
-                  _ ->
-                    "px"
-                end
+      # For standard classes like border-2, border-y-4, etc.
+      Regex.match?(~r/-\d+$/, class) ->
+        [_, value] = Regex.run(~r/-(\d+)$/, class)
+        value
 
-              _ ->
-                "px"
-            end
+      true ->
+        "px"
+    end
+  end
 
-          # For standard classes like border-2, border-y-4, etc.
-          Regex.match?(~r/-\d+$/, class) ->
-            [_, value] = Regex.run(~r/-(\d+)$/, class)
-            value
+  defp arbitrary_border_width_unit(class) do
+    case Regex.run(~r/\[(.+)\]$/, class) do
+      [_, value] -> parsed_border_width_unit(value)
+      _ -> "px"
+    end
+  end
 
-          true ->
-            "px"
-        end
+  defp parsed_border_width_unit(value) do
+    case VisualEditor.parse_number_and_unit(value) do
+      {:ok, _, unit} -> unit
+      _ -> "px"
     end
   end
 

@@ -36,10 +36,10 @@
     }
   }
 
-  $: htmlWrapperHasMultipleElements = ((): Boolean => {
+  $: htmlWrapperHasMultipleElements = ((): boolean => {
     return !!htmlWrapper && htmlWrapper.childElementCount > 1
   })()
-  $: htmlWrapperHasIframe = ((): Boolean => {
+  $: htmlWrapperHasIframe = ((): boolean => {
     return !!htmlWrapper && htmlWrapper.getElementsByTagName("iframe").length > 0
   })()
 

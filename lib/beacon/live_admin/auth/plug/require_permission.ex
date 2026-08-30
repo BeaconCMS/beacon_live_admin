@@ -31,13 +31,11 @@ defmodule Beacon.LiveAdmin.Auth.Plug.RequirePermission do
 
   @impl true
   def call(conn, opts) do
-    cond do
-      is_nil(Auth.auth_provider()) ->
-        assign(conn, :beacon_admin_user, nil)
-
-      true ->
-        user = Auth.get_current_user(conn)
-        check_permission(conn, user, opts)
+    if is_nil(Auth.auth_provider()) do
+      assign(conn, :beacon_admin_user, nil)
+    else
+      user = Auth.get_current_user(conn)
+      check_permission(conn, user, opts)
     end
   end
 

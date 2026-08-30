@@ -83,11 +83,9 @@ defmodule Beacon.LiveAdmin.PreviewController do
   end
 
   defp component_registry(site) do
-    try do
-      Beacon.Content.build_component_registry_for_ast(site)
-    rescue
-      _ -> %{}
-    end
+    Beacon.Content.build_component_registry_for_ast(site)
+  rescue
+    _ -> %{}
   end
 
   defp preview_assigns(site, page) do
@@ -112,30 +110,26 @@ defmodule Beacon.LiveAdmin.PreviewController do
 
   # Load the site's Tailwind theme JSON for the WASM compiler
   defp load_theme_json(site) do
-    try do
-      config = Beacon.Config.fetch!(site)
+    config = Beacon.Config.fetch!(site)
 
-      if config.tailwind_config && File.exists?(config.tailwind_config) do
-        Beacon.CSS.ThemeParser.parse_file(config.tailwind_config)
-      end
-    rescue
-      _ -> nil
+    if config.tailwind_config && File.exists?(config.tailwind_config) do
+      Beacon.CSS.ThemeParser.parse_file(config.tailwind_config)
     end
+  rescue
+    _ -> nil
   end
 
   # Load the site's custom stylesheets
   defp load_custom_css(site) do
-    try do
-      site
-      |> Beacon.Content.list_stylesheets()
-      |> Enum.map_join("\n", fn s -> s.content end)
-      |> case do
-        "" -> nil
-        css -> css
-      end
-    rescue
-      _ -> nil
+    site
+    |> Beacon.Content.list_stylesheets()
+    |> Enum.map_join("\n", fn s -> s.content end)
+    |> case do
+      "" -> nil
+      css -> css
     end
+  rescue
+    _ -> nil
   end
 
   defp wrap_html(site, title, body) do

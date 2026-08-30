@@ -5,6 +5,18 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Typography do
 
   @css_units ~w(px rem em %)
 
+  @font_families ~w(sans serif mono)
+  @font_weights ~w(thin extralight light normal medium semibold bold extrabold black)
+  @font_sizes ~w(xs sm base lg xl 2xl 3xl 4xl 5xl 6xl)
+  @font_size_classes Enum.map(@font_sizes, &"text-#{&1}")
+  @line_heights ~w(none tight snug normal relaxed loose)
+  @letter_spacings ~w(tighter tight normal wide wider widest)
+  @keyword_text_colors ~w(text-inherit text-current text-transparent text-black text-white)
+  @arbitrary_font_size_re ~r/^text-\[\d+(?:\.\d+)?(?:px|rem|em|%)?\]$/
+  @hex_text_color_re ~r/^text-\[#[0-9A-Fa-f]{6}\]$/
+  @palette_text_color_re ~r/^text-(?:slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(?:[1-9]0{2}|950)$/
+  @arbitrary_scale_re ~r/^(\d+(?:\.\d+)?)(px|rem|em|%)$/
+
   def extract_typography_properties(element) do
     classes = VisualEditor.element_classes(element)
     {font_size, font_size_unit} = extract_font_size(classes)
@@ -105,194 +117,83 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Typography do
   defp maybe_add_line_height(classes, _, nil), do: classes
   defp maybe_add_line_height(classes, _, "default"), do: classes
 
-  defp extract_font_family(classes) do
-    font_classes = Enum.filter(classes, &String.starts_with?(&1, "font-"))
+  defp extract_font_family(classes), do: find_suffix(classes, "font-", @font_families)
 
-    Enum.find_value(font_classes, fn class ->
-      case class do
-        "font-sans" -> "sans"
-        "font-serif" -> "serif"
-        "font-mono" -> "mono"
-        _ -> nil
-      end
-    end)
-  end
+  defp extract_font_weight(classes), do: find_suffix(classes, "font-", @font_weights)
 
-  defp extract_font_weight(classes) do
-    font_classes = Enum.filter(classes, &String.starts_with?(&1, "font-"))
-
-    Enum.find_value(font_classes, fn class ->
-      case class do
-        "font-thin" -> "thin"
-        "font-extralight" -> "extralight"
-        "font-light" -> "light"
-        "font-normal" -> "normal"
-        "font-medium" -> "medium"
-        "font-semibold" -> "semibold"
-        "font-bold" -> "bold"
-        "font-extrabold" -> "extrabold"
-        "font-black" -> "black"
-        _ -> nil
-      end
+  # The first class whose suffix names one of `names`, or nil.
+  defp find_suffix(classes, prefix, names) do
+    classes
+    |> Enum.filter(&String.starts_with?(&1, prefix))
+    |> Enum.find_value(fn class ->
+      suffix = String.replace_prefix(class, prefix, "")
+      if suffix in names, do: suffix
     end)
   end
 
   defp extract_text_color(classes) do
-    text_classes = Enum.filter(classes, &String.starts_with?(&1, "text-"))
+    classes
+    |> Enum.filter(&String.starts_with?(&1, "text-"))
+    |> Enum.find_value(&text_color/1)
+  end
 
-    Enum.find_value(text_classes, fn class ->
-      cond do
-        # Skip size classes
-        class in ~w(text-xs text-sm text-base text-lg text-xl text-2xl text-3xl text-4xl text-5xl text-6xl) ->
-          nil
+  # `text-` prefixes the font size classes too, so a size is not a colour.
+  defp text_color(class) do
+    cond do
+      class in @font_size_classes -> nil
+      String.match?(class, @arbitrary_font_size_re) -> nil
+      String.match?(class, @hex_text_color_re) -> hex_text_color(class)
+      String.match?(class, @palette_text_color_re) -> String.replace_prefix(class, "text-", "")
+      class in @keyword_text_colors -> String.replace_prefix(class, "text-", "")
+      true -> nil
+    end
+  end
 
-        # Skip size classes with units
-        String.match?(class, ~r/^text-\[\d+(?:\.\d+)?(?:px|rem|em|%)?\]$/) ->
-          nil
-
-        # Handle hex colors in square brackets
-        String.match?(class, ~r/^text-\[#[0-9A-Fa-f]{6}\]$/) ->
-          [_, color] = Regex.run(~r/^text-\[(.+)\]$/, class)
-          color
-
-        # Handle standard Tailwind color classes
-        String.match?(
-          class,
-          ~r/^text-(?:slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(?:[1-9]0{2}|950)$/
-        ) ->
-          String.replace_prefix(class, "text-", "")
-
-        # Handle special colors
-        class in ~w(text-inherit text-current text-transparent text-black text-white) ->
-          String.replace_prefix(class, "text-", "")
-
-        true ->
-          nil
-      end
-    end)
+  defp hex_text_color(class) do
+    [_, color] = Regex.run(~r/^text-\[(.+)\]$/, class)
+    color
   end
 
   defp extract_font_size(classes) do
-    tailwind_sizes = ~w(text-xs text-sm text-base text-lg text-xl text-2xl text-3xl text-4xl text-5xl text-6xl)
-
-    case Enum.find(classes, fn class ->
-           class in tailwind_sizes or String.starts_with?(class, "text-[")
-         end) do
-      # Tailwind preset sizes
-      "text-xs" ->
-        {"xs", "xs"}
-
-      "text-sm" ->
-        {"sm", "sm"}
-
-      "text-base" ->
-        {"base", "base"}
-
-      "text-lg" ->
-        {"lg", "lg"}
-
-      "text-xl" ->
-        {"xl", "xl"}
-
-      "text-2xl" ->
-        {"2xl", "2xl"}
-
-      "text-3xl" ->
-        {"3xl", "3xl"}
-
-      "text-4xl" ->
-        {"4xl", "4xl"}
-
-      "text-5xl" ->
-        {"5xl", "5xl"}
-
-      "text-6xl" ->
-        {"6xl", "6xl"}
-
-      # Custom sizes with units
-      <<"text-[", size::binary>> ->
-        size = String.trim_trailing(size, "]")
-
-        case Regex.run(~r/^(\d+(?:\.\d+)?)(px|rem|em|%)$/, size) do
-          [_, value, unit] -> {value, unit}
-          _ -> {nil, "default"}
-        end
-
-      # Default case
-      _ ->
-        {nil, "default"}
-    end
+    classes
+    |> Enum.find(&(&1 in @font_size_classes or String.starts_with?(&1, "text-[")))
+    |> scale_value("text-", @font_sizes, &{&1, &1})
   end
 
   defp extract_line_height(classes) do
-    case Enum.find(classes, &String.starts_with?(&1, "leading-")) do
-      # Tailwind preset values
-      "leading-none" ->
-        {"none", "none"}
-
-      "leading-tight" ->
-        {"tight", "tight"}
-
-      "leading-snug" ->
-        {"snug", "snug"}
-
-      "leading-normal" ->
-        {"normal", "normal"}
-
-      "leading-relaxed" ->
-        {"relaxed", "relaxed"}
-
-      "leading-loose" ->
-        {"loose", "loose"}
-
-      # Custom sizes with units
-      <<"leading-[", size::binary>> ->
-        size = String.trim_trailing(size, "]")
-
-        case Regex.run(~r/^(\d+(?:\.\d+)?)(px|rem|em|%)$/, size) do
-          [_, value, unit] -> {value, unit}
-          _ -> {nil, "default"}
-        end
-
-      # Default case
-      _ ->
-        {nil, "default"}
-    end
+    classes
+    |> Enum.find(&String.starts_with?(&1, "leading-"))
+    |> scale_value("leading-", @line_heights, &{&1, &1})
   end
 
   defp extract_letter_spacing(classes) do
-    case Enum.find(classes, &String.starts_with?(&1, "tracking-")) do
-      # Tailwind preset values - value is nil, unit is the preset
-      "tracking-tighter" ->
-        {nil, "tighter"}
+    classes
+    |> Enum.find(&String.starts_with?(&1, "tracking-"))
+    |> scale_value("tracking-", @letter_spacings, &{nil, &1})
+  end
 
-      "tracking-tight" ->
-        {nil, "tight"}
+  # A typography class carries either a name from Tailwind's scale — `text-lg` —
+  # or an arbitrary value in brackets — `text-[13px]`. `preset` says how a scale
+  # name becomes the `{value, unit}` pair the form works with, which is the name
+  # twice everywhere except letter spacing.
+  defp scale_value(nil, _prefix, _names, _preset), do: {nil, "default"}
 
-      "tracking-normal" ->
-        {nil, "normal"}
+  defp scale_value(class, prefix, names, preset) do
+    suffix = String.replace_prefix(class, prefix, "")
 
-      "tracking-wide" ->
-        {nil, "wide"}
+    cond do
+      suffix in names -> preset.(suffix)
+      String.starts_with?(suffix, "[") -> arbitrary_scale_value(suffix)
+      true -> {nil, "default"}
+    end
+  end
 
-      "tracking-wider" ->
-        {nil, "wider"}
+  defp arbitrary_scale_value(suffix) do
+    size = suffix |> String.trim_leading("[") |> String.trim_trailing("]")
 
-      "tracking-widest" ->
-        {nil, "widest"}
-
-      # Custom sizes with units - value is the number, unit is the CSS unit
-      <<"tracking-[", size::binary>> ->
-        size = String.trim_trailing(size, "]")
-
-        case Regex.run(~r/^(\d+(?:\.\d+)?)(px|rem|em|%)$/, size) do
-          [_, value, unit] -> {value, unit}
-          _ -> {nil, "default"}
-        end
-
-      # Default case
-      _ ->
-        {nil, "default"}
+    case Regex.run(@arbitrary_scale_re, size) do
+      [_, value, unit] -> {value, unit}
+      _ -> {nil, "default"}
     end
   end
 

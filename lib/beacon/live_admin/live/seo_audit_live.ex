@@ -52,21 +52,31 @@ defmodule Beacon.LiveAdmin.SEOAuditLive do
     {earned, total}
   end
 
+  # Listed in the order they are reported, which is the reverse of the order the
+  # checks used to be prepended in.
   defp find_issues(page) do
-    issues = []
-    issues = if !non_empty?(page.title), do: ["Missing title" | issues], else: issues
-    issues = if non_empty?(page.title) and String.length(page.title) > 60, do: ["Title too long" | issues], else: issues
-    issues = if !non_empty?(page.meta_description) and !non_empty?(page.description), do: ["No description" | issues], else: issues
-    issues = if !non_empty?(page.og_image), do: ["No OG image" | issues], else: issues
-    issues = if !non_empty?(page.canonical_url), do: ["No canonical" | issues], else: issues
-    issues = if page.raw_schema == nil or page.raw_schema == [], do: ["No schema" | issues], else: issues
-    issues
+    [
+      {page.raw_schema == nil or page.raw_schema == [], "No schema"},
+      {not non_empty?(page.canonical_url), "No canonical"},
+      {not non_empty?(page.og_image), "No OG image"},
+      {not non_empty?(page.meta_description) and not non_empty?(page.description), "No description"},
+      {non_empty?(page.title) and String.length(page.title) > 60, "Title too long"},
+      {not non_empty?(page.title), "Missing title"}
+    ]
+    |> Enum.filter(&elem(&1, 0))
+    |> Enum.map(&elem(&1, 1))
   end
 
   defp compute_stats(audited) do
     total = length(audited)
     good = Enum.count(audited, fn %{score: {e, t}} -> e / max(t, 1) >= 0.8 end)
-    needs_work = Enum.count(audited, fn %{score: {e, t}} -> pct = e / max(t, 1); pct >= 0.4 and pct < 0.8 end)
+
+    needs_work =
+      Enum.count(audited, fn %{score: {e, t}} ->
+        pct = e / max(t, 1)
+        pct >= 0.4 and pct < 0.8
+      end)
+
     poor = Enum.count(audited, fn %{score: {e, t}} -> e / max(t, 1) < 0.4 end)
     missing_desc = Enum.count(audited, fn %{page: p} -> !non_empty?(p.meta_description) and !non_empty?(p.description) end)
     missing_og = Enum.count(audited, fn %{page: p} -> !non_empty?(p.og_image) end)
@@ -82,6 +92,7 @@ defmodule Beacon.LiveAdmin.SEOAuditLive do
 
   defp score_color({earned, total}) do
     pct = earned / max(total, 1) * 100
+
     cond do
       pct >= 80 -> "text-success"
       pct >= 40 -> "text-warning"
@@ -91,6 +102,7 @@ defmodule Beacon.LiveAdmin.SEOAuditLive do
 
   defp score_bg({earned, total}) do
     pct = earned / max(total, 1) * 100
+
     cond do
       pct >= 80 -> "bg-emerald-50/50"
       pct >= 40 -> "bg-amber-50/50"
@@ -102,8 +114,10 @@ defmodule Beacon.LiveAdmin.SEOAuditLive do
     cond do
       String.contains?(issue, "Missing") or String.contains?(issue, "No ") ->
         "bg-rose-50 text-rose-700 ring-rose-200"
+
       String.contains?(issue, "too long") ->
         "bg-amber-50 text-amber-700 ring-amber-200"
+
       true ->
         "bg-zinc-100 text-zinc-600 ring-zinc-200 bg-base-200 "
     end

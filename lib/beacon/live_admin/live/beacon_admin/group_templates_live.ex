@@ -149,11 +149,9 @@ defmodule Beacon.LiveAdmin.BeaconAdmin.GroupTemplatesLive do
   end
 
   defp permission_count(group) do
-    try do
-      length(Auth.list_group_permissions(group.id))
-    rescue
-      _ -> 0
-    end
+    length(Auth.list_group_permissions(group.id))
+  rescue
+    _ -> 0
   end
 
   @impl true

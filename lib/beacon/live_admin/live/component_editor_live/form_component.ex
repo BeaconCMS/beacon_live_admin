@@ -4,8 +4,8 @@ defmodule Beacon.LiveAdmin.ComponentEditorLive.FormComponent do
   use Beacon.LiveAdmin.Web, :live_component
   import Ecto.Changeset, only: [get_field: 2]
 
-  alias Beacon.LiveAdmin.Client.Content
   alias Beacon.Content.ComponentAttr
+  alias Beacon.LiveAdmin.Client.Content
 
   @impl true
   def mount(socket) do

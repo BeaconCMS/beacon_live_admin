@@ -9,7 +9,8 @@
   },
   "scripts": {
     "format": "prettier --write .",
-    "format-check": "prettier --check ."
+    "format-check": "prettier --check .",
+    "lint": "oxlint"
   },
   "dependencies": {
     "@mhsdesign/jit-browser-tailwindcss": "^0.4",
@@ -27,9 +28,8 @@
     "esbuild": "^0.25",
     "esbuild-plugin-import-glob": "^0.1",
     "esbuild-svelte": "^0.9",
-    "eslint": "^9",
-    "eslint-config-prettier": "^10",
     "heroicons": "^2.2",
+    "oxlint": "^1.80",
     "postcss": "^8.5",
     "prettier": "^3",
     "prettier-plugin-svelte": "^3",

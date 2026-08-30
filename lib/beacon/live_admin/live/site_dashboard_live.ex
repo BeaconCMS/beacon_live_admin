@@ -3,8 +3,8 @@ defmodule Beacon.LiveAdmin.SiteDashboardLive do
 
   use Beacon.LiveAdmin.PageBuilder
 
-  alias Beacon.LiveAdmin.Client.Content
   alias Beacon.LiveAdmin.Auth.Permissions
+  alias Beacon.LiveAdmin.Client.Content
 
   @impl true
   def menu_link(_, :site_dashboard), do: :skip
@@ -33,70 +33,101 @@ defmodule Beacon.LiveAdmin.SiteDashboardLive do
   end
 
   defp compute_stats(site) do
-    try do
-      pages = Content.list_pages(site, per_page: :infinity)
-      published = Enum.count(pages)
+    pages = Content.list_pages(site, per_page: :infinity)
+    published = Enum.count(pages)
 
-      %{
-        total_pages: published,
-        layouts: count_resource(site, :layouts),
-        components: count_resource(site, :components)
-      }
-    rescue
-      _ -> %{total_pages: 0, layouts: 0, components: 0}
-    end
+    %{
+      total_pages: published,
+      layouts: count_resource(site, :layouts),
+      components: count_resource(site, :components)
+    }
+  rescue
+    _ -> %{total_pages: 0, layouts: 0, components: 0}
   end
 
   defp count_resource(site, :layouts) do
-    try do
-      length(Content.list_layouts(site))
-    rescue
-      _ -> 0
-    end
+    length(Content.list_layouts(site))
+  rescue
+    _ -> 0
   end
 
   defp count_resource(site, :components) do
-    try do
-      length(Content.list_components(site))
-    rescue
-      _ -> 0
-    end
+    length(Content.list_components(site))
+  rescue
+    _ -> 0
   end
 
   @section_groups [
-    {"Content", [
-      %{path: "/pages", icon: "hero-document-text", title: "Pages", description: "Create and manage your site's pages", feature: "pages"},
-      %{path: "/layouts", icon: "hero-rectangle-group", title: "Layouts", description: "Design page layouts and structure", feature: "layouts"},
-      %{path: "/components", icon: "hero-cube", title: "Components", description: "Build reusable UI components", feature: "components"},
-      %{path: "/media_library", icon: "hero-photo", title: "Media Library", description: "Upload and organize media files", feature: "media_library"}
-    ]},
-    {"SEO & Analytics", [
-      %{path: "/seo_audit", icon: "hero-chart-bar", title: "SEO Audit", description: "Review SEO health across all pages", feature: "seo_audit"},
-      %{path: "/measurement", icon: "hero-presentation-chart-line", title: "Measurement", description: "Track SEO metrics over time", feature: "measurement"},
-      %{path: "/link_health", icon: "hero-link", title: "Link Health", description: "Find orphan pages and broken links", feature: "link_health"},
-      %{path: "/redirects", icon: "hero-arrow-uturn-right", title: "Redirects", description: "Manage URL redirects", feature: "redirects"}
-    ]},
-    {"Data & Logic", [
-      %{path: "/graphql_endpoints", icon: "hero-server-stack", title: "GraphQL Endpoints", description: "Connect to external data sources", feature: "graphql_endpoints"},
-      %{path: "/events", icon: "hero-bolt", title: "Event Handlers", description: "Handle user interactions", feature: "event_handlers"},
-      %{path: "/info_handlers", icon: "hero-information-circle", title: "Info Handlers", description: "Process LiveView info messages", feature: "info_handlers"}
-    ]},
-    {"Developer", [
-      %{path: "/error_pages", icon: "hero-exclamation-triangle", title: "Error Pages", description: "Customize error page templates", feature: "error_pages"},
-      %{path: "/hooks", icon: "hero-code-bracket", title: "JS Hooks", description: "Add custom JavaScript hooks", feature: "js_hooks"},
-      %{path: "/settings", icon: "hero-cog-6-tooth", title: "Site Settings", description: "Configure site-wide settings", feature: "site_settings"},
-      %{path: "/collections", icon: "hero-document-duplicate", title: "Collections", description: "Manage content collections", feature: "collections"}
-    ]},
-    {"Administration", [
-      %{path: "/groups", icon: "hero-user-group", title: "Groups", description: "Manage permission groups and members", feature: "site_settings"}
-    ]}
+    {"Content",
+     [
+       %{path: "/pages", icon: "hero-document-text", title: "Pages", description: "Create and manage your site's pages", feature: "pages"},
+       %{path: "/layouts", icon: "hero-rectangle-group", title: "Layouts", description: "Design page layouts and structure", feature: "layouts"},
+       %{path: "/components", icon: "hero-cube", title: "Components", description: "Build reusable UI components", feature: "components"},
+       %{path: "/media_library", icon: "hero-photo", title: "Media Library", description: "Upload and organize media files", feature: "media_library"}
+     ]},
+    {"SEO & Analytics",
+     [
+       %{path: "/seo_audit", icon: "hero-chart-bar", title: "SEO Audit", description: "Review SEO health across all pages", feature: "seo_audit"},
+       %{
+         path: "/measurement",
+         icon: "hero-presentation-chart-line",
+         title: "Measurement",
+         description: "Track SEO metrics over time",
+         feature: "measurement"
+       },
+       %{path: "/link_health", icon: "hero-link", title: "Link Health", description: "Find orphan pages and broken links", feature: "link_health"},
+       %{path: "/redirects", icon: "hero-arrow-uturn-right", title: "Redirects", description: "Manage URL redirects", feature: "redirects"}
+     ]},
+    {"Data & Logic",
+     [
+       %{
+         path: "/graphql_endpoints",
+         icon: "hero-server-stack",
+         title: "GraphQL Endpoints",
+         description: "Connect to external data sources",
+         feature: "graphql_endpoints"
+       },
+       %{path: "/events", icon: "hero-bolt", title: "Event Handlers", description: "Handle user interactions", feature: "event_handlers"},
+       %{
+         path: "/info_handlers",
+         icon: "hero-information-circle",
+         title: "Info Handlers",
+         description: "Process LiveView info messages",
+         feature: "info_handlers"
+       }
+     ]},
+    {"Developer",
+     [
+       %{
+         path: "/error_pages",
+         icon: "hero-exclamation-triangle",
+         title: "Error Pages",
+         description: "Customize error page templates",
+         feature: "error_pages"
+       },
+       %{path: "/hooks", icon: "hero-code-bracket", title: "JS Hooks", description: "Add custom JavaScript hooks", feature: "js_hooks"},
+       %{path: "/settings", icon: "hero-cog-6-tooth", title: "Site Settings", description: "Configure site-wide settings", feature: "site_settings"},
+       %{
+         path: "/collections",
+         icon: "hero-document-duplicate",
+         title: "Collections",
+         description: "Manage content collections",
+         feature: "collections"
+       }
+     ]},
+    {"Administration",
+     [
+       %{path: "/groups", icon: "hero-user-group", title: "Groups", description: "Manage permission groups and members", feature: "site_settings"}
+     ]}
   ]
 
   defp visible_sections(user, site) do
     Enum.map(@section_groups, fn {group_label, sections} ->
-      filtered = Enum.filter(sections, fn section ->
-        can_view_feature?(user, site, section.feature)
-      end)
+      filtered =
+        Enum.filter(sections, fn section ->
+          can_view_feature?(user, site, section.feature)
+        end)
+
       {group_label, filtered}
     end)
     |> Enum.reject(fn {_, sections} -> sections == [] end)

@@ -49,8 +49,7 @@ defmodule Beacon.LiveAdmin.Auth.Permissions do
   def is_owner?(nil), do: false
 
   def is_owner?(%{id: user_id}) do
-    repo()
-    |> apply(:exists?, [from(o in Owner, where: o.user_id == ^user_id)])
+    repo().exists?(from(o in Owner, where: o.user_id == ^user_id))
   end
 
   @doc """
@@ -112,8 +111,10 @@ defmodule Beacon.LiveAdmin.Auth.Permissions do
     site_string = to_string(site)
 
     from(gp in GroupPermission,
-      join: g in Group, on: g.id == gp.group_id,
-      join: ug in UserGroup, on: ug.group_id == g.id,
+      join: g in Group,
+      on: g.id == gp.group_id,
+      join: ug in UserGroup,
+      on: ug.group_id == g.id,
       where: ug.user_id == ^user.id,
       where: g.site == ^site_string,
       where: g.is_template == false,
@@ -126,8 +127,10 @@ defmodule Beacon.LiveAdmin.Auth.Permissions do
     site_string = to_string(site)
 
     from(gp in GroupPermission,
-      join: g in Group, on: g.id == gp.group_id,
-      join: ug in UserGroup, on: ug.group_id == g.id,
+      join: g in Group,
+      on: g.id == gp.group_id,
+      join: ug in UserGroup,
+      on: ug.group_id == g.id,
       where: ug.user_id == ^user.id,
       where: g.site == ^site_string,
       where: g.is_template == false,
@@ -180,7 +183,8 @@ defmodule Beacon.LiveAdmin.Auth.Permissions do
 
     has_group =
       from(ug in UserGroup,
-        join: g in Group, on: g.id == ug.group_id,
+        join: g in Group,
+        on: g.id == ug.group_id,
         where: ug.user_id == ^user.id,
         where: g.site == ^site_string,
         where: g.is_template == false

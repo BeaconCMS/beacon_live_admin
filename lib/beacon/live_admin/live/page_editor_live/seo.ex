@@ -36,11 +36,14 @@ defmodule Beacon.LiveAdmin.PageEditorLive.SEO do
     }
 
     # Include collection fields if present
-    attrs = case params["fields"] do
-      fields when is_map(fields) and map_size(fields) > 0 ->
-        Map.put(attrs, "fields", fields)
-      _ -> attrs
-    end
+    attrs =
+      case params["fields"] do
+        fields when is_map(fields) and map_size(fields) > 0 ->
+          Map.put(attrs, "fields", fields)
+
+        _ ->
+          attrs
+      end
 
     case Content.update_page(page.site, page, attrs) do
       {:ok, updated_page} ->
@@ -77,9 +80,11 @@ defmodule Beacon.LiveAdmin.PageEditorLive.SEO do
 
   def handle_event("set_collection", %{"collection_id" => ""}, socket) do
     page = socket.assigns.page
+
     case Content.update_page(page.site, page, %{"collection_id" => nil}) do
       {:ok, updated} ->
         {:noreply, socket |> assign(:page, updated) |> assign_seo_fields(updated)}
+
       {:error, _} ->
         {:noreply, put_flash(socket, :error, "Failed to update")}
     end
@@ -87,9 +92,11 @@ defmodule Beacon.LiveAdmin.PageEditorLive.SEO do
 
   def handle_event("set_collection", %{"collection_id" => id}, socket) do
     page = socket.assigns.page
+
     case Content.update_page(page.site, page, %{"collection_id" => id}) do
       {:ok, updated} ->
         {:noreply, socket |> assign(:page, updated) |> assign_seo_fields(updated)}
+
       {:error, _} ->
         {:noreply, put_flash(socket, :error, "Failed to update")}
     end
@@ -100,7 +107,17 @@ defmodule Beacon.LiveAdmin.PageEditorLive.SEO do
     collections = Content.list_collections(site, [])
     current_tt = if page.collection_id, do: Content.get_collection(site, page.collection_id)
 
-    form_data = %{
+    socket
+    |> assign(:form_data, seo_form_data(page))
+    |> assign(:seo_score, compute_seo_score(page))
+    |> assign(:collections, collections)
+    |> assign(:current_collection, current_tt)
+    |> assign(:page_fields, page.fields || %{})
+    |> assign(:date_modified, page.date_modified)
+  end
+
+  defp seo_form_data(page) do
+    %{
       "meta_description" => page.meta_description || "",
       "og_title" => page.og_title || "",
       "og_description" => page.og_description || "",
@@ -109,36 +126,36 @@ defmodule Beacon.LiveAdmin.PageEditorLive.SEO do
       "robots" => page.robots || "index, follow",
       "twitter_card" => page.twitter_card || "summary_large_image"
     }
-
-    socket
-    |> assign(:form_data, form_data)
-    |> assign(:seo_score, compute_seo_score(page))
-    |> assign(:collections, collections)
-    |> assign(:current_collection, current_tt)
-    |> assign(:page_fields, page.fields || %{})
-    |> assign(:date_modified, page.date_modified)
   end
 
   defp compute_seo_score(page) do
-    checks = [
-      {10, non_empty?(page.title)},
-      {10, non_empty?(page.title) and String.length(page.title || "") <= 60},
-      {10, non_empty?(page.meta_description || page.description)},
-      {10, non_empty?(page.meta_description || page.description) and String.length(page.meta_description || page.description || "") <= 160},
-      {15, non_empty?(page.og_image)},
-      {5, non_empty?(page.og_title)},
-      {5, non_empty?(page.og_description)},
-      {10, non_empty?(page.canonical_url)},
-      {10, page.raw_schema != nil and page.raw_schema != []},
-      {5, non_empty?(page.robots)},
-      {5, page.collection_id != nil},
-      {5, non_empty?(page.twitter_card)}
-    ]
-
+    checks = seo_checks(page)
     earned = checks |> Enum.filter(&elem(&1, 1)) |> Enum.map(&elem(&1, 0)) |> Enum.sum()
     total = checks |> Enum.map(&elem(&1, 0)) |> Enum.sum()
     {earned, total}
   end
+
+  # {points, earned?} for every field the score covers.
+  defp seo_checks(page) do
+    description = page.meta_description || page.description
+
+    [
+      {10, non_empty?(page.title)},
+      {10, within?(page.title, 60)},
+      {10, non_empty?(description)},
+      {10, within?(description, 160)},
+      {15, non_empty?(page.og_image)},
+      {5, non_empty?(page.og_title)},
+      {5, non_empty?(page.og_description)},
+      {10, non_empty?(page.canonical_url)},
+      {10, page.raw_schema not in [nil, []]},
+      {5, non_empty?(page.robots)},
+      {5, page.collection_id != nil},
+      {5, non_empty?(page.twitter_card)}
+    ]
+  end
+
+  defp within?(value, max), do: non_empty?(value) and String.length(value || "") <= max
 
   defp non_empty?(nil), do: false
   defp non_empty?(""), do: false
@@ -388,7 +405,13 @@ defmodule Beacon.LiveAdmin.PageEditorLive.SEO do
                       <% "text" -> %>
                         <textarea name={"seo[fields][#{field_def["name"]}]"} rows="3" class="w-full rounded-md border-gray-300 text-sm"><%= @page_fields[field_def["name"]] %></textarea>
                       <% "boolean" -> %>
-                        <input type="checkbox" name={"seo[fields][#{field_def["name"]}]"} value="true" checked={@page_fields[field_def["name"]] == true or @page_fields[field_def["name"]] == "true"} class="rounded border-gray-300" />
+                        <input
+                          type="checkbox"
+                          name={"seo[fields][#{field_def["name"]}]"}
+                          value="true"
+                          checked={@page_fields[field_def["name"]] == true or @page_fields[field_def["name"]] == "true"}
+                          class="rounded border-gray-300"
+                        />
                       <% "datetime" -> %>
                         <input type="datetime-local" name={"seo[fields][#{field_def["name"]}]"} value={@page_fields[field_def["name"]]} class="rounded-md border-gray-300 text-sm" />
                       <% "integer" -> %>
@@ -403,7 +426,10 @@ defmodule Beacon.LiveAdmin.PageEditorLive.SEO do
           <% end %>
 
           <div class="flex justify-end pt-4 border-t">
-            <button type="submit" class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
+            <button
+              type="submit"
+              class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150"
+            >
               Save SEO Settings
             </button>
           </div>

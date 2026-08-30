@@ -56,34 +56,35 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Space do
     # Group by value and unit to check if we can coalesce
     grouped = Enum.group_by(values_and_units, fn {_side, value, unit} -> {value, unit} end)
 
-    cond do
+    if map_size(grouped) == 1 do
       # All sides are the same
-      map_size(grouped) == 1 ->
-        [{_side, value, unit} | _] = hd(Map.values(grouped))
-        [generate_space_class(value, unit, type, nil)]
-
-      # Check if we can use axis-based classes
-      true ->
-        {x_axis, y_axis} = axis_values(values_and_units)
-
-        []
-        |> maybe_add_axis_class(x_axis, type_abbrev, "x")
-        |> maybe_add_axis_class(y_axis, type_abbrev, "y")
-        |> then(fn classes ->
-          # Generate individual classes for sides not covered by axis classes
-          remaining =
-            values_and_units
-            |> Enum.reject(fn {side, value, unit} ->
-              axis_covered?(side, value, unit, x_axis, y_axis)
-            end)
-            |> Enum.map(fn {side, value, unit} ->
-              generate_space_class(value, unit, type, side)
-            end)
-
-          classes ++ remaining
-        end)
-        |> Enum.reject(&is_nil/1)
+      [{_side, value, unit} | _] = hd(Map.values(grouped))
+      [generate_space_class(value, unit, type, nil)]
+    else
+      axis_classes(values_and_units, type, type_abbrev)
     end
+  end
+
+  # Axis classes where both sides of an axis agree, plus an individual class for
+  # every side an axis class does not already cover.
+  defp axis_classes(values_and_units, type, type_abbrev) do
+    {x_axis, y_axis} = axis_values(values_and_units)
+
+    axis =
+      []
+      |> maybe_add_axis_class(x_axis, type_abbrev, "x")
+      |> maybe_add_axis_class(y_axis, type_abbrev, "y")
+
+    remaining =
+      values_and_units
+      |> Enum.reject(fn {side, value, unit} ->
+        axis_covered?(side, value, unit, x_axis, y_axis)
+      end)
+      |> Enum.map(fn {side, value, unit} ->
+        generate_space_class(value, unit, type, side)
+      end)
+
+    Enum.reject(axis ++ remaining, &is_nil/1)
   end
 
   defp axis_values(values_and_units) do
@@ -194,16 +195,7 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Space do
     cond do
       # For classes with arbitrary values like p-[2rem] or py-[1px]
       String.contains?(class, "[") ->
-        case Regex.run(~r/\[(.+)\]$/, class) do
-          [_, value] ->
-            case VisualEditor.parse_number_and_unit(value) do
-              {:ok, _, unit} -> unit
-              _ -> "px"
-            end
-
-          _ ->
-            "px"
-        end
+        arbitrary_unit(class)
 
       # For standard classes like pb-2, py-2, p-2
       Regex.match?(~r/-\d+$/, class) ->
@@ -212,6 +204,20 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Space do
 
       true ->
         "px"
+    end
+  end
+
+  defp arbitrary_unit(class) do
+    case Regex.run(~r/\[(.+)\]$/, class) do
+      [_, value] -> parsed_unit(value)
+      _ -> "px"
+    end
+  end
+
+  defp parsed_unit(value) do
+    case VisualEditor.parse_number_and_unit(value) do
+      {:ok, _, unit} -> unit
+      _ -> "px"
     end
   end
 

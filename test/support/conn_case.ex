@@ -1,4 +1,6 @@
 defmodule Beacon.LiveAdmin.ConnCase do
+  @moduledoc false
+
   use ExUnit.CaseTemplate
 
   using do

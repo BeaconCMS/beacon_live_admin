@@ -73,10 +73,14 @@ defmodule Beacon.LiveAdmin.VisualEditor.Components.ColorPicker do
   defp get_color_value(value) do
     case value do
       nil -> "transparent"
-      "Default" -> @tailwind_colors |> Enum.find(fn {n, _hex} -> n == "gray-200" end) |> elem(1)
+      "Default" -> tailwind_color("gray-200") || "transparent"
       "#" <> _ -> value
-      name -> Enum.find_value(@tailwind_colors, fn {n, hex} -> if n == name, do: hex end) || "transparent"
+      name -> tailwind_color(name) || "transparent"
     end
+  end
+
+  defp tailwind_color(name) do
+    Enum.find_value(@tailwind_colors, fn {n, hex} -> if n == name, do: hex end)
   end
 
   defp get_color_name_or_value(value) do

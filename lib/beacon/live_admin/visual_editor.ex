@@ -179,18 +179,21 @@ defmodule Beacon.LiveAdmin.VisualEditor do
   @spec extract_utility_class_unit_value(map(), String.t()) :: {unit :: String.t(), value :: String.t()} | nil
   def extract_utility_class_unit_value(element, class) when is_map(element) and is_binary(class) do
     case extract_utility_class_value(element, class) do
-      nil ->
-        nil
-
-      value ->
-        Enum.reduce_while(@units, nil, fn unit, acc ->
-          case String.split(value, unit) do
-            [value] -> {:halt, {"base", value}}
-            [value, ""] -> {:halt, {unit, value}}
-            _ -> {:cont, acc}
-          end
-        end)
+      nil -> nil
+      value -> split_unit(value)
     end
+  end
+
+  # Splits `12px` into `{"px", "12"}`, and reports `{"base", value}` when the
+  # value carries no unit at all.
+  defp split_unit(value) do
+    Enum.reduce_while(@units, nil, fn unit, acc ->
+      case String.split(value, unit) do
+        [value] -> {:halt, {"base", value}}
+        [value, ""] -> {:halt, {unit, value}}
+        _ -> {:cont, acc}
+      end
+    end)
   end
 
   def extract_utility_class_unit_value(_element, _class), do: nil
@@ -227,21 +230,25 @@ defmodule Beacon.LiveAdmin.VisualEditor do
         numeric_part = String.slice(string, start, length)
         remaining_text = String.slice(string, (start + length)..-1)
 
-        # Try parsing as integer first
-        case Integer.parse(numeric_part) do
-          {int, ""} ->
-            {:ok, int, remaining_text}
-
-          _ ->
-            # If not an integer, parse as float
-            case Float.parse(numeric_part) do
-              {float, ""} -> {:ok, float, remaining_text}
-              _ -> {:error, :not_a_number}
-            end
-        end
+        parse_number(numeric_part, remaining_text)
 
       _ ->
         {:error, :not_a_number}
+    end
+  end
+
+  # An integer stays an integer; anything else that parses cleanly is a float.
+  defp parse_number(numeric_part, remaining_text) do
+    case Integer.parse(numeric_part) do
+      {int, ""} -> {:ok, int, remaining_text}
+      _ -> parse_float(numeric_part, remaining_text)
+    end
+  end
+
+  defp parse_float(numeric_part, remaining_text) do
+    case Float.parse(numeric_part) do
+      {float, ""} -> {:ok, float, remaining_text}
+      _ -> {:error, :not_a_number}
     end
   end
 

@@ -137,6 +137,8 @@ jobs:
 
       - run: mix deps.unlock --check-unused
 
+      - run: mix credo --strict
+
       - run: mix assets.setup
 
       - run: mix format.all

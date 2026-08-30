@@ -200,21 +200,17 @@ defmodule Beacon.LiveAdmin.GroupsLive do
   end
 
   defp member_count(group) do
-    try do
-      length(Auth.list_group_members(group.id))
-    rescue
-      _ -> 0
-    end
+    length(Auth.list_group_members(group.id))
+  rescue
+    _ -> 0
   end
 
   defp permission_summary(group) do
-    try do
-      perms = Auth.list_group_permissions(group.id)
-      feature_count = perms |> Enum.map(& &1.feature) |> Enum.uniq() |> length()
-      "#{length(perms)} permissions across #{feature_count} features"
-    rescue
-      _ -> "—"
-    end
+    perms = Auth.list_group_permissions(group.id)
+    feature_count = perms |> Enum.map(& &1.feature) |> Enum.uniq() |> length()
+    "#{length(perms)} permissions across #{feature_count} features"
+  rescue
+    _ -> "—"
   end
 
   @impl true
@@ -332,7 +328,11 @@ defmodule Beacon.LiveAdmin.GroupsLive do
                       </div>
                       <span class="text-sm text-base-content"><%= member.email %></span>
                     </div>
-                    <button phx-click="remove_member" phx-value-user-id={member.id} class="opacity-0 group-hover/member:opacity-100 text-rose-500 hover:text-rose-700 text-xs font-medium transition-opacity">
+                    <button
+                      phx-click="remove_member"
+                      phx-value-user-id={member.id}
+                      class="opacity-0 group-hover/member:opacity-100 text-rose-500 hover:text-rose-700 text-xs font-medium transition-opacity"
+                    >
                       Remove
                     </button>
                   </div>

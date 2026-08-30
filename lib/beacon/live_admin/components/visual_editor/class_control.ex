@@ -2,8 +2,8 @@ defmodule Beacon.LiveAdmin.VisualEditor.ClassControl do
   @moduledoc false
 
   use Beacon.LiveAdmin.Web, :live_component
-  alias Beacon.LiveAdmin.VisualEditor.Components.ControlSection
   alias Beacon.LiveAdmin.VisualEditor
+  alias Beacon.LiveAdmin.VisualEditor.Components.ControlSection
 
   def render(assigns) do
     ~H"""

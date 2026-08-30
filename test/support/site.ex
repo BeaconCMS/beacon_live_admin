@@ -27,6 +27,8 @@ defmodule MyApp.Router do
 end
 
 defmodule MyAppWeb.ProxyEndpoint do
+  @moduledoc false
+
   use Beacon.ProxyEndpoint,
     otp_app: :my_app,
     session_options: [store: :cookie, key: "_live_view_key", signing_salt: "/VEDsdfsffMnp5"],

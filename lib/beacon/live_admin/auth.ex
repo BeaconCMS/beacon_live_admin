@@ -277,11 +277,7 @@ defmodule Beacon.LiveAdmin.Auth do
 
   @doc "Lists all members of a group."
   def list_group_members(group_id) do
-    from(u in User,
-      join: ug in UserGroup, on: ug.user_id == u.id,
-      where: ug.group_id == ^group_id,
-      order_by: [asc: u.email]
-    )
+    from(u in User, join: ug in UserGroup, on: ug.user_id == u.id, where: ug.group_id == ^group_id, order_by: [asc: u.email])
     |> repo().all()
   end
 
@@ -290,7 +286,8 @@ defmodule Beacon.LiveAdmin.Auth do
     site_string = to_string(site)
 
     from(g in Group,
-      join: ug in UserGroup, on: ug.group_id == g.id,
+      join: ug in UserGroup,
+      on: ug.group_id == g.id,
       where: ug.user_id == ^user_id,
       where: g.site == ^site_string,
       where: g.is_template == false,
@@ -409,34 +406,39 @@ defmodule Beacon.LiveAdmin.Auth do
     site_string = to_string(site)
 
     repo().transaction(fn ->
-      Enum.each(templates, fn template ->
-        # Check if a group with this name already exists for the site
-        existing =
-          from(g in Group, where: g.site == ^site_string and g.name == ^template.name)
-          |> repo().one()
+      Enum.each(templates, &copy_template_to_site(&1, site, site_string))
+    end)
+  end
 
-        unless existing do
-          {:ok, new_group} =
-            create_group(%{
-              site: site,
-              name: template.name,
-              description: template.description,
-              is_template: false
-            })
+  defp copy_template_to_site(template, site, site_string) do
+    # Check if a group with this name already exists for the site
+    existing =
+      from(g in Group, where: g.site == ^site_string and g.name == ^template.name)
+      |> repo().one()
 
-          # Copy permissions
-          template_perms = list_group_permissions(template.id)
+    unless existing do
+      {:ok, new_group} =
+        create_group(%{
+          site: site,
+          name: template.name,
+          description: template.description,
+          is_template: false
+        })
 
-          Enum.each(template_perms, fn perm ->
-            add_group_permission(new_group, %{
-              feature: perm.feature,
-              sub_feature: perm.sub_feature,
-              scope_type: perm.scope_type,
-              scope_id: perm.scope_id
-            })
-          end)
-        end
-      end)
+      copy_template_permissions(template, new_group)
+    end
+  end
+
+  defp copy_template_permissions(template, new_group) do
+    template.id
+    |> list_group_permissions()
+    |> Enum.each(fn perm ->
+      add_group_permission(new_group, %{
+        feature: perm.feature,
+        sub_feature: perm.sub_feature,
+        scope_type: perm.scope_type,
+        scope_id: perm.scope_id
+      })
     end)
   end
 end

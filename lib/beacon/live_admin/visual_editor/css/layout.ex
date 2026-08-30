@@ -32,54 +32,62 @@ defmodule Beacon.LiveAdmin.VisualEditor.Css.Layout do
   end
 
   defp extract_gap_value(classes, type) do
-    class =
-      Enum.find(classes, fn class ->
-        String.starts_with?(class, "#{type}-gap-")
-      end)
-
-    case class do
-      nil ->
-        nil
-
-      class ->
-        case Regex.run(~r/\[(.+)\]$/, class) do
-          [_, value] ->
-            case VisualEditor.parse_number_and_unit(value) do
-              {:ok, number, _} -> to_string(number)
-              _ -> nil
-            end
-
-          _ ->
-            Regex.run(~r/#{type}-gap-(\d+)/, class)
-            |> case do
-              [_, value] -> value
-              _ -> nil
-            end
-        end
+    case gap_class(classes, type) do
+      nil -> nil
+      class -> gap_value(class, type)
     end
   end
 
   defp extract_gap_unit(classes, type) do
-    class =
-      Enum.find(classes, fn class ->
-        String.starts_with?(class, "#{type}-gap-")
-      end)
+    case gap_class(classes, type) do
+      nil -> "px"
+      class -> gap_unit(class)
+    end
+  end
 
-    case class do
-      nil ->
-        "px"
+  # A gap class carries either an arbitrary value in brackets — `x-gap-[12px]` —
+  # or a number from Tailwind's scale — `x-gap-4`. Value and unit read the same
+  # class, so the shapes live here rather than inline in both readers.
+  defp gap_class(classes, type) do
+    Enum.find(classes, &String.starts_with?(&1, "#{type}-gap-"))
+  end
 
-      class ->
-        case Regex.run(~r/\[(.+)\]$/, class) do
-          [_, value] ->
-            case VisualEditor.parse_number_and_unit(value) do
-              {:ok, _, unit} -> unit
-              _ -> "px"
-            end
+  defp arbitrary_gap(class) do
+    Regex.run(~r/\[(.+)\]$/, class)
+  end
 
-          _ ->
-            "px"
-        end
+  defp gap_value(class, type) do
+    case arbitrary_gap(class) do
+      [_, value] -> arbitrary_gap_number(value)
+      _ -> scale_gap_number(class, type)
+    end
+  end
+
+  defp arbitrary_gap_number(value) do
+    case VisualEditor.parse_number_and_unit(value) do
+      {:ok, number, _} -> to_string(number)
+      _ -> nil
+    end
+  end
+
+  defp scale_gap_number(class, type) do
+    case Regex.run(~r/#{type}-gap-(\d+)/, class) do
+      [_, value] -> value
+      _ -> nil
+    end
+  end
+
+  defp gap_unit(class) do
+    case arbitrary_gap(class) do
+      [_, value] -> arbitrary_gap_unit(value)
+      _ -> "px"
+    end
+  end
+
+  defp arbitrary_gap_unit(value) do
+    case VisualEditor.parse_number_and_unit(value) do
+      {:ok, _, unit} -> unit
+      _ -> "px"
     end
   end
 

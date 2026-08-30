@@ -1,0 +1,90 @@
+{
+  // Every JavaScript, TypeScript and Svelte file this repository authors, at
+  // oxlint's strict categories. `mix assets.lint` and the `javascript.yml`
+  // workflow both run oxlint from this directory, so a local run and the CI run
+  // report the same thing.
+  //
+  // Rules below are either configured (the rule stays on, with the option that
+  // matches how this repository writes) or waived, with the reason and the
+  // number of sites it fired on when it was written down. The waivers shrink.
+  "plugins": ["import", "node", "oxc", "promise", "typescript", "unicorn"],
+  "categories": {
+    "correctness": "error",
+    "pedantic": "error",
+    "perf": "error",
+    "suspicious": "error"
+  },
+  "ignorePatterns": ["node_modules/**", "vendor/**", "svelte/**/*.d.ts"],
+  "rules": {
+    // Classic McCabe complexity, at the ceiling `.credo.exs` enforces on the
+    // Elixir in this repository and every sibling project enforces on both.
+    "eslint/complexity": ["error", { "max": 9, "variant": "classic" }],
+    // A line count is not a complexity measure; `complexity` above is.
+    "eslint/max-lines": "off",
+    "eslint/max-lines-per-function": "off",
+    // A leading underscore is how this code marks something as deliberately
+    // unused, which is the convention the rest of the tree already follows.
+    "eslint/no-unused-vars": [
+      "error",
+      {
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_",
+        "caughtErrorsIgnorePattern": "^_"
+      }
+    ],
+    // 37 sites. A leading underscore is how the LiveView hooks and the editor
+    // classes mark a method as internal; JavaScript has no other marker.
+    "eslint/no-underscore-dangle": "off",
+    // 27 sites, all of them ASCII patterns over template source, where the `u`
+    // flag would change nothing but the width of the line.
+    "eslint/require-unicode-regexp": "off",
+    // 19 sites, every one a Svelte `let` that the template or a `bind:` fills
+    // in. The rule cannot see either.
+    "eslint/no-unassigned-vars": "off",
+    // 11 sites. Shadowing here is a callback parameter deliberately named after
+    // the value it stands for.
+    "eslint/no-shadow": "off",
+    // 7 sites.
+    "eslint/no-inline-comments": "off",
+    // 3 sites, all Svelte reactive statements — `$: something` is an expression
+    // by construction, and running it is the point.
+    "eslint/no-unused-expressions": "off",
+    // 3 sites.
+    "eslint/no-else-return": "off",
+    // 4 sites. `async` is how a hook callback satisfies a Promise-returning
+    // signature without awaiting.
+    "eslint/require-await": "off",
+    // TODO notes are tracked in the issue tracker, the same call `.credo.exs`
+    // makes for `Credo.Check.Design.TagTODO`.
+    "eslint/no-warning-comments": "off",
+    // 2 sites, both of which read better with the negation.
+    "eslint/no-negated-condition": "off",
+    "unicorn/no-negated-condition": "off",
+    // 12 sites. These read and clear `data-*` attributes that LiveView writes,
+    // and `getAttribute`/`removeAttribute` name the attribute the server names.
+    "unicorn/prefer-dom-node-dataset": "off",
+    // 8 sites. `getElementById` is what the code means where the target has an
+    // id LiveView assigned.
+    "unicorn/prefer-query-selector": "off",
+    // 2 sites, in module bodies that esbuild bundles for the browser, where a
+    // top-level await would change the output format.
+    "unicorn/prefer-top-level-await": "off",
+    // 2 sites each, all in Svelte components.
+    "unicorn/prefer-string-replace-all": "off",
+    "unicorn/no-array-sort": "off",
+    "unicorn/no-array-callback-reference": "off",
+    "unicorn/prefer-set-has": "off",
+    "unicorn/no-lonely-if": "off",
+    "unicorn/no-immediate-mutation": "off",
+    "unicorn/prefer-number-coercion": "off",
+    "unicorn/prefer-dom-node-append": "off",
+    "unicorn/prefer-dom-node-remove": "off",
+    // 2 sites. The chains it flags end in a side effect, not a value.
+    "promise/always-return": ["error", { "ignoreLastCallback": true }],
+    // 1 site. The mount callbacks are the editor's public API; running them
+    // once the loader resolves is the whole point of the `then`.
+    "promise/no-callback-in-promise": "off",
+    // 2 sites, where the shared statement reads better inside each branch.
+    "oxc/branches-sharing-code": "off"
+  }
+}

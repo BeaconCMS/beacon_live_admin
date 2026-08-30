@@ -3,8 +3,8 @@ defmodule Beacon.LiveAdmin.BeaconAdmin.DashboardLive do
 
   use Beacon.LiveAdmin.PageBuilder
 
-  alias Beacon.LiveAdmin.Cluster
   alias Beacon.LiveAdmin.Client.Content
+  alias Beacon.LiveAdmin.Cluster
 
   @impl true
   def menu_link("/beacon", :dashboard), do: {:root, "Beacon Admin"}
@@ -35,17 +35,20 @@ defmodule Beacon.LiveAdmin.BeaconAdmin.DashboardLive do
   end
 
   defp safe_count(fun) do
-    try do
-      fun.()
-    rescue
-      _ -> 0
-    end
+    fun.()
+  rescue
+    _ -> 0
   end
 
   @admin_links [
     %{path: "/beacon/users", icon: "hero-users", title: "User Management", description: "Create, edit, and manage users"},
     %{path: "/beacon/group_templates", icon: "hero-user-group", title: "Group Templates", description: "Default permission groups for new sites"},
-    %{path: "/beacon/collections", icon: "hero-document-duplicate", title: "Global Collections", description: "Manage collections available to all sites"},
+    %{
+      path: "/beacon/collections",
+      icon: "hero-document-duplicate",
+      title: "Global Collections",
+      description: "Manage collections available to all sites"
+    },
     %{path: "/beacon/settings", icon: "hero-cog-6-tooth", title: "Global Settings", description: "Configure platform-wide defaults and policies"}
   ]
 

@@ -105,13 +105,11 @@ defmodule Beacon.LiveAdmin.PageQueryEditorLive.Index do
   end
 
   defp variable_binding_summary(bindings) when is_map(bindings) and map_size(bindings) > 0 do
-    bindings
-    |> Enum.map(fn {var, spec} ->
+    Enum.map_join(bindings, ", ", fn {var, spec} ->
       source = spec["source"] || "unknown"
       key = spec["key"] || spec["value"] || spec["from"] || ""
       "#{var}: #{source}(#{key})"
     end)
-    |> Enum.join(", ")
   end
 
   defp variable_binding_summary(_), do: "none"
@@ -174,8 +172,7 @@ defmodule Beacon.LiveAdmin.PageQueryEditorLive.Index do
                       </div>
                     </div>
                   </div>
-                  <button type="button" phx-click="delete" phx-value-id={query.id}
-                    class="text-gray-400 hover:text-red-500 transition-colors">
+                  <button type="button" phx-click="delete" phx-value-id={query.id} class="text-gray-400 hover:text-red-500 transition-colors">
                     <.icon name="hero-x-mark" class="w-4 h-4" />
                   </button>
                 </div>

@@ -105,15 +105,16 @@ if Code.ensure_loaded?(Igniter) do
     defp add_use_beacon_live_admin_in_router(igniter, router) do
       Igniter.Project.Module.find_and_update_module!(igniter, router, fn zipper ->
         case Igniter.Code.Module.move_to_use(zipper, Beacon.LiveAdmin.Router) do
-          {:ok, zipper} ->
-            {:ok, zipper}
-
-          _ ->
-            with {:ok, zipper} <- Igniter.Libs.Phoenix.move_to_router_use(igniter, zipper) do
-              {:ok, Igniter.Code.Common.add_code(zipper, "use Beacon.LiveAdmin.Router")}
-            end
+          {:ok, zipper} -> {:ok, zipper}
+          _ -> add_use_beacon_live_admin(igniter, zipper)
         end
       end)
+    end
+
+    defp add_use_beacon_live_admin(igniter, zipper) do
+      with {:ok, zipper} <- Igniter.Libs.Phoenix.move_to_router_use(igniter, zipper) do
+        {:ok, Igniter.Code.Common.add_code(zipper, "use Beacon.LiveAdmin.Router")}
+      end
     end
 
     defp add_admin_pipeline_in_router(igniter, router) do

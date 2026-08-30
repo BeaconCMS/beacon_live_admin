@@ -151,7 +151,7 @@ defmodule Beacon.LiveAdmin.BeaconAdmin.UsersLive do
     Calendar.strftime(datetime, "%Y-%m-%d %H:%M")
   end
 
-  defp is_owner?(user, owner) do
+  defp owner?(user, owner) do
     owner && user.id == owner.id
   end
 
@@ -218,10 +218,9 @@ defmodule Beacon.LiveAdmin.BeaconAdmin.UsersLive do
           <span class="text-base-content/60"><%= user.name || "—" %></span>
         </:col>
         <:col :let={user} label="Role">
-          <%= if is_owner?(user, @owner) do %>
+          <%= if owner?(user, @owner) do %>
             <span class="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-purple-50 text-purple-700 ring-1 ring-accent/30">
-              <.icon name="hero-shield-check-mini" class="w-3.5 h-3.5" />
-              Owner
+              <.icon name="hero-shield-check-mini" class="w-3.5 h-3.5" /> Owner
             </span>
           <% end %>
         </:col>
@@ -233,7 +232,7 @@ defmodule Beacon.LiveAdmin.BeaconAdmin.UsersLive do
             <button phx-click="edit" phx-value-id={user.id} title="Edit user" class="p-2 rounded-md hover:bg-zinc-100 transition-colors">
               <.icon name="hero-pencil-square" class="w-4 h-4 text-zinc-400 hover:text-zinc-600" />
             </button>
-            <%= if @current_is_owner && !is_owner?(user, @owner) do %>
+            <%= if @current_is_owner && !owner?(user, @owner) do %>
               <%= if @confirm_transfer == user.id do %>
                 <span class="text-xs text-base-content/60">Transfer?</span>
                 <button phx-click="transfer_ownership" phx-value-id={user.id} class="p-1 text-purple-600 hover:text-purple-800 text-xs font-semibold">Yes</button>

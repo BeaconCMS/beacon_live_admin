@@ -1,4 +1,6 @@
 defmodule Beacon.LiveAdmin.Fixtures do
+  @moduledoc false
+
   import Beacon.LiveAdminTest.Cluster, only: [rpc: 4]
 
   defp get_lazy(attrs, key, fun) when is_map(attrs), do: Map.get_lazy(attrs, key, fun)
